@@ -49,9 +49,9 @@ class ScriptExecutionsOperations:
         private_cloud_name: str,
         **kwargs: Any
     ) -> AsyncIterable["_models.ScriptExecutionsList"]:
-        """Get an script execution resource by name in a private cloud.
+        """List script executions in a private cloud.
 
-        Get an script execution resource by name in a private cloud.
+        List script executions in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -67,7 +67,7 @@ class ScriptExecutionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -126,9 +126,9 @@ class ScriptExecutionsOperations:
         script_execution_name: str,
         **kwargs: Any
     ) -> "_models.ScriptExecution":
-        """Get an script execution resource by name in a private cloud.
+        """Get an script execution by name in a private cloud.
 
-        Get an script execution resource by name in a private cloud.
+        Get an script execution by name in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -146,7 +146,7 @@ class ScriptExecutionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -196,7 +196,7 @@ class ScriptExecutionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -250,9 +250,9 @@ class ScriptExecutionsOperations:
         script_execution: "_models.ScriptExecution",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.ScriptExecution"]:
-        """Create or update a script execution resource in a private cloud.
+        """Create or update a script execution in a private cloud.
 
-        Create or update a script execution resource in a private cloud.
+        Create or update a script execution in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -332,7 +332,7 @@ class ScriptExecutionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -466,7 +466,7 @@ class ScriptExecutionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

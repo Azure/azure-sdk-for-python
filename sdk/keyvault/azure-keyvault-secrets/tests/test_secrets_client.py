@@ -297,16 +297,20 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
                     try:
-                        body = json.loads(m)
+                        # the body of the request should be JSON
+                        body = json.loads(section)
                         if body["value"] == "secret-value":
+                            mock_handler.close()
                             return
                     except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
+                        # this means the request section is not JSON
                         pass
 
+        mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
     @logging_disabled()
@@ -323,14 +327,20 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
                     try:
-                        body = json.loads(m)
-                        assert body["value"] != "secret-value", "Client request body was logged"
+                        # the body of the request should be JSON
+                        body = json.loads(section)
+                        if body["value"] == "secret-value":
+                            mock_handler.close()
+                            assert False, "Client request body was logged"
                     except (ValueError, KeyError):
                         # this means the message is not JSON or has no kty property
                         pass
+
+        mock_handler.close()
 
 
 def test_service_headers_allowed_in_logs():

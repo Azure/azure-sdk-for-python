@@ -1,7 +1,12 @@
 parameters:
-  BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
 
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
     parameters:
@@ -12,4 +17,4 @@ steps:
     displayName: "Update package versions for dev build"
     inputs:
       scriptPath: 'eng/versioning/version_set_dev.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'
+      arguments: '"$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'

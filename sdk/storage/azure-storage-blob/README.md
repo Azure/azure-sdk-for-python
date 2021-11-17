@@ -345,6 +345,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
 * __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
 the client level to enable it for all requests.
+* __logging_body__ (bool): Enables logging the request and response body. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 ## Troubleshooting

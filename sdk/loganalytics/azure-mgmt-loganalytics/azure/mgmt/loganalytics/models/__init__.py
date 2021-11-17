@@ -137,6 +137,8 @@ except (SyntaxError, ImportError):
 
 from ._log_analytics_management_client_enums import (
     BillingType,
+    Capacity,
+    CapacityReservationLevel,
     ClusterEntityStatus,
     ClusterSkuNameEnum,
     DataIngestionStatus,
@@ -219,6 +221,8 @@ __all__ = [
     'WorkspacePurgeStatusResponse',
     'WorkspaceSku',
     'BillingType',
+    'Capacity',
+    'CapacityReservationLevel',
     'ClusterEntityStatus',
     'ClusterSkuNameEnum',
     'DataIngestionStatus',

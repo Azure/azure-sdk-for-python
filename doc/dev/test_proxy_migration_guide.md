@@ -28,25 +28,25 @@ class TestExample(AzureTestCase):
 ### New test structure
 
 To use the proxy, test classes should inherit from AzureRecordedTestCase and recorded test methods should use a
-RecordedByProxy decorator:
+`recorded_by_proxy` decorator:
 
 ```py
-from devtools_testutils import AzureRecordedTestCase, RecordedByProxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 class TestExample(AzureRecordedTestCase):
 
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_example(self):
         ...
 
     @ExamplePreparer()
-    @RecordedByProxy
+    @recorded_by_proxy
     def test_example_with_preparer(self):
         ...
 ```
 
-For async tests, import the RecordedByProxyAsync decorator from `devtools_testutils.aio` and use it in the same
-way as RecordedByProxy.
+For async tests, import the `recorded_by_proxy_async` decorator from `devtools_testutils.aio` and use it in the same
+way as `recorded_by_proxy`.
 
 > **Note:** since AzureRecordedTestCase doesn't inherit from `unittest.TestCase`, test class names need to start
 > with "Test" in order to be properly collected by pytest by default. For more information, please refer to
@@ -135,6 +135,48 @@ made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will a
 
 For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
 
+### Enabling Testproxy on the CI
+
+To enable test proxy on the CI, you need to set the parameter `TestProxy: true` on ci.yml and on tests.yml are present in the service level folder.
+
+![image](https://user-images.githubusercontent.com/45376673/142270668-5be58bca-87e5-45f5-b593-44f8b1f757bc.png)
+### Record test variables
+
+To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
+[`variables` API](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables).
+This makes it possible for a test to record the values of variables that were used during recording and use the same
+values in playback mode without a sanitizer.
+
+For example, imagine that a test uses a randomized `table_name` variable when creating resources. The same random value
+for `table_name` can be used in playback mode by using this `variables` API.
+
+There are two requirements for a test to use recorded variables. First, the test method should accept `**kwargs` and/or
+a `variables` parameter. Second, the test method should `return` a dictionary with any test variables that it wants to
+record. This dictionary will be stored in the recording when the test is run live, and will be passed to the test as a
+`variables` keyword argument when the test is run in playback.
+
+Below is a code example of how a test method could use recorded variables:
+
+```python
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+
+class TestExample(AzureRecordedTestCase):
+
+    @recorded_by_proxy
+    def test_example(self, variables):
+        # in live mode, variables is an empty dictionary
+        # in playback mode, the value of variables is {"table_name": "random-value"}
+        if self.is_live:
+            table_name = "random-value"
+            variables = {"table_name": table_name}
+        
+        # use variables["table_name"] when using the table name throughout the test
+        ...
+
+        # return the variables at the end of the test
+        return variables
+```
+
 ## Implementation details
 
 ### What does the test proxy do?
@@ -147,7 +189,7 @@ For example, if an operation would typically make a GET request to
 `https://localhost:5001/Tables` instead. The original endpoint should be stored in an `x-recording-upstream-base-uri` --
 the proxy will send the original request and record the result.
 
-The RecordedByProxy and RecordedByProxyAsync decorators patch test requests to do this for you.
+The `recorded_by_proxy` and `recorded_by_proxy_async` decorators patch test requests to do this for you.
 
 ### How does the test proxy know when and what to record or play back?
 
@@ -179,7 +221,7 @@ Running tests in playback follows the same pattern, except that requests will be
 `/playback/stop` instead. A header, `x-recording-mode`, should be set to `record` for all requests when recording and
 `playback` when playing recordings back. More details can be found [here][detailed_docs].
 
-The RecordedByProxy and RecordedByProxyAsync decorators send the appropriate requests at the start and end of each test
+The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of each test
 case.
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md

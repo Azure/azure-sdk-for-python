@@ -33,7 +33,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b1 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
+|3.2.0b2 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -181,7 +181,7 @@ More information about analyzing documents, including supported features, locale
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
-Please note that models can also be built using a graphical user interface such as the [Form Recognizer Labeling Tool][labeling-tool].
+Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -348,8 +348,32 @@ for style in result.styles:
         print("Document contains handwritten content: ")
         print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
-print("----Selection marks found in document----")
 for page in result.pages:
+    print("----Analyzing document from page #{}----".format(page.page_number))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
+
+    for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
+        print(
+            "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+                line_idx,
+                len(words),
+                line.content,
+                format_bounding_box(line.bounding_box),
+            )
+        )
+
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
+            )
+
     for selection_mark in page.selection_marks:
         print(
             "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
@@ -359,6 +383,8 @@ for page in result.pages:
             )
         )
 ```
+
+- Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
 ### Using Prebuilt Models
 Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
@@ -597,6 +623,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr-studio]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
 [fr-models]: https://aka.ms/azsdk/formrecognizer/models
@@ -617,6 +644,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 [service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
 [service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
+[service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md

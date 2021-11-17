@@ -152,9 +152,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    @pytest.mark.live_test_only
     def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 

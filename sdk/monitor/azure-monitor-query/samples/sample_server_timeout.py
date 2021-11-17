@@ -3,19 +3,17 @@
 """
 FILE: sample_server_timeout.py
 DESCRIPTION:
-    This sample demostrates how to update a server timeout for a long running query.
+    This sample demonstrates how to update a server timeout for a long running query.
 USAGE:
     python sample_server_timeout.py
     Set the environment variables with your own values before running the sample:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
-    In order to use the DefaultAzureCredential, the following environment variables must be set:
-    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
-    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
-    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
-**Note** - Although this example uses pandas to prin the response, it is totally optional and is
-not a required package for querying. Alternatively, native python can be used as well.
+**Note** - Although this example uses pandas to print the response, it's optional and
+isn't a required package for querying. Alternatively, native Python can be used as well.
 """
 import os
 import pandas as pd
@@ -32,7 +30,7 @@ query= "range x from 1 to 10000000000 step 1 | count"
 
 try:
     response = client.query_workspace(
-        os.environ['LOG_WORKSPACE_ID'],
+        os.environ['LOGS_WORKSPACE_ID'],
         query,
         timespan=timedelta(days=1),
         server_timeout=3

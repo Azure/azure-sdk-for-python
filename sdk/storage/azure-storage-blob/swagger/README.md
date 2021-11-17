@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-12-06/blob.json
 output-folder: ../azure/storage/blob/_generated
 namespace: azure.storage.blob
 no-namespace-folders: true
@@ -136,8 +136,6 @@ directive:
 - from: swagger-document
   where: $.definitions.BlobItemInternal
   transform: |
-    $.discriminator = "OrMetadata";
-    $.required = [ "OrMetadata" ];
     $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
     $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
     delete $.properties.ObjectReplicationMetadata;

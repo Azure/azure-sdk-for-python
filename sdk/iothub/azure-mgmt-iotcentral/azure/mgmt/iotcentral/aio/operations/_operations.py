@@ -43,9 +43,9 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResult"]:
-        """Lists all of the available IoT Central application REST API operations.
+        """Lists all of the available IoT Central Resource Provider operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationListResult or the result of cls(response)
@@ -57,7 +57,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

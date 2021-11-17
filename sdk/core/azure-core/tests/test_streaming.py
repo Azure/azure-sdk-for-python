@@ -97,7 +97,6 @@ def test_compress_compressed_no_header(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_plain_header(http_request):
     # expect error
-    import requests
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
@@ -109,7 +108,7 @@ def test_decompress_plain_header(http_request):
     try:
         content = b"".join(list(data))
         assert False
-    except (requests.exceptions.ContentDecodingError, DecodeError):
+    except DecodeError:
         pass
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

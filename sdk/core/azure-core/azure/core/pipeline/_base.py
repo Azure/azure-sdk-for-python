@@ -70,8 +70,8 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         try:
             response = self.next.send(request)
         except Exception:  # pylint: disable=broad-except
-            if not _await_result(self._policy.on_exception, request):
-                raise
+            _await_result(self._policy.on_exception, request)
+            raise
         else:
             _await_result(self._policy.on_response, request, response)
         return response
