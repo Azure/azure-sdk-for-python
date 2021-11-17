@@ -29,7 +29,7 @@ class TestBusinessCard(FormRecognizerTest):
             content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()

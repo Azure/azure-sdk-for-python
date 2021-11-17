@@ -148,7 +148,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
+            assert form.form_type_confidence is not None
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
@@ -173,7 +173,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             continuation_token=cont_token
         )
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
@@ -247,7 +247,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
+            assert form.form_type_confidence is not None
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 

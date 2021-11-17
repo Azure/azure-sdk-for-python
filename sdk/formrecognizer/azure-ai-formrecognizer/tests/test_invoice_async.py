@@ -46,7 +46,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
                 content_type=FormContentType.APPLICATION_PDF
             )
             result = await poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -379,7 +379,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             cont_token = initial_poller.continuation_token()
             poller = await client.begin_recognize_invoices(None, continuation_token=cont_token)
             result = await poller.result()
-            self.assertIsNotNone(result)
+            assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

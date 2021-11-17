@@ -54,7 +54,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
                 content_type=FormContentType.IMAGE_PNG
             )
             result = await poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -114,7 +114,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
                 blank,
             )
             result = await poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
@@ -251,7 +251,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
 
         self.assertEqual(len(result.pages), 1)
@@ -287,7 +287,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.page_range.last_page_number, 1)
         self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
 
     @FormRecognizerPreparer()
@@ -314,7 +314,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
         receipt = result.documents[1]
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
@@ -325,7 +325,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
 
         self.assertEqual(len(result.pages), 2)
@@ -384,7 +384,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             cont_token = initial_poller.continuation_token()
             poller = await client.begin_analyze_document("prebuilt-receipt", None, continuation_token=cont_token)
             result = await poller.result()
-            self.assertIsNotNone(result)
+            assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

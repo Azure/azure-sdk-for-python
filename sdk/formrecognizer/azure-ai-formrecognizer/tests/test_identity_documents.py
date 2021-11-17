@@ -186,7 +186,7 @@ class TestIdDocument(FormRecognizerTest):
         cont_token = initial_poller.continuation_token()
         poller = client.begin_recognize_identity_documents(None, continuation_token=cont_token)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

@@ -45,7 +45,7 @@ class TestContentFromStream(FormRecognizerTest):
             content_type=FormContentType.APPLICATION_PDF
         )
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -201,7 +201,7 @@ class TestContentFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_content(None, continuation_token=cont_token)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

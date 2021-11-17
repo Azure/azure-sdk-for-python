@@ -41,7 +41,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         client = DocumentAnalysisClient(endpoint, token)
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -179,7 +179,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt.page_range.first_page_number, 1)
         self.assertEqual(receipt.page_range.last_page_number, 1)
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
         self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, True)
 
@@ -200,7 +200,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
 
         self.assertEqual(len(result.pages), 1)
@@ -224,7 +224,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
         receipt = result.documents[1]
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
@@ -235,7 +235,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
+        assert receipt_type.confidence is not None
         self.assertEqual(receipt_type.value, 'Itemized')
 
         self.assertEqual(len(result.pages), 2)
@@ -286,7 +286,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         cont_token = initial_poller.continuation_token()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", None, continuation_token=cont_token)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

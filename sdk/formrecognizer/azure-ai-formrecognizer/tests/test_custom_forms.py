@@ -156,12 +156,12 @@ class TestCustomForms(FormRecognizerTest):
         self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
         self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
         self.assertIsNone(recognized_form[0].form_type_confidence)
-        self.assertIsNotNone(recognized_form[0].model_id)
+        assert recognized_form[0].model_id is not None
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
         recognized_form_dict = [v.to_dict() for v in recognized_form]
         self.assertIsNone(recognized_form_dict[0].get("form_type_confidence"))
-        self.assertIsNotNone(recognized_form_dict[0].get("model_id"))
+        assert recognized_form_dict[0].get("model_id") is not None
         self.assertEqual(recognized_form_dict[0].get("form_type"), "form-0")
 
         recognized_form = _models.RecognizedForm.from_dict(recognized_form_dict[0])
@@ -170,7 +170,7 @@ class TestCustomForms(FormRecognizerTest):
         self.assertEqual(recognized_form.page_range.first_page_number, page_results[0].page)
         self.assertEqual(recognized_form.page_range.last_page_number, page_results[0].page)
         self.assertIsNone(recognized_form.form_type_confidence)
-        self.assertIsNotNone(recognized_form.model_id)
+        assert recognized_form.model_id is not None
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form.fields, actual_fields, read_results)
 
     @FormRecognizerPreparer()
@@ -323,7 +323,7 @@ class TestCustomForms(FormRecognizerTest):
             continuation_token=cont_token
         )
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
@@ -402,7 +402,7 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
+            assert form.form_type_confidence is not None
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
