@@ -601,20 +601,24 @@ class PipelineClientBase(object):
 
         :param str url_template: The request URL to be formatted if necessary.
         """
-        url = _format_url_section(url_template, **kwargs)
+        path_format_args = {
+            k: rstrip_one(v, "/")
+            for k, v in kwargs.items()
+        }
+        url = _format_url_section(url_template, **path_format_args)
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip("/")
                 try:
-                    base = self._base_url.format(**kwargs).rstrip("/")
+                    base = self._base_url.format(**path_format_args).rstrip("/")
                 except KeyError as key:
                     err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
                     raise ValueError(err_msg.format(key.args[0]))
 
                 url = _urljoin(base, url)
         else:
-            url = self._base_url.format(**kwargs)
+            url = self._base_url.format(**path_format_args)
         return url
 
     def get(

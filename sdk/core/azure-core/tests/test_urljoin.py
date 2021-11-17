@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.core.pipeline.transport._base import _urljoin
+from azure.core._pipeline_client import PipelineClientBase
 
 def test_basic():
     assert (
@@ -48,3 +49,21 @@ def test_colons():
 
 def test_base_url_with_query():
     assert _urljoin("http://example.com/path?query=one&query=two", "?query=three") == "http://example.com/path?query=one&query=two&query=three"
+
+def test_format_url_with_path_params_with_slash():
+    client = PipelineClientBase('{endpoint}/translator/text/batch/v1.0')
+    path_format_arguments = {'endpoint': 'https://python-document-translation.cognitiveservices.azure.com/'}
+    endpoint = client.format_url("/batches", **path_format_arguments)
+    assert endpoint == "https://python-document-translation.cognitiveservices.azure.com/translator/text/batch/v1.0/batches"
+
+def test_format_url_with_path_params_with_two_slashes():
+    client = PipelineClientBase('{endpoint}/translator/text/batch/v1.0')
+    path_format_arguments = {'endpoint': 'https://python-document-translation.cognitiveservices.azure.com//'}
+    endpoint = client.format_url("/batches", **path_format_arguments)
+    assert endpoint == "https://python-document-translation.cognitiveservices.azure.com//translator/text/batch/v1.0/batches"
+
+def test_format_url_no_stub():
+    client = PipelineClientBase('{endpoint}/translator/text/batch/v1.0')
+    path_format_arguments = {'endpoint': 'https://python-document-translation.cognitiveservices.azure.com/'}
+    endpoint = client.format_url("", **path_format_arguments)
+    assert endpoint == "https://python-document-translation.cognitiveservices.azure.com/translator/text/batch/v1.0"

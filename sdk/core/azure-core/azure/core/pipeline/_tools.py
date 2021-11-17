@@ -38,17 +38,17 @@ def await_result(func, *args, **kwargs):
         )
     return result
 
-def rstrip_one(input, character):
+def rstrip_one(input_str, character):
     # type: (str, str) -> str
-    if input.endswith(character):
-        input = input[:len(input) - 1]
-    return input
+    if input_str.endswith(character):
+        input_str = input_str[:len(input_str) - 1]
+    return input_str
 
-def lstrip_one(input, character):
+def lstrip_one(input_str, character):
     # type: (str, str) -> str
-    if input.startswith(character):
-        input = input[1:]
-    return input
+    if input_str.startswith(character):
+        input_str = input_str[1:]
+    return input_str
 
 def is_rest(obj):
     # type: (Any) -> bool
