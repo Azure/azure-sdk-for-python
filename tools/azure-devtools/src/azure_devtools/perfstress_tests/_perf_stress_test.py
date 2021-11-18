@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .batch_perf_test import BatchPerfTest
+from ._batch_perf_test import BatchPerfTest
 
 
 class PerfStressTest(BatchPerfTest):

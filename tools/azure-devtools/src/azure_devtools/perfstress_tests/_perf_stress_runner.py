@@ -15,12 +15,12 @@ from typing import List, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ._perf_stress_base import _PerfTestABC
-from .batch_perf_test import BatchPerfTest
-from .perf_stress_test import PerfStressTest
-from .repeated_timer import RepeatedTimer
+from ._batch_perf_test import BatchPerfTest
+from ._perf_stress_test import PerfStressTest
+from ._repeated_timer import RepeatedTimer
 
 
-class PerfStressRunner:
+class _PerfStressRunner:
     def __init__(self, test_folder_path: Optional[str] = None, debug: bool = False):
         self._tests: List[_PerfTestABC] = []
         self._operation_status_tracker: int = -1

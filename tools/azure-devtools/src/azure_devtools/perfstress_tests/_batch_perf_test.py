@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import cProfile
 import os
 import threading
 import aiohttp
 import time
+from typing import Optional, Any, Dict, List
 
 from urllib.parse import urljoin
 
@@ -19,11 +21,11 @@ class BatchPerfTest(_PerfTestBase):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        self._session = None
-        self._test_proxy = None
-        self._test_proxy_policy = None
-        self._client_kwargs = {}
-        self._recording_id = None
+        self._session: Optional[aiohttp.ClientSession] = None
+        self._test_proxy: Optional[List[str]] = None
+        self._test_proxy_policy: Optional[PerfTestProxyPolicy] = None
+        self._client_kwargs: Dict[str, Any] = {}
+        self._recording_id: Optional[str] = None
 
         if self.args.insecure:
             # Disable SSL verification for SDK Client
@@ -46,6 +48,10 @@ class BatchPerfTest(_PerfTestBase):
             self._client_kwargs['per_retry_policies'] = [self._test_proxy_policy]
 
     async def post_setup(self) -> None:
+        """
+        Post-setup called once per parallel test instance.
+        Used by base classes to setup state (like test-proxy) after all derived class setup is complete.
+        """
         if self._test_proxy_policy:
             # Make one call to run() before starting recording, to avoid capturing
             # one-time setup like authorization requests.
@@ -69,6 +75,10 @@ class BatchPerfTest(_PerfTestBase):
             self._test_proxy_policy.mode = "playback"
 
     async def pre_cleanup(self) -> None:
+        """
+        Pre-cleanup called once per parallel test instance.
+        Used by base classes to cleanup state (like test-proxy) before all derived class cleanup runs.
+        """
         # Only stop playback if it was successfully started
         if self._test_proxy_policy and self._test_proxy_policy.mode == 'playback':
             headers = {
@@ -84,6 +94,9 @@ class BatchPerfTest(_PerfTestBase):
             self._test_proxy_policy.mode = None
 
     async def close(self) -> None:
+        """
+        Close any open client resources/connections per parallel test instance.
+        """
         await self._session.close()
 
     async def _start_recording(self) -> None:
@@ -106,12 +119,25 @@ class BatchPerfTest(_PerfTestBase):
             self._recording_id = resp.headers["x-recording-id"]
 
     def run_batch_sync(self) -> int:
+        """
+        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        :returns: The number of completed results.
+        :rtype: int
+        """
         raise NotImplementedError("run_batch_sync must be implemented for {}".format(self.__class__.__name__))
 
     async def run_batch_async(self) -> int:
+        """
+        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        :returns: The number of completed results.
+        :rtype: int
+        """
         raise NotImplementedError("run_batch_async must be implemented for {}".format(self.__class__.__name__))
 
     def run_all_sync(self, duration: int) -> None:
+        """
+        Run all sync tests, including both warmup and duration.
+        """
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()
@@ -132,6 +158,9 @@ class BatchPerfTest(_PerfTestBase):
                 self._last_completion_time = time.time() - starttime
 
     async def run_all_async(self, duration: int) -> None:
+        """
+        Run all async tests, including both warmup and duration.
+        """
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()
@@ -151,7 +180,10 @@ class BatchPerfTest(_PerfTestBase):
                 self._completed_operations += await self.run_batch_async()
                 self._last_completion_time = time.time() - starttime
 
-    def _save_profile(self, profile, sync):
+    def _save_profile(self, profile: cProfile.Profile, sync: str) -> None:
+        """
+        Dump the profiler data to file in the current working directory.
+        """
         if profile:
             profile_name = "{}/cProfile-{}-{}-{}.pstats".format(
                 os.getcwd(),

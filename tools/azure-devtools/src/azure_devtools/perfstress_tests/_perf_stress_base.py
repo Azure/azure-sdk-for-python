@@ -98,7 +98,7 @@ class _PerfTestABC(abc.ABC):
     @abc.abstractmethod
     def get_from_env(variable: str) -> str:
         """
-        Add test class specific command line arguments.
+        Get the value of an env var. If empty or not found, a ValueError will be raised.
         """
 
 
@@ -204,7 +204,7 @@ class _PerfTestBase(_PerfTestABC):
     @staticmethod
     def get_from_env(variable: str) -> str:
         """
-        Return the value of the given environment variable.
+        Get the value of an env var. If empty or not found, a ValueError will be raised.
         """
         value = os.environ.get(variable)
         if not value:
