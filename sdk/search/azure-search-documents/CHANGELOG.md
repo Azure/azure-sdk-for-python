@@ -1,6 +1,6 @@
 # Release History
 
-## 11.3.0b6 (Unreleased)
+## 11.3.0b6 (2021-11-19)
 
 ### Features Added
 
