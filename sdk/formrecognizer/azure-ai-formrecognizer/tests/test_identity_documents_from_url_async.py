@@ -25,15 +25,15 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
-        self.assertEqual(client._client._config.polling_interval, 7)
+        assert client._client._config.polling_interval ==  7
 
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, polling_interval=6)
             await poller.wait()
-            self.assertEqual(poller._polling_method._timeout, 6)
+            assert poller._polling_method._timeout ==  6
             poller2 = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
             await poller2.wait()
-            self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
+            assert poller2._polling_method._timeout ==  7  # goes back to client default
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -65,8 +65,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormFieldsTransformCorrect(id_document.fields, actual, read_results)
 
         # check page range
-        self.assertEqual(id_document.page_range.first_page_number, document_results[0].page_range[0])
-        self.assertEqual(id_document.page_range.last_page_number, document_results[0].page_range[1])
+        assert id_document.page_range.first_page_number ==  document_results[0].page_range[0]
+        assert id_document.page_range.last_page_number ==  document_results[0].page_range[1]
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
@@ -121,17 +121,17 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         id_document = result[0]
 
         self.assertFormPagesHasValues(id_document.pages)
 
         for field in id_document.fields.values():
             if field.name == "CountryRegion":
-                self.assertEqual(field.value, "USA")
+                assert field.value ==  "USA"
                 continue
             elif field.name == "Region":
-                self.assertEqual(field.value, "Washington")
+                assert field.value ==  "Washington"
             else:
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
@@ -144,7 +144,7 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
             cont_token = initial_poller.continuation_token()
             poller = await client.begin_recognize_identity_documents_from_url(None, continuation_token=cont_token)
             result = await poller.result()
-            self.assertIsNotNone(result)
+            assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

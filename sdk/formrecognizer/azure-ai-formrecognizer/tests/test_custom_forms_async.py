@@ -52,7 +52,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
                 form = await poller.result()
-        self.assertEqual(form[0].form_type, "form-0")
+        assert form[0].form_type ==  "form-0"
         self.assertUnlabeledRecognizedFormHasValues(form[0], model)
 
     @FormRecognizerPreparer()
@@ -77,7 +77,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         for form in forms:
             if form.form_type is None:
                 continue  # blank page
-            self.assertEqual(form.form_type, "form-0")
+            assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
     @FormRecognizerPreparer()
@@ -103,7 +103,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                 forms = await poller.result()
 
         for form in forms:
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
+            assert form.form_type ==  "custom:"+model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
     @FormRecognizerPreparer()
@@ -142,10 +142,10 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
 
         for form, actual in zip(recognized_form, page_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page)
-            self.assertEqual(form.page_range.last_page_number, actual.page)
-            self.assertIsNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page
+            assert form.page_range.last_page_number ==  actual.page
+            assert form.form_type_confidence is None
+            assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
 
@@ -266,7 +266,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                     continuation_token=cont_token
                 )
                 result = await poller.result()
-                self.assertIsNotNone(result)
+                assert result is not None
                 await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
@@ -304,10 +304,10 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, page_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page)
-            self.assertEqual(form.page_range.last_page_number, actual.page)
-            self.assertIsNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page
+            assert form.page_range.last_page_number ==  actual.page
+            assert form.form_type_confidence is None
+            assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @FormRecognizerPreparer()
@@ -346,11 +346,11 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page_range[0]
+            assert form.page_range.last_page_number ==  actual.page_range[1]
+            assert form.form_type ==  "custom:"+model.model_id
+            assert form.form_type_confidence is not None
+            assert form.model_id ==  model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @FormRecognizerPreparer()
