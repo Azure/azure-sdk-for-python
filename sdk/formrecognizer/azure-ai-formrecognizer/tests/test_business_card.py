@@ -194,11 +194,11 @@ class TestBusinessCard(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_business_card_jpg_include_field_elements(self, client):
+        self.some_func()
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         poller = client.begin_recognize_business_cards(business_card, include_field_elements=True)
@@ -251,6 +251,8 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
     def test_business_card_v2(self, client):
+        self.some_func()
+        
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         with pytest.raises(ValueError) as e:

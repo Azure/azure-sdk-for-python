@@ -115,13 +115,13 @@ class FakeTokenCredential(object):
 class FormRecognizerTest(AzureRecordedTestCase):
     # FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
-    def some_func(self, method_name):
-        super(FormRecognizerTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(AccessTokenReplacer())
-        self.recording_processors.append(RequestBodyReplacer())
-        self.recording_processors.append(OperationLocationReplacer())
-        self.configure_logging()
+    def some_func(self):
+        # super(FormRecognizerTest, self).__init__(method_name)
+        # self.vcr.match_on = ["path", "method", "query"]
+        # self.recording_processors.append(AccessTokenReplacer())
+        # self.recording_processors.append(RequestBodyReplacer())
+        # self.recording_processors.append(OperationLocationReplacer())
+        # self.configure_logging()
 
         # URL samples
         # self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
@@ -179,17 +179,17 @@ class FormRecognizerTest(AzureRecordedTestCase):
         self.multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
 
     def get_blob_url(self, container_sas_url, container, file_name):
-        if self.is_live:
-            url = container_sas_url.split(container)
-            url[0] += container + "/" + file_name
-            blob_sas_url = url[0] + url[1]
-            self.scrubber.register_name_pair(
-                blob_sas_url,
-                "blob_sas_url"
-            )
-        else:
-            blob_sas_url = "blob_sas_url"
-        return blob_sas_url
+    #     if self.is_live:
+    #         url = container_sas_url.split(container)
+    #         url[0] += container + "/" + file_name
+    #         blob_sas_url = url[0] + url[1]
+    #         self.scrubber.register_name_pair(
+    #             blob_sas_url,
+    #             "blob_sas_url"
+    #         )
+    #     else:
+    #         blob_sas_url = "blob_sas_url"
+        return container_sas_url
 
     def get_oauth_endpoint(self):
         return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
