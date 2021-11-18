@@ -412,7 +412,7 @@ class ContainerRegistryOperations:
         name: str,
         api_version: Optional[str] = "2021-07-01",
         **kwargs: Any
-    ) -> Optional["_models.DeleteRepositoryResult"]:
+    ) -> None:
         """Delete the repository identified by ``name``.
 
         :param name: Name of the image (including the namespace).
@@ -420,11 +420,11 @@ class ContainerRegistryOperations:
         :param api_version: Api Version. The default value is "2021-07-01".
         :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeleteRepositoryResult, or the result of cls(response)
-        :rtype: ~container_registry.models.DeleteRepositoryResult or None
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeleteRepositoryResult"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -450,14 +450,8 @@ class ContainerRegistryOperations:
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
-        if response.status_code == 202:
-            deserialized = self._deserialize('DeleteRepositoryResult', pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
+            return cls(pipeline_response, None, {})
 
     delete_repository.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
 

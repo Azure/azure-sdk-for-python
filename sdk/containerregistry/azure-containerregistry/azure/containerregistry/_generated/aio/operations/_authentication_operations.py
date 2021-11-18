@@ -15,7 +15,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._authentication_operations import build_exchange_aad_access_token_for_acr_refresh_token_request, build_exchange_acr_refresh_token_for_acr_access_token_request, build_get_acr_access_token_from_login_request
+from ...operations._authentication_operations import build_exchange_aad_access_token_for_acr_refresh_token_request, build_exchange_acr_refresh_token_for_acr_access_token_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -194,60 +194,4 @@ class AuthenticationOperations:
         return deserialized
 
     exchange_acr_refresh_token_for_acr_access_token.metadata = {'url': '/oauth2/token'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def get_acr_access_token_from_login(
-        self,
-        service: str,
-        scope: str,
-        **kwargs: Any
-    ) -> "_models.AcrAccessToken":
-        """Exchange Username, Password and Scope for an ACR Access Token.
-
-        :param service: Indicates the name of your Azure container registry.
-        :type service: str
-        :param scope: Expected to be a valid scope, and can be specified more than once for multiple
-         scope requests. You can obtain this from the Www-Authenticate response header from the
-         challenge.
-        :type scope: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AcrAccessToken, or the result of cls(response)
-        :rtype: ~container_registry.models.AcrAccessToken
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcrAccessToken"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_get_acr_access_token_from_login_request(
-            service=service,
-            scope=scope,
-            template_url=self.get_acr_access_token_from_login.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('AcrAccessToken', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_acr_access_token_from_login.metadata = {'url': '/oauth2/token'}  # type: ignore
 

@@ -331,8 +331,6 @@ class ArtifactManifestProperties(msrest.serialization.Model):
      information about the platform each supports.  This list will be empty if this is a leaf
      manifest and not a manifest list.
     :vartype related_artifacts: list[~container_registry.models.ArtifactManifestPlatform]
-    :ivar config_media_type: Config blob media type.
-    :vartype config_media_type: str
     :ivar tags: A set of tags. List of tags.
     :vartype tags: list[str]
     :ivar can_delete: Delete enabled.
@@ -368,7 +366,6 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         'architecture': {'key': 'manifest.architecture', 'type': 'str'},
         'operating_system': {'key': 'manifest.os', 'type': 'str'},
         'related_artifacts': {'key': 'manifest.references', 'type': '[ArtifactManifestPlatform]'},
-        'config_media_type': {'key': 'manifest.configMediaType', 'type': 'str'},
         'tags': {'key': 'manifest.tags', 'type': '[str]'},
         'can_delete': {'key': 'manifest.changeableAttributes.deleteEnabled', 'type': 'bool'},
         'can_write': {'key': 'manifest.changeableAttributes.writeEnabled', 'type': 'bool'},
@@ -381,8 +378,6 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword config_media_type: Config blob media type.
-        :paramtype config_media_type: str
         :keyword can_delete: Delete enabled.
         :paramtype can_delete: bool
         :keyword can_write: Write enabled.
@@ -402,7 +397,6 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         self.architecture = None
         self.operating_system = None
         self.related_artifacts = None
-        self.config_media_type = kwargs.get('config_media_type', None)
         self.tags = None
         self.can_delete = kwargs.get('can_delete', None)
         self.can_write = kwargs.get('can_write', None)
@@ -430,8 +424,6 @@ class ArtifactTagProperties(msrest.serialization.Model):
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Required. Tag last update time.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar signed: Is signed.
-    :vartype signed: bool
     :ivar can_delete: Delete enabled.
     :vartype can_delete: bool
     :ivar can_write: Write enabled.
@@ -458,7 +450,6 @@ class ArtifactTagProperties(msrest.serialization.Model):
         'digest': {'key': 'tag.digest', 'type': 'str'},
         'created_on': {'key': 'tag.createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'tag.lastUpdateTime', 'type': 'iso-8601'},
-        'signed': {'key': 'tag.signed', 'type': 'bool'},
         'can_delete': {'key': 'tag.changeableAttributes.deleteEnabled', 'type': 'bool'},
         'can_write': {'key': 'tag.changeableAttributes.writeEnabled', 'type': 'bool'},
         'can_list': {'key': 'tag.changeableAttributes.listEnabled', 'type': 'bool'},
@@ -470,8 +461,6 @@ class ArtifactTagProperties(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword signed: Is signed.
-        :paramtype signed: bool
         :keyword can_delete: Delete enabled.
         :paramtype can_delete: bool
         :keyword can_write: Write enabled.
@@ -488,7 +477,6 @@ class ArtifactTagProperties(msrest.serialization.Model):
         self.digest = None
         self.created_on = None
         self.last_updated_on = None
-        self.signed = kwargs.get('signed', None)
         self.can_delete = kwargs.get('can_delete', None)
         self.can_write = kwargs.get('can_write', None)
         self.can_list = kwargs.get('can_list', None)
@@ -859,8 +847,6 @@ class ManifestAttributesBase(msrest.serialization.Model):
      information about the platform each supports.  This list will be empty if this is a leaf
      manifest and not a manifest list.
     :vartype related_artifacts: list[~container_registry.models.ArtifactManifestPlatform]
-    :ivar config_media_type: Config blob media type.
-    :vartype config_media_type: str
     :ivar tags: A set of tags. List of tags.
     :vartype tags: list[str]
     :ivar can_delete: Delete enabled.
@@ -892,7 +878,6 @@ class ManifestAttributesBase(msrest.serialization.Model):
         'architecture': {'key': 'architecture', 'type': 'str'},
         'operating_system': {'key': 'os', 'type': 'str'},
         'related_artifacts': {'key': 'references', 'type': '[ArtifactManifestPlatform]'},
-        'config_media_type': {'key': 'configMediaType', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[str]'},
         'can_delete': {'key': 'changeableAttributes.deleteEnabled', 'type': 'bool'},
         'can_write': {'key': 'changeableAttributes.writeEnabled', 'type': 'bool'},
@@ -905,8 +890,6 @@ class ManifestAttributesBase(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword config_media_type: Config blob media type.
-        :paramtype config_media_type: str
         :keyword can_delete: Delete enabled.
         :paramtype can_delete: bool
         :keyword can_write: Write enabled.
@@ -924,7 +907,6 @@ class ManifestAttributesBase(msrest.serialization.Model):
         self.architecture = None
         self.operating_system = None
         self.related_artifacts = None
-        self.config_media_type = kwargs.get('config_media_type', None)
         self.tags = None
         self.can_delete = kwargs.get('can_delete', None)
         self.can_write = kwargs.get('can_write', None)
@@ -1535,8 +1517,6 @@ class TagAttributesBase(msrest.serialization.Model):
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Required. Tag last update time.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar signed: Is signed.
-    :vartype signed: bool
     :ivar can_delete: Delete enabled.
     :vartype can_delete: bool
     :ivar can_write: Write enabled.
@@ -1559,7 +1539,6 @@ class TagAttributesBase(msrest.serialization.Model):
         'digest': {'key': 'digest', 'type': 'str'},
         'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'signed': {'key': 'signed', 'type': 'bool'},
         'can_delete': {'key': 'changeableAttributes.deleteEnabled', 'type': 'bool'},
         'can_write': {'key': 'changeableAttributes.writeEnabled', 'type': 'bool'},
         'can_list': {'key': 'changeableAttributes.listEnabled', 'type': 'bool'},
@@ -1571,8 +1550,6 @@ class TagAttributesBase(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword signed: Is signed.
-        :paramtype signed: bool
         :keyword can_delete: Delete enabled.
         :paramtype can_delete: bool
         :keyword can_write: Write enabled.
@@ -1587,7 +1564,6 @@ class TagAttributesBase(msrest.serialization.Model):
         self.digest = None
         self.created_on = None
         self.last_updated_on = None
-        self.signed = kwargs.get('signed', None)
         self.can_delete = kwargs.get('can_delete', None)
         self.can_write = kwargs.get('can_write', None)
         self.can_list = kwargs.get('can_list', None)
