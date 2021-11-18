@@ -31,6 +31,17 @@ class AccessIdName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCESS = "access"
     GIT_ACCESS = "gitAccess"
 
+class AccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of access to be used for the storage account.
+    """
+
+    #: Use access key.
+    ACCESS_KEY = "AccessKey"
+    #: Use system assigned managed identity.
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    #: Use user assigned managed identity.
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
 class AlwaysLog(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies for what type of messages sampling settings should not apply.
     """
@@ -77,6 +88,8 @@ class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     HTTP = "http"
     SOAP = "soap"
+    WEBSOCKET = "websocket"
+    GRAPHQL = "graphql"
 
 class ApiVersionSetContractDetailsVersioningScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """An value that determines where the API Version identifier will be located in a HTTP request.
@@ -144,6 +157,23 @@ class CertificateConfigurationStoreName(with_metaclass(_CaseInsensitiveEnumMeta,
     CERTIFICATE_AUTHORITY = "CertificateAuthority"
     ROOT = "Root"
 
+class CertificateSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Certificate Source.
+    """
+
+    MANAGED = "Managed"
+    KEY_VAULT = "KeyVault"
+    CUSTOM = "Custom"
+    BUILT_IN = "BuiltIn"
+
+class CertificateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Certificate Status.
+    """
+
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+
 class ClientAuthenticationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Basic Client Authentication method.
@@ -163,6 +193,24 @@ class Confirmation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SIGNUP = "signup"
     #: Send an e-mail inviting the user to sign-up and complete registration.
     INVITE = "invite"
+
+class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The connection status.
+    """
+
+    UNKNOWN = "Unknown"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DEGRADED = "Degraded"
+
+class ConnectivityCheckProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The request's protocol. Specific protocol configuration can be available based on this
+    selection. The specified destination address must be coherent with this value.
+    """
+
+    TCP = "TCP"
+    HTTP = "HTTP"
+    HTTPS = "HTTPS"
 
 class ConnectivityStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Resource Connectivity Status Type identifier.
@@ -196,6 +244,17 @@ class ContentFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OPENAPI_LINK = "openapi-link"
     #: The OpenAPI 3.0 JSON document is hosted on a publicly accessible internet address.
     OPENAPI_JSON_LINK = "openapi+json-link"
+    #: The GraphQL API endpoint hosted on a publicly accessible internet address.
+    GRAPHQL_LINK = "graphql-link"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class DataMaskingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Data masking mode.
@@ -225,18 +284,18 @@ class ExportFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OPENAPI_JSON = "openapi+json-link"
 
 class ExportResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Format in which the Api Details are exported to the Storage Blob with Sas Key valid for 5
+    """Format in which the API Details are exported to the Storage Blob with Sas Key valid for 5
     minutes.
     """
 
-    #: The Api Definition is exported in OpenApi Specification 2.0 format to the Storage Blob.
+    #: The API Definition is exported in OpenAPI Specification 2.0 format to the Storage Blob.
     SWAGGER = "swagger-link-json"
-    #: The Api Definition is exported in WSDL Schema to Storage Blob. This is only supported for APIs
+    #: The API Definition is exported in WSDL Schema to Storage Blob. This is only supported for APIs
     #: of Type ``soap``.
     WSDL = "wsdl-link+xml"
-    #: Export the Api Definition in WADL Schema to Storage Blob.
+    #: Export the API Definition in WADL Schema to Storage Blob.
     WADL = "wadl-link-json"
-    #: Export the Api Definition in OpenApi Specification 3.0 to Storage Blob.
+    #: Export the API Definition in OpenAPI Specification 3.0 to Storage Blob.
     OPEN_API = "openapi-link"
 
 class GrantType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -296,6 +355,20 @@ class IdentityProviderType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Azure Active Directory B2C as Identity provider.
     AAD_B2_C = "aadB2C"
 
+class IssueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of issue.
+    """
+
+    UNKNOWN = "Unknown"
+    AGENT_STOPPED = "AgentStopped"
+    GUEST_FIREWALL = "GuestFirewall"
+    DNS_RESOLUTION = "DnsResolution"
+    SOCKET_BIND = "SocketBind"
+    NETWORK_SECURITY_RULE = "NetworkSecurityRule"
+    USER_DEFINED_ROUTE = "UserDefinedRoute"
+    PORT_THROTTLED = "PortThrottled"
+    PLATFORM = "Platform"
+
 class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The Key to be used to generate token for user.
     """
@@ -313,6 +386,13 @@ class LoggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLICATION_INSIGHTS = "applicationInsights"
     #: Azure Monitor.
     AZURE_MONITOR = "azureMonitor"
+
+class Method(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The HTTP method to be used.
+    """
+
+    GET = "GET"
+    POST = "POST"
 
 class NameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Invalid indicates the name provided does not match the resource provider’s naming requirements
@@ -356,6 +436,27 @@ class OperationNameFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: HTTP_VERB URL.
     URL = "Url"
 
+class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The origin of the issue.
+    """
+
+    LOCAL = "Local"
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
+
+class PlatformVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Compute Platform Version running the service.
+    """
+
+    #: Platform version cannot be determined, as compute platform is not deployed.
+    UNDETERMINED = "undetermined"
+    #: Platform running the service on Single Tenant V1 platform.
+    STV1 = "stv1"
+    #: Platform running the service on Single Tenant V2 platform.
+    STV2 = "stv2"
+    #: Platform running the service on Multi Tenant V1 platform.
+    MTV1 = "mtv1"
+
 class PolicyContentFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Format of the policyContent.
     """
@@ -391,17 +492,40 @@ class PolicyScopeContract(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALL = "All"
 
 class PortalRevisionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Portal revision publishing status
+    """Status of the portal's revision.
     """
 
-    #: Portal revision publishing is pending.
+    #: Portal's revision has been queued.
     PENDING = "pending"
-    #: Portal revision is publishing.
+    #: Portal's revision is being published.
     PUBLISHING = "publishing"
-    #: Portal revision publishing completed.
+    #: Portal's revision publishing completed.
     COMPLETED = "completed"
-    #: Portal revision publishing failed.
+    #: Portal's revision publishing failed.
     FAILED = "failed"
+
+class PreferredIPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The IP version to be used. Only IPv4 is supported for now.
+    """
+
+    I_PV4 = "IPv4"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
 
 class ProductState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """whether product is published or not. Published products are discoverable by users of developer
@@ -416,6 +540,17 @@ class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     HTTP = "http"
     HTTPS = "https"
+    WS = "ws"
+    WSS = "wss"
+
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not public endpoint access is allowed for this API Management service.  Value is
+    optional but if passed in, must be 'Enabled' or 'Disabled'. If 'Disabled', private endpoints
+    are the exclusive access method. Default value is 'Enabled'
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The scale type applicable to the sku.
@@ -439,6 +574,13 @@ class SettingsTypeName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PUBLIC = "public"
 
+class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The severity of the issue.
+    """
+
+    ERROR = "Error"
+    WARNING = "Warning"
+
 class SkuType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the Sku.
     """
@@ -457,17 +599,23 @@ class SkuType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ISOLATED = "Isolated"
 
 class SoapApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of Api to create.
+    """Type of API to create.
     
     
-    * ``http`` creates a SOAP to REST API
-    * ``soap`` creates a SOAP pass-through API .
+    * ``http`` creates a REST API
+    * ``soap`` creates a SOAP pass-through API
+    * ``websocket`` creates websocket API
+    * ``graphql`` creates GraphQL API.
     """
 
     #: Imports a SOAP API having a RESTful front end.
     SOAP_TO_REST = "http"
-    #: Imports the Soap API having a SOAP front end.
+    #: Imports the SOAP API having a SOAP front end.
     SOAP_PASS_THROUGH = "soap"
+    #: Imports the API having a Websocket front end.
+    WEB_SOCKET = "websocket"
+    #: Imports the API having a GraphQL front end.
+    GRAPH_QL = "graphql"
 
 class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the issue.

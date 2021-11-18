@@ -81,7 +81,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -188,7 +188,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -295,7 +295,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -401,7 +401,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -505,7 +505,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -609,7 +609,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -721,7 +721,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -818,7 +818,7 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

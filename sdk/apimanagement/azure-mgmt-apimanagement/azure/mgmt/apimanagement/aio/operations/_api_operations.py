@@ -87,7 +87,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -176,7 +176,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         # Construct URL
@@ -241,8 +241,8 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json, application/vnd.swagger.doc+json, application/vnd.oai.openapi+json, application/vnd.sun.wadl+xml, application/wsdl+xml"
+        api_version = "2021-08-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -266,19 +266,14 @@ class ApiOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 200]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            deserialized = self._deserialize('ApiContract', pipeline_response)
-
-        if response.status_code == 200:
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            deserialized = self._deserialize('ApiContract', pipeline_response)
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        deserialized = self._deserialize('ApiContract', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -300,7 +295,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -471,7 +466,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -550,7 +545,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         # Construct URL
@@ -630,7 +625,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

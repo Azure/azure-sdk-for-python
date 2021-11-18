@@ -38,6 +38,7 @@ from .operations import AuthorizationServerOperations
 from .operations import BackendOperations
 from .operations import CacheOperations
 from .operations import CertificateOperations
+from .operations import ApiManagementClientOperationsMixin
 from .operations import ContentTypeOperations
 from .operations import ContentItemOperations
 from .operations import DeletedServicesOperations
@@ -61,6 +62,7 @@ from .operations import NotificationOperations
 from .operations import NotificationRecipientUserOperations
 from .operations import NotificationRecipientEmailOperations
 from .operations import OpenIdConnectProviderOperations
+from .operations import OutboundNetworkDependenciesEndpointsOperations
 from .operations import PolicyOperations
 from .operations import PolicyDescriptionOperations
 from .operations import PortalRevisionOperations
@@ -68,6 +70,7 @@ from .operations import PortalSettingsOperations
 from .operations import SignInSettingsOperations
 from .operations import SignUpSettingsOperations
 from .operations import DelegationSettingsOperations
+from .operations import PrivateEndpointConnectionOperations
 from .operations import ProductOperations
 from .operations import ProductApiOperations
 from .operations import ProductGroupOperations
@@ -92,7 +95,7 @@ from .operations import UserConfirmationPasswordOperations
 from .. import models
 
 
-class ApiManagementClient(object):
+class ApiManagementClient(ApiManagementClientOperationsMixin):
     """ApiManagement Client.
 
     :ivar api: ApiOperations operations
@@ -183,6 +186,8 @@ class ApiManagementClient(object):
     :vartype notification_recipient_email: azure.mgmt.apimanagement.aio.operations.NotificationRecipientEmailOperations
     :ivar open_id_connect_provider: OpenIdConnectProviderOperations operations
     :vartype open_id_connect_provider: azure.mgmt.apimanagement.aio.operations.OpenIdConnectProviderOperations
+    :ivar outbound_network_dependencies_endpoints: OutboundNetworkDependenciesEndpointsOperations operations
+    :vartype outbound_network_dependencies_endpoints: azure.mgmt.apimanagement.aio.operations.OutboundNetworkDependenciesEndpointsOperations
     :ivar policy: PolicyOperations operations
     :vartype policy: azure.mgmt.apimanagement.aio.operations.PolicyOperations
     :ivar policy_description: PolicyDescriptionOperations operations
@@ -197,6 +202,8 @@ class ApiManagementClient(object):
     :vartype sign_up_settings: azure.mgmt.apimanagement.aio.operations.SignUpSettingsOperations
     :ivar delegation_settings: DelegationSettingsOperations operations
     :vartype delegation_settings: azure.mgmt.apimanagement.aio.operations.DelegationSettingsOperations
+    :ivar private_endpoint_connection: PrivateEndpointConnectionOperations operations
+    :vartype private_endpoint_connection: azure.mgmt.apimanagement.aio.operations.PrivateEndpointConnectionOperations
     :ivar product: ProductOperations operations
     :vartype product: azure.mgmt.apimanagement.aio.operations.ProductOperations
     :ivar product_api: ProductApiOperations operations
@@ -352,6 +359,8 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.open_id_connect_provider = OpenIdConnectProviderOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.outbound_network_dependencies_endpoints = OutboundNetworkDependenciesEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.policy = PolicyOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.policy_description = PolicyDescriptionOperations(
@@ -365,6 +374,8 @@ class ApiManagementClient(object):
         self.sign_up_settings = SignUpSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.delegation_settings = DelegationSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.product = ProductOperations(
             self._client, self._config, self._serialize, self._deserialize)
