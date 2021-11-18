@@ -81,7 +81,7 @@ class AzureRecordedTestCase(object):
     def get_settings_value(self, key):
         key_value = os.environ.get("AZURE_" + key, None)
 
-        if not key_value or self.is_playback:
+        if not key_value or self.is_playback():
             try:
                 key_value = getattr(self.settings, key)
             except Exception as ex:

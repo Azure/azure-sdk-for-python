@@ -106,9 +106,9 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(invoice.fields.get("Items").value[0].value["Amount"].value, 56651.49)
         self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     async def test_invoice_continuation_token(self, client):
         async with client:
             initial_poller = await client.begin_recognize_invoices_from_url(self.invoice_url_tiff)

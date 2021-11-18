@@ -190,9 +190,9 @@ class TestContentFromStream(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     def test_content_continuation_token(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
