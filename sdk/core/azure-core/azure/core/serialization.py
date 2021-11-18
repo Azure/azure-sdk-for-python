@@ -4,6 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import sys
+import logging
 import base64
 import re
 import isodate
@@ -11,6 +13,8 @@ from json import JSONEncoder
 from typing import Any, Dict, Type, Union, cast, Literal, Optional
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
+
+_LOGGER = logging.getLogger(__name__)
 
 __all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_property"]
 
@@ -202,7 +206,17 @@ _DESERIALIZE_MAPPING = {
     time: _deserialize_time,
 }
 
-def _deserialize(obj: Any, type) -> Any:
+def _get_model(module_name: str, model_name: str):
+    module_end = module_name.rsplit('.', 1)[0]
+    module = sys.modules[module_end]
+    models = {k: v for k, v in module.__dict__.items() if isinstance(v, type)}
+    if model_name not in models:
+        _LOGGER.warning("Can not find model name in models, will not deserialize")
+    return models[model_name]
+
+def _deserialize(obj: Any, type, module_name: str) -> Any:
+    if isinstance(type, str):
+        type = _get_model(module_name, type)
     try:
         return type(obj)
     except Exception:
@@ -223,9 +237,10 @@ class rest_property:
     def __init__(self, name: Optional[str] = None):
         self._deserialization_type = None
         self._rest_name = name
+        self._module = None
 
     def __get__(self, obj: Model, type=None):
-        return _deserialize(obj.__getitem__(self._rest_name), self._deserialization_type)
+        return _deserialize(obj.__getitem__(self._rest_name), self._deserialization_type, self._module)
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
@@ -240,4 +255,5 @@ class rest_property:
             raise TypeError(f"You need to add a response type annotation to the property {func.__name__}.")
         if not self._rest_name:
             self._rest_name = func.__name__
+        self._module = func.__module__
         return self
