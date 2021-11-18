@@ -207,7 +207,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :param name: The name or the indexer object to delete.
         :type name: str or ~azure.search.documents.indexes.models.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: None
         :rtype: None
@@ -359,9 +359,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :param data_source_connection: The definition of the data source connection to create or update.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
-        :type skip_indexer_reset_requirement_for_cache: bool
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
         :return: The created SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
@@ -392,7 +392,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :param data_source_connection: The data source connection to delete.
         :type data_source_connection: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
 
@@ -563,7 +563,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :param skillset: The SearchIndexerSkillset to delete
         :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         .. admonition:: Example:
 
@@ -620,7 +620,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :param skillset: The SearchIndexerSkillset object to create or update
         :type skillset: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
