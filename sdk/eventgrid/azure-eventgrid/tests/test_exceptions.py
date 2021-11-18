@@ -24,7 +24,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -37,11 +37,10 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer,
 )
 
-class EventGridPublisherClientTests(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
-
+class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @recorded_by_proxy
     def test_raise_on_auth_error(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
@@ -56,6 +55,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @recorded_by_proxy
     def test_raise_on_bad_resource(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
@@ -65,11 +65,12 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        with pytest.raises(ServiceRequestError):
+        with pytest.raises(HttpResponseError):
             client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @recorded_by_proxy
     def test_raise_on_large_payload(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)

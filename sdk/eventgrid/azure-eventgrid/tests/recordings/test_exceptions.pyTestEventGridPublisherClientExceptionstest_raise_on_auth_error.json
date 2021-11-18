@@ -1,0 +1,40 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eventgridtest2tsltihrltz.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "212",
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "azsdk-python-eventgrid/4.7.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "3decde08-48a2-11ec-9b17-2816a845e8c6"
+      },
+      "RequestBody": "[{\u0022id\u0022: \u0022b6f4bfb9-b31c-4762-99cd-85761cb1380d\u0022, \u0022subject\u0022: \u0022sample\u0022, \u0022data\u0022: {\u0022sample\u0022: \u0022eventgridevent\u0022}, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222021-11-18T19:03:40.239771Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}]",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Length": "809",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 18 Nov 2021 19:03:39 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-request-id": "49fa01f9-db55-4898-b44f-cb82c50bebb3"
+      },
+      "ResponseBody": [
+        "{\r\n",
+        "    \u0022error\u0022: {\r\n",
+        "        \u0022code\u0022: \u0022Unauthorized\u0022,\r\n",
+        "        \u0022message\u0022: \u0022The request authorization key is not authorized for EVENTGRIDTEST2TSLTIHRLTZ.WESTUS-1.EVENTGRID.AZURE.NET. This is due to the reason: Invalid length for a Base-64 char array or string. Report \u002749fa01f9-db55-4898-b44f-cb82c50bebb3:2:11/18/2021 7:03:39 PM (UTC)\u0027 to our forums for assistance or raise a support ticket.\u0022,\r\n",
+        "        \u0022details\u0022: [{\r\n",
+        "            \u0022code\u0022: \u0022Unauthorized\u0022,\r\n",
+        "            \u0022message\u0022: \u0022The request authorization key is not authorized for EVENTGRIDTEST2TSLTIHRLTZ.WESTUS-1.EVENTGRID.AZURE.NET. This is due to the reason: Invalid length for a Base-64 char array or string. Report \u002749fa01f9-db55-4898-b44f-cb82c50bebb3:2:11/18/2021 7:03:39 PM (UTC)\u0027 to our forums for assistance or raise a support ticket.\u0022\r\n",
+        "    }]\r\n",
+        "  }\r\n",
+        "}"
+      ]
+    }
+  ],
+  "Variables": {}
+}
