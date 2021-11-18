@@ -69,7 +69,7 @@ class ACRExchangeClient(object):
     async def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service, token.token, grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, **kwargs
+            grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, service=service, access_token=token.token, **kwargs
         )
         return refresh_token.refresh_token
 

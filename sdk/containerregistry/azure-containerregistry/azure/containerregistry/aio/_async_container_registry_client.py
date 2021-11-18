@@ -597,7 +597,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_properties(
-                repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+                repository, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 
