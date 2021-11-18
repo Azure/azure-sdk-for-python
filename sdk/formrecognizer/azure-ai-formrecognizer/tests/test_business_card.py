@@ -19,12 +19,11 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 
 class TestBusinessCard(FormRecognizerTest):
-    
-    @pytest.mark.skip
+
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_enum_content_type(self, client):
+    def test_passing_enum_content_type(self, client, variables):
         with open(self.business_card_png, "rb") as fd:
             myfile = fd.read()
         poller = client.begin_recognize_business_cards(
@@ -34,33 +33,30 @@ class TestBusinessCard(FormRecognizerTest):
         result = poller.result()
         assert result is not None
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
+    def test_damaged_file_bytes_fails_autodetect_content_type(self, client, variables):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
             poller = client.begin_recognize_business_cards(
                 damaged_pdf
             )
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_damaged_file_bytes_io_fails_autodetect(self, client):
+    def test_damaged_file_bytes_io_fails_autodetect(self, client, variables):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
             poller = client.begin_recognize_business_cards(
                 damaged_pdf
             )
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_bad_content_type_param_passed(self, client):
+    def test_passing_bad_content_type_param_passed(self, client, variables):
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
@@ -195,7 +191,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_business_card_jpg_include_field_elements(self, client):
+    def test_business_card_jpg_include_field_elements(self, client, variables):
         self.some_func()
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
@@ -248,7 +244,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
-    def test_business_card_v2(self, client):
+    def test_business_card_v2(self, client, variables):
         self.some_func()
         
         with open(self.business_card_jpg, "rb") as fd:
