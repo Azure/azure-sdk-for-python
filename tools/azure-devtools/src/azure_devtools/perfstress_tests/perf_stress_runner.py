@@ -11,14 +11,17 @@ import logging
 import os
 import pkgutil
 import sys
-import threading
+from typing import List, Optional
+from concurrent.futures import ThreadPoolExecutor
 
-from .perf_stress_test import PerfStressTest
+from ._perf_stress_base import _PerfTestABC
 from .repeated_timer import RepeatedTimer
 
 
 class PerfStressRunner:
-    def __init__(self, test_folder_path=None, debug=False):
+    def __init__(self, test_folder_path: Optional[str] = None, debug: bool = False):
+        self._tests: List[_PerfTestABC] = []
+        self._operation_status_tracker: int = -1
 
         self.logger = logging.getLogger(__name__)
         handler = logging.StreamHandler()
@@ -34,13 +37,12 @@ class PerfStressRunner:
         self._discover_tests(test_folder_path or os.getcwd())
         self._parse_args()
 
-    def _get_completed_operations(self):
-        return sum(self._completed_operations)
+    def _get_completed_operations(self) -> int:
+        return sum([t.completed_operations for t in self._tests])
 
-    def _get_operations_per_second(self):
-        return sum(
-            map(lambda x: x[0] / x[1] if x[1] else 0, zip(self._completed_operations, self._last_completion_times))
-        )
+    def _get_operations_per_second(self) -> float:
+        test_results = [(t.completed_operations, t.last_completion_time) for t in self._tests]
+        return sum(map(lambda x: x[0] / x[1] if x[1] else 0, test_results))
 
     def _parse_args(self):
         # First, detect which test we're running.
@@ -129,81 +131,60 @@ class PerfStressRunner:
 
                 if name.startswith("_"):
                     continue
-                if inspect.isclass(value) and issubclass(value, PerfStressTest) and value != PerfStressTest:
+                if inspect.isclass(value) and isinstance(value, _PerfTestABC):
                     self.logger.info("Loaded test class: {}".format(name))
                     self._test_classes[name] = value
 
     async def start(self):
         self.logger.info("=== Setup ===")
-
-        tests = []
-        for _ in range(0, self.per_test_args.parallel):
-            tests.append(self._test_class_to_run(self.per_test_args))
+        self._tests = [self._test_class_to_run(self.per_test_args) for _ in range(self.per_test_args.parallel)]
 
         try:
             try:
-                await tests[0].global_setup()
+                await self._tests[0].global_setup()
                 try:
-                    await asyncio.gather(*[test.setup() for test in tests])
+                    await asyncio.gather(*[test.setup() for test in self._tests])
+                    self.logger.info("")
+                    self.logger.info("=== Post Setup ===")
+                    await asyncio.gather(*[test.post_setup() for test in self._tests])
                     self.logger.info("")
 
-                    if self.per_test_args.test_proxies:
-                        self.logger.info("=== Record and Start Playback ===")
-                        await asyncio.gather(*[test.record_and_start_playback() for test in tests])
-                        self.logger.info("")
+                    if self.per_test_args.warmup:
+                        await self._run_tests("Warmup", self.per_test_args.warmup)
 
-                    if self.per_test_args.warmup > 0:
-                        await self._run_tests(tests, self.per_test_args.warmup, "Warmup")
-
-                    for i in range(0, self.per_test_args.iterations):
-                        title = "Test"
-                        if self.per_test_args.iterations > 1:
-                            title += " " + (i + 1)
-                        await self._run_tests(
-                            tests,
-                            self.per_test_args.duration,
-                            title,
-                            with_profiler=self.per_test_args.profile)
+                    for i in range(self.per_test_args.iterations):
+                        title = "Test" if self.per_test_args.iterations == 1 else "Test {}".format(i + 1)
+                        await self._run_tests(title, self.per_test_args.duration)
                 except Exception as e:
-                    print("Exception: " + str(e))
+                    self.logger.warn("Exception: " + str(e))
                 finally:
-                    if self.per_test_args.test_proxies:
-                        self.logger.info("=== Stop Playback ===")
-                        await asyncio.gather(*[test.stop_playback() for test in tests])
-                        self.logger.info("")
+                    self.logger.info("=== Pre Cleanup ===")
+                    await asyncio.gather(*[test.pre_cleanup() for test in self._tests])
+                    self.logger.info("")
 
                     if not self.per_test_args.no_cleanup:
                         self.logger.info("=== Cleanup ===")
-                        await asyncio.gather(*[test.cleanup() for test in tests])
+                        await asyncio.gather(*[test.cleanup() for test in self._tests])
             except Exception as e:
-                print("Exception: " + str(e))
+                self.logger.warn("Exception: " + str(e))
             finally:
                 if not self.per_test_args.no_cleanup:
-                    await tests[0].global_cleanup()
+                    await self._tests[0].global_cleanup()
         except Exception as e:
-            print("Exception: " + str(e))
+            self.logger.warn("Exception: " + str(e))
         finally:
-            await asyncio.gather(*[test.close() for test in tests])
+            await asyncio.gather(*[test.close() for test in self._tests])
 
-    async def _run_tests(self, tests, duration, title, with_profiler=False):
-        self._completed_operations = [0] * len(tests)
-        self._last_completion_times = [0] * len(tests)
-        self._last_total_operations = -1
-
+    async def _run_tests(self, title: str, duration: int) -> None:
+        self._operation_status_tracker = -1
         status_thread = RepeatedTimer(1, self._print_status, title)
 
         if self.per_test_args.sync:
-            threads = []
-            for id, test in enumerate(tests):
-                thread = threading.Thread(
-                    target=lambda: self._run_sync_loop(test, duration, id, with_profiler)
-                )
-                threads.append(thread)
-                thread.start()
-            for thread in threads:
-                thread.join()
+            with ThreadPoolExecutor(max_workers=self.per_test_args.parallel) as ex:
+                for test in self._tests:
+                    ex.submit(test.run_all_sync, duration)
         else:
-            tasks = [self._run_async_loop(test, duration, id, with_profiler) for id, test in enumerate(tests)]
+            tasks = [test.run_all_async(duration) for test in self._tests]
             await asyncio.gather(*tasks)
 
         status_thread.stop()
@@ -223,72 +204,14 @@ class PerfStressRunner:
         )
         self.logger.info("")
 
-    def _run_sync_loop(self, test, duration, id, with_profiler):
-        start = time.time()
-        runtime = 0
-        if with_profiler:
-            import cProfile
-            profile = None
-            while runtime < duration:
-                profile = cProfile.Profile()
-                profile.enable()
-                test.run_sync()
-                profile.disable()
-                runtime = time.time() - start
-                self._completed_operations[id] += 1
-                self._last_completion_times[id] = runtime
-
-            if profile:
-                # Store only profile for final iteration
-                profile_name = "{}/cProfile-{}-{}-sync.pstats".format(os.getcwd(), test.__class__.__name__, id)
-                print("Dumping profile data to {}".format(profile_name))
-                profile.dump_stats(profile_name)
-            else:
-                print("No profile generated.")
-        else:
-            while runtime < duration:
-                test.run_sync()
-                runtime = time.time() - start
-                self._completed_operations[id] += 1
-                self._last_completion_times[id] = runtime
-
-    async def _run_async_loop(self, test, duration, id, with_profiler):
-        start = time.time()
-        runtime = 0
-        if with_profiler:
-            import cProfile
-            profile = None
-            while runtime < duration:
-                profile = cProfile.Profile()
-                profile.enable()
-                await test.run_async()
-                profile.disable()
-                runtime = time.time() - start
-                self._completed_operations[id] += 1
-                self._last_completion_times[id] = runtime
-
-            if profile:
-                # Store only profile for final iteration
-                profile_name = "{}/cProfile-{}-{}-async.pstats".format(os.getcwd(), test.__class__.__name__, id)
-                print("Dumping profile data to {}".format(profile_name))
-                profile.dump_stats(profile_name)
-            else:
-                print("No profile generated.")
-        else:
-            while runtime < duration:
-                await test.run_async()
-                runtime = time.time() - start
-                self._completed_operations[id] += 1
-                self._last_completion_times[id] = runtime
-
     def _print_status(self, title):
-        if self._last_total_operations == -1:
-            self._last_total_operations = 0
+        if self._operation_status_tracker == -1:
+            self._operation_status_tracker = 0
             self.logger.info("=== {} ===\nCurrent\t\tTotal\t\tAverage".format(title))
 
         total_operations = self._get_completed_operations()
-        current_operations = total_operations - self._last_total_operations
+        current_operations = total_operations - self._operation_status_tracker
         average_operations = self._get_operations_per_second()
 
-        self._last_total_operations = total_operations
+        self._operation_status_tracker = total_operations
         self.logger.info("{}\t\t{}\t\t{:.2f}".format(current_operations, total_operations, average_operations))

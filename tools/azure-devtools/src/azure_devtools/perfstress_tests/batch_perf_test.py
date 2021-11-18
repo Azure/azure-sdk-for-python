@@ -111,18 +111,44 @@ class BatchPerfTest(_PerfTestBase):
     async def run_batch_async(self) -> int:
         raise NotImplementedError("run_batch_async must be implemented for {}".format(self.__class__.__name__))
 
-    def run_all_sync(self) -> None:
-        self._completed_operations = 0
-        self._last_completion_time = None
-        start_time = time.time()
-        operations = self.run_batch_sync()
-        self._completed_operations += operations
-        self._last_completion_time = time.time() - start_time
-
-    async def run_all_async(self) -> None:
+    def run_all_sync(self, duration: int) -> None:
         self._completed_operations = 0
         self._last_completion_time = 0.0
-        start_time = time.time()
-        operations = await self.run_batch_async()
-        self._completed_operations += operations
-        self._last_completion_time = time.time() - start_time
+        if self.args.profile:
+            # If the profiler is used, ignore the duration and run once.
+            import cProfile
+            with cProfile.Profile() as profile:
+                self.run_batch_async()
+            self._save_profile(profile)
+        else: 
+            starttime = time.time()
+            while self._last_completion_time < duration:
+                self._completed_operations += self.run_batch_sync()
+                self._last_completion_time = time.time() - starttime
+
+    async def run_all_async(self, duration: int) -> None:
+        self._completed_operations = 0
+        self._last_completion_time = 0.0
+        if self.args.profile:
+            # If the profiler is used, ignore the duration and run once. 
+            import cProfile
+            with cProfile.Profile() as profile:
+                await self.run_batch_async()
+            self._save_profile(profile)
+        else: 
+            starttime = time.time()
+            while self._last_completion_time < duration:
+                self._completed_operations += await self.run_batch_async()
+                self._last_completion_time = time.time() - starttime
+
+    def _save_profile(self, profile, sync):
+        if profile:
+            profile_name = "{}/cProfile-{}-{}-{}.pstats".format(
+                os.getcwd(),
+                self.__class__.__name__,
+                self._parallel_index,
+                sync)
+            print("Dumping profile data to {}".format(profile_name))
+            profile.dump_stats(profile_name)
+        else:
+            print("No profile generated.")

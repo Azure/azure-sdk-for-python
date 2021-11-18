@@ -6,6 +6,7 @@
 from typing import Any
 import abc
 import threading
+import argparse
 
 
 class _PerfTestABC(abc.ABC):
@@ -24,35 +25,6 @@ class _PerfTestABC(abc.ABC):
         """
         Elapsed time between start of warmup/run and last completed operation.
         Reset after warmup.
-        """
-
-    @property
-    @abc.abstractmethod
-    def latencies(self) -> Any:
-        """
-        Elapsed time between start and end of each completed operation.
-        Reset after warmup.
-        Only populated if "--latency" option is enabled.
-        NOT YET SUPPORTED IN PYTHON
-        """
-
-    @property
-    @abc.abstractmethod
-    def corrected_latencies(self) -> Any:
-        """
-        Elapsed time between scheduled start and actual end of each completed operation.
-        Reset after warmup.
-        Only populated if both "--latency" and "--rate" options are enabled.
-        NOT YET SUPPORTED IN PYTHON
-        """
-
-    @property
-    @abc.abstractmethod
-    def pending_operations(self) -> Any:
-        """
-        Channel containing the scheduled start time of each operation.
-        Also includes a Stopwatch measuring elapsed time since scheduled start.
-        NOT YET SUPPORTED IN PYTHON
         """
 
     @abc.abstractmethod
@@ -98,21 +70,27 @@ class _PerfTestABC(abc.ABC):
         """
 
     @abc.abstractmethod
-    async def close(self):
+    async def close(self) -> None:
         """
         Close any open client resources/connections per parallel test instance.
         """
 
     @abc.abstractmethod
-    def run_all_sync(self):
+    def run_all_sync(self, duration: int) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
 
     @abc.abstractmethod
-    async def run_all_async(self):
+    async def run_all_async(self, duration: int) -> None:
         """
         Run all async tests, including both warmup and duration.
+        """
+    
+    @abc.abstractmethod
+    def add_arguments(self, arg_parser: argparse.ArgumentParser) -> None:
+        """
+        Add test class specific command line arguments.
         """
 
 
@@ -148,35 +126,6 @@ class _PerfTestBase(_PerfTestABC):
         """
         return self._last_completion_time
 
-    @property
-    def latencies(self) -> Any:
-        """
-        Elapsed time between start and end of each completed operation.
-        Reset after warmup.
-        Only populated if "--latency" option is enabled.
-        NOT YET SUPPORTED IN PYTHON
-        """
-        raise NotImplementedError()
-
-    @property
-    def corrected_latencies(self) -> Any:
-        """
-        Elapsed time between scheduled start and actual end of each completed operation.
-        Reset after warmup.
-        Only populated if both "--latency" and "--rate" options are enabled.
-        NOT YET SUPPORTED IN PYTHON
-        """
-        raise NotImplementedError()
-
-    @property
-    def pending_operations(self) -> Any:
-        """
-        Channel containing the scheduled start time of each operation.
-        Also includes a Stopwatch measuring elapsed time since scheduled start.
-        NOT YET SUPPORTED IN PYTHON
-        """
-        raise NotImplementedError()
-
     async def global_setup(self) -> None:
         """
         Setup called once across all parallel test instances.
@@ -224,14 +173,20 @@ class _PerfTestBase(_PerfTestABC):
         Close any open client resources/connections per parallel test instance.
         """
         return
+    
+    def add_arguments(self, arg_parser: argparse.ArgumentParser) -> None:
+        """
+        Add test class specific command line arguments.
+        """
+        return
 
-    def run_all_sync(self):
+    def run_all_sync(self, duration: int) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
         raise NotImplementedError("run_all_sync must be implemented for {}".format(self.__class__.__name__))
 
-    async def run_all_async(self):
+    async def run_all_async(self, duration: int) -> None:
         """
         Run all async tests, including both warmup and duration.
         """
