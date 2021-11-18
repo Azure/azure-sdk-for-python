@@ -69,11 +69,10 @@ class TestBusinessCard(FormRecognizerTest):
                 content_type="application/jpeg"
             )
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client):
+    def test_business_card_multipage_pdf(self, client, variables):
         with open(self.business_card_multipage_pdf, "rb") as fd:
             business_card = fd.read()
 
@@ -130,12 +129,11 @@ class TestBusinessCard(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client):
-
+    def test_business_card_multipage_pdf(self, client, variables):
+        self.some_func()
         with open(self.business_card_multipage_pdf, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_recognize_business_cards(receipt, include_field_elements=True)
