@@ -114,14 +114,19 @@ class BatchPerfTest(_PerfTestBase):
     def run_all_sync(self, duration: int) -> None:
         self._completed_operations = 0
         self._last_completion_time = 0.0
+        starttime = time.time()
         if self.args.profile:
             # If the profiler is used, ignore the duration and run once.
             import cProfile
-            with cProfile.Profile() as profile:
-                self.run_batch_async()
-            self._save_profile(profile)
-        else: 
-            starttime = time.time()
+            profile = cProfile.Profile()
+            try:
+                profile.enable()
+                self._completed_operations += self.run_batch_sync()
+            finally:
+                profile.disable()
+            self._last_completion_time = time.time() - starttime
+            self._save_profile(profile, "sync")
+        else:
             while self._last_completion_time < duration:
                 self._completed_operations += self.run_batch_sync()
                 self._last_completion_time = time.time() - starttime
@@ -129,14 +134,19 @@ class BatchPerfTest(_PerfTestBase):
     async def run_all_async(self, duration: int) -> None:
         self._completed_operations = 0
         self._last_completion_time = 0.0
+        starttime = time.time()
         if self.args.profile:
             # If the profiler is used, ignore the duration and run once. 
             import cProfile
-            with cProfile.Profile() as profile:
-                await self.run_batch_async()
-            self._save_profile(profile)
-        else: 
-            starttime = time.time()
+            profile = cProfile.Profile()
+            try:
+                profile.enable()
+                self._completed_operations += await self.run_batch_async()
+            finally:
+                profile.disable()
+            self._last_completion_time = time.time() - starttime
+            self._save_profile(profile, "async")
+        else:
             while self._last_completion_time < duration:
                 self._completed_operations += await self.run_batch_async()
                 self._last_completion_time = time.time() - starttime

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Any
+import os
 import abc
 import threading
 import argparse
@@ -87,8 +87,16 @@ class _PerfTestABC(abc.ABC):
         Run all async tests, including both warmup and duration.
         """
     
+    @staticmethod
     @abc.abstractmethod
-    def add_arguments(self, arg_parser: argparse.ArgumentParser) -> None:
+    def add_arguments(parser: argparse.ArgumentParser) -> None:
+        """
+        Add test class specific command line arguments.
+        """
+
+    @staticmethod
+    @abc.abstractmethod
+    def get_from_env(variable: str) -> str:
         """
         Add test class specific command line arguments.
         """
@@ -173,12 +181,6 @@ class _PerfTestBase(_PerfTestABC):
         Close any open client resources/connections per parallel test instance.
         """
         return
-    
-    def add_arguments(self, arg_parser: argparse.ArgumentParser) -> None:
-        """
-        Add test class specific command line arguments.
-        """
-        return
 
     def run_all_sync(self, duration: int) -> None:
         """
@@ -191,3 +193,20 @@ class _PerfTestBase(_PerfTestABC):
         Run all async tests, including both warmup and duration.
         """
         raise NotImplementedError("run_all_async must be implemented for {}".format(self.__class__.__name__))
+
+    @staticmethod
+    def add_arguments(parser: argparse.ArgumentParser) -> None:
+        """
+        Add test class specific command line arguments.
+        """
+        return
+
+    @staticmethod
+    def get_from_env(variable: str) -> str:
+        """
+        Return the value of the given environment variable.
+        """
+        value = os.environ.get(variable)
+        if not value:
+            raise ValueError("Undefined environment variable {}".format(variable))
+        return value

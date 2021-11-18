@@ -12,9 +12,11 @@ import os
 import pkgutil
 import sys
 from typing import List, Optional
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ._perf_stress_base import _PerfTestABC
+from .batch_perf_test import BatchPerfTest
+from .perf_stress_test import PerfStressTest
 from .repeated_timer import RepeatedTimer
 
 
@@ -119,21 +121,24 @@ class PerfStressRunner:
 
     def _discover_tests(self, test_folder_path):
         self._test_classes = {}
+        if os.path.isdir(os.path.join(test_folder_path, 'tests')):
+            test_folder_path = os.path.join(test_folder_path, 'tests')
+        self.logger.debug("Searching for tests in {}".format(test_folder_path))
 
         # Dynamically enumerate all python modules under the tests path for classes that implement PerfStressTest
-        for loader, name, _ in pkgutil.walk_packages([test_folder_path, os.path.join(test_folder_path, 'tests')]):
+        for loader, name, _ in pkgutil.walk_packages([test_folder_path]):
             try:
                 module = loader.find_module(name).load_module(name)
             except Exception as e:
                 self.logger.debug("Unable to load module {}: {}".format(name, e))
                 continue
             for name, value in inspect.getmembers(module):
-
                 if name.startswith("_"):
                     continue
-                if inspect.isclass(value) and isinstance(value, _PerfTestABC):
-                    self.logger.info("Loaded test class: {}".format(name))
-                    self._test_classes[name] = value
+                if inspect.isclass(value):
+                    if issubclass(value, _PerfTestABC) and value not in [PerfStressTest, BatchPerfTest]:
+                        self.logger.info("Loaded test class: {}".format(name))
+                        self._test_classes[name] = value
 
     async def start(self):
         self.logger.info("=== Setup ===")
@@ -149,7 +154,7 @@ class PerfStressRunner:
                     await asyncio.gather(*[test.post_setup() for test in self._tests])
                     self.logger.info("")
 
-                    if self.per_test_args.warmup:
+                    if self.per_test_args.warmup and not self.per_test_args.profile:
                         await self._run_tests("Warmup", self.per_test_args.warmup)
 
                     for i in range(self.per_test_args.iterations):
@@ -178,30 +183,34 @@ class PerfStressRunner:
     async def _run_tests(self, title: str, duration: int) -> None:
         self._operation_status_tracker = -1
         status_thread = RepeatedTimer(1, self._print_status, title)
-
-        if self.per_test_args.sync:
-            with ThreadPoolExecutor(max_workers=self.per_test_args.parallel) as ex:
-                for test in self._tests:
-                    ex.submit(test.run_all_sync, duration)
-        else:
-            tasks = [test.run_all_async(duration) for test in self._tests]
-            await asyncio.gather(*tasks)
-
-        status_thread.stop()
+        try:
+            if self.per_test_args.sync:
+                with ThreadPoolExecutor(max_workers=self.per_test_args.parallel) as ex:
+                    futures = [ex.submit(test.run_all_sync, duration) for test in self._tests]
+                    for future in as_completed(futures):
+                        future.result()
+                    
+            else:
+                tasks = [test.run_all_async(duration) for test in self._tests]
+                await asyncio.gather(*tasks)
+        finally:
+            status_thread.stop()
 
         self.logger.info("")
         self.logger.info("=== Results ===")
 
         total_operations = self._get_completed_operations()
         operations_per_second = self._get_operations_per_second()
-        seconds_per_operation = 1 / operations_per_second
-        weighted_average_seconds = total_operations / operations_per_second
-
-        self.logger.info(
-            "Completed {:,} operations in a weighted-average of {:,.2f}s ({:,.2f} ops/s, {:,.3f} s/op)".format(
-                total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation
+        if operations_per_second:
+            seconds_per_operation = 1 / operations_per_second
+            weighted_average_seconds = total_operations / operations_per_second
+            self.logger.info(
+                "Completed {:,} operations in a weighted-average of {:,.2f}s ({:,.2f} ops/s, {:,.3f} s/op)".format(
+                    total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation
+                )
             )
-        )
+        else:
+            self.logger.info("Completed without generating operation statistics.")
         self.logger.info("")
 
     def _print_status(self, title):
