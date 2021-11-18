@@ -21,5 +21,9 @@ def add_sanitizers():
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
     add_general_regex_sanitizer(
         value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z]+(?=\\.cognitiveservices\\.azure\\.com)"
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)"
+    )
+    add_general_regex_sanitizer(
+        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+        value="fakeendpoint",
     )

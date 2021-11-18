@@ -15,7 +15,7 @@ from azure.core.credentials import AzureKeyCredential
 DocumentTranslationPreparer = functools.partial(
     PowerShellPreparer,
     'translation',
-    translation_document_test_endpoint="https://redacted.cognitiveservices.azure.com/",
+    translation_document_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
     translation_document_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     translation_document_name="redacted",
     translation_document_storage_name="redacted",
