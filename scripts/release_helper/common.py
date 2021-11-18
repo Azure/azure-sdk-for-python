@@ -106,7 +106,7 @@ class IssueProcess:
         readme_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue.rest_repo.get_contents(readme_path).decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
-        self.default_readme_tag = pattern_tag.findall(contents)[0].split(':')[-1].strip()
+        self.default_readme_tag = pattern_tag.search(contents).group().split(':')[-1].strip()
 
     def edit_issue_body(self) -> None:
         issue_body_list = [i for i in self.issue.issue.body.split("\n") if i]
