@@ -180,7 +180,7 @@ class SearchIndexClient(HeadersMixin):
         :param index: The index to retrieve.
         :type index: str or ~azure.search.documents.indexes.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -244,7 +244,7 @@ class SearchIndexClient(HeadersMixin):
          large indexes.
         :type allow_index_downtime: bool
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -386,7 +386,7 @@ class SearchIndexClient(HeadersMixin):
         :param name: The Synonym Map to delete
         :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
 
@@ -449,7 +449,7 @@ class SearchIndexClient(HeadersMixin):
         :param synonym_map: The Synonym Map object
         :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
 
