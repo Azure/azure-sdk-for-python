@@ -24,14 +24,14 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
-        self.assertEqual(client._client._config.polling_interval, 7)
+        assert client._client._config.polling_interval ==  7
 
         poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, polling_interval=6)
         poller.wait()
-        self.assertEqual(poller._polling_method._timeout, 6)
+        assert poller._polling_method._timeout ==  6
         poller2 = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         poller2.wait()
-        self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
+        assert poller2._polling_method._timeout ==  7  # goes back to client default
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -62,8 +62,8 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         self.assertFormFieldsTransformCorrect(id_document.fields, actual, read_results)
 
         # check page range
-        self.assertEqual(id_document.page_range.first_page_number, document_results[0].page_range[0])
-        self.assertEqual(id_document.page_range.last_page_number, document_results[0].page_range[1])
+        assert id_document.page_range.first_page_number ==  document_results[0].page_range[0]
+        assert id_document.page_range.last_page_number ==  document_results[0].page_range[1]
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
@@ -114,17 +114,17 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         id_document = result[0]
 
         self.assertFormPagesHasValues(id_document.pages)
 
         for field in id_document.fields.values():
             if field.name == "CountryRegion":
-                self.assertEqual(field.value, "USA")
+                assert field.value ==  "USA"
                 continue
             elif field.name == "Region":
-                self.assertEqual(field.value, "Washington")
+                assert field.value ==  "Washington"
             else:
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 

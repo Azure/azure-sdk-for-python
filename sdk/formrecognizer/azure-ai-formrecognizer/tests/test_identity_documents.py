@@ -103,8 +103,8 @@ class TestIdDocument(FormRecognizerTest):
         self.assertFormFieldsTransformCorrect(id_document.fields, actual, read_results)
 
         # check page range
-        self.assertEqual(id_document.page_range.first_page_number, document_results[0].page_range[0])
-        self.assertEqual(id_document.page_range.last_page_number, document_results[0].page_range[1])
+        assert id_document.page_range.first_page_number ==  document_results[0].page_range[0]
+        assert id_document.page_range.last_page_number ==  document_results[0].page_range[1]
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
@@ -161,17 +161,17 @@ class TestIdDocument(FormRecognizerTest):
         poller = client.begin_recognize_identity_documents(id_document, include_field_elements=True)
 
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         id_document = result[0]
 
         self.assertFormPagesHasValues(id_document.pages)
 
         for field in id_document.fields.values():
             if field.name == "CountryRegion":
-                self.assertEqual(field.value, "USA")
+                assert field.value ==  "USA"
                 continue
             elif field.name == "Region":
-                self.assertEqual(field.value, "Washington")
+                assert field.value ==  "Washington"
             else:
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
