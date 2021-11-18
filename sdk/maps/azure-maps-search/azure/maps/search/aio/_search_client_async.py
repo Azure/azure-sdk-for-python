@@ -19,6 +19,73 @@ from ._configuration import SearchClientConfiguration
 from .operations import SearchOperations
 from .. import models
 
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+from typing import TYPE_CHECKING
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import HttpResponseError
+from .._generated.aio._search_client import SearchClient as SearchClientGen
+from .._generated.models import *
+from ..utils import get_authentication_policy
+
+if TYPE_CHECKING:
+    from typing import Any, List
+    from azure.core.credentials import TokenCredential
+    from azure.core.polling import LROPoller
+    from .._generated.models import *
+
+class Coordinate(object):
+
+    def __init__(
+        self, 
+        lat, # type: float
+        lon # type: float
+    ):
+        self.latitude = lat
+        self.longitude = lon
+
+    def toList(self): # type: (...) -> List[float]
+        return [self.latitude, self.longitude]
+
+class SearchClient(object):
+    """Azure Maps Search REST APIs.
+
+    :ivar search: SearchOperations operations
+    :vartype search: azure.maps.search.operations.SearchOperations
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
+    :type client_id: str
+    :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    """
+    def __init__(
+        self,
+        base_url, # type: str
+        credential, # type: TokenCredential
+        **kwargs # type: Any
+    ):
+        # type: (...) -> None
+        try:
+            if not base_url.lower().startswith('http'):
+                base_url = "https://" + base_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+
+        if not credential:
+            raise ValueError(
+                "You need to provide account shared key to authenticate.")
+
+        self._base_url = base_url
+        self._search_client = SearchClientGen(
+            self._base_url,
+            authentication_policy=get_authentication_policy(base_url, credential),
+            **kwargs).search
+
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.

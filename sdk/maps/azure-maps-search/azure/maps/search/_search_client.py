@@ -74,7 +74,7 @@ class SearchClient(object):
     ):
         # type: (...) -> "PolygonResult"
         """**Get Polygon**
-        <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-polygon>`_.
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-polygon>`_.
 
         :param geometry_ids: Comma separated list of geometry UUIDs, previously retrieved from an
          Online Search request.
@@ -99,7 +99,7 @@ class SearchClient(object):
     ):
         # type: (...) -> "SearchAddressResult"
         """**Free Form Search**
-        <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-fuzzy>`_.
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-fuzzy>`_.
 
         :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
          as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
@@ -223,7 +223,7 @@ class SearchClient(object):
         # type: (...) -> "PointOfInterestCategoryTreeResult" 
 
         """**Get POI Category Tree**
-        <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
 
         :param format: Desired format of the response. Only ``json`` format is supported.
         :param language: Language in which search results should be returned. Should be one of
@@ -249,7 +249,7 @@ class SearchClient(object):
         # type: (...) -> "ReverseSearchAddressResult"
 
         """**Search Address Reverse Batch API**
-        <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
 
         :param batch_request: The list of reverse geocoding queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
@@ -290,7 +290,7 @@ class SearchClient(object):
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
         
         """**Reverse Geocode to a Cross Street**
-        <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
 
         :param query: The applicable query specified as a comma separated string composed by latitude
          followed by longitude e.g. "47.641268,-122.125679".
@@ -347,6 +347,7 @@ class SearchClient(object):
         """
         The Search Along Route endpoint allows you to perform a fuzzy search for POIs along a specified
         route. 
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-along-route>`_
 
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
          Must be properly URL encoded.
@@ -427,6 +428,7 @@ class SearchClient(object):
         """
         The Search Geometry endpoint allows you to perform a free form search inside a single geometry
         or many of them. 
+        `Reference Document <>`_
 
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
          Must be properly URL encoded.
@@ -492,3 +494,486 @@ class SearchClient(object):
             operating_hours=kwargs.pop("operating_hours", None),
             **kwargs
         )
+
+
+    @distributed_trace
+    def search_point_of_interest(
+        self,
+        query,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """**Get POI by Name**
+        `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category>`_
+
+        Points of Interest (POI) Search allows you to request POI results by name.  Search supports
+        additional query parameters such as language and filtering results by area of interest driven
+        by country or bounding box.  Endpoint will return only POI results matching the query string.
+        Response includes POI details such as address, coordinate location and category.
+
+        :param query: The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
+         properly URL encoded.
+        :type query: str
+        :param format: Desired format of the response. Value can be either *json* or *xml*.
+        :type format: str or ~azure.maps.search.models.ResponseFormat
+        :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
+         partial input and the search will enter predictive mode.
+        :type is_type_ahead: bool
+        :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+         maximum: 100.
+        :type top: int
+        :param skip: Starting offset of the returned results within the full result set. Default: 0,
+         minimum: 0 and maximum: 1900.
+        :type skip: int
+        :param category_filter: A comma-separated list of category set IDs which could be used to
+         restrict the result to specific Points of Interest categories. 
+        :type category_filter: list[int]
+        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+         search to the specified countries.
+        :type country_filter: list[str]
+        :param lat: Latitude where results should be biased. E.g. 37.337.
+        :type lat: float
+        :param lon: Longitude where results should be biased. E.g. -121.89.
+        :type lon: float
+        :param radius_in_meters: The radius in meters to for the results to be constrained to the
+         defined area.
+        :type radius_in_meters: int
+        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :type top_left: str
+        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :type btm_right: str
+        :param language: Language in which search results should be returned. 
+        :type language: str
+        :param extended_postal_codes_for: Indexes for which extended postal codes should be included in
+         the results.
+        :type extended_postal_codes_for: list[str or ~azure.maps.search.models.PointOfInterestExtendedPostalCodes]
+        :param brand_filter: A comma-separated list of brand names which could be used to restrict the
+         result to specific brands.
+        :type brand_filter: list[str]
+        :param electric_vehicle_connector_filter: A comma-separated list of connector types which could
+         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+        :type electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :param localized_map_view: The View parameter (also called the "user region" parameter) allows
+         you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
+        :param operating_hours: Hours of operation for a POI (Points of Interest).
+        :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """           
+        return self._search_client.search_point_of_interest(
+            query,
+            is_type_ahead=None,  # type: Optional[bool]
+            top=None,  # type: Optional[int]
+            skip=None,  # type: Optional[int]
+            category_filter=None,  # type: Optional[List[int]]
+            country_filter=None,  # type: Optional[List[str]]
+            lat=None,  # type: Optional[float]
+            lon=None,  # type: Optional[float]
+            radius_in_meters=None,  # type: Optional[int]
+            top_left=None,  # type: Optional[str]
+            btm_right=None,  # type: Optional[str]
+            language=None,  # type: Optional[str]
+            extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.PointOfInterestExtendedPostalCodes"]]]
+            brand_filter=None,  # type: Optional[List[str]]
+            electric_vehicle_connector_filter=None,  # type: Optional[List[Union[str, "models.ElectricVehicleConnector"]]]
+            localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
+            operating_hours=None,  # type: Optional[Union[str, "models.OperatingHoursRange"]]
+            **kwargs  # type: Any
+        )
+
+
+    @distributed_trace
+    def search_nearby_point_of_interest(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """**Search Nearby Point of Interest **
+        Please refer to `Supported Languages <https://docs.microsoft.com/azure/azure-maps/supported-
+        languages>`_ for details.
+
+        :param lat: Latitude where results should be biased. E.g. 37.337.
+        :type lat: float
+        :param lon: Longitude where results should be biased. E.g. -121.89.
+        :type lon: float
+        :param format: Desired format of the response. Value can be either *json* or *xml*.
+        :type format: str or ~azure.maps.search.models.ResponseFormat
+        :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+         maximum: 100.
+        :type top: int
+        :param skip: Starting offset of the returned results within the full result set. Default: 0,
+         minimum: 0 and maximum: 1900.
+        :type skip: int
+        :param category_filter: A comma-separated list of category set IDs which could be used to
+         restrict the result to specific Points of Interest categories. ID order does not matter. 
+        :type category_filter: list[int]
+        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+         search to the specified countries.
+        :type country_filter: list[str]
+        :param radius_in_meters: The radius in meters to for the results to be constrained to the
+         defined area, Min value is 1, Max Value is 50000.
+        :type radius_in_meters: int
+        :param language: Language in which search results should be returned. Should be one of
+         supported IETF language tags, case insensitive. 
+        :type language: str
+        :param extended_postal_codes_for: Indexes for which extended postal codes should be included in
+         the results.
+        :type extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
+        :param brand_filter: A comma-separated list of brand names which could be used to restrict the
+         result to specific brands. Item order does not matter.
+        :type brand_filter: list[str]
+        :param electric_vehicle_connector_filter: A comma-separated list of connector types which could
+         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+        :type electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :param localized_map_view: The View parameter (also called the "user region" parameter) allows
+         you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        return self._search_client.search_nearby_point_of_interest(
+            **kwargs  # type: Any
+        )
+
+
+    @distributed_trace
+    def search_point_of_interest_category(
+        self,
+        query,  # type: str
+        is_type_ahead=None,  # type: Optional[bool]
+        top=None,  # type: Optional[int]
+        skip=None,  # type: Optional[int]
+        category_filter=None,  # type: Optional[List[int]]
+        country_filter=None,  # type: Optional[List[str]]
+        lat=None,  # type: Optional[float]
+        lon=None,  # type: Optional[float]
+        radius_in_meters=None,  # type: Optional[int]
+        top_left=None,  # type: Optional[str]
+        btm_right=None,  # type: Optional[str]
+        language=None,  # type: Optional[str]
+        extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.SearchIndexes"]]]
+        brand_filter=None,  # type: Optional[List[str]]
+        electric_vehicle_connector_filter=None,  # type: Optional[List[Union[str, "models.ElectricVehicleConnector"]]]
+        localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
+        operating_hours=None,  # type: Optional[Union[str, "models.OperatingHoursRange"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """**Get POI by Category**
+
+        Points of Interest (POI) Category Search allows you to request POI results from given category.
+        Search allows to query POIs from one category at a time.  Endpoint will only return POI results
+        which are categorized as specified.  Response includes POI details such as address, coordinate
+        location and classification.
+
+        :param query: The POI category to search for (e.g., "AIRPORT", "RESTAURANT"), must be properly
+         URL encoded. 
+        :type query: str
+        :param format: Desired format of the response. Value can be either *json* or *xml*.
+        :type format: str or ~azure.maps.search.models.ResponseFormat
+        :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
+         partial input and the search will enter predictive mode.
+        :type is_type_ahead: bool
+        :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+         maximum: 100.
+        :type top: int
+        :param skip: Starting offset of the returned results within the full result set. Default: 0,
+         minimum: 0 and maximum: 1900.
+        :type skip: int
+        :param category_filter: A comma-separated list of category set IDs which could be used to
+         restrict the result to specific Points of Interest categories. 
+        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+         search to the specified countries.
+        :type country_filter: list[str]
+        :param lat: Latitude where results should be biased. E.g. 37.337.
+        :type lat: float
+        :param lon: Longitude where results should be biased. E.g. -121.89.
+        :type lon: float
+        :param radius_in_meters: The radius in meters to for the results to be constrained to the
+         defined area.
+        :type radius_in_meters: int
+        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :type top_left: str
+        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :type btm_right: str
+        :param language: Language in which search results should be returned.
+        :type language: str
+        :param extended_postal_codes_for: Indexes for which extended postal codes should be included in
+         the results.
+        :type extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
+        :param brand_filter: A comma-separated list of brand names which could be used to restrict the
+         result to specific brands. Item order does not matter.
+        :type brand_filter: list[str]
+        :param electric_vehicle_connector_filter: A comma-separated list of connector types which could
+         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+        :type electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :param localized_map_view: The View parameter (also called the "user region" parameter) allows
+         you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
+        :param operating_hours: Hours of operation for a POI (Points of Interest). The availability of
+         hours of operation will vary based on the data available. If not passed, then no opening hours
+         information will be returned.
+         Supported value: nextSevenDays.
+        :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._search_client.search_point_of_interest_category(
+            **kwargs  # type: Any
+        )
+
+
+    @distributed_trace
+    def search_address(
+        self,
+        query,  # type: str
+        is_type_ahead=None,  # type: Optional[bool]
+        top=None,  # type: Optional[int]
+        skip=None,  # type: Optional[int]
+        country_filter=None,  # type: Optional[List[str]]
+        lat=None,  # type: Optional[float]
+        lon=None,  # type: Optional[float]
+        radius_in_meters=None,  # type: Optional[int]
+        top_left=None,  # type: Optional[str]
+        btm_right=None,  # type: Optional[str]
+        language=None,  # type: Optional[str]
+        extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.SearchIndexes"]]]
+        entity_type=None,  # type: Optional[Union[str, "models.GeographicEntityType"]]
+        localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "models.SearchAddressResult"
+        """**Address Geocoding**
+
+        In many cases, the complete search service might be too much, for instance if you are only
+        interested in traditional geocoding. Search can also be accessed for address look up
+        exclusively. The geocoding is performed by hitting the geocode endpoint with just the address
+        or partial address in question. The geocoding search index will be queried for everything above
+        the street level data. No POIs will be returned. Note that the geocoder is very tolerant of
+        typos and incomplete addresses. It will also handle everything from exact street addresses or
+        street or intersections as well as higher level geographies such as city centers, counties,
+        states etc.
+
+        :param query: The address to search for (e.g., "1 Microsoft way, Redmond, WA"), must be
+         properly URL encoded.
+        :type query: str
+        :param format: Desired format of the response. Value can be either *json* or *xml*.
+        :type format: str or ~azure.maps.search.models.ResponseFormat
+        :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
+         partial input and the search will enter predictive mode.
+        :type is_type_ahead: bool
+        :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+         maximum: 100.
+        :type top: int
+        :param skip: Starting offset of the returned results within the full result set. Default: 0,
+         minimum: 0 and maximum: 1900.
+        :type skip: int
+        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+         search to the specified countries.
+        :type country_filter: list[str]
+        :param lat: Latitude where results should be biased. E.g. 37.337.
+        :type lat: float
+        :param lon: Longitude where results should be biased. E.g. -121.89.
+        :type lon: float
+        :param radius_in_meters: The radius in meters to for the results to be constrained to the
+         defined area.
+        :type radius_in_meters: int
+        :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
+        :type top_left: str
+        :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :type btm_right: str
+        :param language: Language in which search results should be returned. 
+        :type extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
+        :param entity_type: Specifies the level of filtering performed on geographies.
+        :type entity_type: str or ~azure.maps.search.models.GeographicEntityType
+        :param localized_map_view: The View parameter (also called the "user region" parameter) allows
+         you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._search_client.search_address(
+            **kwargs  # type: Any
+        )
+
+
+    @distributed_trace
+    def search_structured_address(
+        self,
+        format="json",  # type: Union[str, "models.ResponseFormat"]
+        language=None,  # type: Optional[str]
+        country_code="US",  # type: str
+        top=None,  # type: Optional[int]
+        skip=None,  # type: Optional[int]
+        street_number=None,  # type: Optional[str]
+        street_name=None,  # type: Optional[str]
+        cross_street=None,  # type: Optional[str]
+        municipality=None,  # type: Optional[str]
+        municipality_subdivision=None,  # type: Optional[str]
+        country_tertiary_subdivision=None,  # type: Optional[str]
+        country_secondary_subdivision=None,  # type: Optional[str]
+        country_subdivision=None,  # type: Optional[str]
+        postal_code=None,  # type: Optional[str]
+        extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.SearchIndexes"]]]
+        entity_type=None,  # type: Optional[Union[str, "models.GeographicEntityType"]]
+        localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """**Structured Address Geocoding**
+
+        Azure Address Geocoding can also be accessed for  structured address look up exclusively. The
+        geocoding search index will be queried for everything above the  street level data. No POIs
+        will be returned. Note that the geocoder is very tolerant of typos and incomplete  addresses.
+        It will also handle everything from exact  street addresses or street or intersections as well
+        as higher level geographies such as city centers,  counties, states etc.
+
+        :param format: Desired format of the response. Value can be either *json* or *xml*.
+        :type format: str or ~azure.maps.search.models.ResponseFormat
+        :param language: Language in which search results should be returned.
+        :type language: str
+        :param country_code: The 2 or 3 letter `ISO3166-1 <https://www.iso.org/iso-3166-country-
+         codes.html>`_ country code portion of an address. E.g. US.
+        :type country_code: str
+        :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+         maximum: 100.
+        :type top: int
+        :param skip: Starting offset of the returned results within the full result set. Default: 0,
+         minimum: 0 and maximum: 1900.
+        :type skip: int
+        :param street_number: The street number portion of an address.
+        :type street_number: str
+        :param street_name: The street name portion of an address.
+        :type street_name: str
+        :param cross_street: The cross street name for the structured address.
+        :type cross_street: str
+        :param municipality: The municipality portion of an address.
+        :type municipality: str
+        :param municipality_subdivision: The municipality subdivision (sub/super city) for the
+         structured address.
+        :type municipality_subdivision: str
+        :param country_tertiary_subdivision: The named area for the structured address.
+        :type country_tertiary_subdivision: str
+        :param country_secondary_subdivision: The county for the structured address.
+        :type country_secondary_subdivision: str
+        :param country_subdivision: The country subdivision portion of an address.
+        :type country_subdivision: str
+        :param postal_code: The postal code portion of an address.
+        :type postal_code: str
+        :param extended_postal_codes_for: Indexes for which extended postal codes should be included in
+         the results.
+        :type extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
+        :param entity_type: Specifies the level of filtering performed on geographies.
+        :type entity_type: str or ~azure.maps.search.models.GeographicEntityType
+        :param localized_map_view: The View parameter (also called the "user region" parameter) allows
+         you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._search_client.search_structured_address(
+            **kwargs  # type: Any
+        )
+
+    
+    @distributed_trace
+    def fuzzy_search_batch_sync(
+        self,
+        batch_request,  # type: "BatchRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressBatchResult"
+        """**Search Fuzzy Batch API**
+
+        The Search Address Batch API sends batches of queries to `Search Fuzzy API
+        <https://docs.microsoft.com/rest/api/maps/search/getsearchfuzzy>`_ using just a single API
+        call. You can call Search Address Fuzzy Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+
+
+        :param batch_request: The list of search fuzzy queries/requests to process. The list can
+         contain  a max of 10,000 queries and must contain at least 1 query.
+        :type batch_request: ~azure.maps.search.models.BatchRequest
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.search.models.JsonFormat
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressBatchResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._search_client.fuzzy_search_batch_sync(
+            batch_request,
+            **kwargs
+        )
+
+
+    @distributed_trace
+    def search_address_batch_sync(
+        self,
+        batch_request,  # type: "BatchRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressBatchResult"
+        """**Search Address Batch API**
+
+        :param batch_request: The list of address geocoding queries/requests to process. The list can
+         contain  a max of 10,000 queries and must contain at least 1 query.
+        :type batch_request: ~azure.maps.search.models.BatchRequest
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.search.models.JsonFormat
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SearchAddressBatchResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._search_client.search_address_batch_sync(
+            batch_request,
+            **kwargs
+        )
+
+
+    @distributed_trace
+    def reverse_search_address_batch_sync(
+        self,
+        batch_request,  # type: "BatchRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "ReverseSearchAddressBatchProcessResult"
+        """**Search Address Reverse Batch API**
+
+        **Applies to**\ : S1 pricing tier.
+
+        The Search Address Batch API sends batches of queries to `Search Address Reverse API
+        <https://docs.microsoft.com/rest/api/maps/search/getsearchaddressreverse>`_ using just a single
+        API call. You can call Search Address Reverse Batch API to run either asynchronously (async) or
+        synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
+        API up to **100** queries.
+        :param batch_request: The list of reverse geocoding queries/requests to process. The list can
+         contain  a max of 10,000 queries and must contain at least 1 query.
+        :type batch_request: ~azure.maps.search.models.BatchRequest
+        :param format: Desired format of the response. Only ``json`` format is supported.
+        :type format: str or ~azure.maps.search.models.JsonFormat
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ReverseSearchAddressBatchProcessResult, or the result of cls(response)
+        :rtype: ~azure.maps.search.models.ReverseSearchAddressBatchProcessResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        return self._search_client.reverse_search_address_batch_sync(
+            batch_request,
+            **kwargs
+        )
+
