@@ -212,15 +212,44 @@ def _get_model(module_name: str, model_name: str):
     models = {k: v for k, v in module.__dict__.items() if isinstance(v, type)}
     if model_name not in models:
         _LOGGER.warning("Can not find model name in models, will not deserialize")
+        return model_name
     return models[model_name]
 
-def _deserialize(obj: Any, type, module_name: str) -> Any:
-    if isinstance(type, str):
-        type = _get_model(module_name, type)
+def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
+    if isinstance(deserialization_type, str):
+        deserialization_type = _get_model(module_name, deserialization_type)
+
     try:
-        return type(obj)
+        # i'm a dict-like thing
+        return {
+            _deserialize(k, deserialization_type.__args__[0], module_name): _deserialize(v, deserialization_type.__args__[1], module_name)
+            for k, v in obj.items()
+        }
+    except (AttributeError, IndexError):
+        pass
+
+    if type(obj) in [list, set, tuple]:
+        try:
+            if len(deserialization_type.__args__) > 1:
+                if len(deserialization_type.__args__) > len(obj):
+                    raise ValueError("There are more type hints than elements in the iterable.")
+                if len(deserialization_type.__args__) < len(obj):
+                    raise ValueError("There are more type hints than elements in the iterable.")
+                return type(obj)(
+                    _deserialize(entry, dt, module_name)
+                    for entry, dt in zip(obj, deserialization_type.__args__)
+                )
+            return type(obj)(
+                _deserialize(entry, deserialization_type.__args__[0], module_name)
+                for entry in obj
+            )
+        except (TypeError, IndexError, AttributeError, SyntaxError):
+            pass
+
+    try:
+        return deserialization_type(obj)
     except Exception:
-        return _DESERIALIZE_MAPPING.get(type, lambda x: x)(obj)
+        return _DESERIALIZE_MAPPING.get(deserialization_type, lambda x: x)(obj)
 
 class Model(dict):
 

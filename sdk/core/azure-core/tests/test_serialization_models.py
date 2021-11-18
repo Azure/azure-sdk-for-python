@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 import datetime
-from typing import Any, List, Literal, Dict
+from typing import Any, List, Literal, Dict, Set, Tuple
 import pytest
 import isodate
 from azure.core.serialization import Model, rest_property
@@ -295,6 +295,72 @@ def test_model_recursion():
     assert model.me['name'] == model.me.name == "Egg"
     assert model.me['me'] == {"name": "Chicken"}
     assert model.me.me.name == "Chicken"
+
+def test_dictionary_deserialization():
+    class DictionaryModel(Model):
+
+        @rest_property()
+        def prop(self) -> Dict[str, datetime.datetime]:
+            """Dictionary of str to datetime.datetime"""
+
+    val_str = "9999-12-31T23:59:59.999Z"
+    val = isodate.parse_datetime(val_str)
+    dict_response = {
+        "prop": {
+            "datetime": val_str
+        }
+    }
+    model = DictionaryModel(dict_response)
+    assert model['prop'] == {"datetime": val_str}
+    assert model.prop == {"datetime": val}
+
+def test_list_deserialization():
+    class ListModel(Model):
+
+        @rest_property()
+        def prop(self) -> List[datetime.datetime]:
+            """Dictionary of str to datetime.datetime"""
+
+    val_str = "9999-12-31T23:59:59.999Z"
+    val = isodate.parse_datetime(val_str)
+    dict_response = {
+        "prop": [val_str, val_str]
+    }
+    model = ListModel(dict_response)
+    assert model['prop'] == [val_str, val_str]
+    assert model.prop == [val, val]
+
+def test_set_deserialization():
+    class SetModel(Model):
+
+        @rest_property()
+        def prop(self) -> Set[datetime.datetime]:
+            """Dictionary of str to datetime.datetime"""
+
+    val_str = "9999-12-31T23:59:59.999Z"
+    val = isodate.parse_datetime(val_str)
+    dict_response = {
+        "prop": set([val_str, val_str])
+    }
+    model = SetModel(dict_response)
+    assert model['prop'] == set([val_str, val_str])
+    assert model.prop == set([val, val])
+
+def test_tuple_deserialization():
+    class TupleModel(Model):
+
+        @rest_property()
+        def prop(self) -> Tuple[str, datetime.datetime]:
+            """Dictionary of str to datetime.datetime"""
+
+    val_str = "9999-12-31T23:59:59.999Z"
+    val = isodate.parse_datetime(val_str)
+    dict_response = {
+        "prop": (val_str, val_str)
+    }
+    model = TupleModel(dict_response)
+    assert model['prop'] == (val_str, val_str)
+    assert model.prop == (val_str, val)
 
 # def test_model_recursion_complex():
 #     class RecursiveModel(Model):
