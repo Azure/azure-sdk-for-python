@@ -8,28 +8,30 @@ products:
 urlFragment: query-azuremonitor-samples
 ---
 
-# Azure Monitor Query Client Library Python Samples
+# Azure Monitor Query client library Python samples
 
 ## Samples
-These code samples show common champion scenario operations with the Azure Monitor Query client library.
 
-* Send a single query with LogsQueryClient and handle the response as a table: [sample_logs_single_query.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_single_query.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_log_query_async.py))
+The following code samples show common scenarios with the Azure Monitor Query client library.
 
-* Send a single query with LogsQueryClient and handle the response in key value form: [sample_logs_query_key_value_form.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_query_key_value_form.py)
+### Logs query samples
 
-* Send a single query with LogsQueryClient without pandas: [sample_single_log_query_without_pandas.py.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_single_log_query_without_pandas.py)
+- [Send a single query with LogsQueryClient and handle the response as a table](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_single_query.py) ([async sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_log_query_async.py))
+- [Send a single query with LogsQueryClient and handle the response in key-value form](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_query_key_value_form.py)
+- [Send a single query with LogsQueryClient without pandas](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_single_log_query_without_pandas.py)
+- [Send a single query with LogsQueryClient across multiple workspaces](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_multiple_workspaces.py)
+- [Send multiple queries with LogsQueryClient](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_batch_query.py)
+- [Send a single query with LogsQueryClient using server timeout](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_server_timeout.py)
 
-* Send a single query with LogsQueryClient across multiple workspaces: [sample_logs_query_multiple_workspaces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_log_query_multiple_workspaces.py)
+### Metrics query samples
 
-* Send multiple queries with LogsQueryClient: [sample_batch_query.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_batch_query.py)
+- [Send a query using MetricsQueryClient](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metrics_query.py) ([async sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metrics_query_async.py))
+- [Get a list of metric namespaces](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metric_namespaces.py) ([async sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metric_namespaces_async.py))
+- [Get a list of metric definitions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metric_definitions.py) ([async sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metric_definitions_async.py))
 
-* Send a single query with LogsQueryClient using server timeout: [sample_server_timeout.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_server_timeout.py)
+## _Disclaimer_
 
-* Send a query using MetricsQueryClient: [sample_metrics_query.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metrics_query.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metrics_query_async.py))
-
-* Get a list of metric namespaces: [sample_metric_namespaces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metric_namespaces.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metric_namespaces_async.py))
-
-* Get a list of metric definitions: [sample_metric_definitions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_metric_definitions.py) ([async_sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_metric_definitions_async.py))
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
 
 ## Prerequisites
 
@@ -40,32 +42,37 @@ These code samples show common champion scenario operations with the Azure Monit
 
 ## Setup
 
-1. Install the latest beta version of Azure monitor query that the samples use:
+1. Install the latest version of the Azure Monitor Query library:
 
-```bash
-pip install azure-monitor-query
-```
+  ```bash
+  pip install azure-monitor-query
+  ```
 
 2. Clone or download this sample repository.
-3. Open the sample folder in Visual Studio Code or your IDE of choice.
-4. To run most of this samples, you need azure-identity and pandas although they are optional can be replaced.
+3. Open the *samples* folder in Visual Studio Code or your IDE of choice.
+4. To run most of this samples, you need `azure-identity` and `pandas`. Although, those dependencies are optional and can be replaced.
 
-```bash
-pip install azure-identity pandas
-```
+  ```bash
+  pip install azure-identity pandas
+  ```
 
-5. Finally, to run the async samples, you would need an async http framework like aiohttp
+5. To run the async samples, you need an asynchronous HTTP framework like `aiohttp`:
 
-```bash
-pip install aiohttp
-```
+  ```bash
+  pip install aiohttp
+  ```
 
-## Running the samples
+## Run the samples
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_logs_single_query.py`
+3. Follow the usage described in the file. For example, `python sample_logs_single_query.py`.
 
 ## Next steps
 
 To learn more about Azure Monitor, see the [Azure Monitor service documentation](https://docs.microsoft.com/azure/azure-monitor/).
+
+<!-- LINKS -->
+
+[azure_monitor_create_using_portal]: https://docs.microsoft.com/azure/azure-monitor/logs/quick-create-workspace
+[azure_subscription]: https://azure.microsoft.com/free/python/

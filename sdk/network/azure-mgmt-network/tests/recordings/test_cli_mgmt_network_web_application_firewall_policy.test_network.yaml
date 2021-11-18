@@ -14,14 +14,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy\",\r\n
-        \ \"etag\": \"W/\\\"1ceb9967-6c45-4e3d-a512-5b02c9ea6360\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"947032f3-5aae-4525-b7bb-39fb0946e9f8\\\"\",\r\n  \"type\":
         \"Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies\",\r\n
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Updating\",\r\n    \"customRules\": [],\r\n    \"policySettings\": {\r\n
@@ -35,7 +35,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/f4ed7932-5dc7-4e4c-bcf1-d05042eb2c06?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5ad675ac-341f-4776-a146-29cef6d47f49?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
@@ -43,7 +43,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 06:42:03 GMT
+      - Fri, 05 Nov 2021 11:25:49 GMT
       expires:
       - '-1'
       pragma:
@@ -56,7 +56,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - caafc7d1-14c0-4e21-8d99-8c667f7a1051
+      - 754cba13-67e7-45ca-8438-7b723160ab7c
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -72,14 +72,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myPolicy\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy\",\r\n
-        \ \"etag\": \"W/\\\"187afd99-f981-4b6c-b945-20743faddc6c\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"b0f3bb8d-ab9f-415d-bd65-713691088c6b\\\"\",\r\n  \"type\":
         \"Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies\",\r\n
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"customRules\": [],\r\n    \"policySettings\": {\r\n
@@ -97,9 +97,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 06:42:03 GMT
+      - Fri, 05 Nov 2021 11:25:49 GMT
       etag:
-      - W/"187afd99-f981-4b6c-b945-20743faddc6c"
+      - W/"b0f3bb8d-ab9f-415d-bd65-713691088c6b"
       expires:
       - '-1'
       pragma:
@@ -116,7 +116,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d0c5b19d-ea5a-4fa9-8011-afd04aed74a7
+      - c34c6866-536a-4dc6-b658-d29d805c249d
     status:
       code: 200
       message: OK
@@ -132,10 +132,10 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/myPolicy?api-version=2021-05-01
   response:
     body:
       string: ''
@@ -143,17 +143,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a076e27d-0068-4780-a3a6-a9e638e99ce7?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/66ee475d-4535-49af-8351-bf826c7e1c31?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 14 May 2021 06:42:03 GMT
+      - Fri, 05 Nov 2021 11:25:50 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/a076e27d-0068-4780-a3a6-a9e638e99ce7?api-version=2021-02-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/66ee475d-4535-49af-8351-bf826c7e1c31?api-version=2021-05-01
       pragma:
       - no-cache
       server:
@@ -164,7 +164,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 51bc1348-870c-4d6a-9bb8-f584aa937d3c
+      - 9f2b6f60-8638-47f1-8562-3623586e47d0
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14999'
     status:
@@ -180,10 +180,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a076e27d-0068-4780-a3a6-a9e638e99ce7?api-version=2021-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/66ee475d-4535-49af-8351-bf826c7e1c31?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -195,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 May 2021 06:42:13 GMT
+      - Fri, 05 Nov 2021 11:26:00 GMT
       expires:
       - '-1'
       pragma:
@@ -212,7 +212,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 78792dd2-2b85-4c21-afd0-ecbc72fe35f6
+      - 57407045-0c6f-4668-ba6e-6b45c1f0c5b8
     status:
       code: 200
       message: OK

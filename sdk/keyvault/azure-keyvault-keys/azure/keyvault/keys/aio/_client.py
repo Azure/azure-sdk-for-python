@@ -8,6 +8,8 @@ from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ..crypto.aio import CryptographyClient
+from .._client import _get_key_id
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
@@ -17,7 +19,6 @@ from .. import (
     KeyProperties,
     KeyRotationPolicy,
     KeyVaultKey,
-    RandomBytes,
     ReleaseKeyResult,
 )
 
@@ -59,6 +60,25 @@ class KeyClient(AsyncKeyVaultClientBase):
                 enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
             )
         return None
+
+    def get_cryptography_client(self, key_name, **kwargs):
+        # type: (str, **Any) -> CryptographyClient
+        """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
+
+        :param str key_name: The name of the key used to perform cryptographic operations.
+
+        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
+
+        :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
+            HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
+        :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
+        """
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
+
+        # We provide a fake credential because the generated client already has the KeyClient's real credential
+        return CryptographyClient(
+            key_id, object(), generated_client=self._client, generated_models=self._models  # type: ignore
+        )
 
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
@@ -109,7 +129,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(data=policy.data, content_type=policy.content_type)
+            policy = self._models.KeyReleasePolicy(data=policy.encoded_policy, content_type=policy.content_type)
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
@@ -520,7 +540,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
@@ -634,7 +654,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
@@ -654,7 +674,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def release_key(
-        self, name: str, target: str, version: "Optional[str]" = None, **kwargs: "Any"
+        self, name: str, target_attestation_token: str, version: "Optional[str]" = None, **kwargs: "Any"
     ) -> ReleaseKeyResult:
         """Releases a key.
 
@@ -662,7 +682,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         exportable. This operation requires the keys/release permission.
 
         :param str name: The name of the key to get.
-        :param str target: The attestation assertion for the target of the key release.
+        :param str target_attestation_token: The attestation assertion for the target of the key release.
         :param str version: (optional) A specific version of the key to release. If unspecified, the latest version is
             released.
 
@@ -679,20 +699,20 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
-                target=target, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+                target=target_attestation_token, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
             ),
             **kwargs
         )
         return ReleaseKeyResult(result.value)
 
     @distributed_trace_async
-    async def get_random_bytes(self, count: int, **kwargs: "Any") -> RandomBytes:
+    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
 
         :return: The random bytes.
-        :rtype: ~azure.keyvault.keys.RandomBytes
+        :rtype: bytes
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -709,7 +729,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return RandomBytes(value=result.value)
+        return result.value
 
     @distributed_trace_async
     async def get_key_rotation_policy(self, name: str, **kwargs: "Any") -> "KeyRotationPolicy":

@@ -16,8 +16,8 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._documents_operations import build_autocomplete_get_request, build_autocomplete_post_request, build_count_request, build_get_request, build_index_request, build_search_get_request, build_search_post_request, build_suggest_get_request, build_suggest_post_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -53,6 +53,9 @@ class DocumentsOperations:
 
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: long, or the result of cls(response)
         :rtype: long
@@ -64,26 +67,30 @@ class DocumentsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_count_request(
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.count.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('long', pipeline_response)
@@ -113,6 +120,9 @@ class DocumentsOperations:
         :type search_options: ~azure.search.documents.models.SearchOptions
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
@@ -123,6 +133,8 @@ class DocumentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
 
         _include_total_result_count = None
         _facets = None
@@ -135,6 +147,7 @@ class DocumentsOperations:
         _query_type = None
         _scoring_parameters = None
         _scoring_profile = None
+        _semantic_configuration = None
         _search_fields = None
         _query_language = None
         _speller = None
@@ -160,6 +173,7 @@ class DocumentsOperations:
             _query_type = search_options.query_type
             _scoring_parameters = search_options.scoring_parameters
             _scoring_profile = search_options.scoring_profile
+            _semantic_configuration = search_options.semantic_configuration
             _search_fields = search_options.search_fields
             _query_language = search_options.query_language
             _speller = search_options.speller
@@ -176,6 +190,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_search_get_request(
+            api_version=api_version,
             search_text=search_text,
             include_total_result_count=_include_total_result_count,
             facets=_facets,
@@ -188,6 +203,7 @@ class DocumentsOperations:
             query_type=_query_type,
             scoring_parameters=_scoring_parameters,
             scoring_profile=_scoring_profile,
+            semantic_configuration=_semantic_configuration,
             search_fields=_search_fields,
             query_language=_query_language,
             speller=_speller,
@@ -202,19 +218,20 @@ class DocumentsOperations:
             semantic_fields=_semantic_fields,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.search_get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchDocumentsResult', pipeline_response)
@@ -240,6 +257,9 @@ class DocumentsOperations:
         :type search_request: ~azure.search.documents.models.SearchRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
@@ -251,6 +271,7 @@ class DocumentsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -259,23 +280,25 @@ class DocumentsOperations:
         json = self._serialize.body(search_request, 'SearchRequest')
 
         request = build_search_post_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.search_post.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchDocumentsResult', pipeline_response)
@@ -305,6 +328,9 @@ class DocumentsOperations:
         :type selected_fields: list[str]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: any, or the result of cls(response)
         :rtype: any
@@ -316,28 +342,32 @@ class DocumentsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_request(
             key=key,
+            api_version=api_version,
             selected_fields=selected_fields,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('object', pipeline_response)
@@ -371,6 +401,9 @@ class DocumentsOperations:
         :type suggest_options: ~azure.search.documents.models.SuggestOptions
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SuggestDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
@@ -381,6 +414,8 @@ class DocumentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
 
         _filter = None
         _use_fuzzy_matching = None
@@ -406,6 +441,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_suggest_get_request(
+            api_version=api_version,
             search_text=search_text,
             suggester_name=suggester_name,
             filter=_filter,
@@ -419,19 +455,20 @@ class DocumentsOperations:
             top=_top,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.suggest_get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SuggestDocumentsResult', pipeline_response)
@@ -457,6 +494,9 @@ class DocumentsOperations:
         :type suggest_request: ~azure.search.documents.models.SuggestRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SuggestDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
@@ -468,6 +508,7 @@ class DocumentsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -476,23 +517,25 @@ class DocumentsOperations:
         json = self._serialize.body(suggest_request, 'SuggestRequest')
 
         request = build_suggest_post_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.suggest_post.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SuggestDocumentsResult', pipeline_response)
@@ -518,6 +561,9 @@ class DocumentsOperations:
         :type actions: list[~azure.search.documents.models.IndexAction]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IndexDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.IndexDocumentsResult
@@ -529,6 +575,7 @@ class DocumentsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -538,23 +585,25 @@ class DocumentsOperations:
         json = self._serialize.body(_batch, 'IndexBatch')
 
         request = build_index_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.index.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 207]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -591,6 +640,9 @@ class DocumentsOperations:
         :type request_options: ~azure.search.documents.models.RequestOptions
         :param autocomplete_options: Parameter group.
         :type autocomplete_options: ~azure.search.documents.models.AutocompleteOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutocompleteResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.AutocompleteResult
@@ -601,6 +653,8 @@ class DocumentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
 
         _x_ms_client_request_id = None
         _autocomplete_mode = None
@@ -624,6 +678,7 @@ class DocumentsOperations:
             _top = autocomplete_options.top
 
         request = build_autocomplete_get_request(
+            api_version=api_version,
             search_text=search_text,
             suggester_name=suggester_name,
             x_ms_client_request_id=_x_ms_client_request_id,
@@ -636,19 +691,20 @@ class DocumentsOperations:
             search_fields=_search_fields,
             top=_top,
             template_url=self.autocomplete_get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AutocompleteResult', pipeline_response)
@@ -674,6 +730,9 @@ class DocumentsOperations:
         :type autocomplete_request: ~azure.search.documents.models.AutocompleteRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutocompleteResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.AutocompleteResult
@@ -685,6 +744,7 @@ class DocumentsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -693,23 +753,25 @@ class DocumentsOperations:
         json = self._serialize.body(autocomplete_request, 'AutocompleteRequest')
 
         request = build_autocomplete_post_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.autocomplete_post.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             "indexName": self._serialize.url("self._config.index_name", self._config.index_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AutocompleteResult', pipeline_response)

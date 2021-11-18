@@ -12,7 +12,7 @@ urlFragment: formrecognizer-samples
 # Samples for Azure Form Recognizer client library for Python
 
 > Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the Migration Guide for detailed instructions on how to update application
+> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
@@ -28,7 +28,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |----------------|-------------|
 |[sample_authentication.py][sample_auth] and [sample_authentication_async.py][sample_auth_async]|Authenticate the client|
 |[sample_analyze_layout.py][sample_analyze_layout] and [sample_analyze_layout_async.py][sample_analyze_layout_async]|Extract text, selection marks, and table structures in a document|
-|[sample_analyze_prebuilt_document.py][sample_analyze_prebuilt_document] and [sample_analyze_prebuilt_document_async.py][sample_analyze_prebuilt_document_async]|Analyze document key-value pairs, entities, tables, and selection marks using a prebuilt model|
+|[sample_analyze_general_documents.py][sample_analyze_general_documents] and [sample_analyze_general_documents_async.py][sample_analyze_general_documents_async]|Analyze document key-value pairs, entities, tables, and selection marks using a prebuilt model|
 |[sample_analyze_invoices.py][sample_analyze_invoices] and [sample_analyze_invoices_async.py][sample_analyze_invoices_async]|Analyze document text, selection marks, tables, and pre-trained fields and values pertaining to English invoices using a prebuilt model|
 |[sample_analyze_business_cards.py][sample_analyze_business_cards] and [sample_analyze_business_cards_async.py][sample_analyze_business_cards_async]|Analyze document text and pre-trained fields and values pertaining to English business cards using a prebuilt model|
 |[sample_analyze_identity_documents.py][sample_analyze_identity_documents] and [sample_analyze_identity_documents_async.py][sample_analyze_identity_documents_async]|Analyze document text and pre-trained fields and values pertaining to US driver licenses and international passports using a prebuilt model|
@@ -39,6 +39,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_manage_models.py][sample_manage_models] and [sample_manage_models_async.py][sample_manage_models_async]|Manage the models in your account|
 |[sample_get_operations.py][sample_get_operations] and [sample_get_operations_async.py][sample_get_operations_async]|Get and list the document model operations created within the past 24 hours|
 |[sample_copy_model.py][sample_copy] and [sample_copy_model_async.py][sample_copy_async]|Copy a custom model from one Form Recognizer resource to another|
+|[sample_get_words_on_document_line.py][sample_get_words_on_document_line] and [sample_get_words_on_document_line_async.py][sample_get_words_on_document_line_async]|Get the words in a DocumentLine|
 
 ## Samples for client library versions 3.1.X
 
@@ -101,10 +102,11 @@ what you can do with the Azure Form Recognizer client library.
 [azure_form_recognizer_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
-[get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
+[get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-api-key
 [changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [v3.0.0-samples-tag]: https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-formrecognizer_3.0.0/sdk/formrecognizer/azure-ai-formrecognizer/samples
+[migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
 
 <!-- V3.2-beta links -->
 
@@ -112,8 +114,8 @@ what you can do with the Azure Form Recognizer client library.
 [sample_auth_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_authentication_async.py
 [sample_analyze_layout]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_analyze_layout.py
 [sample_analyze_layout_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_analyze_layout_async.py
-[sample_analyze_prebuilt_document]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_analyze_prebuilt_document.py
-[sample_analyze_prebuilt_document_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_analyze_prebuilt_document_async.py
+[sample_analyze_general_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_analyze_general_documents.py
+[sample_analyze_general_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_analyze_general_documents_async.py
 [sample_analyze_invoices]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_analyze_invoices.py
 [sample_analyze_invoices_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_analyze_invoices_async.py
 [sample_analyze_business_cards]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_analyze_business_cards.py
@@ -134,6 +136,8 @@ what you can do with the Azure Form Recognizer client library.
 [sample_get_operations_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_get_operations_async.py
 [sample_copy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_copy_model.py
 [sample_copy_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_copy_model_async.py
+[sample_get_words_on_document_line]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_get_words_on_document_line.py
+[sample_get_words_on_document_line_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_get_words_on_document_line_async.py
 
 <!-- V3.1 links -->
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_authentication.py

@@ -1,5 +1,32 @@
 # Release History
 
+## 10.0.0 (2021-11-01)
+
+**Features**
+
+  - Model ErrorResponse has a new parameter error
+  - Model NetworkRuleSet has a new parameter location
+  - Model Eventhub has a new parameter location
+  - Model ConsumerGroup has a new parameter location
+  - Model ArmDisasterRecovery has a new parameter location
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model PrivateEndpointConnection has a new parameter location
+  - Model Destination has a new parameter data_lake_account_name
+  - Model Destination has a new parameter data_lake_subscription_id
+  - Model Destination has a new parameter data_lake_folder_path
+  - Model EHNamespace has a new parameter alternate_name
+  - Model OperationDisplay has a new parameter description
+  - Model AuthorizationRule has a new parameter location
+  - Added operation NamespacesOperations.list_network_rule_set
+  - Added operation group SchemaRegistryOperations
+
+**Breaking changes**
+
+  - Model ErrorResponse no longer has parameter message
+  - Model ErrorResponse no longer has parameter code
+
 ## 9.1.0 (2021-09-17)
 
 **Features**

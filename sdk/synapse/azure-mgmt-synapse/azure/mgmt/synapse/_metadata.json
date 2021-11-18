@@ -161,6 +161,14 @@
         "integration_runtime_monitoring_data": "IntegrationRuntimeMonitoringDataOperations",
         "integration_runtime_status": "IntegrationRuntimeStatusOperations",
         "spark_configuration": "SparkConfigurationOperations",
-        "spark_configurations": "SparkConfigurationsOperations"
+        "spark_configurations": "SparkConfigurationsOperations",
+        "kusto_operations": "KustoOperationsOperations",
+        "kusto_pools": "KustoPoolsOperations",
+        "kusto_pool_child_resource": "KustoPoolChildResourceOperations",
+        "kusto_pool_attached_database_configurations": "KustoPoolAttachedDatabaseConfigurationsOperations",
+        "kusto_pool_databases": "KustoPoolDatabasesOperations",
+        "kusto_pool_data_connections": "KustoPoolDataConnectionsOperations",
+        "kusto_pool_principal_assignments": "KustoPoolPrincipalAssignmentsOperations",
+        "kusto_pool_database_principal_assignments": "KustoPoolDatabasePrincipalAssignmentsOperations"
     }
 }

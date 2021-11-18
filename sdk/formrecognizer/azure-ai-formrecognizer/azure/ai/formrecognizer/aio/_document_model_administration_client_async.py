@@ -30,7 +30,7 @@ from .._models import (
     DocumentModelInfo,
     ModelOperation,
     ModelOperationInfo,
-    AccountInfo
+    AccountInfo,
 )
 
 if TYPE_CHECKING:
@@ -47,7 +47,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     to another Form Recognizer resource, and composing a new model from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
-        v2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
+        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -62,7 +62,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         <=v2.1, instantiate a FormTrainingClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
 
-    .. versionadded:: v2021-09-30-preview
+    .. versionadded:: 2021-09-30-preview
         The *DocumentModelAdministrationClient* and its client methods.
 
     .. admonition:: Example:
@@ -88,14 +88,20 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW)
+        api_version = kwargs.pop(
+            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+        )
         super(DocumentModelAdministrationClient, self).__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="document",
+            **kwargs
         )
 
     @distributed_trace_async
     async def begin_build_model(
-            self, source: str, **kwargs: Any
+        self, source: str, **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]:
         """Build a custom model.
 
@@ -106,7 +112,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
-            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+            https://aka.ms/azsdk/formrecognizer/buildtrainingset
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
@@ -121,16 +127,20 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_build_model_async.py
-                :start-after: [START build_model]
-                :end-before: [END build_model]
+                :start-after: [START build_model_async]
+                :end-before: [END build_model_async]
                 :language: python
                 :dedent: 4
                 :caption: Building a model from training files.
         """
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(
+                self._generated_models.GetOperationResponse, raw_response
+            )
+            model_info = self._deserialize(
+                self._generated_models.ModelInfo, op_response.result
+            )
             return DocumentModel._from_generated(model_info)
 
         description = kwargs.pop("description", None)
@@ -156,7 +166,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             cls=cls,
             continuation_token=continuation_token,
             polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
+                timeout=polling_interval,
+                lro_algorithms=[DocumentModelAdministrationPolling()],
+                **kwargs
             ),
             **kwargs
         )
@@ -183,8 +195,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_create_composed_model_async.py
-                :start-after: [START composed_model]
-                :end-before: [END composed_model]
+                :start-after: [START composed_model_async]
+                :end-before: [END composed_model_async]
                 :language: python
                 :dedent: 4
                 :caption: Creating a composed model with existing models.
@@ -193,8 +205,12 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         def _compose_callback(
             raw_response, _, headers
         ):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(
+                self._generated_models.GetOperationResponse, raw_response
+            )
+            model_info = self._deserialize(
+                self._generated_models.ModelInfo, op_response.result
+            )
             return DocumentModel._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
@@ -214,7 +230,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 component_models=[
                     self._generated_models.ComponentModelInfo(model_id=model_id)
                     for model_id in model_ids
-                ] if model_ids else []
+                ]
+                if model_ids
+                else [],
             ),
             cls=kwargs.pop("cls", _compose_callback),
             polling=AsyncLROBasePolling(
@@ -249,8 +267,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         response = await self._client.authorize_copy_document_model(
             authorize_copy_request=self._generated_models.AuthorizeCopyRequest(
-                model_id=model_id,
-                description=description
+                model_id=model_id, description=description
             ),
             **kwargs
         )
@@ -281,16 +298,20 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_copy_model_async.py
-                :start-after: [START begin_copy_model]
-                :end-before: [END begin_copy_model]
+                :start-after: [START begin_copy_model_async]
+                :end-before: [END begin_copy_model_async]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource
         """
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(
+                self._generated_models.GetOperationResponse, raw_response
+            )
+            model_info = self._deserialize(
+                self._generated_models.ModelInfo, op_response.result
+            )
             return DocumentModel._from_generated(model_info)
 
         if not model_id:
@@ -310,15 +331,18 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 access_token=target["accessToken"],
                 expiration_date_time=target["expirationDateTime"],
                 target_model_location=target["targetModelLocation"],
-            ) if target else None,
+            )
+            if target
+            else None,
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
+                timeout=polling_interval,
+                lro_algorithms=[DocumentModelAdministrationPolling()],
+                **kwargs
             ),
             continuation_token=continuation_token,
             **kwargs
         )
-
 
     @distributed_trace_async
     async def delete_model(self, model_id: str, **kwargs: Any) -> None:
@@ -332,8 +356,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START delete_model]
-                :end-before: [END delete_model]
+                :start-after: [START delete_model_async]
+                :end-before: [END delete_model_async]
                 :language: python
                 :dedent: 8
                 :caption: Delete a model.
@@ -350,14 +374,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         description, and when it was created.
 
         :return: Pageable of DocumentModelInfo.
-        :rtype: ~azure.core.paging.async_paging.AsyncItemPaged[DocumentModelInfo]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START list_models]
-                :end-before: [END list_models]
+                :start-after: [START list_models_async]
+                :end-before: [END list_models_async]
                 :language: python
                 :dedent: 8
                 :caption: List all models that were built successfully under the Form Recognizer resource.
@@ -366,12 +390,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_models(
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    DocumentModelInfo._from_generated(
-                        x
-                    )
-                    for x in objs
-                ],
+                lambda objs: [DocumentModelInfo._from_generated(x) for x in objs],
             ),
             **kwargs
         )
@@ -387,8 +406,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START get_account_info]
-                :end-before: [END get_account_info]
+                :start-after: [START get_account_info_async]
+                :end-before: [END get_account_info_async]
                 :language: python
                 :dedent: 4
                 :caption: Get model counts and limits under the Form Recognizer resource.
@@ -409,8 +428,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START get_model]
-                :end-before: [END get_model]
+                :start-after: [START get_model_async]
+                :end-before: [END get_model_async]
                 :language: python
                 :dedent: 8
                 :caption: Get a model by its ID.
@@ -419,10 +438,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = await self._client.get_model(
-            model_id=model_id,
-            **kwargs
-        )
+        response = await self._client.get_model(model_id=model_id, **kwargs)
         return DocumentModel._from_generated(response)
 
     @distributed_trace
@@ -434,14 +450,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :return: A pageable of ModelOperationInfo.
-        :rtype: ~azure.core.paging.async_paging.AsyncItemPaged[ModelOperationInfo]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[ModelOperationInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_get_operations_async.py
-                :start-after: [START list_operations]
-                :end-before: [END list_operations]
+                :start-after: [START list_operations_async]
+                :end-before: [END list_operations_async]
                 :language: python
                 :dedent: 4
                 :caption: List all document model operations in the past 24 hours.
@@ -450,10 +466,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_operations(
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    ModelOperationInfo._from_generated(x)
-                    for x in objs
-                ],
+                lambda objs: [ModelOperationInfo._from_generated(x) for x in objs],
             ),
             **kwargs
         )
@@ -474,8 +487,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_get_operations_async.py
-                :start-after: [START get_operation]
-                :end-before: [END get_operation]
+                :start-after: [START get_operation_async]
+                :end-before: [END get_operation_async]
                 :language: python
                 :dedent: 8
                 :caption: Get a document model operation by its ID.
@@ -486,7 +499,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         return ModelOperation._from_generated(
             await self._client.get_operation(operation_id, **kwargs),
-            api_version=self._api_version
+            api_version=self._api_version,
         )
 
     def get_document_analysis_client(self, **kwargs: Any) -> DocumentAnalysisClient:

@@ -23,56 +23,95 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
+FILE: sample_code_schemaregistry_async.py
+DESCRIPTION:
+    This sample demonstrates asynchronously authenticating the SchemaRegistryClient and registering a schema,
+     retrieving a schema by its ID, and retrieving schema properties.
+USAGE:
+    python sample_code_schemaregistry_async.py
+    Set the environment variables with your own values before running the sample:
+    1) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    2) SCHEMAREGISTRY_GROUP - The name of the schema group.
+
+This example uses the async DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on the async DefaultAzureCredential, see
+ https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+"""
 import os
 import asyncio
+import json
 
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry import SchemaFormat
-from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 
 def create_client():
     # [START create_sr_client_async]
-    SCHEMAREGISTRY_FQN = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+    SCHEMAREGISTRY_FQN = os.environ["SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"]
     token_credential = DefaultAzureCredential()
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(
+        fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
+    )
     # [END create_sr_client_async]
-    TENANT_ID = os.environ['AZURE_TENANT_ID']
-    CLIENT_ID = os.environ['AZURE_CLIENT_ID']
-    CLIENT_SECRET = os.environ['AZURE_CLIENT_SECRET']
-    token_credential = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
-    schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential)
     return schema_registry_client, token_credential
 
 
 async def register_schema(schema_registry_client):
     # [START register_schema_async]
-    GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
-    NAME = 'your-schema-name'
-    FORMAT = SchemaFormat.AVRO
-    SCHEMA_DEFINITION = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-    schema_properties = await schema_registry_client.register_schema(GROUP_NAME, NAME, SCHEMA_DEFINITION, FORMAT)
+    GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
+    NAME = "your-schema-name"
+    FORMAT = "Avro"
+    SCHEMA_JSON = {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+            {"name": "name", "type": "string"},
+            {"name": "favorite_number", "type": ["int", "null"]},
+            {"name": "favorite_color", "type": ["string", "null"]},
+        ],
+    }
+    DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+    schema_properties = await schema_registry_client.register_schema(
+        GROUP_NAME, NAME, DEFINITION, FORMAT
+    )
     schema_id = schema_properties.id
     # [END register_schema_async]
     return schema_id
 
 
-async def get_schema(schema_registry_client, id):
+async def get_schema(schema_registry_client, schema_id):
     # [START get_schema_async]
-    schema = await schema_registry_client.get_schema(id)
-    schema_definition = schema.schema_definition
+    schema = await schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
+    properties = schema.properties
     # [END get_schema_async]
-    return schema_definition
+    print(definition)
+    print(properties)
+    return definition
 
 
 async def get_schema_id(schema_registry_client):
-    group_name = os.environ['SCHEMAREGISTRY_GROUP']
-    name = 'your-schema-name'
-    format = SchemaFormat.AVRO
-    schema_definition = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-
     # [START get_schema_id_async]
-    schema_properties = await schema_registry_client.get_schema_properties(group_name, name, schema_definition, format)
+    group_name = os.environ["SCHEMAREGISTRY_GROUP"]
+    name = "your-schema-name"
+    format = "Avro"
+    schema_json = {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+            {"name": "name", "type": "string"},
+            {"name": "favorite_number", "type": ["int", "null"]},
+            {"name": "favorite_color", "type": ["string", "null"]},
+        ],
+    }
+    definition = json.dumps(schema_json, separators=(",", ":"))
+    schema_properties = await schema_registry_client.get_schema_properties(
+        group_name, name, definition, format
+    )
     schema_id = schema_properties.id
     # [END get_schema_id_async]
     return schema_id
@@ -81,11 +120,11 @@ async def get_schema_id(schema_registry_client):
 async def main():
     client, credential = create_client()
     async with client, credential:
-        id = await register_schema(client)
-        schema = await get_schema(client, id)
-        id = await get_schema_id(client)
+        schema_id = await register_schema(client)
+        schema = await get_schema(client, schema_id)
+        schema_id = await get_schema_id(client)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

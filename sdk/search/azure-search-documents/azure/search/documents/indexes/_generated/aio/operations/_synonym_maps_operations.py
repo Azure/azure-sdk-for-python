@@ -16,8 +16,8 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._synonym_maps_operations import build_create_or_update_request, build_create_request, build_delete_request, build_get_request, build_list_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -67,6 +67,13 @@ class SynonymMapsOperations:
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword prefer: For HTTP PUT requests, instructs the service to return the created/updated
+         resource on success. The default value is "return=representation". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype prefer: str
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
@@ -78,6 +85,8 @@ class SynonymMapsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        prefer = kwargs.pop('prefer', "return=representation")  # type: str
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -87,24 +96,27 @@ class SynonymMapsOperations:
 
         request = build_create_or_update_request(
             synonym_map_name=synonym_map_name,
+            prefer=prefer,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
-            json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -142,6 +154,9 @@ class SynonymMapsOperations:
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -153,28 +168,32 @@ class SynonymMapsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_delete_request(
             synonym_map_name=synonym_map_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -196,6 +215,9 @@ class SynonymMapsOperations:
         :type synonym_map_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
@@ -207,26 +229,30 @@ class SynonymMapsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_request(
             synonym_map_name=synonym_map_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SynonymMap', pipeline_response)
@@ -254,6 +280,9 @@ class SynonymMapsOperations:
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListSynonymMapsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListSynonymMapsResult
@@ -265,26 +294,30 @@ class SynonymMapsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_list_request(
+            api_version=api_version,
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListSynonymMapsResult', pipeline_response)
@@ -310,6 +343,9 @@ class SynonymMapsOperations:
         :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
@@ -321,6 +357,7 @@ class SynonymMapsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -329,22 +366,24 @@ class SynonymMapsOperations:
         json = self._serialize.body(synonym_map, 'SynonymMap')
 
         request = build_create_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SynonymMap', pipeline_response)

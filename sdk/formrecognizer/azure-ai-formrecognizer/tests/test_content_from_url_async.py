@@ -108,9 +108,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     async def test_content_continuation_token(self, client):
         async with client:
             initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)

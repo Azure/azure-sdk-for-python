@@ -9,6 +9,7 @@ import datetime
 import msrest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
+from azure.servicebus.management import ApiVersion
 from azure.servicebus.management import QueueProperties
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus._common.utils import utc_now
@@ -759,3 +760,41 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
                 await mgmt_service.update_queue(queue_description_only_name)
         finally:
             await mgmt_service.delete_queue(queue_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_queue_basic_v2017_04(self, servicebus_namespace_connection_string,
+                                                        servicebus_namespace, servicebus_namespace_key_name,
+                                                        servicebus_namespace_primary_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string, api_version=ApiVersion.V2017_04)
+        await clear_queues(mgmt_service)
+
+        await mgmt_service.create_queue("test_queue")
+        queues = await async_pageable_to_list(mgmt_service.list_queues())
+        assert len(queues) == 1 and queues[0].name == "test_queue"
+        queue = await mgmt_service.get_queue("test_queue")
+        assert queue.name == "test_queue"
+        await mgmt_service.delete_queue("test_queue")
+        queues = await async_pageable_to_list(mgmt_service.list_queues())
+        assert len(queues) == 0
+
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
+
+        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace,
+            credential=ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key),
+            api_version=ApiVersion.V2017_04
+        )
+        await mgmt_service.create_queue("test_queue")
+        queues = await async_pageable_to_list(mgmt_service.list_queues())
+        assert len(queues) == 1 and queues[0].name == "test_queue"
+        queue = await mgmt_service.get_queue("test_queue")
+        assert queue.name == "test_queue"
+        await mgmt_service.delete_queue("test_queue")
+        queues = await async_pageable_to_list(mgmt_service.list_queues())
+        assert len(queues) == 0
+
+        with pytest.raises(HttpResponseError):
+            await mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)

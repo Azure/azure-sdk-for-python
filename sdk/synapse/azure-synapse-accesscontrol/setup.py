@@ -84,7 +84,7 @@ setup(
     install_requires=[
         'msrest>=0.5.0',
         'azure-common~=1.1',
-        'azure-core>=1.6.0,<2.0.0',
+        'azure-core>=1.20.0,<2.0.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-synapse-nspkg'],

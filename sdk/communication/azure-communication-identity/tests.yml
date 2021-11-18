@@ -3,11 +3,9 @@ trigger: none
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
       BuildTargetingString: 'azure-communication-identity'
       JobName: identity
       ServiceDirectory: communication
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       CloudConfig:

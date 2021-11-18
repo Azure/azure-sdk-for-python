@@ -21,9 +21,9 @@ from ._available_service_tiers_operations import AvailableServiceTiersOperations
 from ._gateways_operations import GatewaysOperations
 from ._schema_operations import SchemaOperations
 from ._workspace_purge_operations import WorkspacePurgeOperations
+from ._operations import Operations
 from ._tables_operations import TablesOperations
 from ._clusters_operations import ClustersOperations
-from ._operations import Operations
 from ._workspaces_operations import WorkspacesOperations
 from ._deleted_workspaces_operations import DeletedWorkspacesOperations
 
@@ -43,9 +43,9 @@ __all__ = [
     'GatewaysOperations',
     'SchemaOperations',
     'WorkspacePurgeOperations',
+    'Operations',
     'TablesOperations',
     'ClustersOperations',
-    'Operations',
     'WorkspacesOperations',
     'DeletedWorkspacesOperations',
 ]

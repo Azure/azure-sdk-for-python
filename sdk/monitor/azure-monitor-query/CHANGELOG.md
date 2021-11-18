@@ -1,6 +1,22 @@
 # Release History
 
-## 1.0.0b5 (2021-10-05)
+## 1.0.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.1 (2021-11-09)
+
+### Bugs Fixed
+
+- Fixed a bug where Metadata values in timestamp don't show up sometimes.
+
+## 1.0.0 (2021-10-06)
 
 ### Features Added
 
@@ -8,8 +24,7 @@
 - Added `status` attribute to `LogsQueryResult`.
 - Added `LogsQueryStatus` Enum to describe the status of a result.
 - Added a new `LogsTableRow` type that represents a single row in a table.
-- Items in `metrics` list in `MetricsResult` can now be accessed by metric names.
-- Added `audience` keyword to support providing credential scope when creating clients.
+- Items in `metrics` list in `MetricsQueryResult` can now be accessed by metric names.
 
 ### Breaking Changes
 
@@ -19,6 +34,7 @@
 - `query_workspace` API now returns a union of `LogsQueryPartialResult` and `LogsQueryResult`.
 - `query_batch` API now returns a union of `LogsQueryPartialResult`, `LogsQueryError` and `LogsQueryResult`.
 - `metric_namespace` is renamed to `namespace` and is a keyword-only argument in `list_metric_definitions` API.
+- `MetricsResult` is renamed to `MetricsQueryResult`.
 
 ## 1.0.0b4 (2021-09-09)
 

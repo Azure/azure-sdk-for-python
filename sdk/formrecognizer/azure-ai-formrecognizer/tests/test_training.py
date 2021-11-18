@@ -194,9 +194,9 @@ class TestTraining(FormRecognizerTest):
             poller = client.begin_build_model(formrecognizer_storage_container_sas_url,  prefix="subfolder")
             model = poller.result()
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    @pytest.mark.live_test_only
     def test_build_model_continuation_token(self, client, formrecognizer_storage_container_sas_url):
 
         initial_poller = client.begin_build_model(formrecognizer_storage_container_sas_url)

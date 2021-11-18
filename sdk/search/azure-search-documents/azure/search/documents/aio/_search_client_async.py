@@ -175,27 +175,36 @@ class SearchClient(HeadersMixin):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: A value that specifies the language of the search query. Possible values
-         include: "none", "en-us".
+        :keyword query_language: The language of the search query. Possible values include: "none", "en-us",
+         "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
+         "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
+         "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
+         "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
+         "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
+         "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
+         "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
         :keyword query_speller: A value that specified the type of the speller to use to spell-correct
          individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype query_speller: str or ~azure.search.documents.models.Speller
+        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
          the query returns answers extracted from key passages in the highest ranked documents.
          Possible values include: "none", "extractive".
-        :paramtype query_answer: str or ~azure.search.documents.models.Answers
+        :paramtype query_answer: str or ~azure.search.documents.models.QueryAnswerType
         :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
          query answer is 'extractive'.
          Configures the number of answers returned. Default count is 1.
         :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
-        :paramtype query_caption: str or ~azure.search.documents.models.Captions
+        :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
         :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword list[str] semantic_fields: The list of field names used for semantic search.
+        :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
+         processing documents for queries of type semantic.
+        :paramtype semantic_configuration_name: str
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -205,6 +214,19 @@ class SearchClient(HeadersMixin):
          $skip to implement client-side paging of search results. If results are truncated due to
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+        statistics (such as document frequency) globally for more consistent scoring, or locally, for
+        lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+        before scoring. Using global scoring statistics can increase latency of search queries.
+        Possible values include: "local", "global".
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword session_id: A value to be used to create a sticky session, which can help getting more
+        consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+        to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+        interfere with the load balancing of the requests across replicas and adversely affect the
+        performance of the search service. The value used as sessionId cannot start with a '_'
+        character.
+        :paramtype session_id: str
         :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -253,6 +275,8 @@ class SearchClient(HeadersMixin):
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
+        session_id = kwargs.pop("session_id", None)
+        scoring_statistics = kwargs.pop("scoring_statistics", None)
 
         query_answer = kwargs.pop("query_answer", None)
         query_answer_count = kwargs.pop("query_answer_count", None)
@@ -267,6 +291,7 @@ class SearchClient(HeadersMixin):
         )
 
         semantic_fields = kwargs.pop("semantic_fields", None)
+        semantic_configuration = kwargs.pop("semantic_configuration_name", None)
 
         query = SearchQuery(
             search_text=search_text,
@@ -288,9 +313,12 @@ class SearchClient(HeadersMixin):
             answers=answers,
             captions=captions,
             semantic_fields=",".join(semantic_fields) if semantic_fields else None,
+            semantic_configuration=semantic_configuration,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top,
+            session_id=session_id,
+            scoring_statistics=scoring_statistics
         )
         if isinstance(select, list):
             query.select(select)

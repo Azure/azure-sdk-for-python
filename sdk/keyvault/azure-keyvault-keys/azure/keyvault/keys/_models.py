@@ -264,7 +264,7 @@ class KeyReleasePolicy(object):
 
     def __init__(self, data, **kwargs):
         # type: (bytes, **Any) -> None
-        self.data = data
+        self.encoded_policy = data
         self.content_type = kwargs.get("content_type", None)
 
 
@@ -337,7 +337,7 @@ class KeyRotationPolicy(object):
             return cls(
                 policy_id=policy.id,
                 lifetime_actions=lifetime_actions,
-                expires_on=policy.attributes.expiry_time,
+                expires_in=policy.attributes.expiry_time,
                 created_on=policy.attributes.created,
                 updated_on=policy.attributes.updated,
             )
@@ -573,13 +573,3 @@ class DeletedKey(KeyVaultKey):
         :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date
-
-
-class RandomBytes(object):
-    """Contains random bytes returned from a managed HSM.
-
-    :param bytes value: the random bytes
-    """
-
-    def __init__(self, value):
-        self.value = value

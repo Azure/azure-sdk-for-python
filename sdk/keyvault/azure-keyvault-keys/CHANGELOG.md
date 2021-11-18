@@ -1,18 +1,48 @@
 # Release History
 
-## 4.5.0b4 (Unreleased)
+## 4.5.0b6 (Unreleased)
 
 ### Features Added
-- Added support for automated and on-demand key rotation in Azure Key Vault
-  ([#19840](https://github.com/Azure/azure-sdk-for-python/issues/19840))
-  - Added `KeyClient.rotate_key` to rotate a key on-demand
-  - Added `KeyClient.update_key_rotation_policy` to update a key's automated rotation policy
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.5.0b5 (2021-11-11)
+
+### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.get_random_bytes` now returns bytes instead of RandomBytes. The RandomBytes class
+  has been removed
+- Renamed the `version` keyword-only argument in `KeyClient.get_cryptography_client` to
+  `key_version`
+- Renamed `KeyReleasePolicy.data` to `KeyReleasePolicy.encoded_policy`
+- Renamed the `target` parameter in `KeyClient.release_key` to `target_attestation_token`
+
+### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
+
+## 4.5.0b4 (2021-10-07)
+
+### Features Added
+- Added `KeyClient.get_cryptography_client`, which provides a simple way to create a
+  `CryptographyClient` for a key, given its name and optionally a version
+  ([#20621](https://github.com/Azure/azure-sdk-for-python/issues/20621))
+- Added support for automated and on-demand key rotation in Azure Key Vault
+  ([#19840](https://github.com/Azure/azure-sdk-for-python/issues/19840))
+  - Added `KeyClient.rotate_key` to rotate a key on-demand
+  - Added `KeyClient.update_key_rotation_policy` to update a key's automated rotation policy
+
+### Other Changes
+- `CryptographyClient` no longer requires a key version when providing a key ID to its constructor
+  (though providing a version is still recommended)
 
 ## 4.5.0b3 (2021-09-09)
 

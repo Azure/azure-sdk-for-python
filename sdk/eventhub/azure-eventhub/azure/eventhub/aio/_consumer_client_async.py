@@ -161,7 +161,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             network_tracing=network_tracing,
             **kwargs
         )
-        self._lock = asyncio.Lock(loop=self._loop)
+        self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
 
     async def __aenter__(self):
@@ -198,7 +198,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            loop=self._loop,
+            **self._internal_kwargs
         )
         return handler
 
@@ -378,7 +378,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 owner_level=owner_level,
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-                loop=self._loop,
+                **self._internal_kwargs
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
@@ -687,7 +687,6 @@ class EventHubConsumerClient(ClientBaseAsync):
             await asyncio.gather(
                 *[p.stop() for p in self._event_processors.values()],
                 return_exceptions=True,
-                loop=self._loop
             )
             self._event_processors = {}
             await super(EventHubConsumerClient, self)._close_async()

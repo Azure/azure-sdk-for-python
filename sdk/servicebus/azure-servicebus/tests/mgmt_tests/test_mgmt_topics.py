@@ -8,7 +8,8 @@ import pytest
 import datetime
 
 import msrest
-from azure.servicebus.management import ServiceBusAdministrationClient, TopicProperties
+from azure.servicebus.management import ServiceBusAdministrationClient, TopicProperties, ApiVersion
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -485,3 +486,41 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
                 mgmt_service.update_topic(topic_description_only_name)
         finally:
             mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_topic_basic_v2017_04(self, servicebus_namespace_connection_string, servicebus_namespace,
+                                    servicebus_namespace_key_name, servicebus_namespace_primary_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string, api_version=ApiVersion.V2017_04)
+        clear_topics(mgmt_service)
+
+        mgmt_service.create_topic("test_topic")
+        topics = list(mgmt_service.list_topics())
+        assert len(topics) == 1 and topics[0].name == "test_topic"
+        topic = mgmt_service.get_topic("test_topic")
+        assert topic.name == "test_topic"
+        mgmt_service.delete_topic("test_topic")
+        topics = list(mgmt_service.list_topics())
+        assert len(topics) == 0
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)
+
+        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace,
+            credential=ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key),
+            api_version=ApiVersion.V2017_04
+        )
+
+        mgmt_service.create_topic("test_topic")
+        topics = list(mgmt_service.list_topics())
+        assert len(topics) == 1 and topics[0].name == "test_topic"
+        topic = mgmt_service.get_topic("test_topic")
+        assert topic.name == "test_topic"
+        mgmt_service.delete_topic("test_topic")
+        topics = list(mgmt_service.list_topics())
+        assert len(topics) == 0
+
+        with pytest.raises(HttpResponseError):
+            mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)

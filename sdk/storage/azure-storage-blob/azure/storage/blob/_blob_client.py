@@ -8,8 +8,8 @@ from functools import partial
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar, Type)
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -74,6 +74,8 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
+ClassType = TypeVar("ClassType")
+
 
 class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
@@ -101,8 +103,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -202,7 +204,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
-        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        # type: (Type[ClassType], str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> ClassType
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -272,13 +274,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobClient
+        ):  # type: (...) -> ClassType
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
@@ -1869,9 +1872,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
         requires_sync = kwargs.pop('requires_sync', None)
+        encryption_scope_str = kwargs.pop('encryption_scope', None)
         source_authorization = kwargs.pop('source_authorization', None)
+
+        if not requires_sync and encryption_scope_str:
+            raise ValueError("Encryption_scope is only supported for sync copy, please specify requires_sync=True")
         if source_authorization and incremental_copy:
             raise ValueError("Source authorization tokens are not applicable for incremental copying.")
+        #
+        # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
+        #  when requires_sync=True is set.
+        #  Currently both sync copy and async copy are calling _generated/_blob_operations.py start_copy_from_url.
+        #  As sync copy diverges more from async copy, more problem will surface.
+        if encryption_scope_str:
+            headers.update({'x-ms-encryption-scope': encryption_scope_str})
+
         if requires_sync is True:
             headers['x-ms-requires-sync'] = str(requires_sync)
             if source_authorization:
@@ -2056,6 +2071,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string. This option is only available when `incremental_copy` is
             set to False and `requires_sync` is set to True.
+
+            .. versionadded:: 12.9.0
+
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the sync copied blob. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.10.0
+
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
 

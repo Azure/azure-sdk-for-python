@@ -16,8 +16,8 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._indexers_operations import build_create_or_update_request, build_create_request, build_delete_request, build_get_request, build_get_status_request, build_list_request, build_reset_docs_request, build_reset_request, build_run_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -56,6 +56,9 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -67,26 +70,30 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_reset_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.reset.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -100,7 +107,7 @@ class IndexersOperations:
         self,
         indexer_name: str,
         overwrite: Optional[bool] = False,
-        keys_or_ids: Optional["_models.Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema"] = None,
+        keys_or_ids: Optional["_models.DocumentKeysOrIds"] = None,
         request_options: Optional["_models.RequestOptions"] = None,
         **kwargs: Any
     ) -> None:
@@ -112,10 +119,12 @@ class IndexersOperations:
          keys or ids in this payload will be queued to be re-ingested.
         :type overwrite: bool
         :param keys_or_ids:
-        :type keys_or_ids:
-         ~azure.search.documents.indexes.models.Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -127,35 +136,38 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         if keys_or_ids is not None:
-            json = self._serialize.body(keys_or_ids, 'Paths1Cj7DxmIndexersIndexernameSearchResetdocsPostRequestbodyContentApplicationJsonSchema')
+            json = self._serialize.body(keys_or_ids, 'DocumentKeysOrIds')
         else:
             json = None
 
         request = build_reset_docs_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             overwrite=overwrite,
             x_ms_client_request_id=_x_ms_client_request_id,
-            json=json,
             template_url=self.reset_docs.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -177,6 +189,9 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -188,26 +203,30 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_run_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.run.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -223,8 +242,8 @@ class IndexersOperations:
         indexer: "_models.SearchIndexer",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
-        ignore_reset_requirements: Optional[bool] = None,
         request_options: Optional["_models.RequestOptions"] = None,
         **kwargs: Any
     ) -> "_models.SearchIndexer":
@@ -240,13 +259,20 @@ class IndexersOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
          detection.
         :type disable_cache_reprocessing_change_detection: bool
-        :param ignore_reset_requirements: Ignores cache reset requirements.
-        :type ignore_reset_requirements: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword prefer: For HTTP PUT requests, instructs the service to return the created/updated
+         resource on success. The default value is "return=representation". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype prefer: str
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -258,6 +284,8 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        prefer = kwargs.pop('prefer', "return=representation")  # type: str
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -267,26 +295,29 @@ class IndexersOperations:
 
         request = build_create_or_update_request(
             indexer_name=indexer_name,
+            prefer=prefer,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
-            ignore_reset_requirements=ignore_reset_requirements,
-            json=json,
             template_url=self.create_or_update.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -324,6 +355,9 @@ class IndexersOperations:
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -335,28 +369,32 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_delete_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
             template_url=self.delete.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -378,6 +416,9 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -389,26 +430,30 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexer', pipeline_response)
@@ -436,6 +481,9 @@ class IndexersOperations:
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListIndexersResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListIndexersResult
@@ -447,26 +495,30 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_list_request(
+            api_version=api_version,
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListIndexersResult', pipeline_response)
@@ -492,6 +544,9 @@ class IndexersOperations:
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -503,6 +558,7 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -511,22 +567,24 @@ class IndexersOperations:
         json = self._serialize.body(indexer, 'SearchIndexer')
 
         request = build_create_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexer', pipeline_response)
@@ -552,6 +610,9 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerStatus, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
@@ -563,26 +624,30 @@ class IndexersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_status_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get_status.metadata['url'],
-        )._to_pipeline_transport_request()
+        )
+        request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerStatus', pipeline_response)

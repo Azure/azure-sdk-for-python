@@ -1,12 +1,11 @@
 # Azure Form Recognizer client library for Python
 
-Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents.
-It includes the following main features:
+Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
-* Layout - Extract text, table structures, and selection marks, along with their bounding region coordinates, from documents.
-* Document - Analyze entities, key-value pairs, tables, and selection marks from documents using the general prebuilt document model. 
-* Prebuilt - Analyze data from certain types of common documents (such as receipts, invoices, business cards, or identity documents) using prebuilt models.
-* Custom - Build custom models to extract text, field values, selection marks, and table data from documents. Custom models are built with your own data, so they're tailored to your documents.
+- Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
+- Document - Analyze key-value pairs and entities in addition to general layout from documents.
+- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents) using prebuilt models.
+- Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -28,19 +27,19 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the 2021-09-30-preview version of the service
+> Note: This version of the client library defaults to the `2021-09-30-preview` version of the service.
 
-This table shows the relationship between SDK versions and supported API versions of the service
+This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b1 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
+|3.2.0b2 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
-> Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the Migration Guide for detailed instructions on how to update application
-> code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
+> Note: Starting with version `2021-09-30-preview`, a new set of clients were introduced to leverage the newest features
+> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
+> code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
@@ -49,40 +48,41 @@ This table shows the relationship between SDK versions and supported API version
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
-#### Create a Form Recognizer resource
-Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
-Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource.
+#### Create a Cognitive Services or Form Recognizer resource
+Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
-You can create the resource using
+You can create either resource using: 
 
-**Option 1:** [Azure Portal][azure_portal_create_FR_resource]
+* Option 1: [Azure Portal][cognitive_resource_portal].
+* Option 2: [Azure CLI][cognitive_resource_cli].
 
-**Option 2:** [Azure CLI][azure_cli_create_FR_resource].
 Below is an example of how you can create a Form Recognizer resource using the CLI:
 
-```bash
-# Create a new resource group to hold the form recognizer resource -
+```PowerShell
+# Create a new resource group to hold the form recognizer resource
 # if using an existing resource group, skip this step
-az group create --name my-resource-group --location westus2
+az group create --name <your-resource-name> --location <location>
 ```
 
-```bash
+```PowerShell
 # Create form recognizer
 az cognitiveservices account create \
-    --name form-recognizer-resource \
-    --resource-group my-resource-group \
+    --name <your-resource-name> \
+    --resource-group <your-resource-group-name> \
     --kind FormRecognizer \
-    --sku F0 \
-    --location westus2 \
+    --sku <sku> \
+    --location <location> \
     --yes
 ```
+
+For more information about creating the resource or how to get the location and sku information see [here][cognitive_resource_cli].
 
 ### Authenticate the client
 In order to interact with the Form Recognizer service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 
-#### Looking up the endpoint
+#### Get the endpoint
 You can find the endpoint for your Form Recognizer resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
@@ -92,12 +92,23 @@ or [Azure CLI][azure_cli_endpoint_lookup]:
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
+Either a regional endpoint or a custom subdomain can be used for authentication. They are formatted as follows:
+
+```
+Regional endpoint: https://<region>.api.cognitive.microsoft.com/
+Custom subdomain: https://<resource-name>.cognitiveservices.azure.com/
+```
+
+A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support AAD authentication.
+
+A custom subdomain, on the other hand, is a name that is unique to the Form Recognizer resource. They can only be used by [single-service resources][cognitive_resource_portal].
+
 #### Get the API key
 
-The API key can be found in the Azure Portal or by running the following Azure CLI command:
+The API key can be found in the [Azure Portal][azure_portal] or by running the following Azure CLI command:
 
 ```bash
-az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"
+az cognitiveservices account keys list --name "<resource-name>" --resource-group "<resource-group-name>"
 ```
 
 #### Create the client with AzureKeyCredential
@@ -126,8 +137,7 @@ with the Azure SDK, please install the `azure-identity` package:
 
 ```pip install azure-identity```
 
-You will also need to [register a new AAD application and grant access][register_aad_app] to
-Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new AAD application and grant access][register_aad_app] to Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -135,8 +145,8 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
-credential = DefaultAzureCredential()
 
+credential = DefaultAzureCredential()
 document_analysis_client = DocumentAnalysisClient(
     endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
     credential=credential
@@ -146,31 +156,32 @@ document_analysis_client = DocumentAnalysisClient(
 ## Key concepts
 
 ### DocumentAnalysisClient
-`DocumentAnalysisClient` provides operations for analyzing input documents using custom and prebuilt models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
+`DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
 Use the `model` parameter to select the type of model for analysis.
 
 |Model| Features
 |-|-
-|"prebuilt-layout"| Text extraction, selection marks, tables
-|"prebuilt-document"| Text extraction, selection marks, tables, key-value pairs and entities
-|"prebuilt-invoices"| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
-|"prebuilt-businessCard"| Text extraction and pre-trained fields and values pertaining to English business cards
-|"prebuilt-idDocument"| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
-|"prebuilt-receipt"| Text extraction and pre-trained fields and values pertaining to English sales receipts
-|"{custom-model-id}"| Text extraction, selection marks, tables, labeled fields and values from your custom documents
+|`prebuilt-layout`| Text extraction, selection marks, tables
+|`prebuilt-document`| Text extraction, selection marks, tables, key-value pairs and entities
+|`prebuilt-invoices`| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
+|`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
+|`prebuilt-idDocument`| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
+|`prebuilt-receipt`| Text extraction and pre-trained fields and values pertaining to English sales receipts
+|`{custom-model-id}`| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
+More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
 
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
+- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
-Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
+Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -189,9 +200,10 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
 
-* [Extract layout](#extract-layout "Extract Layout")
+* [Extract Layout](#extract-layout "Extract Layout")
+* [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
-* [Build a Model](#build-a-model "Build a model")
+* [Build a Custom Model](#build-a-custom-model "Build a custom model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
@@ -271,10 +283,113 @@ for table_idx, table in enumerate(result.tables):
         )
 ```
 
+### Using the General Document Model
+Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
+Select the General Document Model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
+
+```python
+from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+document_analysis_client = DocumentAnalysisClient(endpoint, credential)
+
+with open("<path to your document>", "rb") as fd:
+    document = fd.read()
+
+poller = document_analysis_client.begin_analyze_document("prebuilt-document", document)
+result = poller.result()
+
+print("----Entities found in document----")
+for entity in result.entities:
+    print("Entity '{}' has category '{}' with sub-category '{}'".format(
+        entity.content, entity.category, entity.sub_category
+    ))
+    print("...with confidence {}\n".format(entity.confidence))
+
+print("----Key-value pairs found in document----")
+for kv_pair in result.key_value_pairs:
+    if kv_pair.key:
+        print(
+                "Key '{}' found within '{}' bounding regions".format(
+                    kv_pair.key.content,
+                    kv_pair.key.bounding_regions,
+                )
+            )
+    if kv_pair.value:
+        print(
+                "Value '{}' found within '{}' bounding regions\n".format(
+                    kv_pair.value.content,
+                    kv_pair.value.bounding_regions,
+                )
+            )
+
+print("----Tables found in document----")
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                region.bounding_box,
+            )
+        )
+
+print("----Styles found in document----")
+for style in result.styles:
+    if style.is_handwritten:
+        print("Document contains handwritten content: ")
+        print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+
+for page in result.pages:
+    print("----Analyzing document from page #{}----".format(page.page_number))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
+
+    for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
+        print(
+            "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+                line_idx,
+                len(words),
+                line.content,
+                format_bounding_box(line.bounding_box),
+            )
+        )
+
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
+            )
+
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                selection_mark.bounding_box,
+                selection_mark.confidence,
+            )
+        )
+```
+
+- Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
+
 ### Using Prebuilt Models
 Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
 
-For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_documents` method:
+For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -310,7 +425,8 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 
-### Build a model
+
+### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
 Provide a container SAS URL to your Azure Storage Blob container where you're storing the training documents.
 
@@ -454,6 +570,7 @@ except ResourceNotFoundError:
 
 ### General
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
 
 ### Logging
 This library uses the standard
@@ -498,14 +615,19 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
 [azure_subscription]: https://azure.microsoft.com/free/
+[azure_portal]: https://ms.portal.azure.com/
+[regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=azure-applied-ai-services
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
-[azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
-[azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
+[cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
+[cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
-[fr-labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr-studio]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
+[fr-models]: https://aka.ms/azsdk/formrecognizer/models
+[fr-errors]: https://aka.ms/azsdk/formrecognizer/errors
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
@@ -522,9 +644,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 [service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
 [service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
+[service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
+[migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

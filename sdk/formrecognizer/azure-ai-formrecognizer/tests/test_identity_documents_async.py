@@ -185,9 +185,9 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             else:
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     async def test_identity_document_continuation_token(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()

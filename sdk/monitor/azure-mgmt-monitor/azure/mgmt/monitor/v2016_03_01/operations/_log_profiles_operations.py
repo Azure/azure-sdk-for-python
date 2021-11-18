@@ -71,7 +71,7 @@ class LogProfilesOperations(object):
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -93,7 +93,7 @@ class LogProfilesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}'}  # type: ignore
 
     def get(
         self,
@@ -122,7 +122,7 @@ class LogProfilesOperations(object):
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -140,7 +140,7 @@ class LogProfilesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LogProfileResource', pipeline_response)
@@ -149,7 +149,7 @@ class LogProfilesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}'}  # type: ignore
 
     def create_or_update(
         self,
@@ -182,7 +182,7 @@ class LogProfilesOperations(object):
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -212,7 +212,7 @@ class LogProfilesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}'}  # type: ignore
 
     def update(
         self,
@@ -244,7 +244,7 @@ class LogProfilesOperations(object):
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -267,7 +267,7 @@ class LogProfilesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LogProfileResource', pipeline_response)
@@ -276,7 +276,7 @@ class LogProfilesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}'}  # type: ignore
 
     def list(
         self,
@@ -307,7 +307,7 @@ class LogProfilesOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -343,4 +343,4 @@ class LogProfilesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles'}  # type: ignore

@@ -241,9 +241,9 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    @pytest.mark.live_test_only
     async def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
         with open(self.form_jpg, "rb") as fd:
@@ -414,3 +414,27 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    async def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_document_analysis_client()
+
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+
+        async with client:
+            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url)
+            model = await build_polling.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_analyze_document(
+                    model.model_id,
+                    myfile,
+                )
+                result = await poller.result()
+
+        assert result.documents[0].fields.get("FullSignature").value == "signed"
+        assert result.documents[0].fields.get("FullSignature").value_type == "signature"
+        # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
+        assert result.documents[0].fields.get("FullSignature").content == None

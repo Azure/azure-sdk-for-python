@@ -128,9 +128,9 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
             else:
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     def test_identity_document_continuation_token(self, client):
         initial_poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         cont_token = initial_poller.continuation_token()

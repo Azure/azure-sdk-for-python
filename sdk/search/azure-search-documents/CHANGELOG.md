@@ -1,6 +1,26 @@
 # Release History
 
-## 11.3.0b4 (Unreleased)
+## 11.3.0b6 (Unreleased)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `semantic_configuration_name`
+- Added properties to `SearchIndex`: `semantic_settings`
+- Added models: `PrioritizedFields`, `SemanticConfiguration`, `SemanticField`, `SemanticSettings`
+- Added new values to model `QueryLanguage`
+
+## 11.3.0b5 (2021-11-09)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `session_id`, `scoring_statistics`.
+- Added properties to `SearchIndexerDataSourceConnection`: `identity`, `encryption_key`.
+- Added `select` property to the following `SearchIndexClient` operations: `get_synonym_maps`, `list_indexes`.
+- Added `select` property to the following `SearchIndexersClient` operations: `get_data_source_connections`, `get_indexers`, `get_skillsets`.
+- Added operations to `SearchIndexerClient`: `reset_skills`, `reset_documents`.
+- Added model: `DocumentKeysOrIds`
+
+## 11.3.0b4 (2021-10-05)
 
 ### Features Added
 
@@ -10,19 +30,18 @@
 ### Breaking Changes
 
 - Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Renamed model `Speller` to `QuerySpellerType`.
+- Renamed model `Answers` to `QueryAnswerType`. 
 - Removed keyword arguments from `SearchClient`: `answers` and `captions`.
 - `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
-
-### Bugs Fixed
-
-### Other Changes
+- Renamed property `ignore_reset_requirements` to `skip_indexer_reset_requirement_for_cache`.
 
 ## 11.3.0b3 (2021-09-08)
 
 ### Features Added
 
 - Added new models: 
-  - `azure.search.documents.models.Captions`
+  - `azure.search.documents.models.QueryCaptionType`
   - `azure.search.documents.models.CaptionResult`
   - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
   - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`

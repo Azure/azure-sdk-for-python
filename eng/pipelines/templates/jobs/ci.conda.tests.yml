@@ -31,6 +31,9 @@ parameters:
   - name: CloudConfig
     type: object
     default: {}
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -70,6 +73,9 @@ jobs:
         PackageName: "azure-template"
         ServiceDirectory: "template"
         TestPipeline: ${{ parameters.TestPipeline }}
+
+    - ${{if eq(parameters.TestProxy, true) }}:
+      - template: /eng/common/testproxy/test-proxy-tool.yml
 
     - task: UsePythonVersion@0
       displayName: 'Use Python $(PythonVersion)'

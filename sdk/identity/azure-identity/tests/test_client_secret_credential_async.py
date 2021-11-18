@@ -7,7 +7,6 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
@@ -251,23 +250,24 @@ async def test_cache_multiple_clients():
 
 
 @pytest.mark.asyncio
-async def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+async def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        assert "tenant_id" not in kwargs, "tenant_id kwarg shouldn't get passed to send method"
+
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+
         token = first_token if tenant == first_tenant else second_token
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = ClientSecretCredential(
-        first_tenant, "client-id", "secret", allow_multitenant_authentication=True, transport=Mock(send=send)
+        first_tenant, "client-id", "secret", transport=Mock(send=send)
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -284,9 +284,21 @@ async def test_allow_multitenant_authentication():
 
 
 @pytest.mark.asyncio
-async def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
+async def test_live_multitenant_authentication(live_service_principal):
+    # first create a credential with a non-existent tenant
+    credential = ClientSecretCredential(
+        "...", live_service_principal["client_id"], live_service_principal["client_secret"]
+    )
+    # then get a valid token for an actual tenant
+    token = await credential.get_token(
+        "https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"]
+    )
+    assert token.token
+    assert token.expires_on
 
+
+@pytest.mark.asyncio
+async def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
@@ -301,15 +313,12 @@ async def test_multitenant_authentication_not_allowed():
     token = await credential.get_token("scope")
     assert token.token == expected_token
 
-    # explicitly specifying the configured tenant is okay
     token = await credential.get_token("scope", tenant_id=expected_tenant)
     assert token.token == expected_token
 
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token * 2
 
-    # ...unless the compat switch is enabled
-    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"
+        assert token.token == expected_token
