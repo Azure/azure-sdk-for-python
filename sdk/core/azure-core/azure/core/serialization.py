@@ -179,13 +179,34 @@ def _deserialize_datetime(attr: str) -> datetime:
         raise OverflowError("Hit max or min date")
     return date_obj
 
+def _deserialize_date(attr: str) -> date:
+    """Deserialize ISO-8601 formatted string into Date object.
+    :param str attr: response string to be deserialized.
+    :rtype: Date
+    """
+    # This must NOT use defaultmonth/defaultday. Using None ensure this raises an exception.
+    return isodate.parse_date(attr, defaultmonth=None, defaultday=None)
+
+def _deserialize_time(attr: str) -> time:
+    """Deserialize ISO-8601 formatted string into time object.
+
+    :param str attr: response string to be deserialized.
+    :rtype: datetime.time
+    """
+    return isodate.parse_time(attr)
+
+
+_DESERIALIZE_MAPPING = {
+    datetime: _deserialize_datetime,
+    date: _deserialize_date,
+    time: _deserialize_time,
+}
+
 def _deserialize(obj: Any, type) -> Any:
     try:
         return type(obj)
     except Exception:
-        if type == datetime:
-            return _deserialize_datetime(obj)
-        return obj
+        return _DESERIALIZE_MAPPING.get(type, lambda x: x)(obj)
 
 class Model(dict):
 

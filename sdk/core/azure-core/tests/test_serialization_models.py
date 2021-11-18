@@ -170,17 +170,17 @@ def test_modify_property():
 def test_property_is_a_type():
     class Fish(Model):
 
-        @rest_property(name="name")
+        @rest_property()
         def name(self) -> str:
             """My Fish name"""
 
-        @rest_property(name="species")
+        @rest_property()
         def species(self) -> Literal['Salmon', 'Halibut']:
             """My species"""
 
     class Fishery(Model):
 
-        @rest_property(name="fish")
+        @rest_property()
         def fish(self) -> Fish:
             """The fish in my fishery."""
 
@@ -212,3 +212,51 @@ def test_datetime_deserialization():
     assert isinstance(model.my_prop, DatetimeModel)
     assert model.my_prop['datetimeValue'] == model['myProp']['datetimeValue'] == val_str
     assert model.my_prop.datetime_value == val
+
+def test_date_deserialization():
+    class DateModel(Model):
+
+        @rest_property(name="dateValue")
+        def date_value(self) -> datetime.date:
+            """My date value"""
+
+    val_str = "2016-02-29"
+    val = isodate.parse_date(val_str)
+    model = DateModel({"dateValue": val_str})
+    assert model['dateValue'] == val_str
+    assert model.date_value == val
+
+    class BaseModel(Model):
+
+        @rest_property(name="myProp")
+        def my_prop(self) -> DateModel:
+            """My property, which is an instance of DateModel"""
+
+    model = BaseModel({"myProp": {"dateValue": val_str}})
+    assert isinstance(model.my_prop, DateModel)
+    assert model.my_prop['dateValue'] == model['myProp']['dateValue'] == val_str
+    assert model.my_prop.date_value == val
+
+def test_time_deserialization():
+    class TimeModel(Model):
+
+        @rest_property(name="timeValue")
+        def time_value(self) -> datetime.time:
+            """My time value"""
+
+    val_str = '11:34:56'
+    val = datetime.time(11, 34, 56)
+    model = TimeModel({"timeValue": val_str})
+    assert model['timeValue'] == val_str
+    assert model.time_value == val
+
+    class BaseModel(Model):
+
+        @rest_property(name="myProp")
+        def my_prop(self) -> TimeModel:
+            """My property, which is an instance of TimeModel"""
+
+    model = BaseModel({"myProp": {"timeValue": val_str}})
+    assert isinstance(model.my_prop, TimeModel)
+    assert model.my_prop['timeValue'] == model['myProp']['timeValue'] == val_str
+    assert model.my_prop.time_value == val
