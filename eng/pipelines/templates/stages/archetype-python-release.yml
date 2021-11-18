@@ -264,6 +264,8 @@ stages:
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
         vmImage: MMSUbuntu20.04
+      variables: 
+        DocValidationImageId: azuresdkimages.azurecr.io/pyrefautocr:latest
       steps:
         - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
           parameters:
@@ -274,7 +276,12 @@ stages:
         - pwsh: |
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
           displayName: Show visible artifacts
-
+        # Pull and build the docker image.
+        - template: /eng/common/pipelines/templates/steps/docker-pull-image.yml
+          parameters:
+            ContainerRegistryClientId: $(azuresdkimages-cr-clientid)
+            ContainerRegistryClientSecret: $(azuresdkimages-cr-clientsecret)
+            ImageId: "$(DocValidationImageId)"
         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
           parameters:
             PackageInfoLocations:
