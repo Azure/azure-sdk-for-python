@@ -36,3 +36,9 @@ def iterable():
 @streams_api.route('/error', methods=['GET'])
 def error():
     return Response(stream_json_error(), status=400)
+
+@streams_api.route('/string', methods=['GET'])
+def string():
+    return Response(
+        "test", status=200, mimetype="text/plain"
+    )
