@@ -16,8 +16,8 @@ class PerfStressTest(BatchPerfTest):
         await self.run_async()
         return 1
 
-    def run_sync(self) -> int:
+    def run_sync(self) -> None:
         raise NotImplementedError("run_sync must be implemented for {}".format(self.__class__.__name__))
 
-    async def run_async(self) -> int:
+    async def run_async(self) -> None:
         raise NotImplementedError("run_async must be implemented for {}".format(self.__class__.__name__))
