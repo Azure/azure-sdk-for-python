@@ -169,6 +169,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
+    @recorded_by_proxy_async
     async def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_pii_entities(
@@ -177,6 +178,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
+    @recorded_by_proxy_async
     async def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_pii_entities(
@@ -364,6 +366,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
+    @recorded_by_proxy_async
     async def test_client_passed_default_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -402,6 +405,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
@@ -601,6 +605,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @recorded_by_proxy_async
     async def test_recognize_pii_entities_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_pii_entities(["this should fail"])
@@ -666,6 +671,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @recorded_by_proxy_async
     async def test_string_index_type_explicit_fails_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_pii_entities(["this should fail"], string_index_type="UnicodeCodePoint")
