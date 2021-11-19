@@ -65,34 +65,7 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
         return kwargs
 
 
-class FakeTokenCredential(object):
-    """Protocol for classes able to provide OAuth tokens.
-    :param str scopes: Lets you specify the type of access needed.
-    """
-    def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
-
-    def get_token(self, *args):
-        return self.token
-
-
 class TextAnalyticsTest(AzureRecordedTestCase):
-
-    def get_oauth_endpoint(self):
-        return os.getenv("TEXTANALYTICS_TEST_ENDPOINT")
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("TEXTANALYTICS_TENANT_ID"),
-                os.getenv("TEXTANALYTICS_CLIENT_ID"),
-                os.getenv("TEXTANALYTICS_CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
 
     def assertOpinionsEqual(self, opinion_one, opinion_two):
         assert opinion_one.sentiment == opinion_two.sentiment

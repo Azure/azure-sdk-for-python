@@ -11,7 +11,7 @@ import functools
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
-from asynctestcase import AsyncTextAnalyticsTest
+from testcase import TextAnalyticsTest
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -20,7 +20,7 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 # the first one
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-class TestEncoding(AsyncTextAnalyticsTest):
+class TestEncoding(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

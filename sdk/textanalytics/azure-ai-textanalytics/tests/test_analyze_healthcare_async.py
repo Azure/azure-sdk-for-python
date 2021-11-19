@@ -15,7 +15,7 @@ from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
-from asynctestcase import AsyncTextAnalyticsTest
+from testcase import TextAnalyticsTest
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -28,7 +28,7 @@ from azure.ai.textanalytics import (
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
-class TestHealth(AsyncTextAnalyticsTest):
+class TestHealth(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 

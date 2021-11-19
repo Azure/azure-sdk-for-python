@@ -5,17 +5,17 @@
 # ------------------------------------
 
 import pytest
-
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
 class TestAuth(TextAnalyticsTest):
+
     @pytest.mark.live_test_only
-    def test_active_directory_auth(self):
-        token = self.generate_oauth_token()
-        endpoint = self.get_oauth_endpoint()
-        text_analytics = TextAnalyticsClient(endpoint, token)
+    @TextAnalyticsPreparer()
+    def test_active_directory_auth(self, textanalytics_test_endpoint):
+        token = self.get_credential(TextAnalyticsClient)
+        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token)
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},

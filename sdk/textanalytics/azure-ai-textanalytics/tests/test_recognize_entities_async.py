@@ -21,13 +21,13 @@ from azure.ai.textanalytics import (
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
-from asynctestcase import AsyncTextAnalyticsTest
+from testcase import TextAnalyticsTest
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
-class TestRecognizeEntities(AsyncTextAnalyticsTest):
+class TestRecognizeEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
