@@ -86,9 +86,9 @@ parameters:
   - name: PlatformPostSteps
     type: object
     default: []
-- name: TestProxy
-  type: boolean
-  default: false
+  - name: TestProxy
+    type: boolean
+    default: false
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
