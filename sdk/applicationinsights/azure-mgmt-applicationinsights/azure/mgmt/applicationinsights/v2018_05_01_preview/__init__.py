@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._application_insights_management_client import ApplicationInsightsManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ApplicationInsightsManagementClient']
 
 try:

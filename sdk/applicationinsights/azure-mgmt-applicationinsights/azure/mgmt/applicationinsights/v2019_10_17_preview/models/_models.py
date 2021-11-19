@@ -135,7 +135,7 @@ class WorkbookTemplate(WorkbookTemplateResource):
     :param author: Information about the author of the workbook template.
     :type author: str
     :param template_data: Valid JSON object containing workbook template payload.
-    :type template_data: object
+    :type template_data: any
     :param galleries: Workbook galleries supported by the template.
     :type galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -216,7 +216,7 @@ class WorkbookTemplateLocalizedGallery(msrest.serialization.Model):
     """Localized template data and gallery information.
 
     :param template_data: Valid JSON object containing workbook template payload.
-    :type template_data: object
+    :type template_data: any
     :param galleries: Workbook galleries supported by the template.
     :type galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]
@@ -266,7 +266,7 @@ class WorkbookTemplateUpdateParameters(msrest.serialization.Model):
     :param author: Information about the author of the workbook template.
     :type author: str
     :param template_data: Valid JSON object containing workbook template payload.
-    :type template_data: object
+    :type template_data: any
     :param galleries: Workbook galleries supported by the template.
     :type galleries:
      list[~azure.mgmt.applicationinsights.v2019_10_17_preview.models.WorkbookTemplateGallery]

@@ -48,7 +48,7 @@ class AnalyticsItemsOperations:
         scope: Optional[Union[str, "_models.ItemScope"]] = None,
         type: Optional[Union[str, "_models.ItemTypeParameter"]] = "none",
         include_content: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ApplicationInsightsComponentAnalyticsItem"]:
         """Gets a list of Analytics Items defined within an Application Insights component.
 
@@ -84,7 +84,7 @@ class AnalyticsItemsOperations:
         url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str'),
         }
@@ -127,7 +127,7 @@ class AnalyticsItemsOperations:
         scope_path: Union[str, "_models.ItemScopePath"],
         id: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentAnalyticsItem":
         """Gets a specific Analytics Items defined within an Application Insights component.
 
@@ -159,7 +159,7 @@ class AnalyticsItemsOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str'),
         }
@@ -200,7 +200,7 @@ class AnalyticsItemsOperations:
         scope_path: Union[str, "_models.ItemScopePath"],
         item_properties: "_models.ApplicationInsightsComponentAnalyticsItem",
         override_item: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentAnalyticsItem":
         """Adds or Updates a specific Analytics Item within an Application Insights component.
 
@@ -235,7 +235,7 @@ class AnalyticsItemsOperations:
         url = self.put.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str'),
         }
@@ -278,7 +278,7 @@ class AnalyticsItemsOperations:
         scope_path: Union[str, "_models.ItemScopePath"],
         id: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specific Analytics Items defined within an Application Insights component.
 
@@ -309,7 +309,7 @@ class AnalyticsItemsOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str'),
         }

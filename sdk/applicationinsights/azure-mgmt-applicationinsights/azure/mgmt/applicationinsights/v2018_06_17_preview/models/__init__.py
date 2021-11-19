@@ -8,6 +8,10 @@
 
 try:
     from ._models_py3 import ErrorFieldContract
+    from ._models_py3 import ErrorResponse
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import Resource
     from ._models_py3 import Workbook
     from ._models_py3 import WorkbookError
@@ -15,6 +19,10 @@ try:
     from ._models_py3 import WorkbooksListResult
 except (SyntaxError, ImportError):
     from ._models import ErrorFieldContract  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
+    from ._models import Operation  # type: ignore
+    from ._models import OperationDisplay  # type: ignore
+    from ._models import OperationListResult  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Workbook  # type: ignore
     from ._models import WorkbookError  # type: ignore
@@ -28,6 +36,10 @@ from ._application_insights_management_client_enums import (
 
 __all__ = [
     'ErrorFieldContract',
+    'ErrorResponse',
+    'Operation',
+    'OperationDisplay',
+    'OperationListResult',
     'Resource',
     'Workbook',
     'WorkbookError',
