@@ -153,6 +153,8 @@ class TestExceptions(object):
         assert error.error.error.code == "FakeErrorOne"
         assert error.error.error.message == "A fake error"
 
+        assert str(error) == "(FakeErrorOne) A fake error\nCode: FakeErrorOne\nMessage: A fake error"
+
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_deserialized_httpresponse_error_message(self, mock_response):
