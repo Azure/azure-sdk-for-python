@@ -14,7 +14,7 @@ from ._batch_perf_test import BatchPerfTest
 
 __all__ = [
     "PerfStressTest",
-    "BatchPerfTest"
+    "BatchPerfTest",
     "RandomStream",
     "WriteStream",
     "AsyncRandomStream",
