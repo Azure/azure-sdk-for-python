@@ -15,7 +15,7 @@ import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
-def _convert_datetime_to_utc_int(expires_on):
+def _convert_datetime_to_utc_int(input_datetime):
     """
     Converts DateTime in local time to the Epoch in UTC in second.
 
@@ -24,7 +24,7 @@ def _convert_datetime_to_utc_int(expires_on):
     :return: Integer
     :rtype: int
     """
-    return int(calendar.timegm(expires_on.utctimetuple()))
+    return int(calendar.timegm(input_datetime.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
