@@ -1,0 +1,133 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages?model-version=latest\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "226",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "66bb524c-497c-11ec-bfc5-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "56",
+            "text": ":)",
+            "countryHint": "US"
+          },
+          {
+            "id": "0",
+            "text": ":(",
+            "countryHint": "US"
+          },
+          {
+            "id": "22",
+            "text": "",
+            "countryHint": "US"
+          },
+          {
+            "id": "19",
+            "text": ":P",
+            "countryHint": "US"
+          },
+          {
+            "id": "1",
+            "text": ":D",
+            "countryHint": "US"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e00fb282-c1e9-4474-9b41-50889948be0f",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
+        "Date": "Fri, 19 Nov 2021 21:05:18 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7"
+      },
+      "ResponseBody": {
+        "statistics": {
+          "documentsCount": 5,
+          "validDocumentsCount": 4,
+          "erroneousDocumentsCount": 1,
+          "transactionsCount": 4
+        },
+        "documents": [
+          {
+            "id": "56",
+            "detectedLanguage": {
+              "name": "(Unknown)",
+              "iso6391Name": "(Unknown)",
+              "confidenceScore": 0.0
+            },
+            "statistics": {
+              "charactersCount": 2,
+              "transactionsCount": 1
+            },
+            "warnings": []
+          },
+          {
+            "id": "0",
+            "detectedLanguage": {
+              "name": "(Unknown)",
+              "iso6391Name": "(Unknown)",
+              "confidenceScore": 0.0
+            },
+            "statistics": {
+              "charactersCount": 2,
+              "transactionsCount": 1
+            },
+            "warnings": []
+          },
+          {
+            "id": "19",
+            "detectedLanguage": {
+              "name": "(Unknown)",
+              "iso6391Name": "(Unknown)",
+              "confidenceScore": 0.0
+            },
+            "statistics": {
+              "charactersCount": 2,
+              "transactionsCount": 1
+            },
+            "warnings": []
+          },
+          {
+            "id": "1",
+            "detectedLanguage": {
+              "name": "(Unknown)",
+              "iso6391Name": "(Unknown)",
+              "confidenceScore": 0.0
+            },
+            "statistics": {
+              "charactersCount": 2,
+              "transactionsCount": 1
+            },
+            "warnings": []
+          }
+        ],
+        "errors": [
+          {
+            "id": "22",
+            "error": {
+              "code": "InvalidArgument",
+              "message": "Invalid document in request.",
+              "innererror": {
+                "code": "InvalidDocument",
+                "message": "Document text is empty."
+              }
+            }
+          }
+        ],
+        "modelVersion": "2021-01-05"
+      }
+    }
+  ],
+  "Variables": {}
+}

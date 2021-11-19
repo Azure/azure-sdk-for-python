@@ -6,19 +6,18 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "314",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "02b249aa-497c-11ec-a404-b831b58100e8"
+        "x-ms-client-request-id": "62cb7bab-497c-11ec-8062-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022I should take my cat to the veterinarian.\u0022,\u0022countryHint\u0022:\u0022US\u0022},{\u0022id\u0022:\u00222\u0022,\u0022text\u0022:\u0022Este es un document escrito en Espa\u00F1ol.\u0022,\u0022countryHint\u0022:\u0022US\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022\u732B\u306F\u5E78\u305B\u0022,\u0022countryHint\u0022:\u0022US\u0022},{\u0022id\u0022:\u00224\u0022,\u0022text\u0022:\u0022Fahrt nach Stuttgart und dann zum Hotel zu Fu.\u0022,\u0022countryHint\u0022:\u0022US\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "7d149698-3bb1-4199-9352-1717a86b1526",
+        "apim-request-id": "1f62b6d3-5d2a-4357-beab-30225abc76a3",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
-        "Date": "Fri, 19 Nov 2021 21:02:32 GMT",
+        "Date": "Fri, 19 Nov 2021 21:05:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
