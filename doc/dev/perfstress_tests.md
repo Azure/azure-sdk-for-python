@@ -365,7 +365,7 @@ class MessageReceiveTest(BatchPerfTest):
         return len(messages)
 
     async def run_batch_async(self) -> int:
-        messages = self.async_receiver_client.receive(
+        messages = await self.async_receiver_client.receive(
             max_messages=self.args.max_message_count,
             min_messages=self.args.min_message_count
         )
