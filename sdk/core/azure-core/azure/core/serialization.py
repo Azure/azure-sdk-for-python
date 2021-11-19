@@ -216,6 +216,19 @@ def _get_model(module_name: str, model_name: str):
     return models[model_name]
 
 def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
+    try:
+        # right now, assuming we don't have unions (since we're getting rid of the only)
+        # union we used to have in msrest models, which was union of str and enum
+        if any(a for a in deserialization_type.__args__ if a == type(None)):
+            if obj is None:
+                return obj
+            return _deserialize(
+                obj,
+                next(a for  a in deserialization_type.__args__ if a != type(None)),
+                module_name
+            )
+    except (AttributeError):
+        pass
     if isinstance(deserialization_type, str) or type(deserialization_type) == ForwardRef:
         try:
             model_name = deserialization_type.__forward_arg__
