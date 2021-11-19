@@ -1,0 +1,192 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "222",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "ac6d51c1-497e-11ec-bc91-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "1",
+            "text": "I will go to the park.",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "I did not like the hotel we stayed at.",
+            "language": "en"
+          },
+          {
+            "id": "3",
+            "text": "The restaurant had really good food.",
+            "language": "en"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b7d24da6-58c4-4808-a6aa-035ada4da1c3",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Fri, 19 Nov 2021 21:21:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "12"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "park"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "hotel"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "good food",
+              "restaurant"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "222",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "ac7b82b4-497e-11ec-aad1-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "1",
+            "text": "I will go to the park.",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "I did not like the hotel we stayed at.",
+            "language": "en"
+          },
+          {
+            "id": "3",
+            "text": "The restaurant had really good food.",
+            "language": "en"
+          }
+        ]
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "apim-request-id": "c14c4517-4b86-42a9-91ea-99d0ed43260d",
+        "Content-Length": "224",
+        "Content-Type": "application/json",
+        "Date": "Fri, 19 Nov 2021 21:21:34 GMT"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "401",
+          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "222",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "ac81eb34-497e-11ec-be14-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "1",
+            "text": "I will go to the park.",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "I did not like the hotel we stayed at.",
+            "language": "en"
+          },
+          {
+            "id": "3",
+            "text": "The restaurant had really good food.",
+            "language": "en"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a7c12b9c-86b3-47e7-96d8-6572adf7680d",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Fri, 19 Nov 2021 21:21:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "13"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "park"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "hotel"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "good food",
+              "restaurant"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

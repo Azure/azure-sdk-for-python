@@ -130,6 +130,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
+    @recorded_by_proxy
     def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = client.extract_key_phrases(
@@ -138,6 +139,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
+    @recorded_by_proxy
     def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = client.extract_key_phrases(
@@ -325,6 +327,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
+    @recorded_by_proxy
     def test_client_passed_default_language_hint(self, client):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -363,6 +366,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
@@ -547,6 +551,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @recorded_by_proxy
     def test_string_index_type_not_fail_v3(self, client):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
         # cause v3.0 calls to fail

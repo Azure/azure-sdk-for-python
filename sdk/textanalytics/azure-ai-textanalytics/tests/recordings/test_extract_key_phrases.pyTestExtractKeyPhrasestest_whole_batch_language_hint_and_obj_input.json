@@ -1,0 +1,59 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "219",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "aa96b39b-497e-11ec-a23f-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022I should take my cat to the veterinarian.\u0022,\u0022language\u0022:\u0022de\u0022},{\u0022id\u0022:\u00224\u0022,\u0022text\u0022:\u0022Este es un document escrito en Espa\u00F1ol.\u0022,\u0022language\u0022:\u0022de\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022\u732B\u306F\u5E78\u305B\u0022,\u0022language\u0022:\u0022de\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "fa1aab07-00c5-40f4-a829-45a9f17aaccd",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Fri, 19 Nov 2021 21:21:31 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "14"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "cat",
+              "veterinarian"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "4",
+            "keyPhrases": [
+              "Espa\u00F1ol",
+              "document"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "\u306F\u5E78\u305B"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

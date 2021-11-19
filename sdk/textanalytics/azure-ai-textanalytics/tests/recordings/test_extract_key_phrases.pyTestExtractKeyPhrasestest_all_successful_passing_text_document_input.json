@@ -1,0 +1,67 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "188",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "a6e7d7d7-497e-11ec-afb1-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "1",
+            "text": "Microsoft was founded by Bill Gates and Paul Allen",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
+            "language": "es"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "603bf7ae-a3dd-428e-8234-d3ab9a36ed6b",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2",
+        "Date": "Fri, 19 Nov 2021 21:21:25 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "14"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "Bill Gates",
+              "Paul Allen",
+              "Microsoft"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "Bill Gates",
+              "Paul Allen",
+              "Microsoft"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}
