@@ -4,7 +4,7 @@ This guide is to help Python SDK users to get private package. Just follow the s
 
 ## 1. Confirm default tag
 
-Make sure your target tag is defined in `README.md` and **default tag is same with your target tag**. For example:
+Make sure your target tag is defined in `readme.md` and **default tag is same with your target tag**. For example:
 
 [azure-rest-api-specs/specification/network/resource-manager at main · Azure/azure-rest-api-specs (github.com)](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/network/resource-manager#basic-information)
 
