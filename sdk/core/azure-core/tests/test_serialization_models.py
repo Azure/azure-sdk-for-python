@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 import datetime
-from typing import Any, List, Literal, Dict, Set, Tuple
+from typing import Any, List, Literal, Dict, Set, Tuple, Optional
 import pytest
 import isodate
 from azure.core.serialization import Model, rest_property
@@ -141,6 +141,18 @@ def test_original_and_attr_name_same():
     dict_response = {"hello": "nihao"}
     model = MyModel(dict_response)
     assert model.hello == model["hello"] == dict_response["hello"]
+
+def test_optional_property():
+
+    class MyModel(Model):
+
+        @rest_property()
+        def optional_str(self) -> Optional[str]:
+            """optional string property"""
+
+        @rest_property()
+        def optional_time(self) -> Optional[datetime.time]:
+            """optional time property"""
 
 def test_modify_dict():
     dict_response = {
@@ -362,76 +374,150 @@ def test_tuple_deserialization():
     assert model['prop'] == (val_str, val_str)
     assert model.prop == (val_str, val)
 
-# def test_model_recursion_complex():
-#     class RecursiveModel(Model):
+def test_model_recursion_complex():
+    class RecursiveModel(Model):
 
-#         @rest_property()
-#         def name(self) -> str:
-#             """My name"""
+        @rest_property()
+        def name(self) -> str:
+            """My name"""
 
-#         @rest_property(name="listOfMe")
-#         def list_of_me(self) -> List["RecursiveModel"]:
-#             """A list of myself"""
+        @rest_property(name="listOfMe")
+        def list_of_me(self) -> List["RecursiveModel"]:
+            """A list of myself"""
 
-#         @rest_property(name="dictOfMe")
-#         def dict_of_me(self) -> Dict[str, "RecursiveModel"]:
-#             """A dictionary of me"""
+        @rest_property(name="dictOfMe")
+        def dict_of_me(self) -> Dict[str, "RecursiveModel"]:
+            """A dictionary of me"""
 
-#         @rest_property(name="dictOfListOfMe")
-#         def dict_of_list_of_me(self) -> Dict[str, List["RecursiveModel"]]:
-#             """A dictionary of a list of me"""
+        @rest_property(name="dictOfListOfMe")
+        def dict_of_list_of_me(self) -> Dict[str, List["RecursiveModel"]]:
+            """A dictionary of a list of me"""
 
-#         @rest_property(name="listOfDictOfMe")
-#         def list_of_dict_of_me(self) -> List[Dict[str, "RecursiveModel"]]:
-#             """A list of a dictionary of me"""
+        @rest_property(name="listOfDictOfMe")
+        def list_of_dict_of_me(self) -> List[Dict[str, "RecursiveModel"]]:
+            """A list of a dictionary of me"""
 
-#     dict_response = {
-#         "name": "it's me!",
-#         "listOfMe": [
-#             {
-#                 "name": "it's me!",
-#                 "listOfMe": None,
-#                 "dictOfMe": None,
-#                 "dictOfListOfMe": None,
-#                 "listOfDictOfMe": None
-#             }
-#         ],
-#         "dictOfMe": {
-#             "me": {
-#                 "name": "it's me!",
-#                 "listOfMe": None,
-#                 "dictOfMe": None,
-#                 "dictOfListOfMe": None,
-#                 "listOfDictOfMe": None
-#             }
-#         },
-#         "dictOfListOfMe": {
-#             "many mes": [
-#                 {
-#                     "name": "it's me!",
-#                     "listOfMe": None,
-#                     "dictOfMe": None,
-#                     "dictOfListOfMe": None,
-#                     "listOfDictOfMe": None
-#                 }
-#             ]
-#         },
-#         "listOfDictOfMe": [
-#             {"me": {
-#                     "name": "it's me!",
-#                     "listOfMe": None,
-#                     "dictOfMe": None,
-#                     "dictOfListOfMe": None,
-#                     "listOfDictOfMe": None
-#                 }
-#             }
-#         ]
-#     }
+    dict_response = {
+        "name": "it's me!",
+        "listOfMe": [
+            {
+                "name": "it's me!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None
+            }
+        ],
+        "dictOfMe": {
+            "me": {
+                "name": "it's me!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None
+            }
+        },
+        "dictOfListOfMe": {
+            "many mes": [
+                {
+                    "name": "it's me!",
+                    "listOfMe": None,
+                    "dictOfMe": None,
+                    "dictOfListOfMe": None,
+                    "listOfDictOfMe": None
+                }
+            ]
+        },
+        "listOfDictOfMe": [
+            {"me": {
+                    "name": "it's me!",
+                    "listOfMe": None,
+                    "dictOfMe": None,
+                    "dictOfListOfMe": None,
+                    "listOfDictOfMe": None
+                }
+            }
+        ]
+    }
 
-#     model = RecursiveModel(dict_response)
+    model = RecursiveModel(dict_response)
+    assert model.name == model['name'] == "it's me!"
+    assert model['listOfMe'] == [
+        {
+            "name": "it's me!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None
+        }
+    ]
+    assert model.list_of_me == [RecursiveModel({
+        "name": "it's me!",
+        "listOfMe": None,
+        "dictOfMe": None,
+        "dictOfListOfMe": None,
+        "listOfDictOfMe": None
+    })]
+    assert model.list_of_me[0].name == "it's me!"
+    assert model.list_of_me[0].list_of_me
 
-#     expected.list_of_me = [RecursiveModel()]
-#     expected.dict_of_me = {"me": RecursiveModel()}
-#     expected.dict_of_list_of_me = {"many mes": [RecursiveModel()]}
-#     expected.list_of_dict_of_me = [{"me": RecursiveModel()}]
-#     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+    assert model['dictOfMe'] == {
+        "me": {
+            "name": "it's me!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None
+        }
+    }
+    assert model.dict_of_me == {"me": RecursiveModel({
+        "name": "it's me!",
+        "listOfMe": None,
+        "dictOfMe": None,
+        "dictOfListOfMe": None,
+        "listOfDictOfMe": None
+    })}
+
+    assert model['dictOfListOfMe'] == {
+        "many mes": [
+            {
+                "name": "it's me!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None
+            }
+        ]
+    }
+    assert model.dict_of_list_of_me == {
+        "many mes": [
+            RecursiveModel({
+                "name": "it's me!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None
+            })
+        ]
+    }
+    assert model['listOfDictOfMe'] == [
+        {"me": {
+                "name": "it's me!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None
+            }
+        }
+    ]
+    assert model.list_of_dict_of_me == [{
+        "me": RecursiveModel({
+            "name": "it's me!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None
+        })
+    }]
+
+    assert json.loads(json.dumps(model)) == model == dict_response

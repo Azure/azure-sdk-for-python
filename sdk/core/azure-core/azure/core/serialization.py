@@ -10,7 +10,7 @@ import base64
 import re
 import isodate
 from json import JSONEncoder
-from typing import Any, Dict, Type, Union, cast, Literal, Optional
+from typing import Any, Dict, Type, Union, cast, Literal, Optional, ForwardRef
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
@@ -216,8 +216,12 @@ def _get_model(module_name: str, model_name: str):
     return models[model_name]
 
 def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
-    if isinstance(deserialization_type, str):
-        deserialization_type = _get_model(module_name, deserialization_type)
+    if isinstance(deserialization_type, str) or type(deserialization_type) == ForwardRef:
+        try:
+            model_name = deserialization_type.__forward_arg__
+        except AttributeError:
+            model_name = deserialization_type
+        deserialization_type = _get_model(module_name, model_name)
 
     try:
         # i'm a dict-like thing
