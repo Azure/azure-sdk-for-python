@@ -1,0 +1,133 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/general?showStats=false\u0026stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "219",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "68ed68f1-497f-11ec-bf2b-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "1",
+            "text": "one",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "two",
+            "language": "en"
+          },
+          {
+            "id": "3",
+            "text": "three",
+            "language": "en"
+          },
+          {
+            "id": "4",
+            "text": "four",
+            "language": "en"
+          },
+          {
+            "id": "5",
+            "text": "five",
+            "language": "en"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "002fe61b-a1b5-4adc-a8ba-43b5a2947359",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=5,CognitiveServices.TextAnalytics.TextRecords=5",
+        "Date": "Fri, 19 Nov 2021 21:26:50 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "22"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "entities": [
+              {
+                "text": "one",
+                "category": "Quantity",
+                "subcategory": "Number",
+                "offset": 0,
+                "length": 3,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "entities": [
+              {
+                "text": "two",
+                "category": "Quantity",
+                "subcategory": "Number",
+                "offset": 0,
+                "length": 3,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "entities": [
+              {
+                "text": "three",
+                "category": "Quantity",
+                "subcategory": "Number",
+                "offset": 0,
+                "length": 5,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "4",
+            "entities": [
+              {
+                "text": "four",
+                "category": "Quantity",
+                "subcategory": "Number",
+                "offset": 0,
+                "length": 4,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "5",
+            "entities": [
+              {
+                "text": "five",
+                "category": "Quantity",
+                "subcategory": "Number",
+                "offset": 0,
+                "length": 4,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

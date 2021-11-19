@@ -1,0 +1,116 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/general?model-version=2020-02-01\u0026showStats=true\u0026stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "340",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "66c8ac20-497f-11ec-9ded-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00222\u0022,\u0022text\u0022:\u0022Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.\u0022,\u0022language\u0022:\u0022es\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\u00FCndet.\u0022,\u0022language\u0022:\u0022de\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "6218f10e-9a48-46b7-a42d-4583ad145d7c",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Fri, 19 Nov 2021 21:26:47 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "99"
+      },
+      "ResponseBody": {
+        "statistics": {
+          "documentsCount": 3,
+          "validDocumentsCount": 3,
+          "erroneousDocumentsCount": 0,
+          "transactionsCount": 3
+        },
+        "documents": [
+          {
+            "id": "1",
+            "statistics": {
+              "charactersCount": 68,
+              "transactionsCount": 1
+            },
+            "entities": [
+              {
+                "text": "Microsoft",
+                "category": "Organization",
+                "offset": 0,
+                "length": 9,
+                "confidenceScore": 1.0
+              },
+              {
+                "text": "Bill Gates",
+                "category": "Person",
+                "offset": 25,
+                "length": 10,
+                "confidenceScore": 0.67
+              },
+              {
+                "text": "Paul Allen",
+                "category": "Person",
+                "offset": 40,
+                "length": 10,
+                "confidenceScore": 0.81
+              },
+              {
+                "text": "April 4, 1975",
+                "category": "DateTime",
+                "subcategory": "Date",
+                "offset": 54,
+                "length": 13,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "statistics": {
+              "charactersCount": 72,
+              "transactionsCount": 1
+            },
+            "entities": [
+              {
+                "text": "4 de abril de 1975",
+                "category": "DateTime",
+                "subcategory": "Date",
+                "offset": 53,
+                "length": 18,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "statistics": {
+              "charactersCount": 73,
+              "transactionsCount": 1
+            },
+            "entities": [
+              {
+                "text": "4. April 1975",
+                "category": "DateTime",
+                "subcategory": "Date",
+                "offset": 19,
+                "length": 13,
+                "confidenceScore": 0.8
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2020-02-01"
+      }
+    }
+  ],
+  "Variables": {}
+}
