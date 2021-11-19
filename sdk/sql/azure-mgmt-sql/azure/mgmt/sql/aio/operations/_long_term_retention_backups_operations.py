@@ -57,7 +57,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -197,7 +197,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -351,7 +351,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -402,7 +402,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -542,7 +542,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -626,7 +626,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -711,7 +711,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -782,7 +782,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -930,7 +930,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1095,7 +1095,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1148,7 +1148,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
 
         # Construct URL
         url = self._delete_by_resource_group_initial.metadata['url']  # type: ignore
@@ -1299,7 +1299,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1388,7 +1388,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1478,7 +1478,7 @@ class LongTermRetentionBackupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
