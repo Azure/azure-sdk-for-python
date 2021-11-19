@@ -5,6 +5,7 @@ stages:
     parameters:
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: textanalytics
+      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
