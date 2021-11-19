@@ -3,10 +3,13 @@
     - [The PerfStressTest base](#the-perfstresstest-base)
     - [Default command options](#default-command-options)
     - [Running with test proxy](#running-with-the-test-proxy)
+    - [The BatchPerfTest base](#the-batchperftest-base)
 2. [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
     - [Writing a test](#writing-a-test)
+    - [Writing a batch test](#writing-a-batch-test)
     - [Adding legacy T1 tests](#adding-legacy-t1-tests)
 3. [Running the tests](#running-the-tests)
+    - [Running the system tests](#running-the-system-tests)
 4. [Readme](#readme)
 
 # The perfstress framework
@@ -20,6 +23,7 @@ the tests. To start using the framework, make sure that `azure-devtools` is incl
 The perfstress framework offers the following:
 - The `perfstress` commandline tool.
 - The `PerfStressTest` baseclass.
+- The `BatchPerfTest` baseclass.
 - Stream utilities for uploading/downloading without storing in memory: `RandomStream`, `AsyncRandomStream`, `WriteStream`.
 - A `get_random_bytes` utility for returning randomly generated data.
 - A series of "system tests" to test the perfstress framework along with the performance of the raw transport layers (requests, aiohttp, etc).
@@ -39,14 +43,14 @@ class PerfStressTest:
     async def global_cleanup(self):
         # Can be optionally defined. Only run once, regardless of parallelism.
 
-    async def record_and_start_playback(self):
-        # Set up the recording on the test proxy, and configure the proxy in playback mode.
-        # This function is only run if a test proxy URL is provided (-x).
+    async def post_setup(self):
+        # Post-setup called once per parallel test instance.
+        # Used by base classes to setup state (like test-proxy) after all derived class setup is complete.
         # There should be no need to overwrite this function.
 
-    async def stop_playback(self):
-        # Configure the proxy out of playback mode and discard the recording.
-        # This function is only run if a test proxy URL is provided (-x).
+    async def pre_cleanup(self):
+        # Pre-cleanup called once per parallel test instance.
+        # Used by base classes to cleanup state (like test-proxy) before all derived class cleanup runs.
         # There should be no need to overwrite this function.
 
     async def setup(self):
@@ -82,9 +86,9 @@ The framework has a series of common command line options built in:
 - `-w --warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
-- `-x --test-proxies` Whether to run the tests against the test proxy server. Specify the URL(s) for the proxy endpoint(s) (e.g. "https://localhost:5001").
-- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
-
+- `--insecure` Whether to run without SSL validation. Default is False.
+- `-x --test-proxies` Whether to run the tests against the test proxy server. Specify the URL(s) for the proxy endpoint(s) (e.g. "https://localhost:5001"). Multiple values should be semi-colon-separated.
+- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of a single iteration will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync|async>.pstats"`.
 
 ## Running with the test proxy
 Follow the instructions here to install and run the test proxy server:
@@ -94,6 +98,29 @@ Once running, in a separate process run the perf test in question, combined with
 ```cmd
 (env) ~/azure-storage-blob/tests> perfstress DownloadTest -x "https://localhost:5001"
 ```
+## The BatchPerfTest base
+The `BatchPerfTest` class is the parent class of the above `PerfStressTest` class that is further abstracted to allow for more flexible testing of SDKs that don't conform to a 1:1 ratio of operations to results.
+An example of this is a messaging SDK that streams multiple messages for a period of time.
+This base class uses the same setup/cleanup/close functions described above, however instead of `run_sync` and `run_async`, it has `run_batch_sync` and `run_batch_async`:
+```python
+class BatchPerfTest:
+
+    def run_batch_sync(self) -> int:
+        """
+        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        :returns: The number of completed results.
+        :rtype: int
+        """
+
+    async def run_batch_async(self) -> int:
+        """
+        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        :returns: The number of completed results.
+        :rtype: int
+        """
+
+```
+An example test case using the `BatchPerfTest` base can be found below.
 
 # Adding performance tests to an SDK
 The performance tests will be in a submodule called `perfstress_tests` within the `tests` directory in an SDK project.
@@ -314,6 +341,44 @@ class DownloadTest(_StorageStreamTestBase):
         stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         await stream.readinto(self.download_stream)
 ```
+## Writing a batch test
+#### Example messaging receive test
+```python
+from azure_devtools.perfstress_tests import BatchPerfTest
+
+from azure.messaging.foo import MockReceiver
+from azure.messaging.foo.aio import MockReceiver as AsyncMockReceiver
+
+class MessageReceiveTest(BatchPerfTest):
+    def __init__(self, arguments):
+        super().__init__(arguments)
+
+        # Setup service clients
+        self.receiver_client = MockReceiver()
+        self.async_receiver_client = AsyncMockReceiver()
+
+    def run_batch_sync(self) -> int:
+        messages = self.receiver_client.receive(
+            max_messages=self.args.max_message_count,
+            min_messages=self.args.min_message_count
+        )
+        return len(messages)
+
+    async def run_batch_async(self) -> int:
+        messages = await self.async_receiver_client.receive(
+            max_messages=self.args.max_message_count,
+            min_messages=self.args.min_message_count
+        )
+        return len(messages)
+        
+    @staticmethod
+    def add_arguments(parser):
+        super(MessageReceiveTest, MessageReceiveTest).add_arguments(parser)
+        parser.add_argument('--max-message-count', nargs='?', type=int, default=10)
+        parser.add_argument('--min-message-count', nargs='?', type=int, default=0)
+
+```
+
 ## Adding legacy T1 tests
 To compare performance against T1 libraries, you can add tests for a legacy SDK. To do this, add a submodule into the `perfstress_tests` module called `T1_legacy_tests` (and add an empty `__init__.py`).
 To configure the exact T1 SDK you wish to compare perf against, add a `t1_test_requirements.txt` file to install any package requirements. Note that this will likely be incompatible with the T2 SDK testing environment, and running the legacy tests will probably need to be from a separate virtual environment (see the [Running the tests](#running-the-tests) section below).
@@ -360,15 +425,30 @@ AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
 When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
-(env) ~/azure-storage-file-share> cd tests
-(env) ~/azure-storage-file-share/tests> perfstress
+(env) ~/azure-storage-file-share> perfstress
 ```
 Using the `perfstress` command alone will list the available perf tests found. Note that the available tests discovered will vary depending on whether your environment is configured for the T1 or T2 SDK.
+If your tests are not being discovered, run the `perfstressdebug` command instead for additional logging.
 
 ### Example test run command
 ```cmd
-(env) ~/azure-storage-file-share/tests> perfstress UploadTest --parallel=2 --size=10240
+(env) ~/azure-storage-file-share> perfstress UploadTest --parallel=2 --size=10240
 ```
+## Running the system tests
+The system tests are used to test the performance of the Python HTTP layers exclusive of the Azure SDK in order to set a performance benchmark.
+In order to run these, you will need a Python environment with `systemperf` flavour of `azure-devtools` installed. Installing to a fresh Python environment is recommended.
+```cmd
+(env) ~/> pip install -e azure-sdk-for-python/tools/azure-devtools[systemperf]
+```
+Once these dependencies are installed, the `systemperf` command can be run directly to list the available tests:
+```cmd
+(env)~/> systemperf
+```
+A specific test can be run in the same manner as an SDK perf test:
+```cmd
+(env)~/> systemperf AioHttpGetTest --url="http://test-endpoint.com"
+```
+
 
 # Readme
 
