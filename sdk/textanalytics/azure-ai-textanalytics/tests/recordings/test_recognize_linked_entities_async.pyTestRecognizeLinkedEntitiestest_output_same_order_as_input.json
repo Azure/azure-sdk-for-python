@@ -1,0 +1,88 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/linking?showStats=false\u0026stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "219",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "ec93b8c1-497f-11ec-b20d-b831b58100e8"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "1",
+            "text": "one",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "two",
+            "language": "en"
+          },
+          {
+            "id": "3",
+            "text": "three",
+            "language": "en"
+          },
+          {
+            "id": "4",
+            "text": "four",
+            "language": "en"
+          },
+          {
+            "id": "5",
+            "text": "five",
+            "language": "en"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d45fb258-a081-476a-9ba8-ba15d8dbd5f4",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=5,CognitiveServices.TextAnalytics.TextRecords=5",
+        "Date": "Fri, 19 Nov 2021 21:30:31 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "10"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "entities": [],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "entities": [],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "entities": [],
+            "warnings": []
+          },
+          {
+            "id": "4",
+            "entities": [],
+            "warnings": []
+          },
+          {
+            "id": "5",
+            "entities": [],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

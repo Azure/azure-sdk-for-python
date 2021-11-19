@@ -153,6 +153,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
+    @recorded_by_proxy_async
     async def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_linked_entities(
@@ -161,6 +162,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
+    @recorded_by_proxy_async
     async def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_linked_entities(
@@ -358,6 +360,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
+    @recorded_by_proxy_async
     async def test_client_passed_default_language_hint(self, client):
 
         def callback(resp):
@@ -397,6 +400,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
@@ -617,6 +621,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @recorded_by_proxy_async
     async def test_no_offset_v3_linked_entity_match(self, client):
         result = await client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
@@ -627,6 +632,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @recorded_by_proxy_async
     async def test_string_index_type_not_fail_v3(self, client):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview doesn't
         # cause v3.0 calls to fail
@@ -643,6 +649,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    @recorded_by_proxy_async
     async def test_string_index_type_explicit_fails_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_linked_entities(["this should fail"], string_index_type="UnicodeCodePoint")
