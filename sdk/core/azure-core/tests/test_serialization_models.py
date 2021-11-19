@@ -153,25 +153,29 @@ def test_original_and_attr_name_same():
     model = MyModel(dict_response)
     assert model.hello == model["hello"] == dict_response["hello"]
 
+class OptionalModel(Model):
+
+    @rest_property()
+    def optional_str(self) -> Optional[str]:
+        """optional string property"""
+
+    @rest_property()
+    def optional_time(self) -> Optional[datetime.time]:
+        """optional time property"""
+
+    @rest_property(name="optionalDict")
+    def optional_dict(self) -> Optional[Dict[str, Optional[Pet]]]:
+        """My optional dict, that maps strings to optional Pet"""
+
+    @rest_property()
+    def optional_model(self) -> Optional[Pet]:
+        """My optional Pet"""
+
+    @rest_property()
+    def optional_myself(self) -> Optional["OptionalModel"]:
+        """My optional self"""
+
 def test_optional_property():
-
-    class OptionalModel(Model):
-
-        @rest_property()
-        def optional_str(self) -> Optional[str]:
-            """optional string property"""
-
-        @rest_property()
-        def optional_time(self) -> Optional[datetime.time]:
-            """optional time property"""
-
-        @rest_property(name="optionalDict")
-        def optional_dict(self) -> Optional[Dict[str, Optional[Pet]]]:
-            """My optional dict, that maps strings to optional Pet"""
-
-        @rest_property()
-        def optional_model(self) -> Optional[Pet]:
-            """My optional Pet"""
 
     dict_response = {
         "optional_str": "hello!",
@@ -183,8 +187,19 @@ def test_optional_property():
             },
             "Lady": None,
         },
-        "optional_model": None
+        "optional_model": None,
+        "optional_myself": {
+            "optional_str": None,
+            "optional_time": '11:34:56',
+            "optionalDict": None,
+            "optional_model": {
+                "name": "Lady",
+                "species": "Newt"
+            },
+            "optional_myself": None
+        }
     }
+
     model = OptionalModel(dict_response)
     assert model.optional_str == model["optional_str"] == "hello!"
     assert model.optional_time == model["optional_time"] == None
@@ -197,6 +212,23 @@ def test_optional_property():
     }
     assert model.optional_dict["Eugene"].name == model.optional_dict["Eugene"]["name"] == "Eugene"
     assert model.optional_dict["Lady"] is None
+
+    assert model.optional_myself == model["optional_myself"] == {
+        "optional_str": None,
+        "optional_time": '11:34:56',
+        "optionalDict": None,
+        "optional_model": {
+            "name": "Lady",
+            "species": "Newt"
+        },
+        "optional_myself": None
+    }
+    assert model.optional_myself.optional_str is None
+    assert model.optional_myself.optional_time == datetime.time(11, 34, 56)
+    assert model.optional_myself.optional_dict is None
+    assert model.optional_myself.optional_model.name == "Lady"
+    assert model.optional_myself.optional_model.species == "Newt"
+    assert model.optional_myself.optional_myself is None
 
 def test_modify_dict():
     dict_response = {
