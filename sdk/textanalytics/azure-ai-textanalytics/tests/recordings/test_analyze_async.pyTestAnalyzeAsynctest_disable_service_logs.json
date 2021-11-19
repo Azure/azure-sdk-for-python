@@ -1,0 +1,490 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1538",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "9a258631-4972-11ec-a680-b831b58100e8"
+      },
+      "RequestBody": {
+        "tasks": {
+          "entityRecognitionTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": true,
+                "stringIndexType": "UnicodeCodePoint"
+              },
+              "taskName": "0"
+            }
+          ],
+          "entityRecognitionPiiTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": true,
+                "stringIndexType": "UnicodeCodePoint"
+              },
+              "taskName": "2"
+            }
+          ],
+          "keyPhraseExtractionTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": true
+              },
+              "taskName": "1"
+            }
+          ],
+          "entityLinkingTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": true,
+                "stringIndexType": "UnicodeCodePoint"
+              },
+              "taskName": "3"
+            }
+          ],
+          "sentimentAnalysisTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": true,
+                "opinionMining": false
+              },
+              "taskName": "4"
+            }
+          ],
+          "extractiveSummarizationTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": true,
+                "stringIndexType": "UnicodeCodePoint",
+                "sentenceCount": 3,
+                "sortBy": "Offset"
+              },
+              "taskName": "5"
+            }
+          ],
+          "customEntityRecognitionTasks": [
+            {
+              "parameters": {
+                "project-name": "custom_entities_project_name",
+                "deployment-name": "custom_entities_deployment_name",
+                "loggingOptOut": true
+              },
+              "taskName": "8"
+            }
+          ],
+          "customSingleClassificationTasks": [
+            {
+              "parameters": {
+                "project-name": "single_category_classify_project_name",
+                "deployment-name": "single_category_classify_deployment_name",
+                "loggingOptOut": true
+              },
+              "taskName": "6"
+            }
+          ],
+          "customMultiClassificationTasks": [
+            {
+              "parameters": {
+                "project-name": "multi_category_classify_project_name",
+                "deployment-name": "multi_category_classify_deployment_name",
+                "loggingOptOut": true
+              },
+              "taskName": "7"
+            }
+          ]
+        },
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Test for logging disable",
+              "language": "en"
+            }
+          ]
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "b045fa42-9092-4ea2-9d00-6fcf35e0977a",
+        "Date": "Fri, 19 Nov 2021 19:55:10 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d44f31d9-87fc-472c-b988-dd7ecc7368b5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "758"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d44f31d9-87fc-472c-b988-dd7ecc7368b5",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "9a258631-4972-11ec-a680-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "8ac8e729-9d3b-4c38-a3d0-da42549c9867",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Nov 2021 19:55:15 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "139"
+      },
+      "ResponseBody": {
+        "jobId": "d44f31d9-87fc-472c-b988-dd7ecc7368b5",
+        "lastUpdateDateTime": "2021-11-19T19:55:13Z",
+        "createdDateTime": "2021-11-19T19:55:10Z",
+        "expirationDateTime": "2021-11-20T19:55:10Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 3,
+          "failed": 0,
+          "inProgress": 6,
+          "total": 9,
+          "extractiveSummarizationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:13.7834509Z",
+              "taskName": "5",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentences": [
+                      {
+                        "text": "Test for logging disable",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 24
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-08-01"
+              }
+            }
+          ],
+          "customSingleClassificationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:12.3786205Z",
+              "taskName": "6",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "classification": {
+                      "category": "PlayMusic",
+                      "confidenceScore": 0.6
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "659c1851-be0b-4142-b12a-087da9785926",
+                "deploymentName": "659c1851-be0b-4142-b12a-087da9785926"
+              }
+            }
+          ],
+          "customMultiClassificationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:11.632516Z",
+              "taskName": "7",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "classifications": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "7cdace98-537b-494a-b69a-c19754718025",
+                "deploymentName": "7cdace98-537b-494a-b69a-c19754718025"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d44f31d9-87fc-472c-b988-dd7ecc7368b5",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "9a258631-4972-11ec-a680-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "741b0ebc-5be4-4d38-b2b7-65f7998956fc",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Nov 2021 19:55:21 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "327"
+      },
+      "ResponseBody": {
+        "jobId": "d44f31d9-87fc-472c-b988-dd7ecc7368b5",
+        "lastUpdateDateTime": "2021-11-19T19:55:18Z",
+        "createdDateTime": "2021-11-19T19:55:10Z",
+        "expirationDateTime": "2021-11-20T19:55:10Z",
+        "status": "partiallyCompleted",
+        "errors": [
+          {
+            "code": "InternalServerError",
+            "message": "1 out of 9 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+          }
+        ],
+        "tasks": {
+          "completed": 8,
+          "failed": 1,
+          "inProgress": 0,
+          "total": 9,
+          "entityRecognitionTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:18.5568007Z",
+              "taskName": "0",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "text": "Test",
+                        "category": "Skill",
+                        "offset": 0,
+                        "length": 4,
+                        "confidenceScore": 0.83
+                      },
+                      {
+                        "text": "logging",
+                        "category": "Skill",
+                        "offset": 9,
+                        "length": 7,
+                        "confidenceScore": 0.69
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ],
+          "entityLinkingTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:18.8228Z",
+              "taskName": "3",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "bingId": "a7b11e27-5b63-19a5-b4dd-37b71149ecac",
+                        "name": "Test (assessment)",
+                        "matches": [
+                          {
+                            "text": "Test",
+                            "offset": 0,
+                            "length": 4,
+                            "confidenceScore": 0.04
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Test (assessment)",
+                        "url": "https://en.wikipedia.org/wiki/Test_(assessment)",
+                        "dataSource": "Wikipedia"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ],
+          "entityRecognitionPiiTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:18.6623506Z",
+              "taskName": "2",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "redactedText": "Test for logging disable",
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-01-15"
+              }
+            }
+          ],
+          "extractiveSummarizationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:13.7834509Z",
+              "taskName": "5",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentences": [
+                      {
+                        "text": "Test for logging disable",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 24
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-08-01"
+              }
+            }
+          ],
+          "keyPhraseExtractionTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:18.440168Z",
+              "taskName": "1",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "keyPhrases": [
+                      "Test",
+                      "logging"
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ],
+          "sentimentAnalysisTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:18.5769917Z",
+              "taskName": "4",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentiment": "negative",
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.12,
+                      "negative": 0.86
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.12,
+                          "negative": 0.86
+                        },
+                        "offset": 0,
+                        "length": 24,
+                        "text": "Test for logging disable"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            }
+          ],
+          "customEntityRecognitionTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:17.1197872Z",
+              "taskName": "8",
+              "state": "failed"
+            }
+          ],
+          "customSingleClassificationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:12.3786205Z",
+              "taskName": "6",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "classification": {
+                      "category": "PlayMusic",
+                      "confidenceScore": 0.6
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "659c1851-be0b-4142-b12a-087da9785926",
+                "deploymentName": "659c1851-be0b-4142-b12a-087da9785926"
+              }
+            }
+          ],
+          "customMultiClassificationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:55:11.632516Z",
+              "taskName": "7",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "classifications": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "7cdace98-537b-494a-b69a-c19754718025",
+                "deploymentName": "7cdace98-537b-494a-b69a-c19754718025"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

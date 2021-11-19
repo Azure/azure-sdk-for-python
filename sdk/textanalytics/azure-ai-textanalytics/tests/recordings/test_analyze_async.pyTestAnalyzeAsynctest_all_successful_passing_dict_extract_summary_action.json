@@ -1,0 +1,127 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "2224",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "bf3e0805-4972-11ec-ace1-b831b58100e8"
+      },
+      "RequestBody": "{\u0022tasks\u0022:{\u0022entityRecognitionTasks\u0022:[],\u0022entityRecognitionPiiTasks\u0022:[],\u0022keyPhraseExtractionTasks\u0022:[],\u0022entityLinkingTasks\u0022:[],\u0022sentimentAnalysisTasks\u0022:[],\u0022extractiveSummarizationTasks\u0022:[{\u0022parameters\u0022:{\u0022model-version\u0022:\u0022latest\u0022,\u0022loggingOptOut\u0022:false,\u0022stringIndexType\u0022:\u0022UnicodeCodePoint\u0022,\u0022sentenceCount\u0022:3,\u0022sortBy\u0022:\u0022Offset\u0022},\u0022taskName\u0022:\u00220\u0022}],\u0022customEntityRecognitionTasks\u0022:[],\u0022customSingleClassificationTasks\u0022:[],\u0022customMultiClassificationTasks\u0022:[]},\u0022analysisInput\u0022:{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis. Their decision to leave the government came three days after May appeared to have agreed a deal with herfractured Cabinet on the UK\u0027s post Brexit relationship with the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree about the best way of delivering our shared commitment to honoring the result of the referendum. The Prime Minister\u0027s latest plitical drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan. He said it involved too close a relationship with the EU and gave only an illusion of control being returned to the UK after it left the EU. It seems to me we\u0027re giving too much away, too easily, and that\u0027s a dangerous strategy at this time, Davis said in a BBC radio interview Monday morning. Johnson\u0027s resignation came Monday afternoon local time, just before the Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00222\u0022,\u0022text\u0022:\u0022Microsoft fue fundado por Bill Gates y Paul Allen\u0022,\u0022language\u0022:\u0022es\u0022}]}}",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "8417af27-1510-459e-87ce-d41367e5ddb3",
+        "Date": "Fri, 19 Nov 2021 19:56:12 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/9d38df3d-710d-4014-87e1-07cd0f371cf0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "187"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/9d38df3d-710d-4014-87e1-07cd0f371cf0?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "bf3e0805-4972-11ec-ace1-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4a7df6cc-12b9-40c0-8101-8a61efaf7da8",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Nov 2021 19:56:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "82"
+      },
+      "ResponseBody": {
+        "jobId": "9d38df3d-710d-4014-87e1-07cd0f371cf0",
+        "lastUpdateDateTime": "2021-11-19T19:56:15Z",
+        "createdDateTime": "2021-11-19T19:56:12Z",
+        "expirationDateTime": "2021-11-20T19:56:12Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "extractiveSummarizationTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:56:15.5471978Z",
+              "taskName": "0",
+              "state": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 2,
+                  "validDocumentsCount": 2,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 1625,
+                      "transactionsCount": 2
+                    },
+                    "sentences": [
+                      {
+                        "text": "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy.",
+                        "rankScore": 0.57,
+                        "offset": 0,
+                        "length": 176
+                      },
+                      {
+                        "text": "The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis.",
+                        "rankScore": 1.0,
+                        "offset": 177,
+                        "length": 164
+                      },
+                      {
+                        "text": "Their decision to leave the government came three days after May appeared to have agreed a deal with herfractured Cabinet on the UK\u0027s post Brexit relationship with the EU.",
+                        "rankScore": 0.47,
+                        "offset": 342,
+                        "length": 171
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 49,
+                      "transactionsCount": 1
+                    },
+                    "sentences": [
+                      {
+                        "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 49
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-08-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

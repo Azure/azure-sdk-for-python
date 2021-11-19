@@ -1,0 +1,115 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1063",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "e56ecc6e-4970-11ec-9c91-b831b58100e8"
+      },
+      "RequestBody": {
+        "tasks": {
+          "entityRecognitionTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": false,
+                "stringIndexType": "UnicodeCodePoint"
+              },
+              "taskName": "0"
+            }
+          ],
+          "entityRecognitionPiiTasks": [
+            {
+              "parameters": {
+                "model-version": "bad",
+                "loggingOptOut": true,
+                "stringIndexType": "UnicodeCodePoint"
+              },
+              "taskName": "2"
+            }
+          ],
+          "keyPhraseExtractionTasks": [
+            {
+              "parameters": {
+                "model-version": "bad",
+                "loggingOptOut": false
+              },
+              "taskName": "1"
+            }
+          ],
+          "entityLinkingTasks": [
+            {
+              "parameters": {
+                "model-version": "bad",
+                "loggingOptOut": false,
+                "stringIndexType": "UnicodeCodePoint"
+              },
+              "taskName": "3"
+            }
+          ],
+          "sentimentAnalysisTasks": [
+            {
+              "parameters": {
+                "model-version": "bad",
+                "loggingOptOut": false,
+                "opinionMining": false
+              },
+              "taskName": "4"
+            }
+          ],
+          "extractiveSummarizationTasks": [
+            {
+              "parameters": {
+                "model-version": "bad",
+                "loggingOptOut": false,
+                "stringIndexType": "UnicodeCodePoint",
+                "sentenceCount": 3,
+                "sortBy": "Offset"
+              },
+              "taskName": "5"
+            }
+          ],
+          "customEntityRecognitionTasks": [],
+          "customSingleClassificationTasks": [],
+          "customMultiClassificationTasks": []
+        },
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "english"
+            }
+          ]
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "dfecac8d-092e-4402-a264-ed47f7759fae",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Nov 2021 19:42:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "5"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Invalid parameter in request",
+          "innererror": {
+            "code": "InvalidParameterValue",
+            "message": "Job task parameter value bad is not supported for model-version parameter for job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01,2021-05-01."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

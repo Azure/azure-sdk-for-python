@@ -1,0 +1,303 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "604",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "bffb83a8-4970-11ec-8fe5-b831b58100e8"
+      },
+      "RequestBody": {
+        "tasks": {
+          "entityRecognitionTasks": [],
+          "entityRecognitionPiiTasks": [],
+          "keyPhraseExtractionTasks": [],
+          "entityLinkingTasks": [],
+          "sentimentAnalysisTasks": [
+            {
+              "parameters": {
+                "model-version": "latest",
+                "loggingOptOut": false,
+                "opinionMining": true
+              },
+              "taskName": "0"
+            }
+          ],
+          "extractiveSummarizationTasks": [],
+          "customEntityRecognitionTasks": [],
+          "customSingleClassificationTasks": [],
+          "customMultiClassificationTasks": []
+        },
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "It has a sleek premium aluminum design that makes it beautiful to look at.",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "The food and service is not good",
+              "language": "en"
+            }
+          ]
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "64df8fbd-f5f4-4400-bbd3-1d087c613a51",
+        "Date": "Fri, 19 Nov 2021 19:41:54 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/55079495-1a36-4850-9b08-9e55651819e2",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "164"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/55079495-1a36-4850-9b08-9e55651819e2?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "bffb83a8-4970-11ec-8fe5-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "eb96a72d-7f09-4667-8475-80ca11fb88a4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Nov 2021 19:41:59 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7"
+      },
+      "ResponseBody": {
+        "jobId": "55079495-1a36-4850-9b08-9e55651819e2",
+        "lastUpdateDateTime": "2021-11-19T19:41:55Z",
+        "createdDateTime": "2021-11-19T19:41:54Z",
+        "expirationDateTime": "2021-11-20T19:41:54Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/55079495-1a36-4850-9b08-9e55651819e2?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "bffb83a8-4970-11ec-8fe5-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "6dbca385-c4fb-4560-b057-136960f81200",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Nov 2021 19:42:04 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "60"
+      },
+      "ResponseBody": {
+        "jobId": "55079495-1a36-4850-9b08-9e55651819e2",
+        "lastUpdateDateTime": "2021-11-19T19:42:03Z",
+        "createdDateTime": "2021-11-19T19:41:54Z",
+        "expirationDateTime": "2021-11-20T19:41:54Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "sentimentAnalysisTasks": [
+            {
+              "lastUpdateDateTime": "2021-11-19T19:42:03.2511552Z",
+              "taskName": "0",
+              "state": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 2,
+                  "validDocumentsCount": 2,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 2
+                },
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentiment": "positive",
+                    "statistics": {
+                      "charactersCount": 74,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.98,
+                      "neutral": 0.02,
+                      "negative": 0.0
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.98,
+                          "neutral": 0.02,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 74,
+                        "text": "It has a sleek premium aluminum design that makes it beautiful to look at.",
+                        "targets": [
+                          {
+                            "sentiment": "positive",
+                            "confidenceScores": {
+                              "positive": 1.0,
+                              "negative": 0.0
+                            },
+                            "offset": 32,
+                            "length": 6,
+                            "text": "design",
+                            "relations": [
+                              {
+                                "relationType": "assessment",
+                                "ref": "#/documents/0/sentences/0/assessments/0"
+                              },
+                              {
+                                "relationType": "assessment",
+                                "ref": "#/documents/0/sentences/0/assessments/1"
+                              }
+                            ]
+                          }
+                        ],
+                        "assessments": [
+                          {
+                            "sentiment": "positive",
+                            "confidenceScores": {
+                              "positive": 1.0,
+                              "negative": 0.0
+                            },
+                            "offset": 9,
+                            "length": 5,
+                            "text": "sleek",
+                            "isNegated": false
+                          },
+                          {
+                            "sentiment": "positive",
+                            "confidenceScores": {
+                              "positive": 1.0,
+                              "negative": 0.0
+                            },
+                            "offset": 15,
+                            "length": 7,
+                            "text": "premium",
+                            "isNegated": false
+                          }
+                        ]
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "sentiment": "negative",
+                    "statistics": {
+                      "charactersCount": 32,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.0,
+                      "negative": 1.0
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.0,
+                          "negative": 1.0
+                        },
+                        "offset": 0,
+                        "length": 32,
+                        "text": "The food and service is not good",
+                        "targets": [
+                          {
+                            "sentiment": "negative",
+                            "confidenceScores": {
+                              "positive": 0.0,
+                              "negative": 1.0
+                            },
+                            "offset": 4,
+                            "length": 4,
+                            "text": "food",
+                            "relations": [
+                              {
+                                "relationType": "assessment",
+                                "ref": "#/documents/1/sentences/0/assessments/0"
+                              }
+                            ]
+                          },
+                          {
+                            "sentiment": "negative",
+                            "confidenceScores": {
+                              "positive": 0.0,
+                              "negative": 1.0
+                            },
+                            "offset": 13,
+                            "length": 7,
+                            "text": "service",
+                            "relations": [
+                              {
+                                "relationType": "assessment",
+                                "ref": "#/documents/1/sentences/0/assessments/0"
+                              }
+                            ]
+                          }
+                        ],
+                        "assessments": [
+                          {
+                            "sentiment": "negative",
+                            "confidenceScores": {
+                              "positive": 0.0,
+                              "negative": 1.0
+                            },
+                            "offset": 28,
+                            "length": 4,
+                            "text": "good",
+                            "isNegated": true
+                          }
+                        ]
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
