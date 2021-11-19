@@ -675,3 +675,37 @@ def test_model_recursion_complex():
     }]
 
     assert json.loads(json.dumps(model)) == model == dict_response
+
+def test_literals():
+
+    class LiteralModel(Model):
+
+        @rest_property()
+        def species(self) -> Literal["Mongoose", "Eagle", "Penguin"]:
+            """My species"""
+
+        @rest_property()
+        def age(self) -> Literal[1, 2, 3]:
+            """My age"""
+
+    dict_response = {
+        "species": "Mongoose",
+        "age": 3
+    }
+    model = LiteralModel(dict_response)
+    assert model.species == model["species"] == "Mongoose"
+    assert model.age == model["age"] == 3
+
+    dict_response = {
+        "species": "invalid",
+        "age": 5
+    }
+    model = LiteralModel(dict_response)
+    assert model["species"] == "invalid"
+    assert model["age"] == 5
+
+    with pytest.raises(ValueError):
+        model.species
+
+    with pytest.raises(ValueError):
+        model.age

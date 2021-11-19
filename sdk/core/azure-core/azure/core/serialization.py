@@ -217,6 +217,14 @@ def _get_model(module_name: str, model_name: str):
 
 def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
     try:
+        if deserialization_type.__origin__ == Literal:
+            if obj not in deserialization_type.__args__:
+                raise ValueError("Not one of the literal values")
+            return obj
+    except AttributeError:
+        pass
+
+    try:
         # right now, assuming we don't have unions (since we're getting rid of the only)
         # union we used to have in msrest models, which was union of str and enum
         if any(a for a in deserialization_type.__args__ if a == type(None)):
