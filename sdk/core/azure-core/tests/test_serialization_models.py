@@ -559,29 +559,37 @@ def test_list_of_tuple_deserialization_model():
     assert model.prop[0][1].pet.name == model.prop[0][1]["pet"]["name"] == "Eugene"
     assert model.prop[1][0] == model.prop[1][1].pet
 
+class RecursiveModelWithWrappers(Model):
+
+    @rest_property()
+    def 
+
+def test_recursion_with_wrappers():
+    pass
+
+class RecursiveModel(Model):
+
+    @rest_property()
+    def name(self) -> str:
+        """My name"""
+
+    @rest_property(name="listOfMe")
+    def list_of_me(self) -> List["RecursiveModel"]:
+        """A list of myself"""
+
+    @rest_property(name="dictOfMe")
+    def dict_of_me(self) -> Dict[str, "RecursiveModel"]:
+        """A dictionary of me"""
+
+    @rest_property(name="dictOfListOfMe")
+    def dict_of_list_of_me(self) -> Dict[str, List["RecursiveModel"]]:
+        """A dictionary of a list of me"""
+
+    @rest_property(name="listOfDictOfMe")
+    def list_of_dict_of_me(self) -> List[Dict[str, "RecursiveModel"]]:
+        """A list of a dictionary of me"""
 
 def test_model_recursion_complex():
-    class RecursiveModel(Model):
-
-        @rest_property()
-        def name(self) -> str:
-            """My name"""
-
-        @rest_property(name="listOfMe")
-        def list_of_me(self) -> List["RecursiveModel"]:
-            """A list of myself"""
-
-        @rest_property(name="dictOfMe")
-        def dict_of_me(self) -> Dict[str, "RecursiveModel"]:
-            """A dictionary of me"""
-
-        @rest_property(name="dictOfListOfMe")
-        def dict_of_list_of_me(self) -> Dict[str, List["RecursiveModel"]]:
-            """A dictionary of a list of me"""
-
-        @rest_property(name="listOfDictOfMe")
-        def list_of_dict_of_me(self) -> List[Dict[str, "RecursiveModel"]]:
-            """A list of a dictionary of me"""
 
     dict_response = {
         "name": "it's me!",
@@ -645,7 +653,7 @@ def test_model_recursion_complex():
         "listOfDictOfMe": None
     })]
     assert model.list_of_me[0].name == "it's me!"
-    assert model.list_of_me[0].list_of_me
+    assert model.list_of_me[0].list_of_me is None
 
     assert model['dictOfMe'] == {
         "me": {
