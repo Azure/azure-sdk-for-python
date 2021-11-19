@@ -5,33 +5,43 @@
 # --------------------------------------------------------------------------
 from threading import Lock, Condition
 from datetime import datetime, timedelta
-from typing import ( # pylint: disable=unused-import
+
+from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
+    Any
 )
+import six
 
 from msrest.serialization import TZ_UTC
+from .utils import get_current_utc_as_int
+from .utils import create_access_token
 
-from .user_token_refresh_options import CommunicationTokenRefreshOptions
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service
-    :keyword token_refresher: The token refresher to provide capacity to fetch fresh token
+    :keyword token_refresher: The async token refresher to provide capacity to fetch fresh token
+    :keyword refresh_proactively: Whether to refresh the token proactively or not
+    :keyword refresh_time_before_token_expiry: The time before the token expires to refresh the token
     :raises: TypeError
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
+    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self,
-            token, # type: str
-            **kwargs
-        ):
-        token_refresher = kwargs.pop('token_refresher', None)
-        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
-                                                                               token_refresher=token_refresher)
-        self._token = communication_token_refresh_options.get_token()
-        self._token_refresher = communication_token_refresh_options.get_token_refresher()
+                 token,  # type: str
+                 **kwargs  # type: Any
+                 ):
+        if not isinstance(token, six.string_types):
+            raise TypeError("token must be a string.")
+        self._token = create_access_token(token)
+        self._token_refresher = kwargs.pop('token_refresher', None)
+        self._refresh_proactively = kwargs.pop('refresh_proactively', False)
+        self._refresh_time_before_token_expiry = kwargs.pop('refresh_time_before_token_expiry', timedelta(
+            minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
+
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
@@ -79,8 +89,8 @@ class CommunicationTokenCredential(object):
         self._lock.acquire()
 
     def _token_expiring(self):
-        return self._token.expires_on - self._get_utc_now() <\
-            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
+        return self._token.expires_on - get_current_utc_as_int() <\
+            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
 
     def _is_currenttoken_valid(self):
         return self._get_utc_now() < self._token.expires_on
