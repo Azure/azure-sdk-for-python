@@ -250,6 +250,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert 'food' == food_target.text
                     assert 'negative' == food_target.sentiment
                     assert 0.0 == food_target.confidence_scores.neutral
+
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -345,6 +346,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "textanalytics_test_api_key": "",
     })
+    @recorded_by_proxy_async
     async def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
             async with client:
@@ -365,6 +367,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "textanalytics_test_api_key": "xxxxxxxxxxxx"
     })
+    @recorded_by_proxy_async
     async def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
             async with client:
@@ -423,7 +426,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 for action_idx, document_result in enumerate(document_results):
                     assert document_result.id == document_order[doc_idx]
                     assert self.document_result_to_action_type(document_result) == action_order[action_idx]
-
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -522,7 +524,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
+    # @recorded_by_proxy_async
     # async def test_whole_batch_language_hint(self, client):
     #     def callback(resp):
     #         language_str = "\"language\": \"fr\""
@@ -592,7 +594,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
+    # @recorded_by_proxy_async
     # async def test_invalid_language_hint_method(self, client):
     #     async with client:
     #         response = await (await client.begin_analyze_actions(
@@ -773,6 +775,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_disable_service_logs(
             self,
             textanalytics_custom_text_endpoint,
@@ -1147,6 +1150,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert isinstance(document_results[1][0], ExtractSummaryResult)
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_single_category_classify(
             self,
             textanalytics_custom_text_endpoint,
@@ -1187,6 +1191,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 assert result.classification.confidence_score
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_multi_category_classify(
             self,
             textanalytics_custom_text_endpoint,
@@ -1229,6 +1234,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert classification.confidence_score
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_recognize_custom_entities(
             self,
             textanalytics_custom_text_endpoint,
@@ -1275,6 +1281,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/12409536 and https://github.com/Azure/azure-sdk-for-python/issues/21369")
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_custom_partial_error(
             self,
             textanalytics_custom_text_endpoint,
@@ -1385,6 +1392,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_generic_action_error_no_target(
         self,
         textanalytics_custom_text_endpoint,
@@ -1448,6 +1456,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_action_errors_with_targets(
         self,
         textanalytics_custom_text_endpoint,
@@ -1543,6 +1552,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy_async
     async def test_action_job_failure(
             self,
             textanalytics_custom_text_endpoint,

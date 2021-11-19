@@ -295,6 +295,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "textanalytics_test_api_key": "",
     })
+    @recorded_by_proxy
     def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = client.begin_analyze_actions(
@@ -314,6 +315,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "textanalytics_test_api_key": "xxxxxxxxxxxx",
     })
+    @recorded_by_proxy
     def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
             response = client.begin_analyze_actions(
@@ -700,6 +702,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_disable_service_logs(
             self,
             textanalytics_custom_text_endpoint,
@@ -1061,6 +1064,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(document_results[1][0], ExtractSummaryResult)
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_single_category_classify(
             self,
             textanalytics_custom_text_endpoint,
@@ -1098,6 +1102,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.classification.confidence_score
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_multi_category_classify(
             self,
             textanalytics_custom_text_endpoint,
@@ -1136,6 +1141,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.confidence_score
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_recognize_custom_entities(
             self,
             textanalytics_custom_text_endpoint,
