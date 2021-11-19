@@ -5,7 +5,7 @@
 
 from io import BytesIO
 
-from .random_stream import get_random_bytes, _DEFAULT_LENGTH
+from ._random_stream import get_random_bytes, _DEFAULT_LENGTH
 
 
 class AsyncRandomStream(BytesIO):

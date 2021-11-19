@@ -1,4 +1,5 @@
 from .mgmt_testcase import AzureMgmtTestCase, AzureMgmtPreparer
+from .mgmt_recorded_testcase import AzureMgmtRecordedTestCase
 from .azure_recorded_testcase import AzureRecordedTestCase
 from .azure_testcase import AzureTestCase, is_live, get_region_override
 from .resource_testcase import (
@@ -43,6 +44,7 @@ __all__ = [
     "add_uri_regex_sanitizer",
     "AzureMgmtTestCase",
     "AzureMgmtPreparer",
+    "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",
     "FakeResource",
     "ResourceGroupPreparer",

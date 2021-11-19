@@ -86,6 +86,13 @@
             "metadata": {
                 "description": "Test attestation service for Secure Key Release."
             }
+        },
+        "storageEndpointSuffix": {
+          "type": "string",
+          "defaultValue": "core.windows.net",
+          "metadata": {
+              "description": "The url suffix to use when accessing the storage data plane."
+          }
         }
     },
     "variables": {
@@ -272,6 +279,10 @@
         "CLIENT_OBJECTID": {
             "type": "string",
             "value": "[parameters('testApplicationOid')]"
+        },
+        "KEYVAULT_STORAGE_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('storageEndpointSuffix')]"
         },
         "BLOB_STORAGE_ACCOUNT_NAME": {
             "type": "string",

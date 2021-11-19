@@ -165,9 +165,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
                     assert field["type"]
                     assert doc_type.field_confidence[key] is not None
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    @pytest.mark.live_test_only
     async def test_copy_continuation_token(self, client, formrecognizer_storage_container_sas_url):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)

@@ -1,6 +1,6 @@
 # Release History
 
-## 11.3.0b6 (Unreleased)
+## 11.3.0b7 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,15 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.3.0b6 (2021-11-19)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `semantic_configuration_name`
+- Added properties to `SearchIndex`: `semantic_settings`
+- Added models: `PrioritizedFields`, `SemanticConfiguration`, `SemanticField`, `SemanticSettings`
+- Added new values to model `QueryLanguage`
 
 ## 11.3.0b5 (2021-11-09)
 

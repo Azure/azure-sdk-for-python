@@ -1,5 +1,11 @@
 # Release History
 
+## 4.7.1 (2021-11-18)
+
+### Bugs Fixed
+
+- The `send` API will raise on exceptions.
+
 ## 4.7.0 (2021-11-09)
 
 ### Features Added

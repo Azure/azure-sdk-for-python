@@ -15,6 +15,7 @@ class SleepTest(PerfStressTest):
     instance_count = 0
 
     def __init__(self, arguments):
+        super().__init__(arguments)
         type(self).instance_count += 1
         self.seconds_per_operation = math.pow(2, type(self).instance_count)
 

@@ -66,7 +66,6 @@ async def create_with_sas_token():
         await producer_client.send_batch(event_data_batch)
 
 
-loop = asyncio.get_event_loop()
 start_time = time.time()
-loop.run_until_complete(create_with_sas_token())
+asyncio.run(create_with_sas_token())
 print("Send messages in {} seconds.".format(time.time() - start_time))
