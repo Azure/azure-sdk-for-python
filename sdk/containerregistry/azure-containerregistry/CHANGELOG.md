@@ -5,7 +5,6 @@
 ### Features Added
 
 - Updated the supported rest api version to be the stable "2021-07-01".
-  - Added `grant_type` when getting token.
   - Removed the property `teleport_enabled` in `RepositoryProperties`.
 
 ## 1.0.0b6 (2021-09-08)
