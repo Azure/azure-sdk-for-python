@@ -142,17 +142,20 @@ def test_original_and_attr_name_same():
     model = MyModel(dict_response)
     assert model.hello == model["hello"] == dict_response["hello"]
 
-def test_optional_property():
+# def test_optional_property():
 
-    class MyModel(Model):
+#     class MyModel(Model):
 
-        @rest_property()
-        def optional_str(self) -> Optional[str]:
-            """optional string property"""
+#         @rest_property()
+#         def optional_str(self) -> Optional[str]:
+#             """optional string property"""
 
-        @rest_property()
-        def optional_time(self) -> Optional[datetime.time]:
-            """optional time property"""
+#         @rest_property()
+#         def optional_time(self) -> Optional[datetime.time]:
+#             """optional time property"""
+
+#         @rest_property(name="optionalDict")
+#         def optional_dict(self) -> Optional[Dict[str, ]]
 
 def test_modify_dict():
     dict_response = {
@@ -326,12 +329,63 @@ def test_dictionary_deserialization():
     assert model['prop'] == {"datetime": val_str}
     assert model.prop == {"datetime": val}
 
+class Pet(Model):
+
+    @rest_property()
+    def name(self) -> str:
+        """My name"""
+
+    @rest_property()
+    def species(self) -> str:
+        """My species"""
+
+def test_dictionary_deserialization_model():
+
+    class DictionaryModel(Model):
+
+        @rest_property()
+        def prop(self) -> Dict[str, Pet]:
+            """Dictionary of str to pet"""
+
+    dict_response = {
+        "prop": {
+            "Eugene": {
+                "name": "Eugene",
+                "species": "Dog",
+            },
+            "Lady": {
+                "name": "Lady",
+                "species": "Newt",
+            }
+        }
+    }
+
+    model = DictionaryModel(dict_response)
+    assert model['prop'] == {
+        "Eugene": {
+            "name": "Eugene",
+            "species": "Dog",
+        },
+        "Lady": {
+            "name": "Lady",
+            "species": "Newt",
+        }
+    }
+    assert model.prop == {
+        "Eugene": Pet({"name": "Eugene", "species": "Dog"}),
+        "Lady": Pet({"name": "Lady", "species": "Newt"})
+    }
+    assert model.prop["Eugene"].name == model.prop["Eugene"]["name"] == "Eugene"
+    assert model.prop["Eugene"].species == model.prop["Eugene"]["species"] == "Dog"
+    assert model.prop["Lady"].name == model.prop["Lady"]["name"] == "Lady"
+    assert model.prop["Lady"].species == model.prop["Lady"]["species"] == "Newt"
+
 def test_list_deserialization():
     class ListModel(Model):
 
         @rest_property()
         def prop(self) -> List[datetime.datetime]:
-            """Dictionary of str to datetime.datetime"""
+            """Last of datetime.datetime"""
 
     val_str = "9999-12-31T23:59:59.999Z"
     val = isodate.parse_datetime(val_str)
@@ -342,12 +396,40 @@ def test_list_deserialization():
     assert model['prop'] == [val_str, val_str]
     assert model.prop == [val, val]
 
+def test_list_deserialization_model():
+    class ListModel(Model):
+
+        @rest_property()
+        def prop(self) -> List[Pet]:
+            """List of pets"""
+
+    dict_response = {
+        "prop": [
+            {"name": "Eugene", "species": "Dog"},
+            {"name": "Lady", "species": "Newt"}
+        ]
+    }
+    model = ListModel(dict_response)
+    assert model["prop"] == [
+        {"name": "Eugene", "species": "Dog"},
+        {"name": "Lady", "species": "Newt"}
+    ]
+    assert model.prop == [
+        Pet({"name": "Eugene", "species": "Dog"}),
+        Pet({"name": "Lady", "species": "Newt"})
+    ]
+    assert len(model.prop) == 2
+    assert model.prop[0].name == model.prop[0]["name"] == "Eugene"
+    assert model.prop[0].species == model.prop[0]["species"] == "Dog"
+    assert model.prop[1].name == model.prop[1]["name"] == "Lady"
+    assert model.prop[1].species == model.prop[1]["species"] == "Newt"
+
 def test_set_deserialization():
     class SetModel(Model):
 
         @rest_property()
         def prop(self) -> Set[datetime.datetime]:
-            """Dictionary of str to datetime.datetime"""
+            """Set of datetime.datetime"""
 
     val_str = "9999-12-31T23:59:59.999Z"
     val = isodate.parse_datetime(val_str)
@@ -363,7 +445,7 @@ def test_tuple_deserialization():
 
         @rest_property()
         def prop(self) -> Tuple[str, datetime.datetime]:
-            """Dictionary of str to datetime.datetime"""
+            """Tuple of str and datetime"""
 
     val_str = "9999-12-31T23:59:59.999Z"
     val = isodate.parse_datetime(val_str)
@@ -373,6 +455,47 @@ def test_tuple_deserialization():
     model = TupleModel(dict_response)
     assert model['prop'] == (val_str, val_str)
     assert model.prop == (val_str, val)
+
+def test_list_of_tuple_deserialization_model():
+
+    class Owner(Model):
+        @rest_property()
+        def name(self) -> str:
+            """Owner name"""
+
+        @rest_property()
+        def pet(self) -> Pet:
+            """Pet"""
+
+    class ListOfTupleModel(Model):
+
+        @rest_property()
+        def prop(self) -> List[Tuple[Pet, Owner]]:
+            """Tuple of Pet and Owner"""
+
+    eugene = {"name": "Eugene", "species": "Dog"}
+    lady = {"name": "Lady", "species": "Newt"}
+    giacamo = {"name": "Giacamo", "pet": eugene}
+    elizabeth = {"name": "Elizabeth", "pet": lady}
+
+    dict_response = {
+        "prop": [(eugene, giacamo), (lady, elizabeth)]
+    }
+    model = ListOfTupleModel(dict_response)
+    assert (
+        model['prop'] ==
+        model.prop ==
+        [(eugene, giacamo), (lady, elizabeth)] ==
+        [(Pet(eugene), Owner(giacamo)), (Pet(lady), Owner(elizabeth))]
+    )
+    assert len(model.prop[0]) == len(model['prop'][0]) == 2
+    assert model.prop[0][0].name == model.prop[0][0]['name'] == "Eugene"
+    assert model.prop[0][0].species == model.prop[0][0]['species'] == "Dog"
+    assert model.prop[0][1].name == "Giacamo"
+    assert model.prop[0][1].pet == model.prop[0][0]
+    assert model.prop[0][1].pet.name == model.prop[0][1]["pet"]["name"] == "Eugene"
+    assert model.prop[1][0] == model.prop[1][1].pet
+
 
 def test_model_recursion_complex():
     class RecursiveModel(Model):
