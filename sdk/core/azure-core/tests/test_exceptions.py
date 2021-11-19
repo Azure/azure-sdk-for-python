@@ -310,3 +310,11 @@ class TestExceptions(object):
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
         assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Error: I am throwing an error."
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_datav4_error(self, client, http_request):
+        request = http_request("GET", "/errors/odatav4")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert "Error: {\"" not in str(ex.value)

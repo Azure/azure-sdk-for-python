@@ -54,3 +54,10 @@ def get_text_body():
         'I am throwing an error',
         status=400
     )
+
+@errors_api.route('/odatav4', methods=['GET'])
+def get_odatav4():
+    return Response(
+        '{"error": {"code": "501", "message": "Unsupported functionality", "target": "query", "details": [{"code": "301", "target": "$search", "message": "$search query option not supported"}], "innererror": {"trace": [], "context": {}}}}',
+        status=400
+    )

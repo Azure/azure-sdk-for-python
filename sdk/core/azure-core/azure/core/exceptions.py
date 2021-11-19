@@ -337,11 +337,11 @@ class HttpResponseError(AzureError):
         retval = super(HttpResponseError, self).__str__()
         try:
             body = self.response.text()
-            if body:
+            if body and not self.error:
                 return "{}. Error: {}.".format(retval, body)[:2048]
-            return retval
         except Exception:  # pylint: disable=broad-except
-            return retval
+            pass
+        return retval
 
 
 class DecodeError(HttpResponseError):
