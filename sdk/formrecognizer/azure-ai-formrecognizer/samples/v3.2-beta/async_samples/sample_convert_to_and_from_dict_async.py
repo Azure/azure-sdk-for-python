@@ -54,39 +54,17 @@ async def convert_to_and_from_dict_async():
             )
         result = await poller.result()
 
-    # connvert the received model to a dictionary
-    d = result.to_dict()
+    # convert the received model to a dictionary
+    analyze_result_dict = result.to_dict()
 
     # save the dictionary as a JSON content in a JSON file
     with open('data.json', 'w') as f:
-        json.dump(d, f)
+        json.dump(analyze_result_dict, f)
 
     # convert the dictionary back to the original model
-    model = AnalyzeResult.from_dict(d)
+    model = AnalyzeResult.from_dict(analyze_result_dict)
 
     # use the model as normal
-    for style in model.styles:
-        if style.is_handwritten:
-            print("Document contains handwritten content: ")
-            print(",".join([model.content[span.offset:span.offset + span.length] for span in style.spans]))
-
-    print("----Key-value pairs found in document----")
-    for kv_pair in model.key_value_pairs:
-        if kv_pair.key:
-            print(
-                    "Key '{}' found within '{}' bounding regions".format(
-                        kv_pair.key.content,
-                        kv_pair.key.bounding_regions,
-                    )
-                )
-        if kv_pair.value:
-            print(
-                    "Value '{}' found within '{}' bounding regions\n".format(
-                        kv_pair.value.content,
-                        kv_pair.value.bounding_regions,
-                    )
-                )
-
     print("----Entities found in document----")
     for entity in model.entities:
         print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
@@ -94,28 +72,6 @@ async def convert_to_and_from_dict_async():
         print("...within '{}' bounding regions".format(entity.bounding_regions))
         print("...with confidence {}\n".format(entity.confidence))
 
-    for table_idx, table in enumerate(model.tables):
-        print(
-            "Table # {} has {} rows and {} columns".format(
-                table_idx, table.row_count, table.column_count
-            )
-        )
-        for region in table.bounding_regions:
-            print(
-                "Table # {} location on page: {} is on {}".format(
-                    table_idx,
-                    region.page_number,
-                    region.bounding_box,
-                )
-            )
-        for cell in table.cells:
-            print(
-                "...Cell[{}][{}] has content '{}'".format(
-                    cell.row_index,
-                    cell.column_index,
-                    cell.content,
-                )
-            )
     print("----------------------------------------")
 
 
