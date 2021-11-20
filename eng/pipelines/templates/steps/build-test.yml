@@ -63,6 +63,11 @@ steps:
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 
+  - ${{if eq(parameters.TestProxy, true) }}:
+    - pwsh: |
+        cat $(Build.SourcesDirectory)/test-proxy.log
+      displayName: Dump Test-Proxy Logs
+
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs
     condition: failed()
