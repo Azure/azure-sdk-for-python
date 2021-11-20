@@ -171,6 +171,12 @@ class ContentStreamDownloader():  # pylint: disable=too-many-instance-attributes
     """A streaming object to download recording content.
     :ivar str endpoint:
         The url where the content is located.
+    :ivar ~azure.communication.callingserver.ContentProperties properties:
+        The properties of the content being downloaded. If only a range of the data is being
+        downloaded, this will be reflected in the properties.
+    :ivar int size:
+        The size of the total data in the stream. This will be the byte range if speficied,
+        otherwise the total size of the requested content.
     """
 
     def __init__(

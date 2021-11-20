@@ -119,16 +119,8 @@ class CallingServerClient:
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of CallingServerClient.
-        :rtype:  ~azure.communication.phonenumbers.aio.CallingServerClient
+        :rtype: ~azure.communication.callingserver.CallingServerClient
 
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/callingserver_sample.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the CallingServerClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -145,6 +137,7 @@ class CallingServerClient:
            The call connection id for the CallConnection instance.
         :returns: Instance of CallConnection.
         :rtype: ~azure.communication.callingserver.aio.CallConnection
+
         """
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
@@ -685,17 +678,17 @@ class CallingServerClient:
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
         :param recording_state_callback_uri: Required. The uri to send notifications to.
         :type recording_state_callback_uri: str
-        :keyword recording_content_type: The content type of call recording. Possible values include:
+        :keyword content_type: The content type of call recording. Possible values include:
          "audio", "audioVideo".
-        :paramtype recording_content_type: str or
+        :paramtype content_type: str or
          ~azure.communication.callingserver.models.RecordingContentType
-        :keyword recording_channel_type: The channel type of call recording. Possible values include:
+        :keyword channel_type: The channel type of call recording. Possible values include:
         "mixed", "unmixed".
-        :paramtype recording_channel_type: str or
+        :paramtype channel_type: str or
          ~azure.communication.callingserver.models.RecordingChannelType
-        :keyword recording_format_type: The format type of call recording. Possible values include: "wav",
+        :keyword format_type: The format type of call recording. Possible values include: "wav",
          "mp3", "mp4".
-        :paramtype recording_format_type: str or
+        :paramtype format_type: str or
          ~azure.communication.callingserver.models.RecordingFormatType
         :return: StartCallRecordingResult
         :rtype: ~azure.communication.callingserver.StartCallRecordingResult
@@ -720,15 +713,17 @@ class CallingServerClient:
     async def pause_recording(
         self,
         recording_id: str,
-        **kwargs: Any
+        **kwargs: None
     ) -> None:
         """Pause recording the call.
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+
         """
-        
         return await self._server_call_client.pause_recording(
             recording_id=recording_id,
             **kwargs
@@ -744,6 +739,8 @@ class CallingServerClient:
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -762,6 +759,8 @@ class CallingServerClient:
 
         :param recording_id: Required. The recording id.
         :type recording_id: str
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -841,14 +840,13 @@ class CallingServerClient:
         self,
         content_delete_url: str,
         **kwargs: Any
-
     ) -> None:
         """Delete recording.
 
         :param content_delete_url: Required. The content delete url.
         :type content_delete_url: str
-        :return: The response of the operation.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
