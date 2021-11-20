@@ -91,10 +91,8 @@ class ContentDownloader(object):
             header_parameters['Range'] = self._serialize.header("range", http_range, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        print(f"The request: {request.__dict__}")
         pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs) # pylint:disable=protected-access
         response = pipeline_response.http_response
-        print(f"The response from download: {response.__dict__}")
         if response.status_code not in [200, 206]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
