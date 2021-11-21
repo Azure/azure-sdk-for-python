@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from unittest import TestCase
-from unittest.mock import MagicMock
+try:
+    from unittest.mock import MagicMock
+except ImportError:  # python < 3.3
+    from mock import MagicMock  # type: ignore
 from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
 from azure.communication.identity._shared.utils import create_access_token
 
