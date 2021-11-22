@@ -160,13 +160,11 @@ class IssueProcess:
         _LOG.info(f'issue {self.issue.issue.number}: {message}')
 
     def request_repo(self) -> Repository:
-        # return self.request_repo_dict[self.assignee]
-        return self.request_repo_dict['msyyc']
+        return self.request_repo_dict[self.assignee]
 
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue.labels_name:
             return
-        return
         self.add_label(AUTO_ASSIGN_LABEL)
         assignees = list(_ASSIGNEE_TOKEN.keys())
         # assign averagely
