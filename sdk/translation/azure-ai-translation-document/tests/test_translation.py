@@ -437,7 +437,6 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
     def test_overloaded_bad_input(self, client):
         translation_inputs = [
             DocumentTranslationInput(
@@ -466,10 +465,9 @@ class TestTranslation(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
-    def test_translation_continuation_token(self, client, variables):
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
-        target_container_sas_url = self.create_target_container(variables=variables)
+    def test_translation_continuation_token(self, client):
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
 
         initial_poller = client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
         cont_token = initial_poller.continuation_token()
@@ -480,7 +478,6 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             self._validate_doc_status(doc, target_language="es")
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
-        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

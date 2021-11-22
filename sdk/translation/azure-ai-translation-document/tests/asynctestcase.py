@@ -11,20 +11,21 @@ from testcase import DocumentTranslationTest, Document
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
-class AsyncDocumentTranslationTest(AzureRecordedTestCase, DocumentTranslationTest):
+class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCase):
 
     async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
         # submit operation
-        poller = await async_client.begin_translation(translation_inputs)
-        assert poller.id is not None
-        assert poller.details.id is not None
-        # wait for result
-        doc_statuses = await poller.result()
-        # validate
-        self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
-        async for doc in doc_statuses:
-            self._validate_doc_status(doc, language)
-        return poller.id
+        async with async_client:
+            poller = await async_client.begin_translation(translation_inputs)
+            assert poller.id is not None
+            assert poller.details.id is not None
+            # wait for result
+            doc_statuses = await poller.result()
+            # validate
+            self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
+            async for doc in doc_statuses:
+                self._validate_doc_status(doc, language)
+            return poller.id
 
     # client helpers
     async def _begin_multiple_translations_async(self, async_client, operations_count, **kwargs):
@@ -56,17 +57,17 @@ class AsyncDocumentTranslationTest(AzureRecordedTestCase, DocumentTranslationTes
                     ]
                 )
             ]
+            async with async_client:
+                # submit multiple operations
+                poller = await async_client.begin_translation(translation_inputs)
+                assert poller.id is not None
+                if wait_for_operation:
+                    await poller.result()
+                else:
+                    await poller.wait()
+                result_ids.append(poller.id)
 
-            # submit multiple operations
-            poller = await async_client.begin_translation(translation_inputs)
-            assert poller.id is not None
-            if wait_for_operation:
-                await poller.result()
-            else:
-                await poller.wait()
-            result_ids.append(poller.id)
-
-        return result_ids
+            return result_ids
 
     async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
         # get input parms
@@ -90,16 +91,16 @@ class AsyncDocumentTranslationTest(AzureRecordedTestCase, DocumentTranslationTes
                 ]
             )
         ]
+        async with async_client:
+            # submit operation
+            poller = await async_client.begin_translation(translation_inputs)
+            assert poller.id is not None
+            # wait for result
+            if wait_for_operation:
+                result = await poller.result()
+                async for doc in result:
+                    self._validate_doc_status(doc, "es")
 
-        # submit operation
-        poller = await async_client.begin_translation(translation_inputs)
-        assert poller.id is not None
-        # wait for result
-        if wait_for_operation:
-            result = await poller.result()
-            async for doc in result:
-                self._validate_doc_status(doc, "es")
-
-        # validate
-        self._validate_translation_metadata(poller=poller)
-        return poller
+            # validate
+            self._validate_translation_metadata(poller=poller)
+            return poller

@@ -1,0 +1,47 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/translator/text/batch/v1.0/batches",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "549",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "f47860dc-4be1-11ec-a0a9-b831b58100e8"
+      },
+      "RequestBody": "{\u0022inputs\u0022: [{\u0022source\u0022: {\u0022sourceUrl\u0022: \u0022https://fakeendpoint.blob.core.windows.net/src969424c6-336f-4820-8e08-9458152403bd?se=end\u0026sp=rl\u0026sv=2020-10-02\u0026sr=c\u0026sig=fake_token_value\u0022, \u0022filter\u0022: {\u0022prefix\u0022: \u0022\u0022, \u0022suffix\u0022: \u0022.txt\u0022}, \u0022language\u0022: \u0022en\u0022}, \u0022targets\u0022: [{\u0022targetUrl\u0022: \u0022https://fakeendpoint.blob.core.windows.net/target5195102b-c607-4f49-abd9-326daeb0ca29?se=end\u0026sp=wl\u0026sv=2020-10-02\u0026sr=c\u0026sig=fake_token_value\u0022, \u0022category\u0022: \u0022fake\u0022, \u0022language\u0022: \u0022es\u0022, \u0022glossaries\u0022: [{\u0022glossaryUrl\u0022: \u0022https://glossaryfile.txt\u0022, \u0022format\u0022: \u0022txt\u0022}]}], \u0022storageType\u0022: \u0022File\u0022}]}",
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "2be11e1c-09da-45b5-9e90-2897bf7164aa",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 22 Nov 2021 22:17:18 GMT",
+        "Set-Cookie": [
+          "ARRAffinity=f9ffee55d5b846ab210939783079e864f7c0bd5efbd10d36648d3b62bbdfbaac;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
+          "ARRAffinitySameSite=f9ffee55d5b846ab210939783079e864f7c0bd5efbd10d36648d3b62bbdfbaac;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "X-Powered-By": "ASP.NET",
+        "X-RequestId": "2be11e1c-09da-45b5-9e90-2897bf7164aa"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "The category parameter is invalid.",
+          "target": "Category",
+          "innerError": {
+            "code": "InvalidCategory",
+            "message": "The category parameter is invalid."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "source_container_name": "src969424c6-336f-4820-8e08-9458152403bd",
+    "target_container_name": "target5195102b-c607-4f49-abd9-326daeb0ca29"
+  }
+}
