@@ -42,6 +42,7 @@ jobs:
         export JF_TOKEN=$(Jiefeng-GitToken)
         export ZED_TOKEN=$(Zed-GitToken)
         export COOKIE=$(USR_TOKEN)
+        export LANGUAGE=$(RUN_LANGUAGE)
 
         # create virtual env
         python -m venv venv-sdk

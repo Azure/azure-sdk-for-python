@@ -1,5 +1,5 @@
 from common import IssueProcess, Common
-from typing import Any, str, List
+from typing import Any, List
 
 
 class IssueProcessPython(IssueProcess):

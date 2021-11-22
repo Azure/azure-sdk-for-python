@@ -100,14 +100,29 @@ class IssueProcess:
         else:
             self.readme_link = link.split('/resource-manager')[0] + '/resource-manager'
 
-    def get_default_readme_tag(self):
-        pass
+    def get_default_readme_tag(self) -> None:
+        pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
+        readme_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
+        contents = str(self.issue.rest_repo.get_contents(readme_path).decoded_content)
+        pattern_tag = re.compile(r'tag: package-[\w+-.]+')
+        self.default_readme_tag = pattern_tag.search(contents).group().split(':')[-1].strip()
 
     def edit_issue_body(self) -> None:
-        pass
+        issue_body_list = [i for i in self.issue.issue.body.split("\n") if i]
+        issue_body_list.insert(0, f'\n{self.readme_link.replace("/readme.md", "")}')
+        issue_body_up = ''
+        # solve format problems
+        for raw in issue_body_list:
+            if raw == '---\r' or raw == '---':
+                issue_body_up += '\n'
+            issue_body_up += raw + '\n'
+        self.issue.issue.edit(body=issue_body_up)
 
     def check_tag_consistency(self) -> None:
-        pass
+        if self.default_readme_tag != self.target_readme_tag:
+            self.comment(f'Hi, @{self.owner}, your **Readme Tag** is `{self.target_readme_tag}`, '
+                         f'but in [readme.md]({self.readme_link}) it is still `{self.default_readme_tag}`, '
+                         f'please modify the readme.md or your **Readme Tag** above ')
 
     def auto_parse(self) -> None:
         if AUTO_PARSE_LABEL in self.issue.labels_name:
@@ -123,9 +138,9 @@ class IssueProcess:
         self.get_readme_link(origin_link)
 
         # get default tag with readme_link
-        self.get_default_readme_tag()
+        # self.get_default_readme_tag()
 
-        self.check_tag_consistency()
+        # self.check_tag_consistency()
 
         self.edit_issue_body()
 
@@ -150,7 +165,6 @@ class IssueProcess:
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue.labels_name:
             return
-
         self.add_label(AUTO_ASSIGN_LABEL)
         assignees = list(_ASSIGNEE_TOKEN.keys())
         # assign averagely
@@ -181,6 +195,7 @@ class Common:
         self.issues = issues
         for assignee in _ASSIGNEE_TOKEN:
             self.request_repo_dict[assignee] = Github(_ASSIGNEE_TOKEN[assignee]).get_repo(REQUEST_REPO)
+            # self.request_repo_dict[assignee] = Github(os.getenv('Token')).get_repo(REQUEST_REPO)
 
     def run(self):
         for item in self.issues:
