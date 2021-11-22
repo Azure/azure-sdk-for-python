@@ -14,16 +14,16 @@ from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
-class DocumentStatus(AsyncDocumentTranslationTest):
+class TestDocumentStatus(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_list_statuses(self, client):
+    async def test_list_statuses(self, client, variables):
         # prepare containers and test data
         blob_data = [Document(data=b'This is some text')]
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
         target_language = "es"
 
         # prepare translation inputs
@@ -53,3 +53,4 @@ class DocumentStatus(AsyncDocumentTranslationTest):
         # get doc details
         doc_status = await client.get_document_status(translation_id=translation_id, document_id=first_doc.id)
         self._validate_doc_status(doc_status, target_language)
+        return variables

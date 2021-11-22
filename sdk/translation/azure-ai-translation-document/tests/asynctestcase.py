@@ -15,17 +15,16 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
 
     async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
         # submit operation
-        async with async_client:
-            poller = await async_client.begin_translation(translation_inputs)
-            assert poller.id is not None
-            assert poller.details.id is not None
-            # wait for result
-            doc_statuses = await poller.result()
-            # validate
-            self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
-            async for doc in doc_statuses:
-                self._validate_doc_status(doc, language)
-            return poller.id
+        poller = await async_client.begin_translation(translation_inputs)
+        assert poller.id is not None
+        assert poller.details.id is not None
+        # wait for result
+        doc_statuses = await poller.result()
+        # validate
+        self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
+        async for doc in doc_statuses:
+            self._validate_doc_status(doc, language)
+        return poller.id
 
     # client helpers
     async def _begin_multiple_translations_async(self, async_client, operations_count, **kwargs):
@@ -71,13 +70,14 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
 
     async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
         # get input parms
+        variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
 
         # prepare containers and test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -91,16 +91,15 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
                 ]
             )
         ]
-        async with async_client:
-            # submit operation
-            poller = await async_client.begin_translation(translation_inputs)
-            assert poller.id is not None
-            # wait for result
-            if wait_for_operation:
-                result = await poller.result()
-                async for doc in result:
-                    self._validate_doc_status(doc, "es")
+        # submit operation
+        poller = await async_client.begin_translation(translation_inputs)
+        assert poller.id is not None
+        # wait for result
+        if wait_for_operation:
+            result = await poller.result()
+            async for doc in result:
+                self._validate_doc_status(doc, "es")
 
-            # validate
-            self._validate_translation_metadata(poller=poller)
-            return poller
+        # validate
+        self._validate_translation_metadata(poller=poller)
+        return poller

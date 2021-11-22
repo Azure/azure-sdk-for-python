@@ -19,7 +19,7 @@ class TestCancelTranslation(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_cancel_translation(self, client):
+    def test_cancel_translation(self, client, variables):
         '''
             some notes (test sporadically failing):
             1. use a large number of translations
@@ -30,7 +30,7 @@ class TestCancelTranslation(DocumentTranslationTest):
         '''
         # submit translation operation
         docs_count = 8 # large number of docs 
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False, variables=variables)
 
         # cancel translation
         client.cancel_translation(poller.id)
@@ -46,3 +46,4 @@ class TestCancelTranslation(DocumentTranslationTest):
             poller.wait()
         except HttpResponseError:
             pass  # expected if the operation was already in a terminal state.
+        return variables

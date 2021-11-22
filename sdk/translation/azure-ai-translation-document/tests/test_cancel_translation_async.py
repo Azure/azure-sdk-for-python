@@ -20,7 +20,7 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_cancel_translation(self, client):
+    async def test_cancel_translation(self, client, variables):
         '''
             some notes (test sporadically failing):
             1. use a large number of translations
@@ -30,15 +30,15 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
                 - in order for the cancel status to propagate
         '''
         # submit translation operation
-        docs_count = 8 # large number of docs 
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, wait=False)
+        docs_count = 8 # large number of docs
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, wait=False, variables=variables)
 
         # cancel translation
         await client.cancel_translation(poller.id)
 
         # wait for propagation
         wait_time = 15  # for 'canceled' status to propagate, if test failed, increase this value!
-        self.wait(duration=wait_time) 
+        self.wait(duration=wait_time)
 
         # check translation status
         translation_details = await client.get_translation_status(poller.id)
@@ -47,3 +47,4 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
             await poller.wait()
         except HttpResponseError:
             pass  # expected if the operation was already in a terminal state.
+        return variables
