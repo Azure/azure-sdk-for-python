@@ -15,20 +15,7 @@ if TYPE_CHECKING:
     from typing import Any, List
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from ._generated.models import *
-
-class Coordinate(object):
-
-    def __init__(
-        self, 
-        lat, # type: float
-        lon # type: float
-    ):
-        self.latitude = lat
-        self.longitude = lon
-
-    def toList(self): # type: (...) -> List[float]
-        return [self.latitude, self.longitude]
+    from ._shared.models import *
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
@@ -243,7 +230,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_address(
         self,
-        coordinate, # type: "Coordinate"
+        coordinates, # type: "Coordinates"
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchAddressResult"
@@ -262,7 +249,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_address(
-            query=coordinate.toList(),
+            query=coordinates.toCoordinateList(),
             include_speed_limit= kwargs.pop("include_speed_limit", None),
             heading=kwargs.pop("heading", None),
             radius_in_meters=kwargs.pop("radius_in_meters", None),
@@ -280,7 +267,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_cross_street_address(
         self, 
-        coordinate, # type: "Coordinate"
+        coordinates, # type: "Coordinates"
         top=None,  # type: int
         heading=None,  # type: int
         radius_in_meters=None,  # type: int
@@ -326,7 +313,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_cross_street_address(
-            query=coordinate.toList(),
+            coordinates.toCoordinateList(),
             top=top,
             heading=heading,
             radius_in_meters=radius_in_meters,
