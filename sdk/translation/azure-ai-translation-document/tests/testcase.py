@@ -11,10 +11,6 @@ import uuid
 from devtools_testutils import (
     AzureRecordedTestCase
 )
-from azure_devtools.scenario_tests import (
-    RecordingProcessor,
-    ReplayableTest
-)
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
@@ -35,54 +31,11 @@ class Document(object):
         return result
 
 
-class OperationLocationReplacer(RecordingProcessor):
-    """Replace the location/operation location uri in a request/response body."""
-
-    def __init__(self):
-        self._replacement = "https://redacted.cognitiveservices.azure.com/translator/"
-
-    def process_response(self, response):
-        try:
-            headers = response['headers']
-            if 'operation-location' in headers:
-                location_header = "operation-location"
-                if isinstance(headers[location_header], list):
-                    suffix = headers[location_header][0].split("/translator/")[1]
-                    response['headers'][location_header] = [self._replacement + suffix]
-                else:
-                    suffix = headers[location_header].split("/translator/")[1]
-                    response['headers'][location_header] = self._replacement + suffix
-            url = response["url"]
-            if url is not None:
-                suffix = url.split("/translator/")[1]
-                response['url'] = self._replacement + suffix
-            return response
-        except (KeyError, ValueError):
-            return response
-
-
 class DocumentTranslationTest(AzureRecordedTestCase):
-    # FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
-
-    # def __init__(self, method_name):
-    #     super(DocumentTranslationTest, self).__init__(method_name)
-    #     self.recording_processors.append(OperationLocationReplacer())
-    #     self.storage_name = os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
-    #     self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
-    #     self.storage_key = os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
-    #     self.scrubber.register_name_pair(
-    #         self.storage_endpoint, "https://redacted.blob.core.windows.net/"
-    #     )
-    #     self.scrubber.register_name_pair(
-    #         self.storage_name, "redacted"
-    #     )
-    #     self.scrubber.register_name_pair(
-    #         self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
-    #     )
 
     @property
     def storage_name(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME")
 
     @property
     def storage_endpoint(self):
@@ -92,18 +45,6 @@ class DocumentTranslationTest(AzureRecordedTestCase):
     def storage_key(self):
         return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
 
-    def get_oauth_endpoint(self):
-        return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("TRANSLATION_TENANT_ID"),
-                os.getenv("TRANSLATION_CLIENT_ID"),
-                os.getenv("TRANSLATION_CLIENT_SECRET"),
-            )
-
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
             for blob in data:
@@ -111,34 +52,32 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         else:
             container_client.upload_blob(name=data.prefix + data.name + data.suffix, data=data.data)
 
-    def create_source_container(self, data):
-        # for offline tests
-        if not self.is_live:
-            return "dummy_string"
+    def create_source_container(self, data, variables={}, **kwargs):
+        container_suffix = kwargs.get("container_suffix", "")
+        var_key = "source_container_name" + container_suffix
+        if self.is_live:
+            self.source_container_name = "src" + str(uuid.uuid4())
+            variables[var_key] = self.source_container_name
+            container_client = ContainerClient(self.storage_endpoint, variables[var_key],
+                                               self.storage_key)
+            container_client.create_container()
 
-        # for actual live tests
-        self.source_container_name = "src" + str(uuid.uuid4())
-        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
-                                           self.storage_key)
-        container_client.create_container()
-
-        self.upload_documents(data, container_client)
-        return self.generate_sas_url(self.source_container_name, "rl")
-
-    def create_target_container(self, data=None):
-        # for offline tests
-        if not self.is_live:
-            return "dummy_string"
-
-        # for actual live tests
-        self.target_container_name = "target" + str(uuid.uuid4())
-        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
-                                           self.storage_key)
-        container_client.create_container()
-        if data:
             self.upload_documents(data, container_client)
+        return self.generate_sas_url(variables[var_key], "rl")
 
-        return self.generate_sas_url(self.target_container_name, "wl")
+    def create_target_container(self, data=None, variables={}, **kwargs):
+        container_suffix = kwargs.get("container_suffix", "")
+        var_key = "target_container_name" + container_suffix
+        if self.is_live:
+            self.target_container_name = "target" + str(uuid.uuid4())
+            variables[var_key] = self.target_container_name
+            container_client = ContainerClient(self.storage_endpoint, variables[var_key],
+                                               self.storage_key)
+            container_client.create_container()
+            if data:
+                self.upload_documents(data, container_client)
+
+        return self.generate_sas_url(variables[var_key], "wl")
 
     def generate_sas_url(self, container_name, permission):
 
