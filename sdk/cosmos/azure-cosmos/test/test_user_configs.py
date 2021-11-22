@@ -22,12 +22,17 @@
 import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
+import pytest
 from test_config import _test_config
 
 
 # This test class serves to test user-configurable options and verify they are
 # properly set and saved into the different object instances that use these
 # user-configurable settings.
+
+pytestmark = pytest.mark.cosmosEmulator
+
+@pytest.mark.usefixtures("teardown")
 class TestUserConfigs(unittest.TestCase):
 
     def test_enable_endpoint_discovery(self):
@@ -40,3 +45,6 @@ class TestUserConfigs(unittest.TestCase):
         self.assertFalse(client_false.client_connection.connection_policy.EnableEndpointDiscovery)
         self.assertTrue(client_default.client_connection.connection_policy.EnableEndpointDiscovery)
         self.assertTrue(client_true.client_connection.connection_policy.EnableEndpointDiscovery)
+
+if __name__ == "__main__":
+    unittest.main()
