@@ -32,25 +32,16 @@ class SearchClient(object):
     """
     def __init__(
         self,
-        base_url, # type: str
         credential, # type: AsyncTokenCredential
         **kwargs # type: Any
     ):
         # type: (...) -> None
-        try:
-            if not base_url.lower().startswith('http'):
-                base_url = "https://" + base_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-
         if not credential:
             raise ValueError(
                 "You need to provide account shared key to authenticate.")
 
-        self._base_url = base_url
         self._search_client = SearchClientGen(
-            self._base_url,
-            authentication_policy=get_authentication_policy(base_url, credential, is_async=True),
+            authentication_policy=get_authentication_policy(credential, is_async=True),
             **kwargs).search
 
    
