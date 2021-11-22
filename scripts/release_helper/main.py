@@ -3,6 +3,12 @@ from github.Repository import Repository
 from github.PaginatedList import PaginatedList
 from github.Issue import Issue
 from utils import REQUEST_REPO, REST_REPO, IssuePackage
+
+from python import python_process
+from go import go_process
+from java import java_process
+from js import js_process
+
 import os
 from typing import List, Any, Set
 from common import common_process
@@ -20,9 +26,10 @@ _CONVERT = {
 }
 _LANGUAGES = {
     'Test': common_process,
-    # 'Java': java_process,
-    # 'Go': go_process,
-    # 'JS': js_process
+    'Python': python_process,
+    'Java': java_process,
+    'Go': go_process,
+    'JS': js_process
 }
 
 

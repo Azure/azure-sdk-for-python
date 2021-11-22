@@ -32,7 +32,6 @@ class IssueProcess:
         self.assignee = issue.issue.assignee.login
         self.owner = issue.issue.user.login
 
-
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue.issue.body.split("\n") if i]
 
@@ -101,7 +100,7 @@ class IssueProcess:
         else:
             self.readme_link = link.split('/resource-manager')[0] + '/resource-manager'
 
-    def get_default_readme_tag(self)-> None:
+    def get_default_readme_tag(self) -> None:
         pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         readme_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue.rest_repo.get_contents(readme_path).decoded_content)
@@ -139,9 +138,9 @@ class IssueProcess:
         self.get_readme_link(origin_link)
 
         # get default tag with readme_link
-        self.get_default_readme_tag()
+        # self.get_default_readme_tag()
 
-        self.check_tag_consistency()
+        # self.check_tag_consistency()
 
         self.edit_issue_body()
 
@@ -161,12 +160,13 @@ class IssueProcess:
         _LOG.info(f'issue {self.issue.issue.number}: {message}')
 
     def request_repo(self) -> Repository:
-        return self.request_repo_dict[self.assignee]
+        # return self.request_repo_dict[self.assignee]
+        return self.request_repo_dict['msyyc']
 
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue.labels_name:
             return
-
+        return
         self.add_label(AUTO_ASSIGN_LABEL)
         assignees = list(_ASSIGNEE_TOKEN.keys())
         # assign averagely
@@ -197,6 +197,7 @@ class Common:
         self.issues = issues
         for assignee in _ASSIGNEE_TOKEN:
             self.request_repo_dict[assignee] = Github(_ASSIGNEE_TOKEN[assignee]).get_repo(REQUEST_REPO)
+            # self.request_repo_dict[assignee] = Github(os.getenv('Token')).get_repo(REQUEST_REPO)
 
     def run(self):
         for item in self.issues:
