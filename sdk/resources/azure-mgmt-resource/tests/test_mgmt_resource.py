@@ -77,7 +77,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             # special client
             import azure.mgmt.managementgroups
             self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
-                credentials=self.settings.get_credentials()
+                credential=self.settings.get_credentials()
             )
 
     @unittest.skip('hard to test')
