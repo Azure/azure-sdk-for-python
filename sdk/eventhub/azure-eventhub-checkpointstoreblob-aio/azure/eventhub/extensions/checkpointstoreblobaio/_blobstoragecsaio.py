@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from typing import Iterable, Dict, Any, Optional
 import logging
+import copy
 from collections import defaultdict
 import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
@@ -130,7 +131,7 @@ class BlobCheckpointStore(CheckpointStore):
         ].timestamp()
 
     async def _claim_one_partition(self, ownership: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
-        updated_ownership = ownership.copy()    # all keys/values immutable, so copied by value
+        updated_ownership = copy.deepcopy(ownership)
         try:
             await self._upload_ownership(updated_ownership, **kwargs)
             return updated_ownership

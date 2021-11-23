@@ -6,6 +6,7 @@ from typing import Dict, Optional, Any, Iterable, Union
 import logging
 import time
 import calendar
+import copy
 from datetime import datetime
 from collections import defaultdict
 
@@ -151,7 +152,7 @@ class BlobCheckpointStore(CheckpointStore):
         )
 
     def _claim_one_partition(self, ownership, **kwargs):
-        updated_ownership = ownership.copy()    # all keys/values immutable, so copied by value
+        updated_ownership = copy.deepcopy(ownership)
         try:
             self._upload_ownership(updated_ownership, **kwargs)
             return updated_ownership
