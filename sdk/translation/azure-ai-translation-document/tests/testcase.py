@@ -35,7 +35,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
 
     @property
     def storage_name(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME")
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
 
     @property
     def storage_endpoint(self):
@@ -43,7 +43,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
 
     @property
     def storage_key(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY", "fakeZmFrZV9hY29jdW50X2tleQ==")
 
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
@@ -56,8 +56,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         container_suffix = kwargs.get("container_suffix", "")
         var_key = "source_container_name" + container_suffix
         if self.is_live:
-            self.source_container_name = "src" + str(uuid.uuid4())
-            variables[var_key] = self.source_container_name
+            variables[var_key] = "src" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
                                                self.storage_key)
             container_client.create_container()
@@ -69,8 +68,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         container_suffix = kwargs.get("container_suffix", "")
         var_key = "target_container_name" + container_suffix
         if self.is_live:
-            self.target_container_name = "target" + str(uuid.uuid4())
-            variables[var_key] = self.target_container_name
+            variables[var_key] = "target" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
                                                self.storage_key)
             container_client.create_container()
