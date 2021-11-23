@@ -5,6 +5,7 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translation
+      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
