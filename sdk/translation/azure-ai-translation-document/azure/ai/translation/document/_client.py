@@ -69,7 +69,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :dedent: 4
                 :caption: Creating the DocumentTranslationClient with a token credential.
         """
-        self._endpoint = endpoint
+        self._endpoint = endpoint.rstrip("/")
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
 
