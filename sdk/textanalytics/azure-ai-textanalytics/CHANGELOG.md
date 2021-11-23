@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
 
 ### Other Changes
 
