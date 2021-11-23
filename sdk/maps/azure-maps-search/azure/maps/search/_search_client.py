@@ -75,6 +75,8 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
+        coordinates, # type: "LatLong"
+        bounding_box, # type: "BoundingBox"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -171,26 +173,10 @@ class SearchClient(object):
         """
         return self._search_client.fuzzy_search(
             query, 
-            is_type_ahead=kwargs.pop("is_type_ahead", None),
-            top=kwargs.pop("top", None),
-            skip=kwargs.pop("skip", None),
-            category_filter=kwargs.pop("category_filter", None),
-            country_filter=kwargs.pop("country_filter", None),
-            lat=kwargs.pop("lat", None),
-            lon=kwargs.pop("lon", None),
-            radius_in_meters=kwargs.pop("radius_in_meters", None),
-            top_left=kwargs.pop("top_left", None),
-            btm_right=kwargs.pop("btm_right", None),
-            language=kwargs.pop("language", None),
-            extended_postal_codes_for=kwargs.pop("extended_postal_codes_for", None),
-            min_fuzzy_level=kwargs.pop("min_fuzzy_level", None),
-            max_fuzzy_level=kwargs.pop("max_fuzzy_level", None),
-            index_filter=kwargs.pop("index_filter", None),
-            brand_filter=kwargs.pop("brand_filter", None),
-            electric_vehicle_connector_filter=kwargs.pop("electric_vehicle_connector_filter", None),
-            entity_type=kwargs.pop("entity_type", None),
-            localized_map_view=kwargs.pop("localized_map_view", None),
-            operating_hours=kwargs.pop("operating_hours", None),
+            lat=coordinates.latitude,
+            lon=coordinates.longitude,
+            top_left=bounding_box.top_left,
+            btm_right=bounding_box.bottom_right,
             **kwargs  # type: Any
         )
 
@@ -215,7 +201,6 @@ class SearchClient(object):
         :return: PointOfInterestCategoryTreeResult, or the result of cls(response)
         """
         return self._search_client.get_point_of_interest_category_tree(
-            language=kwargs.pop("language", None),
             **kwargs
         )
 
@@ -223,7 +208,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_address(
         self,
-        coordinates, # type: "Coordinates"
+        coordinates, # type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchAddressResult"
@@ -242,17 +227,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_address(
-            query=coordinates.toCoordinateList(),
-            include_speed_limit= kwargs.pop("include_speed_limit", None),
-            heading=kwargs.pop("heading", None),
-            radius_in_meters=kwargs.pop("radius_in_meters", None),
-            number=kwargs.pop("number", None),
-            include_road_use=kwargs.pop("include_road_use", None),
-            road_use=kwargs.pop("road_use", None),
-            allow_freeform_newline=kwargs.pop("allow_freeform_newline", None),
-            include_match_type=kwargs.pop("include_match_type", None),
-            entity_type=kwargs.pop("entity_type", None),
-            localized_map_view=kwargs.pop("localized_map_view", None),
+            query=coordinates.toLatLongList(),
             **kwargs
         )
 
@@ -260,11 +235,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_cross_street_address(
         self, 
-        coordinates, # type: "Coordinates"
-        top=None,  # type: int
-        heading=None,  # type: int
-        radius_in_meters=None,  # type: int
-        localized_map_view=None,  # type: str or LocalizedMapView
+        coordinates, # type: "LatLong"
         **kwargs  # type: Any
     ): 
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
@@ -306,11 +277,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_cross_street_address(
-            coordinates.toCoordinateList(),
-            top=top,
-            heading=heading,
-            radius_in_meters=radius_in_meters,
-            localized_map_view=localized_map_view,
+            coordinates.toLatLongList(),
             **kwargs
         )
 
@@ -386,12 +353,6 @@ class SearchClient(object):
             query,
             max_detour_time,
             route,
-            top=kwargs.pop("top", None),
-            brand_filter=kwargs.pop("brand_filter", None),
-            category_filter=kwargs.pop("category_filter", None),
-            electric_vehicle_connector_filter=kwargs.pop("electric_vehicle_connector_filter", None),
-            localized_map_view=kwargs.pop("localized_map_view", None),
-            operating_hours=kwargs.pop("operating_hours", None),
             **kwargs
         )
 
@@ -400,7 +361,7 @@ class SearchClient(object):
     def search_inside_geometry(
         self,
         query,  # type: str
-        geometry,  # type: "SearchInsideGeometryRequest"
+        geometry,  # type: "GeoJsonObject"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -465,13 +426,6 @@ class SearchClient(object):
         return self._search_client.search_inside_geometry(
             query,
             geometry,
-            top=kwargs.pop("top", None),
-            language=kwargs.pop("language", None),
-            category_filter=kwargs.pop("category_filter", None),
-            extended_postal_codes_for=kwargs.pop("extended_postal_codes_for", None),
-            index_filter=kwargs.pop("index_filter", None),
-            localized_map_view=kwargs.pop("localized_map_view", None),
-            operating_hours=kwargs.pop("operating_hours", None),
             **kwargs
         )
 
@@ -480,6 +434,8 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
+        coordinates, # type: "LatLong"
+        bounding_box, # type: "BoundingBox"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -545,35 +501,23 @@ class SearchClient(object):
         """           
         return self._search_client.search_point_of_interest(
             query,
-            is_type_ahead=None,  # type: Optional[bool]
-            top=None,  # type: Optional[int]
-            skip=None,  # type: Optional[int]
-            category_filter=None,  # type: Optional[List[int]]
-            country_filter=None,  # type: Optional[List[str]]
-            lat=None,  # type: Optional[float]
-            lon=None,  # type: Optional[float]
-            radius_in_meters=None,  # type: Optional[int]
-            top_left=None,  # type: Optional[str]
-            btm_right=None,  # type: Optional[str]
-            language=None,  # type: Optional[str]
-            extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.PointOfInterestExtendedPostalCodes"]]]
-            brand_filter=None,  # type: Optional[List[str]]
-            electric_vehicle_connector_filter=None,  # type: Optional[List[Union[str, "models.ElectricVehicleConnector"]]]
-            localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
-            operating_hours=None,  # type: Optional[Union[str, "models.OperatingHoursRange"]]
-            **kwargs  # type: Any
+            lat=coordinates.latitude,
+            lon=coordinates.longitude,
+            top_left=bounding_box.top_left,
+            btm_right=bounding_box.bottom_right,
+            **kwargs
         )
 
 
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
+        coordinates, #type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
         """**Search Nearby Point of Interest **
-        Please refer to `Supported Languages <https://docs.microsoft.com/azure/azure-maps/supported-
-        languages>`_ for details.
+        Please refer to `Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-nearby>`_ for details.
 
         :param lat: Latitude where results should be biased. E.g. 37.337.
         :type lat: float
@@ -618,6 +562,8 @@ class SearchClient(object):
         """
 
         return self._search_client.search_nearby_point_of_interest(
+            lat=coordinates.latitude,
+            lon=coordinates.longitude,
             **kwargs  # type: Any
         )
 
@@ -626,22 +572,8 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        is_type_ahead=None,  # type: Optional[bool]
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        category_filter=None,  # type: Optional[List[int]]
-        country_filter=None,  # type: Optional[List[str]]
-        lat=None,  # type: Optional[float]
-        lon=None,  # type: Optional[float]
-        radius_in_meters=None,  # type: Optional[int]
-        top_left=None,  # type: Optional[str]
-        btm_right=None,  # type: Optional[str]
-        language=None,  # type: Optional[str]
-        extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.SearchIndexes"]]]
-        brand_filter=None,  # type: Optional[List[str]]
-        electric_vehicle_connector_filter=None,  # type: Optional[List[Union[str, "models.ElectricVehicleConnector"]]]
-        localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
-        operating_hours=None,  # type: Optional[Union[str, "models.OperatingHoursRange"]]
+        coordinates, # type: "LatLong"
+        bounding_box, # type: "BoundingBox"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -707,7 +639,12 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_point_of_interest_category(
-            **kwargs  # type: Any
+            query,
+            lat=coordinates.latitude,
+            lon=coordinates.longitude,
+            top_left=bounding_box.top_left,
+            btm_right=bounding_box.bottom_right,
+            **kwargs
         )
 
 
@@ -715,22 +652,11 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        is_type_ahead=None,  # type: Optional[bool]
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        country_filter=None,  # type: Optional[List[str]]
-        lat=None,  # type: Optional[float]
-        lon=None,  # type: Optional[float]
-        radius_in_meters=None,  # type: Optional[int]
-        top_left=None,  # type: Optional[str]
-        btm_right=None,  # type: Optional[str]
-        language=None,  # type: Optional[str]
-        extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.SearchIndexes"]]]
-        entity_type=None,  # type: Optional[Union[str, "models.GeographicEntityType"]]
-        localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
+        coordinates, # type: "LatLong"
+        bounding_box, # type: "BoundingBox"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SearchAddressResult"
+        # type: (...) -> "SearchAddressResult"
         """**Address Geocoding**
 
         In many cases, the complete search service might be too much, for instance if you are only
@@ -783,6 +709,11 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_address(
+            query,
+            lat=coordinates.latitude,
+            lon=coordinates.longitude,
+            top_left=bounding_box.top_left,
+            btm_right=bounding_box.bottom_right,
             **kwargs  # type: Any
         )
 
@@ -790,38 +721,23 @@ class SearchClient(object):
     @distributed_trace
     def search_structured_address(
         self,
-        format="json",  # type: Union[str, "models.ResponseFormat"]
-        language=None,  # type: Optional[str]
-        country_code="US",  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        street_number=None,  # type: Optional[str]
-        street_name=None,  # type: Optional[str]
-        cross_street=None,  # type: Optional[str]
-        municipality=None,  # type: Optional[str]
-        municipality_subdivision=None,  # type: Optional[str]
-        country_tertiary_subdivision=None,  # type: Optional[str]
-        country_secondary_subdivision=None,  # type: Optional[str]
-        country_subdivision=None,  # type: Optional[str]
-        postal_code=None,  # type: Optional[str]
-        extended_postal_codes_for=None,  # type: Optional[List[Union[str, "models.SearchIndexes"]]]
-        entity_type=None,  # type: Optional[Union[str, "models.GeographicEntityType"]]
-        localized_map_view=None,  # type: Optional[Union[str, "models.LocalizedMapView"]]
+        country_code,  # type: str
+        street_number,  # type: str
+        street_name,  # type: str
+        municipality, # type: str
+        country_subdivision,  # type: str
+        postal_code,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
         """**Structured Address Geocoding**
 
-        Azure Address Geocoding can also be accessed for  structured address look up exclusively. The
+        Azure Address Geocoding can also be accessed for structured address look up exclusively. The
         geocoding search index will be queried for everything above the  street level data. No POIs
         will be returned. Note that the geocoder is very tolerant of typos and incomplete  addresses.
         It will also handle everything from exact  street addresses or street or intersections as well
         as higher level geographies such as city centers,  counties, states etc.
 
-        :param format: Desired format of the response. Value can be either *json* or *xml*.
-        :type format: str or ~azure.maps.search.models.ResponseFormat
-        :param language: Language in which search results should be returned.
-        :type language: str
         :param country_code: The 2 or 3 letter `ISO3166-1 <https://www.iso.org/iso-3166-country-
          codes.html>`_ country code portion of an address. E.g. US.
         :type country_code: str
@@ -864,7 +780,13 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_structured_address(
-            **kwargs  # type: Any
+            country_code=country_code,
+            street_number=street_number,
+            street_name=street_name,
+            municipality=municipality,
+            country_subdivision=country_subdivision,
+            postal_code=postal_code,
+            **kwargs
         )
 
     
