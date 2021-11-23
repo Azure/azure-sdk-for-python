@@ -55,7 +55,7 @@ class AsyncTextAnalyticsClientBase(object):
         )
 
         self._client = _TextAnalyticsClient(
-            endpoint=endpoint,
+            endpoint=endpoint.rstrip("/"),
             credential=credential,
             api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
