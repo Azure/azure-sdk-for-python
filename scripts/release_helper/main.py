@@ -29,8 +29,8 @@ _LANGUAGES = {
     'Test': python_process,
     # 'Python': python_process,
     'Java': java_process,
-    # 'Go': go_process,
-    # 'JS': js_process
+    'Go': go_process,
+    'JS': js_process
 }
 
 
