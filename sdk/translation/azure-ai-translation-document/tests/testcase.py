@@ -234,6 +234,8 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         
 
     def _begin_multiple_translations(self, client, operations_count, **kwargs):
+        container_suffix = kwargs.pop('container_suffix', "")
+        variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
         docs_per_operation = kwargs.pop('docs_per_operation', 2)
@@ -241,8 +243,8 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         for i in range(operations_count):
             # prepare containers and test data
             blob_data = Document.create_dummy_docs(docs_per_operation)
-            source_container_sas_url = self.create_source_container(data=blob_data)
-            target_container_sas_url = self.create_target_container()
+            source_container_sas_url = self.create_source_container(data=blob_data, variables=variables, container_suffix=str(i)+container_suffix)
+            target_container_sas_url = self.create_target_container(variables=variables, container_suffix=str(i)+container_suffix)
 
             # prepare translation inputs
             translation_inputs = [

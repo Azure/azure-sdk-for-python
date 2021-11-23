@@ -21,11 +21,11 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations(self, client):
+    def test_list_translations(self, client, variables):
         # create some translations
         operations_count = 5
         docs_per_operation = 5
-        self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
+        self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables)
 
         # list translations
         submitted_translations = list(client.list_translation_statuses())
@@ -34,19 +34,19 @@ class TestListTranslations(DocumentTranslationTest):
         # check statuses
         for translation in submitted_translations:
             self._validate_translations(translation)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_with_pagination(self, client):
+    def test_list_translations_with_pagination(self, client, variables):
         # prepare data
         operations_count = 5
         docs_per_operation = 2
         results_per_page = 2
 
         # create some translations
-        self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
+        self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables)
 
         # list translations
         submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
@@ -58,38 +58,38 @@ class TestListTranslations(DocumentTranslationTest):
             assert len(page_translations) <=  results_per_page
             for translation in page_translations:
                 self._validate_translations(translation)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_with_skip(self, client):
+    def test_list_translations_with_skip(self, client, variables):
         # prepare data
         operations_count = 10
         docs_per_operation = 2
         skip = 5
 
         # create some translations
-        self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # assert
         all_translations = list(client.list_translation_statuses())
         translations_with_skip = list(client.list_translation_statuses(skip=skip))
         assert len(all_translations) - len(translations_with_skip) == skip
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_filter_by_status(self, client):
+    def test_list_translations_filter_by_status(self, client, variables):
         operations_count = 5
         docs_per_operation = 1
 
         # create some translations with the status 'Succeeded'
-        completed_translation_ids = self._begin_multiple_translations(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
+        completed_translation_ids = self._begin_multiple_translations(client, operations_count, wait=True, docs_per_operation=docs_per_operation, variables=variables)
 
         # create some translations with the status 'Canceled'
-        translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables, container_suffix="cancel")
         for id in translation_ids:
             client.cancel_translation(id)
         self.wait(10) # wait for canceled to propagate
@@ -101,18 +101,18 @@ class TestListTranslations(DocumentTranslationTest):
         # check statuses
         for translation in submitted_translations:
             assert translation.status in statuses
-            assert translation.id not in  completed_translation_ids
-
+            assert translation.id not in completed_translation_ids
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_filter_by_ids(self, client):
+    def test_list_translations_filter_by_ids(self, client, variables):
         operations_count = 3
         docs_per_operation = 2
 
         # create some translations
-        translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations
         submitted_translations = list(client.list_translation_statuses(translation_ids=translation_ids))
@@ -121,12 +121,11 @@ class TestListTranslations(DocumentTranslationTest):
         # check statuses
         for translation in submitted_translations:
             assert translation.id in translation_ids
-
+        return variables
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
     def test_list_translations_filter_by_created_after(self, client):
         # create some translations
         operations_count = 3
@@ -145,11 +144,9 @@ class TestListTranslations(DocumentTranslationTest):
             assert translation.id in translation_ids
             assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
 
-
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
     def test_list_translations_filter_by_created_before(self, client):
         '''
             NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
@@ -169,19 +166,18 @@ class TestListTranslations(DocumentTranslationTest):
 
         # check statuses
         for translation in submitted_translations:
-            assert translation.created_on.replace(tzinfo=None) <=  end.replace(tzinfo=None)
+            assert translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None)
             assert translation.id not in  translation_ids
-
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_order_by_creation_time_asc(self, client):
+    def test_list_translations_order_by_creation_time_asc(self, client, variables):
         operations_count = 3
         docs_per_operation = 2
 
         # create some translations
-        self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations
         submitted_translations = list(client.list_translation_statuses(order_by=["created_on asc"]))
@@ -192,17 +188,17 @@ class TestListTranslations(DocumentTranslationTest):
         for translation in submitted_translations:
             assert(translation.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
             curr = translation.created_on
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_order_by_creation_time_desc(self, client):
+    def test_list_translations_order_by_creation_time_desc(self, client, variables):
         operations_count = 3
         docs_per_operation = 2
 
         # create some translations
-        self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations
         submitted_translations = list(client.list_translation_statuses(order_by=["created_on desc"]))
@@ -213,11 +209,11 @@ class TestListTranslations(DocumentTranslationTest):
         for translation in submitted_translations:
             assert(translation.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = translation.created_on
+        return variables
 
     @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
     def test_list_translations_mixed_filters(self, client):
         # create some translations
         operations_count = 4

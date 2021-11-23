@@ -28,6 +28,8 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
 
     # client helpers
     async def _begin_multiple_translations_async(self, async_client, operations_count, **kwargs):
+        container_suffix = kwargs.pop('container_suffix', "")
+        variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
         docs_per_operation = kwargs.pop('docs_per_operation', 2)
@@ -41,8 +43,8 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
                 no need for async container clients!
             '''
             blob_data = Document.create_dummy_docs(docs_per_operation)
-            source_container_sas_url = self.create_source_container(data=blob_data)
-            target_container_sas_url = self.create_target_container()
+            source_container_sas_url = self.create_source_container(data=blob_data, variables=variables, container_suffix=str(i)+container_suffix)
+            target_container_sas_url = self.create_target_container(variables=variables, container_suffix=str(i)+container_suffix)
 
             # prepare translation inputs
             translation_inputs = [
@@ -56,17 +58,17 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
                     ]
                 )
             ]
-            async with async_client:
-                # submit multiple operations
-                poller = await async_client.begin_translation(translation_inputs)
-                assert poller.id is not None
-                if wait_for_operation:
-                    await poller.result()
-                else:
-                    await poller.wait()
-                result_ids.append(poller.id)
 
-            return result_ids
+            # submit multiple operations
+            poller = await async_client.begin_translation(translation_inputs)
+            assert poller.id is not None
+            if wait_for_operation:
+                await poller.result()
+            else:
+                await poller.wait()
+            result_ids.append(poller.id)
+
+        return result_ids
 
     async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
         # get input parms
