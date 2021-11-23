@@ -26,11 +26,11 @@ _CONVERT = {
     't': 'Test'
 }
 _LANGUAGES = {
-    'Test': python_process,
+    # 'Test': python_process,
     # 'Python': python_process,
-    'Java': java_process,
+    # 'Java': java_process,
     'Go': go_process,
-    'JS': js_process
+    # 'JS': js_process
 }
 
 
