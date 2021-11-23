@@ -5,10 +5,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 import datetime
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 from azure_devtools.scenario_tests import (
-    ReplayableTest,
     create_random_name
 )
 
@@ -44,112 +44,75 @@ from azure.ai.metricsadvisor.models import (
 )
 
 
-class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key', 'x-api-key']
+class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
 
-    def __init__(self, method_name):
-        super(TestMetricsAdvisorAdministrationClientBase, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        if self.is_live:
-            service_endpoint = self.get_settings_value("METRICS_ADVISOR_ENDPOINT")
-            subscription_key = self.get_settings_value("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-            api_key = self.get_settings_value("METRICS_ADVISOR_API_KEY")
-            self.sql_server_connection_string = self.get_settings_value("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING")
-            self.azure_table_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_TABLE_CONNECTION_STRING")
-            self.azure_blob_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_BLOB_CONNECTION_STRING")
-            self.azure_cosmosdb_connection_string = self.get_settings_value("METRICS_ADVISOR_COSMOS_DB_CONNECTION_STRING")
-            self.application_insights_api_key = self.get_settings_value("METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY")
-            self.azure_data_explorer_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING")
-            self.influxdb_connection_string = self.get_settings_value("METRICS_ADVISOR_INFLUX_DB_CONNECTION_STRING")
-            self.influxdb_password = self.get_settings_value("METRICS_ADVISOR_INFLUX_DB_PASSWORD")
-            self.azure_datalake_account_key = self.get_settings_value("METRICS_ADVISOR_AZURE_DATALAKE_ACCOUNT_KEY")
-            self.mongodb_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_MONGO_DB_CONNECTION_STRING")
-            self.mysql_connection_string = self.get_settings_value("METRICS_ADVISOR_MYSQL_CONNECTION_STRING")
-            self.postgresql_connection_string = self.get_settings_value("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING")
-            self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
-            self.data_feed_id = self.get_settings_value("METRICS_ADVISOR_DATA_FEED_ID")
-            self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
-            self.scrubber.register_name_pair(
-                self.sql_server_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.azure_table_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.azure_blob_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.azure_cosmosdb_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.application_insights_api_key,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.azure_data_explorer_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.influxdb_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.influxdb_password,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.azure_datalake_account_key,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.mongodb_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.mysql_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.postgresql_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.metric_id,
-                "metric_id"
-            )
-            self.scrubber.register_name_pair(
-                self.data_feed_id,
-                "data_feed_id"
-            )
-            self.scrubber.register_name_pair(
-                self.anomaly_detection_configuration_id,
-                "anomaly_detection_configuration_id"
-            )
-        else:
-            service_endpoint = "https://endpointname.cognitiveservices.azure.com"
-            subscription_key = "METRICS_ADVISOR_SUBSCRIPTION_KEY"
-            api_key = "METRICS_ADVISOR_API_KEY"
-            self.sql_server_connection_string = "SQL_SERVER_CONNECTION_STRING"
-            self.azure_table_connection_string = "AZURE_TABLE_CONNECTION_STRING"
-            self.azure_blob_connection_string = "AZURE_BLOB_CONNECTION_STRING"
-            self.azure_cosmosdb_connection_string = "COSMOS_DB_CONNECTION_STRING"
-            self.application_insights_api_key = "METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY"
-            self.azure_data_explorer_connection_string = "METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING"
-            self.influxdb_connection_string = "METRICS_ADVISOR_INFLUXDB_CONNECTION_STRING"
-            self.influxdb_password = "METRICS_ADVISOR_INFLUXDB_PASSWORD"
-            self.azure_datalake_account_key = "METRICS_ADVISOR_AZURE_DATALAKE_ACCOUNT_KEY"
-            self.mongodb_connection_string = "METRICS_ADVISOR_AZURE_MONGODB_CONNECTION_STRING"
-            self.mysql_connection_string = "METRICS_ADVISOR_MYSQL_CONNECTION_STRING"
-            self.postgresql_connection_string = "METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING"
-            self.anomaly_detection_configuration_id = "anomaly_detection_configuration_id"
-            self.metric_id = "metric_id"
-            self.data_feed_id = "data_feed_id"
-        self.admin_client = MetricsAdvisorAdministrationClient(service_endpoint,
+    @property
+    def admin_client(self):
+        service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
+        subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
+        api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
+        return MetricsAdvisorAdministrationClient(service_endpoint,
                                                                MetricsAdvisorKeyCredential(subscription_key, api_key))
+
+    @property
+    def sql_server_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING", "metrics_advisor_sql_server_connection_string")
+
+    @property
+    def azure_table_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_AZURE_TABLE_CONNECTION_STRING", "metrics_advisor_azure_table_connection_string")
+
+    @property
+    def azure_blob_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_AZURE_BLOB_CONNECTION_STRING", "metrics_advisor_azure_blob_connection_string")
+
+    @property
+    def azure_cosmosdb_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_COSMOS_DB_CONNECTION_STRING", "metrics_advisor_cosmos_db_connection_string")
+
+    @property
+    def application_insights_api_key(self):
+        return os.getenv("METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY", "metrics_advisor_application_insights_api_key")
+
+    @property
+    def azure_data_explorer_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING", "metrics_advisor_azure_data_explorer_connection_string")
+
+    @property
+    def influxdb_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_INFLUX_DB_CONNECTION_STRING", "metrics_advisor_influx_db_connection_string")
+
+    @property
+    def influxdb_password(self):
+        return os.getenv("METRICS_ADVISOR_INFLUX_DB_PASSWORD", "metrics_advisor_influx_db_password")
+
+    @property
+    def azure_datalake_account_key(self):
+        return os.getenv("METRICS_ADVISOR_AZURE_DATALAKE_ACCOUNT_KEY", "metrics_advisor_azure_datalake_account_key")
+
+    @property
+    def mongodb_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_AZURE_MONGO_DB_CONNECTION_STRING", "metrics_advisor_azure_mongo_db_connection_string")
+
+    @property
+    def mysql_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_MYSQL_CONNECTION_STRING", "metrics_advisor_mysql_connection_string")
+
+    @property
+    def postgresql_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING", "metrics_advisor_postgresql_connection_string")
+
+    @property
+    def anomaly_detection_configuration_id(self):
+        return os.getenv("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID", "metrics_advisor_anomaly_detection_configuration_id")
+
+    @property
+    def data_feed_id(self):
+        return os.getenv("METRICS_ADVISOR_DATA_FEED_ID", "metrics_advisor_data_feed_id")
+
+    @property
+    def metric_id(self):
+        return os.getenv("METRICS_ADVISOR_METRIC_ID", "metrics_advisor_metric_id")
 
     def _create_data_feed(self, name):
         name = create_random_name(name)
@@ -239,7 +202,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             access_mode="Private",
             action_link_template="action link template"
         )
-
 
     def _create_alert_config_for_update(self, name):
         try:
@@ -390,63 +352,41 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         )
 
 
-class TestMetricsAdvisorClientBase(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key', 'x-api-key']
+class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
 
-    def __init__(self, method_name):
-        super(TestMetricsAdvisorClientBase, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        if self.is_live:
-            service_endpoint = self.get_settings_value("METRICS_ADVISOR_ENDPOINT")
-            subscription_key = self.get_settings_value("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-            api_key = self.get_settings_value("METRICS_ADVISOR_API_KEY")
-            self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
-            self.anomaly_alert_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID")
-            self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
-            self.incident_id = self.get_settings_value("METRICS_ADVISOR_INCIDENT_ID")
-            self.dimension_name = self.get_settings_value("METRICS_ADVISOR_DIMENSION_NAME")
-            self.feedback_id = self.get_settings_value("METRICS_ADVISOR_FEEDBACK_ID")
-            self.alert_id = self.get_settings_value("METRICS_ADVISOR_ALERT_ID")
-            self.scrubber.register_name_pair(
-                self.anomaly_detection_configuration_id,
-                "anomaly_detection_configuration_id"
-            )
-            self.scrubber.register_name_pair(
-                self.anomaly_alert_configuration_id,
-                "anomaly_alert_configuration_id"
-            )
-            self.scrubber.register_name_pair(
-                self.metric_id,
-                "metric_id"
-            )
-            self.scrubber.register_name_pair(
-                self.incident_id,
-                "incident_id"
-            )
-            self.scrubber.register_name_pair(
-                self.dimension_name,
-                "dimension_name"
-            )
-            self.scrubber.register_name_pair(
-                self.feedback_id,
-                "feedback_id"
-            )
-            self.scrubber.register_name_pair(
-                self.alert_id,
-                "alert_id"
-            )
-        else:
-            service_endpoint = "https://endpointname.cognitiveservices.azure.com"
-            subscription_key = "METRICS_ADVISOR_SUBSCRIPTION_KEY"
-            api_key = "METRICS_ADVISOR_API_KEY"
-            self.anomaly_detection_configuration_id = "anomaly_detection_configuration_id"
-            self.anomaly_alert_configuration_id = "anomaly_alert_configuration_id"
-            self.metric_id = "metric_id"
-            self.incident_id = "incident_id"
-            self.dimension_name = "dimension_name"
-            self.feedback_id = "feedback_id"
-            self.alert_id = "alert_id"
-
-        self.client = MetricsAdvisorClient(service_endpoint,
+    @property
+    def client(self):
+        service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
+        subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
+        api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
+        return MetricsAdvisorClient(service_endpoint,
                                                  MetricsAdvisorKeyCredential(subscription_key, api_key))
+
+    @property
+    def anomaly_detection_configuration_id(self):
+        return os.getenv("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID", "metrics_advisor_anomaly_detection_configuration_id")
+
+    @property
+    def anomaly_alert_configuration_id(self):
+        return os.getenv("METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID", "metrics_advisor_anomaly_alert_configuration_id")
+
+    @property
+    def metric_id(self):
+        return os.getenv("METRICS_ADVISOR_METRIC_ID", "metrics_advisor_metric_id")
+
+    @property
+    def incident_id(self):
+        return os.getenv("METRICS_ADVISOR_INCIDENT_ID", "metrics_advisor_incident_id")
+
+    @property
+    def dimension_name(self):
+        return os.getenv("METRICS_ADVISOR_DIMENSION_NAME", "metrics_advisor_dimension_name")
+
+    @property
+    def feedback_id(self):
+        return os.getenv("METRICS_ADVISOR_FEEDBACK_ID", "metrics_advisor_feedback_id")
+
+    @property
+    def alert_id(self):
+        return os.getenv("METRICS_ADVISOR_ALERT_ID", "metrics_advisor_alert_id")
 
