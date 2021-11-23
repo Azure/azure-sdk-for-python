@@ -1,5 +1,14 @@
 # Release History
 
+## 16.4.0 (2021-11-23)
+
+**Features**
+
+  - Model ManagedClusterLoadBalancerProfileManagedOutboundIPs has a new parameter count_i_pv6
+  - Model ContainerServiceNetworkProfile has a new parameter ip_families
+  - Model ContainerServiceNetworkProfile has a new parameter service_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter pod_cidrs
+
 ## 16.3.0 (2021-10-18)
 
 **Features**
