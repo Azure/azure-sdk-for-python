@@ -1,6 +1,6 @@
 from common import IssueProcess, Common
 from typing import Any, List
-
+import os
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN = {'ArcturusZhang': os.getenv('GO_DAPENGZHANG_TOKEN')}

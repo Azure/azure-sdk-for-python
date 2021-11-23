@@ -1,5 +1,6 @@
 from common import IssueProcess, Common
 from typing import Any, List
+import os
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN = {'weidongxu-microsoft': os.getenv('JAVA_WEIDONGXU_TOKEN')}
