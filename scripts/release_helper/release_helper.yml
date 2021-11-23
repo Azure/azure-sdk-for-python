@@ -38,7 +38,7 @@ jobs:
         export PYTHON_ZED_TOKEN=$(Zed-GitToken)
         export PYTHON_MSYYC_TOKEN=$(Yuchao-GitToken)
         export JAVA_WEIDONGXU_TOKEN=$(Weidong-GitToken)
-        export GO_DAPENGZHANG_TOKEN=$(JiaHui-GitToken)
+        export GO_DAPENGZHANG_TOKEN=$(Dapeng-GitToken)
         export JS_QIAOQIAO_TOKEN=$(QiaoQiao-GitToken)
         export LANGUAGE=$(RUN_LANGUAGE)
 
