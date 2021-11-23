@@ -10,7 +10,7 @@ from .config import PROXY_URL
 from .proxy_testcase import get_recording_id
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict
 
 
 def set_bodiless_matcher():
@@ -189,24 +189,30 @@ def _get_request_args(**kwargs):
 
 
 def _send_matcher_request(matcher, headers):
+    # type: (str, Dict) -> None
+    """Sends a POST request to the test proxy endpoint to register the specified matcher.
+
+    :param str matcher: The name of the matcher to set.
+    :param dict headers: Any matcher headers, as a dictionary.
+    """
+
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
-    response = requests.post(
+    requests.post(
         "{}/Admin/SetMatcher".format(PROXY_URL),
         headers=headers_to_send,
     )
-    print("got matcher response")
 
 
 def _send_sanitizer_request(sanitizer, parameters):
     # type: (str, Dict) -> None
-    """Send a POST request to the test proxy endpoint to register the specified sanitizer.
+    """Sends a POST request to the test proxy endpoint to register the specified sanitizer.
 
     :param str sanitizer: The name of the sanitizer to add.
     :param dict parameters: The sanitizer constructor parameters, as a dictionary.
     """
 
-    response = requests.post(
+    requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
         headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
         json=parameters

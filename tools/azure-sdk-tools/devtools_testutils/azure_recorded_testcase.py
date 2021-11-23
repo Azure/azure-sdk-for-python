@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-import logging
 import os
 import os.path
 import six
@@ -14,7 +13,6 @@ from typing import TYPE_CHECKING
 
 from dotenv import load_dotenv, find_dotenv
 
-from azure_devtools.scenario_tests.config import TestConfig
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from . import mgmt_settings_fake as fake_settings
