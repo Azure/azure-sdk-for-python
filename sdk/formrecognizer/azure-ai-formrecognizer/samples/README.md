@@ -40,7 +40,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_get_operations.py][sample_get_operations] and [sample_get_operations_async.py][sample_get_operations_async]|Get and list the document model operations created within the past 24 hours|
 |[sample_copy_model.py][sample_copy] and [sample_copy_model_async.py][sample_copy_async]|Copy a custom model from one Form Recognizer resource to another|
 |[sample_get_words_on_document_line.py][sample_get_words_on_document_line] and [sample_get_words_on_document_line_async.py][sample_get_words_on_document_line_async]|Get the words in a DocumentLine|
-|[sample_get_elements_with_spans.py][sample_get_elements_with_spans] and [sample_get_elements_with_spans_async.py][sample_get_elements_with_spans_async]|Get elements in the result of an analyze operation by searching with spans|
+|[sample_get_elements_with_spans.py][sample_get_elements_with_spans] and [sample_get_elements_with_spans_async.py][sample_get_elements_with_spans_async]|Get elements, such as words, lines, and styles, in the result of an analyze operation by searching with spans|
 
 ## Samples for client library versions 3.1.X
 
