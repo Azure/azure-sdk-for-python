@@ -17,7 +17,7 @@ from .storage_testcase import (
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
 from .proxy_docker_startup import start_test_proxy, stop_test_proxy, test_proxy
-from .proxy_testcase import recorded_by_proxy, recorded_without_body_matching
+from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
     add_body_key_sanitizer,
     add_body_regex_sanitizer,
@@ -28,6 +28,7 @@ from .sanitizers import (
     add_remove_header_sanitizer,
     add_request_subscription_id_sanitizer,
     add_uri_regex_sanitizer,
+    set_bodiless_matcher,
 )
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credential import FakeTokenCredential, ACCOUNT_FAKE_KEY
@@ -60,8 +61,8 @@ __all__ = [
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
     "recorded_by_proxy",
-    "recorded_without_body_matching",
     "test_proxy",
+    "set_bodiless_matcher",
     "start_test_proxy",
     "stop_test_proxy",
     "ResponseCallback",

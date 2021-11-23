@@ -9,7 +9,6 @@ import requests
 import six
 import sys
 from typing import TYPE_CHECKING
-import pdb
 
 try:
     # py3
@@ -25,7 +24,7 @@ from azure.core.pipeline.transport import RequestsTransport
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from .helpers import is_live, send_proxy_matcher_request
+from .helpers import is_live
 from .config import PROXY_URL
 
 if TYPE_CHECKING:
@@ -40,6 +39,14 @@ RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
+
+# we store recording ID in a module-level variable so that sanitizers can access it
+this = sys.modules[__name__]
+this.recording_id = None
+
+
+def get_recording_id():
+    return this.recording_id
 
 
 def get_test_id():
@@ -89,6 +96,8 @@ def start_record_or_playback(test_id):
                     ValueError("The response body returned from starting playback did not contain valid JSON"), ex
                 )
 
+    # set recording ID in a module-level variable so that sanitizers can access it
+    this.recording_id = recording_id
     return (recording_id, variables)
 
 
@@ -130,49 +139,6 @@ def transform_request(request, recording_id):
     request.url = updated_target
 
 
-def run_wrapped_test(test_func, *args, **kwargs):
-    test_id = get_test_id()
-    recording_id, variables = start_record_or_playback(test_id)
-    if kwargs.pop("bodiless", False):
-        set_bodiless_matcher(recording_id)
-
-    def transform_args(*args, **kwargs):
-        copied_positional_args = list(args)
-        request = copied_positional_args[1]
-
-        transform_request(request, recording_id)
-        return tuple(copied_positional_args), kwargs
-
-    trimmed_kwargs = {k: v for k, v in kwargs.items()}
-    trim_kwargs_from_test_function(test_func, trimmed_kwargs)
-
-    original_transport_func = RequestsTransport.send
-
-    def combined_call(*args, **kwargs):
-        adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-        return original_transport_func(*adjusted_args, **adjusted_kwargs)
-
-    RequestsTransport.send = combined_call
-
-    # call the modified function
-    # we define test_output before invoking the test so the variable is defined in case of an exception
-    test_output = None
-    try:
-        test_output = test_func(*args, variables=variables, **trimmed_kwargs)
-    except TypeError:
-        logger = logging.getLogger()
-        logger.info(
-            "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-            "`variables` parameter to make use of recorded test variables."
-        )
-        test_output = test_func(*args, **trimmed_kwargs)
-    finally:
-        RequestsTransport.send = original_transport_func
-        stop_record_or_playback(test_id, recording_id, test_output)
-
-    return test_output
-
-
 def recorded_by_proxy(test_func):
     """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
 
@@ -181,30 +147,44 @@ def recorded_by_proxy(test_func):
     """
 
     def record_wrap(*args, **kwargs):
-        return run_wrapped_test(test_func, *args, **kwargs)
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+
+        def transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+
+            transform_request(request, recording_id)
+
+            return tuple(copied_positional_args), kwargs
+
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+
+        original_transport_func = RequestsTransport.send
+
+        def combined_call(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            return original_transport_func(*adjusted_args, **adjusted_kwargs)
+
+        RequestsTransport.send = combined_call
+
+        # call the modified function
+        # we define test_output before invoking the test so the variable is defined in case of an exception
+        test_output = None
+        try:
+            test_output = test_func(*args, variables=variables, **trimmed_kwargs)
+        except TypeError:
+            logger = logging.getLogger()
+            logger.info(
+                "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                "`variables` parameter to make use of recorded test variables."
+            )
+            test_output = test_func(*args, **trimmed_kwargs)
+        finally:
+            RequestsTransport.send = original_transport_func
+            stop_record_or_playback(test_id, recording_id, test_output)
+
+        return test_output
 
     return record_wrap
-
-
-def recorded_without_body_matching(test_func):
-    """Decorator that redirects network requests to target the test proxy, and disables body matching in playback tests.
-
-    For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
-    """
-
-    def record_wrap(*args, **kwargs):
-        return run_wrapped_test(test_func, *args, bodiless=True, **kwargs)
-
-    return record_wrap
-
-
-def set_bodiless_matcher(recording_id):
-    # type: () -> None
-    """Adjusts the "match" operation to EXCLUDE the body when matching a request to a recording's entries.
-
-    This method must be called during test case execution, rather than at a session, module, or class level.
-    """
-
-    if not is_live():
-        send_proxy_matcher_request("BodilessMatcher", {"x-recording-id": recording_id})

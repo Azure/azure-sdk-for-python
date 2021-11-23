@@ -3,15 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import requests
 from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
-from .helpers import send_proxy_sanitizer_request
+from .proxy_testcase import get_recording_id
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
+
+
+def set_bodiless_matcher():
+    # type: () -> None
+    """Adjusts the "match" operation to EXCLUDE the body when matching a request to a recording's entries.
+
+    This method must be called during test case execution, rather than at a session, module, or class level.
+    """
+
+    x_recording_id = get_recording_id()
+    _send_matcher_request("BodilessMatcher", {"x-recording-id": x_recording_id})
 
 
 def add_body_key_sanitizer(**kwargs):
@@ -30,7 +40,7 @@ def add_body_key_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("BodyKeySanitizer", request_args)
+    _send_sanitizer_request("BodyKeySanitizer", request_args)
 
 
 def add_body_regex_sanitizer(**kwargs):
@@ -48,7 +58,7 @@ def add_body_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("BodyRegexSanitizer", request_args)
+    _send_sanitizer_request("BodyRegexSanitizer", request_args)
 
 
 def add_continuation_sanitizer(**kwargs):
@@ -67,7 +77,7 @@ def add_continuation_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("ContinuationSanitizer", request_args)
+    _send_sanitizer_request("ContinuationSanitizer", request_args)
 
 
 def add_general_regex_sanitizer(**kwargs):
@@ -84,7 +94,7 @@ def add_general_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("GeneralRegexSanitizer", request_args)
+    _send_sanitizer_request("GeneralRegexSanitizer", request_args)
 
 
 def add_header_regex_sanitizer(**kwargs):
@@ -104,14 +114,14 @@ def add_header_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("HeaderRegexSanitizer", request_args)
+    _send_sanitizer_request("HeaderRegexSanitizer", request_args)
 
 
 def add_oauth_response_sanitizer():
     # type: () -> None
     """Registers a sanitizer that cleans out all request/response pairs that match an oauth regex in their URI."""
 
-    send_proxy_sanitizer_request("OAuthResponseSanitizer", {})
+    _send_sanitizer_request("OAuthResponseSanitizer", {})
 
 
 def add_remove_header_sanitizer(**kwargs):
@@ -123,7 +133,7 @@ def add_remove_header_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("RemoveHeaderSanitizer", request_args)
+    _send_sanitizer_request("RemoveHeaderSanitizer", request_args)
 
 
 def add_request_subscription_id_sanitizer(**kwargs):
@@ -136,7 +146,7 @@ def add_request_subscription_id_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("ReplaceRequestSubscriptionId", request_args)
+    _send_sanitizer_request("ReplaceRequestSubscriptionId", request_args)
 
 
 def add_uri_regex_sanitizer(**kwargs):
@@ -151,7 +161,7 @@ def add_uri_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    send_proxy_sanitizer_request("UriRegexSanitizer", request_args)
+    _send_sanitizer_request("UriRegexSanitizer", request_args)
 
 
 def _get_request_args(**kwargs):
@@ -176,3 +186,28 @@ def _get_request_args(**kwargs):
     if "value" in kwargs:
         request_args["value"] = kwargs.get("value")
     return request_args
+
+
+def _send_matcher_request(matcher, headers):
+    headers_to_send = {"x-abstraction-identifier": matcher}
+    headers_to_send.update(headers)
+    response = requests.post(
+        "{}/Admin/SetMatcher".format(PROXY_URL),
+        headers=headers_to_send,
+    )
+    print("got matcher response")
+
+
+def _send_sanitizer_request(sanitizer, parameters):
+    # type: (str, Dict) -> None
+    """Send a POST request to the test proxy endpoint to register the specified sanitizer.
+
+    :param str sanitizer: The name of the sanitizer to add.
+    :param dict parameters: The sanitizer constructor parameters, as a dictionary.
+    """
+
+    response = requests.post(
+        "{}/Admin/AddSanitizer".format(PROXY_URL),
+        headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
+        json=parameters
+    )
