@@ -123,5 +123,4 @@ async def receive_events_from_iothub(iothub_conn_str):
 
 if __name__ == '__main__':
     iothub_conn_str = os.environ["IOTHUB_CONN_STR"]
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(receive_events_from_iothub(iothub_conn_str))
+    asyncio.run(receive_events_from_iothub(iothub_conn_str))
