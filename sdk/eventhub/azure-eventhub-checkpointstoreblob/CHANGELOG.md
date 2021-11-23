@@ -1,10 +1,11 @@
 # Release History
 
-## 1.1.5 (Unleased)
+## 1.1.5 (Unreleased)
 
 ### Bugs Fixed
 
 - Fixed a bug with `BlobCheckpointStore.claim_ownership` mutating the `ownership_list` argument to no longer mutate the argument.
+- Updated `azure-core` dependecy to 1.20.1 to fix `cchardet` ImportError.
 
 ## 1.1.4 (2021-04-07)
 
