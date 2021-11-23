@@ -22,10 +22,11 @@ _CONVERT = {
     'python': 'Python',
     'java': 'Java',
     'go': 'Go',
-    'js': 'JS'
+    'js': 'JS',
+    't': 'Test'
 }
 _LANGUAGES = {
-    'Test': common_process,
+    'Test': python_process,
     'Python': python_process,
     'Java': java_process,
     'Go': go_process,

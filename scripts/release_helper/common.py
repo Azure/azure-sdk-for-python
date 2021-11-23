@@ -10,7 +10,7 @@ from github.Repository import Repository
 _LOG = logging.getLogger(__name__)
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN = {'msyyc': os.getenv('Token')}
+_ASSIGNEE_TOKEN = {'weidongxu-microsoft': os.getenv('JAVA_WEIDONGXU_TOKEN')}
 
 
 class IssueProcess:
@@ -195,7 +195,6 @@ class Common:
         self.issues = issues
         for assignee in _ASSIGNEE_TOKEN:
             self.request_repo_dict[assignee] = Github(_ASSIGNEE_TOKEN[assignee]).get_repo(REQUEST_REPO)
-            # self.request_repo_dict[assignee] = Github(os.getenv('Token')).get_repo(REQUEST_REPO)
 
     def run(self):
         for item in self.issues:

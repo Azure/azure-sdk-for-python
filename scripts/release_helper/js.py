@@ -1,6 +1,9 @@
 from common import IssueProcess, Common
 from typing import Any, List
 
+# 'github assignee': 'token'
+_ASSIGNEE_TOKEN = {'lirenhe': os.getenv('JS_QIAOQIAO_TOKEN')}
+
 
 class IssueProcessJs(IssueProcess):
     pass
