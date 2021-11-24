@@ -18,14 +18,12 @@ USAGE:
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
 """
 
-from azure.ai.language.questionanswering import projects
-
-
 def sample_export_import_project():
-    # [START export_import_project]
+    # [START query_text]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.projects import models
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
@@ -37,9 +35,9 @@ def sample_export_import_project():
 
         # create project
         project_name = "IssacNewton"
-        client.create_project(
+        client.question_answering_projects.create_project(
             project_name=project_name,
-            options={
+            body={
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -49,53 +47,36 @@ def sample_export_import_project():
             })
 
         # export
-        export_poller = client.begin_export(
-            project_name=project_name,
-            format="json"
+        export_poller = client.question_answering_projects.begin_export(
+            project_name=project_name
         )
-        export_result = export_poller.result()
-        export_url = export_result["resultUrl"]
+        export_poller.result()
 
         # delete old project
-        delete_poller = client.begin_delete_project(
+        delete_poller = client.question_answering_projects.delete_project(
             project_name=project_name
         )
         delete_poller.result()
 
         # import project
-        project = {
-            "Metadata": {
-                "ProjectName": "IssacNewton",
-                "Description": "biography of Sir Issac Newton",
-                "Language": "en",
-                "DefaultAnswer": None,
-                "MultilingualResource": False,
-                "CreatedDateTime": "2022-01-25T13:10:08Z",
-                "LastModifiedDateTime": "2022-01-25T13:10:08Z",
-                "LastDeployedDateTime": None,
-                "Settings": {
-                    "DefaultAnswer": "no answer",
-                    "EnableHierarchicalExtraction": None,
-                    "DefaultAnswerUsedForExtraction": None
-                }
-            }
-        }
-        import_poller = client.begin_import_assets(
+        import_poller = client.question_answering_projects.begin_import_method(
             project_name=project_name,
-            options=project
+            file_uri="asdsadasdasd"
         )
         import_poller.result()
 
         # list projects
         print("view all qna projects:")
-        qna_projects = client.list_projects()
+        qna_projects = client.question_answering_projects.list_projects()
         for p in qna_projects:
-            if p["projectName"] == project_name:
-                print("project: {}".format(p["projectName"]))
-                print("\tlanguage: {}".format(p["language"]))
-                print("\tdescription: {}".format(p["description"]))
+            print(u"project: {}".format(p.project_name))
+            print(u"\tlanguage: {}".format(p.language))
+            print(u"\tdescription: {}".format(p.description))
 
-    # [END export_import_project]
+        client.question_answering_projects.get_project_details(
+            project_name=project_name
+        )
+    # [END query_text]
 
 
 if __name__ == '__main__':
