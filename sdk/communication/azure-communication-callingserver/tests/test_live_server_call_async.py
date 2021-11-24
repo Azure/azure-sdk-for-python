@@ -104,7 +104,6 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
         async with self.callingserver_client:
