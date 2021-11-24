@@ -57,9 +57,10 @@ try:
     from ._models_py3 import StartCallRecordingWithCallLocatorRequest
     from ._models_py3 import ToneInfo
     from ._models_py3 import ToneReceivedEvent
-    from ._models_py3 import TransferCallRequest
     from ._models_py3 import TransferCallResult
     from ._models_py3 import TransferCallResultEvent
+    from ._models_py3 import TransferToCallRequest
+    from ._models_py3 import TransferToParticipantRequest
     from ._models_py3 import UnmuteParticipantRequest
     from ._models_py3 import UpdateAudioRoutingGroupRequest
 except (SyntaxError, ImportError):
@@ -113,9 +114,10 @@ except (SyntaxError, ImportError):
     from ._models import StartCallRecordingWithCallLocatorRequest  # type: ignore
     from ._models import ToneInfo  # type: ignore
     from ._models import ToneReceivedEvent  # type: ignore
-    from ._models import TransferCallRequest  # type: ignore
     from ._models import TransferCallResult  # type: ignore
     from ._models import TransferCallResultEvent  # type: ignore
+    from ._models import TransferToCallRequest  # type: ignore
+    from ._models import TransferToParticipantRequest  # type: ignore
     from ._models import UnmuteParticipantRequest  # type: ignore
     from ._models import UpdateAudioRoutingGroupRequest  # type: ignore
 
@@ -186,9 +188,10 @@ __all__ = [
     'StartCallRecordingWithCallLocatorRequest',
     'ToneInfo',
     'ToneReceivedEvent',
-    'TransferCallRequest',
     'TransferCallResult',
     'TransferCallResultEvent',
+    'TransferToCallRequest',
+    'TransferToParticipantRequest',
     'UnmuteParticipantRequest',
     'UpdateAudioRoutingGroupRequest',
     'AudioRoutingMode',

@@ -12,7 +12,6 @@ from parameterized import parameterized
 from azure.communication.callingserver import (
     CommunicationIdentifier,
     CallLocator,
-    ServerCallLocator,
     CallMediaType,
     CallingEventSubscriptionType,
     CallRejectReason

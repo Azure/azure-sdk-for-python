@@ -368,7 +368,7 @@ def build_keep_alive_request(
     )
 
 
-def build_transfer_request(
+def build_transfer_to_participant_request(
     call_connection_id,  # type: str
     **kwargs  # type: Any
 ):
@@ -378,7 +378,43 @@ def build_transfer_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:transfer')
+    url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:transferToParticipant')
+    path_format_arguments = {
+        "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_transfer_to_call_request(
+    call_connection_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/calling/callConnections/{callConnectionId}/:transferToCall')
     path_format_arguments = {
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, 'str'),
     }
@@ -1456,21 +1492,22 @@ class CallConnectionsOperations(object):
 
 
     @distributed_trace
-    def transfer(
+    def transfer_to_participant(
         self,
         call_connection_id,  # type: str
-        transfer_call_request,  # type: "_models.TransferCallRequest"
+        transfer_to_participant_request,  # type: "_models.TransferToParticipantRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TransferCallResult"
-        """Transfer the call to a participant or to another call.
+        """Transfer the call to a participant.
 
-        Transfer the call to a participant or to another call.
+        Transfer the call to a participant.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param transfer_call_request: The transfer call request.
-        :type transfer_call_request: ~azure.communication.callingserver.models.TransferCallRequest
+        :param transfer_to_participant_request: The transfer to participant request.
+        :type transfer_to_participant_request:
+         ~azure.communication.callingserver.models.TransferToParticipantRequest
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1493,14 +1530,14 @@ class CallConnectionsOperations(object):
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(transfer_call_request, 'TransferCallRequest')
+        json = self._serialize.body(transfer_to_participant_request, 'TransferToParticipantRequest')
 
-        request = build_transfer_request(
+        request = build_transfer_to_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
             json=json,
-            template_url=self.transfer.metadata['url'],
+            template_url=self.transfer_to_participant.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1522,7 +1559,77 @@ class CallConnectionsOperations(object):
 
         return deserialized
 
-    transfer.metadata = {'url': '/calling/callConnections/{callConnectionId}/:transfer'}  # type: ignore
+    transfer_to_participant.metadata = {'url': '/calling/callConnections/{callConnectionId}/:transferToParticipant'}  # type: ignore
+
+
+    @distributed_trace
+    def transfer_to_call(
+        self,
+        call_connection_id,  # type: str
+        transfer_to_call_request,  # type: "_models.TransferToCallRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.TransferCallResult"
+        """Transfer the current call to another call.
+
+        Transfer the current call to another call.
+
+        :param call_connection_id: The call connection id.
+        :type call_connection_id: str
+        :param transfer_to_call_request: The transfer to call request.
+        :type transfer_to_call_request: ~azure.communication.callingserver.models.TransferToCallRequest
+        :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TransferCallResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.TransferCallResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransferCallResult"]
+        error_map = {
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        json = self._serialize.body(transfer_to_call_request, 'TransferToCallRequest')
+
+        request = build_transfer_to_call_request(
+            call_connection_id=call_connection_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=json,
+            template_url=self.transfer_to_call.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('TransferCallResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    transfer_to_call.metadata = {'url': '/calling/callConnections/{callConnectionId}/:transferToCall'}  # type: ignore
 
 
     @distributed_trace

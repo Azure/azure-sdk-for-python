@@ -42,7 +42,7 @@ from .._generated.models import (
 from .._shared.models import CommunicationIdentifier
 from ._content_downloader_async import ContentDownloader
 from ._download_async import ContentStreamDownloader
-from .._models import CallLocator, ParallelDownloadOptions
+from .._models import CallLocator
 from ._call_connection_async import CallConnection
 from .._converters import (
     JoinCallRequestConverter,

@@ -15,7 +15,8 @@ from .._generated.models import (
     PlayAudioWithCallLocatorRequest,
     PlayAudioToParticipantRequest,
     PlayAudioToParticipantWithCallLocatorRequest,
-    TransferCallRequest,
+    TransferToParticipantRequest,
+    TransferToCallRequest,
     CommunicationIdentifierModel,
     AddParticipantRequest,
     AddParticipantWithCallLocatorRequest,
@@ -374,23 +375,35 @@ class CancelParticipantMediaOperationWithCallLocatorRequestConverter(object):
             media_operation_id=media_operation_id
         )
 
-class TransferCallRequestConverter(object):
+class TransferToParticipantRequestConverter(object):
     @staticmethod
     def convert(
         target_participant, # type: CommunicationIdentifierModel
-        target_call_connection_id, # type: str
         alternate_caller_id=None, # type: PhoneNumberIdentifierModel
         user_to_user_information=None, # type: str
         operation_context=None # type: str
-        ): # type: (...) -> TransferCallRequest
+        ): # type: (...) -> TransferToParticipantRequest
 
         if not target_participant:
             raise ValueError("target_participant can not be None")
 
-        return TransferCallRequest(
+        return TransferToParticipantRequest(
             target_participant=target_participant,
-            target_call_connection_id=target_call_connection_id,
             alternate_caller_id=alternate_caller_id,
+            user_to_user_information=user_to_user_information,
+            operation_context=operation_context
+        )
+
+class TransferToCallRequestConverter(object):
+    @staticmethod
+    def convert(
+        target_call_connection_id, # type: str
+        user_to_user_information=None, # type: str
+        operation_context=None # type: str
+        ): # type: (...) -> TransferToCallRequest
+
+        return TransferToCallRequest(
+            target_call_connection_id=target_call_connection_id,
             user_to_user_information=user_to_user_information,
             operation_context=operation_context
         )

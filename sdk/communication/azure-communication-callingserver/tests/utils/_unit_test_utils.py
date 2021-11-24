@@ -657,13 +657,12 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_transfer():
+    def data_source_test_transfer_to_participant():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.SERVER_CALL_ID,
             _test_constants.COMMUNICATION_USER_Id_02,
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
@@ -673,8 +672,29 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.SERVER_CALL_ID,
             _test_constants.COMMUNICATION_USER_Id_02,
+            _test_constants.USER_TO_USER_INFORMATION,
+            _test_constants.OPERATION_CONTEXT,
+            True,
+            ))
+
+        return parameters
+
+    @staticmethod
+    def data_source_test_transfer_to_call():
+        parameters = []
+        parameters.append((
+            _test_constants.ClientType_ConnectionString,
+            _test_constants.CALL_ID,
+            _test_constants.SERVER_CALL_ID,
+            _test_constants.USER_TO_USER_INFORMATION,
+            _test_constants.OPERATION_CONTEXT,
+            ))
+
+        parameters.append((
+            _test_constants.ClientType_ManagedIdentity,
+            _test_constants.CALL_ID,
+            _test_constants.SERVER_CALL_ID,
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
             True,

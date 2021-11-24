@@ -9,7 +9,6 @@ from azure.communication.callingserver import (
     CommunicationUserIdentifier,
     CallMediaType,
     CallingEventSubscriptionType,
-    ServerCallLocator,
     GroupCallLocator
     )
 from utils._live_test_utils import CallingServerLiveTestUtils

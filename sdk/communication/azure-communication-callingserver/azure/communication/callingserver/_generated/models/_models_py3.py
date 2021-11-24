@@ -2303,67 +2303,6 @@ class ToneReceivedEvent(msrest.serialization.Model):
         self.call_connection_id = call_connection_id
 
 
-class TransferCallRequest(msrest.serialization.Model):
-    """The transfer call request.
-
-    :ivar target_participant: The identity of the target where call should be transfer to.
-    :vartype target_participant:
-     ~azure.communication.callingserver.models.CommunicationIdentifierModel
-    :ivar target_call_connection_id: The call connection id to replace the current call with. This
-     parameter should be used for consultative transfer.
-    :vartype target_call_connection_id: str
-    :ivar alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
-     number.
-    :vartype alternate_caller_id:
-     ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
-    :ivar user_to_user_information: The user to user information.
-    :vartype user_to_user_information: str
-    :ivar operation_context: The operation context.
-    :vartype operation_context: str
-    """
-
-    _attribute_map = {
-        'target_participant': {'key': 'targetParticipant', 'type': 'CommunicationIdentifierModel'},
-        'target_call_connection_id': {'key': 'targetCallConnectionId', 'type': 'str'},
-        'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
-        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
-        'operation_context': {'key': 'operationContext', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_participant: Optional["CommunicationIdentifierModel"] = None,
-        target_call_connection_id: Optional[str] = None,
-        alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
-        user_to_user_information: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword target_participant: The identity of the target where call should be transfer to.
-        :paramtype target_participant:
-         ~azure.communication.callingserver.models.CommunicationIdentifierModel
-        :keyword target_call_connection_id: The call connection id to replace the current call with.
-         This parameter should be used for consultative transfer.
-        :paramtype target_call_connection_id: str
-        :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a
-         pstn number.
-        :paramtype alternate_caller_id:
-         ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
-        :keyword user_to_user_information: The user to user information.
-        :paramtype user_to_user_information: str
-        :keyword operation_context: The operation context.
-        :paramtype operation_context: str
-        """
-        super(TransferCallRequest, self).__init__(**kwargs)
-        self.target_participant = target_participant
-        self.target_call_connection_id = target_call_connection_id
-        self.alternate_caller_id = alternate_caller_id
-        self.user_to_user_information = user_to_user_information
-        self.operation_context = operation_context
-
-
 class TransferCallResult(msrest.serialization.Model):
     """The response payload for transfer call operation.
 
@@ -2467,6 +2406,113 @@ class TransferCallResultEvent(msrest.serialization.Model):
         self.result_details = result_details
         self.operation_context = operation_context
         self.status = status
+
+
+class TransferToCallRequest(msrest.serialization.Model):
+    """The transfer to call request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar target_call_connection_id: Required. The call connection id to replace the current call
+     with. This parameter should be used for consultative transfer.
+    :vartype target_call_connection_id: str
+    :ivar user_to_user_information: The user to user information.
+    :vartype user_to_user_information: str
+    :ivar operation_context: The operation context.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        'target_call_connection_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_call_connection_id': {'key': 'targetCallConnectionId', 'type': 'str'},
+        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_call_connection_id: str,
+        user_to_user_information: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword target_call_connection_id: Required. The call connection id to replace the current
+         call with. This parameter should be used for consultative transfer.
+        :paramtype target_call_connection_id: str
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        """
+        super(TransferToCallRequest, self).__init__(**kwargs)
+        self.target_call_connection_id = target_call_connection_id
+        self.user_to_user_information = user_to_user_information
+        self.operation_context = operation_context
+
+
+class TransferToParticipantRequest(msrest.serialization.Model):
+    """The transfer call to participant request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar target_participant: Required. The identity of the target where call should be transfer
+     to.
+    :vartype target_participant:
+     ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :ivar alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
+     number.
+    :vartype alternate_caller_id:
+     ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
+    :ivar user_to_user_information: The user to user information.
+    :vartype user_to_user_information: str
+    :ivar operation_context: The operation context.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        'target_participant': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_participant': {'key': 'targetParticipant', 'type': 'CommunicationIdentifierModel'},
+        'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
+        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
+        user_to_user_information: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword target_participant: Required. The identity of the target where call should be transfer
+         to.
+        :paramtype target_participant:
+         ~azure.communication.callingserver.models.CommunicationIdentifierModel
+        :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a
+         pstn number.
+        :paramtype alternate_caller_id:
+         ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        """
+        super(TransferToParticipantRequest, self).__init__(**kwargs)
+        self.target_participant = target_participant
+        self.alternate_caller_id = alternate_caller_id
+        self.user_to_user_information = user_to_user_information
+        self.operation_context = operation_context
 
 
 class UnmuteParticipantRequest(msrest.serialization.Model):
