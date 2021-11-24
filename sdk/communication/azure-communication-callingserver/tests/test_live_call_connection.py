@@ -70,7 +70,7 @@ class CallConnectionTest(CommunicationTestCase):
                     callback_uri=CONST.AppCallbackUrl,
                     requested_media_types=[CallMediaType.AUDIO],
                     requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
-                    alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+                    alternate_caller_id = PhoneNumberIdentifier(self.from_phone_number)
                     )
 
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
@@ -104,7 +104,7 @@ class CallConnectionTest(CommunicationTestCase):
                     callback_uri=CONST.AppCallbackUrl,
                     requested_media_types=[CallMediaType.AUDIO],
                     requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
-                    alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+                    alternate_caller_id = PhoneNumberIdentifier(self.from_phone_number)
                     )
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
 
