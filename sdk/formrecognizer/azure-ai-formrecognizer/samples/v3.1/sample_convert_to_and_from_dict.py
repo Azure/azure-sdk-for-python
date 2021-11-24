@@ -37,8 +37,7 @@ def convert_to_and_from_dict():
 
     from azure.core.serialization import AzureJSONEncoder
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import FormRecognizerClient
-    from azure.ai.formrecognizer import RecognizedForm
+    from azure.ai.formrecognizer import FormRecognizerClient, RecognizedForm
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -54,7 +53,8 @@ def convert_to_and_from_dict():
     # convert the received model to a dictionary
     recognized_form_dict = [doc.to_dict() for doc in id_documents]
 
-    # save the dictionary as a JSON content in a JSON file
+    # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
+    # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
     with open('data.json', 'w') as f:
         json.dump(recognized_form_dict, f, cls=AzureJSONEncoder)
