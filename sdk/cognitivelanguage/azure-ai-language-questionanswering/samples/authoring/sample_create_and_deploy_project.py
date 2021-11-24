@@ -19,10 +19,11 @@ USAGE:
 """
 
 def sample_create_and_deploy_project():
-    # [START create_and_deploy_project]
+    # [START query_text]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.projects import models
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
@@ -34,9 +35,9 @@ def sample_create_and_deploy_project():
 
         # create project
         project_name = "IssacNewton"
-        project = client.create_project(
+        project = client.question_answering_projects.create_project(
             project_name=project_name,
-            options={
+            body={
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -46,29 +47,28 @@ def sample_create_and_deploy_project():
             })
 
         print("view created project info:")
-        print("\tname: {}".format(project["projectName"]))
-        print("\tlanguage: {}".format(project["language"]))
-        print("\tdescription: {}".format(project["description"]))
+        print(u"\tname: {}".format(project.project_name))
+        print(u"\tlanguage: {}".format(project.language))
+        print(u"\tdescription: {}".format(project.description))
 
         # list projects
-        print("find created project ..")
-        qna_projects = client.list_projects()
+        print("view all qna projects:")
+        qna_projects = client.question_answering_projects.list_projects()
         for p in qna_projects:
-            if p["projectName"] == project_name:
-                print("project: {}".format(p["projectName"]))
-                print("\tlanguage: {}".format(p["language"]))
-                print("\tdescription: {}".format(p["description"]))
+            print(u"project: {}".format(p.project_name))
+            print(u"\tlanguage: {}".format(p.language))
+            print(u"\tdescription: {}".format(p.description))
 
-        # update sources (REQUIRED TO DEPLOY PROJECT)
-        update_sources_poller = client.begin_update_sources(
+        # update sources
+        update_sources_poller = client.question_answering_projects.begin_update_sources(
             project_name=project_name,
-            sources=[
+            body=[
                 {
                     "op": "add",
                     "value": {
-                        "displayName": "Issac Newton Bio",
-                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
-                        "sourceKind": "url"
+                        "display_name": "Issac Newton Bio",
+                        "source_uri": "https://wikipedia.org/wiki/Isaac_Newton",
+                        "source_kind": "url"
                     }
                 }
             ]
@@ -77,24 +77,21 @@ def sample_create_and_deploy_project():
 
         # list sources
         print("list project sources")
-        sources = client.list_sources(
+        sources = client.question_answering_projects.get_sources(
             project_name=project_name
         )
         for source in sources:
-            print("project: {}".format(source["displayName"]))
-            print("\tsource: {}".format(source["source"]))
-            print("\tsource Uri: {}".format(source["sourceUri"]))
-            print("\tsource kind: {}".format(source["sourceKind"]))
+            print(source) # needs to properly access values!
 
         # deploy project
-        deployment_poller = client.begin_deploy_project(
+        deployment_poller = client.question_answering_projects.begin_deploy_project(
             project_name=project_name,
-            deployment_name="production"
+            deployment_name="test"
         )
         deployment_poller.result()
 
         # list all deployments
-        deployments = client.list_deployments(
+        deployments = client.question_answering_projects.list_deployments(
             project_name=project_name
         )
 
@@ -102,7 +99,7 @@ def sample_create_and_deploy_project():
         for d in deployments:
             print(d)
 
-    # [END create_and_deploy_project]
+    # [END query_text]
 
 
 if __name__ == '__main__':
