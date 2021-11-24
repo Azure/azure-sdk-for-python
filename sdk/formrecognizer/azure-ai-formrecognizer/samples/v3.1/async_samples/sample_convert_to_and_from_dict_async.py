@@ -10,7 +10,7 @@
 FILE: sample_convert_to_and_from_dict_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to convert models returned from an analyze operation
+    This sample demonstrates how to convert models returned from a recognize operation
     to and from a dictionary. The dictionary in this sample is then converted to a
     JSON file, then the same dictionary is converted back to its original model.
 
@@ -27,49 +27,55 @@ import json
 import asyncio
 
 async def convert_to_and_from_dict_async():
-    path_to_sample_documents = os.path.abspath(
+    path_to_sample_forms = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
             "..",
-            "./sample_forms/forms/Form_1.jpg",
+            "./sample_forms/id_documents/license.jpg",
         )
     )
 
     from azure.core.serialization import AzureJSONEncoder
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer.aio import DocumentAnalysisClient
-    from azure.ai.formrecognizer import AnalyzeResult
+    from azure.ai.formrecognizer.aio import FormRecognizerClient
+    from azure.ai.formrecognizer import RecognizedForm
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
+    form_recognizer_client = FormRecognizerClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    async with document_analysis_client:
-        with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-document", document=f
-            )
-        result = await poller.result()
+    async with form_recognizer_client:
+        with open(path_to_sample_forms, "rb") as f:
+            poller = await form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
+        
+        id_documents = await poller.result()
 
     # convert the received model to a dictionary
-    analyze_result_dict = result.to_dict()
+    recognized_form_dict = [doc.to_dict() for doc in id_documents]
 
     # save the dictionary as a JSON content in a JSON file
     with open('data.json', 'w') as f:
-        json.dump(analyze_result_dict, f, cls=AzureJSONEncoder)
+        json.dump(recognized_form_dict, f, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
-    model = AnalyzeResult.from_dict(analyze_result_dict)
+    model = [RecognizedForm.from_dict(doc) for doc in recognized_form_dict]
 
     # use the model as normal
-    print("----Converted from dictionary AnalyzeResult----")
-    print("Model ID: '{}'".format(model.model_id))
-    print("Number of pages analyzed {}".format(len(model.pages)))
-    print("API version used: {}".format(model.api_version))
+    for idx, id_document in enumerate(model):
+        print("--------Recognizing converted ID document #{}--------".format(idx+1))
+        first_name = id_document.fields.get("FirstName")
+        if first_name:
+            print("First Name: {} has confidence: {}".format(first_name.value, first_name.confidence))
+        last_name = id_document.fields.get("LastName")
+        if last_name:
+            print("Last Name: {} has confidence: {}".format(last_name.value, last_name.confidence))
+        document_number = id_document.fields.get("DocumentNumber")
+        if document_number:
+            print("Document Number: {} has confidence: {}".format(document_number.value, document_number.confidence))
 
     print("----------------------------------------")
 

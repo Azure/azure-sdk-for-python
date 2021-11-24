@@ -35,6 +35,7 @@ def convert_to_and_from_dict():
         )
     )
 
+    from azure.core.serialization import AzureJSONEncoder
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult
 
@@ -55,18 +56,16 @@ def convert_to_and_from_dict():
 
     # save the dictionary as a JSON content in a JSON file
     with open('data.json', 'w') as f:
-        json.dump(analyze_result_dict, f)
+        json.dump(analyze_result_dict, f, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
     model = AnalyzeResult.from_dict(analyze_result_dict)
 
     # use the model as normal
-    print("----Entities found in document----")
-    for entity in model.entities:
-        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
-        print("...has content '{}'".format(entity.content))
-        print("...within '{}' bounding regions".format(entity.bounding_regions))
-        print("...with confidence {}\n".format(entity.confidence))
+    print("----Converted from dictionary AnalyzeResult----")
+    print("Model ID: '{}'".format(model.model_id))
+    print("Number of pages analyzed {}".format(len(model.pages)))
+    print("API version used: {}".format(model.api_version))
 
     print("----------------------------------------")
 
