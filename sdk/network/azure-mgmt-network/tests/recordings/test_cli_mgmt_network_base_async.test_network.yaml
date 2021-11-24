@@ -444,9 +444,7 @@ interactions:
       date: Fri, 05 Nov 2021 09:33:54 GMT
       expires: '-1'
       pragma: no-cache
-      server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-ms-original-request-ids: b6b046b1-0361-461f-b44d-ca32b2c124f5

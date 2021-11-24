@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0 (2021-11-10)
 
 **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure Schema Registry.
@@ -23,14 +33,6 @@
 - `id` parameter in `get_schema` method on sync and async `SchemaRegistryClient` has been renamed `schema_id`.
 - `schema_definition` parameter in `register_schema` and `get_schema_properties` methods on sync and async `SchemaRegistryClient` has been renamed `definition`.
 - `serializer` namespace has been removed from `azure.schemaregistry`.
-
-## 1.0.0b3 (2021-10-05)
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b3 (2021-10-05)
 

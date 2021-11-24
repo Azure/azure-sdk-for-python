@@ -30,7 +30,6 @@ from .operations import CollectionPartitionRegionOperations
 from .operations import CollectionPartitionOperations
 from .operations import PartitionKeyRangeIdOperations
 from .operations import PartitionKeyRangeIdRegionOperations
-from .operations import GraphResourcesOperations
 from .operations import SqlResourcesOperations
 from .operations import MongoDBResourcesOperations
 from .operations import TableResourcesOperations
@@ -52,7 +51,7 @@ from .operations import CassandraDataCentersOperations
 from .. import models
 
 
-class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
+class CosmosDBManagementClient(object):
     """Azure Cosmos DB Database Service Resource Provider REST API.
 
     :ivar database_accounts: DatabaseAccountsOperations operations
@@ -81,8 +80,6 @@ class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
     :vartype partition_key_range_id: azure.mgmt.cosmosdb.aio.operations.PartitionKeyRangeIdOperations
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegionOperations operations
     :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.aio.operations.PartitionKeyRangeIdRegionOperations
-    :ivar graph_resources: GraphResourcesOperations operations
-    :vartype graph_resources: azure.mgmt.cosmosdb.aio.operations.GraphResourcesOperations
     :ivar sql_resources: SqlResourcesOperations operations
     :vartype sql_resources: azure.mgmt.cosmosdb.aio.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
@@ -169,8 +166,6 @@ class CosmosDBManagementClient(CosmosDBManagementClientOperationsMixin):
         self.partition_key_range_id = PartitionKeyRangeIdOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.graph_resources = GraphResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.sql_resources = SqlResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)

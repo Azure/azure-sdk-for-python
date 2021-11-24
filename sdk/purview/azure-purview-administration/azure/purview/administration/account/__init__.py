@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_quota_extension_api import AzureQuotaExtensionAPI
+from ._purview_account_client import PurviewAccountClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['AzureQuotaExtensionAPI']
+__all__ = ['PurviewAccountClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

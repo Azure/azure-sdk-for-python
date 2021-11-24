@@ -35,8 +35,6 @@ class LogsQueryClient(object):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
     :paramtype endpoint: str
-    :keyword audience: URL to use for credential authentication with AAD.
-    :paramtype audience: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:

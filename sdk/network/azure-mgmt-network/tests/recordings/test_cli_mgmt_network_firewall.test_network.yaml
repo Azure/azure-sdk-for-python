@@ -559,12 +559,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3ab9f089-d489-484e-94f6-48d73a00a808?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '30'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -620,7 +620,7 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '29'
+      - '993'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -715,22 +715,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/nfvOperations/2e6ad90b-5a2d-4c60-9ea1-cdf4b963f9a8?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualhub\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\
-        ,\r\n  \"etag\": \"W/\\\"47920ffc-2438-4e08-92f4-f4261c6ec924\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualHubs\",\r\n  \"location\": \"westus\"\
-        ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
-        : {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"virtualHubRouteTableV2s\"\
-        : [],\r\n    \"addressPrefix\": \"10.168.0.0/24\",\r\n    \"virtualRouterAsn\"\
-        : 0,\r\n    \"virtualRouterIps\": [],\r\n    \"routeTable\": {\r\n      \"\
-        routes\": []\r\n    },\r\n    \"virtualWan\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualWans/virtualwan\"\
-        \r\n    },\r\n    \"sku\": \"Basic\",\r\n    \"routingState\": \"Provisioning\"\
-        ,\r\n    \"allowBranchToBranchTraffic\": false,\r\n    \"preferredRoutingGateway\"\
-        : \"ExpressRoute\"\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '993'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -800,14 +790,15 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
-      x-ms-arm-service-request-id:
-      - a07d6464-a222-4b78-8fbf-06e2b931f060
     status:
       code: 200
       message: OK
 - request:
-    body: '{"location": "eastus", "tags": {"key1": "value1"}, "properties": {"threatIntelMode":
-      "Alert"}}'
+    body: '{"location": "West US", "tags": {"key1": "value1"}, "zones": [], "properties":
+      {"virtualHub": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub"},
+      "firewallPolicy": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy"},
+      "hubIPAddresses": {"publicIPs": {"addresses": [], "count": 1}}, "sku": {"name":
+      "AZFW_Hub", "tier": "Standard"}}}'
     headers:
       Accept:
       - application/json
@@ -816,7 +807,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '94'
+      - '606'
       Content-Type:
       - application/json
       User-Agent:
@@ -838,12 +829,14 @@ interactions:
         {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\r\n
         \   }\r\n  }\r\n}"
     headers:
+      azure-asyncnotification:
+      - Enabled
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d25fb46b-a68d-4e89-92f3-4de4558ff6c6?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
-      - '618'
+      - '1125'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -853,6 +846,7 @@ interactions:
       pragma:
       - no-cache
       server:
+      - Microsoft-HTTPAPI/2.0
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
@@ -881,27 +875,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d25fb46b-a68d-4e89-92f3-4de4558ff6c6?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"name\": \"azurefirewall\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/azureFirewalls/azurefirewall\"\
-        ,\r\n  \"etag\": \"W/\\\"170bef60-7fac-433f-a361-9e6a63f7b213\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/azureFirewalls\",\r\n  \"location\": \"westus\"\
-        ,\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\"\
-        : {\r\n    \"provisioningState\": \"Updating\",\r\n    \"sku\": {\r\n    \
-        \  \"name\": \"AZFW_Hub\",\r\n      \"tier\": \"Standard\"\r\n    },\r\n \
-        \   \"additionalProperties\": {},\r\n    \"virtualHub\": {\r\n      \"id\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/virtualHubs/virtualhub\"\
-        \r\n    },\r\n    \"hubIPAddresses\": {\r\n      \"publicIPs\": {\r\n    \
-        \    \"addresses\": [],\r\n        \"count\": 1\r\n      }\r\n    },\r\n \
-        \   \"firewallPolicy\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_firewall_test_network892411e1/providers/Microsoft.Network/firewallPolicies/firewallpolicy\"\
-        \r\n    }\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
     headers:
-      azure-asyncnotification:
-      - Enabled
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/4f5d9a75-c255-4228-a5dc-f2603f24b6d4?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
-      - '1125'
+      - '30'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -915,13 +894,17 @@ interactions:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
       - e8155bfc-e9ea-4620-a08c-505a450fbea8
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
 - request:
     body: null
     headers:

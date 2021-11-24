@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '222'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:56 GMT
+      date: Fri, 12 Nov 2021 21:35:17 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,49 +27,51 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest?api-version=2021-07-01
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: repository:library/hello-world:metadata_read
-      service: yalinlitestsanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:56 GMT
+      date: Fri, 12 Nov 2021 21:35:17 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.65'
     status:
       code: 200
       message: OK
-    url: https://yalinlitestsanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest?api-version=2021-07-01
   response:
     body:
-      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/hello-world",
-        "tag": {"name": "latest", "digest": "sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1",
-        "createdTime": "2021-08-30T10:55:20.0468904Z", "lastUpdateTime": "2021-08-30T10:55:20.0468904Z",
+      string: '{"registry": "yallacrtestsanon.azurecr.io", "imageName": "library/hello-world",
+        "tag": {"name": "latest", "digest": "sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685",
+        "createdTime": "2021-11-11T20:43:42.6193188Z", "lastUpdateTime": "2021-11-11T20:43:42.6193188Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
@@ -77,7 +79,7 @@ interactions:
       connection: keep-alive
       content-length: '396'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:56 GMT
+      date: Fri, 12 Nov 2021 21:35:18 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -85,16 +87,16 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/library%2Fhello-world/_tags/latest?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1
+    uri: https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -105,7 +107,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:56 GMT
+      date: Fri, 12 Nov 2021 21:35:18 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -114,44 +116,46 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://yalinlitestsanon.azurecr.io/v2/library%2Fhello-world/manifests/sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1
+    url: https://yallacrtestsanon.azurecr.io/v2/library%2Fhello-world/manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: repository:library/hello-world:delete
-      service: yalinlitestsanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:56 GMT
+      date: Fri, 12 Nov 2021 21:35:18 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.516667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
     status:
       code: 200
       message: OK
-    url: https://yalinlitestsanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1
+    uri: https://fake_url.azurecr.io/v2/library%2Fhello-world/manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -162,7 +166,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:56 GMT
+      date: Fri, 12 Nov 2021 21:35:18 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -171,5 +175,5 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://yalinlitestsanon.azurecr.io/v2/library%2Fhello-world/manifests/sha256:7d91b69e04a9029b99f3585aaaccae2baa80bcf318f4a5d2165a9898cd2dc0a1
+    url: https://yallacrtestsanon.azurecr.io/v2/library%2Fhello-world/manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685
 version: 1

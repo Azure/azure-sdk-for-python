@@ -26,14 +26,14 @@ interactions:
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"1\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"1\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
         to four hours to charge the Surface Pro 4 battery fully from an empty state.
         It can take longer if you\u2019re using your Surface for power-intensive activities
         like gaming or video streaming while you\u2019re charging it.\",\n      \"confidenceScore\":
-        0.9254359006881714,\n      \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\":
+        0.9254359602928162,\n      \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\":
         \"two to four hours\",\n        \"confidenceScore\": 0.9856282,\n        \"offset\":
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re

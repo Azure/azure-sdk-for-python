@@ -19952,7 +19952,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 9ce37219-70b2-4ad1-b283-ccfc0da19a57
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -20048,7 +20048,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 768b543a-f109-4564-bbe7-d9e5468d65f8
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14997'
     status:
       code: 202
       message: Accepted

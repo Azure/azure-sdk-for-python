@@ -153,14 +153,6 @@ class DefaultConsistencyLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
 
-class EnableFullTextQuery(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describe the level of detail with which queries are to be logged.
-    """
-
-    NONE = "None"
-    TRUE = "True"
-    FALSE = "False"
-
 class IndexingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the indexing mode.
     """
@@ -299,33 +291,6 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     THREE2 = "3.2"
     THREE6 = "3.6"
     FOUR0 = "4.0"
-
-class ServiceSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Instance type for the service.
-    """
-
-    COSMOS_D4_S = "Cosmos.D4s"
-    COSMOS_D8_S = "Cosmos.D8s"
-    COSMOS_D16_S = "Cosmos.D16s"
-
-class ServiceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the status of a service.
-    """
-
-    CREATING = "Creating"
-    RUNNING = "Running"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    ERROR = "Error"
-    STOPPED = "Stopped"
-
-class ServiceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ServiceType for the service.
-    """
-
-    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
-    DATA_TRANSFER = "DataTransfer"
-    GRAPH_API_COMPUTE = "GraphAPICompute"
 
 class SpatialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the spatial type of index.

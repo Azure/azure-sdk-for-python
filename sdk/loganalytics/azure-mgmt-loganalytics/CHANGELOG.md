@@ -1,5 +1,19 @@
 # Release History
 
+## 12.0.0 (2021-11-16)
+
+**Features**
+
+  - Model Table has a new parameter is_troubleshooting_allowed
+  - Model Table has a new parameter last_troubleshoot_date
+  - Model Table has a new parameter is_troubleshoot_enabled
+  - Added operation TablesOperations.create
+  - Added operation ClustersOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation ClustersOperations.update
+
 ## 11.0.0 (2021-07-12)
 
 **Features**

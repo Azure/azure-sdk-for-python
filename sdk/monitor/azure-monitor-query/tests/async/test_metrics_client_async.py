@@ -42,26 +42,6 @@ async def test_metrics_granularity():
     assert response
     assert response.granularity == timedelta(minutes=5)
 
-
-@pytest.mark.live_test_only
-@pytest.mark.asyncio
-async def test_metrics_list():
-    credential = _credential()
-    client = MetricsQueryClient(credential)
-    response = await client.query_resource(
-        os.environ['METRICS_RESOURCE_URI'],
-        metric_names=["MatchedEventCount"],
-        timespan=timedelta(days=1),
-        granularity=timedelta(minutes=5),
-        aggregations=[MetricAggregationType.COUNT]
-        )
-    assert response
-    metrics = response.metrics
-    assert len(metrics) == 1
-    assert metrics[0].__class__ == Metric
-    assert metrics['MatchedEventCount'].__class__ == Metric
-    assert metrics['MatchedEventCount'] == metrics[0]
-
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
 async def test_metrics_filter():

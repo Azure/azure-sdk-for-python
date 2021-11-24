@@ -90,10 +90,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_training(
-        self,
-        training_files_url: str,
-        use_training_labels: bool,
-        **kwargs: Any
+        self, training_files_url: str, use_training_labels: bool, **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that

@@ -13,7 +13,7 @@ class RequestsGetTest(PerfStressTest):
         type(self).session = requests.Session()
 
     def run_sync(self):
-        type(self).session.get(self.Arguments.url).text
+        type(self).session.get(self.args.url).text
 
     @staticmethod
     def add_arguments(parser):

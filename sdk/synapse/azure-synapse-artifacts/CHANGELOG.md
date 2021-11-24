@@ -4,13 +4,11 @@
 
 ### Features Added
 
-- re-generated based on tag package-artifacts-composite-v1
+### Breaking Changes
 
-## 0.9.0 (2021-10-05)
+### Bugs Fixed
 
-### Features Added
-
-- re-generated based on tag package-artifacts-composite-v1
+### Other Changes
 
 ## 0.10.0 (2021-11-09)
 

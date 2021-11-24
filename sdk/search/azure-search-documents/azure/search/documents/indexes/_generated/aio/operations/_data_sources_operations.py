@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._data_sources_operations import build_create_or_update_request, build_create_request, build_delete_request, build_get_request, build_list_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,6 +70,13 @@ class DataSourcesOperations:
         :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword prefer: For HTTP PUT requests, instructs the service to return the created/updated
+         resource on success. The default value is "return=representation". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype prefer: str
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
@@ -82,6 +88,8 @@ class DataSourcesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        prefer = kwargs.pop('prefer', "return=representation")  # type: str
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -91,12 +99,14 @@ class DataSourcesOperations:
 
         request = build_create_or_update_request(
             data_source_name=data_source_name,
+            prefer=prefer,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            json=json,
             template_url=self.create_or_update.metadata['url'],
         )
         request = _convert_request(request)
@@ -148,6 +158,9 @@ class DataSourcesOperations:
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -159,12 +172,15 @@ class DataSourcesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_delete_request(
             data_source_name=data_source_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -203,6 +219,9 @@ class DataSourcesOperations:
         :type data_source_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
@@ -214,12 +233,15 @@ class DataSourcesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_request(
             data_source_name=data_source_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
         )
@@ -262,6 +284,9 @@ class DataSourcesOperations:
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListDataSourcesResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListDataSourcesResult
@@ -273,11 +298,14 @@ class DataSourcesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_list_request(
+            api_version=api_version,
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
@@ -319,6 +347,9 @@ class DataSourcesOperations:
         :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSource
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
@@ -330,6 +361,7 @@ class DataSourcesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -338,9 +370,10 @@ class DataSourcesOperations:
         json = self._serialize.body(data_source, 'SearchIndexerDataSource')
 
         request = build_create_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
