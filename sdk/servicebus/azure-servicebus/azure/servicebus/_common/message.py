@@ -353,7 +353,7 @@ class ServiceBusMessage(
             if self._raw_amqp_message.properties.absolute_expiry_time:
                 self._raw_amqp_message.properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
-            self._raw_amqp_message.header.time_to_live = value.seconds * 1000
+            self._raw_amqp_message.header.time_to_live = int(value.total_seconds()) * 1000
         else:
             self._raw_amqp_message.header.time_to_live = int(value) * 1000
 
