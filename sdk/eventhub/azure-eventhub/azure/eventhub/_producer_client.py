@@ -43,6 +43,8 @@ class EventHubProducerClient(ClientBase):
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
+    :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+    :paramtype retry_mode: ~azure.eventhub.RetryMode
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
@@ -178,6 +180,8 @@ class EventHubProducerClient(ClientBase):
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+        :paramtype retry_mode: ~azure.eventhub.RetryMode
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.

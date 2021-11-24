@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `EventHubProducerClient` and `EventHubConsumerClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+
 ### Breaking Changes
 
 ### Bugs Fixed

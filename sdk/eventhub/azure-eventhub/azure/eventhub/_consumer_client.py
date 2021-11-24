@@ -72,6 +72,8 @@ class EventHubConsumerClient(ClientBase):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+    :paramtype retry_mode: ~azure.eventhub.RetryMode
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
@@ -219,6 +221,8 @@ class EventHubConsumerClient(ClientBase):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+        :paramtype retry_mode: ~azure.eventhub.RetryMode
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no furthur activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.

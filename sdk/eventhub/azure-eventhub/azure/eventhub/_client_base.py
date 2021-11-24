@@ -26,6 +26,7 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
+from ._retry import RetryMode
 from ._utils import utc_from_timestamp, parse_sas_credential
 from ._connection_manager import get_connection_manager
 from ._constants import (
@@ -330,7 +331,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     ):
         # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
-        backoff = self._config.backoff_factor * 2 ** retried_times
+        backoff = self._get_backoff_time(retried_times)
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
         ):  # pylint:disable=no-else-return
@@ -347,6 +348,13 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 last_exception,
             )
             raise last_exception
+
+    def _get_backoff_time(self, retried_times):
+        if self._config.retry_mode == RetryMode.Fixed:
+            backoff_value = self._config.backoff_factor
+        else:
+            backoff_value = self._config.backoff_factor * (2 ** retried_times)
+        return backoff_value
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
