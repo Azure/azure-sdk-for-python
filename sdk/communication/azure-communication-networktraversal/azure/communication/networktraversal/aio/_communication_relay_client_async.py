@@ -84,18 +84,23 @@ class CommunicationRelayClient:
     async def get_relay_configuration(
             self,
             user: 'CommunicationUserIdentifier' = None,
+            route_type: 'CommunicationRelayConfigurationRequestRouteType' = None,
             **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration.
-        :param: CommunicationUserIdentifier user: A user from which we will get an id
+        :param user: Azure Communication User
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
+        :param route_type: Azure Communication Route Type
+        :type route_type: ~azure.communication.networktraversal.RouteType
         :return: CommunicationRelayConfiguration
-        :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
+        :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """
         if user is None:
             return await self._network_traversal_service_client.communication_network_traversal. \
-                issue_relay_configuration(None, **kwargs)
+                issue_relay_configuration(None, route_type, **kwargs)
         return await self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
             user.properties['id'],
+            route_type,
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationRelayClient":

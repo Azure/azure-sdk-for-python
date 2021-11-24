@@ -65,8 +65,8 @@ class AsyncMockTransport(mock.MagicMock):
 @pytest.mark.skip
 class TestLogging(AsyncFormRecognizerTest):
 
-    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
+    @FormRecognizerPreparer()
     async def test_logging_info_dac_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
@@ -86,8 +86,8 @@ class TestLogging(AsyncFormRecognizerTest):
                 else:
                     assert message.message.find("REDACTED") == -1
 
-    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
+    @FormRecognizerPreparer()
     async def test_logging_info_dmac_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()

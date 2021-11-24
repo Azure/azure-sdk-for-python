@@ -297,6 +297,20 @@ async def test_live_multitenant_authentication(live_service_principal):
 
 
 @pytest.mark.asyncio
+async def test_live_multitenant_authentication(live_service_principal):
+    # first create a credential with a non-existent tenant
+    credential = ClientSecretCredential(
+        "...", live_service_principal["client_id"], live_service_principal["client_secret"]
+    )
+    # then get a valid token for an actual tenant
+    token = await credential.get_token(
+        "https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"]
+    )
+    assert token.token
+    assert token.expires_on
+
+
+@pytest.mark.asyncio
 async def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"

@@ -1782,12 +1782,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/60152bb4-2a86-4134-b804-dd5e284cce2b?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '30'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -1809,52 +1809,6 @@ interactions:
       - nosniff
       x-ms-arm-service-request-id:
       - a291bbd7-84d7-42a9-8224-1ebd5aa98c87
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/60152bb4-2a86-4134-b804-dd5e284cce2b?api-version=2021-05-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 05 Nov 2021 09:03:36 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 76f3392e-dbe4-46a8-8217-8b8117be868f
     status:
       code: 200
       message: OK
@@ -1910,7 +1864,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Nov 2021 09:05:16 GMT
+      - Fri, 05 Nov 2021 09:03:36 GMT
       expires:
       - '-1'
       pragma:
@@ -1927,7 +1881,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 340fd9ad-9fc8-4ebe-80f2-f68bcb82a910
+      - 76f3392e-dbe4-46a8-8217-8b8117be868f
     status:
       code: 200
       message: OK
@@ -1947,9 +1901,10 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2021-03-01
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/60152bb4-2a86-4134-b804-dd5e284cce2b?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
@@ -1976,7 +1931,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 09 Oct 2021 06:28:47 GMT
+      - Fri, 05 Nov 2021 09:05:16 GMT
       expires:
       - '-1'
       pragma:
@@ -1989,9 +1944,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7269edfd-6f8f-4c5e-a89e-c2ddacf20f97
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - 340fd9ad-9fc8-4ebe-80f2-f68bcb82a910
     status:
       code: 201
       message: Created

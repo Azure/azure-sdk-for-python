@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_service_linker import MicrosoftServiceLinker
-__all__ = ['MicrosoftServiceLinker']
+from ._purview_account_client import PurviewAccountClient
+__all__ = ['PurviewAccountClient']

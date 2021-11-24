@@ -39,7 +39,7 @@ class ManageCustomModelsSampleAsync(object):
 
         # [START get_account_properties_async]
         async with FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_training_client:
             # First, we see how many custom models we have, and what our limit is
             account_properties = await form_training_client.get_account_properties()
@@ -52,9 +52,9 @@ class ManageCustomModelsSampleAsync(object):
             # [START list_custom_models_async]
             custom_models = form_training_client.list_custom_models()
 
-            # print("We have models with the following IDs:")  TODO list models is returning null for some models
-            # async for model in custom_models:
-            #     print(model.model_id)
+            print("We have models with the following IDs:")
+            async for model in custom_models:
+                print(model.model_id)
             # [END list_custom_models_async]
 
             # let's train a model to use for this sample

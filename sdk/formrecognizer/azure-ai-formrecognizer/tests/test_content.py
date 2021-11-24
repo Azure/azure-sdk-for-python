@@ -45,7 +45,7 @@ class TestContentFromStream(FormRecognizerTest):
             content_type=FormContentType.APPLICATION_PDF
         )
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -144,16 +144,16 @@ class TestContentFromStream(FormRecognizerTest):
         with open(self.form_jpg, "rb") as stream:
             poller = client.begin_recognize_content(stream)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 4)
-        self.assertEqual(layout.tables[1].row_count, 4)
-        self.assertEqual(layout.tables[1].column_count, 2)
-        self.assertEqual(layout.tables[0].page_number, 1)
-        self.assertEqual(layout.tables[1].page_number, 1)
+        assert layout.tables[0].row_count == 5
+        assert layout.tables[0].column_count== 4
+        assert layout.tables[1].row_count == 4
+        assert layout.tables[1].column_count== 2
+        assert layout.tables[0].page_number == 1
+        assert layout.tables[1].page_number== 1
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -163,7 +163,7 @@ class TestContentFromStream(FormRecognizerTest):
         poller = client.begin_recognize_content(invoice)
         result = poller.result()
 
-        self.assertEqual(len(result), 3)
+        assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
@@ -190,9 +190,9 @@ class TestContentFromStream(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @pytest.mark.live_test_only
     def test_content_continuation_token(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -201,7 +201,7 @@ class TestContentFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_content(None, continuation_token=cont_token)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
@@ -236,9 +236,9 @@ class TestContentFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_content(myform)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
@@ -249,9 +249,9 @@ class TestContentFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_content(myform)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
