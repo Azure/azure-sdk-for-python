@@ -10,9 +10,8 @@ from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
-from datetime import datetime
+from datetime import datetime, timezone
 import calendar
-from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
 def _convert_datetime_to_utc_int(input_datetime):
@@ -55,12 +54,12 @@ def parse_connection_str(conn_str):
 
 def get_current_utc_time():
     # type: () -> str
-    return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
+    return str(datetime.now(tz=timezone.utc).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
 def get_current_utc_as_int():
     # type: () -> int
-    current_utc_datetime = datetime.utcnow()
+    current_utc_datetime = datetime.now(tz=timezone.utc)
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 def create_access_token(token):
