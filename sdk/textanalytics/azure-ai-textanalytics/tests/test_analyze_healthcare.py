@@ -249,7 +249,6 @@ class TestHealth(TextAnalyticsTest):
         self.assertIsNotNone(doc_results[0].error.message)
         self.assertEqual(doc_results[1].error.code, "UnsupportedLanguageCode")
         self.assertIsNotNone(doc_results[1].error.message)
-        # Service not returning error b/c of exceeded char limit, returns warning instead
         assert not doc_results[2].is_error
         assert doc_results[2].warnings
 
