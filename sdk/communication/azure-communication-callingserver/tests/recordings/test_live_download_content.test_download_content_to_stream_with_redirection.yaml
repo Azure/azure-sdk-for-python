@@ -1,0 +1,99 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=0-4194303
+      UriToSignWith:
+      - https://acs-recording-runner-apac.communication.azure.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-11.6-x86_64-i386-64bit)
+      host:
+      - acs-recording-runner-apac.communication.azure.com
+      x-ms-date:
+      - Tue, 05 Oct 2021 17:36:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 05 Oct 2021 17:36:36 GMT
+      location:
+      - https://sa1-storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Range:
+      - bytes=0-4194303
+      UriToSignWith:
+      - https://acs-recording-runner-apac.communication.azure.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+      User-Agent:
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.8.2 (macOS-11.6-x86_64-i386-64bit)
+      host:
+      - acs-recording-runner-apac.communication.azure.com
+      x-ms-date:
+      - Tue, 05 Oct 2021 17:36:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sa1-storage.asm.skype.com/v1/objects/0-wus-d3-008713a3abdb3f3ae4904369277244c5/content/acsmetadata
+  response:
+    body:
+      string: "{\r\n  \"resourceId\": \"fe385110-ae15-4739-bacb-fad6267a9304\",\r\n
+        \ \"callId\": \"84b48151-3d91-42be-bd14-c7466c68b04e\",\r\n  \"chunkDocumentId\":
+        \"0-wus-d3-008713a3abdb3f3ae4904369277244c5\",\r\n  \"chunkIndex\": 0,\r\n
+        \ \"chunkStartTime\": \"2021-10-05T17:26:12.9316257Z\",\r\n  \"chunkDuration\":
+        8400.0,\r\n  \"pauseResumeIntervals\": [],\r\n  \"recordingInfo\": {\r\n    \"contentType\":
+        \"mixed\",\r\n    \"channelType\": \"audioVideo\",\r\n    \"format\": \"mp4\",\r\n
+        \   \"audioConfiguration\": {\r\n      \"sampleRate\": 16000,\r\n      \"bitRate\":
+        128000,\r\n      \"channels\": 1\r\n    },\r\n    \"videoConfiguration\":
+        {\r\n      \"longerSideLength\": 1920,\r\n      \"shorterSideLength\": 1080,\r\n
+        \     \"framerate\": 8,\r\n      \"bitRate\": 1000000\r\n    }\r\n  },\r\n
+        \ \"participants\": [\r\n    {\r\n      \"participantId\": \"8:acs:fe385110-ae15-4739-bacb-fad6267a9304_0000000c-a4c6-185c-8975-c93a0d004dc1\"\r\n
+        \   },\r\n    {\r\n      \"participantId\": \"8:acs:fe385110-ae15-4739-bacb-fad6267a9304_0000000c-43b8-f4e6-9b76-c93a0d003941\"\r\n
+        \   },\r\n    {\r\n      \"participantId\": \"8:acs:fe385110-ae15-4739-bacb-fad6267a9304_0000000c-a4c6-1a5b-8975-c93a0d004dc2\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      cache-control:
+      - no-cache, max-age=0, s-maxage=0, private
+      content-length:
+      - '1078'
+      content-range:
+      - bytes 0-1077/1078
+      content-type:
+      - application/octet-stream
+      date:
+      - Tue, 05 Oct 2021 17:36:37 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 206
+      message: Partial Content
+version: 1

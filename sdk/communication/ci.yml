@@ -31,6 +31,8 @@ extends:
   parameters:
     ServiceDirectory: communication
     Artifacts:
+    - name: azure-communication-callingserver
+      safeName: azurecommunicationcallingserver
     - name: azure-communication-identity
       safeName: azurecommunicationidentity
     - name: azure-communication-chat

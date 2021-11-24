@@ -1,0 +1,20 @@
+trigger: none
+
+stages:
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      AllocateResourceGroup: 'false'
+      BuildTargetingString: 'azure-communication-callingserver'
+      JobName: callingserver
+      ServiceDirectory: communication
+      DeployArmTemplate: true
+      MatrixReplace:
+            - TestSamples=.*/true
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-communication-services-cloud-test-resources-common)
+            - $(sub-config-communication-services-cloud-test-resources-python)
+      Clouds: Public
+
