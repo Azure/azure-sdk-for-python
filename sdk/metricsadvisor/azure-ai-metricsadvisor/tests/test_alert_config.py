@@ -7,7 +7,7 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
-
+from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor.models import (
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
@@ -22,16 +22,19 @@ from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
-    def test_create_alert_config_top_n_alert_direction_both(self):
-
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
+    @recorded_by_proxy
+    def test_create_alert_config_top_n_alert_direction_both(self, variables):
+        self._create_data_feed_and_detection_config("topnup", variables)
         alert_config_name = self.create_random_name("testalert")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+
         try:
             alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -43,7 +46,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_ids"],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -67,15 +70,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            if self.is_live:
+                variables["alert_config_id"] = alert_config.id
+            self.admin_client.delete_alert_configuration(variables["alert_config_id"])
 
             with pytest.raises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+                self.admin_client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_detection_configuration(variables["detection_config_id"])
+            self.admin_client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
     def test_create_alert_config_top_n_alert_direction_down(self):
 

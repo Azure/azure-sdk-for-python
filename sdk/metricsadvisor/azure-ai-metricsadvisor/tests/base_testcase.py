@@ -114,10 +114,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
     def metric_id(self):
         return os.getenv("METRICS_ADVISOR_METRIC_ID", "metrics_advisor_metric_id")
 
-    def _create_data_feed(self, name):
+    def _create_data_feed(self, name, variables):
         name = create_random_name(name)
+        if self.is_live:
+            variables["data_feed_name"] = name
         return self.admin_client.create_data_feed(
-            name=name,
+            name=variables["data_feed_name"],
             source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query="select * from adsample2 where Timestamp = @StartTime"
@@ -136,13 +138,16 @@ class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
             ingestion_settings="2019-10-01T00:00:00Z",
         )
 
-    def _create_data_feed_and_detection_config(self, name):
+    def _create_data_feed_and_detection_config(self, name, variables):
         try:
-            data_feed = self._create_data_feed(name)
+            data_feed = self._create_data_feed(name, variables)
+            if self.is_live:
+                variables["data_feed_id"] = data_feed.id
+                variables["data_feed_metric_ids"] = data_feed.metric_ids['cost']
             detection_config_name = create_random_name(name)
             detection_config = self.admin_client.create_detection_configuration(
-                name=detection_config_name,
-                metric_id=data_feed.metric_ids['cost'],
+                name=variables["detection_config_name"],
+                metric_id=variables["data_feed_metric_ids"],
                 description="testing",
                 whole_series_detection_condition=MetricDetectionCondition(
                     smart_detection_condition=SmartDetectionCondition(
@@ -155,9 +160,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
                     )
                 )
             )
+            if self.is_live:
+                variables["detection_config_name"] = detection_config_name
+                variables["detection_config_id"] = detection_config.id
             return detection_config, data_feed
         except Exception as e:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.admin_client.delete_data_feed(variables["data_feed_id"])
             raise e
 
     def _create_data_feed_for_update(self, name):
