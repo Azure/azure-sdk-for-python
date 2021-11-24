@@ -62,41 +62,32 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 )
             )
-            self.assertIsNotNone(config.id)
-            self.assertEqual(config.metric_id, data_feed.metric_ids['cost'])
-            self.assertEqual(config.description, "My test metric anomaly detection configuration")
-            self.assertIsNotNone(config.name)
-            self.assertIsNone(config.series_detection_conditions)
-            self.assertIsNone(config.series_group_detection_conditions)
-            self.assertEqual(config.whole_series_detection_condition.condition_operator, "OR")
-            self.assertEqual(
-                config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(config.whole_series_detection_condition.change_threshold_condition.change_percentage, 50)
-            self.assertEqual(config.whole_series_detection_condition.change_threshold_condition.shift_point, 30)
-            self.assertTrue(config.whole_series_detection_condition.change_threshold_condition.within_range)
-            self.assertEqual(
-                config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number, 2)
-            self.assertEqual(
-                config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(
-                config.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(config.whole_series_detection_condition.hard_threshold_condition.lower_bound, 0)
-            self.assertEqual(config.whole_series_detection_condition.hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(
-                config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio, 5)
-            self.assertEqual(
-                config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(config.whole_series_detection_condition.smart_detection_condition.sensitivity, 50)
-            self.assertEqual(
-                config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 5)
+            assert config.id is not None
+            assert config.metric_id ==  data_feed.metric_ids['cost']
+            assert config.description ==  "My test metric anomaly detection configuration"
+            assert config.name is not None
+            assert config.series_detection_conditions is None
+            assert config.series_group_detection_conditions is None
+            assert config.whole_series_detection_condition.condition_operator ==  "OR"
+            assert config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert config.whole_series_detection_condition.change_threshold_condition.change_percentage ==  50
+            assert config.whole_series_detection_condition.change_threshold_condition.shift_point ==  30
+            assert config.whole_series_detection_condition.change_threshold_condition.within_range
+            assert config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number ==  2
+            assert config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert config.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert config.whole_series_detection_condition.hard_threshold_condition.lower_bound ==  0
+            assert config.whole_series_detection_condition.hard_threshold_condition.upper_bound ==  100
+            assert config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number ==  5
+            assert config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio ==  5
+            assert config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert config.whole_series_detection_condition.smart_detection_condition.sensitivity ==  50
+            assert config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number ==  5
+            assert config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio ==  5
 
             self.admin_client.delete_detection_configuration(config.id)
 
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 self.admin_client.get_detection_configuration(config.id)
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
@@ -163,55 +154,36 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 )]
             )
 
-            self.assertIsNotNone(detection_config.id)
-            self.assertEqual(detection_config.metric_id, data_feed.metric_ids['cost'])
-            self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
-            self.assertIsNotNone(detection_config.name)
-            self.assertEqual(detection_config.whole_series_detection_condition.condition_operator, "AND")
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.whole_series_detection_condition.change_threshold_condition.change_percentage, 50)
-            self.assertEqual(detection_config.whole_series_detection_condition.change_threshold_condition.shift_point, 30)
-            self.assertTrue(detection_config.whole_series_detection_condition.change_threshold_condition.within_range)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number, 2)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.whole_series_detection_condition.hard_threshold_condition.lower_bound, 0)
-            self.assertEqual(detection_config.whole_series_detection_condition.hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio, 5)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.whole_series_detection_condition.smart_detection_condition.sensitivity, 50)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 5)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 1)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.sensitivity, 63)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].series_key, {'region': 'Shenzhen', 'category': 'Jewelry'})
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 1)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 63)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].series_group_key, {'region': 'Sao Paulo'})
+            assert detection_config.id is not None
+            assert detection_config.metric_id ==  data_feed.metric_ids['cost']
+            assert detection_config.description ==  "My test metric anomaly detection configuration"
+            assert detection_config.name is not None
+            assert detection_config.whole_series_detection_condition.condition_operator ==  "AND"
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.change_percentage ==  50
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.shift_point ==  30
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.within_range
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number ==  2
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.lower_bound ==  0
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.upper_bound ==  100
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number ==  5
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio ==  5
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.sensitivity ==  50
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number ==  5
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio ==  5
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  100
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  1
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.sensitivity ==  63
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_detection_conditions[0].series_key == {'region': 'Shenzhen', 'category': 'Jewelry'}
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  100
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  1
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.sensitivity ==  63
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_group_detection_conditions[0].series_group_key ==  {'region': 'Sao Paulo'}
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
@@ -346,117 +318,76 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
 
-            self.assertIsNotNone(detection_config.id)
-            self.assertEqual(detection_config.metric_id, data_feed.metric_ids['cost'])
-            self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
-            self.assertIsNotNone(detection_config.name)
+            assert detection_config.id is not None
+            assert detection_config.metric_id ==  data_feed.metric_ids['cost']
+            assert detection_config.description ==  "My test metric anomaly detection configuration"
+            assert detection_config.name is not None
 
             # whole series detection condition
-            self.assertEqual(detection_config.whole_series_detection_condition.condition_operator, "AND")
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.whole_series_detection_condition.change_threshold_condition.change_percentage, 50)
-            self.assertEqual(detection_config.whole_series_detection_condition.change_threshold_condition.shift_point, 30)
-            self.assertTrue(detection_config.whole_series_detection_condition.change_threshold_condition.within_range)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number, 2)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.whole_series_detection_condition.hard_threshold_condition.lower_bound, 0)
-            self.assertEqual(detection_config.whole_series_detection_condition.hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio, 5)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.whole_series_detection_condition.smart_detection_condition.sensitivity, 50)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 5)
+            assert detection_config.whole_series_detection_condition.condition_operator ==  "AND"
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.change_percentage ==  50
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.shift_point ==  30
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.within_range
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number ==  2
+            assert detection_config.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.lower_bound ==  0
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.upper_bound ==  100
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number ==  5
+            assert detection_config.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio ==  5
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.sensitivity ==  50
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number ==  5
+            assert detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio ==  5
 
             # series detection conditions
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].series_key, {'region': 'Shenzhen', 'category': 'Jewelry'})
-            self.assertEqual(detection_config.series_detection_conditions[0].condition_operator, "AND")
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 1)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.sensitivity, 63)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.series_detection_conditions[0].change_threshold_condition.change_percentage, 50)
-            self.assertEqual(detection_config.series_detection_conditions[0].change_threshold_condition.shift_point, 30)
-            self.assertTrue(detection_config.series_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 2)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.series_detection_conditions[0].hard_threshold_condition.lower_bound, 0)
-            self.assertEqual(detection_config.series_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                detection_config.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 5)
-            self.assertEqual(
-                detection_config.series_detection_conditions[1].series_key, {"region": "Osaka", "category": "Cell Phones"})
-            self.assertEqual(
-                detection_config.series_detection_conditions[1].smart_detection_condition.suppress_condition.min_ratio, 100)
-            self.assertEqual(
-                detection_config.series_detection_conditions[1].smart_detection_condition.suppress_condition.min_number, 1)
-            self.assertEqual(
-                detection_config.series_detection_conditions[1].smart_detection_condition.sensitivity, 63)
-            self.assertEqual(
-                detection_config.series_detection_conditions[1].smart_detection_condition.anomaly_detector_direction, "Both")
+            assert detection_config.series_detection_conditions[0].series_key == {'region': 'Shenzhen', 'category': 'Jewelry'}
+            assert detection_config.series_detection_conditions[0].condition_operator ==  "AND"
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  100
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  1
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.sensitivity ==  63
+            assert detection_config.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_detection_conditions[0].change_threshold_condition.change_percentage ==  50
+            assert detection_config.series_detection_conditions[0].change_threshold_condition.shift_point ==  30
+            assert detection_config.series_detection_conditions[0].change_threshold_condition.within_range
+            assert detection_config.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  2
+            assert detection_config.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert detection_config.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_detection_conditions[0].hard_threshold_condition.lower_bound ==  0
+            assert detection_config.series_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert detection_config.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert detection_config.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  5
+            assert detection_config.series_detection_conditions[1].series_key == {"region": "Osaka", "category": "Cell Phones"}
+            assert detection_config.series_detection_conditions[1].smart_detection_condition.suppress_condition.min_ratio ==  100
+            assert detection_config.series_detection_conditions[1].smart_detection_condition.suppress_condition.min_number ==  1
+            assert detection_config.series_detection_conditions[1].smart_detection_condition.sensitivity ==  63
+            assert detection_config.series_detection_conditions[1].smart_detection_condition.anomaly_detector_direction ==  "Both"
 
             # series group detection conditions
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].series_group_key, {"region": "Sao Paulo"})
-            self.assertEqual(detection_config.series_group_detection_conditions[0].condition_operator, "AND")
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 1)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 63)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.series_group_detection_conditions[0].change_threshold_condition.change_percentage, 50)
-            self.assertEqual(detection_config.series_group_detection_conditions[0].change_threshold_condition.shift_point, 30)
-            self.assertTrue(detection_config.series_group_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 2)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(detection_config.series_group_detection_conditions[0].hard_threshold_condition.lower_bound, 0)
-            self.assertEqual(detection_config.series_group_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 5)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[1].series_group_key, {"region": "Seoul"})
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[1].smart_detection_condition.suppress_condition.min_ratio, 100)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[1].smart_detection_condition.suppress_condition.min_number, 1)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[1].smart_detection_condition.sensitivity, 63)
-            self.assertEqual(
-                detection_config.series_group_detection_conditions[1].smart_detection_condition.anomaly_detector_direction, "Both")
+            assert detection_config.series_group_detection_conditions[0].series_group_key ==  {"region": "Sao Paulo"}
+            assert detection_config.series_group_detection_conditions[0].condition_operator ==  "AND"
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  100
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  1
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.sensitivity ==  63
+            assert detection_config.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_group_detection_conditions[0].change_threshold_condition.change_percentage ==  50
+            assert detection_config.series_group_detection_conditions[0].change_threshold_condition.shift_point ==  30
+            assert detection_config.series_group_detection_conditions[0].change_threshold_condition.within_range
+            assert detection_config.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  2
+            assert detection_config.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert detection_config.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert detection_config.series_group_detection_conditions[0].hard_threshold_condition.lower_bound ==  0
+            assert detection_config.series_group_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert detection_config.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert detection_config.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  5
+            assert detection_config.series_group_detection_conditions[1].series_group_key ==  {"region": "Seoul"}
+            assert detection_config.series_group_detection_conditions[1].smart_detection_condition.suppress_condition.min_ratio ==  100
+            assert detection_config.series_group_detection_conditions[1].smart_detection_condition.suppress_condition.min_number ==  1
+            assert detection_config.series_group_detection_conditions[1].smart_detection_condition.sensitivity ==  63
+            assert detection_config.series_group_detection_conditions[1].smart_detection_condition.anomaly_detector_direction ==  "Both"
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
@@ -512,55 +443,55 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
             self.admin_client.update_detection_configuration(detection_config)
             updated = self.admin_client.get_detection_configuration(detection_config.id)
-            self.assertEqual(updated.name, "updated")
-            self.assertEqual(updated.description, "updated")
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.series_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].condition_operator, "AND")
+            assert updated.name ==  "updated"
+            assert updated.description ==  "updated"
+            assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.series_detection_conditions[0].change_threshold_condition.change_percentage ==  20
+            assert updated.series_detection_conditions[0].change_threshold_condition.shift_point ==  10
+            assert updated.series_detection_conditions[0].change_threshold_condition.within_range
+            assert updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_detection_conditions[0].smart_detection_condition.sensitivity ==  10
+            assert updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].condition_operator ==  "AND"
 
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.series_group_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].condition_operator, "AND")
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage ==  20
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.shift_point ==  10
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.within_range
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity ==  10
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].condition_operator ==  "AND"
 
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.whole_series_detection_condition.change_threshold_condition.within_range)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.condition_operator, "OR")
+            assert updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.whole_series_detection_condition.change_threshold_condition.change_percentage ==  20
+            assert updated.whole_series_detection_condition.change_threshold_condition.shift_point ==  10
+            assert updated.whole_series_detection_condition.change_threshold_condition.within_range
+            assert updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.whole_series_detection_condition.hard_threshold_condition.upper_bound ==  100
+            assert updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.whole_series_detection_condition.smart_detection_condition.sensitivity ==  10
+            assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.condition_operator ==  "OR"
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
@@ -619,57 +550,57 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 )]
             )
             updated = self.admin_client.get_detection_configuration(detection_config.id)
-            self.assertEqual(updated.name, "updated")
-            self.assertEqual(updated.description, "updated")
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.series_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].condition_operator, "AND")
-            self.assertEqual(updated.series_detection_conditions[0].series_key, {"region": "San Paulo", "category": "Jewelry"})
+            assert updated.name ==  "updated"
+            assert updated.description ==  "updated"
+            assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.series_detection_conditions[0].change_threshold_condition.change_percentage ==  20
+            assert updated.series_detection_conditions[0].change_threshold_condition.shift_point ==  10
+            assert updated.series_detection_conditions[0].change_threshold_condition.within_range
+            assert updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_detection_conditions[0].smart_detection_condition.sensitivity ==  10
+            assert updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].condition_operator ==  "AND"
+            assert updated.series_detection_conditions[0].series_key == {"region": "San Paulo", "category": "Jewelry"}
 
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.series_group_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].condition_operator, "AND")
-            self.assertEqual(updated.series_group_detection_conditions[0].series_group_key, {"region": "Shenzen"})
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage ==  20
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.shift_point ==  10
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.within_range
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity ==  10
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].condition_operator ==  "AND"
+            assert updated.series_group_detection_conditions[0].series_group_key ==  {"region": "Shenzen"}
 
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.whole_series_detection_condition.change_threshold_condition.within_range)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.condition_operator, "OR")
+            assert updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.whole_series_detection_condition.change_threshold_condition.change_percentage ==  20
+            assert updated.whole_series_detection_condition.change_threshold_condition.shift_point ==  10
+            assert updated.whole_series_detection_condition.change_threshold_condition.within_range
+            assert updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.whole_series_detection_condition.hard_threshold_condition.upper_bound ==  100
+            assert updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.whole_series_detection_condition.smart_detection_condition.sensitivity ==  10
+            assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.condition_operator ==  "OR"
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
@@ -729,57 +660,57 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 )]
             )
             updated = self.admin_client.get_detection_configuration(detection_config.id)
-            self.assertEqual(updated.name, "updateMe")
-            self.assertEqual(updated.description, "updateMe")
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.series_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_detection_conditions[0].condition_operator, "AND")
-            self.assertEqual(updated.series_detection_conditions[0].series_key, {"region": "San Paulo", "category": "Jewelry"})
+            assert updated.name ==  "updateMe"
+            assert updated.description ==  "updateMe"
+            assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.series_detection_conditions[0].change_threshold_condition.change_percentage ==  20
+            assert updated.series_detection_conditions[0].change_threshold_condition.shift_point ==  10
+            assert updated.series_detection_conditions[0].change_threshold_condition.within_range
+            assert updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_detection_conditions[0].smart_detection_condition.sensitivity ==  10
+            assert updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_detection_conditions[0].condition_operator ==  "AND"
+            assert updated.series_detection_conditions[0].series_key == {"region": "San Paulo", "category": "Jewelry"}
 
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.series_group_detection_conditions[0].change_threshold_condition.within_range)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.series_group_detection_conditions[0].condition_operator, "AND")
-            self.assertEqual(updated.series_group_detection_conditions[0].series_group_key, {"region": "Shenzen"})
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage ==  20
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.shift_point ==  10
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.within_range
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.upper_bound ==  100
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity ==  10
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.series_group_detection_conditions[0].condition_operator ==  "AND"
+            assert updated.series_group_detection_conditions[0].series_group_key ==  {"region": "Shenzen"}
 
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.change_percentage, 20)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.shift_point, 10)
-            self.assertTrue(updated.whole_series_detection_condition.change_threshold_condition.within_range)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.upper_bound, 100)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Up")
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.sensitivity, 10)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
-            self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 2)
-            self.assertEqual(updated.whole_series_detection_condition.condition_operator, "OR")
+            assert updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction ==  "Both"
+            assert updated.whole_series_detection_condition.change_threshold_condition.change_percentage ==  20
+            assert updated.whole_series_detection_condition.change_threshold_condition.shift_point ==  10
+            assert updated.whole_series_detection_condition.change_threshold_condition.within_range
+            assert updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.change_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.hard_threshold_condition.anomaly_detector_direction ==  "Up"
+            assert updated.whole_series_detection_condition.hard_threshold_condition.upper_bound ==  100
+            assert updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.hard_threshold_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction ==  "Up"
+            assert updated.whole_series_detection_condition.smart_detection_condition.sensitivity ==  10
+            assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number ==  5
+            assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio ==  2
+            assert updated.whole_series_detection_condition.condition_operator ==  "OR"
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
@@ -795,12 +726,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 # series_group_detection_conditions=None
             )
             updated = self.admin_client.get_detection_configuration(detection_config.id)
-            self.assertEqual(updated.name, "reset")
-            self.assertEqual(updated.description, "")  # currently won't update with None
+            assert updated.name ==  "reset"
+            assert updated.description ==  ""  # currently won't update with None
 
             # service bug says these are required
-            # self.assertEqual(updated.series_detection_conditions, None)
-            # self.assertEqual(updated.series_group_detection_conditions, None)
+            # assert updated.series_detection_conditions ==  None
+            # assert updated.series_group_detection_conditions ==  None
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)

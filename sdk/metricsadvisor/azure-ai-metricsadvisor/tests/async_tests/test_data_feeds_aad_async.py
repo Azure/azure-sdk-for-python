@@ -6,7 +6,6 @@
 
 import datetime
 from dateutil.tz import tzutc
-import unittest
 import pytest
 from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
@@ -52,16 +51,15 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ingestion_settings=datetime.datetime(2019, 10, 1)
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Daily")
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "SqlServer"
+                assert data_feed.source.query is not None
+                assert data_feed.granularity.granularity_type ==  "Daily"
+                assert data_feed.schema.metrics[0].name ==  "cost"
+                assert data_feed.schema.metrics[1].name ==  "revenue"
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -111,48 +109,47 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     access_mode="Private",
                     action_link_template="action link template"
                 )
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Daily")
-                self.assertEqual(data_feed.granularity.custom_granularity_value, None)
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.schema.metrics[0].display_name, "display cost")
-                self.assertEqual(data_feed.schema.metrics[1].display_name, "display revenue")
-                self.assertEqual(data_feed.schema.metrics[0].description, "the cost")
-                self.assertEqual(data_feed.schema.metrics[1].description, "the revenue")
-                self.assertEqual(data_feed.schema.dimensions[0].name, "category")
-                self.assertEqual(data_feed.schema.dimensions[1].name, "city")
-                self.assertEqual(data_feed.schema.dimensions[0].display_name, "display category")
-                self.assertEqual(data_feed.schema.dimensions[1].display_name, "display city")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(data_feed.ingestion_settings.data_source_request_concurrency, 0)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.admins)
-                self.assertEqual(data_feed.data_feed_description, "my first data feed")
-                self.assertEqual(data_feed.missing_data_point_fill_settings.fill_type, "SmartFilling")
-                self.assertEqual(data_feed.rollup_settings.rollup_type, "NoRollup")
-                self.assertEqual(data_feed.rollup_settings.rollup_method, "None")
-                self.assertEqual(data_feed.viewers, ["viewers"])
-                self.assertEqual(data_feed.access_mode, "Private")
-                self.assertEqual(data_feed.action_link_template, "action link template")
-                self.assertEqual(data_feed.status, "Active")
-                self.assertTrue(data_feed.is_admin)
-                self.assertIsNotNone(data_feed.metric_ids)
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "SqlServer"
+                assert data_feed.source.query is not None
+                assert data_feed.granularity.granularity_type ==  "Daily"
+                assert data_feed.granularity.custom_granularity_value ==  None
+                assert data_feed.schema.metrics[0].name ==  "cost"
+                assert data_feed.schema.metrics[1].name ==  "revenue"
+                assert data_feed.schema.metrics[0].display_name ==  "display cost"
+                assert data_feed.schema.metrics[1].display_name ==  "display revenue"
+                assert data_feed.schema.metrics[0].description ==  "the cost"
+                assert data_feed.schema.metrics[1].description ==  "the revenue"
+                assert data_feed.schema.dimensions[0].name ==  "category"
+                assert data_feed.schema.dimensions[1].name ==  "city"
+                assert data_feed.schema.dimensions[0].display_name ==  "display category"
+                assert data_feed.schema.dimensions[1].display_name ==  "display city"
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.data_source_request_concurrency ==  0
+                assert data_feed.ingestion_settings.ingestion_retry_delay ==  -1
+                assert data_feed.ingestion_settings.ingestion_start_offset ==  -1
+                assert data_feed.ingestion_settings.stop_retry_after ==  -1
+                assert "yournamehere@microsoft.com" in  data_feed.admins
+                assert data_feed.data_feed_description ==  "my first data feed"
+                assert data_feed.missing_data_point_fill_settings.fill_type ==  "SmartFilling"
+                assert data_feed.rollup_settings.rollup_type ==  "NoRollup"
+                assert data_feed.rollup_settings.rollup_method ==  "None"
+                assert data_feed.viewers ==  ["viewers"]
+                assert data_feed.access_mode ==  "Private"
+                assert data_feed.action_link_template ==  "action link template"
+                assert data_feed.status ==  "Active"
+                assert data_feed.is_admin
+                assert data_feed.metric_ids is not None
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-                with self.assertRaises(ResourceNotFoundError):
+                with pytest.raises(ResourceNotFoundError):
                     await self.admin_client.get_data_feed(data_feed.id)
 
-    @unittest.skip("skip test")
+    @pytest.mark.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server_with_custom_values(self):
 
@@ -202,47 +199,46 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     access_mode="Private",
                     action_link_template="action link template"
                 )
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Custom")
-                self.assertEqual(data_feed.granularity.custom_granularity_value, 400)
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.schema.metrics[0].display_name, "display cost")
-                self.assertEqual(data_feed.schema.metrics[1].display_name, "display revenue")
-                self.assertEqual(data_feed.schema.metrics[0].description, "the cost")
-                self.assertEqual(data_feed.schema.metrics[1].description, "the revenue")
-                self.assertEqual(data_feed.schema.dimensions[0].name, "category")
-                self.assertEqual(data_feed.schema.dimensions[1].name, "city")
-                self.assertEqual(data_feed.schema.dimensions[0].display_name, "display category")
-                self.assertEqual(data_feed.schema.dimensions[1].display_name, "display city")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(data_feed.ingestion_settings.data_source_request_concurrency, 0)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.admins)
-                self.assertEqual(data_feed.data_feed_description, "my first data feed")
-                self.assertEqual(data_feed.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(data_feed.missing_data_point_fill_settings.custom_fill_value, 10)
-                self.assertEqual(data_feed.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(data_feed.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(data_feed.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(data_feed.viewers, ["viewers"])
-                self.assertEqual(data_feed.access_mode, "Private")
-                self.assertEqual(data_feed.action_link_template, "action link template")
-                self.assertEqual(data_feed.status, "Active")
-                self.assertTrue(data_feed.is_admin)
-                self.assertIsNotNone(data_feed.metric_ids)
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "SqlServer"
+                assert data_feed.source.query is not None
+                assert data_feed.granularity.granularity_type ==  "Custom"
+                assert data_feed.granularity.custom_granularity_value ==  400
+                assert data_feed.schema.metrics[0].name ==  "cost"
+                assert data_feed.schema.metrics[1].name ==  "revenue"
+                assert data_feed.schema.metrics[0].display_name ==  "display cost"
+                assert data_feed.schema.metrics[1].display_name ==  "display revenue"
+                assert data_feed.schema.metrics[0].description ==  "the cost"
+                assert data_feed.schema.metrics[1].description ==  "the revenue"
+                assert data_feed.schema.dimensions[0].name ==  "category"
+                assert data_feed.schema.dimensions[1].name ==  "city"
+                assert data_feed.schema.dimensions[0].display_name ==  "display category"
+                assert data_feed.schema.dimensions[1].display_name ==  "display city"
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.data_source_request_concurrency ==  0
+                assert data_feed.ingestion_settings.ingestion_retry_delay ==  -1
+                assert data_feed.ingestion_settings.ingestion_start_offset ==  -1
+                assert data_feed.ingestion_settings.stop_retry_after ==  -1
+                assert "yournamehere@microsoft.com" in  data_feed.admins
+                assert data_feed.data_feed_description ==  "my first data feed"
+                assert data_feed.missing_data_point_fill_settings.fill_type ==  "CustomValue"
+                assert data_feed.missing_data_point_fill_settings.custom_fill_value ==  10
+                assert data_feed.rollup_settings.rollup_type ==  "AlreadyRollup"
+                assert data_feed.rollup_settings.rollup_method ==  "Sum"
+                assert data_feed.rollup_settings.rollup_identification_value ==  "sumrollup"
+                assert data_feed.viewers ==  ["viewers"]
+                assert data_feed.access_mode ==  "Private"
+                assert data_feed.action_link_template ==  "action link template"
+                assert data_feed.status ==  "Active"
+                assert data_feed.is_admin
+                assert data_feed.metric_ids is not None
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-                with self.assertRaises(ResourceNotFoundError):
+                with pytest.raises(ResourceNotFoundError):
                     await self.admin_client.get_data_feed(data_feed.id)
 
     @AzureTestCase.await_prepared_test
@@ -276,12 +272,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureTable")
-                self.assertEqual(data_feed.source.table, "adsample")
-                self.assertEqual(data_feed.source.query, "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "AzureTable"
+                assert data_feed.source.table ==  "adsample"
+                assert data_feed.source.query ==  "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'"
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -316,12 +312,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureBlob")
-                self.assertEqual(data_feed.source.container, "adsample")
-                self.assertEqual(data_feed.source.blob_template, "%Y/%m/%d/%h/JsonFormatV2.json")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "AzureBlob"
+                assert data_feed.source.container ==  "adsample"
+                assert data_feed.source.blob_template ==  "%Y/%m/%d/%h/JsonFormatV2.json"
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -357,13 +353,13 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureCosmosDB")
-                self.assertEqual(data_feed.source.database, "adsample")
-                self.assertEqual(data_feed.source.collection_id, "adsample")
-                self.assertEqual(data_feed.source.sql_query, "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "AzureCosmosDB"
+                assert data_feed.source.database ==  "adsample"
+                assert data_feed.source.collection_id ==  "adsample"
+                assert data_feed.source.sql_query ==  "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'"
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -403,12 +399,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureApplicationInsights")
-                self.assertEqual(data_feed.source.application_id, "3706fe8b-98f1-47c7-bf69-b73b6e53274d")
-                self.assertIsNotNone(data_feed.source.query)
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "AzureApplicationInsights"
+                assert data_feed.source.application_id ==  "3706fe8b-98f1-47c7-bf69-b73b6e53274d"
+                assert data_feed.source.query is not None
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -445,11 +441,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureDataExplorer")
-                self.assertEqual(data_feed.source.query, query)
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "AzureDataExplorer"
+                assert data_feed.source.query ==  query
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -487,13 +483,13 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "InfluxDB")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.source.database, "adsample")
-                self.assertEqual(data_feed.source.user_name, "adreadonly")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "InfluxDB"
+                assert data_feed.source.query is not None
+                assert data_feed.source.database ==  "adsample"
+                assert data_feed.source.user_name ==  "adreadonly"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -531,14 +527,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureDataLakeStorageGen2")
-                self.assertEqual(data_feed.source.account_name, "adsampledatalakegen2")
-                self.assertEqual(data_feed.source.file_system_name, "adsample")
-                self.assertEqual(data_feed.source.directory_template, "%Y/%m/%d")
-                self.assertEqual(data_feed.source.file_template, "adsample.json")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "AzureDataLakeStorageGen2"
+                assert data_feed.source.account_name ==  "adsampledatalakegen2"
+                assert data_feed.source.file_system_name ==  "adsample"
+                assert data_feed.source.directory_template ==  "%Y/%m/%d"
+                assert data_feed.source.file_template ==  "adsample.json"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -574,12 +570,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "MongoDB")
-                self.assertEqual(data_feed.source.database, "adsample")
-                self.assertEqual(data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}')
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "MongoDB"
+                assert data_feed.source.database ==  "adsample"
+                assert data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000 == }'
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -614,11 +610,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "MySql")
-                self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "MySql"
+                assert data_feed.source.query ==  "'select * from adsample2 where Timestamp = @StartTime'"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -653,11 +649,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 )
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "PostgreSql")
-                self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type ==  "PostgreSql"
+                assert data_feed.source.query ==  "'select * from adsample2 where Timestamp = @StartTime'"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
@@ -707,7 +703,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @unittest.skip("skip test")
+    @pytest.mark.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_skip(self):
         async with self.admin_client:
@@ -721,7 +717,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 skipped_feeds_list.append(feed)
             assert len(all_feeds_list) == len(skipped_feeds_list) + 1
 
-    @unittest.skip("skip test")
+    @pytest.mark.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model(self):
         async with self.admin_client:
@@ -750,30 +746,29 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 await self.admin_client.update_data_feed(data_feed)
                 updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "update")
-                self.assertEqual(updated.data_feed_description, "updated")
-                self.assertEqual(updated.schema.timestamp_column, "time")
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2021, 12, 10, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
-                self.assertEqual(updated.access_mode, "Public")
-                self.assertEqual(updated.viewers, ["updated"])
-                self.assertEqual(updated.status, "Paused")
-                self.assertEqual(updated.action_link_template, "updated")
-                self.assertEqual(updated.source.query, "get data")
+                assert updated.name ==  "update"
+                assert updated.data_feed_description ==  "updated"
+                assert updated.schema.timestamp_column ==  "time"
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset ==  1
+                assert updated.ingestion_settings.data_source_request_concurrency ==  1
+                assert updated.ingestion_settings.ingestion_retry_delay ==  1
+                assert updated.ingestion_settings.stop_retry_after ==  1
+                assert updated.rollup_settings.rollup_type ==  "AlreadyRollup"
+                assert updated.rollup_settings.rollup_method ==  "Sum"
+                assert updated.rollup_settings.rollup_identification_value ==  "sumrollup"
+                assert updated.missing_data_point_fill_settings.fill_type ==  "CustomValue"
+                assert updated.missing_data_point_fill_settings.custom_fill_value ==  2
+                assert updated.access_mode ==  "Public"
+                assert updated.viewers ==  ["updated"]
+                assert updated.status ==  "Paused"
+                assert updated.action_link_template ==  "updated"
+                assert updated.source.query ==  "get data"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @unittest.skip("skip test")
+    @pytest.mark.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_kwargs(self):
         async with self.admin_client:
@@ -805,30 +800,29 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     )
                 )
                 updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "update")
-                self.assertEqual(updated.data_feed_description, "updated")
-                self.assertEqual(updated.schema.timestamp_column, "time")
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2021, 12, 10, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
-                self.assertEqual(updated.access_mode, "Public")
-                self.assertEqual(updated.viewers, ["updated"])
-                self.assertEqual(updated.status, "Paused")
-                self.assertEqual(updated.action_link_template, "updated")
-                self.assertEqual(updated.source.query, "get data")
+                assert updated.name ==  "update"
+                assert updated.data_feed_description ==  "updated"
+                assert updated.schema.timestamp_column ==  "time"
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset ==  1
+                assert updated.ingestion_settings.data_source_request_concurrency ==  1
+                assert updated.ingestion_settings.ingestion_retry_delay ==  1
+                assert updated.ingestion_settings.stop_retry_after ==  1
+                assert updated.rollup_settings.rollup_type ==  "AlreadyRollup"
+                assert updated.rollup_settings.rollup_method ==  "Sum"
+                assert updated.rollup_settings.rollup_identification_value ==  "sumrollup"
+                assert updated.missing_data_point_fill_settings.fill_type ==  "CustomValue"
+                assert updated.missing_data_point_fill_settings.custom_fill_value ==  2
+                assert updated.access_mode ==  "Public"
+                assert updated.viewers ==  ["updated"]
+                assert updated.status ==  "Paused"
+                assert updated.action_link_template ==  "updated"
+                assert updated.source.query ==  "get data"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @unittest.skip("skip test")
+    @pytest.mark.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model_and_kwargs(self):
         async with self.admin_client:
@@ -879,30 +873,29 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     )
                 )
                 updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "updateMe")
-                self.assertEqual(updated.data_feed_description, "updateMe")
-                self.assertEqual(updated.schema.timestamp_column, "time")
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2021, 12, 10, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
-                self.assertEqual(updated.access_mode, "Public")
-                self.assertEqual(updated.viewers, ["updated"])
-                self.assertEqual(updated.status, "Paused")
-                self.assertEqual(updated.action_link_template, "updated")
-                self.assertEqual(updated.source.query, "get data")
+                assert updated.name ==  "updateMe"
+                assert updated.data_feed_description ==  "updateMe"
+                assert updated.schema.timestamp_column ==  "time"
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset ==  1
+                assert updated.ingestion_settings.data_source_request_concurrency ==  1
+                assert updated.ingestion_settings.ingestion_retry_delay ==  1
+                assert updated.ingestion_settings.stop_retry_after ==  1
+                assert updated.rollup_settings.rollup_type ==  "AlreadyRollup"
+                assert updated.rollup_settings.rollup_method ==  "Sum"
+                assert updated.rollup_settings.rollup_identification_value ==  "sumrollup"
+                assert updated.missing_data_point_fill_settings.fill_type ==  "CustomValue"
+                assert updated.missing_data_point_fill_settings.custom_fill_value ==  2
+                assert updated.access_mode ==  "Public"
+                assert updated.viewers ==  ["updated"]
+                assert updated.status ==  "Paused"
+                assert updated.action_link_template ==  "updated"
+                assert updated.source.query ==  "get data"
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @unittest.skip("skip test")
+    @pytest.mark.skip("skip test")
     @AzureTestCase.await_prepared_test
     async def test_update_data_feed_by_reseting_properties(self):
         async with self.admin_client:
@@ -929,24 +922,23 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     action_link_template=None,
                 )
                 updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "update")
-                # self.assertEqual(updated.data_feed_description, "")  # doesn't currently clear
-                # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 0)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, -1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, -1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "NoRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "None")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, None)
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "SmartFilling")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 0)
-                self.assertEqual(updated.access_mode, "Private")
-                # self.assertEqual(updated.viewers, ["viewers"]) # doesn't currently clear
-                self.assertEqual(updated.status, "Active")
-                # self.assertEqual(updated.action_link_template, "updated")  # doesn't currently clear
+                assert updated.name ==  "update"
+                # assert updated.data_feed_description ==  ""  # doesn't currently clear
+                # assert updated.schema.timestamp_column ==  ""  # doesn't currently clear
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset ==  -1
+                assert updated.ingestion_settings.data_source_request_concurrency ==  0
+                assert updated.ingestion_settings.ingestion_retry_delay ==  -1
+                assert updated.ingestion_settings.stop_retry_after ==  -1
+                assert updated.rollup_settings.rollup_type ==  "NoRollup"
+                assert updated.rollup_settings.rollup_method ==  "None"
+                assert updated.rollup_settings.rollup_identification_value ==  None
+                assert updated.missing_data_point_fill_settings.fill_type ==  "SmartFilling"
+                assert updated.missing_data_point_fill_settings.custom_fill_value ==  0
+                assert updated.access_mode ==  "Private"
+                # assert updated.viewers ==  ["viewers"] # doesn't currently clear
+                assert updated.status ==  "Active"
+                # assert updated.action_link_template ==  "updated"  # doesn't currently clear
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)

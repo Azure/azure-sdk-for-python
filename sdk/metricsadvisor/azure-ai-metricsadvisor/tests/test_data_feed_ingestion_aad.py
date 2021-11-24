@@ -18,8 +18,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         ingestion = self.admin_client.get_data_feed_ingestion_progress(
             data_feed_id=self.data_feed_id
         )
-        self.assertIsNotNone(ingestion.latest_success_timestamp)
-        self.assertIsNotNone(ingestion.latest_active_timestamp)
+        assert ingestion.latest_success_timestamp is not None
+        assert ingestion.latest_active_timestamp is not None
 
     def test_list_data_feed_ingestion_status(self):
 
