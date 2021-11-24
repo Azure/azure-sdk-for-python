@@ -12,7 +12,7 @@ schedules:
     displayName: Daily release
     branches:
       include:
-      - main
+      - release_issue_status
     always: true
 
 jobs:
