@@ -74,7 +74,7 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def delete_call(
+    def delete(
             self,
             **kwargs  # type: Any
         ): # type: (...) -> None
@@ -163,8 +163,6 @@ class CallConnection(object):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         :return: PlayAudioResult
         :rtype: ~azure.communication.callingserver.PlayAudioResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -172,14 +170,12 @@ class CallConnection(object):
         """
         operation_context = kwargs.pop("operation_context", None)
         audio_file_id = kwargs.pop("audio_file_id", None)
-        callback_uri = kwargs.pop("callback_uri", None)
 
         play_audio_request = PlayAudioRequestConverter.convert(
             audio_url=audio_url,
             loop=is_looped,
             operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
+            audio_file_id=audio_file_id
             )
 
         return self._call_connection_client.play_audio(
@@ -273,13 +269,13 @@ class CallConnection(object):
             self,
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
-        ): # type: (...) -> List[CallParticipant]
+        ): # type: (...) -> CallParticipant
         """Get participant from the call using identifier.
 
         :param participant: Required. The identifier of the target participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
-        :return: List[CallParticipant]
-        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
+        :return: CallParticipant
+        :rtype: ~azure.communication.callingserver.models.CallParticipant
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -318,8 +314,6 @@ class CallConnection(object):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         :return: PlayAudioResult
         :rtype: ~azure.communication.callingserver.PlayAudioResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -334,8 +328,7 @@ class CallConnection(object):
             audio_url=audio_url,
             loop=is_looped,
             operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
+            audio_file_id=audio_file_id
             )
 
         return self._call_connection_client.participant_play_audio(
@@ -559,7 +552,7 @@ class CallConnection(object):
             audio_routing_group_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> AudioRoutingGroupResult
-        """List audio routing group in a call.
+        """List audio routing groups in a call.
 
         :param audio_routing_group_id: Required. The audio routing group id.
         :type audio_routing_group_id: str

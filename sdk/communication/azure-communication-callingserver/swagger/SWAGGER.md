@@ -15,7 +15,7 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-require: https://raw.githubusercontent.com/navali-msft/azure-rest-api-specs/f63c517df5083d1f3d044277bac15c6b1ed2b060/specification/communication/data-plane/CallingServer/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2a48a447a8e423a16658262b48b63335e7fadb01/specification/communication/data-plane/CallingServer/readme.md
 output-folder: ../azure/communication/callingserver/_generated
 namespace: azure.communication.callingserver
 no-namespace-folders: true

@@ -153,7 +153,7 @@ class CallingServerClient:
         requested_media_types: List[CallMediaType],
         requested_call_events: List[CallingEventSubscriptionType],
         *,
-        alternate_Caller_Id: Optional[str] = None,
+        alternate_caller_id: Optional[str] = None,
         subject: Optional[str] = None,
         **kwargs: Any
     ) -> CallConnection:
@@ -171,8 +171,8 @@ class CallingServerClient:
         :param requested_call_events:  The requested call events to subscribe to.
         :type requested_call_events: list[str or
          ~azure.communication.callingserver.models.CallingEventSubscriptionType]
-        :keyword alternate_Caller_Id: The alternate caller id.
-        :paramtype alternate_Caller_Id: str
+        :keyword alternate_caller_id: The alternate caller id.
+        :paramtype alternate_caller_id: str
         :keyword subject: The subject.
         :paramtype subject: str
         :return: CallConnection
@@ -187,8 +187,8 @@ class CallingServerClient:
             requested_media_types=requested_media_types,
             requested_call_events=requested_call_events,
             alternate_caller_id=(None
-                if alternate_Caller_Id is None
-                else PhoneNumberIdentifierModel(value=alternate_Caller_Id)),
+                if alternate_caller_id is None
+                else PhoneNumberIdentifierModel(value=alternate_caller_id)),
             subject=subject
         )
 
@@ -302,26 +302,22 @@ class CallingServerClient:
         incoming_call_context: str,
         *,
         call_reject_reason: Optional[CallRejectReason] = None,
-        callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Answer the call.
+        """Reject the call.
 
         :param incoming_call_context: Required. The context associated with the call.
         :type incoming_call_context: str
         :keyword call_reject_reason:  The rejection reason. Possible values include: "none", "busy",
          "forbidden".
         :paramtype call_reject_reason: str or ~azure.communication.callingserver.models.CallRejectReason
-        :keyword callback_uri: The callback uri.
-        :paramtype callback_uri: str
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         reject_call_request = RejectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
-            call_reject_reason=call_reject_reason,
-            callback_uri=callback_uri
+            call_reject_reason=call_reject_reason
             )
 
         return await self._server_call_client.reject_call(
@@ -333,22 +329,15 @@ class CallingServerClient:
     async def redirect_call(
         self,
         incoming_call_context: str,
-        targets: List[CommunicationIdentifier],
-        *,
-        callback_uri: Optional[str] = None,
-        timeout_in_seconds: Optional[int] = None,
+        target: CommunicationIdentifier,
         **kwargs: Any
     ) -> None:
         """Redirect the call.
 
         :param incoming_call_context: Required. The call locator.
         :type incoming_call_context: ~azure.communication.callingserver.models.CallLocator
-        :param targets: Required. The identifier of the participant to be removed from the call.
-        :type targets: ~azure.communication.callingserver.models.CommunicationIdentifier
-        :keyword callback_uri: The alternate caller id.
-        :paramtype callback_uri: str
-        :keyword timeout_in_seconds: The alternate caller id.
-        :paramtype timeout_in_seconds: int
+        :param target: Required. The target identity to redirect the call to.
+        :type target: ~azure.communication.callingserver.models.CommunicationIdentifier
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -356,9 +345,7 @@ class CallingServerClient:
         """
         redirect_call_request = RedirectCallRequestConverter.convert(
             incoming_call_context=incoming_call_context,
-            target_identities=[serialize_identifier(m) for m in targets],
-            callback_uri=callback_uri,
-            timeout_in_seconds=timeout_in_seconds
+            target_identity=serialize_identifier(target)
             )
 
         return await self._server_call_client.redirect_call(
@@ -378,7 +365,7 @@ class CallingServerClient:
         callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> PlayAudioResult:
-        """Redirect the call.
+        """Play audio in the call.
 
         :param call_locator: Required. The call locator.
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
@@ -578,15 +565,15 @@ class CallingServerClient:
             call_locator: CallLocator,
             participant: CommunicationIdentifier,
             **kwargs: Any
-        ) -> List[CallParticipant]:
+        ) -> CallParticipant:
         """Get participant from the call using identifier.
 
         :param call_locator: Required. The call locator.
         :type call_locator: ~azure.communication.callingserver.models.CallLocator
         :param participant: Required. The identifier of the target participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
-        :return: list of CallParticipant
-        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
+        :return: CallParticipant
+        :rtype: ~azure.communication.callingserver.models.CallParticipant
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """

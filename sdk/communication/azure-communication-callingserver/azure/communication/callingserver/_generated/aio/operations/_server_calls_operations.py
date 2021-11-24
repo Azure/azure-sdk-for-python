@@ -245,7 +245,7 @@ class ServerCallsOperations:
         self,
         get_participant_with_call_locator_request: "_models.GetParticipantWithCallLocatorRequest",
         **kwargs: Any
-    ) -> List["_models.CallParticipant"]:
+    ) -> "_models.CallParticipant":
         """Get participant from the call using identifier.
 
         Get participant from the call using identifier.
@@ -257,11 +257,11 @@ class ServerCallsOperations:
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of CallParticipant, or the result of cls(response)
-        :rtype: list[~azure.communication.callingserver.models.CallParticipant]
+        :return: CallParticipant, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.CallParticipant
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.CallParticipant"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CallParticipant"]
         error_map = {
             409: ResourceExistsError,
             400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
@@ -296,7 +296,7 @@ class ServerCallsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('[CallParticipant]', pipeline_response)
+        deserialized = self._deserialize('CallParticipant', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

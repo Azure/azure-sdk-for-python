@@ -83,7 +83,7 @@ GetParticipantsResponsePayload=[
     ]
 
 # GetParticipantPayload
-GetParticipantResponsePayload=[{
+GetParticipantResponsePayload={
     "identifier": {
         "communicationUser": {
                 "id": COMMUNICATION_USER_Id_01
@@ -91,7 +91,7 @@ GetParticipantResponsePayload=[{
         },
     "participantId": PARTICIPANT_ID_01,
     "isMuted": "false"
-    }]
+    }
 
 ErrorPayload={
     "operationId": OPERATION_ID,

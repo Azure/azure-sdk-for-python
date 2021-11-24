@@ -70,7 +70,7 @@ class CallConnectionTest(CommunicationTestCase):
                     callback_uri=CONST.AppCallbackUrl,
                     requested_media_types=[CallMediaType.AUDIO],
                     requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
-                    alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+                    alternate_caller_id = PhoneNumberIdentifier(self.from_phone_number)
                     )
 
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
@@ -84,7 +84,6 @@ class CallConnectionTest(CommunicationTestCase):
                 CONST.AudioFileUrl,
                 is_looped = True,
                 audio_file_id = AudioFileId,
-                callback_uri = CONST.AppCallbackUrl,
                 operation_context = OperationContext
                 )
             CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
@@ -105,7 +104,7 @@ class CallConnectionTest(CommunicationTestCase):
                     callback_uri=CONST.AppCallbackUrl,
                     requested_media_types=[CallMediaType.AUDIO],
                     requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
-                    alternate_Caller_Id = PhoneNumberIdentifier(self.from_phone_number)
+                    alternate_caller_id = PhoneNumberIdentifier(self.from_phone_number)
                     )
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
 

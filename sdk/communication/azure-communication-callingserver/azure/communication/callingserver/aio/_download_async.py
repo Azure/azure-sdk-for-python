@@ -61,7 +61,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         )
 
         #pylint: disable=protected-access
-        return response.response.internal_response._body
+        return await self._response.response.internal_response.content.read()
 
 class _AsyncChunkIterator(object):
     """Async iterator for chunks in content download stream."""
@@ -164,7 +164,7 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
         if self.size == 0:
             self._current_content = b""
         else:
-            self._current_content = self._response.response.internal_response._body #pylint: disable=protected-access
+            self._current_content = await self._response.response.internal_response.content.read() #pylint: disable=protected-access
 
     async def _initial_request(self):
         http_range = CallingServerUtils.validate_and_format_range_headers(
@@ -176,7 +176,6 @@ class ContentStreamDownloader(): # pylint: disable=too-many-instance-attributes
                 http_range=http_range,
                 content_url=self.endpoint,
                 **self._request_options)
-
             # Parse the total file size and adjust the download size if ranges
             # were specified
             self._file_size = CallingServerUtils.parse_length_from_content_range(

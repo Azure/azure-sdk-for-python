@@ -199,7 +199,6 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         incoming_call_context,  # type: str
         call_reject_reason=None,  # type: CallRejectReason
-        callback_uri=None,  # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -211,8 +210,7 @@ class TestCallingServerClient(unittest.TestCase):
 
         calling_server_client.reject_call(
             incoming_call_context=incoming_call_context,
-            call_reject_reason=call_reject_reason,
-            callback_uri=callback_uri
+            call_reject_reason=call_reject_reason
             )
 
     @parameterized.expand(CallingServerUnitTestUtils.data_source_test_reject_call())
@@ -221,7 +219,6 @@ class TestCallingServerClient(unittest.TestCase):
         test_name, # type: str
         incoming_call_context,  # type: str
         call_reject_reason=None,  # type: CallRejectReason
-        callback_uri=None,  # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -235,8 +232,7 @@ class TestCallingServerClient(unittest.TestCase):
         try:
             calling_server_client.reject_call(
                 incoming_call_context=incoming_call_context,
-                call_reject_reason=call_reject_reason,
-                callback_uri=callback_uri
+                call_reject_reason=call_reject_reason
                 )
         except:
             raised = True
@@ -247,9 +243,7 @@ class TestCallingServerClient(unittest.TestCase):
         self,
         test_name, # type: str
         incoming_call_context,  # type: str
-        targets, # type: List[CommunicationIdentifier]
-        callback_uri,  # type: str
-        timeout_in_second,  # type: int
+        target, # type: CommunicationIdentifier
         use_managed_identity = False # type: bool
         ):
 
@@ -261,9 +255,7 @@ class TestCallingServerClient(unittest.TestCase):
 
         calling_server_client.redirect_call(
             incoming_call_context=incoming_call_context,
-            targets=targets,
-            callback_uri=callback_uri,
-            timeout_in_seconds=timeout_in_second
+            target=target
             )
 
     @parameterized.expand(CallingServerUnitTestUtils.data_source_test_redirect_call())
@@ -271,9 +263,7 @@ class TestCallingServerClient(unittest.TestCase):
         self,
         test_name, # type: str
         incoming_call_context,  # type: str
-        targets, # type: List[CommunicationIdentifier]
-        callback_uri,  # type: str
-        timeout_in_seconds,  # type: int
+        target, # type: CommunicationIdentifier
         use_managed_identity = False # type: bool
         ):
 
@@ -287,9 +277,7 @@ class TestCallingServerClient(unittest.TestCase):
         try:
             calling_server_client.redirect_call(
                 incoming_call_context=incoming_call_context,
-                targets=targets,
-                callback_uri=callback_uri,
-                timeout_in_seconds=timeout_in_seconds
+                target=target
                 )
         except:
             raised = True

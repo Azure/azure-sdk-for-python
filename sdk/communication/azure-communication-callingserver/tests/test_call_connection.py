@@ -59,8 +59,8 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete_call())
-    def test_delete_call_succeed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete())
+    def test_delete_succeed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -74,11 +74,11 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        call_connection.delete_call()
+        call_connection.delete()
         assert call_connection.call_connection_id == _test_constants.CALL_ID
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete_call())
-    def test_delete_call_failed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete())
+    def test_delete_failed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -94,7 +94,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.delete_call()
+            call_connection.delete()
         except:
             raised = True
         assert raised == True
@@ -228,7 +228,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -244,7 +243,6 @@ class TestCallConnection(unittest.TestCase):
             audio_url,
             is_looped,
             audio_file_id = audio_file_id,
-            callback_uri = callback_uri,
             operation_context = operation_context
             )
         CallConnectionUnitTestUtils.verify_play_audio_result(result)
@@ -257,7 +255,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -276,7 +273,6 @@ class TestCallConnection(unittest.TestCase):
                 audio_url,
                 is_looped,
                 audio_file_id = audio_file_id,
-                callback_uri = callback_uri,
                 operation_context = operation_context
                 )
         except:
@@ -292,7 +288,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -309,7 +304,6 @@ class TestCallConnection(unittest.TestCase):
             audio_url,
             is_looped,
             audio_file_id = audio_file_id,
-            callback_uri = callback_uri,
             operation_context = operation_context
             )
 
@@ -324,7 +318,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -343,7 +336,6 @@ class TestCallConnection(unittest.TestCase):
                 audio_url,
                 is_looped,
                 audio_file_id = audio_file_id,
-                callback_uri = callback_uri,
                 operation_context = operation_context
                 )
         except:
