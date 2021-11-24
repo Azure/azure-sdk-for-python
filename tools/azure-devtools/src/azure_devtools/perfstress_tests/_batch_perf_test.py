@@ -5,7 +5,6 @@
 
 import cProfile
 import os
-import threading
 import aiohttp
 import time
 from typing import Optional, Any, Dict, List
