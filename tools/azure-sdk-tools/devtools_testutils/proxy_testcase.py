@@ -90,7 +90,10 @@ def start_record_or_playback(test_id):
             PLAYBACK_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
-        recording_id = result.headers["x-recording-id"]
+        try:
+            recording_id = result.headers["x-recording-id"]
+        except KeyError:
+            raise ValueError("No recording file found for {}".format(test_id))
         if result.text:
             try:
                 variables = result.json()
