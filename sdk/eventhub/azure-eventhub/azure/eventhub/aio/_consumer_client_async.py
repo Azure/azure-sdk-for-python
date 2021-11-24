@@ -25,6 +25,7 @@ from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
 from .._constants import ALL_PARTITIONS
 from .._eventprocessor.common import LoadBalancingStrategy
+from .._retry import RetryMode
 
 
 if TYPE_CHECKING:
@@ -79,6 +80,8 @@ class EventHubConsumerClient(ClientBaseAsync):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+    :paramtype retry_mode: ~azure.eventhub.RetryMode
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
@@ -214,6 +217,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
+        retry_mode: RetryMode = RetryMode.Exponential,
         transport_type: Optional["TransportType"] = None,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 10,
@@ -239,6 +243,8 @@ class EventHubConsumerClient(ClientBaseAsync):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+        :paramtype retry_mode: ~azure.eventhub.RetryMode
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no further activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.

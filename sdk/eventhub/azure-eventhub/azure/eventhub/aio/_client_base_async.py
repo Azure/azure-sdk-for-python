@@ -21,7 +21,7 @@ from uamqp import (
 )
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
-from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
+from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str, _get_backoff_time
 from .._utils import utc_from_timestamp, parse_sas_credential
 from ..exceptions import ClientClosedError, ConnectError
 from .._constants import (
@@ -211,7 +211,7 @@ class ClientBaseAsync(ClientBase):
         entity_name: Optional[str] = None,
     ) -> None:
         entity_name = entity_name or self._container_id
-        backoff = self._config.backoff_factor * 2 ** retried_times
+        backoff = _get_backoff_time(self._config.retry_mode, self._config.backoff_factor, retried_times)
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
         ):  # pylint:disable=no-else-return

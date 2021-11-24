@@ -155,6 +155,13 @@ def _build_uri(address, entity):
     address += "/" + str(entity)
     return address
 
+def _get_backoff_time(retry_mode, backoff_factor, retried_times):
+    if retry_mode == RetryMode.Fixed:
+        backoff_value = backoff_factor
+    else:
+        backoff_value = backoff_factor * (2 ** retried_times)
+    return backoff_value
+
 
 class EventHubSharedKeyCredential(object):
     """The shared access key credential used for authentication.
@@ -331,7 +338,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     ):
         # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
-        backoff = self._get_backoff_time(retried_times)
+        backoff = _get_backoff_time(self._config.retry_mode, self._config.backoff_factor, retried_times)
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
         ):  # pylint:disable=no-else-return
@@ -348,13 +355,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 last_exception,
             )
             raise last_exception
-
-    def _get_backoff_time(self, retried_times):
-        if self._config.retry_mode == RetryMode.Fixed:
-            backoff_value = self._config.backoff_factor
-        else:
-            backoff_value = self._config.backoff_factor * (2 ** retried_times)
-        return backoff_value
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any

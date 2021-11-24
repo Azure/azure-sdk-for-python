@@ -16,6 +16,7 @@ from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
+from .._retry import RetryMode
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -46,6 +47,8 @@ class EventHubProducerClient(ClientBaseAsync):
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
+    :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+    :paramtype retry_mode: ~azure.eventhub.RetryMode
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
@@ -180,6 +183,7 @@ class EventHubProducerClient(ClientBaseAsync):
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
+        retry_mode: RetryMode = RetryMode.Exponential,
         transport_type: Optional["TransportType"] = None,
         **kwargs: Any
     ) -> "EventHubProducerClient":
@@ -196,6 +200,8 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
+        :paramtype retry_mode: ~azure.eventhub.RetryMode
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
