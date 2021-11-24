@@ -244,13 +244,13 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-        doc_errors = list(result)
-        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
-        self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
-        self.assertIsNotNone(doc_errors[1].error.message)
-        self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
-        self.assertIsNotNone(doc_errors[2].error.message)
+        doc_results = list(result)
+        self.assertEqual(doc_results[0].error.code, "InvalidDocument")
+        self.assertIsNotNone(doc_results[0].error.message)
+        self.assertEqual(doc_results[1].error.code, "UnsupportedLanguageCode")
+        self.assertIsNotNone(doc_results[1].error.message)
+        assert not doc_results[2].is_error
+        assert doc_results[2].warnings
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
