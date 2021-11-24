@@ -84,7 +84,6 @@ class CallConnectionTest(CommunicationTestCase):
                 CONST.AudioFileUrl,
                 is_looped = True,
                 audio_file_id = AudioFileId,
-                callback_uri = CONST.AppCallbackUrl,
                 operation_context = OperationContext
                 )
             CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)

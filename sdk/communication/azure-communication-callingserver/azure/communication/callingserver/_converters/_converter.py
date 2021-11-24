@@ -86,8 +86,7 @@ class RejectCallRequestConverter(object):
     @staticmethod
     def convert(
         incoming_call_context,  # type: str
-        call_reject_reason=None,  # type: CallRejectReason
-        callback_uri=None,  # type: str
+        call_reject_reason=None  # type: CallRejectReason
         ): # type: (...) -> AnswerCallRequest
 
         if not incoming_call_context:
@@ -95,29 +94,24 @@ class RejectCallRequestConverter(object):
 
         return AnswerCallRequest(
             incoming_call_context=incoming_call_context,
-            call_reject_reason=call_reject_reason,
-            callback_uri=callback_uri
+            call_reject_reason=call_reject_reason
             )
 
 class RedirectCallRequestConverter(object):
     @staticmethod
     def convert(
         incoming_call_context,  # type: str
-        target_identities,  # type: List[CommunicationIdentifierModel]
-        callback_uri=None,  # type: str
-        timeout_in_seconds=None,  # type: int
+        target_identity  # type: CommunicationIdentifierModel
         ): # type: (...) -> RedirectCallRequest
 
         if not incoming_call_context:
             raise ValueError("incoming_call_context can not be None")
-        if not target_identities:
-            raise ValueError("target_identities can not be None")
+        if not target_identity:
+            raise ValueError("target_identity can not be None")
 
         return RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            targets=target_identities,
-            callback_uri=callback_uri,
-            timeout_in_seconds=timeout_in_seconds
+            target=target_identity
             )
 
 class PlayAudioRequestConverter(object):
@@ -126,8 +120,7 @@ class PlayAudioRequestConverter(object):
         audio_url, # type: str
         loop,  # type: bool
         operation_context,  # type: str
-        audio_file_id,  # type: str
-        callback_uri  # type: str
+        audio_file_id  # type: str
         ): # type: (...) -> PlayAudioRequest
 
         if not audio_url:
@@ -137,8 +130,7 @@ class PlayAudioRequestConverter(object):
             audio_file_uri=audio_url,
             loop=loop,
             operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
+            audio_file_id=audio_file_id
             )
 
 class PlayAudioWithCallLocatorRequestConverter(object):
@@ -173,8 +165,7 @@ class PlayAudioToParticipantRequestConverter(object):
         audio_url, # type: str
         loop,  # type: bool
         operation_context,  # type: str
-        audio_file_id,  # type: str
-        callback_uri  # type: str
+        audio_file_id  # type: str
         ): # type: (...) -> PlayAudioToParticipantRequest
 
         if not audio_url:
@@ -185,8 +176,7 @@ class PlayAudioToParticipantRequestConverter(object):
             audio_file_uri=audio_url,
             loop=loop,
             operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
+            audio_file_id=audio_file_id
             )
 
 class PlayAudioToParticipantWithCallLocatorRequestConverter(object):
@@ -221,8 +211,7 @@ class AddParticipantRequestConverter(object):
     def convert(
         participant, # type: CommunicationIdentifierModel
         alternate_caller_id=None, # type: PhoneNumberIdentifierModel
-        operation_context=None, # type: str
-        callback_uri=None # type: str
+        operation_context=None # type: str
         ): # type: (...) -> AddParticipantRequest
 
         if not participant:
@@ -231,8 +220,7 @@ class AddParticipantRequestConverter(object):
         return AddParticipantRequest(
             alternate_caller_id=alternate_caller_id,
             participant=participant,
-            operation_context=operation_context,
-            callback_uri=callback_uri
+            operation_context=operation_context
             )
 
 class AddParticipantWithCallLocatorRequestConverter(object):
