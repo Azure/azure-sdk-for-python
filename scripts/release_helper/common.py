@@ -164,8 +164,12 @@ class IssueProcess:
     def request_repo(self) -> Repository:
         return self.request_repo_dict[self.assignee]
 
+    def update_issue_instance(self) -> None:
+        self.issue_package.issue = self.request_repo().get_issue(self.issue_package.issue.number)
+
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
+            self.update_issue_instance()
             return
         # assign averagely
         assignees = list(self.assignee_candidates)
@@ -176,10 +180,10 @@ class IssueProcess:
         if self.assignee != assignee:
             self.log(f'remove assignee "{self.issue_package.issue.assignee}" and add "{assignee}"')
             self.assignee = assignee
-            self.issue_package.issue = self.request_repo().get_issue(self.issue_package.issue.number)
+            self.update_issue_instance()
             self.update_assignee(self.issue_package.issue.assignee, assignee)
         else:
-            self.issue_package.issue = self.request_repo().get_issue(self.issue_package.issue.number)
+            self.update_issue_instance()
         self.add_label(AUTO_ASSIGN_LABEL)
 
     def run(self) -> None:
