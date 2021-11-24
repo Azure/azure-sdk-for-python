@@ -9,6 +9,7 @@ import requests
 import six
 import sys
 from typing import TYPE_CHECKING
+import pdb
 
 try:
     # py3
@@ -40,13 +41,15 @@ RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
-# we store recording ID in a module-level variable so that sanitizers can access it
+# we store recording IDs in a module-level variable so that sanitizers can access them
+# we map test IDs to recording IDs, rather than storing only the current test's recording ID, for parallelization
 this = sys.modules[__name__]
-this.recording_id = None
+this.recording_ids = {}
 
 
 def get_recording_id():
-    return this.recording_id
+    test_id = get_test_id()
+    return this.recording_ids.get(test_id)
 
 
 def get_test_id():
@@ -97,7 +100,7 @@ def start_record_or_playback(test_id):
                 )
 
     # set recording ID in a module-level variable so that sanitizers can access it
-    this.recording_id = recording_id
+    this.recording_ids[test_id] = recording_id
     return (recording_id, variables)
 
 
