@@ -55,6 +55,7 @@ def convert_to_and_from_dict():
     analyze_result_dict = result.to_dict()
 
     # save the dictionary as a JSON content in a JSON file
+    # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
     with open('data.json', 'w') as f:
         json.dump(analyze_result_dict, f, cls=AzureJSONEncoder)
 
