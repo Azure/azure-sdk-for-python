@@ -29,7 +29,7 @@ class MetricsQueryClient(object):
     """MetricsQueryClient
 
     :param credential: The credential to authenticate the client
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
     """
