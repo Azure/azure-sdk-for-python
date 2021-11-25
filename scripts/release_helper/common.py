@@ -31,12 +31,14 @@ class IssueProcess:
     readme_link = ''  # https link which swagger definition is in
     default_readme_tag = ''  # configured in `README.md`
 
-    def __init__(self, issue: IssuePackage, request_repo_dict: Dict[str, Repository], assignee_candidates: Set[str]):
+    def __init__(self, issue: IssuePackage, request_repo_dict: Dict[str, Repository],
+                 assignee_candidates: Set[str], language_owner: Set[str]):
         self.issue_package = issue
         self.request_repo_dict = request_repo_dict
         self.assignee = issue.issue.assignee.login
         self.owner = issue.issue.user.login
         self.assignee_candidates = assignee_candidates
+        self.language_owner = language_owner
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
