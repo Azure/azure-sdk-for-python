@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import *
-from .utils import get_authentication_policy, get_headers_policy
+# from .utils import get_authentication_policy, get_headers_policy
 
 if TYPE_CHECKING:
     from typing import Any, List
@@ -42,7 +42,7 @@ class SearchClient(object):
 
         self._search_client = SearchClientGen(
             credential,
-            **kwargs)
+            **kwargs).search
 
 
     @distributed_trace
@@ -74,8 +74,8 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        coordinates, # type: "LatLong"
-        bounding_box, # type: "BoundingBox"
+        coordinates={}, # type: "LatLong"
+        country_filter=[], # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -114,9 +114,9 @@ class SearchClient(object):
          defined area.
         :type radius_in_meters: int
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
-        :type top_left: str
+        :type top_left: BoundingBox
         :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
-        :type btm_right: str
+        :type btm_right: BoundingBox
         :param language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
          available for a specific field, default language is used.
@@ -172,11 +172,10 @@ class SearchClient(object):
         """
         return self._search_client.fuzzy_search(
             query, 
-            lat=coordinates.latitude,
-            lon=coordinates.longitude,
-            top_left=bounding_box.top_left,
-            btm_right=bounding_box.bottom_right,
-            **kwargs  # type: Any
+            lat=coordinates.get('latitude'),
+            lon=coordinates.get('longitude'),
+            country_filter=country_filter,
+            **kwargs
         )
 
 
@@ -433,8 +432,8 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates, # type: "LatLong"
-        bounding_box, # type: "BoundingBox"
+        coordinates={}, # type: "LatLong"
+        country_filter=[], # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -500,10 +499,9 @@ class SearchClient(object):
         """           
         return self._search_client.search_point_of_interest(
             query,
-            lat=coordinates.latitude,
-            lon=coordinates.longitude,
-            top_left=bounding_box.top_left,
-            btm_right=bounding_box.bottom_right,
+            lat=coordinates.get('latitude'),
+            lon=coordinates.get('longitude'),
+            country_filter=country_filter,
             **kwargs
         )
 
@@ -511,7 +509,7 @@ class SearchClient(object):
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
-        coordinates, #type: "LatLong"
+        coordinates={}, #type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -561,8 +559,8 @@ class SearchClient(object):
         """
 
         return self._search_client.search_nearby_point_of_interest(
-            lat=coordinates.latitude,
-            lon=coordinates.longitude,
+            lat=coordinates.get('latitude'),
+            lon=coordinates.get('longitude'),
             **kwargs  # type: Any
         )
 
@@ -571,8 +569,8 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates, # type: "LatLong"
-        bounding_box, # type: "BoundingBox"
+        coordinates={}, #type: "LatLong"
+        country_filter=[], # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -639,10 +637,9 @@ class SearchClient(object):
         """
         return self._search_client.search_point_of_interest_category(
             query,
-            lat=coordinates.latitude,
-            lon=coordinates.longitude,
-            top_left=bounding_box.top_left,
-            btm_right=bounding_box.bottom_right,
+            lat=coordinates.get('latitude'),
+            lon=coordinates.get('longitude'),
+            country_filter=country_filter,
             **kwargs
         )
 
@@ -651,8 +648,7 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        coordinates, # type: "LatLong"
-        bounding_box, # type: "BoundingBox"
+        coordinates={}, # type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -709,23 +705,16 @@ class SearchClient(object):
         """
         return self._search_client.search_address(
             query,
-            lat=coordinates.latitude,
-            lon=coordinates.longitude,
-            top_left=bounding_box.top_left,
-            btm_right=bounding_box.bottom_right,
-            **kwargs  # type: Any
+            lat=coordinates.get('latitude'),
+            lon=coordinates.get('longitude'),
+            **kwargs
         )
 
 
     @distributed_trace
     def search_structured_address(
         self,
-        country_code,  # type: str
-        street_number,  # type: str
-        street_name,  # type: str
-        municipality, # type: str
-        country_subdivision,  # type: str
-        postal_code,  # type: str
+        structured_address, # type: "StructuredAddress"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -779,12 +768,16 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_structured_address(
-            country_code=country_code,
-            street_number=street_number,
-            street_name=street_name,
-            municipality=municipality,
-            country_subdivision=country_subdivision,
-            postal_code=postal_code,
+            country_code=structured_address.get('country_code'),
+            cross_street=structured_address.get('cross_street'),
+            street_number=structured_address.get('street_number'),
+            street_name=structured_address.get('street_name'),
+            municipality=structured_address.get('municipality'),
+            municipality_subdivision=structured_address.get('municipality_subdivision'),
+            country_tertiary_subdivision=structured_address.get('country_tertiary_subdivision'),
+            country_secondary_subdivision=structured_address.get('country_secondary_subdivision'),
+            country_subdivision=structured_address.get('country_subdivision'),
+            postal_code=structured_address.get('postal_code'),
             **kwargs
         )
 

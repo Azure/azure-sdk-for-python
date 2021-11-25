@@ -1,3 +1,2 @@
-azure-maps-service==preview-2.0
-azure-identity==2020.12.5
-azure-core==1.15.0
+azure-identity==1.7.1
+azure-core==1.16.0
