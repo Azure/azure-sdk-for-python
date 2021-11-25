@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-loganalytics/11.0.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+      - azsdk-python-mgmt-loganalytics/0.0.0 Python/3.8.12 (Linux-5.11.0-1021-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/providers/Microsoft.OperationalInsights/operations?api-version=2020-10-01
   response:
@@ -1074,12 +1074,7 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"AADDomainServicesPrivilegeUse\",\r\n
         \       \"operation\": \"Read AADDomainServicesPrivilegeUse data\",\r\n        \"description\":
         \"Read data from the AADDomainServicesPrivilegeUse table\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AADDomainServicesSystemSecurity/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"AADDomainServicesSystemSecurity\",\r\n
-        \       \"operation\": \"Read AADDomainServicesSystemSecurity data\",\r\n
-        \       \"description\": \"Read data from the AADDomainServicesSystemSecurity
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AADManagedIdentitySignInLogs/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AADManagedIdentitySignInLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AADManagedIdentitySignInLogs\",\r\n
         \       \"operation\": \"Read AADManagedIdentitySignInLogs data\",\r\n        \"description\":
@@ -1094,12 +1089,22 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"AADProvisioningLogs\",\r\n
         \       \"operation\": \"Read AADProvisioningLogs data\",\r\n        \"description\":
         \"Read data from the AADProvisioningLogs table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AADServicePrincipalSignInLogs/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AADRiskyUsers/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AADRiskyUsers\",\r\n        \"operation\":
+        \"Read AADRiskyUsers data\",\r\n        \"description\": \"Read data from
+        the AADRiskyUsers table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/AADServicePrincipalSignInLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AADServicePrincipalSignInLogs\",\r\n
         \       \"operation\": \"Read AADServicePrincipalSignInLogs data\",\r\n        \"description\":
         \"Read data from the AADServicePrincipalSignInLogs table\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ABSBotRequests/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AADUserRiskEvents/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AADUserRiskEvents\",\r\n
+        \       \"operation\": \"Read AADUserRiskEvents data\",\r\n        \"description\":
+        \"Read data from the AADUserRiskEvents table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/ABSBotRequests/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ABSBotRequests\",\r\n
         \       \"operation\": \"Read ABSBotRequests data\",\r\n        \"description\":
@@ -1119,6 +1124,11 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"ACICollaborationAudit\",\r\n
         \       \"operation\": \"Read ACICollaborationAudit data\",\r\n        \"description\":
         \"Read data from the ACICollaborationAudit table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACRConnectedClientList/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ACRConnectedClientList\",\r\n
+        \       \"operation\": \"Read ACRConnectedClientList data\",\r\n        \"description\":
+        \"Read data from the ACRConnectedClientList table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSAuthIncomingOperations/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ACSAuthIncomingOperations\",\r\n
@@ -1129,12 +1139,27 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"ACSBillingUsage\",\r\n
         \       \"operation\": \"Read ACSBillingUsage data\",\r\n        \"description\":
         \"Read data from the ACSBillingUsage table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSCallDiagnostics/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ACSCallDiagnostics\",\r\n
+        \       \"operation\": \"Read ACSCallDiagnostics data\",\r\n        \"description\":
+        \"Read data from the ACSCallDiagnostics table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSCallSummary/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ACSCallSummary\",\r\n
+        \       \"operation\": \"Read ACSCallSummary data\",\r\n        \"description\":
+        \"Read data from the ACSCallSummary table\"\r\n      }\r\n    },\r\n    {\r\n
         \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSChatIncomingOperations/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ACSChatIncomingOperations\",\r\n
         \       \"operation\": \"Read ACSChatIncomingOperations data\",\r\n        \"description\":
         \"Read data from the ACSChatIncomingOperations table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSSMSIncomingOperations/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSNetworkTraversalIncomingOperations/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ACSNetworkTraversalIncomingOperations\",\r\n
+        \       \"operation\": \"Read ACSNetworkTraversalIncomingOperations data\",\r\n
+        \       \"description\": \"Read data from the ACSNetworkTraversalIncomingOperations
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSSMSIncomingOperations/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ACSSMSIncomingOperations\",\r\n
         \       \"operation\": \"Read ACSSMSIncomingOperations data\",\r\n        \"description\":
@@ -1233,7 +1258,12 @@ interactions:
         false,\r\n      \"display\": {\r\n        \"provider\": \"Azure Log Analytics\",\r\n
         \       \"resource\": \"ADPAudit\",\r\n        \"operation\": \"Read ADPAudit
         data\",\r\n        \"description\": \"Read data from the ADPAudit table\"\r\n
-        \     }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ADPRequests/read\",\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ADPDiagnostics/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ADPDiagnostics\",\r\n
+        \       \"operation\": \"Read ADPDiagnostics data\",\r\n        \"description\":
+        \"Read data from the ADPDiagnostics table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/ADPRequests/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ADPRequests\",\r\n        \"operation\":
         \"Read ADPRequests data\",\r\n        \"description\": \"Read data from the
@@ -1276,7 +1306,11 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"ADXIngestionBatching\",\r\n
         \       \"operation\": \"Read ADXIngestionBatching data\",\r\n        \"description\":
         \"Read data from the ADXIngestionBatching table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ADXQuery/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ADXJournal/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ADXJournal\",\r\n        \"operation\":
+        \"Read ADXJournal data\",\r\n        \"description\": \"Read data from the
+        ADXJournal table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ADXQuery/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ADXQuery\",\r\n        \"operation\":
         \"Read ADXQuery data\",\r\n        \"description\": \"Read data from the ADXQuery
@@ -1304,15 +1338,74 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AEWAuditLogs\",\r\n        \"operation\":
         \"Read AEWAuditLogs data\",\r\n        \"description\": \"Read data from the
-        AEWAuditLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/Alert/read\",\r\n
+        AEWAuditLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AEWComputePipelinesLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AEWComputePipelinesLogs\",\r\n
+        \       \"operation\": \"Read AEWComputePipelinesLogs data\",\r\n        \"description\":
+        \"Read data from the AEWComputePipelinesLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodApplicationAuditLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodApplicationAuditLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodApplicationAuditLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodApplicationAuditLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodFarmManagementLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodFarmManagementLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodFarmManagementLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodFarmManagementLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodFarmOperationLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodFarmOperationLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodFarmOperationLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodFarmOperationLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodInsightLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodInsightLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodInsightLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodInsightLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodJobProcessedLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodJobProcessedLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodJobProcessedLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodJobProcessedLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodModelInferenceLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodModelInferenceLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodModelInferenceLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodModelInferenceLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodProviderAuthLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodProviderAuthLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodProviderAuthLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodProviderAuthLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodSatelliteLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodSatelliteLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodSatelliteLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodSatelliteLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AgriFoodWeatherLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AgriFoodWeatherLogs\",\r\n
+        \       \"operation\": \"Read AgriFoodWeatherLogs data\",\r\n        \"description\":
+        \"Read data from the AgriFoodWeatherLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/Alert/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"Alert\",\r\n        \"operation\":
         \"Read Alert data\",\r\n        \"description\": \"Read data from the Alert
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AlertHistory/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AlertEvidence/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AlertEvidence\",\r\n        \"operation\":
+        \"Read AlertEvidence data\",\r\n        \"description\": \"Read data from
+        the AlertEvidence table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/AlertHistory/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AlertHistory\",\r\n        \"operation\":
         \"Read AlertHistory data\",\r\n        \"description\": \"Read data from the
-        AlertHistory table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlComputeClusterEvent/read\",\r\n
+        AlertHistory table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AlertInfo/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AlertInfo\",\r\n        \"operation\":
+        \"Read AlertInfo data\",\r\n        \"description\": \"Read data from the
+        AlertInfo table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlComputeClusterEvent/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AmlComputeClusterEvent\",\r\n
         \       \"operation\": \"Read AmlComputeClusterEvent data\",\r\n        \"description\":
@@ -1327,17 +1420,66 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"AmlComputeCpuGpuUtilization\",\r\n
         \       \"operation\": \"Read AmlComputeCpuGpuUtilization data\",\r\n        \"description\":
         \"Read data from the AmlComputeCpuGpuUtilization table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlComputeInstanceEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlComputeInstanceEvent\",\r\n
+        \       \"operation\": \"Read AmlComputeInstanceEvent data\",\r\n        \"description\":
+        \"Read data from the AmlComputeInstanceEvent table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlComputeJobEvent/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AmlComputeJobEvent\",\r\n
         \       \"operation\": \"Read AmlComputeJobEvent data\",\r\n        \"description\":
         \"Read data from the AmlComputeJobEvent table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlDataLabelEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlDataLabelEvent\",\r\n
+        \       \"operation\": \"Read AmlDataLabelEvent data\",\r\n        \"description\":
+        \"Read data from the AmlDataLabelEvent table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlDataSetEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlDataSetEvent\",\r\n
+        \       \"operation\": \"Read AmlDataSetEvent data\",\r\n        \"description\":
+        \"Read data from the AmlDataSetEvent table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlDataStoreEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlDataStoreEvent\",\r\n
+        \       \"operation\": \"Read AmlDataStoreEvent data\",\r\n        \"description\":
+        \"Read data from the AmlDataStoreEvent table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlDeploymentEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlDeploymentEvent\",\r\n
+        \       \"operation\": \"Read AmlDeploymentEvent data\",\r\n        \"description\":
+        \"Read data from the AmlDeploymentEvent table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlEnvironmentEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlEnvironmentEvent\",\r\n
+        \       \"operation\": \"Read AmlEnvironmentEvent data\",\r\n        \"description\":
+        \"Read data from the AmlEnvironmentEvent table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlInferencingEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlInferencingEvent\",\r\n
+        \       \"operation\": \"Read AmlInferencingEvent data\",\r\n        \"description\":
+        \"Read data from the AmlInferencingEvent table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlModelsEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlModelsEvent\",\r\n
+        \       \"operation\": \"Read AmlModelsEvent data\",\r\n        \"description\":
+        \"Read data from the AmlModelsEvent table\"\r\n      }\r\n    },\r\n    {\r\n
         \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlOnlineEndpointConsoleLog/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AmlOnlineEndpointConsoleLog\",\r\n
         \       \"operation\": \"Read AmlOnlineEndpointConsoleLog data\",\r\n        \"description\":
         \"Read data from the AmlOnlineEndpointConsoleLog table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlRunStatusChangedEvent/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlPipelineEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlPipelineEvent\",\r\n
+        \       \"operation\": \"Read AmlPipelineEvent data\",\r\n        \"description\":
+        \"Read data from the AmlPipelineEvent table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlRunEvent/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AmlRunEvent\",\r\n        \"operation\":
+        \"Read AmlRunEvent data\",\r\n        \"description\": \"Read data from the
+        AmlRunEvent table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AmlRunStatusChangedEvent/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AmlRunStatusChangedEvent\",\r\n
         \       \"operation\": \"Read AmlRunStatusChangedEvent data\",\r\n        \"description\":
@@ -1398,6 +1540,16 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"AppPerformanceCounters\",\r\n
         \       \"operation\": \"Read AppPerformanceCounters data\",\r\n        \"description\":
         \"Read data from the AppPerformanceCounters table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AppPlatformBuildLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AppPlatformBuildLogs\",\r\n
+        \       \"operation\": \"Read AppPlatformBuildLogs data\",\r\n        \"description\":
+        \"Read data from the AppPlatformBuildLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AppPlatformIngressLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AppPlatformIngressLogs\",\r\n
+        \       \"operation\": \"Read AppPlatformIngressLogs data\",\r\n        \"description\":
+        \"Read data from the AppPlatformIngressLogs table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AppPlatformLogsforSpring/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AppPlatformLogsforSpring\",\r\n
@@ -1417,12 +1569,7 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"AppServiceAntivirusScanAuditLogs\",\r\n
         \       \"operation\": \"Read AppServiceAntivirusScanAuditLogs data\",\r\n
         \       \"description\": \"Read data from the AppServiceAntivirusScanAuditLogs
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AppServiceAntivirusScanLogs/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"AppServiceAntivirusScanLogs\",\r\n
-        \       \"operation\": \"Read AppServiceAntivirusScanLogs data\",\r\n        \"description\":
-        \"Read data from the AppServiceAntivirusScanLogs table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AppServiceAppLogs/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AppServiceAppLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AppServiceAppLogs\",\r\n
         \       \"operation\": \"Read AppServiceAppLogs data\",\r\n        \"description\":
@@ -1471,11 +1618,26 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AppTraces\",\r\n        \"operation\":
         \"Read AppTraces data\",\r\n        \"description\": \"Read data from the
-        AppTraces table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AuditLogs/read\",\r\n
+        AppTraces table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ATCExpressRouteCircuitIpfix/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ATCExpressRouteCircuitIpfix\",\r\n
+        \       \"operation\": \"Read ATCExpressRouteCircuitIpfix data\",\r\n        \"description\":
+        \"Read data from the ATCExpressRouteCircuitIpfix table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AuditLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AuditLogs\",\r\n        \"operation\":
         \"Read AuditLogs data\",\r\n        \"description\": \"Read data from the
-        AuditLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AutoscaleEvaluationsLog/read\",\r\n
+        AuditLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AUIEventsAudit/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AUIEventsAudit\",\r\n
+        \       \"operation\": \"Read AUIEventsAudit data\",\r\n        \"description\":
+        \"Read data from the AUIEventsAudit table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/AUIEventsOperational/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AUIEventsOperational\",\r\n
+        \       \"operation\": \"Read AUIEventsOperational data\",\r\n        \"description\":
+        \"Read data from the AUIEventsOperational table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AutoscaleEvaluationsLog/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AutoscaleEvaluationsLog\",\r\n
         \       \"operation\": \"Read AutoscaleEvaluationsLog data\",\r\n        \"description\":
@@ -1490,7 +1652,15 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"AWSCloudTrail\",\r\n        \"operation\":
         \"Read AWSCloudTrail data\",\r\n        \"description\": \"Read data from
         the AWSCloudTrail table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
-        \"Microsoft.OperationalInsights/workspaces/query/AzureActivity/read\",\r\n
+        \"Microsoft.OperationalInsights/workspaces/query/AWSGuardDuty/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AWSGuardDuty\",\r\n        \"operation\":
+        \"Read AWSGuardDuty data\",\r\n        \"description\": \"Read data from the
+        AWSGuardDuty table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AWSVPCFlow/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"AWSVPCFlow\",\r\n        \"operation\":
+        \"Read AWSVPCFlow data\",\r\n        \"description\": \"Read data from the
+        AWSVPCFlow table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/AzureActivity/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"AzureActivity\",\r\n        \"operation\":
         \"Read AzureActivity data\",\r\n        \"description\": \"Read data from
@@ -1553,11 +1723,17 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"BlockchainProxyLog\",\r\n
         \       \"operation\": \"Read BlockchainProxyLog data\",\r\n        \"description\":
         \"Read data from the BlockchainProxyLog table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/BoundPort/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/CassandraAudit/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"BoundPort\",\r\n        \"operation\":
-        \"Read BoundPort data\",\r\n        \"description\": \"Read data from the
-        BoundPort table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CDBCassandraRequests/read\",\r\n
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CassandraAudit\",\r\n
+        \       \"operation\": \"Read CassandraAudit data\",\r\n        \"description\":
+        \"Read data from the CassandraAudit table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/CassandraLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CassandraLogs\",\r\n        \"operation\":
+        \"Read CassandraLogs data\",\r\n        \"description\": \"Read data from
+        the CassandraLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/CDBCassandraRequests/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"CDBCassandraRequests\",\r\n
         \       \"operation\": \"Read CDBCassandraRequests data\",\r\n        \"description\":
@@ -1597,7 +1773,22 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"CDBQueryRuntimeStatistics\",\r\n
         \       \"operation\": \"Read CDBQueryRuntimeStatistics data\",\r\n        \"description\":
         \"Read data from the CDBQueryRuntimeStatistics table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CommonSecurityLog/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CIEventsAudit/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CIEventsAudit\",\r\n        \"operation\":
+        \"Read CIEventsAudit data\",\r\n        \"description\": \"Read data from
+        the CIEventsAudit table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/CIEventsOperational/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CIEventsOperational\",\r\n
+        \       \"operation\": \"Read CIEventsOperational data\",\r\n        \"description\":
+        \"Read data from the CIEventsOperational table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/CloudAppEvents/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"CloudAppEvents\",\r\n
+        \       \"operation\": \"Read CloudAppEvents data\",\r\n        \"description\":
+        \"Read data from the CloudAppEvents table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/CommonSecurityLog/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"CommonSecurityLog\",\r\n
         \       \"operation\": \"Read CommonSecurityLog data\",\r\n        \"description\":
@@ -1676,6 +1867,26 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksDBFS\",\r\n
         \       \"operation\": \"Read DatabricksDBFS data\",\r\n        \"description\":
         \"Read data from the DatabricksDBFS table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksFeatureStore/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksFeatureStore\",\r\n
+        \       \"operation\": \"Read DatabricksFeatureStore data\",\r\n        \"description\":
+        \"Read data from the DatabricksFeatureStore table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksGenie/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksGenie\",\r\n
+        \       \"operation\": \"Read DatabricksGenie data\",\r\n        \"description\":
+        \"Read data from the DatabricksGenie table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksGlobalInitScripts/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksGlobalInitScripts\",\r\n
+        \       \"operation\": \"Read DatabricksGlobalInitScripts data\",\r\n        \"description\":
+        \"Read data from the DatabricksGlobalInitScripts table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksIAMRole/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksIAMRole\",\r\n
+        \       \"operation\": \"Read DatabricksIAMRole data\",\r\n        \"description\":
+        \"Read data from the DatabricksIAMRole table\"\r\n      }\r\n    },\r\n    {\r\n
         \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksInstancePools/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksInstancePools\",\r\n
@@ -1686,17 +1897,37 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksJobs\",\r\n
         \       \"operation\": \"Read DatabricksJobs data\",\r\n        \"description\":
         \"Read data from the DatabricksJobs table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksNotebook/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksMLflowAcledArtifact/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksMLflowAcledArtifact\",\r\n
+        \       \"operation\": \"Read DatabricksMLflowAcledArtifact data\",\r\n        \"description\":
+        \"Read data from the DatabricksMLflowAcledArtifact table\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksMLflowExperiment/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksMLflowExperiment\",\r\n
+        \       \"operation\": \"Read DatabricksMLflowExperiment data\",\r\n        \"description\":
+        \"Read data from the DatabricksMLflowExperiment table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksNotebook/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksNotebook\",\r\n
         \       \"operation\": \"Read DatabricksNotebook data\",\r\n        \"description\":
         \"Read data from the DatabricksNotebook table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksSecrets/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksRemoteHistoryService/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksRemoteHistoryService\",\r\n
+        \       \"operation\": \"Read DatabricksRemoteHistoryService data\",\r\n        \"description\":
+        \"Read data from the DatabricksRemoteHistoryService table\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksSecrets/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksSecrets\",\r\n
         \       \"operation\": \"Read DatabricksSecrets data\",\r\n        \"description\":
         \"Read data from the DatabricksSecrets table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksSQLPermissions/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksSQL/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksSQL\",\r\n        \"operation\":
+        \"Read DatabricksSQL data\",\r\n        \"description\": \"Read data from
+        the DatabricksSQL table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/DatabricksSQLPermissions/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksSQLPermissions\",\r\n
         \       \"operation\": \"Read DatabricksSQLPermissions data\",\r\n        \"description\":
@@ -1706,12 +1937,7 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksSSH\",\r\n        \"operation\":
         \"Read DatabricksSSH data\",\r\n        \"description\": \"Read data from
         the DatabricksSSH table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
-        \"Microsoft.OperationalInsights/workspaces/query/DatabricksTables/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksTables\",\r\n
-        \       \"operation\": \"Read DatabricksTables data\",\r\n        \"description\":
-        \"Read data from the DatabricksTables table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DatabricksWorkspace/read\",\r\n
+        \"Microsoft.OperationalInsights/workspaces/query/DatabricksWorkspace/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DatabricksWorkspace\",\r\n
         \       \"operation\": \"Read DatabricksWorkspace data\",\r\n        \"description\":
@@ -1821,25 +2047,12 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"DeviceSkypeSignIn\",\r\n
         \       \"operation\": \"Read DeviceSkypeSignIn data\",\r\n        \"description\":
         \"Read data from the DeviceSkypeSignIn table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DeviceSleepState/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"DeviceSleepState\",\r\n
-        \       \"operation\": \"Read DeviceSleepState data\",\r\n        \"description\":
-        \"Read data from the DeviceSleepState table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DHAppFailure/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"DHAppFailure\",\r\n        \"operation\":
-        \"Read DHAppFailure data\",\r\n        \"description\": \"Read data from the
-        DHAppFailure table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DHAppReliability/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DHAppReliability/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DHAppReliability\",\r\n
         \       \"operation\": \"Read DHAppReliability data\",\r\n        \"description\":
         \"Read data from the DHAppReliability table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DHCPActivity/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"DHCPActivity\",\r\n        \"operation\":
-        \"Read DHCPActivity data\",\r\n        \"description\": \"Read data from the
-        DHCPActivity table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/DHDriverReliability/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/DHDriverReliability/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"DHDriverReliability\",\r\n
         \       \"operation\": \"Read DHDriverReliability data\",\r\n        \"description\":
@@ -1943,11 +2156,6 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightAmbariSystemMetrics\",\r\n
         \       \"operation\": \"Read HDInsightAmbariSystemMetrics data\",\r\n        \"description\":
         \"Read data from the HDInsightAmbariSystemMetrics table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightGatewayAuditLogs/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightGatewayAuditLogs\",\r\n
-        \       \"operation\": \"Read HDInsightGatewayAuditLogs data\",\r\n        \"description\":
-        \"Read data from the HDInsightGatewayAuditLogs table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightHadoopAndYarnLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightHadoopAndYarnLogs\",\r\n
@@ -2038,11 +2246,6 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightSparkExecutorEvents\",\r\n
         \       \"operation\": \"Read HDInsightSparkExecutorEvents data\",\r\n        \"description\":
         \"Read data from the HDInsightSparkExecutorEvents table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightSparkExtraEvents/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightSparkExtraEvents\",\r\n
-        \       \"operation\": \"Read HDInsightSparkExtraEvents data\",\r\n        \"description\":
-        \"Read data from the HDInsightSparkExtraEvents table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/HDInsightSparkJobEvents/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"HDInsightSparkJobEvents\",\r\n
@@ -2102,21 +2305,31 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"HuntingBookmark\",\r\n
         \       \"operation\": \"Read HuntingBookmark data\",\r\n        \"description\":
         \"Read data from the HuntingBookmark table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/IdentityInfo/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/IdentityDirectoryEvents/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"IdentityDirectoryEvents\",\r\n
+        \       \"operation\": \"Read IdentityDirectoryEvents data\",\r\n        \"description\":
+        \"Read data from the IdentityDirectoryEvents table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/IdentityInfo/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"IdentityInfo\",\r\n        \"operation\":
         \"Read IdentityInfo data\",\r\n        \"description\": \"Read data from the
-        IdentityInfo table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/IISAssessmentRecommendation/read\",\r\n
+        IdentityInfo table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/IdentityLogonEvents/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"IdentityLogonEvents\",\r\n
+        \       \"operation\": \"Read IdentityLogonEvents data\",\r\n        \"description\":
+        \"Read data from the IdentityLogonEvents table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/IdentityQueryEvents/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"IdentityQueryEvents\",\r\n
+        \       \"operation\": \"Read IdentityQueryEvents data\",\r\n        \"description\":
+        \"Read data from the IdentityQueryEvents table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/IISAssessmentRecommendation/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"IISAssessmentRecommendation\",\r\n
         \       \"operation\": \"Read IISAssessmentRecommendation data\",\r\n        \"description\":
         \"Read data from the IISAssessmentRecommendation table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/InboundConnection/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"InboundConnection\",\r\n
-        \       \"operation\": \"Read InboundConnection data\",\r\n        \"description\":
-        \"Read data from the InboundConnection table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/InsightsMetrics/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/InsightsMetrics/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"InsightsMetrics\",\r\n
         \       \"operation\": \"Read InsightsMetrics data\",\r\n        \"description\":
@@ -2240,22 +2453,7 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MADeviceNRT\",\r\n        \"operation\":
         \"Read MADeviceNRT data\",\r\n        \"description\": \"Read data from the
-        MADeviceNRT table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MADevicePnPHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MADevicePnPHealth\",\r\n
-        \       \"operation\": \"Read MADevicePnPHealth data\",\r\n        \"description\":
-        \"Read data from the MADevicePnPHealth table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/MADevicePnPHealthAlternativeVersions/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MADevicePnPHealthAlternativeVersions\",\r\n
-        \       \"operation\": \"Read MADevicePnPHealthAlternativeVersions data\",\r\n
-        \       \"description\": \"Read data from the MADevicePnPHealthAlternativeVersions
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MADevicePnPHealthIssues/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MADevicePnPHealthIssues\",\r\n
-        \       \"operation\": \"Read MADevicePnPHealthIssues data\",\r\n        \"description\":
-        \"Read data from the MADevicePnPHealthIssues table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MADeviceReadiness/read\",\r\n
+        MADeviceNRT table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MADeviceReadiness/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MADeviceReadiness\",\r\n
         \       \"operation\": \"Read MADeviceReadiness data\",\r\n        \"description\":
@@ -2275,75 +2473,26 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddin\",\r\n        \"operation\":
         \"Read MAOfficeAddin data\",\r\n        \"description\": \"Read data from
         the MAOfficeAddin table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
-        \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinEntityHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinEntityHealth\",\r\n
-        \       \"operation\": \"Read MAOfficeAddinEntityHealth data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAddinEntityHealth table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinHealth\",\r\n
-        \       \"operation\": \"Read MAOfficeAddinHealth data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAddinHealth table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinHealthEventNRT/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinHealthEventNRT\",\r\n
-        \       \"operation\": \"Read MAOfficeAddinHealthEventNRT data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAddinHealthEventNRT table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinHealthIssues/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinHealthIssues\",\r\n
-        \       \"operation\": \"Read MAOfficeAddinHealthIssues data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAddinHealthIssues table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinInstance/read\",\r\n
+        \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinInstance/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinInstance\",\r\n
         \       \"operation\": \"Read MAOfficeAddinInstance data\",\r\n        \"description\":
         \"Read data from the MAOfficeAddinInstance table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinInstanceReadiness/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinInstanceReadiness\",\r\n
-        \       \"operation\": \"Read MAOfficeAddinInstanceReadiness data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAddinInstanceReadiness table\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinReadiness/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAddinReadiness/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAddinReadiness\",\r\n
         \       \"operation\": \"Read MAOfficeAddinReadiness data\",\r\n        \"description\":
         \"Read data from the MAOfficeAddinReadiness table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeApp/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeApp\",\r\n        \"operation\":
-        \"Read MAOfficeApp data\",\r\n        \"description\": \"Read data from the
-        MAOfficeApp table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppCrashesNRT/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAppCrashesNRT\",\r\n
-        \       \"operation\": \"Read MAOfficeAppCrashesNRT data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAppCrashesNRT table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAppHealth\",\r\n
-        \       \"operation\": \"Read MAOfficeAppHealth data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAppHealth table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppInstance/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppInstance/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAppInstance\",\r\n
         \       \"operation\": \"Read MAOfficeAppInstance data\",\r\n        \"description\":
         \"Read data from the MAOfficeAppInstance table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppInstanceHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAppInstanceHealth\",\r\n
-        \       \"operation\": \"Read MAOfficeAppInstanceHealth data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAppInstanceHealth table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppReadiness/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAppReadiness\",\r\n
         \       \"operation\": \"Read MAOfficeAppReadiness data\",\r\n        \"description\":
         \"Read data from the MAOfficeAppReadiness table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeAppSessionsNRT/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeAppSessionsNRT\",\r\n
-        \       \"operation\": \"Read MAOfficeAppSessionsNRT data\",\r\n        \"description\":
-        \"Read data from the MAOfficeAppSessionsNRT table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeBuildInfo/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeBuildInfo\",\r\n
@@ -2354,62 +2503,7 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeCurrencyAssessment\",\r\n
         \       \"operation\": \"Read MAOfficeCurrencyAssessment data\",\r\n        \"description\":
         \"Read data from the MAOfficeCurrencyAssessment table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeCurrencyAssessmentDailyCounts/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeCurrencyAssessmentDailyCounts\",\r\n
-        \       \"operation\": \"Read MAOfficeCurrencyAssessmentDailyCounts data\",\r\n
-        \       \"description\": \"Read data from the MAOfficeCurrencyAssessmentDailyCounts
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeDeploymentStatus/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeDeploymentStatus\",\r\n
-        \       \"operation\": \"Read MAOfficeDeploymentStatus data\",\r\n        \"description\":
-        \"Read data from the MAOfficeDeploymentStatus table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeDeploymentStatusNRT/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeDeploymentStatusNRT\",\r\n
-        \       \"operation\": \"Read MAOfficeDeploymentStatusNRT data\",\r\n        \"description\":
-        \"Read data from the MAOfficeDeploymentStatusNRT table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroErrorNRT/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroErrorNRT\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroErrorNRT data\",\r\n        \"description\":
-        \"Read data from the MAOfficeMacroErrorNRT table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroGlobalHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroGlobalHealth\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroGlobalHealth data\",\r\n        \"description\":
-        \"Read data from the MAOfficeMacroGlobalHealth table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroHealth/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroHealth\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroHealth data\",\r\n        \"description\":
-        \"Read data from the MAOfficeMacroHealth table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroHealthIssues/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroHealthIssues\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroHealthIssues data\",\r\n        \"description\":
-        \"Read data from the MAOfficeMacroHealthIssues table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroIssueInstanceReadiness/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroIssueInstanceReadiness\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroIssueInstanceReadiness data\",\r\n
-        \       \"description\": \"Read data from the MAOfficeMacroIssueInstanceReadiness
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroIssueReadiness/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroIssueReadiness\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroIssueReadiness data\",\r\n        \"description\":
-        \"Read data from the MAOfficeMacroIssueReadiness table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeMacroSummary/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeMacroSummary\",\r\n
-        \       \"operation\": \"Read MAOfficeMacroSummary data\",\r\n        \"description\":
-        \"Read data from the MAOfficeMacroSummary table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeSuite/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeSuite\",\r\n        \"operation\":
-        \"Read MAOfficeSuite data\",\r\n        \"description\": \"Read data from
-        the MAOfficeSuite table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
-        \"Microsoft.OperationalInsights/workspaces/query/MAOfficeSuiteInstance/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAOfficeSuiteInstance/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAOfficeSuiteInstance\",\r\n
         \       \"operation\": \"Read MAOfficeSuiteInstance data\",\r\n        \"description\":
@@ -2444,12 +2538,7 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"MAWindowsDeploymentStatusNRT\",\r\n
         \       \"operation\": \"Read MAWindowsDeploymentStatusNRT data\",\r\n        \"description\":
         \"Read data from the MAWindowsDeploymentStatusNRT table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MAWindowsSysReqInstanceReadiness/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"MAWindowsSysReqInstanceReadiness\",\r\n
-        \       \"operation\": \"Read MAWindowsSysReqInstanceReadiness data\",\r\n
-        \       \"description\": \"Read data from the MAWindowsSysReqInstanceReadiness
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/McasShadowItReporting/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/McasShadowItReporting/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"McasShadowItReporting\",\r\n
         \       \"operation\": \"Read McasShadowItReporting data\",\r\n        \"description\":
@@ -2458,7 +2547,12 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MCCEventLogs\",\r\n        \"operation\":
         \"Read MCCEventLogs data\",\r\n        \"description\": \"Read data from the
-        MCCEventLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MCVPOperationLogs/read\",\r\n
+        MCCEventLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MCVPAuditLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"MCVPAuditLogs\",\r\n        \"operation\":
+        \"Read MCVPAuditLogs data\",\r\n        \"description\": \"Read data from
+        the MCVPAuditLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/MCVPOperationLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MCVPOperationLogs\",\r\n
         \       \"operation\": \"Read MCVPOperationLogs data\",\r\n        \"description\":
@@ -2513,12 +2607,7 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"NWConnectionMonitorDestinationListenerResult\",\r\n
         \       \"operation\": \"Read NWConnectionMonitorDestinationListenerResult
         data\",\r\n        \"description\": \"Read data from the NWConnectionMonitorDestinationListenerResult
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/NWConnectionMonitorDNSResult/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"NWConnectionMonitorDNSResult\",\r\n
-        \       \"operation\": \"Read NWConnectionMonitorDNSResult data\",\r\n        \"description\":
-        \"Read data from the NWConnectionMonitorDNSResult table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/NWConnectionMonitorPathResult/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/NWConnectionMonitorPathResult/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"NWConnectionMonitorPathResult\",\r\n
         \       \"operation\": \"Read NWConnectionMonitorPathResult data\",\r\n        \"description\":
@@ -2537,16 +2626,16 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"Operation\",\r\n        \"operation\":
         \"Read Operation data\",\r\n        \"description\": \"Read data from the
-        Operation table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/OutboundConnection/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"OutboundConnection\",\r\n
-        \       \"operation\": \"Read OutboundConnection data\",\r\n        \"description\":
-        \"Read data from the OutboundConnection table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/Perf/read\",\r\n
+        Operation table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/Perf/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"Perf\",\r\n        \"operation\":
         \"Read Perf data\",\r\n        \"description\": \"Read data from the Perf
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/PowerBIDatasetsTenant/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/PowerBIAuditTenant/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"PowerBIAuditTenant\",\r\n
+        \       \"operation\": \"Read PowerBIAuditTenant data\",\r\n        \"description\":
+        \"Read data from the PowerBIAuditTenant table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/PowerBIDatasetsTenant/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"PowerBIDatasetsTenant\",\r\n
         \       \"operation\": \"Read PowerBIDatasetsTenant data\",\r\n        \"description\":
@@ -2566,7 +2655,12 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"PowerBIDatasetsWorkspacePreview\",\r\n
         \       \"operation\": \"Read PowerBIDatasetsWorkspacePreview data\",\r\n
         \       \"description\": \"Read data from the PowerBIDatasetsWorkspacePreview
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ProtectionStatus/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/PowerBIReportUsageTenant/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"PowerBIReportUsageTenant\",\r\n
+        \       \"operation\": \"Read PowerBIReportUsageTenant data\",\r\n        \"description\":
+        \"Read data from the PowerBIReportUsageTenant table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ProtectionStatus/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ProtectionStatus\",\r\n
         \       \"operation\": \"Read ProtectionStatus data\",\r\n        \"description\":
@@ -2590,7 +2684,12 @@ interactions:
         false,\r\n      \"display\": {\r\n        \"provider\": \"Azure Log Analytics\",\r\n
         \       \"resource\": \"requests\",\r\n        \"operation\": \"Read requests
         data\",\r\n        \"description\": \"Read data from the requests table\"\r\n
-        \     }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SCCMAssessmentRecommendation/read\",\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ResourceManagementPublicAccessLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ResourceManagementPublicAccessLogs\",\r\n
+        \       \"operation\": \"Read ResourceManagementPublicAccessLogs data\",\r\n
+        \       \"description\": \"Read data from the ResourceManagementPublicAccessLogs
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SCCMAssessmentRecommendation/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SCCMAssessmentRecommendation\",\r\n
         \       \"operation\": \"Read SCCMAssessmentRecommendation data\",\r\n        \"description\":
@@ -2722,11 +2821,6 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"SqlDataClassification\",\r\n
         \       \"operation\": \"Read SqlDataClassification data\",\r\n        \"description\":
         \"Read data from the SqlDataClassification table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SQLQueryPerformance/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"SQLQueryPerformance\",\r\n
-        \       \"operation\": \"Read SQLQueryPerformance data\",\r\n        \"description\":
-        \"Read data from the SQLQueryPerformance table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SQLSecurityAuditEvents/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SQLSecurityAuditEvents\",\r\n
@@ -2777,7 +2871,42 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseBuiltinSqlPoolRequestsEnded\",\r\n
         \       \"operation\": \"Read SynapseBuiltinSqlPoolRequestsEnded data\",\r\n
         \       \"description\": \"Read data from the SynapseBuiltinSqlPoolRequestsEnded
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseGatewayApiRequests/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXCommand/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXCommand\",\r\n
+        \       \"operation\": \"Read SynapseDXCommand data\",\r\n        \"description\":
+        \"Read data from the SynapseDXCommand table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXFailedIngestion/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXFailedIngestion\",\r\n
+        \       \"operation\": \"Read SynapseDXFailedIngestion data\",\r\n        \"description\":
+        \"Read data from the SynapseDXFailedIngestion table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXIngestionBatching/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXIngestionBatching\",\r\n
+        \       \"operation\": \"Read SynapseDXIngestionBatching data\",\r\n        \"description\":
+        \"Read data from the SynapseDXIngestionBatching table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXQuery/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXQuery\",\r\n
+        \       \"operation\": \"Read SynapseDXQuery data\",\r\n        \"description\":
+        \"Read data from the SynapseDXQuery table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXSucceededIngestion/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXSucceededIngestion\",\r\n
+        \       \"operation\": \"Read SynapseDXSucceededIngestion data\",\r\n        \"description\":
+        \"Read data from the SynapseDXSucceededIngestion table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXTableDetails/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXTableDetails\",\r\n
+        \       \"operation\": \"Read SynapseDXTableDetails data\",\r\n        \"description\":
+        \"Read data from the SynapseDXTableDetails table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseDXTableUsageStatistics/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseDXTableUsageStatistics\",\r\n
+        \       \"operation\": \"Read SynapseDXTableUsageStatistics data\",\r\n        \"description\":
+        \"Read data from the SynapseDXTableUsageStatistics table\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseGatewayApiRequests/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseGatewayApiRequests\",\r\n
         \       \"operation\": \"Read SynapseGatewayApiRequests data\",\r\n        \"description\":
@@ -2792,32 +2921,17 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseIntegrationActivityRuns\",\r\n
         \       \"operation\": \"Read SynapseIntegrationActivityRuns data\",\r\n        \"description\":
         \"Read data from the SynapseIntegrationActivityRuns table\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationActivityRunsEnded/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseIntegrationActivityRunsEnded\",\r\n
-        \       \"operation\": \"Read SynapseIntegrationActivityRunsEnded data\",\r\n
-        \       \"description\": \"Read data from the SynapseIntegrationActivityRunsEnded
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationPipelineRuns/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationPipelineRuns/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseIntegrationPipelineRuns\",\r\n
         \       \"operation\": \"Read SynapseIntegrationPipelineRuns data\",\r\n        \"description\":
         \"Read data from the SynapseIntegrationPipelineRuns table\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationPipelineRunsEnded/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseIntegrationPipelineRunsEnded\",\r\n
-        \       \"operation\": \"Read SynapseIntegrationPipelineRunsEnded data\",\r\n
-        \       \"description\": \"Read data from the SynapseIntegrationPipelineRunsEnded
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationTriggerRuns/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationTriggerRuns/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseIntegrationTriggerRuns\",\r\n
         \       \"operation\": \"Read SynapseIntegrationTriggerRuns data\",\r\n        \"description\":
         \"Read data from the SynapseIntegrationTriggerRuns table\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseIntegrationTriggerRunsEnded/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseIntegrationTriggerRunsEnded\",\r\n
-        \       \"operation\": \"Read SynapseIntegrationTriggerRunsEnded data\",\r\n
-        \       \"description\": \"Read data from the SynapseIntegrationTriggerRunsEnded
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseRBACEvents/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SynapseRBACEvents/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SynapseRBACEvents\",\r\n
         \       \"operation\": \"Read SynapseRBACEvents data\",\r\n        \"description\":
@@ -2856,11 +2970,7 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"Syslog\",\r\n        \"operation\":
         \"Read Syslog data\",\r\n        \"description\": \"Read data from the Syslog
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SysmonEvent/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"SysmonEvent\",\r\n        \"operation\":
-        \"Read SysmonEvent data\",\r\n        \"description\": \"Read data from the
-        SysmonEvent table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/Tables.Custom/read\",\r\n
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/Tables.Custom/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"Tables.Custom\",\r\n        \"operation\":
         \"Read Custom Logs\",\r\n        \"description\": \"Reading data from any
@@ -2899,12 +3009,7 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"UAFeedback\",\r\n        \"operation\":
         \"Read UAFeedback data\",\r\n        \"description\": \"Read data from the
-        UAFeedback table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UAHardwareSecurity/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"UAHardwareSecurity\",\r\n
-        \       \"operation\": \"Read UAHardwareSecurity data\",\r\n        \"description\":
-        \"Read data from the UAHardwareSecurity table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/UAIESiteDiscovery/read\",\r\n
+        UAFeedback table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UAIESiteDiscovery/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"UAIESiteDiscovery\",\r\n
         \       \"operation\": \"Read UAIESiteDiscovery data\",\r\n        \"description\":
@@ -2929,11 +3034,40 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"UAUpgradedComputer\",\r\n
         \       \"operation\": \"Read UAUpgradedComputer data\",\r\n        \"description\":
         \"Read data from the UAUpgradedComputer table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/Update/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/UCClient/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"Update\",\r\n        \"operation\":
-        \"Read Update data\",\r\n        \"description\": \"Read data from the Update
-        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UpdateRunProgress/read\",\r\n
+        \"Azure Log Analytics\",\r\n        \"resource\": \"UCClient\",\r\n        \"operation\":
+        \"Read UCClient data\",\r\n        \"description\": \"Read data from the UCClient
+        table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UCClientReadinessStatus/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"UCClientReadinessStatus\",\r\n
+        \       \"operation\": \"Read UCClientReadinessStatus data\",\r\n        \"description\":
+        \"Read data from the UCClientReadinessStatus table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UCClientUpdateStatus/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"UCClientUpdateStatus\",\r\n
+        \       \"operation\": \"Read UCClientUpdateStatus data\",\r\n        \"description\":
+        \"Read data from the UCClientUpdateStatus table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UCDeviceAlert/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"UCDeviceAlert\",\r\n        \"operation\":
+        \"Read UCDeviceAlert data\",\r\n        \"description\": \"Read data from
+        the UCDeviceAlert table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/UCServiceUpdateStatus/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"UCServiceUpdateStatus\",\r\n
+        \       \"operation\": \"Read UCServiceUpdateStatus data\",\r\n        \"description\":
+        \"Read data from the UCServiceUpdateStatus table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UCUpdateAlert/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"UCUpdateAlert\",\r\n        \"operation\":
+        \"Read UCUpdateAlert data\",\r\n        \"description\": \"Read data from
+        the UCUpdateAlert table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Microsoft.OperationalInsights/workspaces/query/Update/read\",\r\n      \"isDataAction\":
+        false,\r\n      \"display\": {\r\n        \"provider\": \"Azure Log Analytics\",\r\n
+        \       \"resource\": \"Update\",\r\n        \"operation\": \"Read Update
+        data\",\r\n        \"description\": \"Read data from the Update table\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/UpdateRunProgress/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"UpdateRunProgress\",\r\n
         \       \"operation\": \"Read UpdateRunProgress data\",\r\n        \"description\":
@@ -2977,11 +3111,7 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"W3CIISLog\",\r\n        \"operation\":
         \"Read W3CIISLog data\",\r\n        \"description\": \"Read data from the
-        W3CIISLog table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/W3CIISLogV2/read\",\r\n
-        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
-        \"Azure Log Analytics\",\r\n        \"resource\": \"W3CIISLogV2\",\r\n        \"operation\":
-        \"Read W3CIISLogV2 data\",\r\n        \"description\": \"Read data from the
-        W3CIISLogV2 table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/WaaSDeploymentStatus/read\",\r\n
+        W3CIISLog table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/WaaSDeploymentStatus/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"WaaSDeploymentStatus\",\r\n
         \       \"operation\": \"Read WaaSDeploymentStatus data\",\r\n        \"description\":
@@ -3008,7 +3138,22 @@ interactions:
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"WDAVThreat\",\r\n        \"operation\":
         \"Read WDAVThreat data\",\r\n        \"description\": \"Read data from the
-        WDAVThreat table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/WindowsClientAssessmentRecommendation/read\",\r\n
+        WDAVThreat table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/WebPubSubConnectivity/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"WebPubSubConnectivity\",\r\n
+        \       \"operation\": \"Read WebPubSubConnectivity data\",\r\n        \"description\":
+        \"Read data from the WebPubSubConnectivity table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/WebPubSubHttpRequest/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"WebPubSubHttpRequest\",\r\n
+        \       \"operation\": \"Read WebPubSubHttpRequest data\",\r\n        \"description\":
+        \"Read data from the WebPubSubHttpRequest table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/WebPubSubMessaging/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"WebPubSubMessaging\",\r\n
+        \       \"operation\": \"Read WebPubSubMessaging data\",\r\n        \"description\":
+        \"Read data from the WebPubSubMessaging table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/WindowsClientAssessmentRecommendation/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"WindowsClientAssessmentRecommendation\",\r\n
         \       \"operation\": \"Read WindowsClientAssessmentRecommendation data\",\r\n
@@ -3115,7 +3260,27 @@ interactions:
         \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
         \       \"resource\": \"Rules\",\r\n        \"operation\": \"Get all alert
         rules\",\r\n        \"description\": \"Get all alert rules.\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/savedsearches/schedules/read\",\r\n
+        \   },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/customfields/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"Custom Fields\",\r\n        \"operation\": \"Get a
+        custom field\",\r\n        \"description\": \"Get a custom field.\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/customfields/write\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"Custom Fields\",\r\n        \"operation\": \"Create
+        or update a custom field\",\r\n        \"description\": \"Create or update
+        a custom field.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/customfields/delete\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"Custom Fields\",\r\n        \"operation\": \"Delete
+        a custom field\",\r\n        \"description\": \"Delete a custom field.\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/customfields/list\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"Custom Fields\",\r\n        \"operation\": \"List
+        all custom fields\",\r\n        \"description\": \"List all custom fields.\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/customfields/action\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"Custom Fields\",\r\n        \"operation\": \"Extract
+        custom fields\",\r\n        \"description\": \"Extract custom fields.\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/workspaces/savedsearches/schedules/read\",\r\n
         \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
         \       \"resource\": \"Schedules\",\r\n        \"operation\": \"Get scheduled
         searches\",\r\n        \"description\": \"Get scheduled searches.\"\r\n      }\r\n
@@ -3201,16 +3366,48 @@ interactions:
         \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
         \       \"resource\": \"MachineGroups\",\r\n        \"operation\": \"Get the
         Service Map Machine Groups\",\r\n        \"description\": \"Get the Service
-        Map Machine Groups.\"\r\n      }\r\n    }\r\n  ]\r\n}"
+        Map Machine Groups.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/write\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPacks\",\r\n        \"operation\": \"Create or
+        Update Query Packs\",\r\n        \"description\": \"Create or Update Query
+        Packs.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPacks\",\r\n        \"operation\": \"Get Query
+        Packs\",\r\n        \"description\": \"Get Query Packs.\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/delete\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPacks\",\r\n        \"operation\": \"Delete Query
+        Packs\",\r\n        \"description\": \"Delete Query Packs.\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/action\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPacks\",\r\n        \"operation\": \"Perform
+        Query Packs Actions\",\r\n        \"description\": \"Perform Query Packs Actions.\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/queries/write\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPackQueries\",\r\n        \"operation\": \"Create
+        or Update Query Pack Queries\",\r\n        \"description\": \"Create or Update
+        Query Pack Queries.\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/queries/read\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPackQueries\",\r\n        \"operation\": \"Get
+        Query Pack Queries\",\r\n        \"description\": \"Get Query Pack Queries.\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/queries/delete\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPackQueries\",\r\n        \"operation\": \"Delete
+        Query Pack Queries\",\r\n        \"description\": \"Delete Query Pack Queries.\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"microsoft.operationalinsights/querypacks/queries/action\",\r\n
+        \     \"display\": {\r\n        \"provider\": \"MicrosoftOperationalInsights\",\r\n
+        \       \"resource\": \"QueryPackQueries\",\r\n        \"operation\": \"Perform
+        Actions on Queries in QueryPack\",\r\n        \"description\": \"Perform Actions
+        on Queries in QueryPack.\"\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '251526'
+      - '265969'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 12 Jul 2021 02:18:32 GMT
+      - Thu, 25 Nov 2021 05:55:31 GMT
       expires:
       - '-1'
       pragma:
