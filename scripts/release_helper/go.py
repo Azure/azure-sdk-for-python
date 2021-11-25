@@ -3,7 +3,7 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_ASSIGNEE_CANDIDATES_GO = {'ArcturusZhang'}
+_GO_OWNER = {'ArcturusZhang'}
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN_GO = {'ArcturusZhang': os.getenv('PYTHON_ZED_TOKEN')}
@@ -18,5 +18,5 @@ class Go(Common):
 
 
 def go_process(issues: List[Any]):
-    instance = Go(issues, _ASSIGNEE_TOKEN_GO, _ASSIGNEE_CANDIDATES_GO)
+    instance = Go(issues, _ASSIGNEE_TOKEN_GO, _GO_OWNER)
     instance.run()
