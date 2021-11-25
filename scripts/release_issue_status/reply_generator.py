@@ -67,7 +67,7 @@ def get_reply_and_sdk_number_from_readme(rest_repo, link_dict, item):
     details = rest_repo.get_check_run(check_run_id).output.text
     sdk_link_number = re.findall(r'/azure-sdk-for-python/pull/(\d*)">Release SDK Changes</a>', details)[0]
     changelog = '<details open><summary><b> python-track2</b>' + \
-               re.search(rf'</code><b>track2_{item_package}(.)+?</pre></li>', details, re.DOTALL).group() \
+               re.search(rf'</code><b>track2_{item.package}(.)+?</pre></li>', details, re.DOTALL).group() \
                + '</details>'
     info_model = 'hi @{} Please check the package whether works well and the changelog info ' \
                  'is as below:\n{}\n' \
