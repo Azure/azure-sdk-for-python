@@ -1,9 +1,5 @@
-from github.Repository import Repository
-from github.PaginatedList import PaginatedList
 from github.Issue import Issue
-from typing import Set
 from github.Repository import Repository
-import re
 import logging
 from typing import List
 

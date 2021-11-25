@@ -1,7 +1,4 @@
 from github import Github
-from github.Repository import Repository
-from github.PaginatedList import PaginatedList
-from github.Issue import Issue
 from utils import REQUEST_REPO, REST_REPO, IssuePackage
 
 from python import python_process
@@ -10,8 +7,7 @@ from java import java_process
 from js import js_process
 
 import os
-from typing import List, Any, Set
-from common import common_process
+from typing import List
 import logging
 
 logging.basicConfig(level=logging.INFO,
