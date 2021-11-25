@@ -21,60 +21,53 @@ parser.parse_args()
 client = SearchClient('None', x_ms_client_id=os.environ.get("CLIENT_ID", None), authentication_policy=AzureKeyInQueryCredentialPolicy(
     AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), "subscription-key"))
 
-result = client.search.search_address(
-    TextFormat.JSON, "15127 NE 24th Street, Redmond, WA 98052")
+result = client.search.search_address("15127 NE 24th Street, Redmond, WA 98052")
 print("Get Search Address:")
 print(result)
 
 
-result = client.search.reverse_search_address(
-    TextFormat.JSON, "37.337,-121.89")
+result = client.search.reverse_search_address("37.337,-121.89")
 print("Get Search Address Reverse:")
 print(result)
 
 
-result = client.search.reverse_search_cross_street_address(
-    TextFormat.JSON, "37.337,-121.89")
+result = client.search.reverse_search_cross_street_address("37.337,-121.89")
 print("Get Search Address Reverse Cross Street:")
 print(result)
 
 
-result = client.search.search_structured_address(
-    TextFormat.JSON, None, "US", None, None, 15127, "NE 24th Street", None, "Redmond", None, None, None, "WA", "98052")
+result = client.search.search_structured_address(None, "US", None, None, 15127, "NE 24th Street", None, "Redmond", None, None, None, "WA", "98052")
 print("Get Search Address Structured:")
 print(result)
 
 
-results = client.search.fuzzy_search(TextFormat.JSON, "seattle")
+results = client.search.fuzzy_search("seattle")
 print("Get Search Fuzzy:")
 print(results)
 ids = list(map(lambda result: result.data_sources.geometry.id, results.results))
 
 
-result = client.search.search_nearby_point_of_interest(
-    TextFormat.JSON, 40.706270, -74.011454, 10, None, None, None, 8046)
+result = client.search.search_nearby_point_of_interest(40.706270, -74.011454, 10, None, None, None, 8046)
 print("Get Search Fuzzy:")
 print(result)
 
 
-result = client.search.search_point_of_interest(
-    TextFormat.JSON, "juice bars", None, 5, None, None, None, 47.606038, -122.333345, 8046)
+result = client.search.search_point_of_interest("juice bars", None, 5, None, None, None, 47.606038, -122.333345, 8046)
 print("Get Search POI:")
 print(result)
 
 
-result = client.search.search_point_of_interest_category(
-    TextFormat.JSON, "atm", None, 5, None, None, None, 47.606038, -122.333345, 8046)
+result = client.search.search_point_of_interest_category("atm", None, 5, None, None, None, 47.606038, -122.333345, 8046)
 print("Get Search POI Category:")
 print(result)
 
 
-result = client.search.get_point_of_interest_category_tree(TextFormat.JSON)
+result = client.search.get_point_of_interest_category_tree()
 print("Get Search POI Category Tree:")
 print(result)
 
 
-result = client.search.list_polygons(TextFormat.JSON, ids)
+result = client.search.list_polygons(ids)
 print("Get Search Polygon:")
 print(result)
 

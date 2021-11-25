@@ -4,42 +4,54 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import json
 import os
+from typing import Any
 
-from azure.core.credentials import AccessToken
-
-from azure.core.credentials import AzureKeyCredential
-from common.common import AzureKeyInQueryCredentialPolicy
-
-
-from azure.maps.search.models import TextFormat
-from azure.maps.search import SearchClient
+from azure.core.pipeline._base import SansIOHTTPPolicy
 
 from azure.identity import DefaultAzureCredential
 from azure.core.pipeline.policies import HeadersPolicy
-from azure.core.credentials import TokenCredential, AsyncTokenCredential
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 
+SUBSCRIPTION_KEY_HEADER_NAME="subscription-key"
+CLIENT_ID_HEADER_NAME="x-ms-client-id"
 
-def get_authentication_policy(
-        credential, # type: TokenCredential or AsyncTokenCredential
-        is_async=False, # type: bool
-):
-    # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
-    """Returns the correct authentication policy based
-    on which credential is being passed.
-    :param credential: The credential we use to authenticate to the service
-    :type credential: TokenCredential or str
-    :param isAsync: For async clients there is a need to decode the url
-    :type bool: isAsync or str
-    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
+class AzureKeyInQueryCredentialPolicy(SansIOHTTPPolicy):
+    """Adds a key in query for the provided credential.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param str name: The name of the key in query used for the credential.
+    :raises: ValueError or TypeError
     """
 
+    def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
+        # type: (AzureKeyCredential, str, **Any) -> None
+        super(AzureKeyInQueryCredentialPolicy, self).__init__()
+        self._credential = credential
+        self._name = name
+
+
+
+def get_authentication_policy(credential):
+    authentication_policy=None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
-    if hasattr(credential):
-        return (('None', x_ms_client_id=os.environ.get("CLIENT_ID", None), authentication_policy=AzureKeyInQueryCredentialPolicy(AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), "subscription-key")))
+    if isinstance(credential, AzureKeyCredential):
+        authentication_policy = AzureKeyInQueryCredentialPolicy(
+            AzureKeyCredential(os.environ.get("SUBSCRIPTION_KEY")), SUBSCRIPTION_KEY_HEADER_NAME
+        )
+    elif credential is not None and not hasattr(credential, "get_token"):
+        raise TypeError(
+            f'Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential '
+            'or a token credential from azure.identity'
+        )
+    return authentication_policy
 
-    if isinstance(credential, str):
-        return (DefaultAzureCredential(), x_ms_client_id=os.environ.get("CLIENT_ID", None), headers_policy=HeadersPolicy({'x-ms-client-id': os.environ.get("CLIENT_ID", None)}))
+
+def get_headers_policy(credential):
+    headers_policy=None
+    if credential is None:
+        headers_policy=HeadersPolicy({CLIENT_ID_HEADER_NAME: os.environ.get("CLIENT_ID", None)})
+    return headers_policy

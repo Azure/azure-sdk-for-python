@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import *
-from .utils import get_authentication_policy
+from .utils import get_authentication_policy, get_headers_policy
 
 if TYPE_CHECKING:
     from typing import Any, List
@@ -41,9 +41,8 @@ class SearchClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._search_client = SearchClientGen(
-            self._base_url,
-            authentication_policy=get_authentication_policy(credential),
-            **kwargs).search
+            credential,
+            **kwargs)
 
 
     @distributed_trace
