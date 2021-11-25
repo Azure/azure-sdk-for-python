@@ -8,7 +8,7 @@ trigger:
     - '*'
 
 schedules:
-  - cron: "0/5 */1 * * *"
+  - cron: "0 */1 * * *"
     displayName: Daily release
     branches:
       include:
