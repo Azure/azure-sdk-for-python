@@ -1,5 +1,24 @@
 # Release History
 
+## 2.0.0 (2021-11-25)
+
+**Features**
+
+  - Model PutAliasRequestProperties has a new parameter additional_properties
+  - Model Operation has a new parameter is_data_action
+  - Model ErrorResponseBody has a new parameter code
+  - Model ErrorResponseBody has a new parameter message
+  - Model OperationDisplay has a new parameter description
+  - Added operation SubscriptionOperations.begin_accept_ownership
+  - Added operation SubscriptionOperations.accept_ownership_status
+  - Added operation group SubscriptionPolicyOperations
+  - Added operation group BillingAccountOperations
+
+**Breaking changes**
+
+  - Removed operation group TenantsOperations
+  - Removed operation group SubscriptionsOperations
+
 ## 1.0.0 (2020-12-16)
 
 - GA release
