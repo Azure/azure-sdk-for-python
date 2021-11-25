@@ -258,7 +258,7 @@ class SearchField(msrest.serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
-            normalizer=normalizer,
+            normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
         )
@@ -524,6 +524,8 @@ class SearchIndex(msrest.serialization.Model):
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
     :paramtype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
+    :keyword semantic_settings: Defines parameters for a search index that influence semantic capabilities.
+    :paramtype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
     :keyword e_tag: The ETag of the index.
     :paramtype e_tag: str
     """
@@ -550,6 +552,7 @@ class SearchIndex(msrest.serialization.Model):
             "type": "SearchResourceEncryptionKey",
         },
         "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
+        "semantic_settings": {"key": "semantic", "type": "SemanticSettings"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
 
@@ -568,6 +571,7 @@ class SearchIndex(msrest.serialization.Model):
         self.normalizers = kwargs.get("normalizers", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
+        self.semantic_settings = kwargs.get("semantic_settings", None)
         self.e_tag = kwargs.get("e_tag", None)
 
     def _to_generated(self):
@@ -607,6 +611,7 @@ class SearchIndex(msrest.serialization.Model):
             if self.encryption_key
             else None,
             similarity=self.similarity,
+            semantic_settings=self.semantic_settings,
             e_tag=self.e_tag,
         )
 
@@ -656,6 +661,7 @@ class SearchIndex(msrest.serialization.Model):
                 search_index.encryption_key
             ),
             similarity=search_index.similarity,
+            semantic_settings=search_index.semantic_settings,
             e_tag=search_index.e_tag,
         )
 

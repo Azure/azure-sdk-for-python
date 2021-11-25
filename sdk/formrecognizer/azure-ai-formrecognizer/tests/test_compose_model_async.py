@@ -82,9 +82,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         document_model_from_dict = DocumentModel.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    @pytest.mark.live_test_only
     async def test_compose_continuation_token(self, client, formrecognizer_storage_container_sas_url):
 
         async with client:

@@ -62,22 +62,28 @@ on how to do so can be found [here][proxy_cert_docs].
 
 ### Start the proxy server
 
-There is a [PowerShell script][docker_start_proxy] in `eng/common/testproxy` that will fetch the proxy Docker image if
-you don't already have it, and will start or stop a container running the image for you. You can run the following
-command from the root of the `azure-sdk-for-python` directory to start the container whenever you want to make the test
-proxy available for running tests:
+The test proxy has to be available in order for tests to work in live or playback mode. There's a
+[section](#manually-start-the-proxy) under [Advanced details](#advanced-details) that describes how to do this manually,
+but it's recommended that tests use a `pytest` fixture to start and stop the proxy automatically when running tests.
 
-```powershell
-.\eng\common\testproxy\docker-start-proxy.ps1 "start"
+In a `conftest.py` file for your package's tests, add a session-level fixture that accepts `devtools_testutils.test_proxy`
+as a parameter (and has `autouse` set to `True`):
+
+```python
+from devtools_testutils import test_proxy
+
+# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+@pytest.fixture(scope="session", autouse=True)
+def start_proxy(test_proxy):
+    return
 ```
 
-Note that the proxy is available as long as the container is running. In other words, you don't need to start and
-stop the container for each test run or between tests for different SDKs. You can run the above command in the morning
-and just stop the container whenever you'd like. To stop the container, run the same command but with `"stop"` in place
-of `"start"`. In the future, the proxy container will be set up and started automatically when tests are run, and
-starting it manually will be optional.
+If your tests already use an `autouse`d, session-level fixture for tests, you can accept the `test_proxy` parameter in
+that existing fixture instead of adding a new one. For an example, see the [Register sanitizers](#register-sanitizers)
+section of this document.
 
-For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
+In general, if any fixture requires the test proxy to be available by the time it's used, that fixture should accept this
+`test_proxy` parameter.
 
 ### Record or play back tests
 
@@ -86,7 +92,8 @@ set to "true" or "yes", live tests will run and produce recordings. When this va
 not set at all, tests will run in playback mode and attempt to match existing recordings.
 
 Recordings for a given package will end up in that package's `/tests/recordings` directory, just like they currently
-do.
+do. Recordings that use the test proxy are `.json` files instead of `.yml` files, so migrated test suites no longer
+need old `.yml` recordings.
 
 > **Note:** at this time, support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
@@ -110,13 +117,16 @@ the string "my-key-vault" with "fake-vault" in recordings, you could add somethi
 `conftest.py` file:
 
 ```python
-from devtools_testutils import add_general_regex_sanitizer
+from devtools_testutils import add_general_regex_sanitizer, test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers():
+def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
 ```
+
+Note that the sanitizer fixture accepts the `test_proxy` fixture as a parameter to ensure the proxy is started
+beforehand.
 
 For a more advanced scenario, where we want to sanitize the account names of all storage endpoints in recordings, we
 could instead call
@@ -135,6 +145,12 @@ made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will a
 
 For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
 
+### Enabling the test proxy in CI
+
+To enable using the test proxy in CI, you need to set the parameter `TestProxy: true` in the `ci.yml` and `tests.yml`
+files in the service level folder. For example, in `sdk/eventgrid/ci.yml`:
+
+![image](https://user-images.githubusercontent.com/45376673/142270668-5be58bca-87e5-45f5-b593-44f8b1f757bc.png)
 ### Record test variables
 
 To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
@@ -172,7 +188,7 @@ class TestExample(AzureRecordedTestCase):
         return variables
 ```
 
-## Implementation details
+## Advanced details
 
 ### What does the test proxy do?
 
@@ -216,8 +232,40 @@ Running tests in playback follows the same pattern, except that requests will be
 `/playback/stop` instead. A header, `x-recording-mode`, should be set to `record` for all requests when recording and
 `playback` when playing recordings back. More details can be found [here][detailed_docs].
 
-The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of each test
-case.
+The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of
+each test case.
+
+### Manually start the proxy
+
+There are two options for manually starting and stopping the test proxy: one uses a PowerShell command, and one uses
+methods from `devtools_testutils`.
+
+#### PowerShell
+
+There is a [PowerShell script][docker_start_proxy] in `eng/common/testproxy` that will fetch the proxy Docker image if
+you don't already have it, and will start or stop a container running the image for you. You can run the following
+command from the root of the `azure-sdk-for-python` directory to start the container whenever you want to make the test
+proxy available for running tests:
+
+```powershell
+.\eng\common\testproxy\docker-start-proxy.ps1 "start"
+```
+
+Note that the proxy is available as long as the container is running. In other words, you don't need to start and
+stop the container for each test run or between tests for different SDKs. You can run the above command in the morning
+and just stop the container whenever you'd like. To stop the container, run the same command but with `"stop"` in place
+of `"start"`.
+
+#### Python
+
+There are two methods in `devtools_testutils`,
+[start_test_proxy](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L97)
+and
+[stop_test_proxy](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L135),
+that can be used to manually start and stop the test proxy. Like `docker-start-proxy.ps1`, `start_test_proxy` will
+automatically fetch the proxy Docker image for you and start the container if it's not already running.
+
+For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
