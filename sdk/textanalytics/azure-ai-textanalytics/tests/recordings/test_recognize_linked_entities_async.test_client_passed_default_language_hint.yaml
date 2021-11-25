@@ -12,25 +12,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: e41913c7-78f8-4934-8a98-ec5632e7b81c
+      apim-request-id: 9d85ef7a-7906-4df6-8e6a-b4d560f65514
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Wed, 23 Jun 2021 01:56:49 GMT
+      date: Wed, 06 Oct 2021 21:05:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '30'
+      x-envoy-upstream-service-time: '16'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -44,25 +44,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: 411d7470-8685-45d6-9cc1-191dde3e369d
+      apim-request-id: f3afc368-1f27-48f9-93cb-36c050f04a0c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Wed, 23 Jun 2021 01:56:49 GMT
+      date: Wed, 06 Oct 2021 21:05:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -76,23 +76,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: 544e0734-a049-470d-b0bc-c06f244dbd5d
+      apim-request-id: 9d977751-499e-45de-a179-d050604f09bf
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Wed, 23 Jun 2021 01:56:49 GMT
+      date: Wed, 06 Oct 2021 21:05:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '82'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

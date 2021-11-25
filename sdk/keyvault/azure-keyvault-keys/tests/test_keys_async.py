@@ -11,18 +11,26 @@ import logging
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import ApiVersion, JsonWebKey
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicyAction,
+)
 from azure.keyvault.keys.aio import KeyClient
+import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
+from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_policies_equal
 
 
 all_api_versions = get_decorator(is_async=True)
-exclude_7_3_preview = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V7_3_PREVIEW], is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -37,23 +45,13 @@ class MockHandler(logging.Handler):
 
 
 class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, match_body=False, **kwargs)
+
     def _assert_jwks_equal(self, jwk1, jwk2):
-        assert jwk1.kid == jwk2.kid
-        assert jwk1.kty == jwk2.kty
-        assert sorted(jwk1.key_ops) == sorted(jwk2.key_ops)
-        assert jwk1.n == jwk2.n
-        assert jwk1.e == jwk2.e
-        assert jwk1.d == jwk2.d
-        assert jwk1.dp == jwk2.dp
-        assert jwk1.dq == jwk2.dq
-        assert jwk1.qi == jwk2.qi
-        assert jwk1.p == jwk2.p
-        assert jwk1.q == jwk2.q
-        assert jwk1.k == jwk2.k
-        assert jwk1.t == jwk2.t
-        assert jwk1.crv == jwk2.crv
-        assert jwk1.x == jwk2.x
-        assert jwk1.y == jwk2.y
+        for field in JsonWebKey._FIELDS:
+            if field != "key_ops":
+                assert getattr(jwk1, field) == getattr(jwk2, field)
 
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
@@ -113,13 +111,24 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             "Missing required date attributes.",
         )
 
-    async def _update_key_properties(self, client, key):
+    async def _update_key_properties(self, client, key, release_policy=None):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = await client.update_key_properties(key.name, expires_on=expires, tags=tags)
-        self.assertEqual(tags, key_bundle.properties.tags)
-        self.assertEqual(key.id, key_bundle.id)
-        self.assertNotEqual(key.properties.updated_on, key_bundle.properties.updated_on)
+        key_ops = ["decrypt", "encrypt"]
+
+        # wait before updating the key to make sure updated_on has a different value
+        if self.is_live:
+            await asyncio.sleep(2)
+        key_bundle = await client.update_key_properties(
+            key.name, key_operations=key_ops, expires_on=expires, tags=tags, release_policy=release_policy
+        )
+
+        assert tags == key_bundle.properties.tags
+        assert key.id == key_bundle.id
+        assert key.properties.updated_on != key_bundle.properties.updated_on
+        assert sorted(key_ops) == sorted(key_bundle.key_operations)
+        if release_policy:
+            assert key.properties.release_policy.encoded_policy != key_bundle.properties.release_policy.encoded_policy
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
@@ -129,7 +138,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    async def _import_test_key(self, client, name, hardware_protected=False):
+    async def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
         def _to_bytes(hex):
             if len(hex) % 2:
                 hex = "0{}".format(hex)
@@ -161,11 +170,11 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
                 "009fe7ae42e92bc04fcd5780464bd21d0c8ac0c599f9af020fde6ab0a7e7d1d39902f5d8fb6c614184c4c1b103fb46e94cd10a6c8a40f9991a1f28269f326435b6c50276fda6493353c650a833f724d80c7d522ba16c79f0eb61f672736b68fb8be3243d10943c4ab7028d09e76cfb5892222e38bc4d35585bf35a88cd68c73b07"
             ),
         )
-        imported_key = await client.import_key(name, key)
+        imported_key = await client.import_key(name, key, **kwargs)
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @exclude_7_3_preview()
+    @all_api_versions()
     @client_setup
     async def test_key_crud_operations(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
@@ -218,6 +227,8 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         # delete the new key
         deleted_key = await client.delete_key(rsa_key.name)
         self.assertIsNotNone(deleted_key)
+
+        # aside from key_ops, the original updated keys should have the same JWKs
         self._assert_jwks_equal(rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, rsa_key.id)
         self.assertTrue(
@@ -412,15 +423,21 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                    if body["kty"] == expected_kty:
-                        return
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
+                    try:
+                        # the body of the request should be JSON
+                        body = json.loads(section)
+                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                        if body["kty"] == expected_kty:
+                            mock_handler.close()
+                            return
+                    except (ValueError, KeyError):
+                        # this means the request section is not JSON or has no kty property
+                        pass
 
+        mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
     @logging_disabled()
@@ -437,13 +454,21 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                    assert body["kty"] != expected_kty, "Client request body was logged"
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
+                    try:
+                        # the body of the request should be JSON
+                        body = json.loads(section)
+                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                        if body["kty"] == expected_kty:
+                            mock_handler.close()
+                            assert False, "Client request body was logged"
+                    except (ValueError, KeyError):
+                        # this means the request section is not JSON or has no kty property
+                        pass
+
+        mock_handler.close()
 
     @only_hsm_7_3_preview()
     @client_setup
@@ -452,10 +477,167 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         generated_random_bytes = []
         for i in range(5):
+            # [START get_random_bytes]
+            # get eight random bytes from a managed HSM
             random_bytes = await client.get_random_bytes(count=8)
+            # [END get_random_bytes]
             assert len(random_bytes) == 8
-            assert all([random_bytes != rb] for rb in generated_random_bytes)
+            assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_key_release(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        attestation = get_attestation_token(attestation_uri)
+        release_policy = get_release_policy(attestation_uri)
+
+        rsa_key_name = self.get_resource_name("rsa-key-name")
+        key = await self._create_rsa_key(
+            client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy
+        assert key.properties.release_policy.encoded_policy
+        assert key.properties.exportable
+
+        release_result = await client.release_key(rsa_key_name, attestation)
+        assert release_result.value
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_imported_key_release(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        attestation = get_attestation_token(attestation_uri)
+        release_policy = get_release_policy(attestation_uri)
+
+        imported_key_name = self.get_resource_name("imported-key-name")
+        key = await self._import_test_key(
+            client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy
+        assert key.properties.release_policy.encoded_policy
+        assert key.properties.exportable
+
+        release_result = await client.release_key(imported_key_name, attestation)
+        assert release_result.value
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_update_release_policy(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri)
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy.encoded_policy
+
+        new_release_policy_json = {
+            "anyOf": [
+                {
+                    "anyOf": [
+                        {
+                            "claim": "sdk-test",
+                            "equals": False
+                        }
+                    ],
+                    "authority": attestation_uri.rstrip("/") + "/"
+                }
+            ],
+            "version": "1.0.0"
+        }
+        policy_string = json.dumps(new_release_policy_json).encode()
+        new_release_policy = KeyReleasePolicy(policy_string)
+
+        await self._update_key_properties(client, key, new_release_policy)
+
+    @only_vault_7_3_preview()
+    @client_setup
+    async def test_key_rotation(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        key = await self._create_rsa_key(client, key_name)
+        rotated_key = await client.rotate_key(key_name)
+
+        # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
+        assert key.id != rotated_key.id
+        assert key.properties.version != rotated_key.properties.version
+        assert key.key.n != rotated_key.key.n
+
+    @only_vault_7_3_preview()
+    @client_setup
+    async def test_key_rotation_policy(self, client, **kwargs):
+        key_name = self.get_resource_name("rotation-key")
+        await self._create_rsa_key(client, key_name)
+
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
+        updated_policy = await client.update_key_rotation_policy(key_name, lifetime_actions=actions)
+        fetched_policy = await client.get_key_rotation_policy(key_name)
+        assert updated_policy.expires_in is None
+        _assert_rotation_policies_equal(updated_policy, fetched_policy)
+
+        updated_policy_actions = updated_policy.lifetime_actions[0]
+        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.time_after_create == "P2M"
+        assert updated_policy_actions.time_before_expiry is None
+        _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
+
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
+        new_policy = await client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
+        new_fetched_policy = await client.get_key_rotation_policy(key_name)
+        assert new_policy.expires_in == "P90D"
+        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+
+        new_policy_actions = new_policy.lifetime_actions[0]
+        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
+        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
+        assert new_policy_actions.time_after_create is None
+        assert new_policy_actions.time_before_expiry == "P30D"
+        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
+
+    @all_api_versions()
+    @client_setup
+    async def test_get_cryptography_client(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+        # try specifying the key version
+        crypto_client = client.get_cryptography_client(key_name, key_version=key.properties.version)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        plaintext = b"plaintext"
+        result = await crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
+
+        # try ommitting the key version
+        crypto_client = client.get_cryptography_client(key_name)
+        # both clients should use the same generated client
+        assert client._client == crypto_client._client
+
+        # the crypto client should successfully perform crypto operations
+        result = await crypto_client.encrypt("RSA-OAEP", plaintext)
+        assert result.key_id == key.id
+
+        result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
+        assert result.key_id == key.id
+        assert "RSA-OAEP" == result.algorithm
+        assert plaintext == result.plaintext
+
+
+@pytest.mark.asyncio
+async def test_positive_bytes_count_required():
+    client = KeyClient("...", object())
+    with pytest.raises(ValueError):
+        await client.get_random_bytes(count=0)
+    with pytest.raises(ValueError):
+        await client.get_random_bytes(count=-1)
 
 
 def test_service_headers_allowed_in_logs():

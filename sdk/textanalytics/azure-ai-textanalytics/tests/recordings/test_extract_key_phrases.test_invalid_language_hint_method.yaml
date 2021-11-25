@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
@@ -25,11 +25,11 @@ interactions:
         For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}'
     headers:
       apim-request-id:
-      - f38e9ed8-e0df-4adc-b656-886d5233e7a7
+      - c699b5be-2e05-4b47-9810-3fe299a3b023
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:54:52 GMT
+      - Wed, 06 Oct 2021 21:04:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK

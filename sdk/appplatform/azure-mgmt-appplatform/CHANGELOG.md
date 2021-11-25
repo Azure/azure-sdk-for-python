@@ -1,5 +1,13 @@
 # Release History
 
+## 6.1.0 (2021-07-09)
+
+**Features**
+
+  - Model UserSourceInfo has a new parameter custom_container
+  - Model MetricDimension has a new parameter to_be_exported_for_shoebox
+  - Model DeploymentSettings has a new parameter resource_requests
+
 ## 6.0.0 (2021-04-08)
 
 **Features**

@@ -27,6 +27,8 @@ class Baseline(msrest.serialization.Model):
     :type low_thresholds: list[float]
     :param high_thresholds: Required. The high thresholds of the baseline.
     :type high_thresholds: list[float]
+    :param timestamps: the array of timestamps of the baselines.
+    :type timestamps: list[~datetime.datetime]
     """
 
     _validation = {
@@ -39,6 +41,7 @@ class Baseline(msrest.serialization.Model):
         'sensitivity': {'key': 'sensitivity', 'type': 'str'},
         'low_thresholds': {'key': 'lowThresholds', 'type': '[float]'},
         'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
+        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
     }
 
     def __init__(
@@ -47,12 +50,14 @@ class Baseline(msrest.serialization.Model):
         sensitivity: Union[str, "Sensitivity"],
         low_thresholds: List[float],
         high_thresholds: List[float],
+        timestamps: Optional[List[datetime.datetime]] = None,
         **kwargs
     ):
         super(Baseline, self).__init__(**kwargs)
         self.sensitivity = sensitivity
         self.low_thresholds = low_thresholds
         self.high_thresholds = high_thresholds
+        self.timestamps = timestamps
 
 
 class BaselineMetadataValue(msrest.serialization.Model):
@@ -107,8 +112,8 @@ class BaselineResponse(msrest.serialization.Model):
     :param baseline: the baseline values for each sensitivity.
     :type baseline: list[~$(python-base-namespace).v2017_11_01_preview.models.Baseline]
     :param metadata: the baseline metadata values.
-    :type metadata: list[~$(python-base-
-     namespace).v2017_11_01_preview.models.BaselineMetadataValue]
+    :type metadata:
+     list[~$(python-base-namespace).v2017_11_01_preview.models.BaselineMetadataValue]
     """
 
     _validation = {

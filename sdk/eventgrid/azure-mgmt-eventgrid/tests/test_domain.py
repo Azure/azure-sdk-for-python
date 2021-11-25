@@ -9,7 +9,7 @@ import unittest
 
 from azure.mgmt.eventgrid import EventGridManagementClient
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 
 class MgmtEventGridTest(AzureMgmtTestCase):
@@ -18,7 +18,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         super(MgmtEventGridTest, self).setUp()
         self.eventgrid_client = self.create_mgmt_client(EventGridManagementClient)
 
-    @ResourceGroupPreparer()
+    @RandomNameResourceGroupPreparer(location="eastus2euap")
     def test_domain(self, resource_group, location):
         # create
         DOMAIN_NAME = self.get_resource_name('domain')

@@ -1,15 +1,102 @@
 # Release History
 
-## 1.16.1 (Unreleased)
+## 1.20.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+- Sync stream downloading now raises `azure.core.exceptions.DecodeError` rather than `requests.exceptions.ContentDecodingError`
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.20.1 (2021-11-08)
+
+### Bugs Fixed
+
+- Correctly set response's content to decompressed body when users are using aiohttp transport with decompression headers #21620
+
+## 1.20.0 (2021-11-04)
+
+### Features Added
+
+- GA `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
+- GA `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- GA errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
+are thrown if you mishandle streamed responses from the `azure.core.rest` module
+- add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
+- no longer raise JSON errors if users pass in file descriptors of JSON to the `json` kwarg in `HttpRequest`  #21504
+- Added new error type `IncompleteReadError` which is raised if peer closes the connection before we have received the complete message body.
+
+### Breaking Changes
+
+- SansIOHTTPPolicy.on_exception returns None instead of bool.
+
+### Bugs Fixed
+
+- The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
+  rather than silently truncating data in case the underlying tcp connection is closed prematurely.
+  (thanks to @jochen-ott-by for the contribution)   #20412
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
+- Add default content type header of `text/plain` and content length header for users who pass unicode strings to the `content` kwarg of `HttpRequest` in 2.7  #21550
+
+## 1.19.1 (2021-11-01)
+
+### Bugs Fixed
+
+- respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- Fix "coroutine x.read() was never awaited" warning from `ContentDecodePolicy`  #21318
+- fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
+- use `charset_normalizer` if `chardet` is not installed to migrate aiohttp 3.8.0 changes.
+
+### Other Changes
+
+- Refactor AzureJSONEncoder (thanks to @Codejune for the contribution)  #21028
+
+## 1.19.0 (2021-09-30)
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` are now abstract base classes. They should not be initialized directly, instead
+your transport responses should inherit from them and implement them.
+- The properties of the `azure.core.rest` responses are now all read-only
+
+- HttpLoggingPolicy integrates logs into one record #19925
+
+## 1.18.0 (2021-09-02)
+
+### Features Added
+
+- `azure.core.serialization.AzureJSONEncoder` (introduced in 1.17.0) serializes `datetime.datetime` objects in ISO 8601 format, conforming to RFC 3339's specification.    #20190
+- We now use `azure.core.serialization.AzureJSONEncoder` to serialize `json` input to `azure.core.rest.HttpRequest`.
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- The `text` property on `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse` has changed to a method, which also takes
+an `encoding` parameter.
+- Removed `iter_text` and `iter_lines` from `azure.core.rest.HttpResponse` and `azure.core.rest.AsyncHttpResponse`
+
+### Bugs Fixed
+
+- The behaviour of the headers returned in `azure.core.rest` responses now aligns across sync and async. Items can now be checked case-insensitively and without raising an error for format.
+
+## 1.17.0 (2021-08-05)
+
+### Features Added
+
+- Cut hard dependency on requests library
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return a `CloudEvent`
 
 ### Fixed
 
+- Not override "x-ms-client-request-id" if it already exists in the header.    #17757
+
+### Breaking Changes in the Provisional `azure.core.rest` package
+
+- `azure.core.rest` will not try to guess the `charset` anymore if it was impossible to extract it from `HttpResponse` analysis. This removes our dependency on `charset`.
 
 ## 1.16.0 (2021-07-01)
 
@@ -35,7 +122,6 @@ are thrown if you mishandle streamed responses from the provisional `azure.core.
 
 - Retry policies don't sleep after operations time out
 - The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
-
 
 ## 1.14.0 (2021-05-13)
 

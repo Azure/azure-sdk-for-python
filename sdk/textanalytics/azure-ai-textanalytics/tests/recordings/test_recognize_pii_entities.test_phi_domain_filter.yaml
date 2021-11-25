@@ -14,22 +14,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"redactedText":"I work at ********* and my phone number
         is ************","id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":10,"length":9,"confidenceScore":0.95},{"text":"333-333-3333","category":"PhoneNumber","offset":43,"length":12,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - fd6979ae-0112-49e2-95c7-9c422b8bf12c
+      - 32eda87d-4285-4849-bb1c-1e2c1958b494
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
       date:
-      - Wed, 23 Jun 2021 01:57:10 GMT
+      - Wed, 06 Oct 2021 21:05:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '23'
+      - '25'
     status:
       code: 200
       message: OK

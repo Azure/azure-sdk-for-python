@@ -11,6 +11,10 @@ and other secrets
 
 [Source code][certificates_client_src] | [Package (PyPI)][pypi_package_certificates] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][certificates_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 ### Install the package
 Install [azure-keyvault-certificates][pypi_package_certificates] and
@@ -437,6 +441,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-certificates/docs
 [certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/azure/keyvault/certificates
 [certificates_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples
-[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-certificates%2FREADME.png)

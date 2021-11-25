@@ -4,7 +4,6 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
-      DeployArmTemplate: true
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
       MatrixReplace:
@@ -14,9 +13,9 @@ stages:
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
       CloudConfig:
-        Prod:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: $(LOCATION)
+#         Prod:
+#           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+#           Location: $(LOCATION)
         Canary:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'centraluseuap'

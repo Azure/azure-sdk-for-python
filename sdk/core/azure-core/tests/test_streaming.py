@@ -23,16 +23,19 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
+import pytest
 from azure.core import PipelineClient
+from azure.core.exceptions import DecodeError
+from utils import HTTP_REQUESTS
 
-def test_decompress_plain_no_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_decompress_plain_no_header(http_request):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=True)
@@ -40,13 +43,14 @@ def test_decompress_plain_no_header():
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
-def test_compress_plain_no_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_plain_no_header(http_request):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=False)
@@ -54,13 +58,14 @@ def test_compress_plain_no_header():
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
-def test_decompress_compressed_no_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_decompress_compressed_no_header(http_request):
     # expect compressed text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=True)
@@ -71,13 +76,14 @@ def test_decompress_compressed_no_header():
     except UnicodeDecodeError:
         pass
 
-def test_compress_compressed_no_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_compressed_no_header(http_request):
     # expect compressed text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=False)
@@ -88,30 +94,31 @@ def test_compress_compressed_no_header():
     except UnicodeDecodeError:
         pass
 
-def test_decompress_plain_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_decompress_plain_header(http_request):
     # expect error
-    import requests
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=True)
     try:
         content = b"".join(list(data))
         assert False
-    except requests.exceptions.ContentDecodingError:
+    except DecodeError:
         pass
 
-def test_compress_plain_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_plain_header(http_request):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=False)
@@ -119,13 +126,14 @@ def test_compress_plain_header():
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
-def test_decompress_compressed_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_decompress_compressed_header(http_request):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=True)
@@ -133,13 +141,14 @@ def test_decompress_compressed_header():
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
-def test_compress_compressed_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_compressed_header(http_request):
     # expect compressed text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = http_request("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=False)

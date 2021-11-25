@@ -28,7 +28,7 @@ class DatabasesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.kusto.models
+    :type models: ~kusto_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -48,19 +48,19 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         resource_name: "_models.CheckNameRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameResult":
-        """Checks that the database name is valid and is not already in use.
+        """Checks that the databases resource name is valid and is not already in use.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
         :param cluster_name: The name of the Kusto cluster.
         :type cluster_name: str
         :param resource_name: The name of the resource.
-        :type resource_name: ~azure.mgmt.kusto.models.CheckNameRequest
+        :type resource_name: ~kusto_management_client.models.CheckNameRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.CheckNameResult
+        :rtype: ~kusto_management_client.models.CheckNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameResult"]
@@ -68,7 +68,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -113,7 +113,7 @@ class DatabasesOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Returns the list of databases of the given Kusto cluster.
 
@@ -123,7 +123,7 @@ class DatabasesOperations:
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DatabaseListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.kusto.models.DatabaseListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~kusto_management_client.models.DatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseListResult"]
@@ -131,7 +131,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -188,7 +188,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         """Returns a database.
 
@@ -200,7 +200,7 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Database, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.Database
+        :rtype: ~kusto_management_client.models.Database
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
@@ -208,7 +208,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL
@@ -251,14 +251,14 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -313,7 +313,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Creates or updates a database.
 
@@ -324,15 +324,15 @@ class DatabasesOperations:
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param parameters: The database parameters supplied to the CreateOrUpdate operation.
-        :type parameters: ~azure.mgmt.kusto.models.Database
+        :type parameters: ~kusto_management_client.models.Database
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.kusto.models.Database]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~kusto_management_client.models.Database]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -389,14 +389,14 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Database":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -451,7 +451,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         parameters: "_models.Database",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Database"]:
         """Updates a database.
 
@@ -462,15 +462,15 @@ class DatabasesOperations:
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param parameters: The database parameters supplied to the Update operation.
-        :type parameters: ~azure.mgmt.kusto.models.Database
+        :type parameters: ~kusto_management_client.models.Database
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.kusto.models.Database]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~kusto_management_client.models.Database]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -526,14 +526,14 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL
@@ -572,7 +572,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the database with the given name.
 
@@ -584,8 +584,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -641,7 +641,7 @@ class DatabasesOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabasePrincipalListResult"]:
         """Returns a list of database principals of the given Kusto cluster and database.
 
@@ -653,7 +653,7 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DatabasePrincipalListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.kusto.models.DatabasePrincipalListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~kusto_management_client.models.DatabasePrincipalListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalListResult"]
@@ -661,7 +661,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -720,7 +720,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         database_principals_to_add: "_models.DatabasePrincipalListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabasePrincipalListResult":
         """Add Database principals permissions.
 
@@ -731,10 +731,10 @@ class DatabasesOperations:
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param database_principals_to_add: List of database principals to add.
-        :type database_principals_to_add: ~azure.mgmt.kusto.models.DatabasePrincipalListRequest
+        :type database_principals_to_add: ~kusto_management_client.models.DatabasePrincipalListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatabasePrincipalListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalListResult
+        :rtype: ~kusto_management_client.models.DatabasePrincipalListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalListResult"]
@@ -742,7 +742,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -790,7 +790,7 @@ class DatabasesOperations:
         cluster_name: str,
         database_name: str,
         database_principals_to_remove: "_models.DatabasePrincipalListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabasePrincipalListResult":
         """Remove Database principals permissions.
 
@@ -801,10 +801,10 @@ class DatabasesOperations:
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param database_principals_to_remove: List of database principals to remove.
-        :type database_principals_to_remove: ~azure.mgmt.kusto.models.DatabasePrincipalListRequest
+        :type database_principals_to_remove: ~kusto_management_client.models.DatabasePrincipalListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatabasePrincipalListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalListResult
+        :rtype: ~kusto_management_client.models.DatabasePrincipalListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalListResult"]
@@ -812,7 +812,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

@@ -27,6 +27,8 @@ from azure.identity._credentials.azure_powershell import (
 )
 import pytest
 
+from credscan_ignore import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
+
 
 POPEN = AzurePowerShellCredential.__module__ + ".subprocess.Popen"
 
@@ -145,15 +147,7 @@ def test_powershell_not_installed_sh():
             AzurePowerShellCredential().get_token("scope")
 
 
-@pytest.mark.parametrize(
-    "stderr",
-    (
-        """#< CLIXML
-<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><Obj S="progress" RefId="0"><TN RefId="0"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj><Obj S="progress" RefId="1"><TNRef RefId="0" /><MS><I64 N="SourceId">2</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj><S S="Error">Get-AzAccessToken : Run Connect-AzAccount to login._x000D__x000A_</S><S S="Error">At line:11 char:10_x000D__x000A_</S><S S="Error">+ $token = Get-AzAccessToken -ResourceUrl 'scope'_x000D__x000A_</S><S S="Error">+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~_x000D__x000A_</S><S S="Error">    + CategoryInfo          : CloseError: (:) [Get-AzAccessToken], PSInvalidOperationException_x000D__x000A_</S><S S="Error">    + FullyQualifiedErrorId : Microsoft.Azure.Commands.Profile.GetAzureRmAccessTokenCommand_x000D__x000A_</S><S S="Error"> _x000D__x000A_</S></Objs>""",
-        """#< CLIXML
-<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><S S="Error">_x001B_[91mGet-AzAccessToken: _x000D__x000A_</S><S S="Error">_x001B_[96mLine |_x000D__x000A_</S><S S="Error">_x001B_[96m  11 | _x001B_[0m $token = _x001B_[96mGet-AzAccessToken -ResourceUrl 'scope'_x001B_[0m_x000D__x000A_</S><S S="Error">_x001B_[96m     | _x001B_[91m          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~_x000D__x000A_</S><S S="Error">_x001B_[91m_x001B_[96m     | _x001B_[91mRun Connect-AzAccount to login._x001B_[0m_x000D__x000A_</S></Objs>""",
-    ),
-)
+@pytest.mark.parametrize("stderr", (POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR))
 def test_not_logged_in(stderr):
     """The credential should raise CredentialUnavailableError when a user isn't logged in to Azure PowerShell"""
 
@@ -249,9 +243,7 @@ def test_windows_powershell_fallback():
     assert Fake.calls == 2
 
 
-def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+def test_multitenant_authentication():
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2
@@ -260,7 +252,7 @@ def test_allow_multitenant_authentication():
         assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
         encoded_script = command[-1].split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search("Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
 
         assert tenant is None or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
@@ -270,7 +262,7 @@ def test_allow_multitenant_authentication():
         communicate = Mock(return_value=(stdout, ""))
         return Mock(communicate=communicate, returncode=0)
 
-    credential = AzurePowerShellCredential(allow_multitenant_authentication=True)
+    credential = AzurePowerShellCredential()
     with patch(POPEN, fake_Popen):
         token = credential.get_token("scope")
         assert token.token == first_token
@@ -282,17 +274,14 @@ def test_allow_multitenant_authentication():
         token = credential.get_token("scope")
         assert token.token == first_token
 
-
 def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
     expected_token = "***"
 
     def fake_Popen(command, **_):
         assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
         encoded_script = command[-1].split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search("Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
 
         assert tenant is None, "credential shouldn't accept an explicit tenant ID"
@@ -306,13 +295,6 @@ def test_multitenant_authentication_not_allowed():
         token = credential.get_token("scope")
         assert token.token == expected_token
 
-        # specifying a tenant should get an error
-        with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-            credential.get_token("scope", tenant_id="some tenant")
-
-        # ...unless the compat switch is enabled
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
             token = credential.get_token("scope", tenant_id="some tenant")
-        assert (
-            token.token == expected_token
-        ), "credential should ignore tenant_id kwarg when the compat switch is enabled"
+            assert token.token == expected_token

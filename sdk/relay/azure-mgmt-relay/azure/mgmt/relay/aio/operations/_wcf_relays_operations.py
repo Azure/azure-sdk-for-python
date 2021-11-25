@@ -45,7 +45,7 @@ class WCFRelaysOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WcfRelaysListResult"]:
         """Lists the WCF relays within the namespace.
 
@@ -105,7 +105,7 @@ class WCFRelaysOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,7 +122,7 @@ class WCFRelaysOperations:
         namespace_name: str,
         relay_name: str,
         parameters: "_models.WcfRelay",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WcfRelay":
         """Creates or updates a WCF relay. This operation is idempotent.
 
@@ -176,7 +176,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WcfRelay', pipeline_response)
@@ -192,7 +192,7 @@ class WCFRelaysOperations:
         resource_group_name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a WCF relay.
 
@@ -239,7 +239,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -252,7 +252,7 @@ class WCFRelaysOperations:
         resource_group_name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WcfRelay"]:
         """Returns the description for the specified WCF relay.
 
@@ -299,7 +299,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -317,7 +317,7 @@ class WCFRelaysOperations:
         resource_group_name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AuthorizationRuleListResult"]:
         """Authorization rules for a WCF relay.
 
@@ -397,7 +397,7 @@ class WCFRelaysOperations:
         relay_name: str,
         authorization_rule_name: str,
         parameters: "_models.AuthorizationRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationRule":
         """Creates or updates an authorization rule for a WCF relay.
 
@@ -454,7 +454,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -471,7 +471,7 @@ class WCFRelaysOperations:
         namespace_name: str,
         relay_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a WCF relay authorization rule.
 
@@ -521,7 +521,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -535,7 +535,7 @@ class WCFRelaysOperations:
         namespace_name: str,
         relay_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationRule":
         """Get authorizationRule for a WCF relay by name.
 
@@ -585,7 +585,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -602,7 +602,7 @@ class WCFRelaysOperations:
         namespace_name: str,
         relay_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessKeys":
         """Primary and secondary connection strings to the WCF relay.
 
@@ -652,7 +652,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -670,7 +670,7 @@ class WCFRelaysOperations:
         relay_name: str,
         authorization_rule_name: str,
         parameters: "_models.RegenerateAccessKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessKeys":
         """Regenerates the primary or secondary connection strings to the WCF relay.
 
@@ -727,7 +727,7 @@ class WCFRelaysOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)

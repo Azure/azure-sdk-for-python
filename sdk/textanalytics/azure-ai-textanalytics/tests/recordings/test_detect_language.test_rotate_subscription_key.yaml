@@ -16,21 +16,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":0.99},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":0.99},"warnings":[]}],"errors":[],"modelVersion":"2021-01-05"}'
     headers:
       apim-request-id:
-      - 74a87786-d8f1-4648-974d-d7e33c404d9e
+      - 7236e2fa-d62b-4ed9-b81c-b4a64b198423
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 23 Jun 2021 01:53:21 GMT
+      - Wed, 06 Oct 2021 21:04:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '7'
     status:
       code: 200
       message: OK
@@ -59,9 +59,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=false
   response:
     body:
       string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
@@ -69,13 +69,13 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       apim-request-id:
-      - 91747a62-8d78-4e93-8128-85394a122339
+      - d7c848ed-efcd-4621-bf98-4ed1210aa94a
       content-length:
       - '224'
       content-type:
       - application/json
       date:
-      - Wed, 23 Jun 2021 01:53:21 GMT
+      - Wed, 06 Oct 2021 21:04:12 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -96,21 +96,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":0.99},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":0.99},"warnings":[]}],"errors":[],"modelVersion":"2021-01-05"}'
     headers:
       apim-request-id:
-      - 6c543f55-fff6-447d-a6d3-2d20e0730fb5
+      - 6dac516a-8cbe-4736-8ad4-9d6967edbf4c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 23 Jun 2021 01:53:21 GMT
+      - Wed, 06 Oct 2021 21:04:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -118,7 +118,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '11'
+      - '8'
     status:
       code: 200
       message: OK

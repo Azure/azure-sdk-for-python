@@ -25,7 +25,7 @@ class OperationsResultsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.kusto.models
+    :type models: ~kusto_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -44,7 +44,7 @@ class OperationsResultsOperations:
         self,
         location: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationResult":
         """Returns operation results.
 
@@ -54,7 +54,7 @@ class OperationsResultsOperations:
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.OperationResult
+        :rtype: ~kusto_management_client.models.OperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResult"]
@@ -62,7 +62,7 @@ class OperationsResultsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL

@@ -571,10 +571,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_incorrect_credential_scopes(self, containerregistry_endpoint):
+    def test_construct_container_registry_client(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
-        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, credential_scopes="https://microsoft.com")
 
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com")
         with pytest.raises(ClientAuthenticationError):
             properties = client.get_repository_properties(HELLO_WORLD)
+        
+        with pytest.raises(ValueError):
+            client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)

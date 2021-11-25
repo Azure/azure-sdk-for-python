@@ -49,7 +49,7 @@ class BindingsOperations:
         service_name: str,
         app_name: str,
         binding_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BindingResource":
         """Get a Binding and its properties.
 
@@ -117,7 +117,7 @@ class BindingsOperations:
         app_name: str,
         binding_name: str,
         binding_resource: "_models.BindingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BindingResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BindingResource"]
         error_map = {
@@ -181,7 +181,7 @@ class BindingsOperations:
         app_name: str,
         binding_name: str,
         binding_resource: "_models.BindingResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BindingResource"]:
         """Create a new Binding or update an exiting Binding.
 
@@ -198,8 +198,8 @@ class BindingsOperations:
         :type binding_resource: ~azure.mgmt.appplatform.v2020_07_01.models.BindingResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BindingResource or the result of cls(response)
@@ -262,7 +262,7 @@ class BindingsOperations:
         service_name: str,
         app_name: str,
         binding_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -310,7 +310,7 @@ class BindingsOperations:
         service_name: str,
         app_name: str,
         binding_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Operation to delete a Binding.
 
@@ -325,8 +325,8 @@ class BindingsOperations:
         :type binding_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -386,7 +386,7 @@ class BindingsOperations:
         app_name: str,
         binding_name: str,
         binding_resource: "_models.BindingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BindingResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BindingResource"]
         error_map = {
@@ -447,7 +447,7 @@ class BindingsOperations:
         app_name: str,
         binding_name: str,
         binding_resource: "_models.BindingResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BindingResource"]:
         """Operation to update an exiting Binding.
 
@@ -464,8 +464,8 @@ class BindingsOperations:
         :type binding_resource: ~azure.mgmt.appplatform.v2020_07_01.models.BindingResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BindingResource or the result of cls(response)
@@ -527,7 +527,7 @@ class BindingsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BindingResourceCollection"]:
         """Handles requests to list all resources in an App.
 

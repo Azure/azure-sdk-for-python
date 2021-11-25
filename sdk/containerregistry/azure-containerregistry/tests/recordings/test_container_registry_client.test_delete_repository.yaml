@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -32,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:30 GMT
+      - Fri, 12 Nov 2021 00:20:59 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -57,13 +57,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1343'
+      - '1337'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
   response:
     body:
       string: '{"refresh_token": "REDACTED"}'
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:32 GMT
+      - Fri, 12 Nov 2021 00:20:59 GMT
       server:
       - openresty
       strict-transport-security:
@@ -81,7 +81,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.583333'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -95,13 +95,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1136'
+      - '1146'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -111,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:32 GMT
+      - Fri, 12 Nov 2021 00:20:59 GMT
       server:
       - openresty
       strict-transport-security:
@@ -119,7 +119,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.5'
+      - '166.566667'
     status:
       code: 200
       message: OK
@@ -135,21 +135,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted?api-version=2021-07-01
   response:
     body:
-      string: '{"manifestsDeleted": ["sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
-        "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
-        "sha256:7fed95756fe4ebeb6eb1d82c2176e0800a02807cc66fe48beb179e57c54ddcf1",
-        "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
-        "sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343",
-        "sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d",
-        "sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98",
-        "sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf",
-        "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9"],
+      string: '{"manifestsDeleted": ["sha256:01433e86a06b752f228e3c17394169a5e21a0995f153268a9b36a16d4f2b2184",
+        "sha256:251bb7a536c7cce3437758971aab3a31c6da52fb43ff0654cff5b167c4486409",
+        "sha256:7b8b7289d0536a08eabdf71c20246e23f7116641db7e1d278592236ea4dcb30c",
+        "sha256:96ebeec770e1af26469c98913277e1c3b40933202ca398cefc16177c3f26cc75",
+        "sha256:98c9722322be649df94780d3fbe594fce7996234b259f27eac9428b84050c849",
+        "sha256:b836bb24a270b9cc935962d8228517fde0f16990e88893d935efcb1b14c0017a",
+        "sha256:c2f204d26b4ea353651385001bb6bc371d8c4edcd9daf61d00ad365d927e00c0",
+        "sha256:c7b6944911848ce39b44ed660d95fb54d69bbd531de724c7ce6fc9f743c0b861",
+        "sha256:cb76c852a47032c7c42335ca57deeb72b0ff077557b61e3c99e0677ecdeec575",
+        "sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685",
+        "sha256:f130bd2d67e6e9280ac6d0a6c83857bfaf70234e8ef4236876eccfbd30973b1c",
+        "sha256:f54a58bc1aac5ea1a25d796ae155dc228b3f0e11d046ae276b39c4bf2f13d8c4"],
         "tagsDeleted": ["latest"]}'
     headers:
       access-control-expose-headers:
@@ -160,11 +162,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '788'
+      - '936'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:34 GMT
+      - Fri, 12 Nov 2021 00:21:01 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -189,7 +191,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
@@ -210,7 +212,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:34 GMT
+      - Fri, 12 Nov 2021 00:21:01 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -226,6 +228,44 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1337'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 12 Nov 2021 00:21:01 GMT
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '166.55'
+    status:
+      code: 200
+      message: OK
+- request:
     body: service=fake_url.azurecr.io&scope=registry%3Acatalog%3A%2A&refresh_token=REDACTED&grant_type=refresh_token
     headers:
       Accept:
@@ -235,13 +275,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1125'
+      - '1135'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -251,7 +291,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:34 GMT
+      - Fri, 12 Nov 2021 00:21:01 GMT
       server:
       - openresty
       strict-transport-security:
@@ -259,7 +299,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.483333'
+      - '166.533333'
     status:
       code: 200
       message: OK
@@ -273,21 +313,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo13cf14de",
-        "repo25ce0f5d", "repo26ab150f", "repo27331535", "repo28471541", "repo2915152d",
-        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3db51597",
-        "repo3dc21571", "repo3e8d15a3", "repo41a21dd2", "repo6969166d", "repo6a411679",
-        "repo7bda1b05", "repo7cee1b11", "repo80c61ece", "repo84e316ff", "repo8b5a11da",
-        "repo93d41b55", "repo99be175b", "repo9b321760", "repo9cb4121e", "repoaf17178c",
-        "repoaf8812b0", "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc1b5131a",
-        "repoc1b812f4", "repoc28d1326", "repod2be1c42", "repodf771888", "repoe08b1894",
-        "repoeb7113db", "repof94c18ea", "repofa2418f6", "repos6ce51658", "reposetb7cc1bf8",
-        "reposetmani160e197b"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
+        "repo26ab150f", "repo27741d6f", "repo2b381dc2", "repo2bef19cb", "repo45431dd7",
+        "repo60eb1a9e", "repo63d41ad4", "repo6969166d", "repo80c61ece", "repo816516e9",
+        "repo93d41b55", "repoaf8317b0", "repoc1b812f4", "repodf771888", "repoec051cb9"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -297,11 +331,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '695'
+      - '301'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:35 GMT
+      - Fri, 12 Nov 2021 00:21:02 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

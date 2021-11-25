@@ -813,6 +813,26 @@ class SendReadReceiptRequest(msrest.serialization.Model):
         self.chat_message_id = kwargs['chat_message_id']
 
 
+class SendTypingNotificationRequest(msrest.serialization.Model):
+    """Request payload for typing notifications.
+
+    :param sender_display_name: The display name of the typing notification sender. This property
+     is used to populate sender name for push notifications.
+    :type sender_display_name: str
+    """
+
+    _attribute_map = {
+        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SendTypingNotificationRequest, self).__init__(**kwargs)
+        self.sender_display_name = kwargs.get('sender_display_name', None)
+
+
 class UpdateChatMessageRequest(msrest.serialization.Model):
     """Request payload for updating a chat message.
 

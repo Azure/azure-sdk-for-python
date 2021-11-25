@@ -12,26 +12,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["good
         food","restaurant"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: 8b41b087-3247-4a44-a730-763e41ab2178
+      apim-request-id: f54f848f-3a06-4c2b-85d7-a1596ffd4109
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Wed, 23 Jun 2021 01:55:05 GMT
+      date: Wed, 06 Oct 2021 21:04:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '12'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/keyPhrases?showStats=false
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -45,23 +45,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
         key or wrong API endpoint. Make sure to provide a valid key for an active
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: e7cb1344-6ee7-4fbf-8351-34a67885a1bf
+      apim-request-id: 2caddd03-5452-49ff-adfd-ab8f2dd9222f
       content-length: '224'
       content-type: application/json
-      date: Wed, 23 Jun 2021 01:55:05 GMT
+      date: Wed, 06 Oct 2021 21:04:45 GMT
     status:
       code: 401
       message: PermissionDenied
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/keyPhrases?showStats=false
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -75,24 +75,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["good
         food","restaurant"],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}'
     headers:
-      apim-request-id: 4b7438c5-2f0d-4649-a34e-9ea78e12537c
+      apim-request-id: ce37d17a-16cf-4c23-9ebc-b4cb254c2454
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
-      date: Wed, 23 Jun 2021 01:55:05 GMT
+      date: Wed, 06 Oct 2021 21:04:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '16'
+      x-envoy-upstream-service-time: '12'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/keyPhrases?showStats=false
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/keyPhrases?showStats=false
 version: 1

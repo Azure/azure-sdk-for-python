@@ -1403,7 +1403,7 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The vault name.
     :type name: str
-    :ivar type: Required. The type of resource, Microsoft.KeyVault/vaults. Default value:
+    :ivar type: The type of resource, Microsoft.KeyVault/vaults. Has constant value:
      "Microsoft.KeyVault/vaults".
     :vartype type: str
     """
@@ -1545,10 +1545,10 @@ class VaultPatchProperties(msrest.serialization.Model):
     :type enable_soft_delete: bool
     :param enable_rbac_authorization: Property that controls how data actions are authorized. When
      true, the key vault will use Role Based Access Control (RBAC) for authorization of data
-     actions, and the access policies specified in vault properties will be  ignored (warning: this
-     is a preview feature). When false, the key vault will use the access policies specified in
-     vault properties, and any policy stored on Azure Resource Manager will be ignored. If null or
-     not specified, the value of this property will not change.
+     actions, and the access policies specified in vault properties will be  ignored. When false,
+     the key vault will use the access policies specified in vault properties, and any policy stored
+     on Azure Resource Manager will be ignored. If null or not specified, the value of this property
+     will not change.
     :type enable_rbac_authorization: bool
     :param soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
     :type soft_delete_retention_in_days: int
@@ -1652,11 +1652,10 @@ class VaultProperties(msrest.serialization.Model):
     :type soft_delete_retention_in_days: int
     :param enable_rbac_authorization: Property that controls how data actions are authorized. When
      true, the key vault will use Role Based Access Control (RBAC) for authorization of data
-     actions, and the access policies specified in vault properties will be  ignored (warning: this
-     is a preview feature). When false, the key vault will use the access policies specified in
-     vault properties, and any policy stored on Azure Resource Manager will be ignored. If null or
-     not specified, the vault is created with the default value of false. Note that management
-     actions are always authorized with RBAC.
+     actions, and the access policies specified in vault properties will be  ignored. When false,
+     the key vault will use the access policies specified in vault properties, and any policy stored
+     on Azure Resource Manager will be ignored. If null or not specified, the vault is created with
+     the default value of false. Note that management actions are always authorized with RBAC.
     :type enable_rbac_authorization: bool
     :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
      or not. Possible values include: "recover", "default".
@@ -1749,8 +1748,7 @@ class VirtualNetworkRule(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param id: Required. Full resource id of a vnet subnet, such as
-     '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-
-     vnet/subnets/subnet1'.
+     '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
     :type id: str
     :param ignore_missing_vnet_service_endpoint: Property to specify whether NRP will ignore the
      check if parent subnet has serviceEndpoints configured.

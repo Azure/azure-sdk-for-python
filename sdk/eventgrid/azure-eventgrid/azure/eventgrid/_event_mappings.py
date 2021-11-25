@@ -90,6 +90,38 @@ class SystemEventNames(str, Enum):
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
 
+    AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
+
+    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.ApiCreated'
+
+    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.ApiDeleted'
+
+    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.ApiReleaseCreated'
+
+    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.ApiReleaseDeleted'
+
+    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
+
+    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
+
+    ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
+
+    ApiManagementProductDeletedEventName = 'Microsoft.ApiManagement.ProductDeleted'
+
+    ApiManagementProductUpdatedEventName = 'Microsoft.ApiManagement.ProductUpdated'
+
+    ApiManagementSubscriptionCreatedEventName = 'Microsoft.ApiManagement.SubscriptionCreated'
+
+    ApiManagementSubscriptionDeletedEventName = 'Microsoft.ApiManagement.SubscriptionDeleted'
+
+    ApiManagementSubscriptionUpdatedEventName = 'Microsoft.ApiManagement.SubscriptionUpdated'
+
+    ApiManagementUserCreatedEventName = 'Microsoft.ApiManagement.UserCreated'
+
+    ApiManagementUserDeletedEventName = 'Microsoft.ApiManagement.UserDeleted'
+
+    ApiManagementUserUpdatedEventName = 'Microsoft.ApiManagement.UserUpdated'
+
     AppConfigurationKeyValueDeletedEventName = 'Microsoft.AppConfiguration.KeyValueDeleted'
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
@@ -105,6 +137,8 @@ class SystemEventNames(str, Enum):
     ContainerRegistryImageDeletedEventName = 'Microsoft.ContainerRegistry.ImageDeleted'
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
+
+    ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
@@ -183,6 +217,8 @@ class SystemEventNames(str, Enum):
     MediaJobScheduledEventName = 'Microsoft.Media.JobScheduled'
 
     MediaJobStateChangeEventName = 'Microsoft.Media.JobStateChange'
+
+    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat'
 
     MediaLiveEventConnectionRejectedEventName = 'Microsoft.Media.LiveEventConnectionRejected'
 

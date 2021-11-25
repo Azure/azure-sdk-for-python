@@ -32,3 +32,5 @@ extends:
       safeName: azuremgmtmachinelearningservices
     - name: azure-mgmt-machinelearningcompute
       safeName: azuremgmtmachinelearningcompute
+    - name: azure-mgmt-guestconfig
+      safeName: azuremgmtguestconfig

@@ -48,7 +48,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         application_gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -94,7 +94,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         application_gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified private endpoint connection on application gateway.
 
@@ -106,8 +106,8 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -164,7 +164,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         application_gateway_name: str,
         connection_name: str,
         parameters: "_models.ApplicationGatewayPrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApplicationGatewayPrivateEndpointConnection"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationGatewayPrivateEndpointConnection"]]
         error_map = {
@@ -221,7 +221,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         application_gateway_name: str,
         connection_name: str,
         parameters: "_models.ApplicationGatewayPrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApplicationGatewayPrivateEndpointConnection"]:
         """Updates the specified private endpoint connection on application gateway.
 
@@ -236,8 +236,8 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         :type parameters: ~azure.mgmt.network.v2020_06_01.models.ApplicationGatewayPrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApplicationGatewayPrivateEndpointConnection or the result of cls(response)
@@ -297,7 +297,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         application_gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationGatewayPrivateEndpointConnection":
         """Gets the specified private endpoint connection on application gateway.
 
@@ -358,7 +358,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationGatewayPrivateEndpointConnectionListResult"]:
         """Lists all private endpoint connections on an application gateway.
 

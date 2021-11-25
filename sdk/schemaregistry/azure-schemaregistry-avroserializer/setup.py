@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------
 
 import re
+import sys
 import os.path
 from io import open
 from setuptools import find_packages, setup
@@ -37,8 +38,12 @@ exclude_packages = [
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.schemaregistry',
-        'azure.schemaregistry.serializer'
     ]
+install_packages = [
+    'azure-schemaregistry>=1.0.0,<2.0.0',
+    'avro==1.10.0',
+    'backports.functools-lru-cache >= 1.6.4; python_version == "2.7"'
+]
 
 setup(
     name=PACKAGE_NAME,
@@ -56,16 +61,14 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    install_requires=[
-        'azure-schemaregistry==1.0.0b1',
-        'avro<2.0.0,>=1.10.0'
-    ]
+    install_requires=install_packages
 )

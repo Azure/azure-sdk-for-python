@@ -78,7 +78,7 @@ class TopQueryStatisticsOperations(object):
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'queryStatisticId': self._serialize.url("query_statistic_id", query_statistic_id, 'str'),
         }
@@ -149,7 +149,7 @@ class TopQueryStatisticsOperations(object):
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)

@@ -15,7 +15,7 @@ from msrest.serialization import UTC
 from urllib.parse import urlparse
 import datetime as dt
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -29,7 +29,8 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer
 )
 
-class EventGridPublisherClientTests(AzureMgmtTestCase):
+
+class EventGridPublisherClientTests(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -329,3 +330,18 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     def test_send_NONE_credential_async(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
+
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @pytest.mark.asyncio
+    async def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        credential = self.get_credential(EventGridPublisherClient)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
+        eg_event = EventGridEvent(
+                subject="sample", 
+                data={"sample": "eventgridevent"}, 
+                event_type="Sample.EventGrid.Event",
+                data_version="2.0"
+                )
+        await client.send(eg_event)

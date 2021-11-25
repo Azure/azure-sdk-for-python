@@ -4,7 +4,7 @@
 
 The exporter for Azure Monitor allows you to export tracing data utilizing the OpenTelemetry SDK and send telemetry data to Azure Monitor for applications written in Python.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] || [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/CHANGELOG.md)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/CHANGELOG.md)
 
 ## Getting started
 
@@ -21,7 +21,7 @@ To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Monitor - [How to use application insights][application_insights_namespace]
 * Opentelemetry SDK - [Opentelemtry SDK for Python][ot_sdk_python]
-* Python 3.5 or later - [Install Python][python]
+* Python 3.6 or later - [Install Python][python]
 
 ### Instantiate the client
 
@@ -33,7 +33,7 @@ Please find the samples linked below for demonstration as to how to construct th
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 exporter = AzureMonitorTraceExporter.from_connection_string(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    conn_str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 ```
 

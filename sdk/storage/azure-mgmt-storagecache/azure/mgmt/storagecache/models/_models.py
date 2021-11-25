@@ -136,7 +136,7 @@ class AscOperation(msrest.serialization.Model):
     :param error: The error detail of the operation if any.
     :type error: ~storage_cache_management_client.models.ErrorResponse
     :param output: Additional operation-specific output.
-    :type output: dict[str, str]
+    :type output: dict[str, any]
     """
 
     _attribute_map = {
@@ -146,7 +146,7 @@ class AscOperation(msrest.serialization.Model):
         'end_time': {'key': 'endTime', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'output': {'key': 'properties.output', 'type': '{str}'},
+        'output': {'key': 'properties.output', 'type': '{object}'},
     }
 
     def __init__(
@@ -213,15 +213,16 @@ class Cache(msrest.serialization.Model):
     :vartype health: ~storage_cache_management_client.models.CacheHealth
     :ivar mount_addresses: Array of IP addresses that can be used by clients mounting this Cache.
     :vartype mount_addresses: list[str]
-    :param provisioning_state: ARM provisioning state, see
+    :ivar provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: "Succeeded", "Failed", "Cancelled", "Creating", "Deleting",
      "Updating".
-    :type provisioning_state: str or ~storage_cache_management_client.models.ProvisioningStateType
+    :vartype provisioning_state: str or
+     ~storage_cache_management_client.models.ProvisioningStateType
     :param subnet: Subnet used for the Cache.
     :type subnet: str
-    :param upgrade_status: Upgrade status of the Cache.
-    :type upgrade_status: ~storage_cache_management_client.models.CacheUpgradeStatus
+    :ivar upgrade_status: Upgrade status of the Cache.
+    :vartype upgrade_status: ~storage_cache_management_client.models.CacheUpgradeStatus
     :param network_settings: Specifies network settings of the cache.
     :type network_settings: ~storage_cache_management_client.models.CacheNetworkSettings
     :param encryption_settings: Specifies encryption settings of the cache.
@@ -240,6 +241,8 @@ class Cache(msrest.serialization.Model):
         'system_data': {'readonly': True},
         'health': {'readonly': True},
         'mount_addresses': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'upgrade_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -279,9 +282,9 @@ class Cache(msrest.serialization.Model):
         self.cache_size_gb = kwargs.get('cache_size_gb', None)
         self.health = None
         self.mount_addresses = None
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None
         self.subnet = kwargs.get('subnet', None)
-        self.upgrade_status = kwargs.get('upgrade_status', None)
+        self.upgrade_status = None
         self.network_settings = kwargs.get('network_settings', None)
         self.encryption_settings = kwargs.get('encryption_settings', None)
         self.security_settings = kwargs.get('security_settings', None)
@@ -412,10 +415,14 @@ class CacheEncryptionSettings(msrest.serialization.Model):
 
     :param key_encryption_key: Specifies the location of the key encryption key in Key Vault.
     :type key_encryption_key: ~storage_cache_management_client.models.KeyVaultKeyReference
+    :param rotation_to_latest_key_version_enabled: Specifies whether the service will automatically
+     rotate to the newest version of the key in the Key Vault.
+    :type rotation_to_latest_key_version_enabled: bool
     """
 
     _attribute_map = {
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
+        'rotation_to_latest_key_version_enabled': {'key': 'rotationToLatestKeyVersionEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -424,6 +431,7 @@ class CacheEncryptionSettings(msrest.serialization.Model):
     ):
         super(CacheEncryptionSettings, self).__init__(**kwargs)
         self.key_encryption_key = kwargs.get('key_encryption_key', None)
+        self.rotation_to_latest_key_version_enabled = kwargs.get('rotation_to_latest_key_version_enabled', None)
 
 
 class CacheHealth(msrest.serialization.Model):
@@ -465,13 +473,17 @@ class CacheIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar principal_id: The principal id of the cache.
+    :ivar principal_id: The principal ID for the system-assigned identity of the cache.
     :vartype principal_id: str
-    :ivar tenant_id: The tenant id associated with the cache.
+    :ivar tenant_id: The tenant ID associated with the cache.
     :vartype tenant_id: str
     :param type: The type of identity used for the cache. Possible values include:
-     "SystemAssigned", "None".
+     "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
     :type type: str or ~storage_cache_management_client.models.CacheIdentityType
+    :param user_assigned_identities: A dictionary where each key is a user assigned identity
+     resource ID, and each key's value is an empty dictionary.
+    :type user_assigned_identities: dict[str,
+     ~storage_cache_management_client.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -483,6 +495,7 @@ class CacheIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -493,6 +506,7 @@ class CacheIdentity(msrest.serialization.Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class CacheNetworkSettings(msrest.serialization.Model):
@@ -536,7 +550,7 @@ class CacheNetworkSettings(msrest.serialization.Model):
         self.utility_addresses = None
         self.dns_servers = kwargs.get('dns_servers', None)
         self.dns_search_domain = kwargs.get('dns_search_domain', None)
-        self.ntp_server = kwargs.get('ntp_server', None)
+        self.ntp_server = kwargs.get('ntp_server', "time.windows.com")
 
 
 class CacheSecuritySettings(msrest.serialization.Model):
@@ -1017,7 +1031,7 @@ class NamespaceJunction(msrest.serialization.Model):
         self.namespace_path = kwargs.get('namespace_path', None)
         self.target_path = kwargs.get('target_path', None)
         self.nfs_export = kwargs.get('nfs_export', None)
-        self.nfs_access_policy = kwargs.get('nfs_access_policy', None)
+        self.nfs_access_policy = kwargs.get('nfs_access_policy', "default")
 
 
 class Nfs3Target(msrest.serialization.Model):
@@ -1030,7 +1044,7 @@ class Nfs3Target(msrest.serialization.Model):
     """
 
     _validation = {
-        'target': {'pattern': r'^[-.0-9a-zA-Z]+$'},
+        'target': {'pattern': r'^[-.,0-9a-zA-Z]+$'},
     }
 
     _attribute_map = {
@@ -1370,11 +1384,15 @@ class StorageTarget(StorageTargetResource):
     :param target_type: Type of the Storage Target. Possible values include: "nfs3", "clfs",
      "unknown", "blobNfs".
     :type target_type: str or ~storage_cache_management_client.models.StorageTargetType
-    :param provisioning_state: ARM provisioning state, see
+    :ivar provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: "Succeeded", "Failed", "Cancelled", "Creating", "Deleting",
      "Updating".
-    :type provisioning_state: str or ~storage_cache_management_client.models.ProvisioningStateType
+    :vartype provisioning_state: str or
+     ~storage_cache_management_client.models.ProvisioningStateType
+    :param state: Storage target operational state. Possible values include: "Ready", "Busy",
+     "Suspended", "Flushing".
+    :type state: str or ~storage_cache_management_client.models.OperationalStateType
     :param nfs3: Properties when targetType is nfs3.
     :type nfs3: ~storage_cache_management_client.models.Nfs3Target
     :param clfs: Properties when targetType is clfs.
@@ -1391,6 +1409,7 @@ class StorageTarget(StorageTargetResource):
         'type': {'readonly': True},
         'location': {'readonly': True},
         'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1402,6 +1421,7 @@ class StorageTarget(StorageTargetResource):
         'junctions': {'key': 'properties.junctions', 'type': '[NamespaceJunction]'},
         'target_type': {'key': 'properties.targetType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'nfs3': {'key': 'properties.nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'properties.clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'properties.unknown', 'type': 'UnknownTarget'},
@@ -1415,7 +1435,8 @@ class StorageTarget(StorageTargetResource):
         super(StorageTarget, self).__init__(**kwargs)
         self.junctions = kwargs.get('junctions', None)
         self.target_type = kwargs.get('target_type', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None
+        self.state = kwargs.get('state', None)
         self.nfs3 = kwargs.get('nfs3', None)
         self.clfs = kwargs.get('clfs', None)
         self.unknown = kwargs.get('unknown', None)
@@ -1574,3 +1595,33 @@ class UsageModelsResult(msrest.serialization.Model):
         super(UsageModelsResult, self).__init__(**kwargs)
         self.next_link = kwargs.get('next_link', None)
         self.value = kwargs.get('value', None)
+
+
+class UserAssignedIdentitiesValue(msrest.serialization.Model):
+    """UserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the user-assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the user-assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None

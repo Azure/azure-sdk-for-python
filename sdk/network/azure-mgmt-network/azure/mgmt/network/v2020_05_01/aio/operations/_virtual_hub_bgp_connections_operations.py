@@ -45,7 +45,7 @@ class VirtualHubBgpConnectionsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualHubBgpConnectionResults"]:
         """Retrieves the details of all VirtualHubBgpConnections.
 

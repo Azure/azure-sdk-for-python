@@ -10,14 +10,15 @@ from typing import (
     Dict,
     Mapping,
     Optional,
-    List
+    List,
+    Tuple
 )
 
 from azure.core import MatchConditions
 
 from ._common_conversion import _transform_patch_to_cosmos_post
-from ._models import UpdateMode
-from ._serialize import _get_match_headers, _add_entity_properties
+from ._models import UpdateMode, TransactionOperation
+from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._entity import TableEntity
 
 if TYPE_CHECKING:
@@ -26,8 +27,10 @@ if TYPE_CHECKING:
     from ._generated import models, AzureTable
     from ._generated._configuration import AzureTableConfiguration
 
-EntityType = Union[TableEntity, Mapping[str, Any]]
 
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class TableBatchOperations(object):
@@ -90,6 +93,18 @@ class TableBatchOperations(object):
             self._partition_key = entity["PartitionKey"]
         elif entity["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys must all be the same")
+
+    def add_operation(self, operation):
+        # type: (TransactionOperationType) -> None
+        """Add a single operation to a batch."""
+        try:
+            operation_type, entity, kwargs = operation  # type: ignore
+        except ValueError:
+            operation_type, entity, kwargs = operation[0], operation[1], {}  # type: ignore
+        try:
+            getattr(self, operation_type.lower())(entity, **kwargs)
+        except AttributeError:
+            raise ValueError("Unrecognized operation: {}".format(operation))
 
     def create(
         self,
@@ -258,10 +273,11 @@ class TableBatchOperations(object):
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
-        if mode is UpdateMode.REPLACE:
+
+        if mode == UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -270,7 +286,7 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        elif mode is UpdateMode.MERGE:
+        elif mode == UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -279,6 +295,8 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
+        else:
+            raise ValueError("Mode type '{}' is not supported.".format(mode))
 
     def _batch_update_entity(
         self,
@@ -523,8 +541,8 @@ class TableBatchOperations(object):
         """
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
@@ -664,11 +682,11 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         temp = entity.copy()  # type: ignore
 
-        partition_key = temp["PartitionKey"]
-        row_key = temp["RowKey"]
+        partition_key = _prepare_key(temp["PartitionKey"])
+        row_key = _prepare_key(temp["RowKey"])
         temp = _add_entity_properties(temp)
 
-        if mode is UpdateMode.MERGE:
+        if mode == UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -676,7 +694,7 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        elif mode is UpdateMode.REPLACE:
+        elif mode == UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -684,3 +702,5 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
+        else:
+            raise ValueError("Mode type '{}' is not supported.".format(mode))

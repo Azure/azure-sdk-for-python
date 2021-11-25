@@ -46,7 +46,7 @@ class TriggerRunsOperations:
         factory_name: str,
         trigger_name: str,
         run_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Rerun single trigger instance by runId.
 
@@ -109,7 +109,7 @@ class TriggerRunsOperations:
         factory_name: str,
         trigger_name: str,
         run_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancel a single trigger instance by runId.
 
@@ -171,7 +171,7 @@ class TriggerRunsOperations:
         resource_group_name: str,
         factory_name: str,
         filter_parameters: "_models.RunFilterParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TriggerRunsQueryResponse":
         """Query trigger runs.
 

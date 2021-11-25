@@ -171,7 +171,7 @@ from devtools_testutils import PowerShellPreparer
 
 MyServicePreparer = functools.partial(
     PowerShellPreparer, "<my_service_directory>",
-    schemaregistry_endpoint="fake_resource.servicebus.windows.net",
+    schemaregistry_endpoint="fake_resource.servicebus.windows.net/",
     schemaregistry_group="fakegroup"
 )
 ```
@@ -195,7 +195,7 @@ from azure.schemaregistry import SchemaRegistryClient
 
 SchemaRegistryPreparer = functools.partial(
     PowerShellPreparer, 'schemaregistry',
-    schemaregistry_endpoint="fake_resouce.servicebus.windows.net",
+    schemaregistry_endpoint="fake_resource.servicebus.windows.net/",
     schemaregistry_group="fakegroup"
 )
 

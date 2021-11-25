@@ -1,6 +1,46 @@
 # Release History
 
-## 12.9.0b1 (Unreleased)
+## 12.10.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.10.0b1 (2021-11-08)
+**New Features**
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+- Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`)
+- Encryption Scope is now supported as a SAS permission
+
+**Fixes**
+- Blob Client Typing annotation issues have been resolved, specifically `invalid type inference` issues (#19906)
+- Duplicate type signature issue has been resolved (#19739) 
+
+## 12.9.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+## 12.9.0b1 (2021-07-27)
+**New Features**
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
+**Fixes**
+- Fixed a bug for get_block_list (#16314)
+- Ensured that download fails if blob modified mid download
+- Enabled exists() for CPK encrypted blobs (#18041)
+
+**Notes**
+- Deprecated new_name in for undelete container operation
 
 ## 12.8.1 (2021-04-20)
 **Fixes**

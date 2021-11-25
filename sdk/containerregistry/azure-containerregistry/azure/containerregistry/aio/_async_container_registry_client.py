@@ -26,15 +26,18 @@ if TYPE_CHECKING:
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, *, audience, **kwargs: Any) -> None:
         """Create a ContainerRegistryClient from an endpoint and a credential
 
         :param endpoint: An ACR endpoint
         :type endpoint: str
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
-        :keyword credential_scopes: URL for credential authentication if different from the default
-        :paramtype credential_scopes: List[str]
+        :keyword audience: URL to use for credential authentication with AAD. Its value could be
+        "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
+        "https://management.usgovcloudapi.net"
+        :paramtype audience: ~azure.containerregistry.ContainerRegistryAudience or str
         :returns: None
         :raises: None
 
@@ -47,11 +50,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
         """
+        defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super(ContainerRegistryClient, self).__init__(
+            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)
@@ -589,11 +594,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_list = kwargs.pop("can_list", properties.can_list)
         properties.can_read = kwargs.pop("can_read", properties.can_read)
         properties.can_write = kwargs.pop("can_write", properties.can_write)
-        properties.teleport_enabled = kwargs.pop("teleport_enabled", None)
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.set_properties(
-                repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+            await self._client.container_registry.update_properties(
+                repository, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 

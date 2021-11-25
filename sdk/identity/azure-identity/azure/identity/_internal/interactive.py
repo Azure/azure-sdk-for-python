@@ -109,8 +109,7 @@ class InteractiveCredential(MsalCredential, ABC):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
           claims challenge following an authorization failure
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

@@ -30,7 +30,7 @@ class ResourceManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
     """
 

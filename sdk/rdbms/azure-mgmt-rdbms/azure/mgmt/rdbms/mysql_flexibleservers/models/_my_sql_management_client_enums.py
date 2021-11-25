@@ -26,6 +26,22 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ConfigurationSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Source of the configuration.
+    """
+
+    SYSTEM_DEFAULT = "system-default"
+    USER_OVERRIDE = "user-override"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The mode to create a new MySQL server.
     """
@@ -33,23 +49,32 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "Default"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
     REPLICA = "Replica"
+    GEO_RESTORE = "GeoRestore"
 
-class HaEnabledEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not HA is enabled for this server. Value is optional but if passed in, must be
-    'Enabled' or 'Disabled'
+class EnableStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to indicate whether value is 'Enabled' or 'Disabled'
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class InfrastructureEncryptionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Add a second layer of encryption for your data using new encryption algorithm which gives
-    additional data protection. Value is optional but if passed in, must be 'Disabled' or
-    'Enabled'.
+class HighAvailabilityMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """High availability mode for a server.
     """
 
-    ENABLED = "Enabled"
     DISABLED = "Disabled"
+    ZONE_REDUNDANT = "ZoneRedundant"
+    SAME_ZONE = "SameZone"
+
+class HighAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of server high availability.
+    """
+
+    NOT_ENABLED = "NotEnabled"
+    CREATING_STANDBY = "CreatingStandby"
+    HEALTHY = "Healthy"
+    FAILING_OVER = "FailingOver"
+    REMOVING_STANDBY = "RemovingStandby"
 
 class IsConfigPendingRestart(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """If is the configuration pending restart or not.
@@ -72,38 +97,13 @@ class IsReadOnly(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TRUE = "True"
     FALSE = "False"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The intended executor of the operation.
+class ReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The replication role.
     """
 
-    NOT_SPECIFIED = "NotSpecified"
-    USER = "user"
-    SYSTEM = "system"
-
-class PublicNetworkAccessEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not public network access is allowed for this server. Value is optional but if
-    passed in, must be 'Enabled' or 'Disabled'
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-class ServerHAState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of a HA server.
-    """
-
-    NOT_ENABLED = "NotEnabled"
-    CREATING_STANDBY = "CreatingStandby"
-    REPLICATING_DATA = "ReplicatingData"
-    FAILING_OVER = "FailingOver"
-    HEALTHY = "Healthy"
-    REMOVING_STANDBY = "RemovingStandby"
-
-class ServerKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The key type like 'AzureKeyVault'.
-    """
-
-    AZURE_KEY_VAULT = "AzureKeyVault"
+    NONE = "None"
+    SOURCE = "Source"
+    REPLICA = "Replica"
 
 class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of a server.
@@ -122,6 +122,7 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     FIVE7 = "5.7"
+    EIGHT0_21 = "8.0.21"
 
 class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The tier of the particular SKU, e.g. GeneralPurpose.
@@ -130,17 +131,3 @@ class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BURSTABLE = "Burstable"
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
-
-class SslEnforcementEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable ssl enforcement or not when connect to server.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-class StorageAutogrow(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable Storage Auto Grow.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"

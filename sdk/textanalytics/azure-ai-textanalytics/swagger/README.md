@@ -3,7 +3,7 @@
 To generate this file, simply type
 
 ```
-autorest swagger/README.md
+autorest swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
 ```
 
 We automatically hardcode in that this is `python` and `multiapi`.
@@ -28,15 +28,16 @@ multiapi: true
 batch:
   - tag: release_3_0
   - tag: release_3_1
+  - tag: release_3_2_preview.2
   - multiapiscript: true
 ```
 
 ## Multiapiscript
 
 ```yaml $(multiapiscript)
-output-folder: ../azure/ai/textanalytics/_generated/
-default-api: v3_1
-clear-output-folder: false
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/
+default-api: v3_2_preview_2
+clear-output-folder: true
 perform-load: false
 ```
 
@@ -45,9 +46,9 @@ perform-load: false
 These settings apply only when `--tag=release_3_0` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_0'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.0/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_0
-output-folder: ../azure/ai/textanalytics/_generated/v3_0
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_0
 ```
 
 ## Release 3.1
@@ -55,9 +56,19 @@ output-folder: ../azure/ai/textanalytics/_generated/v3_0
 These settings apply only when `--tag=release_3_1` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_1
-output-folder: ../azure/ai/textanalytics/_generated/v3_1
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_1
+```
+
+## Release 3.2-preview.2
+
+These settings apply only when `--tag=release_3_2_preview.2` is specified on the command line.
+
+```yaml $(tag) == 'release_3_2_preview.2'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.2/TextAnalytics.json
+namespace: azure.ai.textanalytics.v3_2_preview_2
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_2_preview_2
 ```
 
 ### Override Analyze's pager poller
@@ -88,7 +99,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override parameterizing the ApiVersion
+### Override parameterizing the ApiVersion v3.1
 
 ```yaml $(tag) == 'release_3_1'
 directive:
@@ -96,5 +107,16 @@ directive:
     where: '$["x-ms-parameterized-host"]'
     transform: >
       $["hostTemplate"] = "{Endpoint}/text/analytics/v3.1";
+      $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
+```
+
+### Override parameterizing the ApiVersion v3.2-preview.2
+
+```yaml $(tag) == 'release_3_2_preview.2'
+directive:
+  - from: swagger-document
+    where: '$["x-ms-parameterized-host"]'
+    transform: >
+      $["hostTemplate"] = "{Endpoint}/text/analytics/v3.2-preview.2";
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```

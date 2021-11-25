@@ -10,24 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"offset":0,"length":28,"text":"Test
         passing cls to endpoint"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 40b1f15f-d3ef-42f4-a480-d8b5f2381bab
+      apim-request-id: 96dd1477-31f2-49fe-b583-faebd46ae839
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 23 Jun 2021 01:49:05 GMT
+      date: Wed, 06 Oct 2021 21:03:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '86'
+      x-envoy-upstream-service-time: '97'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

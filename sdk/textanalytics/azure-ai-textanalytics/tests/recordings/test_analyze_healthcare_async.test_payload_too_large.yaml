@@ -8509,23 +8509,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Request
         Payload sent is too large to be processed. Limit request size to: 524288"}}}'
     headers:
-      apim-request-id: 559588c5-9d69-42af-b48f-3b74f5c39cad
+      apim-request-id: a67470ed-2188-46a6-b067-7c22c1423e38
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:47:51 GMT
+      date: Wed, 06 Oct 2021 21:03:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '25'
+      x-envoy-upstream-service-time: '26'
     status:
       code: 413
       message: Payload Too Large
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
 version: 1

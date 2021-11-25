@@ -1,3 +1,4 @@
 -e ../../../tools/azure-sdk-tools
--e ../azure-mgmt-cognitiveservices
+azure-mgmt-cognitiveservices<12.0.0
 -e ../../../tools/azure-devtools
+azure-core

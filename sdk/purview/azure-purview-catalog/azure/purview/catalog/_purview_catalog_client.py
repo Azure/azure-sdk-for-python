@@ -10,85 +10,97 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.purview.catalog.core.rest import HttpResponse, _StreamContextManager
 from msrest import Deserializer, Serializer
+
+from ._configuration import PurviewCatalogClientConfiguration
+from .operations import CollectionOperations, DiscoveryOperations, EntityOperations, GlossaryOperations, LineageOperations, RelationshipOperations, TypesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.purview.catalog.core.rest import HttpRequest
-
-from ._configuration import PurviewCatalogClientConfiguration
-
+    from azure.core.rest import HttpRequest, HttpResponse
 
 class PurviewCatalogClient(object):
     """Purview Catalog Service is a fully managed cloud service whose users can discover the data sources they need and understand the data sources they find. At the same time, Data Catalog helps organizations get more value from their existing investments. This spec defines REST API of Purview Catalog Service.
 
+    :ivar entity: EntityOperations operations
+    :vartype entity: azure.purview.catalog.operations.EntityOperations
+    :ivar glossary: GlossaryOperations operations
+    :vartype glossary: azure.purview.catalog.operations.GlossaryOperations
+    :ivar discovery: DiscoveryOperations operations
+    :vartype discovery: azure.purview.catalog.operations.DiscoveryOperations
+    :ivar lineage: LineageOperations operations
+    :vartype lineage: azure.purview.catalog.operations.LineageOperations
+    :ivar relationship: RelationshipOperations operations
+    :vartype relationship: azure.purview.catalog.operations.RelationshipOperations
+    :ivar types: TypesOperations operations
+    :vartype types: azure.purview.catalog.operations.TypesOperations
+    :ivar collection: CollectionOperations operations
+    :vartype collection: azure.purview.catalog.operations.CollectionOperations
+    :param endpoint: The catalog endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
-    :type endpoint: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         endpoint,  # type: str
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{Endpoint}/api'
-        self._config = PurviewCatalogClientConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _endpoint = '{Endpoint}/catalog/api'
+        self._config = PurviewCatalogClientConfiguration(endpoint, credential, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.entity = EntityOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.glossary = GlossaryOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.discovery = DiscoveryOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.lineage = LineageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.relationship = RelationshipOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.types = TypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+
+    def send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.purview.catalog.rest`.
-        Use these helper methods to create the request you pass to this method. See our example below:
-
-        >>> from azure.purview.catalog.rest import build_create_or_update_request
-        >>> request = build_create_or_update_request(json, content)
-        <HttpRequest [POST], url: '/atlas/v2/entity'>
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
-        For advanced cases, you can also create your own :class:`~azure.purview.catalog.core.rest.HttpRequest`
-        and pass it in.
-
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.purview.catalog.core.rest.HttpRequest
-        :keyword bool stream_response: Whether the response payload will be streamed. Defaults to False.
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.purview.catalog.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        request_copy = deepcopy(http_request)
+
+        request_copy = deepcopy(request)
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
+
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        if kwargs.pop("stream_response", False):
-            return _StreamContextManager(
-                client=self._client._pipeline,
-                request=request_copy,
-            )
-        pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)
-        response = HttpResponse(
-            status_code=pipeline_response.http_response.status_code,
-            request=request_copy,
-            _internal_response=pipeline_response.http_response
-        )
-        response.read()
-        return response
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

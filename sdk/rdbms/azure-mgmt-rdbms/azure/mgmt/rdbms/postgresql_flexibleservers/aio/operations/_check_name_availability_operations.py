@@ -25,7 +25,7 @@ class CheckNameAvailabilityOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~postgre_sql_management_client.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,10 +49,10 @@ class CheckNameAvailabilityOperations:
 
         :param name_availability_request: The required parameters for checking if resource name is
          available.
-        :type name_availability_request: ~postgre_sql_management_client.models.NameAvailabilityRequest
+        :type name_availability_request: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.NameAvailabilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailability, or the result of cls(response)
-        :rtype: ~postgre_sql_management_client.models.NameAvailability
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.NameAvailability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NameAvailability"]
@@ -97,4 +97,4 @@ class CheckNameAvailabilityOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/checkNameAvailability'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/checkNameAvailability'}  # type: ignore

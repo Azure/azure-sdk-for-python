@@ -31,6 +31,8 @@ class CacheIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -98,6 +100,15 @@ class NfsAccessRuleScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "default"
     NETWORK = "network"
     HOST = "host"
+
+class OperationalStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Storage target operational state.
+    """
+
+    READY = "Ready"
+    BUSY = "Busy"
+    SUSPENDED = "Suspended"
+    FLUSHING = "Flushing"
 
 class ProvisioningStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """ARM provisioning state, see

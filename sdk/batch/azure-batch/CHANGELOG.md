@@ -1,5 +1,34 @@
 # Release History
 
+## 11.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.0.0 (2021-07-30)
+
+### Features
+
+- Add ability to assign user-assigned managed identities to `CloudPool`. These identities will be made available on each node in the pool, and can be used to access various resources.
+- Added `identity_reference` property to the following models to support accessing resources via managed identity:
+  - `AzureBlobFileSystemConfiguration`
+  - `OutputFileBlobContainerDestination`
+  - `ContainerRegistry`
+  - `ResourceFile`
+  - `UploadBatchServiceLogsConfiguration`
+- Added new `compute_node_extension` operations to `BatchServiceClient` for getting/listing VM extensions on a node
+- Added new `extensions` property to `VirtualMachineConfiguration` on `CloudPool` to specify virtual machine extensions for nodes
+- Added the ability to specify availability zones using a new property `node_placement_configuration` on `VirtualMachineConfiguration`
+- Added new `os_disk` property to `VirtualMachineConfiguration`, which contains settings for the operating system disk of the Virtual Machine.
+  - The `placement` property on `DiffDiskSettings` specifies the ephemeral disk placement for operating system disks for all VMs in the pool. Setting it to "CacheDisk" will store the ephemeral OS disk on the VM cache.
+- Added `max_parallel_tasks` property on `CloudJob` to control the maximum allowed tasks per job (defaults to -1, meaning unlimited).
+- Added `virtual_machine_info` property on `ComputeNode` which contains information about the current state of the virtual machine, including the exact version of the marketplace image the VM is using.
+
 ## 10.0.0 (2020-09-01)
 
 ### Features

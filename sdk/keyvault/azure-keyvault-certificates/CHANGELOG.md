@@ -1,15 +1,32 @@
 # Release History
 
-## 4.3.1 (Unreleased)
+## 4.4.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+### Bugs Fixed
 
-### Fixed
+### Other Changes
 
+## 4.4.0b2 (2021-11-11)
+
+### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
+
+## 4.4.0b1 (2021-09-09)
+
+### Features Added
+- Key Vault API version 7.3-preview is now the default
+
+### Other Changes
+- Updated type hints to fix mypy errors
+  ([#19158](https://github.com/Azure/azure-sdk-for-python/issues/19158))
 
 ## 4.3.0 (2021-06-22)
 This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.

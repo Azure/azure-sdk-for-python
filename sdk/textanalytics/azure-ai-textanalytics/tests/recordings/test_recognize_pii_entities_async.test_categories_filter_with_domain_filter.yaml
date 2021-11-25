@@ -10,24 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
   response:
     body:
       string: '{"documents":[{"redactedText":"My name is Inigo Montoya, my SSN in
         *********** and my phone number is 333-3333.","id":"0","entities":[{"text":"243-56-0987","category":"USSocialSecurityNumber","offset":36,"length":11,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 40843c89-5f82-4812-af03-ac32a51a54c4
+      apim-request-id: d7bcc008-1dcd-4e79-b5f3-b3358f42c0ed
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 23 Jun 2021 01:57:23 GMT
+      date: Wed, 06 Oct 2021 21:05:44 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '33'
+      x-envoy-upstream-service-time: '42'
     status:
       code: 200
       message: OK
-    url: https://textanalyticskrpratictextanalytics.cognitiveservices.azure.com//text/analytics/v3.1/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
 version: 1

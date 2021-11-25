@@ -562,6 +562,21 @@ class TestChatThreadClient(unittest.TestCase):
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
 
+    def test_send_typing_notification_with_sender_display_name(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=200)
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        try:
+            chat_thread_client.send_typing_notification(sender_display_name="John")
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+
     def test_send_read_receipt(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         message_id="1596823919339"

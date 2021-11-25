@@ -46,10 +46,12 @@ class SearchIndexClient(HeadersMixin):
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
-    def __init__(self, endpoint: str,
-                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-                 **kwargs
-                 ) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs
+    ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
@@ -83,9 +85,7 @@ class SearchIndexClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
-
-        """
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session."""
         return await self._client.close()
 
     def get_search_client(self, index_name, **kwargs):
@@ -103,15 +103,22 @@ class SearchIndexClient(HeadersMixin):
         # type: (**Any) -> AsyncItemPaged[SearchIndex]
         """List the indexes in an Azure Search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of indexes
         :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         # pylint:disable=protected-access
-        return self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in  objs], **kwargs)
+        return self._client.indexes.list(
+            cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs
+        )
 
     @distributed_trace
     def list_index_names(self, **kwargs):
@@ -125,7 +132,9 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        return self._client.indexes.list(cls=lambda objs: [x.name for x in objs], **kwargs)
+        return self._client.indexes.list(
+            cls=lambda objs: [x.name for x in objs], **kwargs
+        )
 
     @distributed_trace_async
     async def get_index(self, name, **kwargs):
@@ -177,7 +186,7 @@ class SearchIndexClient(HeadersMixin):
         :param index: The index to retrieve.
         :type index: str or :class:`~azure.search.documents.indexes.models.SearchIndex`
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -223,14 +232,12 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_index = index._to_generated()   # pylint:disable=protected-access
+        patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create(patched_index, **kwargs)
         return result
 
     @distributed_trace_async
-    async def create_or_update_index(
-        self, index, allow_index_downtime=None, **kwargs
-    ):
+    async def create_or_update_index(self, index, allow_index_downtime=None, **kwargs):
         # type: (SearchIndex, bool, MatchConditions, **Any) -> SearchIndex
         """Creates a new search index or updates an index if it already exists.
 
@@ -243,7 +250,7 @@ class SearchIndexClient(HeadersMixin):
          large indexes.
         :type allow_index_downtime: bool
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -266,7 +273,7 @@ class SearchIndexClient(HeadersMixin):
             index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_index = index._to_generated()   # pylint:disable=protected-access
+        patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create_or_update(
             index_name=index.name,
             index=patched_index,
@@ -300,7 +307,9 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
-            index_name=index_name, request=analyze_request._to_analyze_request(), **kwargs  # pylint:disable=protected-access
+            index_name=index_name,
+            request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
+            **kwargs
         )
         return result
 
@@ -309,6 +318,10 @@ class SearchIndexClient(HeadersMixin):
         # type: (**Any) -> List[SynonymMap]
         """List the Synonym Maps in an Azure Search service.
 
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -324,6 +337,8 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
         result = await self._client.synonym_maps.list(**kwargs)
         # pylint:disable=protected-access
         return [SynonymMap._from_generated(x) for x in result.synonym_maps]
@@ -365,7 +380,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
+        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
@@ -377,7 +392,7 @@ class SearchIndexClient(HeadersMixin):
         :param name: The Synonym Map to delete
         :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
 
@@ -426,9 +441,11 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
+        patched_synonym_map = (
+            synonym_map._to_generated()  # pylint:disable=protected-access
+        )
         result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
+        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_synonym_map(self, synonym_map, **kwargs):
@@ -439,7 +456,7 @@ class SearchIndexClient(HeadersMixin):
         :param synonym_map: The Synonym Map object
         :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap`
         :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
         :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
 
@@ -449,21 +466,21 @@ class SearchIndexClient(HeadersMixin):
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
+        patched_synonym_map = (
+            synonym_map._to_generated()  # pylint:disable=protected-access
+        )
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
             error_map=error_map,
             **kwargs
         )
-        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
+        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):
         # type: (**Any) -> dict
-        """Get service level statistics for a search service.
-
-        """
+        """Get service level statistics for a search service."""
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()

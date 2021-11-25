@@ -8,8 +8,8 @@
 import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar)
 
 
 try:
@@ -69,6 +69,9 @@ def _get_blob_name(blob):
         return blob
 
 
+ClassType = TypeVar("ClassType")
+
+
 class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
@@ -94,8 +97,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -156,8 +159,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -171,7 +173,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> ContainerClient
+        # type: (Type[ClassType], str, Optional[Any], Any) -> ClassType
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -214,11 +216,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> ContainerClient
+        ):  # type: (...) -> ClassType
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
@@ -743,7 +746,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             begin with the specified prefix.
         :param list[str] or str include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'tags'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.

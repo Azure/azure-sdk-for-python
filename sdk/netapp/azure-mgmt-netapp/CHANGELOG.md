@@ -1,5 +1,51 @@
 # Release History
 
+## 5.1.0 (2021-09-22)
+
+**Features**
+
+  - Model ServiceSpecification has a new parameter log_specifications
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model MetricSpecification has a new parameter is_internal
+  - Model Volume has a new parameter network_sibling_set_id
+  - Model Volume has a new parameter storage_to_network_proximity
+  - Model Volume has a new parameter network_features
+  - Added operation group NetAppResourceQuotaLimitsOperations
+
+## 5.0.0 (2021-08-20)
+
+**Features**
+
+  - Model BackupPolicy has a new parameter etag
+  - Model BackupPolicy has a new parameter backup_policy_id
+  - Model BackupPolicyPatch has a new parameter backup_policy_id
+  - Model NetAppAccount has a new parameter etag
+  - Model VolumePatch has a new parameter is_default_quota_enabled
+  - Model VolumePatch has a new parameter default_user_quota_in_ki_bs
+  - Model VolumePatch has a new parameter default_group_quota_in_ki_bs
+  - Model BackupPolicyDetails has a new parameter backup_policy_id
+  - Model Volume has a new parameter clone_progress
+  - Model Volume has a new parameter default_group_quota_in_ki_bs
+  - Model Volume has a new parameter is_default_quota_enabled
+  - Model Volume has a new parameter default_user_quota_in_ki_bs
+  - Model Volume has a new parameter avs_data_store
+  - Model Volume has a new parameter etag
+  - Model MetricSpecification has a new parameter supported_aggregation_types
+  - Model MetricSpecification has a new parameter supported_time_grain_types
+  - Model MetricSpecification has a new parameter internal_metric_name
+  - Model MetricSpecification has a new parameter source_mdm_namespace
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model CapacityPool has a new parameter encryption_type
+  - Model CapacityPool has a new parameter etag
+  - Model SnapshotPolicy has a new parameter etag
+  - Added operation AccountsOperations.list_by_subscription
+
+**Breaking changes**
+
+  - Model BackupPolicy no longer has parameter yearly_backups_to_keep
+  - Model BackupPolicyPatch no longer has parameter yearly_backups_to_keep
+  - Model BackupPolicyDetails no longer has parameter yearly_backups_to_keep
+
 ## 4.0.0 (2021-06-11)
 
 **Features**
