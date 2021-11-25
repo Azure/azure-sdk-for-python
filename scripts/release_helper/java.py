@@ -22,5 +22,5 @@ class Java(Common):
 
 
 def java_process(issues: List[Any]):
-    instance = Java(issues, _ASSIGNEE_TOKEN_JAVA, _ASSIGNEE_CANDIDATES_JAVA)
+    instance = Java(issues, _ASSIGNEE_TOKEN_JAVA, _JAVA_OWNER)
     instance.run()
