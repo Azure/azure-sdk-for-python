@@ -12,7 +12,6 @@ import azure.communication.identity._shared.user_credential as user_credential
 from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
-#from unittest.mock import patch
 from datetime import timedelta
 from functools import wraps
 import base64
@@ -100,7 +99,8 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(refresher.call_count, 2)
         self.assertEqual(access_token.token, self.expired_token)
 
-    def test_uses_initial_token_as_expected(self):
+    @patch_threading_timer(user_credential.__name__+'.Timer')
+    def test_uses_initial_token_as_expected(self, timer_mock):
         refresher = MagicMock(
             return_value=self.expired_token)
         credential = CommunicationTokenCredential(
