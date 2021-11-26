@@ -31,6 +31,7 @@ from .operations import BackupsOperations
 from .operations import AccountBackupsOperations
 from .operations import BackupPoliciesOperations
 from .operations import VaultsOperations
+from .operations import VolumeGroupsOperations
 from . import models
 
 
@@ -61,6 +62,8 @@ class NetAppManagementClient(object):
     :vartype backup_policies: azure.mgmt.netapp.operations.BackupPoliciesOperations
     :ivar vaults: VaultsOperations operations
     :vartype vaults: azure.mgmt.netapp.operations.VaultsOperations
+    :ivar volume_groups: VolumeGroupsOperations operations
+    :vartype volume_groups: azure.mgmt.netapp.operations.VolumeGroupsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -110,6 +113,8 @@ class NetAppManagementClient(object):
         self.backup_policies = BackupPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.volume_groups = VolumeGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

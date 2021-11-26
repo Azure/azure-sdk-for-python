@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class SnapshotPoliciesOperations(object):
-    """SnapshotPoliciesOperations operations.
+class VolumeGroupsOperations(object):
+    """VolumeGroupsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,25 +47,27 @@ class SnapshotPoliciesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_by_net_app_account(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.SnapshotPoliciesList"]
-        """List snapshot policy.
+        # type: (...) -> Iterable["_models.VolumeGroupList"]
+        """Describe all volume groups.
+
+        List all volume groups for given account.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SnapshotPoliciesList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.SnapshotPoliciesList]
+        :return: An iterator like instance of either VolumeGroupList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.VolumeGroupList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPoliciesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -80,7 +82,7 @@ class SnapshotPoliciesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_by_net_app_account.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -99,7 +101,7 @@ class SnapshotPoliciesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('SnapshotPoliciesList', pipeline_response)
+            deserialized = self._deserialize('VolumeGroupList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -120,30 +122,32 @@ class SnapshotPoliciesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies'}  # type: ignore
+    list_by_net_app_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        snapshot_policy_name,  # type: str
+        volume_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SnapshotPolicy"
-        """Get a snapshot Policy.
+        # type: (...) -> "_models.VolumeGroupDetails"
+        """Describe a Volume Group.
+
+        Get details of the specified volume group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy.
-        :type snapshot_policy_name: str
+        :param volume_group_name: The name of the volumeGroup.
+        :type volume_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SnapshotPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.SnapshotPolicy
+        :return: VolumeGroupDetails, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.VolumeGroupDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,7 +161,7 @@ class SnapshotPoliciesOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
+            'volumeGroupName': self._serialize.url("volume_group_name", volume_group_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -177,39 +181,24 @@ class SnapshotPoliciesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SnapshotPolicy', pipeline_response)
+        deserialized = self._deserialize('VolumeGroupDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
-    def create(
+    def _create_initial(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        snapshot_policy_name,  # type: str
-        body,  # type: "_models.SnapshotPolicy"
+        volume_group_name,  # type: str
+        body,  # type: "_models.VolumeGroupDetails"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SnapshotPolicy"
-        """Create a snapshot policy.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account.
-        :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy.
-        :type snapshot_policy_name: str
-        :param body: Snapshot policy object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicy
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SnapshotPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.SnapshotPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPolicy"]
+        # type: (...) -> "_models.VolumeGroupDetails"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,12 +208,12 @@ class SnapshotPoliciesOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        url = self._create_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
+            'volumeGroupName': self._serialize.url("volume_group_name", volume_group_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -238,129 +227,67 @@ class SnapshotPoliciesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'SnapshotPolicy')
+        body_content = self._serialize.body(body, 'VolumeGroupDetails')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SnapshotPolicy', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('SnapshotPolicy', pipeline_response)
+        deserialized = self._deserialize('VolumeGroupDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
-    def _update_initial(
+    def begin_create(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        snapshot_policy_name,  # type: str
-        body,  # type: "_models.SnapshotPolicyPatch"
+        volume_group_name,  # type: str
+        body,  # type: "_models.VolumeGroupDetails"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SnapshotPolicy"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPolicy"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-08-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        # type: (...) -> LROPoller["_models.VolumeGroupDetails"]
+        """Create the specified volume group and volumes. Creating volume group will create all the volumes specified in request body implicitly. Once volumes are created using volume group, those will be treated as regular volumes thereafter.
 
-        # Construct URL
-        url = self._update_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'SnapshotPolicyPatch')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SnapshotPolicy', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('SnapshotPolicy', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}  # type: ignore
-
-    def begin_update(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        snapshot_policy_name,  # type: str
-        body,  # type: "_models.SnapshotPolicyPatch"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SnapshotPolicy"]
-        """Patch a snapshot policy.
+        Create a volume group along with specified volumes.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy.
-        :type snapshot_policy_name: str
-        :param body: Snapshot policy object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch
+        :param volume_group_name: The name of the volumeGroup.
+        :type volume_group_name: str
+        :param body: Volume Group object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either SnapshotPolicy or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SnapshotPolicy]
+        :return: An instance of LROPoller that returns either VolumeGroupDetails or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeGroupDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupDetails"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._update_initial(
+            raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                snapshot_policy_name=snapshot_policy_name,
+                volume_group_name=volume_group_name,
                 body=body,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -370,7 +297,7 @@ class SnapshotPoliciesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SnapshotPolicy', pipeline_response)
+            deserialized = self._deserialize('VolumeGroupDetails', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -380,10 +307,10 @@ class SnapshotPoliciesOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
+            'volumeGroupName': self._serialize.url("volume_group_name", volume_group_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -395,13 +322,13 @@ class SnapshotPoliciesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        snapshot_policy_name,  # type: str
+        volume_group_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -418,7 +345,7 @@ class SnapshotPoliciesOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
+            'volumeGroupName': self._serialize.url("volume_group_name", volume_group_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -440,24 +367,26 @@ class SnapshotPoliciesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        snapshot_policy_name,  # type: str
+        volume_group_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete snapshot policy.
+        """Delete a volume group.
+
+        Delete the specified volume group only if there are no volumes under volume group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy.
-        :type snapshot_policy_name: str
+        :param volume_group_name: The name of the volumeGroup.
+        :type volume_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling.
@@ -479,7 +408,7 @@ class SnapshotPoliciesOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                snapshot_policy_name=snapshot_policy_name,
+                volume_group_name=volume_group_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -495,10 +424,10 @@ class SnapshotPoliciesOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
+            'volumeGroupName': self._serialize.url("volume_group_name", volume_group_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -510,69 +439,4 @@ class SnapshotPoliciesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}  # type: ignore
-
-    def list_volumes(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        snapshot_policy_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SnapshotPolicyVolumeList"
-        """Get volumes for snapshot policy.
-
-        Get volumes associated with snapshot policy.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account.
-        :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy.
-        :type snapshot_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SnapshotPolicyVolumeList, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.SnapshotPolicyVolumeList
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPolicyVolumeList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-08-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.list_volumes.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'snapshotPolicyName': self._serialize.url("snapshot_policy_name", snapshot_policy_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('SnapshotPolicyVolumeList', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    list_volumes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}/volumes'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore

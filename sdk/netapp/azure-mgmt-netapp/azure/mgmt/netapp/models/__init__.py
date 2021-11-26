@@ -40,6 +40,7 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PlacementKeyValuePairs
     from ._models_py3 import PoolChangeRequest
     from ._models_py3 import ProxyResource
     from ._models_py3 import QuotaAvailabilityRequest
@@ -65,6 +66,11 @@ try:
     from ._models_py3 import Volume
     from ._models_py3 import VolumeBackupProperties
     from ._models_py3 import VolumeBackups
+    from ._models_py3 import VolumeGroup
+    from ._models_py3 import VolumeGroupDetails
+    from ._models_py3 import VolumeGroupList
+    from ._models_py3 import VolumeGroupMetaData
+    from ._models_py3 import VolumeGroupVolumeProperties
     from ._models_py3 import VolumeList
     from ._models_py3 import VolumePatch
     from ._models_py3 import VolumePatchPropertiesDataProtection
@@ -108,6 +114,7 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PlacementKeyValuePairs  # type: ignore
     from ._models import PoolChangeRequest  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import QuotaAvailabilityRequest  # type: ignore
@@ -133,6 +140,11 @@ except (SyntaxError, ImportError):
     from ._models import Volume  # type: ignore
     from ._models import VolumeBackupProperties  # type: ignore
     from ._models import VolumeBackups  # type: ignore
+    from ._models import VolumeGroup  # type: ignore
+    from ._models import VolumeGroupDetails  # type: ignore
+    from ._models import VolumeGroupList  # type: ignore
+    from ._models import VolumeGroupMetaData  # type: ignore
+    from ._models import VolumeGroupVolumeProperties  # type: ignore
     from ._models import VolumeList  # type: ignore
     from ._models import VolumePatch  # type: ignore
     from ._models import VolumePatchPropertiesDataProtection  # type: ignore
@@ -145,6 +157,7 @@ except (SyntaxError, ImportError):
 
 from ._net_app_management_client_enums import (
     ActiveDirectoryStatus,
+    ApplicationType,
     AvsDataStore,
     BackupType,
     CheckNameResourceTypes,
@@ -199,6 +212,7 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PlacementKeyValuePairs',
     'PoolChangeRequest',
     'ProxyResource',
     'QuotaAvailabilityRequest',
@@ -224,6 +238,11 @@ __all__ = [
     'Volume',
     'VolumeBackupProperties',
     'VolumeBackups',
+    'VolumeGroup',
+    'VolumeGroupDetails',
+    'VolumeGroupList',
+    'VolumeGroupMetaData',
+    'VolumeGroupVolumeProperties',
     'VolumeList',
     'VolumePatch',
     'VolumePatchPropertiesDataProtection',
@@ -234,6 +253,7 @@ __all__ = [
     'VolumeSnapshotProperties',
     'WeeklySchedule',
     'ActiveDirectoryStatus',
+    'ApplicationType',
     'AvsDataStore',
     'BackupType',
     'CheckNameResourceTypes',
