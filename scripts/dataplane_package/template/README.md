@@ -79,3 +79,4 @@ additional questions or comments.
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
+[azure_sub]: https://azure.microsoft.com/free/

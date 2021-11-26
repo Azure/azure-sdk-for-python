@@ -111,7 +111,7 @@ def main(**kwargs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="build package for Azure SDK of data-plan for Python",
+        description="build package for Azure SDK of data-plane for Python",
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(

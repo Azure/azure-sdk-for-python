@@ -14,8 +14,8 @@ assume work path is `D:\`
 1. create virtual environment
 
    ```
-   python venv venv-dev
-   .\venv-dev4\Scripts\Activate.ps1
+   python -m venv venv-dev
+   .\venv-dev\Scripts\Activate.ps1
    ```
 
 2. prepare SDK repo if needed
@@ -61,6 +61,7 @@ python D:\azure-sdk-for-python\scripts\dataplan_package\llc_initial.py --output-
 ```
 
 After running the scripts successfully, it creates necessary files and common test framework. **But remember to edit `README.md`, test files under `tests` and sample files under `samples`  since customers need more info to understand the package.**
+([webpubsub](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice) is a good example)
 
 You don't need it anymore after one-time successful run. Go to [Update](#Update) if you need to regenerate code.
 
