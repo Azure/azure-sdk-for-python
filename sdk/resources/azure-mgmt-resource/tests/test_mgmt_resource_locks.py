@@ -50,7 +50,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
-    def test_locks_by_scope(self, resource_group):
+    def test_locks_by_scope(self, resource_group, location):
         lock_name = "pylockrg"
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         resource_name = self.get_resource_name("pytestavset")
@@ -65,7 +65,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
         create_result = self.resource_client.resources.begin_create_or_update_by_id(
             resource_id,
-            parameters={'location': resource_group.location},
+            parameters={'location': location},
             api_version="2019-07-01"
         )
 
@@ -110,7 +110,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            parameters={'location': resource_group.location},
+            parameters={'location': location},
             api_version="2019-07-01"
         )
 

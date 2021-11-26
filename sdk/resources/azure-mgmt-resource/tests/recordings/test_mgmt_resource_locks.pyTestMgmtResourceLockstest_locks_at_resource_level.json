@@ -17,17 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:17 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:49 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAgAAABJvMtkOAAAA; expires=Sun, 26-Dec-2021 06:01:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAgAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:05:49 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12231.8 - EUS ProdSlices",
-        "x-ms-request-id": "1ba64202-ee30-4272-bb77-19f5a641b901"
+        "x-ms-ests-server": "2.1.12231.8 - WUS2 ProdSlices",
+        "x-ms-request-id": "c65832b0-ec40-43c1-9aaf-ebd1ed0daf01"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -104,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAgAAABJvMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAgAAAChwMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -115,17 +115,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:17 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:49 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAgAAABJvMtkOAAAA; expires=Sun, 26-Dec-2021 06:01:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAgAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:05:50 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12249.14 - SEASLR1 ProdSlices",
-        "x-ms-request-id": "27598eda-c666-4096-826f-2ceeabca2700"
+        "x-ms-ests-server": "2.1.12249.14 - SEASLR2 ProdSlices",
+        "x-ms-request-id": "dd6de013-e0d6-49ad-aff4-1cf3f4ce2900"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -180,11 +180,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "4bd88abb-2a84-434a-88f0-b853da311e89",
+        "client-request-id": "c14b4077-2706-42fd-b4f9-0fa275c1c464",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAgAAABJvMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAgAAAChwMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -198,29 +198,29 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "4bd88abb-2a84-434a-88f0-b853da311e89",
+        "client-request-id": "c14b4077-2706-42fd-b4f9-0fa275c1c464",
         "Content-Length": "1349",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:17 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:50 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAwAAABJvMtkOAAAA; expires=Sun, 26-Dec-2021 06:01:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAwAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:05:50 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12231.8 - SCUS ProdSlices",
-        "x-ms-request-id": "85fa4a5e-8013-4fb1-96c8-c5d3497db401"
+        "x-ms-ests-server": "2.1.12231.8 - EUS ProdSlices",
+        "x-ms-request-id": "d68cafd3-94dd-4b2c-935b-2c9b5493b501"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 3599,
         "ext_expires_in": 3599,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTYzNzkwNjE3NywibmJmIjoxNjM3OTA2MTc3LCJleHAiOjE2Mzc5MTAwNzcsImFpbyI6IkUyWmdZSmcwTzV2djM3eW5HbUhYVjJUZDkwdjVEd0E9IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwib2lkIjoiODg3YzQyYjEtNzk0Ni00YzIyLWJhYTYtMTUwNDNlNGIxMzIzIiwicmgiOiIwLkFUY0FJbXVDVk5ZNHNrLTYyYmU1T2o2Y1d0VlUzNklEcXlWSG00Q2FBTE94bG44M0FBQS4iLCJzdWIiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1dGkiOiJYa3I2aFJPQXNVLVd5TVhUU1gyMEFRIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE0MTIyMDY4NDB9.R6gsjWLyRD9UJEphYdd1fJlTLJYGqoTkB9ctuPcZX8jbhIgVUpHrTErZC6iNH3Di9LThXZc19zqf6mAysxGEF1AIqh4BUR-_9XCrxvHd4Ac_36Q6VfqFw6bRjXHYWdQgTJo_81TheyBdUMsM6xxjamrTUvJAgZ58uyul2d4h0Sgk7StwKwZs2jPVarUE84WtSVSxqugkoQnJm5bwnxWdwqDoKtZnJqG5lWS62mvFYD5WWlyfpuGye4hCDtBwivhAL7NJzkN3lYC3sDpLW7cLKEcM7B-jsSHGxG2HMmEXAB3qAsQx1mhA_riEk2dYJzL6yuzvNWtVRNQeDXY9RU9aFA"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTYzNzkwNjQ1MCwibmJmIjoxNjM3OTA2NDUwLCJleHAiOjE2Mzc5MTAzNTAsImFpbyI6IkUyWmdZSmcwTzV2djM3eW5HbUhYVjJUZDkwdjVEd0E9IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwib2lkIjoiODg3YzQyYjEtNzk0Ni00YzIyLWJhYTYtMTUwNDNlNGIxMzIzIiwicmgiOiIwLkFUY0FJbXVDVk5ZNHNrLTYyYmU1T2o2Y1d0VlUzNklEcXlWSG00Q2FBTE94bG44M0FBQS4iLCJzdWIiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1dGkiOiIwNi1NMXQyVUxFdVRXeXliVkpPMUFRIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE0MTIyMDY4NDB9.QqAUdzP8nun9bALedBskh5-uFPTi7DLZIuxlLwu_xIourjYO5qyQKVbZRef3XZZCDqYXv6ueKvWjTUmk6ONCDNn4eWVSgU9zJz_P1a-__1VLHcj1hswARHtoM1c-YcJ_MUjvFAGw2wFBdadkBFqo9iq_UbaOcK3IOjwHaujkuBKjFmgAlIthpbw9BTcW8OxWztWvrcqfqWKljDuuH5gWkGSs5Ox1T-wWT6UWsf2pX-Qq3NnkHGWToRZqWuyHatzrtr2bQanrOOjFmndKpXMrf4jQy-FjS0Zb99L3vS8B7kG_FnWbNyMja6YS0m9V4gbbU737p_DiSFvyUWqE5CPz3w"
       }
     },
     {
@@ -234,7 +234,7 @@
         "Content-Length": "22",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "45105c52-4e7e-11ec-9992-2cf05d45d152"
+        "x-ms-client-request-id": "e76f96be-4e7e-11ec-8a9a-2cf05d45d152"
       },
       "RequestBody": "{\u0022location\u0022: \u0022westus\u0022}",
       "StatusCode": 200,
@@ -242,7 +242,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:30 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -253,11 +253,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "8e318205-3edb-4567-be26-9cf9387ba6a4",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1190",
-        "x-ms-ratelimit-remaining-subscription-writes": "1197",
-        "x-ms-request-id": "14837124-58e5-4694-a1de-dcde2826913b",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060131Z:8e318205-3edb-4567-be26-9cf9387ba6a4"
+        "x-ms-correlation-request-id": "adbd7cea-7c18-49ca-982e-409718f28917",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1192",
+        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-request-id": "2ca6a769-b734-4714-8227-c469878f76b4",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060554Z:adbd7cea-7c18-49ca-982e-409718f28917"
       },
       "ResponseBody": [
         "{\r\n",
@@ -292,17 +292,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:54 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAwAAABJvMtkOAAAA; expires=Sun, 26-Dec-2021 06:01:31 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAwAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:05:54 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12231.8 - NCUS ProdSlices",
-        "x-ms-request-id": "ee615dbf-7730-4fc2-8bb8-f78ed8748601"
+        "x-ms-ests-server": "2.1.12231.8 - EUS ProdSlices",
+        "x-ms-request-id": "358d7c64-688d-4089-ba22-423507e4b201"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -379,7 +379,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAwAAABJvMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAwAAAChwMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -390,17 +390,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:54 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAwAAABJvMtkOAAAA; expires=Sun, 26-Dec-2021 06:01:31 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAwAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:05:54 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-ests-server": "2.1.12249.14 - SEASLR1 ProdSlices",
-        "x-ms-request-id": "27598eda-c666-4096-826f-2cee0acb2700"
+        "x-ms-request-id": "1eccb38e-8029-4916-b814-3d16b5502500"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -455,11 +455,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "e60f0187-ec55-49ce-b60b-0306e10ca0e0",
+        "client-request-id": "f6bcf8a3-2fb1-482d-b102-88960e2b4d06",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEAwAAABJvMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEAwAAAChwMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -473,15 +473,15 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "e60f0187-ec55-49ce-b60b-0306e10ca0e0",
+        "client-request-id": "f6bcf8a3-2fb1-482d-b102-88960e2b4d06",
         "Content-Length": "1349",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:54 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=An2Y5LqswiRFpRHMF0JXn5-ZHqKEBAAAABJvMtkOAAAA; expires=Sun, 26-Dec-2021 06:01:31 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEBAAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:05:54 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
@@ -489,13 +489,13 @@
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
         "x-ms-ests-server": "2.1.12231.8 - NCUS ProdSlices",
-        "x-ms-request-id": "ee615dbf-7730-4fc2-8bb8-f78edb748601"
+        "x-ms-request-id": "f0b2730a-e499-4e87-98c3-cca885694601"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 3599,
         "ext_expires_in": 3599,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTYzNzkwNjE5MSwibmJmIjoxNjM3OTA2MTkxLCJleHAiOjE2Mzc5MTAwOTEsImFpbyI6IkUyWmdZREEyTG0wK0dhbk9WenpiOFAzcFBSUGVBUUE9IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwib2lkIjoiODg3YzQyYjEtNzk0Ni00YzIyLWJhYTYtMTUwNDNlNGIxMzIzIiwicmgiOiIwLkFUY0FJbXVDVk5ZNHNrLTYyYmU1T2o2Y1d0VlUzNklEcXlWSG00Q2FBTE94bG44M0FBQS4iLCJzdWIiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1dGkiOiJ2MTFoN2pCM3drLUx1UGVPMjNTR0FRIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE0MTIyMDY4NDB9.TOBj9kL2p4s_u8SQHPLWCLlOHDsGtRbJETyRGonMBP7eTVpqTDDqphOcISlmcZ9AnWHweHrHVjAr5Kr1oetMsjlT71Ji8MdPZtF8jS5UTMUS693CM3h8n0dtwy-POTb2qEUjQruVaZZQEHBgkjlgTRjrCaL4_W_DYANiT7cLXE2J7toTKr7xnAfCFF1humSvqe8DlXYUp2AifhnF3HH25nCvLuTBhTPrQ64mJqg8UH4pZJVgp4G12cG6oS6kn4fY_YxToiCN3PZBkK3RhqWQGgutMZ8z-M5LsS_z4uUAyov7cQoLhQiUwTnd8oFU0-QTSZnGYDChMy-v7_RsZm9jFA"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTYzNzkwNjQ1NCwibmJmIjoxNjM3OTA2NDU0LCJleHAiOjE2Mzc5MTAzNTQsImFpbyI6IkUyWmdZUENkYzJoK1UrcVh1Syt0ZjRRcUdOcWZBZ0E9IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwib2lkIjoiODg3YzQyYjEtNzk0Ni00YzIyLWJhYTYtMTUwNDNlNGIxMzIzIiwicmgiOiIwLkFUY0FJbXVDVk5ZNHNrLTYyYmU1T2o2Y1d0VlUzNklEcXlWSG00Q2FBTE94bG44M0FBQS4iLCJzdWIiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1dGkiOiJDbk95OEpua2gwNll3OHlvaFdsR0FRIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE0MTIyMDY4NDB9.Q0iwSFbp8Rbj-AxY3EVBF1IW876AtmeCvbyeH-H3nBlh1_DH7gMkob55b3UBUylvqCV6AkPOKSPhq4t7YI7mTZRUjcFITRWIGKvjtN4NUPHr17GnsI3iGZL4PY5bsGRZSiSqc_qhSs9fVoCOtLsCFzm4l9j_6yIbwn7_nnta5AdxUrKoKdeY_2UcyyuwVtpNtZNywMU5ExM_KvPMQzFzzM7Nyqrf3oCXCJZAGRHoey6kIgR5oQE_5Td1DV8s9hCFmHDdnMAaMGNR3GMExiJMKb6-hRxnNKHv0DXATp5m3HH4SFej3XKvztg6hN8IOtVbEuJJbbACbts68c8sVirAEA"
       }
     },
     {
@@ -509,7 +509,7 @@
         "Content-Length": "41",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4d6d6124-4e7e-11ec-8e45-2cf05d45d152"
+        "x-ms-client-request-id": "ea104fcc-4e7e-11ec-bdb3-2cf05d45d152"
       },
       "RequestBody": "{\u0022properties\u0022: {\u0022level\u0022: \u0022CanNotDelete\u0022}}",
       "StatusCode": 201,
@@ -517,15 +517,15 @@
         "Cache-Control": "no-cache",
         "Content-Length": "291",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "69993449-75d2-4e89-bd30-907a051ca7fd",
-        "x-ms-ratelimit-remaining-subscription-writes": "1196",
-        "x-ms-request-id": "southeastasia:0542432c-37f9-4fa5-9cb4-43f9c18f2713",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060132Z:69993449-75d2-4e89-bd30-907a051ca7fd"
+        "x-ms-correlation-request-id": "44fedca0-e24a-4e52-a480-23e922cb5830",
+        "x-ms-ratelimit-remaining-subscription-writes": "1195",
+        "x-ms-request-id": "southeastasia:c64c4d52-c566-4f55-8169-fad26e290f65",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060555Z:44fedca0-e24a-4e52-a480-23e922cb5830"
       },
       "ResponseBody": {
         "properties": {
@@ -545,7 +545,7 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4df7483a-4e7e-11ec-bd05-2cf05d45d152"
+        "x-ms-client-request-id": "eacfbc82-4e7e-11ec-be0f-2cf05d45d152"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -553,7 +553,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -563,10 +563,10 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "eebf3f19-7360-4884-9cdd-e0bf1ab2eca4",
-        "x-ms-ratelimit-remaining-subscription-reads": "11998",
-        "x-ms-request-id": "southeastasia:87b19709-880b-4816-a046-2f2b3e050a72",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060132Z:eebf3f19-7360-4884-9cdd-e0bf1ab2eca4"
+        "x-ms-correlation-request-id": "153d2b55-2c13-440b-b9e5-78500a1b42b4",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-request-id": "southeastasia:c18a6ce9-98c3-4fac-9799-3123e4778864",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060555Z:153d2b55-2c13-440b-b9e5-78500a1b42b4"
       },
       "ResponseBody": {
         "properties": {
@@ -586,7 +586,7 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4e06a1cc-4e7e-11ec-9b06-2cf05d45d152"
+        "x-ms-client-request-id": "eadfa68c-4e7e-11ec-b7ba-2cf05d45d152"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -594,7 +594,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -604,10 +604,10 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "bb8a3024-5aa9-4412-92d7-a888554ea84a",
-        "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-request-id": "southeastasia:40aee0e0-4132-4cfa-815a-23901f209b66",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060132Z:bb8a3024-5aa9-4412-92d7-a888554ea84a"
+        "x-ms-correlation-request-id": "922e52ad-c435-4dbe-85ec-59fa2db6f74f",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-request-id": "southeastasia:237a5792-d213-468e-9135-8b47f33c8c11",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060555Z:922e52ad-c435-4dbe-85ec-59fa2db6f74f"
       },
       "ResponseBody": {
         "value": [
@@ -632,22 +632,22 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4e17f7c6-4e7e-11ec-96ce-2cf05d45d152"
+        "x-ms-client-request-id": "eaf021d4-4e7e-11ec-bc7c-2cf05d45d152"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 26 Nov 2021 06:01:31 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "553b9d78-bd19-4de0-91fe-2cfea00b2b8c",
+        "x-ms-correlation-request-id": "652b0b8a-b9c6-48d4-b80c-b648ca3c0a30",
         "x-ms-ratelimit-remaining-subscription-deletes": "14997",
-        "x-ms-request-id": "southeastasia:0685db89-5998-4529-ae68-a9c9769bdac7",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060132Z:553b9d78-bd19-4de0-91fe-2cfea00b2b8c"
+        "x-ms-request-id": "southeastasia:5317a3d6-c9ff-407a-891a-91cd8818ec1b",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060555Z:652b0b8a-b9c6-48d4-b80c-b648ca3c0a30"
       },
       "ResponseBody": null
     },
@@ -661,14 +661,14 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4e2bf1f6-4e7e-11ec-84a2-2cf05d45d152"
+        "x-ms-client-request-id": "eb04056e-4e7e-11ec-a0ea-2cf05d45d152"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 26 Nov 2021 06:01:35 GMT",
+        "Date": "Fri, 26 Nov 2021 06:05:59 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -677,11 +677,11 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "865117f2-f46b-40da-8ddc-e76c1a388886",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1190",
+        "x-ms-correlation-request-id": "5ac98709-8143-4f41-b94e-9c55dc4af73d",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1192",
         "x-ms-ratelimit-remaining-subscription-deletes": "14996",
-        "x-ms-request-id": "6fcb0704-a0b6-4e9c-b54f-fbabdef32450",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060136Z:865117f2-f46b-40da-8ddc-e76c1a388886"
+        "x-ms-request-id": "11f5defd-2e5c-4ce7-a9c8-c62e0ba351f8",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060559Z:5ac98709-8143-4f41-b94e-9c55dc4af73d"
       },
       "ResponseBody": null
     }
