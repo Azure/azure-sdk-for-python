@@ -16,29 +16,30 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import SubscriptionClientConfiguration
-from .operations import SubscriptionsOperations
-from .operations import TenantsOperations
 from .operations import SubscriptionOperations
 from .operations import Operations
 from .operations import AliasOperations
+from .operations import SubscriptionPolicyOperations
+from .operations import BillingAccountOperations
 from . import models
 
 
 class SubscriptionClient(object):
     """The subscription client.
 
-    :ivar subscriptions: SubscriptionsOperations operations
-    :vartype subscriptions: subscription_client.operations.SubscriptionsOperations
-    :ivar tenants: TenantsOperations operations
-    :vartype tenants: subscription_client.operations.TenantsOperations
     :ivar subscription: SubscriptionOperations operations
-    :vartype subscription: subscription_client.operations.SubscriptionOperations
+    :vartype subscription: azure.mgmt.subscription.operations.SubscriptionOperations
     :ivar operations: Operations operations
-    :vartype operations: subscription_client.operations.Operations
+    :vartype operations: azure.mgmt.subscription.operations.Operations
     :ivar alias: AliasOperations operations
-    :vartype alias: subscription_client.operations.AliasOperations
+    :vartype alias: azure.mgmt.subscription.operations.AliasOperations
+    :ivar subscription_policy: SubscriptionPolicyOperations operations
+    :vartype subscription_policy: azure.mgmt.subscription.operations.SubscriptionPolicyOperations
+    :ivar billing_account: BillingAccountOperations operations
+    :vartype billing_account: azure.mgmt.subscription.operations.BillingAccountOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str base_url: Service URL
@@ -62,16 +63,31 @@ class SubscriptionClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.subscriptions = SubscriptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tenants = TenantsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.subscription = SubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.alias = AliasOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.subscription_policy = SubscriptionPolicyOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.billing_account = BillingAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        http_request.url = self._client.format_url(http_request.url)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

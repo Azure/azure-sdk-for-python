@@ -11051,7 +11051,7 @@ class DataFlow(msrest.serialization.Model):
     """Azure Data Factory nested object which contains a flow with data movements and transformations.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MappingDataFlow, WranglingDataFlow.
+    sub-classes are: Flowlet, MappingDataFlow, WranglingDataFlow.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -11078,7 +11078,7 @@ class DataFlow(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'MappingDataFlow': 'MappingDataFlow', 'WranglingDataFlow': 'WranglingDataFlow'}
+        'type': {'Flowlet': 'Flowlet', 'MappingDataFlow': 'MappingDataFlow', 'WranglingDataFlow': 'WranglingDataFlow'}
     }
 
     def __init__(
@@ -11190,6 +11190,8 @@ class DataFlowDebugPackage(msrest.serialization.Model):
     :type session_id: str
     :param data_flow: Data flow instance.
     :type data_flow: ~azure.mgmt.datafactory.models.DataFlowDebugResource
+    :param data_flows: List of Data flows.
+    :type data_flows: list[~azure.mgmt.datafactory.models.DataFlowDebugResource]
     :param datasets: List of datasets.
     :type datasets: list[~azure.mgmt.datafactory.models.DatasetDebugResource]
     :param linked_services: List of linked services.
@@ -11204,6 +11206,7 @@ class DataFlowDebugPackage(msrest.serialization.Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'data_flow': {'key': 'dataFlow', 'type': 'DataFlowDebugResource'},
+        'data_flows': {'key': 'dataFlows', 'type': '[DataFlowDebugResource]'},
         'datasets': {'key': 'datasets', 'type': '[DatasetDebugResource]'},
         'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceDebugResource]'},
         'staging': {'key': 'staging', 'type': 'DataFlowStagingInfo'},
@@ -11218,6 +11221,7 @@ class DataFlowDebugPackage(msrest.serialization.Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.session_id = kwargs.get('session_id', None)
         self.data_flow = kwargs.get('data_flow', None)
+        self.data_flows = kwargs.get('data_flows', None)
         self.datasets = kwargs.get('datasets', None)
         self.linked_services = kwargs.get('linked_services', None)
         self.staging = kwargs.get('staging', None)
@@ -11418,6 +11422,8 @@ class DataFlowReference(msrest.serialization.Model):
     :type reference_name: str
     :param dataset_parameters: Reference data flow parameters from dataset.
     :type dataset_parameters: any
+    :param parameters: Data flow parameters.
+    :type parameters: dict[str, any]
     """
 
     _validation = {
@@ -11430,6 +11436,7 @@ class DataFlowReference(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'reference_name': {'key': 'referenceName', 'type': 'str'},
         'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
     type = "DataFlowReference"
@@ -11442,6 +11449,7 @@ class DataFlowReference(msrest.serialization.Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.reference_name = kwargs['reference_name']
         self.dataset_parameters = kwargs.get('dataset_parameters', None)
+        self.parameters = kwargs.get('parameters', None)
 
 
 class DataFlowResource(SubResource):
@@ -11496,6 +11504,12 @@ class Transformation(msrest.serialization.Model):
     :type name: str
     :param description: Transformation description.
     :type description: str
+    :param dataset: Dataset reference.
+    :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
+    :param linked_service: Linked service reference.
+    :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     """
 
     _validation = {
@@ -11505,6 +11519,9 @@ class Transformation(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
+        'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
     }
 
     def __init__(
@@ -11514,6 +11531,9 @@ class Transformation(msrest.serialization.Model):
         super(Transformation, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.description = kwargs.get('description', None)
+        self.dataset = kwargs.get('dataset', None)
+        self.linked_service = kwargs.get('linked_service', None)
+        self.flowlet = kwargs.get('flowlet', None)
 
 
 class DataFlowSink(Transformation):
@@ -11529,6 +11549,8 @@ class DataFlowSink(Transformation):
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
     :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param schema_linked_service: Schema linked service reference.
     :type schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
@@ -11542,6 +11564,7 @@ class DataFlowSink(Transformation):
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
     }
 
@@ -11550,8 +11573,6 @@ class DataFlowSink(Transformation):
         **kwargs
     ):
         super(DataFlowSink, self).__init__(**kwargs)
-        self.dataset = kwargs.get('dataset', None)
-        self.linked_service = kwargs.get('linked_service', None)
         self.schema_linked_service = kwargs.get('schema_linked_service', None)
 
 
@@ -11568,6 +11589,8 @@ class DataFlowSource(Transformation):
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
     :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param schema_linked_service: Schema linked service reference.
     :type schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
@@ -11581,6 +11604,7 @@ class DataFlowSource(Transformation):
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
     }
 
@@ -11589,8 +11613,6 @@ class DataFlowSource(Transformation):
         **kwargs
     ):
         super(DataFlowSource, self).__init__(**kwargs)
-        self.dataset = kwargs.get('dataset', None)
-        self.linked_service = kwargs.get('linked_service', None)
         self.schema_linked_service = kwargs.get('schema_linked_service', None)
 
 
@@ -11733,17 +11755,17 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
 class DatasetCompression(msrest.serialization.Model):
     """The compression method used on a dataset.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetBZip2Compression, DatasetDeflateCompression, DatasetGZipCompression, DatasetTarCompression, DatasetTarGZipCompression, DatasetZipDeflateCompression.
-
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :type additional_properties: dict[str, any]
     :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
+     string).
     :type type: any
+    :param level: The dataset compression level. Type: string (or Expression with resultType
+     string).
+    :type level: any
     """
 
     _validation = {
@@ -11753,10 +11775,7 @@ class DatasetCompression(msrest.serialization.Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'object'},
-    }
-
-    _subtype_map = {
-        'type': {'BZip2': 'DatasetBZip2Compression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'Tar': 'DatasetTarCompression', 'TarGZip': 'DatasetTarGZipCompression', 'ZipDeflate': 'DatasetZipDeflateCompression'}
+        'level': {'key': 'level', 'type': 'object'},
     }
 
     def __init__(
@@ -11765,37 +11784,8 @@ class DatasetCompression(msrest.serialization.Model):
     ):
         super(DatasetCompression, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = 'DatasetCompression'  # type: str
-
-
-class DatasetBZip2Compression(DatasetCompression):
-    """The BZip2 compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetBZip2Compression, self).__init__(**kwargs)
-        self.type = 'BZip2'  # type: str
+        self.type = kwargs['type']
+        self.level = kwargs.get('level', None)
 
 
 class DatasetDataElement(msrest.serialization.Model):
@@ -11849,40 +11839,6 @@ class DatasetDebugResource(SubResourceDebugResource):
         self.properties = kwargs['properties']
 
 
-class DatasetDeflateCompression(DatasetCompression):
-    """The Deflate compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The Deflate compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetDeflateCompression, self).__init__(**kwargs)
-        self.type = 'Deflate'  # type: str
-        self.level = kwargs.get('level', None)
-
-
 class DatasetFolder(msrest.serialization.Model):
     """The folder that this Dataset is in. If not specified, Dataset will appear at the root level.
 
@@ -11900,40 +11856,6 @@ class DatasetFolder(msrest.serialization.Model):
     ):
         super(DatasetFolder, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-
-
-class DatasetGZipCompression(DatasetCompression):
-    """The GZip compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The GZip compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetGZipCompression, self).__init__(**kwargs)
-        self.type = 'GZip'  # type: str
-        self.level = kwargs.get('level', None)
 
 
 class DatasetListResponse(msrest.serialization.Model):
@@ -12071,104 +11993,6 @@ class DatasetSchemaDataElement(msrest.serialization.Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.name = kwargs.get('name', None)
         self.type = kwargs.get('type', None)
-
-
-class DatasetTarCompression(DatasetCompression):
-    """The Tar archive method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetTarCompression, self).__init__(**kwargs)
-        self.type = 'Tar'  # type: str
-
-
-class DatasetTarGZipCompression(DatasetCompression):
-    """The TarGZip compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The TarGZip compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetTarGZipCompression, self).__init__(**kwargs)
-        self.type = 'TarGZip'  # type: str
-        self.level = kwargs.get('level', None)
-
-
-class DatasetZipDeflateCompression(DatasetCompression):
-    """The ZipDeflate compression method used on a dataset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of dataset compression. Type: string (or Expression with resultType
-     string).Constant filled by server.
-    :type type: any
-    :param level: The ZipDeflate compression level.
-    :type level: any
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'object'},
-        'level': {'key': 'level', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetZipDeflateCompression, self).__init__(**kwargs)
-        self.type = 'ZipDeflate'  # type: str
-        self.level = kwargs.get('level', None)
 
 
 class Db2LinkedService(LinkedService):
@@ -16009,6 +15833,61 @@ class FilterActivity(ControlActivity):
         self.condition = kwargs['condition']
 
 
+class Flowlet(DataFlow):
+    """Data flow flowlet.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Type of data flow.Constant filled by server.
+    :type type: str
+    :param description: The description of the data flow.
+    :type description: str
+    :param annotations: List of tags that can be used for describing the data flow.
+    :type annotations: list[any]
+    :param folder: The folder that this data flow is in. If not specified, Data flow will appear at
+     the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DataFlowFolder
+    :param sources: List of sources in Flowlet.
+    :type sources: list[~azure.mgmt.datafactory.models.DataFlowSource]
+    :param sinks: List of sinks in Flowlet.
+    :type sinks: list[~azure.mgmt.datafactory.models.DataFlowSink]
+    :param transformations: List of transformations in Flowlet.
+    :type transformations: list[~azure.mgmt.datafactory.models.Transformation]
+    :param script: Flowlet script.
+    :type script: str
+    :param script_lines: Flowlet script lines.
+    :type script_lines: list[str]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
+        'sources': {'key': 'typeProperties.sources', 'type': '[DataFlowSource]'},
+        'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
+        'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
+        'script': {'key': 'typeProperties.script', 'type': 'str'},
+        'script_lines': {'key': 'typeProperties.scriptLines', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Flowlet, self).__init__(**kwargs)
+        self.type = 'Flowlet'  # type: str
+        self.sources = kwargs.get('sources', None)
+        self.sinks = kwargs.get('sinks', None)
+        self.transformations = kwargs.get('transformations', None)
+        self.script = kwargs.get('script', None)
+        self.script_lines = kwargs.get('script_lines', None)
+
+
 class ForEachActivity(ControlActivity):
     """This activity is used for iterating over a collection and execute given activities.
 
@@ -16110,6 +15989,9 @@ class FtpReadSettings(StoreReadSettings):
     :type file_list_path: any
     :param use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
     :type use_binary_transfer: bool
+    :param disable_chunking: If true, disable parallel reading within each file. Default is false.
+     Type: boolean (or Expression with resultType boolean).
+    :type disable_chunking: any
     """
 
     _validation = {
@@ -16129,6 +16011,7 @@ class FtpReadSettings(StoreReadSettings):
         'delete_files_after_completion': {'key': 'deleteFilesAfterCompletion', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'use_binary_transfer': {'key': 'useBinaryTransfer', 'type': 'bool'},
+        'disable_chunking': {'key': 'disableChunking', 'type': 'object'},
     }
 
     def __init__(
@@ -16145,6 +16028,7 @@ class FtpReadSettings(StoreReadSettings):
         self.delete_files_after_completion = kwargs.get('delete_files_after_completion', None)
         self.file_list_path = kwargs.get('file_list_path', None)
         self.use_binary_transfer = kwargs.get('use_binary_transfer', None)
+        self.disable_chunking = kwargs.get('disable_chunking', None)
 
 
 class FtpServerLinkedService(LinkedService):
@@ -22502,6 +22386,8 @@ class MappingDataFlow(DataFlow):
     :type transformations: list[~azure.mgmt.datafactory.models.Transformation]
     :param script: DataFlow script.
     :type script: str
+    :param script_lines: Data flow script lines.
+    :type script_lines: list[str]
     """
 
     _validation = {
@@ -22517,6 +22403,7 @@ class MappingDataFlow(DataFlow):
         'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
         'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
         'script': {'key': 'typeProperties.script', 'type': 'str'},
+        'script_lines': {'key': 'typeProperties.scriptLines', 'type': '[str]'},
     }
 
     def __init__(
@@ -22529,6 +22416,7 @@ class MappingDataFlow(DataFlow):
         self.sinks = kwargs.get('sinks', None)
         self.transformations = kwargs.get('transformations', None)
         self.script = kwargs.get('script', None)
+        self.script_lines = kwargs.get('script_lines', None)
 
 
 class MariaDBLinkedService(LinkedService):
@@ -27140,7 +27028,8 @@ class PipelineRun(msrest.serialization.Model):
     :vartype run_end: ~datetime.datetime
     :ivar duration_in_ms: The duration of a pipeline run.
     :vartype duration_in_ms: int
-    :ivar status: The status of a pipeline run.
+    :ivar status: The status of a pipeline run. Possible values: Queued, InProgress, Succeeded,
+     Failed, Canceling, Cancelled.
     :vartype status: str
     :ivar message: The message from a pipeline run.
     :vartype message: str
@@ -27510,6 +27399,8 @@ class PowerQuerySink(DataFlowSink):
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
     :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param schema_linked_service: Schema linked service reference.
     :type schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param script: sink script.
@@ -27525,6 +27416,7 @@ class PowerQuerySink(DataFlowSink):
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
         'script': {'key': 'script', 'type': 'str'},
     }
@@ -27573,6 +27465,8 @@ class PowerQuerySource(DataFlowSource):
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param linked_service: Linked service reference.
     :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param flowlet: Flowlet Reference.
+    :type flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :param schema_linked_service: Schema linked service reference.
     :type schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param script: source script.
@@ -27588,6 +27482,7 @@ class PowerQuerySource(DataFlowSource):
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
         'script': {'key': 'script', 'type': 'str'},
     }
@@ -32378,6 +32273,9 @@ class SftpReadSettings(StoreReadSettings):
     :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
     :type modified_datetime_end: any
+    :param disable_chunking: If true, disable parallel reading within each file. Default is false.
+     Type: boolean (or Expression with resultType boolean).
+    :type disable_chunking: any
     """
 
     _validation = {
@@ -32398,6 +32296,7 @@ class SftpReadSettings(StoreReadSettings):
         'delete_files_after_completion': {'key': 'deleteFilesAfterCompletion', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+        'disable_chunking': {'key': 'disableChunking', 'type': 'object'},
     }
 
     def __init__(
@@ -32415,6 +32314,7 @@ class SftpReadSettings(StoreReadSettings):
         self.delete_files_after_completion = kwargs.get('delete_files_after_completion', None)
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+        self.disable_chunking = kwargs.get('disable_chunking', None)
 
 
 class SftpServerLinkedService(LinkedService):
