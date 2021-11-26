@@ -7,81 +7,96 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AcceptOwnershipRequest
+    from ._models_py3 import AcceptOwnershipRequestProperties
+    from ._models_py3 import AcceptOwnershipStatusResponse
+    from ._models_py3 import BillingAccountPoliciesResponse
+    from ._models_py3 import BillingAccountPoliciesResponseProperties
     from ._models_py3 import CanceledSubscriptionId
     from ._models_py3 import EnabledSubscriptionId
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ErrorResponseBody
-    from ._models_py3 import Location
-    from ._models_py3 import LocationListResult
+    from ._models_py3 import GetTenantPolicyListResponse
+    from ._models_py3 import GetTenantPolicyResponse
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import PutAliasListResult
     from ._models_py3 import PutAliasRequest
+    from ._models_py3 import PutAliasRequestAdditionalProperties
     from ._models_py3 import PutAliasRequestProperties
-    from ._models_py3 import PutAliasResponse
-    from ._models_py3 import PutAliasResponseProperties
+    from ._models_py3 import PutTenantPolicyRequestProperties
     from ._models_py3 import RenamedSubscriptionId
-    from ._models_py3 import Subscription
-    from ._models_py3 import SubscriptionListResult
+    from ._models_py3 import ServiceTenantResponse
+    from ._models_py3 import SubscriptionAliasListResult
+    from ._models_py3 import SubscriptionAliasResponse
+    from ._models_py3 import SubscriptionAliasResponseProperties
     from ._models_py3 import SubscriptionName
-    from ._models_py3 import SubscriptionPolicies
-    from ._models_py3 import TenantIdDescription
-    from ._models_py3 import TenantListResult
+    from ._models_py3 import SystemData
+    from ._models_py3 import TenantPolicy
 except (SyntaxError, ImportError):
+    from ._models import AcceptOwnershipRequest  # type: ignore
+    from ._models import AcceptOwnershipRequestProperties  # type: ignore
+    from ._models import AcceptOwnershipStatusResponse  # type: ignore
+    from ._models import BillingAccountPoliciesResponse  # type: ignore
+    from ._models import BillingAccountPoliciesResponseProperties  # type: ignore
     from ._models import CanceledSubscriptionId  # type: ignore
     from ._models import EnabledSubscriptionId  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ErrorResponseBody  # type: ignore
-    from ._models import Location  # type: ignore
-    from ._models import LocationListResult  # type: ignore
+    from ._models import GetTenantPolicyListResponse  # type: ignore
+    from ._models import GetTenantPolicyResponse  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
-    from ._models import PutAliasListResult  # type: ignore
     from ._models import PutAliasRequest  # type: ignore
+    from ._models import PutAliasRequestAdditionalProperties  # type: ignore
     from ._models import PutAliasRequestProperties  # type: ignore
-    from ._models import PutAliasResponse  # type: ignore
-    from ._models import PutAliasResponseProperties  # type: ignore
+    from ._models import PutTenantPolicyRequestProperties  # type: ignore
     from ._models import RenamedSubscriptionId  # type: ignore
-    from ._models import Subscription  # type: ignore
-    from ._models import SubscriptionListResult  # type: ignore
+    from ._models import ServiceTenantResponse  # type: ignore
+    from ._models import SubscriptionAliasListResult  # type: ignore
+    from ._models import SubscriptionAliasResponse  # type: ignore
+    from ._models import SubscriptionAliasResponseProperties  # type: ignore
     from ._models import SubscriptionName  # type: ignore
-    from ._models import SubscriptionPolicies  # type: ignore
-    from ._models import TenantIdDescription  # type: ignore
-    from ._models import TenantListResult  # type: ignore
+    from ._models import SystemData  # type: ignore
+    from ._models import TenantPolicy  # type: ignore
 
 from ._subscription_client_enums import (
+    AcceptOwnership,
+    CreatedByType,
     ProvisioningState,
-    SpendingLimit,
-    SubscriptionState,
     Workload,
 )
 
 __all__ = [
+    'AcceptOwnershipRequest',
+    'AcceptOwnershipRequestProperties',
+    'AcceptOwnershipStatusResponse',
+    'BillingAccountPoliciesResponse',
+    'BillingAccountPoliciesResponseProperties',
     'CanceledSubscriptionId',
     'EnabledSubscriptionId',
     'ErrorResponse',
     'ErrorResponseBody',
-    'Location',
-    'LocationListResult',
+    'GetTenantPolicyListResponse',
+    'GetTenantPolicyResponse',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'PutAliasListResult',
     'PutAliasRequest',
+    'PutAliasRequestAdditionalProperties',
     'PutAliasRequestProperties',
-    'PutAliasResponse',
-    'PutAliasResponseProperties',
+    'PutTenantPolicyRequestProperties',
     'RenamedSubscriptionId',
-    'Subscription',
-    'SubscriptionListResult',
+    'ServiceTenantResponse',
+    'SubscriptionAliasListResult',
+    'SubscriptionAliasResponse',
+    'SubscriptionAliasResponseProperties',
     'SubscriptionName',
-    'SubscriptionPolicies',
-    'TenantIdDescription',
-    'TenantListResult',
+    'SystemData',
+    'TenantPolicy',
+    'AcceptOwnership',
+    'CreatedByType',
     'ProvisioningState',
-    'SpendingLimit',
-    'SubscriptionState',
     'Workload',
 ]
