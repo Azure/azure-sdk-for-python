@@ -41,6 +41,12 @@ class ActiveDirectoryStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: Active Directory Updating.
     UPDATING = "Updating"
 
+class ApplicationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Application Type
+    """
+
+    SAP_HANA = "SAP-HANA"
+
 class AvsDataStore(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore purpose
     """
