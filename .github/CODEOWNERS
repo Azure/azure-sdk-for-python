@@ -42,6 +42,7 @@
 /sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @mccoyp @YalinLi0312
