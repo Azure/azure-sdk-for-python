@@ -5,14 +5,14 @@
 # --------------------------------------------------------------------------
 from unittest import TestCase
 try:
-    from unittest.mock import MagicMock, Mock
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import MagicMock, Mock  # type: ignore
+    from mock import MagicMock, Mock, patch  # type: ignore
 import azure.communication.identity._shared.user_credential as user_credential
 from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
-from unittest.mock import patch
+#from unittest.mock import patch
 from datetime import timedelta
 from functools import wraps
 import base64
@@ -40,7 +40,7 @@ def patch_threading_timer(target_timer):
 
             with patch(target_timer, side_effect=side_effect) as timer_mock:
                 # Pass the mock object to the decorated function for further assertions
-                return f(*(*args, timer_mock), **kwargs)
+                return f(*(args[0], timer_mock), **kwargs)
 
         return wrapper
 
@@ -50,19 +50,19 @@ def patch_threading_timer(target_timer):
 class TestCommunicationTokenCredential(TestCase):
 
     @staticmethod
-    def get_token_with_custom_expiry(expires_on: int):
+    def get_token_with_custom_expiry(expires_on):
         expiry_json = '{"exp": ' + str(expires_on) + '}'
         base64expiry = base64.b64encode(
             expiry_json.encode('utf-8')).decode('utf-8').rstrip("=")
         token_template = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +\
-            f"{base64expiry}.adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs"
+            base64expiry + ".adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs"
         return token_template
 
-    def __init__(self, methodName: str = ...) -> None:
-        super().__init__(methodName=methodName)
-        self.sample_token = self.get_token_with_custom_expiry(
+    @classmethod
+    def setUpClass(cls):
+        cls.sample_token = cls.get_token_with_custom_expiry(
             32503680000)  # 1/1/2030
-        self.expired_token = self.get_token_with_custom_expiry(100)  # 1/1/1970
+        cls.expired_token = cls.get_token_with_custom_expiry(100)  # 1/1/1970
 
     def test_communicationtokencredential_decodes_token(self):
         credential = CommunicationTokenCredential(self.sample_token)
@@ -111,7 +111,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(refresher.call_count, 0)
         self.assertEqual(access_token.token, self.sample_token)
 
-    @patch_threading_timer(f'{user_credential.__name__}.Timer')
+    @patch_threading_timer(user_credential.__name__+'.Timer')
     def test_communicationtokencredential_does_not_proactively_refresh_before_specified_time(self, timer_mock):
         refresh_minutes = 30
         token_validity_minutes = 60
@@ -125,7 +125,7 @@ class TestCommunicationTokenCredential(TestCase):
             skip_to_timestamp + token_validity_minutes * 60)))
 
         # travel in time to the point where the token should still not be refreshed
-        with patch(f'{user_credential.__name__}.get_current_utc_as_int', return_value=skip_to_timestamp):
+        with patch(user_credential.__name__+'.get_current_utc_as_int', return_value=skip_to_timestamp):
             credential = CommunicationTokenCredential(
                 initial_token.token,
                 token_refresher=refresher,
@@ -139,7 +139,7 @@ class TestCommunicationTokenCredential(TestCase):
         # check that next refresh is always scheduled
         self.assertTrue(credential._timer is not None)
 
-    @patch_threading_timer(f'{user_credential.__name__}.Timer')
+    @patch_threading_timer(user_credential.__name__+'.Timer')
     def test_communicationtokencredential_proactively_refreshes_after_specified_time(self, timer_mock):
         refresh_minutes = 30
         token_validity_minutes = 60
@@ -153,7 +153,7 @@ class TestCommunicationTokenCredential(TestCase):
             skip_to_timestamp + token_validity_minutes * 60)))
 
         # travel in time to the point where the token should be refreshed
-        with patch(f'{user_credential.__name__}.get_current_utc_as_int', return_value=skip_to_timestamp):
+        with patch(user_credential.__name__+'.get_current_utc_as_int', return_value=skip_to_timestamp):
             credential = CommunicationTokenCredential(
                 initial_token.token,
                 token_refresher=refresher,
@@ -177,7 +177,7 @@ class TestCommunicationTokenCredential(TestCase):
             skip_to_timestamp + token_validity_minutes * 60)))
 
         # travel in time to the point where the token should be refreshed
-        with patch(f'{user_credential.__name__}.get_current_utc_as_int', return_value=skip_to_timestamp):
+        with patch(user_credential.__name__+'.get_current_utc_as_int', return_value=skip_to_timestamp):
             credential = CommunicationTokenCredential(
                 self.expired_token,
                 token_refresher=refresher,
@@ -192,7 +192,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertTrue(credential._timer is not None)
         credential._timer.cancel()
 
-    @patch_threading_timer(f'{user_credential.__name__}.Timer')
+    @patch_threading_timer(user_credential.__name__+'.Timer')
     def test_exit_cancels_timer(self, timer_mock):
         refresher = MagicMock(return_value=self.sample_token)
 
@@ -206,7 +206,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(credential._timer.cancel.call_count, 1)
         self.assertEqual(refresher.call_count, 0)
 
-    @patch_threading_timer(f'{user_credential.__name__}.Timer')
+    @patch_threading_timer(user_credential.__name__+'.Timer')
     def test_refresher_called_only_once(self, timer_mock):
         refresher = MagicMock(
             return_value=create_access_token(self.sample_token))
