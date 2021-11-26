@@ -1,6 +1,16 @@
 # Release History
 
-## 1.3.0 (2021-11-09)
+## 1.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0 (2021-11-10)
 
 ### Bugs Fixed
 - Fix the issue that data was persisted according to an incorrect schema/in an incorrect format ([#20518](https://github.com/Azure/azure-sdk-for-python/issues/20518))

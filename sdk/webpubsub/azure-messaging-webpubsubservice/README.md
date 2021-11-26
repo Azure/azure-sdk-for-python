@@ -7,13 +7,17 @@ You can use this library in your app server side to manage the WebSocket client 
 ![overflow](https://user-images.githubusercontent.com/668244/140014067-25a00959-04dc-47e8-ac25-6957bd0a71ce.png)
 
 Use this library to:
-- Send messages to hubs and groups. 
+- Send messages to hubs and groups.
 - Send messages to particular users and connections.
 - Organize users and connections into groups.
 - Close connections
 - Grant, revoke, and check permissions for an existing connection
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice) | [Package (Pypi)][package] | [API reference documentation](https://aka.ms/awps/sdk/python) | [Product documentation][webpubsubservice_docs]
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -36,7 +40,7 @@ You can authenticate the `WebPubSubServiceClient` using [connection string][conn
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
->>> service = WebPubSubServiceClient.from_connection_string(connection_string='<connection_string>')
+>>> service = WebPubSubServiceClient.from_connection_string(connection_string='<connection_string>', hub='hub')
 ```
 
 Or using the service endpoint and the access key:
@@ -45,7 +49,7 @@ Or using the service endpoint and the access key:
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 >>> from azure.core.credentials import AzureKeyCredential
 
->>> service = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential("<access_key>"))
+>>> service = WebPubSubServiceClient(endpoint='<endpoint>', hub='hub', credential=AzureKeyCredential("<access_key>"))
 ```
 
 Or using [Azure Active Directory][aad_doc]:
@@ -56,7 +60,7 @@ Or using [Azure Active Directory][aad_doc]:
     ```python
     >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
     >>> from azure.identity import DefaultAzureCredential
-    >>> service = WebPubSubServiceClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+    >>> service = WebPubSubServiceClient(endpoint='<endpoint>', hub='hub', credential=DefaultAzureCredential())
     ```
 
 ## Key concepts
@@ -88,8 +92,8 @@ When the client is connected, it can send messages to the upstream application, 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
->>> service = WebPubSubServiceClient.from_connection_string('<connection_string>')
->>> service.send_to_all('hub1', message = {
+>>> service = WebPubSubServiceClient.from_connection_string('<connection_string>', hub='hub1')
+>>> service.send_to_all(message = {
         'from': 'user1',
         'data': 'Hello world'
     })
@@ -101,8 +105,8 @@ The WebSocket client will receive JSON serialized text: `{"from": "user1", "data
 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
->>> service = WebPubSubServiceClient.from_connection_string('<connection_string>')
->>> service.send_to_all('hub1', message = 'Hello world', content_type='text/plain')
+>>> service = WebPubSubServiceClient.from_connection_string('<connection_string>', hub='hub1')
+>>> service.send_to_all(message = 'Hello world', content_type='text/plain')
 ```
 
 The WebSocket client will receive text: `Hello world`.
@@ -112,8 +116,8 @@ The WebSocket client will receive text: `Hello world`.
 ```python
 >>> import io
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
->>> service = WebPubSubServiceClient.from_connection_string('<connection_string>')
->>> service.send_to_all('hub1', message=io.StringIO('Hello World'), content_type='application/octet-stream')
+>>> service = WebPubSubServiceClient.from_connection_string('<connection_string>', hub='hub')
+>>> service.send_to_all(message=io.StringIO('Hello World'), content_type='application/octet-stream')
 ```
 The WebSocket client will receive binary text: `b'Hello world'`.
 
@@ -142,7 +146,7 @@ endpoint = "<endpoint>"
 credential = DefaultAzureCredential()
 
 # This WebPubSubServiceClient will log detailed information about its HTTP sessions, at DEBUG level
-service = WebPubSubServiceClient(endpoint=endpoint, credential=credential, logging_enable=True)
+service = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single call,

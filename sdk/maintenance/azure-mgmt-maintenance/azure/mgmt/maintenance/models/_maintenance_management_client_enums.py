@@ -66,6 +66,22 @@ class MaintenanceScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: This maintenance scope controls installation of SQL managed instance platform update.
     SQL_MANAGED_INSTANCE = "SQLManagedInstance"
 
+class RebootOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Possible reboot preference as defined by the user based on which it would be decided to reboot
+    the machine or not after the patch operation is completed.
+    """
+
+    IF_REQUIRED = "IfRequired"
+    NEVER = "Never"
+    ALWAYS = "Always"
+
+class TaskScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Global Task execute once when schedule trigger. Resource task execute for each VM.
+    """
+
+    GLOBAL_ENUM = "Global"
+    RESOURCE = "Resource"
+
 class UpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status
     """

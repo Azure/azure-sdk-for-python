@@ -1,6 +1,16 @@
 # Release History
 
-## 12.2.0 (2021-11-09)
+## 12.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.2.0 (2021-11-10)
 
 **Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
 
@@ -39,7 +49,7 @@
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
 * Fixed table name from URL parsing in `TableClient.from_table_url` classmethod.
 * The `account_name` attribute on clients will now be pulled from an `AzureNamedKeyCredential` if used.
-* Any additional odata metadata is returned in entitys metadata.
+* Any additional odata metadata is returned in entity's metadata.
 * The timestamp in entity metadata is now deserialized to a timestamp.
 * If the `prefer` header is added in the `create_entity` operation, the echo will be returned.
 * Errors raised on a 412 if-not-match error will now be a specific `azure.core.exceptions.ResourceModifiedError`.

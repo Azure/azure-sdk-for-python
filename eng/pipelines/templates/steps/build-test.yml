@@ -14,6 +14,7 @@ parameters:
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
+  TestProxy: false
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -37,6 +38,9 @@ steps:
       pip freeze
     displayName: 'Prep Environment'
 
+  - ${{if eq(parameters.TestProxy, true) }}:
+    - template: /eng/common/testproxy/test-proxy-tool.yml
+
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
       parameters:
@@ -58,6 +62,11 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+
+  - ${{if eq(parameters.TestProxy, true) }}:
+    - pwsh: |
+        cat $(Build.SourcesDirectory)/test-proxy.log
+      displayName: Dump Test-Proxy Logs
 
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs

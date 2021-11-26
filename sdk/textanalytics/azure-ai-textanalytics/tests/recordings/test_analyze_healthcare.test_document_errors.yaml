@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
@@ -24,11 +24,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - babbcb9d-429e-40ca-9069-8b403b2a7274
+      - 19f8d0af-a534-47b0-b037-07a9b06b0b03
       date:
-      - Wed, 06 Oct 2021 21:00:24 GMT
+      - Tue, 23 Nov 2021 01:09:00 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/a26b209e-1f7e-4a27-842a-733780d5f63e
+      - https://westus2.api.cognitive.microsoft.com//text/analytics/v3.2-preview.2/entities/health/jobs/265d2fec-bbbd-4705-ac19-2d406eac189d
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '266'
+      - '335'
     status:
       code: 202
       message: Accepted
@@ -50,27 +50,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/a26b209e-1f7e-4a27-842a-733780d5f63e
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/265d2fec-bbbd-4705-ac19-2d406eac189d
   response:
     body:
-      string: '{"jobId":"a26b209e-1f7e-4a27-842a-733780d5f63e","lastUpdateDateTime":"2021-10-06T21:00:25Z","createdDateTime":"2021-10-06T21:00:25Z","expirationDateTime":"2021-10-07T21:00:25Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"265d2fec-bbbd-4705-ac19-2d406eac189d","lastUpdateDateTime":"2021-11-23T01:09:03Z","createdDateTime":"2021-11-23T01:09:00Z","expirationDateTime":"2021-11-24T01:09:00Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"3","entities":[],"relations":[],"warnings":[{"code":"DocumentTruncated","message":"Document
+        is large and must be split to be processed; relations across splits may not
+        be caught by the model"}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"A
-        document within the request was too large to be processed. Limit document
-        size to: 5120 text elements. For additional details on the data limitations
-        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2021-05-15"}}'
+        language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}}],"modelVersion":"2021-05-15"}}'
     headers:
       apim-request-id:
-      - d4c1b433-82d4-471c-9d02-58189b8be7ed
+      - de343c73-d70c-4cee-b4dc-bf5bcb783453
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 21:00:29 GMT
+      - Tue, 23 Nov 2021 01:09:05 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -78,7 +76,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '75'
+      - '332'
     status:
       code: 200
       message: OK

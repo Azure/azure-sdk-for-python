@@ -90,12 +90,13 @@ azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-messaging-nspkg
 azure-mixedreality-nspkg
+azure-mixedreality-authentication
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
 azure-agrifood-nspkg
 azure-purview-nspkg
-azure-schemaregistry==1.0.0b3
+azure-schemaregistry>=1.0.0,<2.0.0
 azure-search-nspkg
 azure-security-nspkg
 azure-synapse-nspkg
@@ -125,7 +126,7 @@ aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.11.0
 isodate>=0.6.0
-avro<2.0.0,==1.10.0
+avro==1.10.0
 pyjwt>=1.7.1
 chardet<5,>=3.0.2
 backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
@@ -141,6 +142,10 @@ backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure-data-tables msrest>=0.6.21
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-identity azure-core<2.0.0,>=1.11.0
+#override azure-keyvault-administration azure-core<2.0.0,>=1.15.0
+#override azure-keyvault-certificates azure-core<2.0.0,>=1.15.0
+#override azure-keyvault-keys azure-core<2.0.0,>=1.15.0
+#override azure-keyvault-secrets azure-core<2.0.0,>=1.15.0
 #override azure-identity cryptography>=2.5
 #override azure-keyvault-administration msrest>=0.6.21
 #override azure-keyvault-administration azure-core<2.0.0,>=1.11.0
@@ -346,6 +351,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-containerinstance msrest>=0.6.21
 #override azure-mgmt-recoveryservicessiterecovery msrest>=0.6.21
 #override azure-mixedreality-remoterendering azure-core<2.0.0,>=1.6.0
+#override azure-mixedreality-remoterendering azure-mixedreality-authentication>=1.0.0b1
 #override azure-mgmt-batch msrest>=0.6.21
 #override azure-batch msrest>=0.6.21
 #override azure-mgmt-servicebus msrest>=0.6.21
@@ -357,10 +363,14 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-azurearcdata msrest>=0.6.21
 #override azure-mgmt-servicelinker msrest>=0.6.21
 #override azure-mgmt-fluidrelay msrest>=0.6.21
+#override azure-mgmt-connectedvmware msrest>=0.6.21
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.19.1
 #override azure-ai-language-conversations msrest>=0.6.21
 #override azure-mgmt-deviceupdate msrest>=0.6.21
 #override azure-mgmt-dataprotection msrest>=0.6.21
 #override azure-mgmt-chaos msrest>=0.6.21
+#override azure-mgmt-resourceconnector msrest>=0.6.21
+#override azure-mgmt-desktopvirtualization msrest>=0.6.21
 #override azure-mgmt-monitor msrest>=0.6.21
 #override azure-mgmt-subscription msrest>=0.6.21
+#override azure-mgmt-orbital msrest>=0.6.21

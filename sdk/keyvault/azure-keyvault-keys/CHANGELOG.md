@@ -1,20 +1,33 @@
 # Release History
 
-## 4.5.0b5 (Unreleased)
+## 4.5.0b6 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.5.0b5 (2021-11-11)
+
+### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 4.4.0.
 > Only code written against a beta version such as 4.5.0b1 may be affected.
 - `KeyClient.get_random_bytes` now returns bytes instead of RandomBytes. The RandomBytes class
-  has been removed.
+  has been removed
 - Renamed the `version` keyword-only argument in `KeyClient.get_cryptography_client` to
-  `key_version`.
-
-### Bugs Fixed
+  `key_version`
+- Renamed `KeyReleasePolicy.data` to `KeyReleasePolicy.encoded_policy`
+- Renamed the `target` parameter in `KeyClient.release_key` to `target_attestation_token`
 
 ### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
 
 ## 4.5.0b4 (2021-10-07)
 
