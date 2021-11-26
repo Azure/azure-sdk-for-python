@@ -3,9 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from threading import Lock, Condition
+from threading import Lock, Condition, Timer
 from datetime import timedelta
-from threading import Timer
 
 from typing import (  # pylint: disable=unused-import
     cast,
@@ -14,7 +13,6 @@ from typing import (  # pylint: disable=unused-import
 )
 import six
 
-from msrest.serialization import TZ_UTC
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 
@@ -22,9 +20,9 @@ from .utils import create_access_token
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service
-    :keyword token_refresher: The async token refresher to provide capacity to fetch fresh token
-    :keyword refresh_proactively: Whether to refresh the token proactively or not
-    :keyword refresh_time_before_expiry: The time before the token expires to refresh the token
+    :keyword callable token_refresher: The async token refresher to provide capacity to fetch fresh token
+    :keyword bool refresh_proactively: Whether to refresh the token proactively or not
+    :keyword timedelta refresh_time_before_expiry: The time before the token expires to refresh the token
     :raises: TypeError
     """
 
@@ -45,7 +43,7 @@ class CommunicationTokenCredential(object):
         self._timer = None
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
-        if(self._refresh_proactively):
+        if self._refresh_proactively:
             self._schedule_refresh()
 
     def __enter__(self):
@@ -95,7 +93,7 @@ class CommunicationTokenCredential(object):
                     self._lock.notify_all()
 
                 raise
-        if(self._refresh_proactively):
+        if self._refresh_proactively:
             self._schedule_refresh()
         return self._token
 
@@ -113,7 +111,7 @@ class CommunicationTokenCredential(object):
         self._lock.acquire()
 
     def _token_expiring(self):
-        if(self._refresh_proactively):
+        if self._refresh_proactively:
             interval = self._refresh_time_before_expiry
         else:
             interval = timedelta(
