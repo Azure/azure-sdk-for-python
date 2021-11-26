@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0 (2021-11-20)
+
+**Features**
+
+  - Model PowerQuerySink has a new parameter flowlet
+  - Model DatasetCompression has a new parameter level
+  - Model SftpReadSettings has a new parameter disable_chunking
+  - Model DataFlowSink has a new parameter flowlet
+  - Model PowerQuerySource has a new parameter flowlet
+  - Model Transformation has a new parameter linked_service
+  - Model Transformation has a new parameter dataset
+  - Model Transformation has a new parameter flowlet
+  - Model DataFlowDebugPackage has a new parameter data_flows
+  - Model FtpReadSettings has a new parameter disable_chunking
+  - Model MappingDataFlow has a new parameter script_lines
+  - Model DataFlowReference has a new parameter parameters
+  - Model DataFlowSource has a new parameter flowlet
+
 ## 2.0.0 (2021-10-09)
 
 **Features**
