@@ -1,4 +1,5 @@
 from common import IssueProcess, Common
+from utils import AUTO_PARSE_LABEL, get_origin_link_and_tag
 from typing import Any, List
 import os
 
@@ -14,7 +15,21 @@ _ASSIGNEE_TOKEN_JAVA = {
 
 
 class IssueProcessJava(IssueProcess):
-    pass
+
+    def auto_parse(self) -> None:
+        if AUTO_PARSE_LABEL in self.issue_package.labels_name:
+            return
+
+        self.add_label(AUTO_PARSE_LABEL)
+        issue_body_list = self.get_issue_body()
+
+        # Get the origin link and readme tag in issue body
+        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
+
+        # get readme_link
+        self.get_readme_link(origin_link)
+
+        self.edit_issue_body()
 
 
 class Java(Common):
