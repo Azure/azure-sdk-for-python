@@ -14,26 +14,26 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SubscriptionsOperations:
-    """SubscriptionsOperations async operations.
+class SubscriptionPolicyOperations:
+    """SubscriptionPolicyOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~subscription_client.models
+    :type models: ~azure.mgmt.subscription.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -41,106 +41,82 @@ class SubscriptionsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    def list_locations(
+    async def add_update_policy_for_tenant(
         self,
-        subscription_id: str,
-        **kwargs
-    ) -> AsyncIterable["models.LocationListResult"]:
-        """Gets all available geo-locations.
+        body: "_models.PutTenantPolicyRequestProperties",
+        **kwargs: Any
+    ) -> "_models.GetTenantPolicyResponse":
+        """Create or Update Subscription tenant policy for user's tenant.
 
-        This operation provides all the locations that are available for resource providers; however,
-        each resource provider may support a subset of this list.
-
-        :param subscription_id: The ID of the target subscription.
-        :type subscription_id: str
+        :param body:
+        :type body: ~azure.mgmt.subscription.models.PutTenantPolicyRequestProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either LocationListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~subscription_client.models.LocationListResult]
+        :return: GetTenantPolicyResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.subscription.models.GetTenantPolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetTenantPolicyResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_locations.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize('LocationListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_locations.metadata = {'url': '/subscriptions/{subscriptionId}/locations'}  # type: ignore
-
-    async def get(
-        self,
-        subscription_id: str,
-        **kwargs
-    ) -> "models.Subscription":
-        """Gets details about a specified subscription.
-
-        :param subscription_id: The ID of the target subscription.
-        :type subscription_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Subscription, or the result of cls(response)
-        :rtype: ~subscription_client.models.Subscription
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Subscription"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-10-01"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+        url = self.add_update_policy_for_tenant.metadata['url']  # type: ignore
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'PutTenantPolicyRequestProperties')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('GetTenantPolicyResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    add_update_policy_for_tenant.metadata = {'url': '/providers/Microsoft.Subscription/policies/default'}  # type: ignore
+
+    async def get_policy_for_tenant(
+        self,
+        **kwargs: Any
+    ) -> "_models.GetTenantPolicyResponse":
+        """Get the subscription tenant policy for the user's tenant.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: GetTenantPolicyResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.subscription.models.GetTenantPolicyResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetTenantPolicyResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-10-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_policy_for_tenant.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -156,33 +132,34 @@ class SubscriptionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Subscription', pipeline_response)
+        deserialized = self._deserialize('GetTenantPolicyResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}'}  # type: ignore
+    get_policy_for_tenant.metadata = {'url': '/providers/Microsoft.Subscription/policies/default'}  # type: ignore
 
-    def list(
+    def list_policy_for_tenant(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.SubscriptionListResult"]:
-        """Gets all subscriptions for a tenant.
+        **kwargs: Any
+    ) -> AsyncIterable["_models.GetTenantPolicyListResponse"]:
+        """Get the subscription tenant policy for the user's tenant.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SubscriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~subscription_client.models.SubscriptionListResult]
+        :return: An iterator like instance of either GetTenantPolicyListResponse or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.subscription.models.GetTenantPolicyListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetTenantPolicyListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -192,7 +169,7 @@ class SubscriptionsOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_policy_for_tenant.metadata['url']  # type: ignore
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -205,7 +182,7 @@ class SubscriptionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SubscriptionListResult', pipeline_response)
+            deserialized = self._deserialize('GetTenantPolicyListResponse', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -218,12 +195,13 @@ class SubscriptionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions'}  # type: ignore
+    list_policy_for_tenant.metadata = {'url': '/providers/Microsoft.Subscription/policies'}  # type: ignore
