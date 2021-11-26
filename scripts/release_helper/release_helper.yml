@@ -1,6 +1,6 @@
 # Release status statistics
 
-name: ReleaseIssueStatus
+name: ReleaseHelper
 
 trigger:
   branches:
@@ -16,8 +16,8 @@ schedules:
     always: true
 
 jobs:
-- job: ReleaseIssueStatus
-  displayName: ReleaseIssueStatus Python 3.8
+- job: ReleaseHelper
+  displayName: ReleaseHelper Python 3.8
   timeoutInMinutes: 30
   strategy:
     maxParallel: 3
@@ -30,25 +30,24 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
-        script_path=$(pwd)/scripts/release_issue_status
+        script_path=$(pwd)/scripts/release_helper
         cd ..
-        git config --global user.email "ReleaseIssueStatus"
-        git config --global user.name "ReleaseIssueStatus"
+        git config --global user.email "ReleaseHelper"
+        git config --global user.name "ReleaseHelper"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
-        mkdir file-storage
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
+        # mkdir file-storage
+        # git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
 
         # import env variable
-        export CONN_STR=$(ENV_CONN_STR)
-        export FILE=$(ENV_FILE)
-        export TOKEN=$(USR_TOKEN)
-        export HEADERS=$(PIPELINE_HEADERS)
-        export URL=$(PIPELINE_URL)
-        export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
-        export JF_TOKEN=$(Jiefeng-GitToken)
-        export ZED_TOKEN=$(Zed-GitToken)
-        export COOKIE=$(USR_TOKEN)
+        export TOKEN=$(Yuchao-GitToken)
+        export PYTHON_BIGCAT_TOKEN=$(Jiefeng-GitToken)
+        export PYTHON_ZED_TOKEN=$(Zed-GitToken)
+        export PYTHON_MSYYC_TOKEN=$(Yuchao-GitToken)
+        export JAVA_WEIDONGXU_TOKEN=$(Weidong-GitToken)
+        export GO_DAPENGZHANG_TOKEN=$(Dapeng-GitToken)
+        export JS_QIAOQIAO_TOKEN=$(QiaoQiao-GitToken)
+        export LANGUAGE=$(RUN_LANGUAGE)
 
         # create virtual env
         python -m venv venv-sdk
@@ -56,8 +55,8 @@ jobs:
         pip install -r $script_path/requirement.txt
 
         # checkout the target branch
-        cd file-storage
-        git checkout release-issue-status
+        # cd file-storage
+        # git checkout release-helper
 
         # run
         python $script_path/main.py

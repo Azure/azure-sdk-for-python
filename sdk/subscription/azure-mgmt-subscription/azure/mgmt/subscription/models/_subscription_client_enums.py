@@ -26,6 +26,23 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AcceptOwnership(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The accept ownership state of the resource.
+    """
+
+    PENDING = "Pending"
+    COMPLETED = "Completed"
+    EXPIRED = "Expired"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the resource.
     """
@@ -33,24 +50,6 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCEPTED = "Accepted"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
-
-class SpendingLimit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The subscription spending limit.
-    """
-
-    ON = "On"
-    OFF = "Off"
-    CURRENT_PERIOD_OFF = "CurrentPeriodOff"
-
-class SubscriptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The subscription state. Possible values are Enabled, Warned, PastDue, Disabled, and Deleted.
-    """
-
-    ENABLED = "Enabled"
-    WARNED = "Warned"
-    PAST_DUE = "PastDue"
-    DISABLED = "Disabled"
-    DELETED = "Deleted"
 
 class Workload(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The workload type of the subscription. It can be either Production or DevTest.
