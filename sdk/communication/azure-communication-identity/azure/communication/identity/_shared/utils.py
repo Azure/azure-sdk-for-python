@@ -12,8 +12,8 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 from datetime import datetime
-from azure.core.credentials import AccessToken
 from msrest.serialization import TZ_UTC
+from azure.core.credentials import AccessToken
 
 
 def _convert_datetime_to_utc_int(input_datetime):
