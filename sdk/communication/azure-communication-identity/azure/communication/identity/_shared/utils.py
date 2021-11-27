@@ -6,15 +6,14 @@
 
 import base64
 import json
-import time
 import calendar
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
 from datetime import datetime
-from azure.core.credentials import AccessToken
 from msrest.serialization import TZ_UTC
+from azure.core.credentials import AccessToken
 
 
 def _convert_datetime_to_utc_int(expires_on):
