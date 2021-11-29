@@ -4,17 +4,19 @@ from typing import List, Optional
 
 class LatLong(msrest.serialization.Model):
     _attribute_map = {
-        'latitude': {'key': 'latitude', 'type': 'float'},
-        'longitude': {'key': 'longitude', 'type': 'float'},
+        'lat': {'key': 'lat', 'type': 'float'},
+        'lon': {'key': 'lon', 'type': 'float'},
     }
 
     def __init__(
         self,
+        lat=None,
+        lon=None,
         **kwargs
     ):
-        super(LatLong, self).__init__(**kwargs)
-        self.latitude = kwargs.get('latitude', None)
-        self.longitude = kwargs.get('longitude', None)
+        super(LatLong, self).__init__(**kwargs, lat, lon)
+        self.lat = lat
+        self.lon = lon
 
     def toLatLongList(self): # type: (...) -> List[float]
         return [self.latitude, self.longitude]
@@ -28,11 +30,13 @@ class BoundingBox(msrest.serialization.Model):
 
     def __init__(
         self,
+        top_left=None,
+        bottom_right=None,
         **kwargs
     ):
-        super(BoundingBox, self).__init__(**kwargs)
-        self.top_left = kwargs.get('top_left', None)
-        self.bottom_right = kwargs.get('bottom_right', None)
+        super(BoundingBox, self).__init__(**kwargs, top_left, bottom_right)
+        self.top_left = top_left
+        self.bottom_right = bottom_right
 
 class StructuredAddress(msrest.serialization.Model):
 

@@ -24,8 +24,6 @@ class SearchClient(object):
     :vartype search: azure.maps.search.operations.SearchOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
-    :type client_id: str
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
@@ -172,8 +170,8 @@ class SearchClient(object):
         """
         return self._search_client.fuzzy_search(
             query, 
-            lat=coordinates.get('latitude'),
-            lon=coordinates.get('longitude'),
+            lat=coordinates.lat,
+            lon=coordinates.lon,
             country_filter=country_filter,
             **kwargs
         )
@@ -499,8 +497,8 @@ class SearchClient(object):
         """           
         return self._search_client.search_point_of_interest(
             query,
-            lat=coordinates.get('latitude'),
-            lon=coordinates.get('longitude'),
+            lat=coordinates.lat,
+            lon=coordinates.lon,
             country_filter=country_filter,
             **kwargs
         )
@@ -559,9 +557,9 @@ class SearchClient(object):
         """
 
         return self._search_client.search_nearby_point_of_interest(
-            lat=coordinates.get('latitude'),
-            lon=coordinates.get('longitude'),
-            **kwargs  # type: Any
+            lat=coordinates.lat,
+            lon=coordinates.lon,
+            **kwargs
         )
 
 
@@ -637,8 +635,8 @@ class SearchClient(object):
         """
         return self._search_client.search_point_of_interest_category(
             query,
-            lat=coordinates.get('latitude'),
-            lon=coordinates.get('longitude'),
+            lat=coordinates.lat,
+            lon=coordinates.lon,
             country_filter=country_filter,
             **kwargs
         )
@@ -705,8 +703,8 @@ class SearchClient(object):
         """
         return self._search_client.search_address(
             query,
-            lat=coordinates.get('latitude'),
-            lon=coordinates.get('longitude'),
+            lat=coordinates.lat,
+            lon=coordinates.lon,
             **kwargs
         )
 
