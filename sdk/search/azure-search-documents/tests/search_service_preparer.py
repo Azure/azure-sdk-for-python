@@ -19,17 +19,7 @@ from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2021-04-30-Preview"
 TIME_TO_SLEEP = 3
-
-class SearchResourceGroupPreparer(ResourceGroupPreparer):
-    def create_resource(self, name, **kwargs):
-        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
-        if self.is_live and self._need_creation:
-            expiry = datetime.datetime.now() + datetime.timedelta(days=1)
-            resource_group_params = dict(tags={'DeleteAfter': expiry.isoformat()}, location=self.location)
-            self.client.resource_groups.create_or_update(name, resource_group_params)
-        return result
 
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
@@ -53,7 +43,6 @@ class SearchServicePreparer(AzureMgmtPreparer):
         self.schema = schema
         self.index_name = None
         self.index_batch = index_batch
-        self.service_name = "TEST-SERVICE-NAME"
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -118,7 +107,6 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
         if self.schema:
             response = requests.post(
-                SERVICE_URL_FMT.format(self.service_name),
                 headers={"Content-Type": "application/json", "api-key": api_key},
                 data=self.schema,
             )

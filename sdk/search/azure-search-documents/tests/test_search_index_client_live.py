@@ -8,9 +8,8 @@ from os.path import dirname, join, realpath
 
 import pytest
 
-from devtools_testutils import AzureMgmtTestCase
-from azure_devtools.scenario_tests import ReplayableTest
-from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from search_service_preparer import SearchServicePreparer
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -34,9 +33,8 @@ except UnicodeDecodeError:
 TIME_TO_SLEEP = 5
 
 class SearchIndexClientTest(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -44,7 +42,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert isinstance(result, dict)
         assert set(result.keys()) == {"counters", "limits"}
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_list_indexes_empty(self, api_key, endpoint, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -52,7 +50,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(StopIteration):
             next(result)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_list_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -64,21 +62,21 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(StopIteration):
             next(result)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_index(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_index(index_name)
         assert result.name == index_name
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_index_statistics(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         result = client.get_index_statistics(index_name)
         assert set(result.keys()) == {'document_count', 'storage_size'}
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexes(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -90,7 +88,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(StopIteration):
             next(result)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_indexes_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -129,7 +127,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.delete_index(index, match_condition=MatchConditions.IfNotModified)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
@@ -155,7 +153,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_index(self, api_key, endpoint, index_name, **kwargs):
         name = "hotels"
@@ -190,7 +188,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_indexes_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -229,7 +227,7 @@ class SearchIndexClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))

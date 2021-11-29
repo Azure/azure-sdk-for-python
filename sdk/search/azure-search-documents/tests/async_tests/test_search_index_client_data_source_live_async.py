@@ -11,12 +11,12 @@ from os.path import dirname, join, realpath
 import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
-from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
+from search_service_preparer import SearchServicePreparer
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
@@ -56,7 +56,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         )
         return data_source_connection
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_datasource_async(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -65,7 +65,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         assert result.name == "sample-datasource"
         assert result.type == "azureblob"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_datasource_async(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -75,7 +75,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         await client.delete_data_source_connection("sample-datasource")
         assert len(await client.get_data_source_connections()) == 0
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_datasource_async(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -84,7 +84,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         result = await client.get_data_source_connection("sample-datasource")
         assert result.name == "sample-datasource"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_list_datasource_async(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -96,7 +96,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         assert isinstance(result, list)
         assert set(x.name for x in result) == {"sample-datasource", "another-sample"}
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_or_update_datasource_async(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -110,7 +110,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
         assert result.name == "sample-datasource"
         assert result.description == "updated"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_or_update_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -129,7 +129,7 @@ class SearchDataSourcesClientTest(AzureMgmtTestCase):
             await client.create_or_update_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
             assert len(await client.get_data_source_connections()) == 1
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_datasource_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))

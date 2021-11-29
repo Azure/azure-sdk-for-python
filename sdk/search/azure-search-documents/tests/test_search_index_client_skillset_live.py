@@ -8,9 +8,9 @@ from os.path import dirname, join, realpath
 
 import pytest
 
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from azure_devtools.scenario_tests import ReplayableTest
-from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
+from search_service_preparer import SearchServicePreparer
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -38,7 +38,7 @@ TIME_TO_SLEEP = 5
 class SearchSkillsetClientTest(AzureMgmtTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -131,7 +131,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert 'include_opinion_mining' in str(err.value)
 
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -146,7 +146,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         client.delete_skillset("test-ss")
         assert len(client.get_skillsets()) == 0
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -165,7 +165,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.delete_skillset(updated, match_condition=MatchConditions.IfNotModified)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -184,7 +184,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert len(result.skills) == 1
         assert isinstance(result.skills[0], EntityRecognitionSkill)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_skillsets(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -200,7 +200,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert all(isinstance(x, SearchIndexerSkillset) for x in result)
         assert set(x.name for x in result) == {"test-ss-1", "test-ss-2"}
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -218,7 +218,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_inplace(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
@@ -236,7 +236,7 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert result.name == "test-ss"
         assert result.description == "desc2"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_skillset_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))

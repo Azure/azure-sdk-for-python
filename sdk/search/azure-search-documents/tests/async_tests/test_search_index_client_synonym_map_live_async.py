@@ -11,12 +11,11 @@ from os.path import dirname, join, realpath
 import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-from azure_devtools.scenario_tests import ReplayableTest
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
-from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
+from search_service_preparer import SearchServicePreparer
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
@@ -43,9 +42,8 @@ def await_prepared_test(test_fn):
     return run
 
 class SearchSynonymMapsClientTest(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -63,7 +61,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         ]
         assert len(await client.get_synonym_maps()) == 1
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -77,7 +75,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         await client.delete_synonym_map("test-syn-map")
         assert len(await client.get_synonym_maps()) == 0
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -99,7 +97,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             await client.delete_synonym_map(result, match_condition=MatchConditions.IfNotModified)
             assert len(client.get_synonym_maps()) == 1
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -118,7 +116,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
             "Washington, Wash. => WA",
         ]
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_synonym_maps(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
@@ -138,7 +136,7 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
         assert all(isinstance(x, SynonymMap) for x in result)
         assert set(x.name for x in result) == {"test-syn-map-1", "test-syn-map-2"}
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_or_update_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))

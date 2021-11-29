@@ -9,9 +9,8 @@ import time
 
 import pytest
 
-from devtools_testutils import AzureMgmtTestCase
-from azure_devtools.scenario_tests import ReplayableTest
-from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, test_proxy, ResourceGroupPreparer
+from search_service_preparer import SearchServicePreparer
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -32,8 +31,8 @@ except UnicodeDecodeError:
     BATCH = json.load(open(join(CWD, "hotel_small.json"), encoding="utf-8"))
 TIME_TO_SLEEP = 5
 
-class SearchIndexersClientTest(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+
+class SearchIndexersClientTest(AzureRecordedTestCase):
 
     def _prepare_indexer(self, endpoint, api_key, name="sample-indexer", ds_name="sample-datasource", id_name="hotels"):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING
@@ -60,8 +59,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         ind = SearchIndexClient(endpoint, AzureKeyCredential(api_key)).create_index(index)
         return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_create_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -70,8 +70,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         assert result.target_index_name == "hotels"
         assert result.data_source_name == "sample-datasource"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_delete_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -80,8 +81,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         client.delete_indexer("sample-indexer")
         assert len(client.get_indexers()) == 0
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_reset_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -90,8 +92,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         result = client.reset_indexer("sample-indexer")
         assert client.get_indexer_status("sample-indexer").last_result.status.lower() in ('inprogress', 'reset')
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_run_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -101,8 +104,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         client.run_indexer("sample-indexer")
         assert client.get_indexer_status("sample-indexer").status == 'running'
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_get_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -110,8 +114,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         result = client.get_indexer("sample-indexer")
         assert result.name == "sample-indexer"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_list_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer1 = self._prepare_indexer(endpoint, api_key)
@@ -122,8 +127,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         assert isinstance(result, list)
         assert set(x.name for x in result) == {"sample-indexer", "another-indexer"}
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_create_or_update_indexer(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -136,8 +142,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         assert result.name == "sample-indexer"
         assert result.description == "updated"
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_get_indexer_status(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -145,8 +152,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         status = client.get_indexer_status("sample-indexer")
         assert status.status is not None
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_create_or_update_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
@@ -161,8 +169,9 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         with pytest.raises(HttpResponseError):
             client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
 
-    @SearchResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    @recorded_by_proxy
     def test_delete_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         indexer = self._prepare_indexer(endpoint, api_key)
