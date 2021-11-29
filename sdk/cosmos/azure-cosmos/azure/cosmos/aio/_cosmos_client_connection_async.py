@@ -54,7 +54,7 @@ from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from . import _global_endpoint_manager_async as global_endpoint_manager_async
 from .._routing.aio import routing_map_provider
-from ._retry_utility_async import ConnectionRetryPolicy
+from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
@@ -158,10 +158,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, AsyncHTTPPolicy):
             retry_policy = self.connection_policy.ConnectionRetryConfiguration
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
-            retry_policy = ConnectionRetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
+            retry_policy = _ConnectionRetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, Retry):
             # Convert a urllib3 retry policy to a Pipeline policy
-            retry_policy = ConnectionRetryPolicy(
+            retry_policy = _ConnectionRetryPolicy(
                 retry_total=self.connection_policy.ConnectionRetryConfiguration.total,
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
@@ -205,12 +205,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
     @property
-    def Session(self):
+    def _Session(self):
         """Gets the session object from the client. """
         return self.session
 
-    @Session.setter
-    def Session(self, session):
+    @_Session.setter
+    def _Session(self, session):
         """Sets a session object on the document client.
 
         This will override the existing session
@@ -218,13 +218,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self.session = session
 
     @property
-    def WriteEndpoint(self):
+    def _WriteEndpoint(self):
         """Gets the curent write endpoint for a geo-replicated database account.
         """
         return self._global_endpoint_manager.get_write_endpoint()
 
     @property
-    def ReadEndpoint(self):
+    def _ReadEndpoint(self):
         """Gets the curent read endpoint for a geo-replicated database account.
         """
         return self._global_endpoint_manager.get_read_endpoint()

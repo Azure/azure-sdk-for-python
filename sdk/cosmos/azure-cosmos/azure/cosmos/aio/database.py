@@ -25,6 +25,7 @@
 from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 import warnings
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
@@ -317,7 +318,7 @@ class DatabaseProxy(object):
         max_item_count=None,
         **kwargs
     ):
-        # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Optional[bool], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -357,7 +358,7 @@ class DatabaseProxy(object):
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """List the properties for containers in the current database.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -538,7 +539,7 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def list_users(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List all the users in the container.
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
@@ -561,12 +562,12 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_users(
         self,
-        query=None,  # type: Optional[str]
+        query,  # type: str
         parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Return all users matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.

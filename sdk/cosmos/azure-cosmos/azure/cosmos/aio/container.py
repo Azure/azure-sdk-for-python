@@ -23,6 +23,7 @@
 """
 
 from typing import Any, Dict, List, Optional, Union, Iterable, cast
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
@@ -151,9 +152,6 @@ class ContainerProxy(object):
     async def create_item(
         self,
         body,  # type: Dict[str, Any]
-        pre_trigger_include=None,  # type: Optional[str]
-        post_trigger_include=None,  # type: Optional[str]
-        indexing_directive=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -163,9 +161,9 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param indexing_directive: Indicate whether the document should be omitted from indexing.
+        :keyword pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword indexing_directive: Indicate whether the document should be omitted from indexing.
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -179,6 +177,9 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        pre_trigger_include = kwargs.pop('pre_trigger_include', None)
+        post_trigger_include = kwargs.pop('post_trigger_include', None)
+        indexing_directive = kwargs.pop('indexing_directive', None)
 
         request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
         if pre_trigger_include is not None:
@@ -277,7 +278,7 @@ class ContainerProxy(object):
         populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -356,7 +357,7 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
@@ -594,7 +595,7 @@ class ContainerProxy(object):
 
     @distributed_trace
     def list_conflicts(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List all the conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -623,7 +624,7 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Return all conflicts matching a given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.

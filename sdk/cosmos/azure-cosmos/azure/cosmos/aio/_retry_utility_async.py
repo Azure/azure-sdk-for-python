@@ -133,11 +133,11 @@ async def ExecuteFunctionAsync(function, *args, **kwargs):
     return await function(*args, **kwargs)
 
 
-class ConnectionRetryPolicy(AsyncRetryPolicy):
+class _ConnectionRetryPolicy(AsyncRetryPolicy):
 
     def __init__(self, **kwargs):
         clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        super(ConnectionRetryPolicy, self).__init__(**clean_kwargs)
+        super(_ConnectionRetryPolicy, self).__init__(**clean_kwargs)
 
     async def send(self, request):
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.

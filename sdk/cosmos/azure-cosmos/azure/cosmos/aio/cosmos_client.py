@@ -23,6 +23,7 @@
 """
 
 from typing import Any, Dict, Optional, Union, cast, Iterable, List
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -30,7 +31,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-from ._retry_utility_async import ConnectionRetryPolicy
+from ._retry_utility_async import _ConnectionRetryPolicy
 from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
@@ -74,7 +75,7 @@ def _build_connection_policy(kwargs):
     policy.RetryOptions = retry
     connection_retry = kwargs.pop('connection_retry_policy', None) or policy.ConnectionRetryConfiguration
     if not connection_retry:
-        connection_retry = ConnectionRetryPolicy(
+        connection_retry = _ConnectionRetryPolicy(
             retry_total=total_retries,
             retry_connect=kwargs.pop('retry_connect', None),
             retry_read=kwargs.pop('retry_read', None),
@@ -95,7 +96,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
-    :param str consistency_level: Consistency level to use for the session. The default value is "Session".
+    :keyword str consistency_level: Consistency level to use for the session. The default value is "Session".
 
     .. admonition:: Example:
 
@@ -138,7 +139,7 @@ class CosmosClient(object):
         await self.__aexit__()
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
+    def from_connection_string(cls, conn_str, credential=None, **kwargs):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
@@ -149,14 +150,14 @@ class CosmosClient(object):
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
         :type credential: str or dict(str, str)
-        :param str consistency_level:
+        :keyword str consistency_level:
             Consistency level to use for the session. The default value is "Session".
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
             url=settings['AccountEndpoint'],
             credential=credential or settings['AccountKey'],
-            consistency_level=consistency_level,
+            consistency_level=kwargs.get('consistency_level', 'Session')
             **kwargs
         )
 
@@ -274,7 +275,7 @@ class CosmosClient(object):
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """List the databases in a Cosmos DB SQL database account.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -297,12 +298,12 @@ class CosmosClient(object):
     @distributed_trace
     def query_databases(
         self,
-        query=None,  # type: Optional[str]
+        query,  # type: str
         parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type:  Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.

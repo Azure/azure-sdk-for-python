@@ -24,6 +24,9 @@
 
 from typing import Any, List, Dict, Union, Iterable, Optional
 
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
 from ..partition_key import NonePartitionKeyValue
@@ -57,6 +60,7 @@ class ScriptsProxy(object):
             return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
+    @distributed_trace
     def list_stored_procedures(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all stored procedures in the container.
@@ -73,6 +77,7 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
+    @distributed_trace
     def query_stored_procedures(
         self,
         query,
@@ -100,6 +105,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace_async
     async def read_stored_procedure(self, sproc, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get the stored procedure identified by `id`.
@@ -115,6 +121,7 @@ class ScriptsProxy(object):
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def create_stored_procedure(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Dict[str, Any]
         """Create a new stored procedure in the container.
@@ -132,6 +139,7 @@ class ScriptsProxy(object):
             collection_link=self.container_link, sproc=body, options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def replace_stored_procedure(
         self,
         sproc,
@@ -159,6 +167,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace_async
     async def delete_stored_procedure(self, sproc, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> None
         """Delete a specified stored procedure from the container.
@@ -176,6 +185,7 @@ class ScriptsProxy(object):
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def execute_stored_procedure(
         self,
         sproc,  # type: Union[str, Dict[str, Any]]
@@ -216,6 +226,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace
     def list_triggers(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all triggers in the container.
@@ -232,6 +243,7 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
+    @distributed_trace
     def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all triggers matching the given `query`.
@@ -253,6 +265,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace_async
     async def read_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get a trigger identified by `id`.
@@ -268,6 +281,7 @@ class ScriptsProxy(object):
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def create_trigger(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Dict[str, Any]
         """Create a trigger in the container.
@@ -285,6 +299,7 @@ class ScriptsProxy(object):
             collection_link=self.container_link, trigger=body, options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def replace_trigger(self, trigger, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """Replace a specified tigger in the container.
@@ -307,6 +322,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace_async
     async def delete_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> None
         """Delete a specified trigger from the container.
@@ -324,6 +340,7 @@ class ScriptsProxy(object):
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
+    @distributed_trace
     def list_user_defined_functions(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all the user-defined functions in the container.
@@ -340,6 +357,7 @@ class ScriptsProxy(object):
             collection_link=self.container_link, options=feed_options, **kwargs
         )
 
+    @distributed_trace
     def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return user-defined functions matching a given `query`.
@@ -361,14 +379,15 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace_async
     async def read_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
-        """Get a user-defined functions identified by `id`.
+        """Get a user-defined function identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
         :returns: A dict representing the retrieved user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -376,6 +395,7 @@ class ScriptsProxy(object):
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def create_user_defined_function(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Dict[str, Any]
         """Create a user-defined function in the container.
@@ -393,6 +413,7 @@ class ScriptsProxy(object):
             collection_link=self.container_link, udf=body, options=request_options, **kwargs
         )
 
+    @distributed_trace_async
     async def replace_user_defined_function(self, udf, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """Replace a specified user-defined function in the container.
@@ -415,6 +436,7 @@ class ScriptsProxy(object):
             **kwargs
         )
 
+    @distributed_trace_async
     async def delete_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> None
         """Delete a specified user-defined function from the container.
