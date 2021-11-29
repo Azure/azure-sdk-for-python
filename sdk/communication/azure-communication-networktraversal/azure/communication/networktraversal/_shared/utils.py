@@ -87,7 +87,7 @@ def create_access_token(token):
         padded_base64_payload = base64.b64decode(parts[1] + "==").decode('ascii')
         payload = json.loads(padded_base64_payload)
         return AccessToken(token,
-                           _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
+                           _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp'], TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
 
