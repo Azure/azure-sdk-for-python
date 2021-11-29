@@ -152,12 +152,12 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
@@ -169,8 +169,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await build_polling.result()
 
-            async with fr_client:
-                poller = await fr_client.begin_analyze_document(
+            async with da_client:
+                poller = await da_client.begin_analyze_document(
                     model.model_id,
                     myfile,
                     cls=callback
@@ -198,12 +198,12 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
@@ -215,8 +215,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             build_poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
             model = await build_poller.result()
 
-            async with fr_client:
-                poller = await fr_client.begin_analyze_document(
+            async with da_client:
+                poller = await da_client.begin_analyze_document(
                     model.model_id,
                     myfile,
                     cls=callback
@@ -356,14 +356,14 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
         with open(self.selection_form_pdf, "rb") as fd:
             myfile = fd.read()
 
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
@@ -372,7 +372,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
             model = await poller.result()
 
-            poller = await fr_client.begin_analyze_document(
+            poller = await da_client.begin_analyze_document(
                 model.model_id,
                 myfile,
                 cls=callback
@@ -400,7 +400,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -409,8 +409,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             build_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await build_poller.result()
 
-            async with fr_client:
-                poller = await fr_client.begin_analyze_document(model.model_id, myfile, pages="1")
+            async with da_client:
+                poller = await da_client.begin_analyze_document(model.model_id, myfile, pages="1")
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
@@ -418,7 +418,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -427,8 +427,8 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await build_polling.result()
 
-            async with fr_client:
-                poller = await fr_client.begin_analyze_document(
+            async with da_client:
+                poller = await da_client.begin_analyze_document(
                     model.model_id,
                     myfile,
                 )

@@ -254,7 +254,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
@@ -262,12 +262,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document_from_url(
+        poller = da_client.begin_analyze_document_from_url(
             model=model.model_id,
             document_url=self.selection_mark_url_pdf,
             cls=callback
@@ -309,7 +309,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url)
         model = build_poller.result()
@@ -317,12 +317,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document_from_url(
+        poller = da_client.begin_analyze_document_from_url(
             model.model_id,
             self.label_table_variable_row_url_pdf,
             cls=callback
@@ -349,7 +349,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url)
         model = build_poller.result()
@@ -357,12 +357,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document_from_url(
+        poller = da_client.begin_analyze_document_from_url(
             model.model_id,
             self.label_table_fixed_row_url_pdf,
             cls=callback
