@@ -19,10 +19,11 @@ USAGE:
 """
 
 def sample_update_knowledge_sources():
-    # [START update_knowledge_sources]
+    # [START query_text]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.projects import models
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
@@ -33,11 +34,11 @@ def sample_update_knowledge_sources():
     with client:
 
         # create project
-        project_name = "Microsoft"
-        client.create_project(
+        project_name = "IssacNewton"
+        client.question_answering_projects.create_project(
             project_name=project_name,
-            options={
-                "description": "test project for some Microsoft QnAs",
+            body={
+                "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
                 "settings": {
@@ -45,88 +46,67 @@ def sample_update_knowledge_sources():
                 }
             })
 
-        # sources
-        sources_poller = client.begin_update_sources(
-            project_name=project_name,
-            sources=[{
-                "op": "add",
-                "value": {
-                    "displayName": "MicrosoftFAQ",
-                    "source": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceKind": "url",
-                    "contentStructureKind": "unstructured",
-                    "refresh": False
-                }
-            }]
-        )
-        sources_poller.result() # wait until done
-
-        sources = client.list_sources(
-            project_name=project_name
-        )
-        for item in sources:
-            print("source name: {}".format(item["displayName"]))
-            print("\tsource: {}".format(item["source"]))
-            print("\tsource uri: {}".format(item["sourceUri"]))
-            print("\tsource kind: {}".format(item["sourceKind"]))
-
-        # qnas
-        qna_poller = client.begin_update_qnas(
-            project_name=project_name,
-            qnas=[{
-                "op": "add",
-                "value": {
-                    "questions": [
-                        "What is the easiest way to use azure services in my .NET project?"
-                    ],
-                    "answer": "Using Microsoft's Azure SDKs"
-                }
-            }]
-        )
-        qna_poller.result()
-
-        qnas = client.list_qnas(
-            project_name=project_name
-        )
-        for item in qnas:
-            print("qna: {}".format(item["id"]))
-            print("\tquestions:")
-            for question in item["questions"]:
-                print("\t\t{}".format(question))
-            print("\tanswer: {}".format(item["answer"]))
-
         # synonyms
-        client.update_synonyms(
+        client.question_answering_projects.update_synonyms(
             project_name=project_name,
-            synonyms={
+            body={
                 "value": [
                     {
                         "alterations": [
-                            "qnamaker",
-                            "qna maker"
-                        ]
-                    },
-                    {
-                        "alterations": [
-                            "qna",
-                            "question and answer"
+                            "string"
                         ]
                     }
                 ]
             }
         )
-        synonyms = client.list_synonyms(
+
+        synonyms = client.question_answering_projects.get_synonyms(
             project_name=project_name
         )
         for item in synonyms:
-            print("synonyms:")
-            print("\talterations:")
-            for alt in item["alterations"]:
-                print("\t\t{}".format(alt))
-            print('')
+            print(item)
 
-    # [END update_knowledge_sources]
+        # qnas
+        qna_poller = client.question_answering_projects.begin_update_qnas(
+            project_name=project_name,
+            body=[
+                {
+                    'op': 'add',
+                    "value": {
+                        "id": 0,
+                        "answer": "string",
+                        "source": "string",
+                        "questions": [
+                            "string"
+                        ]
+                    }
+                }
+            ]
+        )
+
+        qna_poller.result()
+
+        qnas = client.question_answering_projects.get_qnas(
+            project_name=project_name
+        )
+        for item in qnas:
+            print(item)
+
+        # sources
+        sources_poller = client.question_answering_projects.begin_update_sources(
+            project_name=project_name,
+            body={
+                
+            }
+        )
+        sources_poller.result()
+        sources = client.question_answering_projects.get_sources(
+            project_name=project_name
+        )
+        for item in sources:
+            print(item)
+
+    # [END query_text]
 
 
 if __name__ == '__main__':
