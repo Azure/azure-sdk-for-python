@@ -7,16 +7,9 @@
 
 import os
 import datetime
-from devtools_testutils import AzureRecordedTestCase
-from azure_devtools.scenario_tests import (
-    create_random_name
-)
-
-from azure.ai.metricsadvisor import (
-    MetricsAdvisorKeyCredential,
-    MetricsAdvisorAdministrationClient,
-    MetricsAdvisorClient,
-)
+from devtools_testutils import AzureRecordedTestCase, AzureMgmtPreparer
+from azure_devtools.scenario_tests import create_random_name
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
 from azure.ai.metricsadvisor.models import (
     SqlServerDataFeedSource,
     DataFeedSchema,
@@ -42,17 +35,270 @@ from azure.ai.metricsadvisor.models import (
     EmailNotificationHook,
     WebNotificationHook,
 )
+from azure.identity import DefaultAzureCredential
+
+
+class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+        super(MetricsAdvisorClientPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+        aad = kwargs.pop("aad", False)
+        service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
+        if aad:
+            self.client = client_cls(service_endpoint, DefaultAzureCredential(), **self.client_kwargs)
+        else:
+            subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
+            api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
+            self.client = client_cls(service_endpoint, MetricsAdvisorKeyCredential(subscription_key, api_key), **self.client_kwargs)
+
+        self.data_feed = kwargs.pop("data_feed", False)
+        self.detection_config = kwargs.pop("detection_config", False)
+        self.alert_config = kwargs.pop("alert_config", False)
+        self.email_hook = kwargs.pop("email_hook", False)
+        self.web_hook = kwargs.pop("web_hook", False)
+        self.variables = kwargs.pop("variables", {})
+
+    def create_resource(self, name, **kwargs):
+        kwargs.update({"client": self.client})
+        if not self.is_live:
+            return kwargs
+
+        try:
+            if self.data_feed:
+                self.data_feed = self.create_data_feed("datafeed")
+
+            if self.detection_config:
+                self.detection_config = self.create_detection_config("detectionconfig")
+
+            if self.alert_config:
+                self.alert_config = self.create_alert_config("alertconfig")
+
+            if self.email_hook:
+                self.email_hook = self.create_email_hook("emailhook")
+
+            if self.web_hook:
+                self.web_hook = self.create_web_hook("web_hook")
+
+        except Exception as e:
+            self.client.delete_data_feed(self.variables["data_feed_id"])
+            raise e
+
+        kwargs.update({"variables": self.variables})
+        return kwargs
+
+    def create_data_feed(self, name):
+        name = create_random_name(name)
+        if self.is_live:
+            self.variables["data_feed_name"] = name
+        data_feed = self.client.create_data_feed(
+            name=self.variables["data_feed_name"],
+            source=SqlServerDataFeedSource(
+                connection_string=os.getenv("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING", "metrics_advisor_sql_server_connection_string"),
+                query="select * from adsample2 where Timestamp = @StartTime"
+            ),
+            granularity=DataFeedGranularity(
+                granularity_type="Daily",
+            ),
+            schema=DataFeedSchema(
+                metrics=[
+                    DataFeedMetric(name="cost", description="the cost"),
+                    DataFeedMetric(name="revenue", description="the revenue")
+                ],
+                dimensions=[
+                    DataFeedDimension(name="category"),
+                    DataFeedDimension(name="region")
+                ],
+                timestamp_column="Timestamp"
+            ),
+            ingestion_settings=DataFeedIngestionSettings(
+                ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                data_source_request_concurrency=0,
+                ingestion_retry_delay=-1,
+                ingestion_start_offset=-1,
+                stop_retry_after=-1,
+            ),
+            admins=["yournamehere@microsoft.com"],
+            data_feed_description="my first data feed",
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type="SmartFilling"
+            ),
+            rollup_settings=DataFeedRollupSettings(
+                rollup_type="NoRollup",
+                rollup_method="None",
+            ),
+            viewers=["viewers"],
+            access_mode="Private",
+            action_link_template="action link template"
+        )
+
+        if self.is_live:
+            self.variables["data_feed_id"] = data_feed.id
+            self.variables["data_feed_metric_id"] = data_feed.metric_ids['cost']
+        return data_feed
+
+    def create_detection_config(self, name):
+        detection_config_name = create_random_name(name)
+        if self.is_live:
+            self.variables["detection_config_name"] = detection_config_name
+        detection_config = self.client.create_detection_configuration(
+            name=self.variables["detection_config_name"],
+            metric_id=self.variables["data_feed_metric_id"],
+            description="My test metric anomaly detection configuration",
+            whole_series_detection_condition=MetricDetectionCondition(
+                condition_operator="AND",
+                smart_detection_condition=SmartDetectionCondition(
+                    sensitivity=50,
+                    anomaly_detector_direction="Both",
+                    suppress_condition=SuppressCondition(
+                        min_number=5,
+                        min_ratio=5
+                    )
+                ),
+                hard_threshold_condition=HardThresholdCondition(
+                    anomaly_detector_direction="Both",
+                    suppress_condition=SuppressCondition(
+                        min_number=5,
+                        min_ratio=5
+                    ),
+                    lower_bound=0,
+                    upper_bound=100
+                ),
+                change_threshold_condition=ChangeThresholdCondition(
+                    change_percentage=50,
+                    shift_point=30,
+                    within_range=True,
+                    anomaly_detector_direction="Both",
+                    suppress_condition=SuppressCondition(
+                        min_number=2,
+                        min_ratio=2
+                    )
+                )
+            ),
+            series_detection_conditions=[MetricSingleSeriesDetectionCondition(
+                series_key={"region": "Beijing", "category": "Shoes Handbags & Sunglasses"},
+                smart_detection_condition=SmartDetectionCondition(
+                    anomaly_detector_direction="Both",
+                    sensitivity=63,
+                    suppress_condition=SuppressCondition(
+                        min_number=1,
+                        min_ratio=100
+                    )
+                )
+            )],
+            series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
+                series_group_key={"region": "Beijing"},
+                smart_detection_condition=SmartDetectionCondition(
+                    anomaly_detector_direction="Both",
+                    sensitivity=63,
+                    suppress_condition=SuppressCondition(
+                        min_number=1,
+                        min_ratio=100
+                    )
+                )
+            )]
+        )
+        if self.is_live:
+            self.variables["detection_config_id"] = detection_config.id
+        return detection_config
+
+    def create_alert_config(self, name):
+        alert_config_name = create_random_name(name)
+        if self.is_live:
+            self.variables["alert_config_name"] = alert_config_name
+        alert_config = self.client.create_alert_configuration(
+            name=self.variables["alert_config_name"],
+            cross_metrics_operator="AND",
+            metric_alert_configurations=[
+                MetricAlertConfiguration(
+                    detection_configuration_id=self.variables["detection_config_id"],
+                    alert_scope=MetricAnomalyAlertScope(
+                        scope_type="TopN",
+                        top_n_group_in_scope=TopNGroupScope(
+                            top=5,
+                            period=10,
+                            min_top_count=9
+                        )
+                    ),
+                    alert_conditions=MetricAnomalyAlertConditions(
+                        metric_boundary_condition=MetricBoundaryCondition(
+                            direction="Both",
+                            companion_metric_id=self.variables["data_feed_metric_id"],
+                            lower=1.0,
+                            upper=5.0
+                        )
+                    )
+                ),
+                MetricAlertConfiguration(
+                    detection_configuration_id=self.variables["detection_config_id"],
+                    alert_scope=MetricAnomalyAlertScope(
+                        scope_type="SeriesGroup",
+                        series_group_in_scope={'region': 'Beijing'}
+                    ),
+                    alert_conditions=MetricAnomalyAlertConditions(
+                        severity_condition=SeverityCondition(
+                            min_alert_severity="Low",
+                            max_alert_severity="High"
+                        )
+                    )
+                ),
+                MetricAlertConfiguration(
+                    detection_configuration_id=self.variables["detection_config_id"],
+                    alert_scope=MetricAnomalyAlertScope(
+                        scope_type="WholeSeries"
+                    ),
+                    alert_conditions=MetricAnomalyAlertConditions(
+                        severity_condition=SeverityCondition(
+                            min_alert_severity="Low",
+                            max_alert_severity="High"
+                        )
+                    )
+                )
+            ],
+            hook_ids=[]
+        )
+        if self.is_live:
+            self.variables["alert_config_id"] = alert_config.id
+        return alert_config
+
+    def create_email_hook(self, name):
+        email_hook_name = create_random_name(name)
+        if self.is_live:
+            self.variables["email_hook_name"] = email_hook_name
+        email_hook = self.client.create_hook(
+            hook=EmailNotificationHook(
+                name=self.variables["email_hook_name"],
+                emails_to_alert=["yournamehere@microsoft.com"],
+                description="my email hook",
+                external_link="external link"
+            )
+        )
+        if self.is_live:
+            self.variables["email_hook_id"] = email_hook.id
+        return email_hook
+
+    def create_web_hook(self, name):
+        web_hook_name = create_random_name(name)
+        if self.is_live:
+            self.variables["web_hook_name"] = web_hook_name
+        web_hook = self.client.create_hook(
+            hook=WebNotificationHook(
+                name=self.variables["web_hook_name"],
+                endpoint="https://httpbin.org/post",
+                description="my web hook",
+                external_link="external link",
+                username="krista",
+                password="123"
+            )
+        )
+
+        if self.is_live:
+            self.variables["web_hook_id"] = web_hook.id
+        return web_hook
 
 
 class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
-
-    @property
-    def admin_client(self):
-        service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
-        subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
-        api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
-        return MetricsAdvisorAdministrationClient(service_endpoint,
-                                                               MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     @property
     def sql_server_connection_string(self):
@@ -114,261 +360,8 @@ class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
     def metric_id(self):
         return os.getenv("METRICS_ADVISOR_METRIC_ID", "metrics_advisor_metric_id")
 
-    def _create_data_feed(self, name, variables):
-        name = create_random_name(name)
-        if self.is_live:
-            variables["data_feed_name"] = name
-        return self.admin_client.create_data_feed(
-            name=variables["data_feed_name"],
-            source=SqlServerDataFeedSource(
-                connection_string=self.sql_server_connection_string,
-                query="select * from adsample2 where Timestamp = @StartTime"
-            ),
-            granularity="Daily",
-            schema=DataFeedSchema(
-                metrics=[
-                    DataFeedMetric(name="cost"),
-                    DataFeedMetric(name="revenue")
-                ],
-                dimensions=[
-                    DataFeedDimension(name="category"),
-                    DataFeedDimension(name="region")
-                ],
-            ),
-            ingestion_settings="2019-10-01T00:00:00Z",
-        )
-
-    def _create_data_feed_and_detection_config(self, name, variables):
-        try:
-            data_feed = self._create_data_feed(name, variables)
-            if self.is_live:
-                variables["data_feed_id"] = data_feed.id
-                variables["data_feed_metric_ids"] = data_feed.metric_ids['cost']
-            detection_config_name = create_random_name(name)
-            detection_config = self.admin_client.create_detection_configuration(
-                name=variables["detection_config_name"],
-                metric_id=variables["data_feed_metric_ids"],
-                description="testing",
-                whole_series_detection_condition=MetricDetectionCondition(
-                    smart_detection_condition=SmartDetectionCondition(
-                        sensitivity=50,
-                        anomaly_detector_direction="Both",
-                        suppress_condition=SuppressCondition(
-                            min_number=5,
-                            min_ratio=5
-                        )
-                    )
-                )
-            )
-            if self.is_live:
-                variables["detection_config_name"] = detection_config_name
-                variables["detection_config_id"] = detection_config.id
-            return detection_config, data_feed
-        except Exception as e:
-            self.admin_client.delete_data_feed(variables["data_feed_id"])
-            raise e
-
-    def _create_data_feed_for_update(self, name):
-        data_feed_name = create_random_name(name)
-        return self.admin_client.create_data_feed(
-            name=data_feed_name,
-            source=SqlServerDataFeedSource(
-                connection_string=self.sql_server_connection_string,
-                query=u"select * from adsample2 where Timestamp = @StartTime"
-            ),
-            granularity=DataFeedGranularity(
-                granularity_type="Daily",
-            ),
-            schema=DataFeedSchema(
-                metrics=[
-                    DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
-                    DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
-                ],
-                dimensions=[
-                    DataFeedDimension(name="category", display_name="display category"),
-                    DataFeedDimension(name="region", display_name="display city")
-                ],
-                timestamp_column="Timestamp"
-            ),
-            ingestion_settings=DataFeedIngestionSettings(
-                ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                data_source_request_concurrency=0,
-                ingestion_retry_delay=-1,
-                ingestion_start_offset=-1,
-                stop_retry_after=-1,
-            ),
-            admins=["yournamehere@microsoft.com"],
-            data_feed_description="my first data feed",
-            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                fill_type="SmartFilling"
-            ),
-            rollup_settings=DataFeedRollupSettings(
-                rollup_type="NoRollup",
-                rollup_method="None",
-            ),
-            viewers=["viewers"],
-            access_mode="Private",
-            action_link_template="action link template"
-        )
-
-    def _create_alert_config_for_update(self, name):
-        try:
-            detection_config, data_feed = self._create_data_feed_and_detection_config(name)
-            alert_config_name = create_random_name(name)
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
-                cross_metrics_operator="AND",
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
-                            )
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
-                                lower=1.0,
-                                upper=5.0
-                            )
-                        )
-                    ),
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="SeriesGroup",
-                            series_group_in_scope={'region': 'Shenzhen'}
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
-                            )
-                        )
-                    ),
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="WholeSeries"
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
-                            )
-                        )
-                    )
-                ],
-                hook_ids=[]
-            )
-            return alert_config, data_feed, detection_config
-        except Exception as e:
-            self.admin_client.delete_data_feed(data_feed.id)
-            raise e
-
-    def _create_detection_config_for_update(self, name):
-        try:
-            data_feed = self._create_data_feed(name)
-            detection_config_name = create_random_name("testupdated")
-            detection_config = self.admin_client.create_detection_configuration(
-                name=detection_config_name,
-                metric_id=data_feed.metric_ids['cost'],
-                description="My test metric anomaly detection configuration",
-                whole_series_detection_condition=MetricDetectionCondition(
-                    condition_operator="AND",
-                    smart_detection_condition=SmartDetectionCondition(
-                        sensitivity=50,
-                        anomaly_detector_direction="Both",
-                        suppress_condition=SuppressCondition(
-                            min_number=5,
-                            min_ratio=5
-                        )
-                    ),
-                    hard_threshold_condition=HardThresholdCondition(
-                        anomaly_detector_direction="Both",
-                        suppress_condition=SuppressCondition(
-                            min_number=5,
-                            min_ratio=5
-                        ),
-                        lower_bound=0,
-                        upper_bound=100
-                    ),
-                    change_threshold_condition=ChangeThresholdCondition(
-                        change_percentage=50,
-                        shift_point=30,
-                        within_range=True,
-                        anomaly_detector_direction="Both",
-                        suppress_condition=SuppressCondition(
-                            min_number=2,
-                            min_ratio=2
-                        )
-                    )
-                ),
-                series_detection_conditions=[MetricSingleSeriesDetectionCondition(
-                    series_key={"region": "Shenzhen", "category": "Jewelry"},
-                    smart_detection_condition=SmartDetectionCondition(
-                        anomaly_detector_direction="Both",
-                        sensitivity=63,
-                        suppress_condition=SuppressCondition(
-                            min_number=1,
-                            min_ratio=100
-                        )
-                    )
-                )],
-                series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
-                    series_group_key={"region": "Sao Paulo"},
-                    smart_detection_condition=SmartDetectionCondition(
-                        anomaly_detector_direction="Both",
-                        sensitivity=63,
-                        suppress_condition=SuppressCondition(
-                            min_number=1,
-                            min_ratio=100
-                        )
-                    )
-                )]
-            )
-            return detection_config, data_feed
-        except Exception as e:
-            self.admin_client.delete_data_feed(data_feed.id)
-            raise e
-
-    def _create_email_hook_for_update(self, name):
-        return self.admin_client.create_hook(
-            hook=EmailNotificationHook(
-                name=name,
-                emails_to_alert=["yournamehere@microsoft.com"],
-                description="my email hook",
-                external_link="external link"
-            )
-        )
-
-    def _create_web_hook_for_update(self, name):
-        return self.admin_client.create_hook(
-            hook=WebNotificationHook(
-                name=name,
-                endpoint="https://httpbin.org/post",
-                description="my web hook",
-                external_link="external link",
-                username="krista",
-                password="123"
-            )
-        )
-
 
 class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
-
-    @property
-    def client(self):
-        service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
-        subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
-        api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
-        return MetricsAdvisorClient(service_endpoint,
-                                                 MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     @property
     def anomaly_detection_configuration_id(self):
@@ -397,4 +390,3 @@ class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
     @property
     def alert_id(self):
         return os.getenv("METRICS_ADVISOR_ALERT_ID", "metrics_advisor_alert_id")
-
