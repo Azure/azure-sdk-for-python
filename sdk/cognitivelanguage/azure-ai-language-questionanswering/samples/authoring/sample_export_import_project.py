@@ -49,6 +49,7 @@ def sample_export_import_project():
         # export
         export_poller = client.question_answering_projects.begin_export(
             project_name=project_name
+            # can't find models for other properties!!! (not even swagger definition is clear!)
         )
         export_poller.result()
 
@@ -61,7 +62,9 @@ def sample_export_import_project():
         # import project
         import_poller = client.question_answering_projects.begin_import_method(
             project_name=project_name,
-            file_uri="asdsadasdasd"
+            body={
+                "file_uri":"asdsadasdasd"
+            }
         )
         import_poller.result()
 
