@@ -183,7 +183,6 @@ class EventHubProducerClient(ClientBaseAsync):
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        retry_mode: RetryMode = RetryMode.Exponential,
         transport_type: Optional["TransportType"] = None,
         **kwargs: Any
     ) -> "EventHubProducerClient":

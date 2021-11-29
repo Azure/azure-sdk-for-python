@@ -217,7 +217,6 @@ class EventHubConsumerClient(ClientBaseAsync):
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        retry_mode: RetryMode = RetryMode.Exponential,
         transport_type: Optional["TransportType"] = None,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 10,
