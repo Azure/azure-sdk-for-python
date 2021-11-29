@@ -295,7 +295,7 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Content: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]}}."
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]}}"
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_malformed_json(self, client, http_request):
@@ -303,7 +303,7 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Content: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]."
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]"
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_text(self, client, http_request):
@@ -311,7 +311,7 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'. Content: I am throwing an error."
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: I am throwing an error"
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_datav4_error(self, client, http_request):

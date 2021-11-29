@@ -338,7 +338,7 @@ class HttpResponseError(AzureError):
         try:
             body = self.response.text()
             if body and not self.error:
-                return "{}. Content: {}.".format(retval, body)[:2048]
+                return "{}\nContent: {}".format(retval, body)[:2048]
         except Exception:  # pylint: disable=broad-except
             pass
         return retval
