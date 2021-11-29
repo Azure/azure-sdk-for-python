@@ -102,7 +102,6 @@ async def run():
         await send_event_data_list(producer)
 
 
-loop = asyncio.get_event_loop()
 start_time = time.time()
-loop.run_until_complete(run())
+asyncio.run(run())
 print("Send messages in {} seconds.".format(time.time() - start_time))
