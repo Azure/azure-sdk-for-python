@@ -172,7 +172,7 @@ def trace_message(event, parent_span=None):
 
 
 def get_event_links(events):
-    trace_events = ( 
+    trace_events = (
         events if isinstance(events, Iterable) else (events,)   # pylint:disable=isinstance-second-argument-not-valid-type
     )
     links = []

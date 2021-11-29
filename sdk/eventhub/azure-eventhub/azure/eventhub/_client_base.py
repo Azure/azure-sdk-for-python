@@ -368,7 +368,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             try:
                 conn = self._conn_manager.get_connection( # pylint:disable=assignment-from-none
                     self._address.hostname, mgmt_auth
-                )  
+                )
                 mgmt_client.open(connection=conn)
                 mgmt_msg.application_properties["security_token"] = mgmt_auth.token
                 response = mgmt_client.mgmt_request(

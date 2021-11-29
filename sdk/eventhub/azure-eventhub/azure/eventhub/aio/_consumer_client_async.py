@@ -25,7 +25,6 @@ from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
 from .._constants import ALL_PARTITIONS
 from .._eventprocessor.common import LoadBalancingStrategy
-from .._retry import RetryMode
 
 
 if TYPE_CHECKING:
