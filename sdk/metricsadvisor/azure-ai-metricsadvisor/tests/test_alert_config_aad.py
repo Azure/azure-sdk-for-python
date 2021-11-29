@@ -55,17 +55,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "TopN"
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count ==  9
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period ==  10
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top ==  5
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Both"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
             self.admin_client.delete_alert_configuration(alert_config.id)
@@ -109,16 +109,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "TopN"
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count ==  9
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period ==  10
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top ==  5
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Down"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Down"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
@@ -163,16 +163,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "TopN"
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count ==  9
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period ==  10
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top ==  5
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Up"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Up"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
@@ -216,15 +216,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "TopN"
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count ==  9
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period ==  10
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top ==  5
-            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity ==  "High"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
             self.admin_client.delete_alert_configuration(alert_config.id)
 
@@ -265,15 +265,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "TopN"
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count ==  9
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period ==  10
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top ==  5
-            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.auto_snooze ==  5
-            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope ==  "Metric"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.auto_snooze == 5
+            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope == "Metric"
             assert alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive
             self.admin_client.delete_alert_configuration(alert_config.id)
 
@@ -312,14 +312,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Both"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
             self.admin_client.delete_alert_configuration(alert_config.id)
@@ -358,13 +358,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Down"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Down"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
@@ -404,13 +404,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Up"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Up"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
@@ -449,12 +449,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "WholeSeries"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity ==  "High"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
             self.admin_client.delete_alert_configuration(alert_config.id)
 
@@ -494,15 +494,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "SeriesGroup"
-            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope ==  {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Both"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
             self.admin_client.delete_alert_configuration(alert_config.id)
@@ -542,14 +542,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "SeriesGroup"
-            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope ==  {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Down"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Down"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
@@ -590,14 +590,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "SeriesGroup"
-            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope ==  {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Up"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Up"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
@@ -637,13 +637,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert alert_config.cross_metrics_operator is None
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  1
+            assert len(alert_config.metric_alert_configurations) == 1
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "SeriesGroup"
-            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope ==  {'region': 'Shenzhen'}
-            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity ==  "High"
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
             self.admin_client.delete_alert_configuration(alert_config.id)
 
@@ -710,27 +710,27 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            assert alert_config.cross_metrics_operator ==  "AND"
+            assert alert_config.cross_metrics_operator == "AND"
             assert alert_config.id is not None
             assert alert_config.name is not None
-            assert len(alert_config.metric_alert_configurations) ==  3
+            assert len(alert_config.metric_alert_configurations) == 3
             assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
             assert not alert_config.metric_alert_configurations[0].negation_operation
-            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type ==  "TopN"
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count ==  9
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period ==  10
-            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top ==  5
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper ==  5.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower ==  1.0
-            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction ==  "Both"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            assert alert_config.metric_alert_configurations[1].alert_scope.scope_type ==  "SeriesGroup"
-            assert alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.max_alert_severity ==  "High"
-            assert alert_config.metric_alert_configurations[2].alert_scope.scope_type ==  "WholeSeries"
-            assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity ==  "High"
+            assert alert_config.metric_alert_configurations[1].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert alert_config.metric_alert_configurations[2].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity == "High"
 
             self.admin_client.delete_alert_configuration(alert_config.id)
 
@@ -773,17 +773,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.update_alert_configuration(alert_config)
             updated = self.admin_client.get_alert_configuration(alert_config.id)
 
-            assert updated.name ==  "update"
-            assert updated.description ==  "update description"
-            assert updated.cross_metrics_operator ==  "OR"
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity ==  "High"
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction ==  "Both"
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper ==  5
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower ==  1
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction ==  "Both"
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper ==  5
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower ==  1
+            assert updated.name == "update"
+            assert updated.description == "update description"
+            assert updated.cross_metrics_operator == "OR"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower == 1
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
@@ -855,17 +855,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
             updated = self.admin_client.get_alert_configuration(alert_config.id)
-            assert updated.name ==  "update"
-            assert updated.description ==  "update description"
-            assert updated.cross_metrics_operator ==  "OR"
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity ==  "High"
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction ==  "Both"
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper ==  5
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower ==  1
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction ==  "Both"
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper ==  5
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower ==  1
+            assert updated.name == "update"
+            assert updated.description == "update description"
+            assert updated.cross_metrics_operator == "OR"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower == 1
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
@@ -943,17 +943,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
             updated = self.admin_client.get_alert_configuration(alert_config.id)
-            assert updated.name ==  "updateMe"
-            assert updated.description ==  "updateMe"
-            assert updated.cross_metrics_operator ==  "OR"
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity ==  "High"
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity ==  "Low"
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction ==  "Both"
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper ==  5
-            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower ==  1
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction ==  "Both"
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper ==  5
-            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower ==  1
+            assert updated.name == "updateMe"
+            assert updated.description == "updateMe"
+            assert updated.cross_metrics_operator == "OR"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower == 1
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
@@ -981,12 +981,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
             updated = self.admin_client.get_alert_configuration(alert_config.id)
-            assert updated.name ==  "reset"
-            assert updated.description ==  ""
-            assert updated.cross_metrics_operator ==  None
-            assert len(updated.metric_alert_configurations) ==  1
-            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition ==  None
-            assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition ==  None
+            assert updated.name == "reset"
+            assert updated.description == ""
+            assert updated.cross_metrics_operator == None
+            assert len(updated.metric_alert_configurations) == 1
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition == None
+            assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition == None
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)

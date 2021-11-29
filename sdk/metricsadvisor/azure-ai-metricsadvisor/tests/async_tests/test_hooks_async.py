@@ -32,10 +32,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert email_hook.id is not None
                 assert email_hook.name is not None
                 assert email_hook.admins is not None
-                assert email_hook.emails_to_alert ==  ["yournamehere@microsoft.com"]
-                assert email_hook.description ==  "my email hook"
-                assert email_hook.external_link ==  "external link"
-                assert email_hook.hook_type ==  "Email"
+                assert email_hook.emails_to_alert == ["yournamehere@microsoft.com"]
+                assert email_hook.description == "my email hook"
+                assert email_hook.external_link == "external link"
+                assert email_hook.hook_type == "Email"
             finally:
                 await self.admin_client.delete_hook(email_hook.id)
 
@@ -58,10 +58,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert web_hook.id is not None
                 assert web_hook.name is not None
                 assert web_hook.admins is not None
-                assert web_hook.endpoint ==  "https://httpbin.org/post"
-                assert web_hook.description ==  "my web hook"
-                assert web_hook.external_link ==  "external link"
-                assert web_hook.hook_type ==  "Webhook"
+                assert web_hook.endpoint == "https://httpbin.org/post"
+                assert web_hook.description == "my web hook"
+                assert web_hook.external_link == "external link"
+                assert web_hook.hook_type == "Webhook"
             finally:
                 await self.admin_client.delete_hook(web_hook.id)
 
@@ -90,10 +90,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 await self.admin_client.update_hook(hook)
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "update"
-                assert updated.description ==  "update"
-                assert updated.external_link ==  "update"
-                assert updated.emails_to_alert ==  ["myemail@m.com"]
+                assert updated.name == "update"
+                assert updated.description == "update"
+                assert updated.external_link == "update"
+                assert updated.emails_to_alert == ["myemail@m.com"]
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -113,10 +113,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     emails_to_alert=["myemail@m.com"]
                 )
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "update"
-                assert updated.description ==  "update"
-                assert updated.external_link ==  "update"
-                assert updated.emails_to_alert ==  ["myemail@m.com"]
+                assert updated.name == "update"
+                assert updated.description == "update"
+                assert updated.external_link == "update"
+                assert updated.emails_to_alert == ["myemail@m.com"]
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -140,10 +140,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     emails_to_alert=["myemail@m.com"]
                 )
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "update"
-                assert updated.description ==  "update"
-                assert updated.external_link ==  "update"
-                assert updated.emails_to_alert ==  ["myemail@m.com"]
+                assert updated.name == "update"
+                assert updated.description == "update"
+                assert updated.external_link == "update"
+                assert updated.emails_to_alert == ["myemail@m.com"]
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -162,11 +162,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     external_link=None,
                 )
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "reset"
+                assert updated.name == "reset"
 
                 # sending null, but not clearing properties
-                # assert updated.description ==  ""
-                # assert updated.external_link ==  ""
+                # assert updated.description == ""
+                # assert updated.external_link == ""
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -185,10 +185,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 await self.admin_client.update_hook(hook)
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "update"
-                assert updated.description ==  "update"
-                assert updated.external_link ==  "update"
-                assert updated.username ==  "myusername"
+                assert updated.name == "update"
+                assert updated.description == "update"
+                assert updated.external_link == "update"
+                assert updated.username == "myusername"
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -210,10 +210,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     password="password"
                 )
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "update"
-                assert updated.description ==  "update"
-                assert updated.external_link ==  "update"
-                assert updated.username ==  "myusername"
+                assert updated.name == "update"
+                assert updated.description == "update"
+                assert updated.external_link == "update"
+                assert updated.username == "myusername"
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -240,10 +240,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     password="password"
                 )
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "update"
-                assert updated.description ==  "updateMe"
-                assert updated.external_link ==  "update"
-                assert updated.username ==  "myusername"
+                assert updated.name == "update"
+                assert updated.description == "updateMe"
+                assert updated.external_link == "update"
+                assert updated.username == "myusername"
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -265,12 +265,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     password=None
                 )
                 updated = await self.admin_client.get_hook(hook.id)
-                assert updated.name ==  "reset"
-                assert updated.password ==  ""
+                assert updated.name == "reset"
+                assert updated.password == ""
 
                 # sending null, but not clearing properties
-                # assert updated.description ==  ""
-                # assert updated.external_link ==  ""
+                # assert updated.description == ""
+                # assert updated.external_link == ""
 
             finally:
                 await self.admin_client.delete_hook(hook.id)

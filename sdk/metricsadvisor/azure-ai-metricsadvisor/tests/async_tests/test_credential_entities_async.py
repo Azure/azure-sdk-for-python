@@ -32,8 +32,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 )
                 assert credential.id is not None
-                assert credential.name ==  credential_name
-                assert credential.credential_type ==  'AzureSQLConnectionString'
+                assert credential.name == credential_name
+                assert credential.credential_type == 'AzureSQLConnectionString'
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -50,8 +50,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 )
                 assert credential.id is not None
-                assert credential.name ==  credential_name
-                assert credential.credential_type ==  'DataLakeGen2SharedKey'
+                assert credential.name == credential_name
+                assert credential.credential_type == 'DataLakeGen2SharedKey'
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -70,8 +70,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 )
                 assert credential.id is not None
-                assert credential.name ==  credential_name
-                assert credential.credential_type ==  'ServicePrincipal'
+                assert credential.name == credential_name
+                assert credential.credential_type == 'ServicePrincipal'
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -93,8 +93,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 )
                 assert credential.id is not None
-                assert credential.name ==  credential_name
-                assert credential.credential_type ==  'ServicePrincipalInKV'
+                assert credential.name == credential_name
+                assert credential.credential_type == 'ServicePrincipalInKV'
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -133,7 +133,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 credential.connection_string = "update"
                 credential.description = "update"
                 credential_updated = await self.admin_client.update_datasource_credential(credential)
-                assert credential_updated.description ==  "update"
+                assert credential_updated.description == "update"
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -152,7 +152,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 credential.account_key = "update"
                 credential.description = "update"
                 credential_updated = await self.admin_client.update_datasource_credential(credential)
-                assert credential_updated.description ==  "update"
+                assert credential_updated.description == "update"
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -175,7 +175,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 credential.tenant_id = "update"
                 credential.description = "update"
                 credential_updated = await self.admin_client.update_datasource_credential(credential)
-                assert credential_updated.description ==  "update"
+                assert credential_updated.description == "update"
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
 
@@ -204,6 +204,6 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 credential.tenant_id = "update"
                 credential.description = "update"
                 credential_updated = await self.admin_client.update_datasource_credential(credential)
-                assert credential_updated.description ==  "update"
+                assert credential_updated.description == "update"
             finally:
                 await self.admin_client.delete_datasource_credential(credential.id)
