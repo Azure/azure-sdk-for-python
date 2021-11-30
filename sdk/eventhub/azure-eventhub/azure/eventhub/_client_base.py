@@ -351,6 +351,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
+        # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -359,7 +360,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
             )
             try:
-                conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
+                conn = self._conn_manager.get_connection(
                     self._address.hostname, mgmt_auth
                 )
                 mgmt_client.open(connection=conn)
