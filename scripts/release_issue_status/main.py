@@ -150,8 +150,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
     if 'auto-link' not in item.labels:
         item.issue_object.add_to_labels('auto-link')
         try:
-            package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo,
-                                                                        item.issue_object.number)
+            package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
             logging.info("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
@@ -226,7 +225,6 @@ def main():
         issue.days_from_latest_comment = _latest_comment_time(item.get_comments(), issue.delay_from_create_date)
         if item.assignee:
             issue.assignee = item.assignee.login
-
         issue_status.append(issue)
         key = (issue.language, issue.package)
         duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
