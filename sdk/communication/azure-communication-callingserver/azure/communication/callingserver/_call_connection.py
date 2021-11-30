@@ -322,7 +322,6 @@ class CallConnection(object):
         """
         operation_context = kwargs.pop("operation_context", None)
         audio_file_id = kwargs.pop("audio_file_id", None)
-        callback_uri = kwargs.pop("callback_uri", None)
 
         play_audio_to_participant_request = PlayAudioToParticipantRequestConverter.convert(
             identifier=serialize_identifier(participant),

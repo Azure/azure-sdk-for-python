@@ -11,7 +11,6 @@
 from typing import TYPE_CHECKING, Any, List, Optional  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.exceptions import (
     HttpResponseError,
     map_error
