@@ -48,7 +48,7 @@ class IotCentralClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2018-09-01"
+        self.api_version = "2021-06-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-iotcentral/{}'.format(VERSION))
         self._configure(**kwargs)

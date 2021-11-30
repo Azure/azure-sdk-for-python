@@ -1,4 +1,5 @@
 from .mgmt_testcase import AzureMgmtTestCase, AzureMgmtPreparer
+from .mgmt_recorded_testcase import AzureMgmtRecordedTestCase
 from .azure_recorded_testcase import AzureRecordedTestCase
 from .azure_testcase import AzureTestCase, is_live, get_region_override
 from .resource_testcase import (
@@ -15,6 +16,7 @@ from .storage_testcase import (
 )
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
+from .proxy_docker_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
     add_body_key_sanitizer,
@@ -26,6 +28,7 @@ from .sanitizers import (
     add_remove_header_sanitizer,
     add_request_subscription_id_sanitizer,
     add_uri_regex_sanitizer,
+    set_bodiless_matcher,
 )
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credential import FakeTokenCredential, ACCOUNT_FAKE_KEY
@@ -42,6 +45,7 @@ __all__ = [
     "add_uri_regex_sanitizer",
     "AzureMgmtTestCase",
     "AzureMgmtPreparer",
+    "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",
     "FakeResource",
     "ResourceGroupPreparer",
@@ -57,6 +61,10 @@ __all__ = [
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
     "recorded_by_proxy",
+    "test_proxy",
+    "set_bodiless_matcher",
+    "start_test_proxy",
+    "stop_test_proxy",
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",

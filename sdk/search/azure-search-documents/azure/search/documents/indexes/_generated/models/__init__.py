@@ -94,6 +94,7 @@ try:
     from ._models_py3 import PatternReplaceTokenFilter
     from ._models_py3 import PatternTokenizer
     from ._models_py3 import PhoneticTokenFilter
+    from ._models_py3 import PrioritizedFields
     from ._models_py3 import RequestOptions
     from ._models_py3 import ResourceCounter
     from ._models_py3 import ScoringFunction
@@ -122,6 +123,9 @@ try:
     from ._models_py3 import SearchIndexerStatus
     from ._models_py3 import SearchIndexerWarning
     from ._models_py3 import SearchResourceEncryptionKey
+    from ._models_py3 import SemanticConfiguration
+    from ._models_py3 import SemanticField
+    from ._models_py3 import SemanticSettings
     from ._models_py3 import SentimentSkill
     from ._models_py3 import SentimentSkillV3
     from ._models_py3 import ServiceCounters
@@ -240,6 +244,7 @@ except (SyntaxError, ImportError):
     from ._models import PatternReplaceTokenFilter  # type: ignore
     from ._models import PatternTokenizer  # type: ignore
     from ._models import PhoneticTokenFilter  # type: ignore
+    from ._models import PrioritizedFields  # type: ignore
     from ._models import RequestOptions  # type: ignore
     from ._models import ResourceCounter  # type: ignore
     from ._models import ScoringFunction  # type: ignore
@@ -268,6 +273,9 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerStatus  # type: ignore
     from ._models import SearchIndexerWarning  # type: ignore
     from ._models import SearchResourceEncryptionKey  # type: ignore
+    from ._models import SemanticConfiguration  # type: ignore
+    from ._models import SemanticField  # type: ignore
+    from ._models import SemanticSettings  # type: ignore
     from ._models import SentimentSkill  # type: ignore
     from ._models import SentimentSkillV3  # type: ignore
     from ._models import ServiceCounters  # type: ignore
@@ -432,6 +440,7 @@ __all__ = [
     'PatternReplaceTokenFilter',
     'PatternTokenizer',
     'PhoneticTokenFilter',
+    'PrioritizedFields',
     'RequestOptions',
     'ResourceCounter',
     'ScoringFunction',
@@ -460,6 +469,9 @@ __all__ = [
     'SearchIndexerStatus',
     'SearchIndexerWarning',
     'SearchResourceEncryptionKey',
+    'SemanticConfiguration',
+    'SemanticField',
+    'SemanticSettings',
     'SentimentSkill',
     'SentimentSkillV3',
     'ServiceCounters',

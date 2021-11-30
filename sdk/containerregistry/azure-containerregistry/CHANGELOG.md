@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b8 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b7 (2021-11-19)
+
+### Features Added
+
+- Updated the supported rest api version to be the stable "2021-07-01".
+  - Removed the property `teleport_enabled` in `RepositoryProperties`.
 
 ## 1.0.0b6 (2021-09-08)
 

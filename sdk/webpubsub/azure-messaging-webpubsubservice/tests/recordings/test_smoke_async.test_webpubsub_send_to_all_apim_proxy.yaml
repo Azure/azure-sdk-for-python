@@ -7,20 +7,21 @@ interactions:
       Content-Length:
       - '50'
       Content-Type:
-      - text/plain
+      - application/json
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://myservice.azure-api.net/api/hubs/Hub/:send?api-version=2021-10-01
+    uri: https://myservice.azure-api.net/api/hubs/hub/:send?api-version=2021-10-01
   response:
     body:
       string: ''
     headers:
+      api-supported-versions: '2021-10-01'
       content-length: '0'
-      date: Wed, 13 Oct 2021 06:08:34 GMT
+      date: Wed, 10 Nov 2021 03:51:35 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202
       message: Accepted
-    url: https://apimanagement-yyc.azure-api.net/api/hubs/Hub/:send?api-version=2021-10-01
+    url: https://apimanagement-yyc.azure-api.net/api/hubs/hub/:send?api-version=2021-10-01
 version: 1
