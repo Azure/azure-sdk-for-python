@@ -363,7 +363,7 @@ for page in result.pages:
                 line_idx,
                 len(words),
                 line.content,
-                format_bounding_box(line.bounding_box),
+                line.bounding_box,
             )
         )
 
