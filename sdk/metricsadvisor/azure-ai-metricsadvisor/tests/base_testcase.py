@@ -366,6 +366,18 @@ class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
 class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
 
     @property
+    def service_endpoint(self):
+        return os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
+
+    @property
+    def subscription_key(self):
+        return os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
+
+    @property
+    def api_key(self):
+        return os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
+
+    @property
     def anomaly_detection_configuration_id(self):
         return os.getenv("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID", "metrics_advisor_anomaly_detection_configuration_id")
 
