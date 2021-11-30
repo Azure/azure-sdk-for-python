@@ -7,6 +7,12 @@ stages:
       ServiceDirectory: translation
       MatrixReplace:
         - TestSamples=.*/true
+      SupportedClouds: 'Public,Dogfood'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        Dogfood:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-dogfood-test-resources)
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
