@@ -14,7 +14,9 @@ class IssueProcessJs(IssueProcess):
 
 
 class Js(Common):
-    pass
+    def __init__(self):
+        super(Js, self).__init__()
+        self.file_out_name = 'release_js_status.md'
 
 
 def js_process(issues: List[Any]):

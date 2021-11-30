@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from typing import Set, List, Dict
 import os
 from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag
@@ -15,9 +16,9 @@ _LANGUAGE_OWNER = {'msyyc'}
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN = {'msyyc': os.getenv('PYTHON_MSYYC_TOKEN')}
 
-
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
+
 
 class IssueProcess:
     # won't be changed anymore after __init__
@@ -75,7 +76,8 @@ class IssueProcess:
         if len(readme_link) > 1:
             multi_link = ', '.join(readme_link)
             pr = f"{_SWAGGER_PULL}/{pr_number}"
-            self.comment(f'Hi, @{self.assignee}, by parsing {pr}, there are multi service link: {multi_link}. Please decide which one is the right.')
+            self.comment(
+                f'Hi, @{self.assignee}, by parsing {pr}, there are multi service link: {multi_link}. Please decide which one is the right.')
             self.bot.append('multi readme link!')
             raise Exception(f'multi link in "{pr}"')
 
@@ -213,16 +215,48 @@ class Common:
         self.issues_package = issues
         self.assignee_candidates = set(assignee_token.keys())
         self.language_owner = language_owner
+        # arguments add to language.md
+        self.file_out_name = 'common.md'
+        self.bot_advice = ''
+        self.target_release_date = ''
+        self.date_from_target = ''
+        self.package_name = ''
+
         for assignee in assignee_token:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
 
+    def output_python_md(self, items):
+        with open(self.file_out_name, 'w') as file_out:
+            file_out.write(
+                '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
+            file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+            file_out.writelines([self.output_python(item) for item in items])
+
+    def output_python(self, item):
+        create_date = str(date.fromtimestamp(item.created_at.timestamp()).strftime('%m-%d'))
+
+        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
+            item.issue_package.issue.html_url.split('/')[-1],
+            item.issue_package.issue.html_url,
+            item.user.login,
+            self.package_name,
+            item.assignee.login,
+            self.bot_advice,
+            create_date,
+            self.target_release_date,
+            self.date_from_target
+        )
+
     def run(self):
+        items = []
         for item in self.issues_package:
             issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
             try:
                 issue.run()
+                items.append(issue)
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
+        self.output_python_md(items)
 
 
 def common_process(issues: List[IssuePackage]):
