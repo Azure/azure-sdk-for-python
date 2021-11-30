@@ -66,9 +66,10 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -79,8 +80,8 @@ setup(
         'azure.mgmt',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
-        'azure-mgmt-core>=1.2.0,<2.0.0',
+        'msrest>=0.6.21',
+        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
     extras_require={
