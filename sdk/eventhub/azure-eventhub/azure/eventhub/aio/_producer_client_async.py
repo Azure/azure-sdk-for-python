@@ -145,7 +145,8 @@ class EventHubProducerClient(ClientBaseAsync):
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=partition_id, send_timeout=send_timeout
+                    partition_id=(None if partition_id == ALL_PARTITIONS else partition_id),
+                    send_timeout=send_timeout
                 )
 
     def _create_producer(
@@ -431,7 +432,9 @@ class EventHubProducerClient(ClientBaseAsync):
 
         """
         async with self._lock:
-            for producer in self._producers.values():
-                if producer:
-                    await producer.close()
+            for pid in self._producers:
+                if self._producers[pid]:
+                    await self._producers[pid].close()
+                self._producers[pid] = None
+
         await super(EventHubProducerClient, self)._close_async()

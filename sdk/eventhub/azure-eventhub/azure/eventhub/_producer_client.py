@@ -143,7 +143,8 @@ class EventHubProducerClient(ClientBase):
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=partition_id, send_timeout=send_timeout
+                    partition_id=(None if partition_id == ALL_PARTITIONS else partition_id),
+                    send_timeout=send_timeout
                 )
 
     def _create_producer(self, partition_id=None, send_timeout=None):
@@ -400,8 +401,8 @@ class EventHubProducerClient(ClientBase):
 
         """
         with self._lock:
-            for producer in self._producers.values():
-                if producer:
-                    producer.close()
-            self._producers = {}
+            for pid in self._producers:
+                if self._producers[pid]:
+                    self._producers[pid].close()
+                self._producers[pid] = None
         super(EventHubProducerClient, self)._close()

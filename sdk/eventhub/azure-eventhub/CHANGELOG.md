@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug that `EventHubProduerClient` is not reusable after getting closed (issue #21849).
+
 ### Other Changes
 
 ## 5.6.1 (2021-10-06)
