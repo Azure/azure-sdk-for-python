@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import SearchAddressResult, PointOfInterestCategoryTreeResult, ReverseSearchAddressResult, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, ReverseSearchAddressBatchProcessResult, PolygonResult
 # from .utils import get_authentication_policy, get_headers_policy
-from ._models import LatLong
+from ._models import *
 
 if TYPE_CHECKING:
     from typing import Any, List, Optional
@@ -25,8 +25,6 @@ class SearchClient(object):
     :vartype search: azure.maps.search.operations.SearchOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
     def __init__(
         self,
@@ -41,7 +39,8 @@ class SearchClient(object):
 
         self._search_client = SearchClientGen(
             credential,
-            **kwargs).search
+            **kwargs
+        ).search
 
 
     @distributed_trace
@@ -57,9 +56,6 @@ class SearchClient(object):
         :param geometry_ids: Comma separated list of geometry UUIDs, previously retrieved from an
          Online Search request.
         :type geometry_ids: list[str]
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.search.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolygonResult, or the result of cls(response)
         :rtype: ~azure.maps.search._generated.models.PolygonResult
         """
@@ -73,8 +69,8 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        coordinates, # type: Optional["LatLong"]
-        country_filter, # type Optional[list[str]]
+        coordinates=None, # type: Optional["LatLong"]
+        country_filter=None, # type Optional[list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -85,8 +81,6 @@ class SearchClient(object):
          as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
          -122.125679"). Must be properly URL encoded.
         :type query: str
-        :param format: Desired format of the response. Value can be either *json* or *xml*.
-        :type format: str or ~azure.maps.search.models.ResponseFormat
         :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
          partial input and the search will enter predictive mode.
         :type is_type_ahead: bool
@@ -162,15 +156,14 @@ class SearchClient(object):
          information will be returned.
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.fuzzy_search(
-            query, 
-            lat=coordinates.lat,
-            lon=coordinates.lon,
+            query,
+            lat=coordinates.get('lat'),
+            lon=coordinates.get('lon'),
             country_filter=country_filter,
             **kwargs
         )
@@ -180,20 +173,20 @@ class SearchClient(object):
     def get_point_of_interest_category_tree(
         self,
         **kwargs  # type: Any
-    ): 
-        # type: (...) -> "PointOfInterestCategoryTreeResult" 
+    ):
+        # type: (...) -> "PointOfInterestCategoryTreeResult"
 
         """**Get POI Category Tree**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
 
-        :param format: Desired format of the response. Only ``json`` format is supported.
         :param language: Language in which search results should be returned. Should be one of
          supported IETF language tags, except NGT and NGT-Latn. Language tag is case insensitive. When
          data in specified language is not available for a specific field, default language is used
          (English).
         :type language: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PointOfInterestCategoryTreeResult, or the result of cls(response)
+        :rtype: ~azure.maps.search._generated.models.PointOfInterestCategoryTreeResult
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.get_point_of_interest_category_tree(
             **kwargs
@@ -211,14 +204,38 @@ class SearchClient(object):
         """**Search Address Reverse Batch API**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
 
-        :param batch_request: The list of reverse geocoding queries/requests to process. The list can
-         contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search.models.BatchRequest
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.search.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReverseSearchAddressBatchProcessResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.ReverseSearchAddressBatchProcessResult
+        :param coordinates: The applicable coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
+        :param language: Language in which search results should be returned.
+        :type language: str
+        :param include_speed_limit: Boolean. To enable return of the posted speed limit.
+        :type include_speed_limit: bool
+        :param heading: The directional heading of the vehicle in degrees, for travel along a segment
+         of roadway.
+        :type heading: int
+        :param radius_in_meters: The radius in meters to for the results to be constrained to the
+         defined area.
+        :type radius_in_meters: int
+        :param number: If a number is sent in along with the request, the response may include the side
+         of the street (Left/Right) and also an offset position for that number.
+        :type number: str
+        :param include_road_use: Boolean. To enable return of the road use array for reverse geocodes
+         at street level.
+        :type include_road_use: bool
+        :param road_use: To restrict reverse geocodes to a certain type of road use. 
+        :type road_use: list[str or ~azure.maps.search.models.RoadUseType]
+        :param allow_freeform_newline: Format of newlines in the formatted address.
+        :type allow_freeform_newline: bool
+        :param include_match_type: Include information on the type of match the geocoder achieved in
+         the response.
+        :type include_match_type: bool
+        :param entity_type: Specifies the level of filtering performed on geographies. 
+        :type entity_type: str or ~azure.maps.search.models.GeographicEntityType
+        :param localized_map_view: The View parameter (also called the "user region" parameter) allows
+         you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
+        :return: ReverseSearchAddressResult, or the result of cls(response)
+        :rtype: ~azure.maps.search._generated.models.ReverseSearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_address(
@@ -229,20 +246,17 @@ class SearchClient(object):
 
     @distributed_trace
     def reverse_search_cross_street_address(
-        self, 
+        self,
         coordinates, # type: "LatLong"
         **kwargs  # type: Any
-    ): 
+    ):
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
         
         """**Reverse Geocode to a Cross Street**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
 
-        :param query: The applicable query specified as a comma separated string composed by latitude
-         followed by longitude e.g. "47.641268,-122.125679".
-        :type query: list[float]
-        :param format: Desired format of the response. Value can be either *json* or *xml*.
-        :type format: str or ~azure.maps.search.models.ResponseFormat
+        :param coordinates: The applicable coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
         :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :type top: int
@@ -266,9 +280,8 @@ class SearchClient(object):
          View parameter correctly for that location. Alternatively, you have the option to set
          ‘View=Auto’, which will return the map data based on the IP  address of the request.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ReverseSearchCrossStreetAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.ReverseSearchCrossStreetAddressResult
+        :rtype: ~azure.maps.search._generated.models.ReverseSearchCrossStreetAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_cross_street_address(
@@ -288,7 +301,7 @@ class SearchClient(object):
         # type: (...) -> "SearchAddressResult"
         """
         The Search Along Route endpoint allows you to perform a fuzzy search for POIs along a specified
-        route. 
+        route.
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-along-route>`_
 
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
@@ -339,9 +352,8 @@ class SearchClient(object):
          information will be returned.
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_along_route(
@@ -413,9 +425,8 @@ class SearchClient(object):
          information will be returned.
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_inside_geometry(
@@ -429,8 +440,8 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates, # type: "LatLong"
-        country_filter=[], # type list[str]
+        coordinates=None, # type: "LatLong"
+        country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -445,8 +456,6 @@ class SearchClient(object):
         :param query: The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
          properly URL encoded.
         :type query: str
-        :param format: Desired format of the response. Value can be either *json* or *xml*.
-        :type format: str or ~azure.maps.search.models.ResponseFormat
         :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
          partial input and the search will enter predictive mode.
         :type is_type_ahead: bool
@@ -462,10 +471,8 @@ class SearchClient(object):
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
-        :param lat: Latitude where results should be biased. E.g. 37.337.
-        :type lat: float
-        :param lon: Longitude where results should be biased. E.g. -121.89.
-        :type lon: float
+        :param coordinates: coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -473,7 +480,7 @@ class SearchClient(object):
         :type top_left: str
         :param btm_right: Bottom right position of the bounding box. E.g. 37.553,-122.453.
         :type btm_right: str
-        :param language: Language in which search results should be returned. 
+        :param language: Language in which search results should be returned.
         :type language: str
         :param extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
@@ -489,15 +496,14 @@ class SearchClient(object):
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :param operating_hours: Hours of operation for a POI (Points of Interest).
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """           
         return self._search_client.search_point_of_interest(
             query,
-            lat=coordinates.lat,
-            lon=coordinates.lon,
+            lat=coordinates.get('lat'),
+            lon=coordinates.get('lon'),
             country_filter=country_filter,
             **kwargs
         )
@@ -513,12 +519,6 @@ class SearchClient(object):
         """**Search Nearby Point of Interest **
         Please refer to `Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-nearby>`_ for details.
 
-        :param lat: Latitude where results should be biased. E.g. 37.337.
-        :type lat: float
-        :param lon: Longitude where results should be biased. E.g. -121.89.
-        :type lon: float
-        :param format: Desired format of the response. Value can be either *json* or *xml*.
-        :type format: str or ~azure.maps.search.models.ResponseFormat
         :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :type top: int
@@ -531,6 +531,8 @@ class SearchClient(object):
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
+        :param coordinates: The applicable coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area, Min value is 1, Max Value is 50000.
         :type radius_in_meters: int
@@ -549,15 +551,14 @@ class SearchClient(object):
         :param localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         return self._search_client.search_nearby_point_of_interest(
-            lat=coordinates.lat,
-            lon=coordinates.lon,
+            lat=coordinates.get('lat'),
+            lon=coordinates.get('lon'),
             **kwargs
         )
 
@@ -566,8 +567,8 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates, #type: "LatLong"
-        country_filter=[], # type list[str]
+        coordinates=None, #type: "LatLong"
+        country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -581,8 +582,6 @@ class SearchClient(object):
         :param query: The POI category to search for (e.g., "AIRPORT", "RESTAURANT"), must be properly
          URL encoded. 
         :type query: str
-        :param format: Desired format of the response. Value can be either *json* or *xml*.
-        :type format: str or ~azure.maps.search.models.ResponseFormat
         :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
          partial input and the search will enter predictive mode.
         :type is_type_ahead: bool
@@ -592,15 +591,13 @@ class SearchClient(object):
         :param skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
         :type skip: int
+        :param coordinates: The applicable coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
         :param category_filter: A comma-separated list of category set IDs which could be used to
          restrict the result to specific Points of Interest categories. 
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
-        :param lat: Latitude where results should be biased. E.g. 37.337.
-        :type lat: float
-        :param lon: Longitude where results should be biased. E.g. -121.89.
-        :type lon: float
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -627,15 +624,14 @@ class SearchClient(object):
          information will be returned.
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_point_of_interest_category(
             query,
-            lat=coordinates.lat,
-            lon=coordinates.lon,
+            lat=coordinates.get('lat'),
+            lon=coordinates.get('lon'),
             country_filter=country_filter,
             **kwargs
         )
@@ -645,7 +641,7 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        coordinates, # type: "LatLong"
+        coordinates=None, # type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -677,10 +673,8 @@ class SearchClient(object):
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
-        :param lat: Latitude where results should be biased. E.g. 37.337.
-        :type lat: float
-        :param lon: Longitude where results should be biased. E.g. -121.89.
-        :type lon: float
+        :param coordinates: The applicable coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -694,16 +688,15 @@ class SearchClient(object):
         :type entity_type: str or ~azure.maps.search.models.GeographicEntityType
         :param localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type localized_map_view: str or ~azure.maps.search._generated.models.LocalizedMapView
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_address(
             query,
-            lat=coordinates.lat,
-            lon=coordinates.lon,
+            lat=coordinates.get('lat'),
+            lon=coordinates.get('lon'),
             **kwargs
         )
 
@@ -723,6 +716,8 @@ class SearchClient(object):
         It will also handle everything from exact  street addresses or street or intersections as well
         as higher level geographies such as city centers,  counties, states etc.
 
+        :param structured_address: structured address type
+        :type structured_address: ~azure.maps.search._models.StructuredAddress
         :param country_code: The 2 or 3 letter `ISO3166-1 <https://www.iso.org/iso-3166-country-
          codes.html>`_ country code portion of an address. E.g. US.
         :type country_code: str
@@ -759,9 +754,8 @@ class SearchClient(object):
         :param localized_map_view: The View parameter (also called the "user region" parameter) allows
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_structured_address(
@@ -794,15 +788,13 @@ class SearchClient(object):
         synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
         API up to **100** queries.
 
-
         :param batch_request: The list of search fuzzy queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search.models.BatchRequest
+        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
         :param format: Desired format of the response. Only ``json`` format is supported.
         :type format: str or ~azure.maps.search.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressBatchResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressBatchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.fuzzy_search_batch_sync(
@@ -822,12 +814,9 @@ class SearchClient(object):
 
         :param batch_request: The list of address geocoding queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search.models.BatchRequest
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.search.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
         :return: SearchAddressBatchResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
+        :rtype: ~azure.maps.search._generated.models.SearchAddressBatchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_address_batch_sync(
@@ -854,12 +843,9 @@ class SearchClient(object):
         API up to **100** queries.
         :param batch_request: The list of reverse geocoding queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
-        :type batch_request: ~azure.maps.search.models.BatchRequest
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.search.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
         :return: ReverseSearchAddressBatchProcessResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.ReverseSearchAddressBatchProcessResult
+        :rtype: ~azure.maps.search._generated.models.ReverseSearchAddressBatchProcessResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
