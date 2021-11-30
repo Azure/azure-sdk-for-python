@@ -559,14 +559,6 @@ def test_list_of_tuple_deserialization_model():
     assert model.prop[0][1].pet.name == model.prop[0][1]["pet"]["name"] == "Eugene"
     assert model.prop[1][0] == model.prop[1][1].pet
 
-class RecursiveModelWithWrappers(Model):
-
-    @rest_property()
-    def 
-
-def test_recursion_with_wrappers():
-    pass
-
 class RecursiveModel(Model):
 
     @rest_property()
@@ -589,6 +581,10 @@ class RecursiveModel(Model):
     def list_of_dict_of_me(self) -> List[Dict[str, "RecursiveModel"]]:
         """A list of a dictionary of me"""
 
+    @rest_property(name="tupleOfMe")
+    def tuple_of_me(self) -> Tuple["RecursiveModel", "RecursiveModel"]:
+        """A tuple of me"""
+
 def test_model_recursion_complex():
 
     dict_response = {
@@ -599,7 +595,8 @@ def test_model_recursion_complex():
                 "listOfMe": None,
                 "dictOfMe": None,
                 "dictOfListOfMe": None,
-                "listOfDictOfMe": None
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
             }
         ],
         "dictOfMe": {
@@ -608,7 +605,8 @@ def test_model_recursion_complex():
                 "listOfMe": None,
                 "dictOfMe": None,
                 "dictOfListOfMe": None,
-                "listOfDictOfMe": None
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
             }
         },
         "dictOfListOfMe": {
@@ -618,7 +616,8 @@ def test_model_recursion_complex():
                     "listOfMe": None,
                     "dictOfMe": None,
                     "dictOfListOfMe": None,
-                    "listOfDictOfMe": None
+                    "listOfDictOfMe": None,
+                    "tupleOfMe": None,
                 }
             ]
         },
@@ -628,10 +627,29 @@ def test_model_recursion_complex():
                     "listOfMe": None,
                     "dictOfMe": None,
                     "dictOfListOfMe": None,
-                    "listOfDictOfMe": None
+                    "listOfDictOfMe": None,
+                    "tupleOfMe": None,
                 }
             }
-        ]
+        ],
+        "tupleOfMe": (
+            {
+                "name": "it's me!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
+            },
+            {
+                "name": "it's me 2!",
+                "listOfMe": None,
+                "dictOfMe": None,
+                "dictOfListOfMe": None,
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
+            },
+        )
     }
 
     model = RecursiveModel(dict_response)
@@ -642,7 +660,8 @@ def test_model_recursion_complex():
             "listOfMe": None,
             "dictOfMe": None,
             "dictOfListOfMe": None,
-            "listOfDictOfMe": None
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
         }
     ]
     assert model.list_of_me == [RecursiveModel({
@@ -650,10 +669,13 @@ def test_model_recursion_complex():
         "listOfMe": None,
         "dictOfMe": None,
         "dictOfListOfMe": None,
-        "listOfDictOfMe": None
+        "listOfDictOfMe": None,
+        "tupleOfMe": None,
     })]
     assert model.list_of_me[0].name == "it's me!"
     assert model.list_of_me[0].list_of_me is None
+    assert isinstance(model.list_of_me, List)
+    assert isinstance(model.list_of_me[0], RecursiveModel)
 
     assert model['dictOfMe'] == {
         "me": {
@@ -661,7 +683,8 @@ def test_model_recursion_complex():
             "listOfMe": None,
             "dictOfMe": None,
             "dictOfListOfMe": None,
-            "listOfDictOfMe": None
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
         }
     }
     assert model.dict_of_me == {"me": RecursiveModel({
@@ -669,8 +692,12 @@ def test_model_recursion_complex():
         "listOfMe": None,
         "dictOfMe": None,
         "dictOfListOfMe": None,
-        "listOfDictOfMe": None
+        "listOfDictOfMe": None,
+        "tupleOfMe": None,
     })}
+
+    assert isinstance(model.dict_of_me, Dict)
+    assert isinstance(model.dict_of_me["me"], RecursiveModel)
 
     assert model['dictOfListOfMe'] == {
         "many mes": [
@@ -679,7 +706,8 @@ def test_model_recursion_complex():
                 "listOfMe": None,
                 "dictOfMe": None,
                 "dictOfListOfMe": None,
-                "listOfDictOfMe": None
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
             }
         ]
     }
@@ -690,17 +718,23 @@ def test_model_recursion_complex():
                 "listOfMe": None,
                 "dictOfMe": None,
                 "dictOfListOfMe": None,
-                "listOfDictOfMe": None
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
             })
         ]
     }
+    assert isinstance(model.dict_of_list_of_me, Dict)
+    assert isinstance(model.dict_of_list_of_me["many mes"], List)
+    assert isinstance(model.dict_of_list_of_me["many mes"][0], RecursiveModel)
+
     assert model['listOfDictOfMe'] == [
         {"me": {
                 "name": "it's me!",
                 "listOfMe": None,
                 "dictOfMe": None,
                 "dictOfListOfMe": None,
-                "listOfDictOfMe": None
+                "listOfDictOfMe": None,
+                "tupleOfMe": None,
             }
         }
     ]
@@ -710,9 +744,53 @@ def test_model_recursion_complex():
             "listOfMe": None,
             "dictOfMe": None,
             "dictOfListOfMe": None,
-            "listOfDictOfMe": None
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
         })
     }]
+    assert isinstance(model.list_of_dict_of_me, List)
+    assert isinstance(model.list_of_dict_of_me[0], Dict)
+    assert isinstance(model.list_of_dict_of_me[0]["me"], RecursiveModel)
+
+    assert model["tupleOfMe"] == (
+        {
+            "name": "it's me!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
+        },
+        {
+            "name": "it's me 2!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
+        },
+    )
+    assert model.tuple_of_me == (
+        RecursiveModel({
+            "name": "it's me!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
+        }),
+        RecursiveModel({
+            "name": "it's me 2!",
+            "listOfMe": None,
+            "dictOfMe": None,
+            "dictOfListOfMe": None,
+            "listOfDictOfMe": None,
+            "tupleOfMe": None,
+        }),
+    )
+    assert isinstance(model.tuple_of_me, Tuple)
+    assert isinstance(model.tuple_of_me[0], RecursiveModel)
+    assert isinstance(model.tuple_of_me[1], RecursiveModel)
 
     assert json.loads(json.dumps(model)) == model == dict_response
 
