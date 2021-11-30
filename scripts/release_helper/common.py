@@ -7,6 +7,7 @@ import logging
 import time
 from github import Github
 from github.Repository import Repository
+import subprocess as sp
 
 _LOG = logging.getLogger(__name__)
 
@@ -247,6 +248,10 @@ class Common:
             self.date_from_target
         )
 
+    def push_md_to_storage(self):
+        cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
+        [sp.check_call(cmd, shell=True) for cmd in cmd_list]
+
     def run(self):
         items = []
         for item in self.issues_package:
@@ -257,6 +262,7 @@ class Common:
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
         self.output_python_md(items)
+        self.push_md_to_storage()
 
 
 def common_process(issues: List[IssuePackage]):
