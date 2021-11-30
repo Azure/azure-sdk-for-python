@@ -135,7 +135,6 @@ def _whether_author_comment(comments):
     diff = q.difference(_PYTHON_SDK_ADMINISTRATORS)
     return len(diff) > 0
 
-
 def _latest_comment_time(comments, delay_from_create_date):
     q = [(comment.updated_at.timestamp(), comment.user.login)
          for comment in comments if comment.user.login not in _PYTHON_SDK_ADMINISTRATORS]
@@ -150,7 +149,7 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
     if 'auto-link' not in item.labels:
         item.issue_object.add_to_labels('auto-link')
         try:
-            package_name, readme_link, output_folder = update_issue_body(request_repo, rest_repo, item.issue_object.number)
+            package_name, readme_link, output_folder = update_issue_body(assigner_repo, rest_repo, item.issue_object.number)
             logging.info("pkname, readme", package_name, readme_link)
             item.package = package_name
             key = ('Python', item.package)
