@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from .._generated.aio._search_client import SearchClient as SearchClientGen
-from .._generated.models import *
+from .._generated.models import BatchRequest
 from ..utils import get_authentication_policy
 
 if TYPE_CHECKING:

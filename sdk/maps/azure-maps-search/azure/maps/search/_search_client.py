@@ -8,14 +8,15 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
-from ._generated.models import *
+from ._generated.models import SearchAddressResult, PointOfInterestCategoryTreeResult, ReverseSearchAddressResult, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, ReverseSearchAddressBatchProcessResult, PolygonResult
 # from .utils import get_authentication_policy, get_headers_policy
+from ._models import LatLong
 
 if TYPE_CHECKING:
-    from typing import Any, List
+    from typing import Any, List, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from ._shared.models import *
+    from ._models import LatLong
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
@@ -60,7 +61,7 @@ class SearchClient(object):
         :type format: str or ~azure.maps.search.models.JsonFormat
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolygonResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.PolygonResult
+        :rtype: ~azure.maps.search._generated.models.PolygonResult
         """
         return self._search_client.list_polygons(
             geometry_ids,
@@ -72,8 +73,8 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        coordinates={}, # type: "LatLong"
-        country_filter=[], # type list[str]
+        coordinates, # type: Optional["LatLong"]
+        country_filter, # type Optional[list[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -104,10 +105,8 @@ class SearchClient(object):
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
-        :param lat: Latitude where results should be biased. E.g. 37.337.
-        :type lat: float
-        :param lon: Longitude where results should be biased. E.g. -121.89.
-        :type lon: float
+        :param coordinates: coordinates
+        :type coordinates: ~azure.maps.search._models.LatLong
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -165,7 +164,7 @@ class SearchClient(object):
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search.models.SearchAddressResult
+        :rtype: ~azure.maps.search._models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.fuzzy_search(
@@ -430,7 +429,7 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates={}, # type: "LatLong"
+        coordinates, # type: "LatLong"
         country_filter=[], # type list[str]
         **kwargs  # type: Any
     ):
@@ -507,7 +506,7 @@ class SearchClient(object):
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
-        coordinates={}, #type: "LatLong"
+        coordinates, #type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -567,7 +566,7 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates={}, #type: "LatLong"
+        coordinates, #type: "LatLong"
         country_filter=[], # type list[str]
         **kwargs  # type: Any
     ):
@@ -646,7 +645,7 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        coordinates={}, # type: "LatLong"
+        coordinates, # type: "LatLong"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
