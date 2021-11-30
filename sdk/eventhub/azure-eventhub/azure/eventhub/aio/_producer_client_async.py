@@ -19,7 +19,7 @@ from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from uamqp.constants import TransportType # pylint: disable=ungrouped-imports
+    from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -80,7 +80,9 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         **kwargs
     ) -> None:
         super(EventHubProducerClient, self).__init__(
@@ -145,8 +147,10 @@ class EventHubProducerClient(ClientBaseAsync):
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=(None if partition_id == ALL_PARTITIONS else partition_id),
-                    send_timeout=send_timeout
+                    partition_id=(
+                        None if partition_id == ALL_PARTITIONS else partition_id
+                    ),
+                    send_timeout=send_timeout,
                 )
 
     def _create_producer(
@@ -295,18 +299,25 @@ class EventHubProducerClient(ClientBaseAsync):
 
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
-                raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
-                                "because type EventDataBatch itself may have partition_id or partition_key")
+                raise TypeError(
+                    "partition_id and partition_key should be None when sending an EventDataBatch "
+                    "because type EventDataBatch itself may have partition_id or partition_key"
+                )
             to_send_batch = event_data_batch
         else:
-            to_send_batch = await self.create_batch(partition_id=partition_id, partition_key=partition_key)
-            to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+            to_send_batch = await self.create_batch(
+                partition_id=partition_id, partition_key=partition_key
+            )
+            to_send_batch._load_events(
+                event_data_batch
+            )  # pylint:disable=protected-access
 
         if len(to_send_batch) == 0:
             return
 
         partition_id = (
-            to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+            to_send_batch._partition_id
+            or ALL_PARTITIONS  # pylint:disable=protected-access
         )
         try:
             await cast(EventHubProducer, self._producers[partition_id]).send(
