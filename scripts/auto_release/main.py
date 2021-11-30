@@ -15,6 +15,7 @@ VERSION_LAST_RELEASE = '1.0.0b1'
 BRANCH_BASE = ''
 OUT_PATH = ''
 NEW_BRANCH = ''
+USER_REPO = ''
 
 _LOG = logging.getLogger()
 
@@ -399,9 +400,9 @@ def git_remote_add():
     global TRACK, NEW_BRANCH
     # init git
     print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
-    print_exec('git remote add autosdk https://github.com/AzureSDKAutomation/azure-sdk-for-python.git')
-    print_check(f'git fetch autosdk {BRANCH_BASE}')
-    print_check(f'git checkout autosdk/{BRANCH_BASE}')
+    print_exec(f'git remote add {USER_REPO} https://github.com/{USER_REPO}/azure-sdk-for-python.git')
+    print_check(f'git fetch {USER_REPO} {BRANCH_BASE}')
+    print_check(f'git checkout {USER_REPO}/{BRANCH_BASE}')
 
 
 def create_branch():
@@ -449,7 +450,8 @@ if __name__ == '__main__':
     logging.basicConfig()
     main_logger.setLevel(logging.INFO)
 
-    BRANCH_BASE = args.branch.replace('AzureSDKAutomation:', '')
+    USER_REPO = args.branch.split(':')[0]
+    BRANCH_BASE = args.branch.split(':')[1]
     SCRIPT_PATH = args.script_path
     OUT_PATH = args.out_path
 
@@ -458,6 +460,8 @@ if __name__ == '__main__':
     TRACK = '2' if BRANCH_BASE.find('track2_') > -1 else '1'
     SERVICE_NAME = BRANCH_BASE.replace('sdkAuto/', '').replace('sdkAutomation/', '').replace('track2_', '').replace(
         'azure-mgmt-', '')
+    if len(SERVICE_NAME.split('-')) > 1:
+        SERVICE_NAME = SERVICE_NAME.split('-')[1]
     try:
         main()
     except Exception as e:
