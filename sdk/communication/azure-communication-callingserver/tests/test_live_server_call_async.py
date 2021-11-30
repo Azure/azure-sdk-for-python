@@ -104,7 +104,6 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_add_remove_hangup_scenario_async(self):
         async with self.callingserver_client:
@@ -128,7 +127,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 # Add Participant
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 OperationContext = str(uuid.uuid4())
-                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-06a7-7ed4-bf75-25482200020e")
+                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-f01d-c9e0-f40f-343a0d009ab8")
                 add_participant_result = await self.callingserver_client.add_participant(
                     call_locator=GroupCallLocator(group_id),
                     participant=CommunicationUserIdentifier(added_participant),

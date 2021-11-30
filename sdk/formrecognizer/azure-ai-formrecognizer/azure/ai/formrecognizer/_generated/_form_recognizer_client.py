@@ -99,7 +99,6 @@ example: https://westus2.api.cognitive.microsoft.com).
            * 2021-09-30-preview: :mod:`v2021_09_30_preview.models<azure.ai.formrecognizer.v2021_09_30_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
-           * 2021-09-30-preview: :mod:`v3_0_preview_1.models<azure.ai.formrecognizer.v3_0_preview_1.models>`
         """
         if api_version == '2021-09-30-preview':
             from .v2021_09_30_preview import models
@@ -109,9 +108,6 @@ example: https://westus2.api.cognitive.microsoft.com).
             return models
         elif api_version == '2.1':
             from .v2_1 import models
-            return models
-        elif api_version == '2021-09-30-preview':
-            from .v3_0_preview_1 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

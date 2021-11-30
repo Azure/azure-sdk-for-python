@@ -27,8 +27,6 @@ class AddParticipantRequest(msrest.serialization.Model):
     :vartype participant: ~azure.communication.callingserver.models.CommunicationIdentifierModel
     :ivar operation_context: The operation context.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI.
-    :vartype callback_uri: str
     """
 
     _validation = {
@@ -39,7 +37,6 @@ class AddParticipantRequest(msrest.serialization.Model):
         'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
         'participant': {'key': 'participant', 'type': 'CommunicationIdentifierModel'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
@@ -48,7 +45,6 @@ class AddParticipantRequest(msrest.serialization.Model):
         participant: "CommunicationIdentifierModel",
         alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -59,14 +55,11 @@ class AddParticipantRequest(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callingserver.models.CommunicationIdentifierModel
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI.
-        :paramtype callback_uri: str
         """
         super(AddParticipantRequest, self).__init__(**kwargs)
         self.alternate_caller_id = alternate_caller_id
         self.participant = participant
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
 
 
 class AddParticipantResult(msrest.serialization.Model):
@@ -99,8 +92,9 @@ class AddParticipantResultEvent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar result_info: The result details.
-    :vartype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar result_details: The result details.
+    :vartype result_details:
+     ~azure.communication.callingserver.models.CallingOperationResultDetails
     :ivar operation_context: The operation context.
     :vartype operation_context: str
     :ivar status: Required. The status of the operation. Possible values include: "notStarted",
@@ -113,7 +107,7 @@ class AddParticipantResultEvent(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'result_info': {'key': 'resultInfo', 'type': 'CallingOperationResultDetails'},
+        'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
     }
@@ -122,13 +116,14 @@ class AddParticipantResultEvent(msrest.serialization.Model):
         self,
         *,
         status: Union[str, "CallingOperationStatus"],
-        result_info: Optional["CallingOperationResultDetails"] = None,
+        result_details: Optional["CallingOperationResultDetails"] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword result_info: The result details.
-        :paramtype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword result_details: The result details.
+        :paramtype result_details:
+         ~azure.communication.callingserver.models.CallingOperationResultDetails
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword status: Required. The status of the operation. Possible values include: "notStarted",
@@ -136,7 +131,7 @@ class AddParticipantResultEvent(msrest.serialization.Model):
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
         """
         super(AddParticipantResultEvent, self).__init__(**kwargs)
-        self.result_info = result_info
+        self.result_details = result_details
         self.operation_context = operation_context
         self.status = status
 
@@ -148,6 +143,8 @@ class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
 
     :ivar call_locator: Required. The call locator.
     :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :ivar callback_uri: The callback URI.
+    :vartype callback_uri: str
     :ivar alternate_caller_id: The alternate identity of source participant.
     :vartype alternate_caller_id:
      ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
@@ -155,8 +152,6 @@ class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
     :vartype participant: ~azure.communication.callingserver.models.CommunicationIdentifierModel
     :ivar operation_context: The operation context.
     :vartype operation_context: str
-    :ivar callback_uri: The callback URI.
-    :vartype callback_uri: str
     """
 
     _validation = {
@@ -166,10 +161,10 @@ class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
 
     _attribute_map = {
         'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
         'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
         'participant': {'key': 'participant', 'type': 'CommunicationIdentifierModel'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
@@ -177,14 +172,16 @@ class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
         *,
         call_locator: "CallLocatorModel",
         participant: "CommunicationIdentifierModel",
+        callback_uri: Optional[str] = None,
         alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
         operation_context: Optional[str] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword call_locator: Required. The call locator.
         :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+        :keyword callback_uri: The callback URI.
+        :paramtype callback_uri: str
         :keyword alternate_caller_id: The alternate identity of source participant.
         :paramtype alternate_caller_id:
          ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
@@ -192,15 +189,13 @@ class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callingserver.models.CommunicationIdentifierModel
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
-        :keyword callback_uri: The callback URI.
-        :paramtype callback_uri: str
         """
         super(AddParticipantWithCallLocatorRequest, self).__init__(**kwargs)
         self.call_locator = call_locator
+        self.callback_uri = callback_uri
         self.alternate_caller_id = alternate_caller_id
         self.participant = participant
         self.operation_context = operation_context
-        self.callback_uri = callback_uri
 
 
 class AnswerCallRequest(msrest.serialization.Model):
@@ -1566,8 +1561,6 @@ class PlayAudioRequest(msrest.serialization.Model):
     :ivar audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
      resource.
     :vartype audio_file_id: str
-    :ivar callback_uri: The callback Uri to receive PlayAudio status notifications.
-    :vartype callback_uri: str
     """
 
     _validation = {
@@ -1580,7 +1573,6 @@ class PlayAudioRequest(msrest.serialization.Model):
         'loop': {'key': 'loop', 'type': 'bool'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
@@ -1590,7 +1582,6 @@ class PlayAudioRequest(msrest.serialization.Model):
         loop: bool,
         operation_context: Optional[str] = None,
         audio_file_id: Optional[str] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1607,15 +1598,12 @@ class PlayAudioRequest(msrest.serialization.Model):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         """
         super(PlayAudioRequest, self).__init__(**kwargs)
         self.audio_file_uri = audio_file_uri
         self.loop = loop
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
-        self.callback_uri = callback_uri
 
 
 class PlayAudioResult(msrest.serialization.Model):
@@ -1630,8 +1618,9 @@ class PlayAudioResult(msrest.serialization.Model):
     :vartype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
-    :ivar result_info: The result info for the operation.
-    :vartype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar result_details: The result info for the operation.
+    :vartype result_details:
+     ~azure.communication.callingserver.models.CallingOperationResultDetails
     """
 
     _validation = {
@@ -1642,7 +1631,7 @@ class PlayAudioResult(msrest.serialization.Model):
         'operation_id': {'key': 'operationId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
-        'result_info': {'key': 'resultInfo', 'type': 'CallingOperationResultDetails'},
+        'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
     }
 
     def __init__(
@@ -1651,7 +1640,7 @@ class PlayAudioResult(msrest.serialization.Model):
         status: Union[str, "CallingOperationStatus"],
         operation_id: Optional[str] = None,
         operation_context: Optional[str] = None,
-        result_info: Optional["CallingOperationResultDetails"] = None,
+        result_details: Optional["CallingOperationResultDetails"] = None,
         **kwargs
     ):
         """
@@ -1662,14 +1651,15 @@ class PlayAudioResult(msrest.serialization.Model):
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
         :keyword operation_context: The operation context provided by client.
         :paramtype operation_context: str
-        :keyword result_info: The result info for the operation.
-        :paramtype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword result_details: The result info for the operation.
+        :paramtype result_details:
+         ~azure.communication.callingserver.models.CallingOperationResultDetails
         """
         super(PlayAudioResult, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.status = status
         self.operation_context = operation_context
-        self.result_info = result_info
+        self.result_details = result_details
 
 
 class PlayAudioResultEvent(msrest.serialization.Model):
@@ -1677,8 +1667,9 @@ class PlayAudioResultEvent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar result_info: The result details.
-    :vartype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar result_details: The result details.
+    :vartype result_details:
+     ~azure.communication.callingserver.models.CallingOperationResultDetails
     :ivar operation_context: The operation context.
     :vartype operation_context: str
     :ivar status: Required. The status of the operation. Possible values include: "notStarted",
@@ -1691,7 +1682,7 @@ class PlayAudioResultEvent(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'result_info': {'key': 'resultInfo', 'type': 'CallingOperationResultDetails'},
+        'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
     }
@@ -1700,13 +1691,14 @@ class PlayAudioResultEvent(msrest.serialization.Model):
         self,
         *,
         status: Union[str, "CallingOperationStatus"],
-        result_info: Optional["CallingOperationResultDetails"] = None,
+        result_details: Optional["CallingOperationResultDetails"] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword result_info: The result details.
-        :paramtype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword result_details: The result details.
+        :paramtype result_details:
+         ~azure.communication.callingserver.models.CallingOperationResultDetails
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword status: Required. The status of the operation. Possible values include: "notStarted",
@@ -1714,7 +1706,7 @@ class PlayAudioResultEvent(msrest.serialization.Model):
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
         """
         super(PlayAudioResultEvent, self).__init__(**kwargs)
-        self.result_info = result_info
+        self.result_details = result_details
         self.operation_context = operation_context
         self.status = status
 
@@ -1738,8 +1730,6 @@ class PlayAudioToParticipantRequest(msrest.serialization.Model):
     :ivar audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
      resource.
     :vartype audio_file_id: str
-    :ivar callback_uri: The callback Uri to receive PlayAudio status notifications.
-    :vartype callback_uri: str
     """
 
     _validation = {
@@ -1754,7 +1744,6 @@ class PlayAudioToParticipantRequest(msrest.serialization.Model):
         'loop': {'key': 'loop', 'type': 'bool'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
@@ -1765,7 +1754,6 @@ class PlayAudioToParticipantRequest(msrest.serialization.Model):
         loop: bool,
         operation_context: Optional[str] = None,
         audio_file_id: Optional[str] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1784,8 +1772,6 @@ class PlayAudioToParticipantRequest(msrest.serialization.Model):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         """
         super(PlayAudioToParticipantRequest, self).__init__(**kwargs)
         self.identifier = identifier
@@ -1793,7 +1779,6 @@ class PlayAudioToParticipantRequest(msrest.serialization.Model):
         self.loop = loop
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
-        self.callback_uri = callback_uri
 
 
 class PlayAudioToParticipantWithCallLocatorRequest(msrest.serialization.Model):
@@ -1801,10 +1786,12 @@ class PlayAudioToParticipantWithCallLocatorRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar call_locator: Required. The call locator.
-    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     :ivar identifier: Required. The identifier of the participant to play audio to.
     :vartype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :ivar call_locator: Required. The call locator.
+    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :ivar callback_uri: The callback Uri to receive PlayAudio status notifications.
+    :vartype callback_uri: str
     :ivar audio_file_uri: Required. The media resource uri of the play audio request.
      Currently only Wave file (.wav) format audio prompts are supported.
      More specifically, the audio content in the wave file must be mono (single-channel),
@@ -1817,44 +1804,44 @@ class PlayAudioToParticipantWithCallLocatorRequest(msrest.serialization.Model):
     :ivar audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
      resource.
     :vartype audio_file_id: str
-    :ivar callback_uri: The callback Uri to receive PlayAudio status notifications.
-    :vartype callback_uri: str
     """
 
     _validation = {
-        'call_locator': {'required': True},
         'identifier': {'required': True},
+        'call_locator': {'required': True},
         'audio_file_uri': {'required': True},
         'loop': {'required': True},
     }
 
     _attribute_map = {
-        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
         'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
         'audio_file_uri': {'key': 'audioFileUri', 'type': 'str'},
         'loop': {'key': 'loop', 'type': 'bool'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        call_locator: "CallLocatorModel",
         identifier: "CommunicationIdentifierModel",
+        call_locator: "CallLocatorModel",
         audio_file_uri: str,
         loop: bool,
+        callback_uri: Optional[str] = None,
         operation_context: Optional[str] = None,
         audio_file_id: Optional[str] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword call_locator: Required. The call locator.
-        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
         :keyword identifier: Required. The identifier of the participant to play audio to.
         :paramtype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+        :keyword call_locator: Required. The call locator.
+        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
+        :paramtype callback_uri: str
         :keyword audio_file_uri: Required. The media resource uri of the play audio request.
          Currently only Wave file (.wav) format audio prompts are supported.
          More specifically, the audio content in the wave file must be mono (single-channel),
@@ -1868,17 +1855,15 @@ class PlayAudioToParticipantWithCallLocatorRequest(msrest.serialization.Model):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         """
         super(PlayAudioToParticipantWithCallLocatorRequest, self).__init__(**kwargs)
-        self.call_locator = call_locator
         self.identifier = identifier
+        self.call_locator = call_locator
+        self.callback_uri = callback_uri
         self.audio_file_uri = audio_file_uri
         self.loop = loop
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
-        self.callback_uri = callback_uri
 
 
 class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
@@ -1888,6 +1873,8 @@ class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
 
     :ivar call_locator: Required. The call locator.
     :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+    :ivar callback_uri: The callback Uri to receive PlayAudio status notifications.
+    :vartype callback_uri: str
     :ivar audio_file_uri: Required. The media resource uri of the play audio request.
      Currently only Wave file (.wav) format audio prompts are supported.
      More specifically, the audio content in the wave file must be mono (single-channel),
@@ -1900,8 +1887,6 @@ class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
     :ivar audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
      resource.
     :vartype audio_file_id: str
-    :ivar callback_uri: The callback Uri to receive PlayAudio status notifications.
-    :vartype callback_uri: str
     """
 
     _validation = {
@@ -1912,11 +1897,11 @@ class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
 
     _attribute_map = {
         'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
+        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
         'audio_file_uri': {'key': 'audioFileUri', 'type': 'str'},
         'loop': {'key': 'loop', 'type': 'bool'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'audio_file_id': {'key': 'audioFileId', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
@@ -1925,14 +1910,16 @@ class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
         call_locator: "CallLocatorModel",
         audio_file_uri: str,
         loop: bool,
+        callback_uri: Optional[str] = None,
         operation_context: Optional[str] = None,
         audio_file_id: Optional[str] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword call_locator: Required. The call locator.
         :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
+        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
+        :paramtype callback_uri: str
         :keyword audio_file_uri: Required. The media resource uri of the play audio request.
          Currently only Wave file (.wav) format audio prompts are supported.
          More specifically, the audio content in the wave file must be mono (single-channel),
@@ -1946,16 +1933,14 @@ class PlayAudioWithCallLocatorRequest(msrest.serialization.Model):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         """
         super(PlayAudioWithCallLocatorRequest, self).__init__(**kwargs)
         self.call_locator = call_locator
+        self.callback_uri = callback_uri
         self.audio_file_uri = audio_file_uri
         self.loop = loop
         self.operation_context = operation_context
         self.audio_file_id = audio_file_id
-        self.callback_uri = callback_uri
 
 
 class RedirectCallRequest(msrest.serialization.Model):
@@ -1965,51 +1950,36 @@ class RedirectCallRequest(msrest.serialization.Model):
 
     :ivar incoming_call_context: Required. The context associated with the call.
     :vartype incoming_call_context: str
-    :ivar targets: Required. The target identity to redirect the call to.
-    :vartype targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
-    :ivar callback_uri: The callback uri.
-    :vartype callback_uri: str
-    :ivar timeout_in_seconds: The timeout for the redirect in seconds.
-    :vartype timeout_in_seconds: int
+    :ivar target: Required. The target identity to redirect the call to.
+    :vartype target: ~azure.communication.callingserver.models.CommunicationIdentifierModel
     """
 
     _validation = {
         'incoming_call_context': {'required': True},
-        'targets': {'required': True},
+        'target': {'required': True},
     }
 
     _attribute_map = {
         'incoming_call_context': {'key': 'incomingCallContext', 'type': 'str'},
-        'targets': {'key': 'targets', 'type': '[CommunicationIdentifierModel]'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'int'},
+        'target': {'key': 'target', 'type': 'CommunicationIdentifierModel'},
     }
 
     def __init__(
         self,
         *,
         incoming_call_context: str,
-        targets: List["CommunicationIdentifierModel"],
-        callback_uri: Optional[str] = None,
-        timeout_in_seconds: Optional[int] = None,
+        target: "CommunicationIdentifierModel",
         **kwargs
     ):
         """
         :keyword incoming_call_context: Required. The context associated with the call.
         :paramtype incoming_call_context: str
-        :keyword targets: Required. The target identity to redirect the call to.
-        :paramtype targets:
-         list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
-        :keyword callback_uri: The callback uri.
-        :paramtype callback_uri: str
-        :keyword timeout_in_seconds: The timeout for the redirect in seconds.
-        :paramtype timeout_in_seconds: int
+        :keyword target: Required. The target identity to redirect the call to.
+        :paramtype target: ~azure.communication.callingserver.models.CommunicationIdentifierModel
         """
         super(RedirectCallRequest, self).__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
-        self.targets = targets
-        self.callback_uri = callback_uri
-        self.timeout_in_seconds = timeout_in_seconds
+        self.target = target
 
 
 class RejectCallRequest(msrest.serialization.Model):
@@ -2022,8 +1992,6 @@ class RejectCallRequest(msrest.serialization.Model):
     :ivar call_reject_reason: The rejection reason. Possible values include: "none", "busy",
      "forbidden".
     :vartype call_reject_reason: str or ~azure.communication.callingserver.models.CallRejectReason
-    :ivar callback_uri: The callback uri.
-    :vartype callback_uri: str
     """
 
     _validation = {
@@ -2033,7 +2001,6 @@ class RejectCallRequest(msrest.serialization.Model):
     _attribute_map = {
         'incoming_call_context': {'key': 'incomingCallContext', 'type': 'str'},
         'call_reject_reason': {'key': 'callRejectReason', 'type': 'str'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
     }
 
     def __init__(
@@ -2041,7 +2008,6 @@ class RejectCallRequest(msrest.serialization.Model):
         *,
         incoming_call_context: str,
         call_reject_reason: Optional[Union[str, "CallRejectReason"]] = None,
-        callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2051,13 +2017,10 @@ class RejectCallRequest(msrest.serialization.Model):
          "forbidden".
         :paramtype call_reject_reason: str or
          ~azure.communication.callingserver.models.CallRejectReason
-        :keyword callback_uri: The callback uri.
-        :paramtype callback_uri: str
         """
         super(RejectCallRequest, self).__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
         self.call_reject_reason = call_reject_reason
-        self.callback_uri = callback_uri
 
 
 class RemoveParticipantRequest(msrest.serialization.Model):
@@ -2340,67 +2303,6 @@ class ToneReceivedEvent(msrest.serialization.Model):
         self.call_connection_id = call_connection_id
 
 
-class TransferCallRequest(msrest.serialization.Model):
-    """The transfer call request.
-
-    :ivar target_participant: The identity of the target where call should be transfer to.
-    :vartype target_participant:
-     ~azure.communication.callingserver.models.CommunicationIdentifierModel
-    :ivar target_call_connection_id: The call connection id to replace the current call with. This
-     parameter should be used for consultative transfer.
-    :vartype target_call_connection_id: str
-    :ivar alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
-     number.
-    :vartype alternate_caller_id:
-     ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
-    :ivar user_to_user_information: The user to user information.
-    :vartype user_to_user_information: str
-    :ivar operation_context: The operation context.
-    :vartype operation_context: str
-    """
-
-    _attribute_map = {
-        'target_participant': {'key': 'targetParticipant', 'type': 'CommunicationIdentifierModel'},
-        'target_call_connection_id': {'key': 'targetCallConnectionId', 'type': 'str'},
-        'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
-        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
-        'operation_context': {'key': 'operationContext', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_participant: Optional["CommunicationIdentifierModel"] = None,
-        target_call_connection_id: Optional[str] = None,
-        alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
-        user_to_user_information: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword target_participant: The identity of the target where call should be transfer to.
-        :paramtype target_participant:
-         ~azure.communication.callingserver.models.CommunicationIdentifierModel
-        :keyword target_call_connection_id: The call connection id to replace the current call with.
-         This parameter should be used for consultative transfer.
-        :paramtype target_call_connection_id: str
-        :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a
-         pstn number.
-        :paramtype alternate_caller_id:
-         ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
-        :keyword user_to_user_information: The user to user information.
-        :paramtype user_to_user_information: str
-        :keyword operation_context: The operation context.
-        :paramtype operation_context: str
-        """
-        super(TransferCallRequest, self).__init__(**kwargs)
-        self.target_participant = target_participant
-        self.target_call_connection_id = target_call_connection_id
-        self.alternate_caller_id = alternate_caller_id
-        self.user_to_user_information = user_to_user_information
-        self.operation_context = operation_context
-
-
 class TransferCallResult(msrest.serialization.Model):
     """The response payload for transfer call operation.
 
@@ -2413,8 +2315,9 @@ class TransferCallResult(msrest.serialization.Model):
     :vartype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
-    :ivar result_info: The result info for the operation.
-    :vartype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar result_details: The result info for the operation.
+    :vartype result_details:
+     ~azure.communication.callingserver.models.CallingOperationResultDetails
     """
 
     _validation = {
@@ -2425,7 +2328,7 @@ class TransferCallResult(msrest.serialization.Model):
         'operation_id': {'key': 'operationId', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
-        'result_info': {'key': 'resultInfo', 'type': 'CallingOperationResultDetails'},
+        'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
     }
 
     def __init__(
@@ -2434,7 +2337,7 @@ class TransferCallResult(msrest.serialization.Model):
         status: Union[str, "CallingOperationStatus"],
         operation_id: Optional[str] = None,
         operation_context: Optional[str] = None,
-        result_info: Optional["CallingOperationResultDetails"] = None,
+        result_details: Optional["CallingOperationResultDetails"] = None,
         **kwargs
     ):
         """
@@ -2445,14 +2348,15 @@ class TransferCallResult(msrest.serialization.Model):
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
         :keyword operation_context: The operation context provided by client.
         :paramtype operation_context: str
-        :keyword result_info: The result info for the operation.
-        :paramtype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword result_details: The result info for the operation.
+        :paramtype result_details:
+         ~azure.communication.callingserver.models.CallingOperationResultDetails
         """
         super(TransferCallResult, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.status = status
         self.operation_context = operation_context
-        self.result_info = result_info
+        self.result_details = result_details
 
 
 class TransferCallResultEvent(msrest.serialization.Model):
@@ -2460,8 +2364,9 @@ class TransferCallResultEvent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar result_info: The result details.
-    :vartype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar result_details: The result details.
+    :vartype result_details:
+     ~azure.communication.callingserver.models.CallingOperationResultDetails
     :ivar operation_context: The operation context.
     :vartype operation_context: str
     :ivar status: Required. The status of the operation. Possible values include: "notStarted",
@@ -2474,7 +2379,7 @@ class TransferCallResultEvent(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'result_info': {'key': 'resultInfo', 'type': 'CallingOperationResultDetails'},
+        'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
     }
@@ -2483,13 +2388,14 @@ class TransferCallResultEvent(msrest.serialization.Model):
         self,
         *,
         status: Union[str, "CallingOperationStatus"],
-        result_info: Optional["CallingOperationResultDetails"] = None,
+        result_details: Optional["CallingOperationResultDetails"] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword result_info: The result details.
-        :paramtype result_info: ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword result_details: The result details.
+        :paramtype result_details:
+         ~azure.communication.callingserver.models.CallingOperationResultDetails
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword status: Required. The status of the operation. Possible values include: "notStarted",
@@ -2497,9 +2403,116 @@ class TransferCallResultEvent(msrest.serialization.Model):
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
         """
         super(TransferCallResultEvent, self).__init__(**kwargs)
-        self.result_info = result_info
+        self.result_details = result_details
         self.operation_context = operation_context
         self.status = status
+
+
+class TransferToCallRequest(msrest.serialization.Model):
+    """The transfer to call request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar target_call_connection_id: Required. The call connection id to replace the current call
+     with. This parameter should be used for consultative transfer.
+    :vartype target_call_connection_id: str
+    :ivar user_to_user_information: The user to user information.
+    :vartype user_to_user_information: str
+    :ivar operation_context: The operation context.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        'target_call_connection_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_call_connection_id': {'key': 'targetCallConnectionId', 'type': 'str'},
+        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_call_connection_id: str,
+        user_to_user_information: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword target_call_connection_id: Required. The call connection id to replace the current
+         call with. This parameter should be used for consultative transfer.
+        :paramtype target_call_connection_id: str
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        """
+        super(TransferToCallRequest, self).__init__(**kwargs)
+        self.target_call_connection_id = target_call_connection_id
+        self.user_to_user_information = user_to_user_information
+        self.operation_context = operation_context
+
+
+class TransferToParticipantRequest(msrest.serialization.Model):
+    """The transfer call to participant request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar target_participant: Required. The identity of the target where call should be transfer
+     to.
+    :vartype target_participant:
+     ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    :ivar alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
+     number.
+    :vartype alternate_caller_id:
+     ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
+    :ivar user_to_user_information: The user to user information.
+    :vartype user_to_user_information: str
+    :ivar operation_context: The operation context.
+    :vartype operation_context: str
+    """
+
+    _validation = {
+        'target_participant': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_participant': {'key': 'targetParticipant', 'type': 'CommunicationIdentifierModel'},
+        'alternate_caller_id': {'key': 'alternateCallerId', 'type': 'PhoneNumberIdentifierModel'},
+        'user_to_user_information': {'key': 'userToUserInformation', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        alternate_caller_id: Optional["PhoneNumberIdentifierModel"] = None,
+        user_to_user_information: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword target_participant: Required. The identity of the target where call should be transfer
+         to.
+        :paramtype target_participant:
+         ~azure.communication.callingserver.models.CommunicationIdentifierModel
+        :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a
+         pstn number.
+        :paramtype alternate_caller_id:
+         ~azure.communication.callingserver.models.PhoneNumberIdentifierModel
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        """
+        super(TransferToParticipantRequest, self).__init__(**kwargs)
+        self.target_participant = target_participant
+        self.alternate_caller_id = alternate_caller_id
+        self.user_to_user_information = user_to_user_information
+        self.operation_context = operation_context
 
 
 class UnmuteParticipantRequest(msrest.serialization.Model):

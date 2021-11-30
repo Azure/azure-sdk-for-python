@@ -5,11 +5,9 @@
 # ------------------------------------
 # pylint: skip-file
 
-from typing import List, Mapping, Optional, Union, Any  # pylint: disable=unused-import
-from enum import Enum, EnumMeta
+from typing import Mapping, Union, Any  # pylint: disable=unused-import
+from enum import Enum
 from six import with_metaclass
-from ._generated.models import CallingEventSubscriptionType, CallMediaType
-from ._shared.models import PhoneNumberIdentifier
 
 try:
     from urllib.parse import urlparse

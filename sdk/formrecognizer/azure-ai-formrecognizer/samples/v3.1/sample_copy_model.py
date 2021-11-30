@@ -51,7 +51,7 @@ class CopyModelSample(object):
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
         # [START get_copy_authorization]
-        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key), api_version="2.1")
+        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         target = target_client.get_copy_authorization(
             resource_region=target_region,
@@ -62,7 +62,7 @@ class CopyModelSample(object):
         # [END get_copy_authorization]
 
         # [START begin_copy_model]
-        source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key), api_version="2.1")
+        source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
 
         poller = source_client.begin_copy_model(
             model_id=source_model_id,
@@ -90,7 +90,7 @@ if __name__ == '__main__':
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
         form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         model = form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL_V2"), use_training_labels=True).result()
         model_id = model.model_id

@@ -4,19 +4,11 @@
 
 ### Features Added
 
-- Added `LivyStatementStates` and `LivyStates`
+### Breaking Changes
 
-## 0.7.0 (2021-10-05)
+### Bugs Fixed
 
-### Features Added
-
-- Added `LivyStatementStates` and `LivyStates`
-
-## 0.7.0 (2021-10-05)
-
-### Features Added
-
-- Added `LivyStatementStates` and `LivyStates`
+### Other Changes
 
 ## 0.6.0 (2021-08-10)
 

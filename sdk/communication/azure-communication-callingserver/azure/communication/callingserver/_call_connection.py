@@ -11,7 +11,8 @@ from ._converters import (
     AddParticipantRequestConverter,
     GetParticipantRequestConverter,
     RemoveParticipantRequestConverter,
-    TransferCallRequestConverter,
+    TransferToParticipantRequestConverter,
+    TransferToCallRequestConverter,
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter,
@@ -74,7 +75,7 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def delete_call(
+    def delete(
             self,
             **kwargs  # type: Any
         ): # type: (...) -> None
@@ -163,8 +164,6 @@ class CallConnection(object):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         :return: PlayAudioResult
         :rtype: ~azure.communication.callingserver.PlayAudioResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -172,14 +171,12 @@ class CallConnection(object):
         """
         operation_context = kwargs.pop("operation_context", None)
         audio_file_id = kwargs.pop("audio_file_id", None)
-        callback_uri = kwargs.pop("callback_uri", None)
 
         play_audio_request = PlayAudioRequestConverter.convert(
             audio_url=audio_url,
             loop=is_looped,
             operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
+            audio_file_id=audio_file_id
             )
 
         return self._call_connection_client.play_audio(
@@ -273,13 +270,13 @@ class CallConnection(object):
             self,
             participant,  # type: CommunicationIdentifier
             **kwargs  # type: Any
-        ): # type: (...) -> List[CallParticipant]
+        ): # type: (...) -> CallParticipant
         """Get participant from the call using identifier.
 
         :param participant: Required. The identifier of the target participant.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
-        :return: List[CallParticipant]
-        :rtype: List[~azure.communication.callingserver.models.CallParticipant]
+        :return: CallParticipant
+        :rtype: ~azure.communication.callingserver.models.CallParticipant
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -318,8 +315,6 @@ class CallConnection(object):
         :keyword audio_file_id: An id for the media in the AudioFileUri, using which we cache the media
          resource.
         :paramtype audio_file_id: str
-        :keyword callback_uri: The callback Uri to receive PlayAudio status notifications.
-        :paramtype callback_uri: str
         :return: PlayAudioResult
         :rtype: ~azure.communication.callingserver.PlayAudioResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -334,8 +329,7 @@ class CallConnection(object):
             audio_url=audio_url,
             loop=is_looped,
             operation_context=operation_context,
-            audio_file_id=audio_file_id,
-            callback_uri=callback_uri
+            audio_file_id=audio_file_id
             )
 
         return self._call_connection_client.participant_play_audio(
@@ -476,18 +470,15 @@ class CallConnection(object):
         )
 
     @distributed_trace()
-    def transfer(
+    def transfer_to_participant(
             self,
             target_participant,  # type: CommunicationIdentifier
-            target_call_connection_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> TransferCallResult
-        """Transfer the call.
+        """Transfer the call to a participant.
 
         :param target_participant: Required. The target participant.
         :type target_participant: ~azure.communication.callingserver.models.CommunicationIdentifier
-        :param target_call_connection_id: The target call connection id to transfer to.
-        :type target_call_connection_id: str
         :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
          number.
         :paramtype alternate_caller_id: str
@@ -508,17 +499,50 @@ class CallConnection(object):
             if alternate_caller_id is None
             else PhoneNumberIdentifierModel(value=alternate_caller_id))
 
-        transfer_call_request = TransferCallRequestConverter.convert(
+        transfer_to_participant_request = TransferToParticipantRequestConverter.convert(
             target_participant=serialize_identifier(target_participant),
-            target_call_connection_id=target_call_connection_id,
             alternate_caller_id=alternate_caller_id,
             user_to_user_information=user_to_user_information,
             operation_context=operation_context
             )
 
-        return self._call_connection_client.transfer(
+        return self._call_connection_client.transfer_to_participant(
             call_connection_id=self.call_connection_id,
-            transfer_call_request=transfer_call_request,
+            transfer_to_participant_request=transfer_to_participant_request,
+            **kwargs
+        )
+
+    @distributed_trace()
+    def transfer_to_call(
+            self,
+            target_call_connection_id,  # type: str
+            **kwargs  # type: Any
+        ):  # type: (...) -> TransferCallResult
+        """Transfer the current call to another call.
+
+        :param target_call_connection_id: The target call connection id to transfer to.
+        :type target_call_connection_id: str
+        :keyword user_to_user_information: The user to user information.
+        :paramtype user_to_user_information: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
+        :return: TransferCallResult
+        :rtype: ~azure.communication.callingserver.TransferCallResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        user_to_user_information = kwargs.pop("user_to_user_information", None)
+        operation_context = kwargs.pop("operation_context", None)
+
+        transfer_to_call_request = TransferToCallRequestConverter.convert(
+            target_call_connection_id=target_call_connection_id,
+            user_to_user_information=user_to_user_information,
+            operation_context=operation_context
+            )
+
+        return self._call_connection_client.transfer_to_call(
+            call_connection_id=self.call_connection_id,
+            transfer_to_call_request=transfer_to_call_request,
             **kwargs
         )
 
@@ -559,7 +583,7 @@ class CallConnection(object):
             audio_routing_group_id,  # type: str
             **kwargs  # type: Any
         ):  # type: (...) -> AudioRoutingGroupResult
-        """List audio routing group in a call.
+        """List audio routing groups in a call.
 
         :param audio_routing_group_id: Required. The audio routing group id.
         :type audio_routing_group_id: str

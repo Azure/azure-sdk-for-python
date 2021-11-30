@@ -12,7 +12,6 @@ from parameterized import parameterized
 from azure.communication.callingserver import (
     CommunicationIdentifier,
     CallLocator,
-    ServerCallLocator,
     CallMediaType,
     CallingEventSubscriptionType,
     CallRejectReason
@@ -198,7 +197,6 @@ async def test_reject_call_succeed(
     test_name, # type: str
     incoming_call_context,  # type: str
     call_reject_reason,  # type: CallRejectReason
-    callback_uri,  # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -210,8 +208,7 @@ async def test_reject_call_succeed(
 
     await calling_server_client.reject_call(
         incoming_call_context=incoming_call_context,
-        call_reject_reason=call_reject_reason,
-        callback_uri=callback_uri
+        call_reject_reason=call_reject_reason
         )
 
 @parameterized.expand(CallingServerUnitTestUtils.data_source_test_reject_call())
@@ -220,7 +217,6 @@ async def test_reject_call_failed(
     test_name, # type: str
     incoming_call_context,  # type: str
     call_reject_reason,  # type: CallRejectReason
-    callback_uri,  # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -234,8 +230,7 @@ async def test_reject_call_failed(
     try:
         await calling_server_client.reject_call(
             incoming_call_context=incoming_call_context,
-            call_reject_reason=call_reject_reason,
-            callback_uri=callback_uri
+            call_reject_reason=call_reject_reason
             )
     except:
         raised = True
@@ -246,9 +241,7 @@ async def test_reject_call_failed(
 async def test_redirect_call_succeed(
     test_name, # type: str
     incoming_call_context,  # type: str
-    targets, # type: List[CommunicationIdentifier]
-    callback_uri,  # type: str
-    timeout_in_second,  # type: int
+    target, # type: CommunicationIdentifier
     use_managed_identity = False # type: bool
     ):
 
@@ -260,9 +253,7 @@ async def test_redirect_call_succeed(
 
     await calling_server_client.redirect_call(
         incoming_call_context=incoming_call_context,
-        targets=targets,
-        callback_uri=callback_uri,
-        timeout_in_seconds=timeout_in_second
+        target=target
         )
 
 @parameterized.expand(CallingServerUnitTestUtils.data_source_test_redirect_call())
@@ -270,9 +261,7 @@ async def test_redirect_call_succeed(
 async def test_redirect_call_failed(
     test_name, # type: str
     incoming_call_context,  # type: str
-    targets, # type: List[CommunicationIdentifier]
-    callback_uri,  # type: str
-    timeout_in_seconds,  # type: int
+    target, # type: CommunicationIdentifier
     use_managed_identity = False # type: bool
     ):
 
@@ -286,9 +275,7 @@ async def test_redirect_call_failed(
     try:
         await calling_server_client.redirect_call(
             incoming_call_context=incoming_call_context,
-            targets=targets,
-            callback_uri=callback_uri,
-            timeout_in_seconds=timeout_in_seconds
+            target=target
             )
     except:
         raised = True

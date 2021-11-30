@@ -1828,12 +1828,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/60152bb4-2a86-4134-b804-dd5e284cce2b?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '29'
+      - '30'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -1874,39 +1874,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/60152bb4-2a86-4134-b804-dd5e284cce2b?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"name\": \"virtualnetworkgatewayname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
-        ,\r\n  \"etag\": \"W/\\\"f294dfb4-e590-4990-9e53-227b37bb62fe\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualNetworkGateways\",\r\n  \"location\"\
-        : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"55410cc2-1709-4ec7-83ba-055e2afdef89\",\r\n \
-        \   \"packetCaptureDiagnosticState\": \"None\",\r\n    \"enablePrivateIpAddress\"\
-        : false,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"\
-        ipconfig\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
-        ,\r\n        \"etag\": \"W/\\\"f294dfb4-e590-4990-9e53-227b37bb62fe\\\"\"\
-        ,\r\n        \"type\": \"Microsoft.Network/virtualNetworkGateways/ipConfigurations\"\
-        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
-        ,\r\n          \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"\
-        publicIPAddress\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname\"\
-        \r\n          },\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet\"\
-        \r\n          }\r\n        }\r\n      }\r\n    ],\r\n    \"natRules\": [],\r\
-        \n    \"enableBgpRouteTranslationForNat\": false,\r\n    \"sku\": {\r\n  \
-        \    \"name\": \"VpnGw1\",\r\n      \"tier\": \"VpnGw1\",\r\n      \"capacity\"\
-        : 2\r\n    },\r\n    \"gatewayType\": \"Vpn\",\r\n    \"vpnType\": \"RouteBased\"\
-        ,\r\n    \"enableBgp\": false,\r\n    \"activeActive\": false,\r\n    \"bgpSettings\"\
-        : {\r\n      \"asn\": 65515,\r\n      \"bgpPeeringAddress\": \"10.0.1.30\"\
-        ,\r\n      \"peerWeight\": 0,\r\n      \"bgpPeeringAddresses\": [\r\n    \
-        \    {\r\n          \"ipconfigurationId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig\"\
-        ,\r\n          \"defaultBgpIpAddresses\": [\r\n            \"10.0.1.30\"\r\
-        \n          ],\r\n          \"customBgpIpAddresses\": [],\r\n          \"\
-        tunnelIpAddresses\": [\r\n            \"23.96.4.217\"\r\n          ]\r\n \
-        \       }\r\n      ]\r\n    },\r\n    \"customRoutes\": {\r\n      \"addressPrefixes\"\
-        : [\r\n        \"101.168.0.6/32\"\r\n      ]\r\n    },\r\n    \"vpnGatewayGeneration\"\
-        : \"Generation1\",\r\n    \"enableDnsForwarding\": false\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2911'
+      - '30'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -1931,70 +1904,6 @@ interactions:
     status:
       code: 200
       message: OK
-- request:
-    body: '{"properties": {"allowVirtualNetworkAccess": true, "allowForwardedTraffic":
-      true, "allowGatewayTransit": false, "useRemoteGateways": false, "remoteVirtualNetwork":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname"}}}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '388'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/19.1.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname?api-version=2021-03-01
-  response:
-    body:
-      string: "{\r\n  \"name\": \"virtualnetworkpeeringname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/virtualNetworkPeerings/virtualnetworkpeeringname\"\
-        ,\r\n  \"etag\": \"W/\\\"b084955d-42d0-43d6-a5cc-6c7eacbeffdc\\\"\",\r\n \
-        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
-        resourceGuid\": \"ca27d982-2b39-08de-31cf-8008aa22d5e6\",\r\n    \"peeringState\"\
-        : \"Initiated\",\r\n    \"peeringSyncLevel\": \"RemoteNotInSync\",\r\n   \
-        \ \"remoteVirtualNetwork\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
-        \r\n    },\r\n    \"allowVirtualNetworkAccess\": true,\r\n    \"allowForwardedTraffic\"\
-        : true,\r\n    \"allowGatewayTransit\": false,\r\n    \"useRemoteGateways\"\
-        : false,\r\n    \"doNotVerifyRemoteGateways\": false,\r\n    \"peerCompleteVnets\"\
-        : true,\r\n    \"remoteAddressSpace\": {\r\n      \"addressPrefixes\": [\r\
-        \n        \"10.2.0.0/16\"\r\n      ]\r\n    },\r\n    \"remoteVirtualNetworkAddressSpace\"\
-        : {\r\n      \"addressPrefixes\": [\r\n        \"10.2.0.0/16\"\r\n      ]\r\
-        \n    },\r\n    \"routeServiceVips\": {}\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/virtualNetworkPeerings\"\
-        \r\n}"
-    headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e6d4ba9f-bc41-48e9-a859-35f65652754c?api-version=2021-03-01
-      cache-control:
-      - no-cache
-      content-length:
-      - '1365'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Sat, 09 Oct 2021 06:28:47 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 7269edfd-6f8f-4c5e-a89e-c2ddacf20f97
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-    status:
-      code: 201
-      message: Created
 - request:
     body: null
     headers:
@@ -2114,20 +2023,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"location": "eastus", "properties": {"virtualNetworkGateway1": {"id":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname",
-      "location": "eastus", "properties": {"ipConfigurations": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig",
-      "name": "ipconfig", "properties": {"privateIPAllocationMethod": "Dynamic", "subnet":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet"},
-      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname"}}}],
-      "gatewayType": "Vpn", "vpnType": "RouteBased", "enableBgp": false, "sku": {"name":
-      "VpnGw1", "tier": "VpnGw1"}, "bgpSettings": {"asn": 65514, "bgpPeeringAddress":
-      "10.0.2.30", "peerWeight": 0}}}, "localNetworkGateway2": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname",
-      "location": "eastus", "properties": {"localNetworkAddressSpace": {"addressPrefixes":
-      ["10.1.0.0/16"]}, "gatewayIpAddress": "10.1.0.1"}}, "connectionType": "IPsec",
-      "connectionProtocol": "IKEv2", "routingWeight": 0, "sharedKey": "Abc123", "enableBgp":
-      false, "usePolicyBasedTrafficSelectors": false, "ipsecPolicies": [], "trafficSelectorPolicies":
-      []}}'
+    body: '{"properties": {"allowVirtualNetworkAccess": true, "allowForwardedTraffic":
+      true, "allowGatewayTransit": false, "useRemoteGateways": false, "remoteVirtualNetwork":
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname"}}}'
     headers:
       Accept:
       - application/json
@@ -2136,7 +2034,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1989'
+      - '388'
       Content-Type:
       - application/json
       User-Agent:
@@ -2159,8 +2057,6 @@ interactions:
         {\r\n      \"addressPrefixes\": [\r\n        \"10.2.0.0/16\"\r\n      ]\r\n
         \   },\r\n    \"routeServiceVips\": {}\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/virtualNetworkPeerings\"\r\n}"
     headers:
-      azure-asyncnotification:
-      - Enabled
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c9d53da5-458e-46cd-8157-b2341206e6e0?api-version=2021-05-01
       cache-control:
@@ -2205,12 +2101,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c9d53da5-458e-46cd-8157-b2341206e6e0?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '30'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -2295,14 +2191,31 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"location": "eastus", "properties": {"virtualNetworkGateway1": {"id":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname",
+      "location": "eastus", "properties": {"ipConfigurations": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname/ipConfigurations/ipconfig",
+      "name": "ipconfig", "properties": {"privateIPAllocationMethod": "Dynamic", "subnet":
+      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/GatewaySubnet"},
+      "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/publicIPAddresses/publicipname"}}}],
+      "gatewayType": "Vpn", "vpnType": "RouteBased", "enableBgp": false, "sku": {"name":
+      "VpnGw1", "tier": "VpnGw1"}, "bgpSettings": {"asn": 65514, "bgpPeeringAddress":
+      "10.0.2.30", "peerWeight": 0}}}, "localNetworkGateway2": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname",
+      "location": "eastus", "properties": {"localNetworkAddressSpace": {"addressPrefixes":
+      ["10.1.0.0/16"]}, "gatewayIpAddress": "10.1.0.1"}}, "connectionType": "IPsec",
+      "connectionProtocol": "IKEv2", "routingWeight": 0, "sharedKey": "Abc123", "enableBgp":
+      false, "usePolicyBasedTrafficSelectors": false, "ipsecPolicies": [], "trafficSelectorPolicies":
+      []}}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '1989'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
@@ -2347,10 +2260,6 @@ interactions:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
@@ -2358,8 +2267,8 @@ interactions:
       x-ms-ratelimit-remaining-subscription-writes:
       - '1197'
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -2376,12 +2285,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b4ee1478-5ce5-44ff-8f26-f98ac91776a4?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '29'
+      - '30'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -2422,27 +2331,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b4ee1478-5ce5-44ff-8f26-f98ac91776a4?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"name\": \"connectionname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname\"\
-        ,\r\n  \"etag\": \"W/\\\"fcb67b91-63ca-4c4f-a4d9-7465fd46b705\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/connections\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"e0b220ea-656e-434d-b101-d452cf7d103e\",\r\n    \"\
-        packetCaptureDiagnosticState\": \"None\",\r\n    \"virtualNetworkGateway1\"\
-        : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworkGateways/virtualnetworkgatewayname\"\
-        \r\n    },\r\n    \"localNetworkGateway2\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/localNetworkGateways/localnetworkgatewayname\"\
-        \r\n    },\r\n    \"connectionType\": \"IPsec\",\r\n    \"connectionProtocol\"\
-        : \"IKEv2\",\r\n    \"routingWeight\": 0,\r\n    \"sharedKey\": \"Abc123\"\
-        ,\r\n    \"enableBgp\": false,\r\n    \"useLocalAzureIpAddress\": false,\r\
-        \n    \"usePolicyBasedTrafficSelectors\": false,\r\n    \"ipsecPolicies\"\
-        : [],\r\n    \"trafficSelectorPolicies\": [],\r\n    \"connectionStatus\"\
-        : \"Unknown\",\r\n    \"ingressBytesTransferred\": 0,\r\n    \"egressBytesTransferred\"\
-        : 0,\r\n    \"expressRouteGatewayBypass\": false,\r\n    \"dpdTimeoutSeconds\"\
-        : 0,\r\n    \"connectionMode\": \"Default\"\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1599'
+      - '30'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -2468,18 +2362,14 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"value": "AzureAbc123"}'
+    body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '24'
-      Content-Type:
-      - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
@@ -2487,14 +2377,14 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b4ee1478-5ce5-44ff-8f26-f98ac91776a4?api-version=2021-05-01
   response:
     body:
-      string: ''
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0a000c9a-23ac-4729-8511-db2f1d01e863?api-version=2021-03-01
       cache-control:
       - no-cache
       content-length:
-      - '0'
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
       date:
       - Fri, 05 Nov 2021 09:07:50 GMT
       expires:
@@ -2506,6 +2396,10 @@ interactions:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
@@ -2574,14 +2468,18 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"value": "AzureAbc123"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '24'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
@@ -2589,16 +2487,14 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/connections/connectionname/sharedkey?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+      string: ''
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e031d896-8fa4-4c2b-a8e5-717c0a040db1?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
+      - '0'
       date:
       - Fri, 05 Nov 2021 09:07:51 GMT
       expires:
@@ -2610,10 +2506,6 @@ interactions:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
@@ -3123,7 +3015,7 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1221'
+      - '921'
       content-type:
       - application/json; charset=utf-8
       date:
@@ -3533,10 +3425,9 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/62839112-d218-4327-bdda-f7c213463566?api-version=2021-05-01
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"localAddress\": \"\",\r\n \
-        \     \"network\": \"10.0.0.0/16\",\r\n      \"nextHop\": \"Virtual Network\"\
-        ,\r\n      \"origin\": \"Network\",\r\n      \"weight\": 0\r\n    }\r\n  ]\r\
-        \n}"
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"localAddress\": \"\",\r\n      \"network\":
+        \"10.0.0.0/16\",\r\n      \"nextHop\": \"Virtual Network\",\r\n      \"origin\":
+        \"Network\",\r\n      \"weight\": 0\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -4963,7 +4854,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 55970cb5-7117-493a-87b2-fb3717a0bff1
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -5058,7 +4949,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 77d7b9bc-4ee0-40e4-82f5-b4f22ba63ff3
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1193'
     status:
       code: 200
       message: OK
@@ -5126,7 +5017,7 @@ interactions:
       x-ms-arm-service-request-id:
       - dfe37c08-85f9-45fc-8202-29ff20d4a3fe
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1192'
     status:
       code: 200
       message: OK
@@ -5176,7 +5067,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 049e02ca-7c81-4c51-b528-e167f9ce334a
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -5362,7 +5253,7 @@ interactions:
       x-ms-arm-service-request-id:
       - fb8b33c2-9f2a-4bfb-9107-34574e199fb0
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14997'
     status:
       code: 202
       message: Accepted
@@ -5458,7 +5349,7 @@ interactions:
       x-ms-arm-service-request-id:
       - ca7569c7-dd4f-4f72-ab23-da8805f7133b
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -5863,7 +5754,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14995'
     status:
       code: 204
       message: No Content
@@ -5900,7 +5791,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14994'
     status:
       code: 204
       message: No Content
@@ -5937,7 +5828,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14993'
     status:
       code: 204
       message: No Content
@@ -5987,7 +5878,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 275abb64-a53a-4f7b-a6eb-72aab228be91
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14992'
     status:
       code: 202
       message: Accepted
@@ -6083,7 +5974,7 @@ interactions:
       x-ms-arm-service-request-id:
       - e6175286-a325-479b-b411-50a514dc57d4
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14991'
     status:
       code: 202
       message: Accepted
@@ -6177,7 +6068,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 15cce446-64ef-4080-a7bc-a2d295a2cb27
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14994'
+      - '14990'
     status:
       code: 202
       message: Accepted
@@ -6273,7 +6164,7 @@ interactions:
       x-ms-arm-service-request-id:
       - 85a11166-17dc-4b0b-a15e-e9edda647d25
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14993'
+      - '14989'
     status:
       code: 202
       message: Accepted

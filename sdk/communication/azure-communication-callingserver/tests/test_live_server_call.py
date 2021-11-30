@@ -102,7 +102,6 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             CallingServerLiveTestUtils.clean_up_connections(call_connections)
 
-    @pytest.mark.skip(reason="Skip because the server side bits not ready")
     def test_create_add_remove_hangup_scenario(self):
         # create GroupCalls
         group_id = CallingServerLiveTestUtils.get_group_id("test_create_add_remove_hangup_scenario")
@@ -124,7 +123,7 @@ class ServerCallTest(CommunicationTestCase):
             # Add Participant
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
-            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-06a7-7ed4-bf75-25482200020e")
+            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-f01d-c9e0-f40f-343a0d009ab8")
             add_participant_result = self.callingserver_client.add_participant(
                 call_locator=GroupCallLocator(group_id),
                 participant=CommunicationUserIdentifier(added_participant),
@@ -194,7 +193,6 @@ class ServerCallTest(CommunicationTestCase):
 
         with self.assertRaises(HttpResponseError):
             self.callingserver_client.start_recording(GroupCallLocator(invalid_server_call_id), CONST.CALLBACK_URI)
-    
 
     def test_start_recording_relative_uri_fails(self):
         # create GroupCalls
@@ -222,7 +220,7 @@ class ServerCallTest(CommunicationTestCase):
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_delete_success(self):
-        delete_url = CallingServerLiveTestUtils.get_delete_url()  
+        delete_url = CallingServerLiveTestUtils.get_delete_url()
         self.callingserver_client.delete_recording(delete_url)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
@@ -232,8 +230,8 @@ class ServerCallTest(CommunicationTestCase):
             self.callingserver_client.delete_recording(delete_url)
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
-    def test_delete_content_unauthorized(self):       
-        delete_url = CallingServerLiveTestUtils.get_delete_url()       
+    def test_delete_content_unauthorized(self):
+        delete_url = CallingServerLiveTestUtils.get_delete_url()
         unauthorized_client = CallingServerClient.from_connection_string("endpoint=https://test.communication.azure.com/;accesskey=1234")
         with self.assertRaises(HttpResponseError):
             unauthorized_client.delete_recording(delete_url)

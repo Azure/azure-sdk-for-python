@@ -56,7 +56,7 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         model_trained_without_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITHOUT_LABELS", unlabeled_model_id)
 
         form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
@@ -143,7 +143,7 @@ if __name__ == '__main__':
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
         form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         if labeled:

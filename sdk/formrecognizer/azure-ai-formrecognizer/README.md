@@ -425,9 +425,6 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 
-```python
-from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.core.credentials import AzureKeyCredential
 
 ### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.

@@ -19,7 +19,6 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
-from ._graph_resources_operations import GraphResourcesOperations
 from ._sql_resources_operations import SqlResourcesOperations
 from ._mongo_db_resources_operations import MongoDBResourcesOperations
 from ._table_resources_operations import TableResourcesOperations
@@ -53,7 +52,6 @@ __all__ = [
     'CollectionPartitionOperations',
     'PartitionKeyRangeIdOperations',
     'PartitionKeyRangeIdRegionOperations',
-    'GraphResourcesOperations',
     'SqlResourcesOperations',
     'MongoDBResourcesOperations',
     'TableResourcesOperations',

@@ -130,14 +130,12 @@ class CallingServerUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             _test_constants.INCOMING_CALL_CONTEXT,
             CallRejectReason.BUSY,
-            _test_constants.CALLBACK_URI,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.INCOMING_CALL_CONTEXT,
             CallRejectReason.BUSY,
-            _test_constants.CALLBACK_URI,
             True,
             ))
 
@@ -149,17 +147,13 @@ class CallingServerUnitTestUtils:
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.INCOMING_CALL_CONTEXT,
-            [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET)],
-            _test_constants.CALLBACK_URI,
-            _test_constants.TIMEOUT_IN_SECONDS,
+            CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET),
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.INCOMING_CALL_CONTEXT,
-            [CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET)],
-            _test_constants.CALLBACK_URI,
-            _test_constants.TIMEOUT_IN_SECONDS,
+            CommunicationUserIdentifier(_test_constants.RESOURCE_TARGET),
             True,
             ))
 
@@ -501,12 +495,12 @@ class CallingServerUnitTestUtils:
 
     @staticmethod
     def verify_get_participant_result(result):
-        # type: (List[CallParticipant]) -> None
-        target_identifier_01 = deserialize_identifier(result[0].identifier)
+        # type: (CallParticipant) -> None
+        target_identifier_01 = deserialize_identifier(result.identifier)
         assert _test_constants.COMMUNICATION_USER_Id_01 == target_identifier_01.properties['id']
         assert _test_constants.COMMUNICATION_USER_KIND == target_identifier_01.kind
-        assert False == result[0].is_muted
-        assert _test_constants.PARTICIPANT_ID_01 == result[0].participant_id
+        assert False == result.is_muted
+        assert _test_constants.PARTICIPANT_ID_01 == result.participant_id
 
 class CallConnectionUnitTestUtils:
 
@@ -527,7 +521,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_delete_call():
+    def data_source_test_delete():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -599,7 +593,6 @@ class CallConnectionUnitTestUtils:
             _test_constants.AUDIO_URL,
             True,
             _test_constants.AUDIO_FILE_ID,
-            _test_constants.CALLBACK_URI,
             _test_constants.OPERATION_CONTEXT
             ))
 
@@ -609,7 +602,6 @@ class CallConnectionUnitTestUtils:
             _test_constants.AUDIO_URL,
             True,
             _test_constants.AUDIO_FILE_ID,
-            _test_constants.CALLBACK_URI,
             _test_constants.OPERATION_CONTEXT,
             True,
             ))
@@ -626,7 +618,6 @@ class CallConnectionUnitTestUtils:
             _test_constants.AUDIO_URL,
             True,
             _test_constants.AUDIO_FILE_ID,
-            _test_constants.CALLBACK_URI,
             _test_constants.OPERATION_CONTEXT
             ))
 
@@ -637,7 +628,6 @@ class CallConnectionUnitTestUtils:
             _test_constants.AUDIO_URL,
             True,
             _test_constants.AUDIO_FILE_ID,
-            _test_constants.CALLBACK_URI,
             _test_constants.OPERATION_CONTEXT,
             True,
             ))
@@ -667,13 +657,12 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_transfer():
+    def data_source_test_transfer_to_participant():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.SERVER_CALL_ID,
             _test_constants.COMMUNICATION_USER_Id_02,
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
@@ -683,8 +672,29 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.SERVER_CALL_ID,
             _test_constants.COMMUNICATION_USER_Id_02,
+            _test_constants.USER_TO_USER_INFORMATION,
+            _test_constants.OPERATION_CONTEXT,
+            True,
+            ))
+
+        return parameters
+
+    @staticmethod
+    def data_source_test_transfer_to_call():
+        parameters = []
+        parameters.append((
+            _test_constants.ClientType_ConnectionString,
+            _test_constants.CALL_ID,
+            _test_constants.SERVER_CALL_ID,
+            _test_constants.USER_TO_USER_INFORMATION,
+            _test_constants.OPERATION_CONTEXT,
+            ))
+
+        parameters.append((
+            _test_constants.ClientType_ManagedIdentity,
+            _test_constants.CALL_ID,
+            _test_constants.SERVER_CALL_ID,
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
             True,

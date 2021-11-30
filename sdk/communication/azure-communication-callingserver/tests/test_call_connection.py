@@ -59,8 +59,8 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete_call())
-    def test_delete_call_succeed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete())
+    def test_delete_succeed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -74,11 +74,11 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        call_connection.delete_call()
+        call_connection.delete()
         assert call_connection.call_connection_id == _test_constants.CALL_ID
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete_call())
-    def test_delete_call_failed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_delete())
+    def test_delete_failed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
@@ -94,7 +94,7 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.delete_call()
+            call_connection.delete()
         except:
             raised = True
         assert raised == True
@@ -228,7 +228,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -244,7 +243,6 @@ class TestCallConnection(unittest.TestCase):
             audio_url,
             is_looped,
             audio_file_id = audio_file_id,
-            callback_uri = callback_uri,
             operation_context = operation_context
             )
         CallConnectionUnitTestUtils.verify_play_audio_result(result)
@@ -257,7 +255,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -276,7 +273,6 @@ class TestCallConnection(unittest.TestCase):
                 audio_url,
                 is_looped,
                 audio_file_id = audio_file_id,
-                callback_uri = callback_uri,
                 operation_context = operation_context
                 )
         except:
@@ -292,7 +288,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -309,7 +304,6 @@ class TestCallConnection(unittest.TestCase):
             audio_url,
             is_looped,
             audio_file_id = audio_file_id,
-            callback_uri = callback_uri,
             operation_context = operation_context
             )
 
@@ -324,7 +318,6 @@ class TestCallConnection(unittest.TestCase):
         audio_url, # type: str
         is_looped, # type: bool
         audio_file_id, # type: str
-        callback_uri, # type: str
         operation_context, # type: str
         use_managed_identity = False # type: bool
         ):
@@ -343,7 +336,6 @@ class TestCallConnection(unittest.TestCase):
                 audio_url,
                 is_looped,
                 audio_file_id = audio_file_id,
-                callback_uri = callback_uri,
                 operation_context = operation_context
                 )
         except:
@@ -770,13 +762,12 @@ class TestCallConnection(unittest.TestCase):
             raised = True
         assert raised == True
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
-    def test_transfer_succeed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_to_participant())
+    def test_transfer_to_participant_succeed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
         target_participant, # type: CommunicationIdentifier
-        target_call_connection_id, # type: str
         alternate_caller_id, # type: str
         user_to_user_information, # type: str
         operation_context, # type: str
@@ -790,9 +781,8 @@ class TestCallConnection(unittest.TestCase):
             use_managed_identity=use_managed_identity
             )
 
-        result = call_connection.transfer(
+        result = call_connection.transfer_to_participant(
             target_participant,
-            target_call_connection_id,
             alternate_caller_id = alternate_caller_id,
             user_to_user_information = user_to_user_information,
             operation_context = operation_context
@@ -800,13 +790,12 @@ class TestCallConnection(unittest.TestCase):
         CallConnectionUnitTestUtils.verify_transfer_result(result)
 
 
-    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer())
-    def test_transfer_failed(
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_to_participant())
+    def test_transfer_to_participant_failed(
         self,
         test_name, # type: str
         call_connection_id, # type: str
         target_participant, # type: CommunicationIdentifier
-        target_call_connection_id, # type: str
         alternate_caller_id, # type: str
         user_to_user_information, # type: str
         operation_context, # type: str
@@ -822,10 +811,64 @@ class TestCallConnection(unittest.TestCase):
 
         raised = False
         try:
-            call_connection.transfer(
+            call_connection.transfer_to_participant(
                 target_participant,
-                target_call_connection_id,
                 alternate_caller_id = alternate_caller_id,
+                user_to_user_information = user_to_user_information,
+                operation_context = operation_context
+                )
+        except:
+            raised = True
+        assert raised == True
+
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_to_call())
+    def test_transfer_to_call_succeed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        target_call_connection_id, # type: str
+        user_to_user_information, # type: str
+        operation_context, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _mock_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=202,
+            payload=_test_constants.TransferResultPayload,
+            use_managed_identity=use_managed_identity
+            )
+
+        result = call_connection.transfer_to_call(
+            target_call_connection_id,
+            user_to_user_information = user_to_user_information,
+            operation_context = operation_context
+            )
+        CallConnectionUnitTestUtils.verify_transfer_result(result)
+
+
+    @parameterized.expand(CallConnectionUnitTestUtils.data_source_test_transfer_to_call())
+    def test_transfer_to_call_failed(
+        self,
+        test_name, # type: str
+        call_connection_id, # type: str
+        target_call_connection_id, # type: str
+        user_to_user_information, # type: str
+        operation_context, # type: str
+        use_managed_identity = False # type: bool
+        ):
+
+        call_connection = _mock_utils.create_mock_call_connection(
+            call_connection_id,
+            status_code=404,
+            payload=_test_constants.ErrorPayload,
+            use_managed_identity = use_managed_identity
+            )
+
+        raised = False
+        try:
+            call_connection.transfer_to_call(
+                target_call_connection_id,
                 user_to_user_information = user_to_user_information,
                 operation_context = operation_context
                 )

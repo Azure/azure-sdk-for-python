@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Union, Any, Iterable, List
+from typing import Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
 from ._generated.v2021_09_30_preview.models import ModelInfo, Error
@@ -1730,15 +1730,6 @@ class FormRecognizerError(object):
             if err
             else []
         )
-
-    @classmethod
-    def _from_generated_v3(cls, err):
-        if err.innererror:
-            return cls(
-                code=err.innererror.code,
-                message=err.innererror.message,
-            )
-        return cls(code=err.code, message=err.message)
 
     def __repr__(self):
         return "FormRecognizerError(code={}, message={})".format(

@@ -23,6 +23,7 @@ from .operations import ConfigurationAssignmentsOperations
 from .operations import MaintenanceConfigurationsOperations
 from .operations import MaintenanceConfigurationsForResourceGroupOperations
 from .operations import ApplyUpdateForResourceGroupOperations
+from .operations import ConfigurationAssignmentsWithinSubscriptionOperations
 from .operations import Operations
 from .operations import UpdatesOperations
 from .. import models
@@ -43,6 +44,8 @@ class MaintenanceManagementClient(object):
     :vartype maintenance_configurations_for_resource_group: azure.mgmt.maintenance.aio.operations.MaintenanceConfigurationsForResourceGroupOperations
     :ivar apply_update_for_resource_group: ApplyUpdateForResourceGroupOperations operations
     :vartype apply_update_for_resource_group: azure.mgmt.maintenance.aio.operations.ApplyUpdateForResourceGroupOperations
+    :ivar configuration_assignments_within_subscription: ConfigurationAssignmentsWithinSubscriptionOperations operations
+    :vartype configuration_assignments_within_subscription: azure.mgmt.maintenance.aio.operations.ConfigurationAssignmentsWithinSubscriptionOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.maintenance.aio.operations.Operations
     :ivar updates: UpdatesOperations operations
@@ -82,6 +85,8 @@ class MaintenanceManagementClient(object):
         self.maintenance_configurations_for_resource_group = MaintenanceConfigurationsForResourceGroupOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.apply_update_for_resource_group = ApplyUpdateForResourceGroupOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.configuration_assignments_within_subscription = ConfigurationAssignmentsWithinSubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)

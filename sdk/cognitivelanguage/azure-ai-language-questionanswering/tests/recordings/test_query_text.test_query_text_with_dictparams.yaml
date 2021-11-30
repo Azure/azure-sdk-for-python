@@ -42,7 +42,7 @@ interactions:
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503516271710396,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503518134355545,\n
         \     \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
         \       \"confidenceScore\": 0.624118,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"

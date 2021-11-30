@@ -282,6 +282,7 @@ async def test_multitenant_authentication():
     token = await credential.get_token("scope")
     assert token.token == first_token
 
+
 @pytest.mark.asyncio
 async def test_live_multitenant_authentication(live_service_principal):
     # first create a credential with a non-existent tenant

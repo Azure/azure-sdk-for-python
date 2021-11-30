@@ -52,7 +52,7 @@ class TestDifferentiateOutputLabeledTables(object):
         model_id_fixed_rows_table = os.getenv("MODEL_ID_FIXED_ROW_TABLES", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
@@ -94,7 +94,7 @@ class TestDifferentiateOutputLabeledTables(object):
         model_id_dynamic_rows_table = os.getenv("MODEL_ID_DYNAMIC_ROW_TABLES", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
@@ -146,7 +146,7 @@ if __name__ == '__main__':
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
         form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         if fixed:

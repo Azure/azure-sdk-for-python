@@ -121,9 +121,6 @@ The following examples are provided below:
 More details on configuring your environment to use the `DefaultAzureCredential`
 can be found in the class's [reference documentation][default_cred_ref].
 
-More details on configuring your environment to use the `DefaultAzureCredential`
-can be found in the class's [reference documentation][default_cred_ref].
-
 This example demonstrates authenticating the `BlobServiceClient` from the
 [azure-storage-blob][azure_storage_blob] library using
 `DefaultAzureCredential`.

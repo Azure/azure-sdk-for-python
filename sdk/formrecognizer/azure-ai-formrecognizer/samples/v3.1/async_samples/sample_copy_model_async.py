@@ -52,7 +52,7 @@ class CopyModelSampleAsync(object):
         target_resource_id = os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"]
 
         # [START get_copy_authorization_async]
-        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key), api_version="2.1")
+        target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
         async with target_client:
             target = await target_client.get_copy_authorization(
@@ -64,7 +64,7 @@ class CopyModelSampleAsync(object):
         # [END get_copy_authorization_async]
 
         # [START copy_model_async]
-        source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key), api_version="2.1")
+        source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
 
         async with source_client:
             poller = await source_client.begin_copy_model(
@@ -93,7 +93,7 @@ async def main():
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
         form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with form_training_client:
             model = await (await form_training_client.begin_training(

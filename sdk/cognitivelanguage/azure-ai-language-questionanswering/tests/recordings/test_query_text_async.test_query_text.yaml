@@ -115,9 +115,9 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.01745828054845333,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.017458289861679077,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
-        0.26247388,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
+        0.26247412,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
         11-plus hours of battery life (on the FHD model), the Envy 13 has a sleek,
         ultraportable chassis, fast performance, and powerful speakers. Best of all,
@@ -132,7 +132,7 @@ interactions:
         recommended alternative, though you might want to wait a few months for the
         rumored Surface Laptop 3.   Overall, the HP Envy 13 is a fantastic laptop
         that checks all the right boxes --- as long as you buy the 1080p model.\",\n
-        \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.0070572528056800365,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
         0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"

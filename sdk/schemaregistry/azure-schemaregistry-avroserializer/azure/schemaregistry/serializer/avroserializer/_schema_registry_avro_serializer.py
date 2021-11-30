@@ -145,7 +145,6 @@ class AvroSerializer(object):
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
 
-        cached_schema = AvroSerializer._parse_schema(raw_input_schema)
         record_format_identifier = b"\0\0\0\0"
 
         try:
