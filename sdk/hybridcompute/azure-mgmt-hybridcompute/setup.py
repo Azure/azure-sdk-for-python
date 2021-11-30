@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-hybridcompute"
-PACKAGE_PPRINT_NAME = "Hybrid Compute Management"
+PACKAGE_PPRINT_NAME = "Hybridcompute Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -36,7 +36,9 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py')
+          if os.path.exists(os.path.join(package_folder_path, 'version.py'))
+          else os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -64,9 +66,10 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -78,8 +81,8 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.6.21',
+        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
-        'azure-mgmt-core>=1.2.0,<2.0.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],
