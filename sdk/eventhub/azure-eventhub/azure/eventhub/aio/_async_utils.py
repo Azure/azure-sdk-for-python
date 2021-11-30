@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 import sys
-import asyncio
+
 
 def get_dict_with_loop_if_needed(loop):
     if sys.version_info >= (3, 10):
