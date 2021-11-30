@@ -14,8 +14,8 @@ class IssueProcessGo(IssueProcess):
 
 
 class Go(Common):
-    def __init__(self):
-        super(Go, self).__init__()
+    def __init__(self, issues, assignee_token, language_owner):
+        super(Go, self).__init__(issues, assignee_token, language_owner)
         self.file_out_name = 'release_go_status.md'
 
 
