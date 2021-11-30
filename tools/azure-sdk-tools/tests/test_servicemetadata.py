@@ -20,6 +20,7 @@ No need to update MANIFETS.IN
 
 MANIFEST_TEMP = """recursive-include tests *.py *.yaml
 include *.md
+include LICENSE
 include azure/__init__.py
 include azure/mgmt/__init__.py
 """

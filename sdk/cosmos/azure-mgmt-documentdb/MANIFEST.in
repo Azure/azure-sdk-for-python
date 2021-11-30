@@ -1,2 +1,3 @@
 include *.rst
+include LICENSE
 include azure_bdist_wheel.py
