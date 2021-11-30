@@ -1,5 +1,25 @@
 # Release History
 
+## 6.0.0 (2021-11-30)
+
+**Features**
+
+  - Model ActiveDirectory has a new parameter encrypt_dc_connections
+  - Model Volume has a new parameter volume_spec_name
+  - Model Volume has a new parameter capacity_pool_resource_id
+  - Model Volume has a new parameter placement_rules
+  - Model Volume has a new parameter volume_group_name
+  - Model Volume has a new parameter proximity_placement_group
+  - Model Volume has a new parameter t2_network
+  - Added operation group VolumeGroupsOperations
+
+**Breaking changes**
+
+  - Model BackupPolicyDetails no longer has parameter name_properties_name
+  - Model BackupPolicy no longer has parameter name_properties_name
+  - Model SubscriptionQuotaItem no longer has parameter name_properties_name
+  - Model BackupPolicyPatch no longer has parameter name_properties_name
+
 ## 5.1.0 (2021-09-22)
 
 **Features**
