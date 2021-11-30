@@ -143,7 +143,7 @@ additional questions or comments.
 [doc_pipelines]: https://go.microsoft.com/fwlink/?linkid=2162396
 [package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer
-[samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
+[samples]: https://go.microsoft.com/fwlink/?linkid=2162278
 [doc_product]: https://go.microsoft.com/fwlink/?linkid=2162396
 [doc_direct_methods]: https://go.microsoft.com/fwlink/?linkid=2162396
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
