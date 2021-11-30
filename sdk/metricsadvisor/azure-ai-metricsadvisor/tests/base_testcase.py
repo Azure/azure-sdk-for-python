@@ -35,23 +35,22 @@ from azure.ai.metricsadvisor.models import (
     EmailNotificationHook,
     WebNotificationHook,
 )
-from azure.identity import DefaultAzureCredential
 
 
 class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+    def __init__(self, client_cls, aad, client_kwargs={}, **kwargs):
         super(MetricsAdvisorClientPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )
-        aad = kwargs.pop("aad", False)
         service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
         if aad:
-            self.client = client_cls(service_endpoint, DefaultAzureCredential(), **self.client_kwargs)
+            credential = AzureRecordedTestCase().get_credential(client_cls)
+            self.client = client_cls(service_endpoint, credential, **client_kwargs)
         else:
             subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
             api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
-            self.client = client_cls(service_endpoint, MetricsAdvisorKeyCredential(subscription_key, api_key), **self.client_kwargs)
+            self.client = client_cls(service_endpoint, MetricsAdvisorKeyCredential(subscription_key, api_key), **client_kwargs)
 
         self.data_feed = kwargs.pop("data_feed", False)
         self.detection_config = kwargs.pop("detection_config", False)
@@ -82,7 +81,10 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
                 self.web_hook = self.create_web_hook("web_hook")
 
         except Exception as e:
-            self.client.delete_data_feed(self.variables["data_feed_id"])
+            try:
+                self.client.delete_data_feed(self.variables["data_feed_id"])
+            except KeyError:
+                pass
             raise e
 
         kwargs.update({"variables": self.variables})

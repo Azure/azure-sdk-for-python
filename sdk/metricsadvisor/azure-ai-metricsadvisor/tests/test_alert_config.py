@@ -20,7 +20,7 @@ from azure.ai.metricsadvisor.models import (
     MetricAnomalyAlertSnoozeCondition,
 )
 from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
-MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
