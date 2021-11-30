@@ -7,7 +7,7 @@ stages:
       ServiceDirectory: translation
       MatrixReplace:
         - TestSamples=.*/true
-      SupportedClouds: 'Public,Dogfood'
+      Clouds: 'Public,Dogfood'
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
