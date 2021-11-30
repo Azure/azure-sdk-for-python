@@ -234,7 +234,7 @@ class Common:
             file_out.writelines([self.output_python(item) for item in items])
 
     def output_python(self, item):
-        create_date = str(date.fromtimestamp(item.created_at.timestamp()).strftime('%m-%d'))
+        create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
 
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
