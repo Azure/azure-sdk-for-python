@@ -47,7 +47,7 @@ class DigitalTwinsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DigitalTwinsDescription":
         """Get DigitalTwinsInstances resource.
 
@@ -108,7 +108,7 @@ class DigitalTwinsOperations:
         resource_group_name: str,
         resource_name: str,
         digital_twins_create: "_models.DigitalTwinsDescription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DigitalTwinsDescription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsDescription"]
         error_map = {
@@ -166,7 +166,7 @@ class DigitalTwinsOperations:
         resource_group_name: str,
         resource_name: str,
         digital_twins_create: "_models.DigitalTwinsDescription",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DigitalTwinsDescription"]:
         """Create or update the metadata of a DigitalTwinsInstance. The usual pattern to modify a property
         is to retrieve the DigitalTwinsInstance and security metadata, and then combine them with the
@@ -181,8 +181,8 @@ class DigitalTwinsOperations:
         :type digital_twins_create: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DigitalTwinsDescription or the result of cls(response)
@@ -240,7 +240,7 @@ class DigitalTwinsOperations:
         resource_group_name: str,
         resource_name: str,
         digital_twins_patch_description: "_models.DigitalTwinsPatchDescription",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DigitalTwinsDescription"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DigitalTwinsDescription"]]
         error_map = {
@@ -296,7 +296,7 @@ class DigitalTwinsOperations:
         resource_group_name: str,
         resource_name: str,
         digital_twins_patch_description: "_models.DigitalTwinsPatchDescription",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DigitalTwinsDescription"]:
         """Update metadata of DigitalTwinsInstance.
 
@@ -309,8 +309,8 @@ class DigitalTwinsOperations:
         :type digital_twins_patch_description: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsPatchDescription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DigitalTwinsDescription or the result of cls(response)
@@ -367,7 +367,7 @@ class DigitalTwinsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DigitalTwinsDescription"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DigitalTwinsDescription"]]
         error_map = {
@@ -417,7 +417,7 @@ class DigitalTwinsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DigitalTwinsDescription"]:
         """Delete a DigitalTwinsInstance.
 
@@ -428,8 +428,8 @@ class DigitalTwinsOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -483,7 +483,7 @@ class DigitalTwinsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DigitalTwinsDescriptionListResult"]:
         """Get all the DigitalTwinsInstances in a subscription.
 
@@ -551,7 +551,7 @@ class DigitalTwinsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DigitalTwinsDescriptionListResult"]:
         """Get all the DigitalTwinsInstances in a resource group.
 
@@ -624,7 +624,7 @@ class DigitalTwinsOperations:
         self,
         location: str,
         digital_twins_instance_check_name: "_models.CheckNameRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameResult":
         """Check if a DigitalTwinsInstance name is available.
 

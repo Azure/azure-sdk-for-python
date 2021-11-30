@@ -23,9 +23,8 @@ class CheckNameRequest(msrest.serialization.Model):
 
     :param name: Required. Resource name.
     :type name: str
-    :ivar type: Required. The type of resource, for instance
-     Microsoft.DigitalTwins/digitalTwinsInstances. Default value:
-     "Microsoft.DigitalTwins/digitalTwinsInstances".
+    :ivar type: The type of resource, for instance Microsoft.DigitalTwins/digitalTwinsInstances.
+     Has constant value: "Microsoft.DigitalTwins/digitalTwinsInstances".
     :vartype type: str
     """
 

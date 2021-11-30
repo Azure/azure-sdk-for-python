@@ -44,7 +44,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GroupIdInformationResponse":
         """List private link resources for given Digital Twin.
 
@@ -105,7 +105,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         resource_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GroupIdInformation":
         """Get the specified private link resource for the given Digital Twin.
 
