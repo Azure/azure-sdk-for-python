@@ -360,6 +360,7 @@ class LibraryOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -910,3 +911,4 @@ class LibraryOperations(object):
             return cls(pipeline_response, None, {})
 
     append.metadata = {'url': '/libraries/{libraryName}'}  # type: ignore
+

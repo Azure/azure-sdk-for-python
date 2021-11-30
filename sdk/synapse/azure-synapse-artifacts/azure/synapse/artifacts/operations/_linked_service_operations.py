@@ -299,6 +299,7 @@ class LinkedServiceOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -607,6 +608,7 @@ class LinkedServiceOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_linked_service.metadata = {'url': '/linkedservices/{linkedServiceName}'}  # type: ignore
 
     def _rename_linked_service_initial(
@@ -724,4 +726,5 @@ class LinkedServiceOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_linked_service.metadata = {'url': '/linkedservices/{linkedServiceName}/rename'}  # type: ignore

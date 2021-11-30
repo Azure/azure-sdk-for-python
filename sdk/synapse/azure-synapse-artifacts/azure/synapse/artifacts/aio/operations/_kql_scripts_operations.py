@@ -120,6 +120,7 @@ class KqlScriptsOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )

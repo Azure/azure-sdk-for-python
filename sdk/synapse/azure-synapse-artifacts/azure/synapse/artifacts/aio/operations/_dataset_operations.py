@@ -121,6 +121,7 @@ class DatasetOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -423,6 +424,7 @@ class DatasetOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_dataset.metadata = {'url': '/datasets/{datasetName}'}  # type: ignore
 
     async def _rename_dataset_initial(
@@ -538,4 +540,5 @@ class DatasetOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_dataset.metadata = {'url': '/datasets/{datasetName}/rename'}  # type: ignore

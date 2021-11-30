@@ -10,6 +10,27 @@
 
 ### Other Changes
 
+## 1.7.1 (2021-11-09)
+
+### Bugs Fixed
+
+- Fix multi-tenant auth using async AadClient ([#21289](https://github.com/Azure/azure-sdk-for-python/issues/21289))
+
+## 1.7.0 (2021-10-14)
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
+
+- The `allow_multitenant_authentication` argument has been removed and the default behavior is now as if it were true.
+  The multitenant authentication feature can be totally disabled by setting the environment variable 
+  `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `True`.
+- `azure.identity.RegionalAuthority` is removed.
+- `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`.
+- `AzureApplicationCredential` is removed.
+- `client_credential` in the ctor of `OnBehalfOfCredential` is removed. Please use `client_secret` or `client_certificate` instead.
+- Make `user_assertion` in the ctor of `OnBehalfOfCredential` a keyword only argument.
+
 ## 1.7.0b4 (2021-09-09)
 
 ### Features Added

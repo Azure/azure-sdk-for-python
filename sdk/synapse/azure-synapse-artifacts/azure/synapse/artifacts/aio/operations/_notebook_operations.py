@@ -122,6 +122,7 @@ class NotebookOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -201,6 +202,7 @@ class NotebookOperations:
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
@@ -503,6 +505,7 @@ class NotebookOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_notebook.metadata = {'url': '/notebooks/{notebookName}'}  # type: ignore
 
     async def _rename_notebook_initial(
@@ -618,4 +621,5 @@ class NotebookOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_notebook.metadata = {'url': '/notebooks/{notebookName}/rename'}  # type: ignore

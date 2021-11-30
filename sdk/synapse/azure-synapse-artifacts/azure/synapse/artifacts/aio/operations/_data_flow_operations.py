@@ -342,6 +342,7 @@ class DataFlowOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
 
     async def _rename_data_flow_initial(
@@ -534,6 +535,7 @@ class DataFlowOperations:
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data

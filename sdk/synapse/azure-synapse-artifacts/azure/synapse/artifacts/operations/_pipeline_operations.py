@@ -344,6 +344,7 @@ class PipelineOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -650,6 +651,7 @@ class PipelineOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_pipeline.metadata = {'url': '/pipelines/{pipelineName}'}  # type: ignore
 
     def _rename_pipeline_initial(

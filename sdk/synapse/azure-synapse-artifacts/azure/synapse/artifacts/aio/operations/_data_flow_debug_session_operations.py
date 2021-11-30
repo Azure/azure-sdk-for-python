@@ -247,6 +247,7 @@ class DataFlowDebugSessionOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -364,6 +365,7 @@ class DataFlowDebugSessionOperations:
             return cls(pipeline_response, None, {})
 
     delete_data_flow_debug_session.metadata = {'url': '/deleteDataFlowDebugSession'}  # type: ignore
+
 
     async def _execute_command_initial(
         self,
@@ -487,4 +489,5 @@ class DataFlowDebugSessionOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_execute_command.metadata = {'url': '/executeDataFlowDebugCommand'}  # type: ignore

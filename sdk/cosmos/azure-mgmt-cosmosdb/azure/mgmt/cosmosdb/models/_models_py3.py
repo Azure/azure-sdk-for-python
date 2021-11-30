@@ -1668,18 +1668,30 @@ class ConnectionError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'throughput': {'key': 'throughput', 'type': 'int'},
-        'autoscale_settings': {'key': 'autoscaleSettings', 'type': 'AutoscaleSettings'},
+        'connection_state': {'key': 'connectionState', 'type': 'str'},
+        'i_p_from': {'key': 'iPFrom', 'type': 'str'},
+        'i_p_to': {'key': 'iPTo', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
+        'exception': {'key': 'exception', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        throughput: Optional[int] = None,
-        autoscale_settings: Optional["AutoscaleSettings"] = None,
+        connection_state: Optional[Union[str, "ConnectionState"]] = None,
+        i_p_from: Optional[str] = None,
+        i_p_to: Optional[str] = None,
+        port: Optional[int] = None,
+        exception: Optional[str] = None,
         **kwargs
     ):
-        super(CassandraViewGetPropertiesOptions, self).__init__(throughput=throughput, autoscale_settings=autoscale_settings, **kwargs)
+        super(ConnectionError, self).__init__(**kwargs)
+        self.connection_state = connection_state
+        self.i_p_from = i_p_from
+        self.i_p_to = i_p_to
+        self.port = port
+        self.exception = exception
+
 
 class ConsistencyPolicy(msrest.serialization.Model):
     """The consistency policy for the Cosmos DB database account.

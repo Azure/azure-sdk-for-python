@@ -122,6 +122,7 @@ class SparkJobDefinitionOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -426,6 +427,7 @@ class SparkJobDefinitionOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}'}  # type: ignore
 
     async def _execute_spark_job_definition_initial(
@@ -541,6 +543,7 @@ class SparkJobDefinitionOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_execute_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}/execute'}  # type: ignore
 
     async def _rename_spark_job_definition_initial(
@@ -656,6 +659,7 @@ class SparkJobDefinitionOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_spark_job_definition.metadata = {'url': '/sparkJobDefinitions/{sparkJobDefinitionName}/rename'}  # type: ignore
 
     async def _debug_spark_job_definition_initial(
@@ -777,4 +781,5 @@ class SparkJobDefinitionOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_debug_spark_job_definition.metadata = {'url': '/debugSparkJobDefinition'}  # type: ignore

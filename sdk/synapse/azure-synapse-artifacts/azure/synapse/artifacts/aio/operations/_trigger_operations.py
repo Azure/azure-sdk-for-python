@@ -121,6 +121,7 @@ class TriggerOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -423,6 +424,7 @@ class TriggerOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_trigger.metadata = {'url': '/triggers/{triggerName}'}  # type: ignore
 
     async def _subscribe_trigger_to_events_initial(
@@ -708,6 +710,7 @@ class TriggerOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_unsubscribe_trigger_from_events.metadata = {'url': '/triggers/{triggerName}/unsubscribeFromEvents'}  # type: ignore
 
     async def _start_trigger_initial(
@@ -811,6 +814,7 @@ class TriggerOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_start_trigger.metadata = {'url': '/triggers/{triggerName}/start'}  # type: ignore
 
     async def _stop_trigger_initial(
@@ -914,4 +918,5 @@ class TriggerOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_stop_trigger.metadata = {'url': '/triggers/{triggerName}/stop'}  # type: ignore

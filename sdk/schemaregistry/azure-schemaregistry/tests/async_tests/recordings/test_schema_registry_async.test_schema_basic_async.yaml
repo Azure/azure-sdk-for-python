@@ -52,8 +52,7 @@ interactions:
       schema-id-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/1051144b7fa7490ba07184606fd25d21?api-version=2021-10
       schema-name: test-schema-basic-asynce5e1482
       schema-version: '1'
-      schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-basic-asynce5e1482/versions?api-version=2020-09-01-preview
-      serialization-type: Avro
+      schema-versions-location: https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-basic-asynce5e1482/versions?api-version=2021-10
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked

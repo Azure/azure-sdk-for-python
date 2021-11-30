@@ -154,6 +154,7 @@ class KqlScriptsOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )

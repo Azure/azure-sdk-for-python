@@ -1424,13 +1424,23 @@ class ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersIt
         self,
         **kwargs
     ):
-        super(ManagedCassandraARMResourceProperties, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.identity = kwargs.get('identity', None)
+        super(ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems, self).__init__(**kwargs)
+        self.address = kwargs.get('address', None)
+        self.state = kwargs.get('state', None)
+        self.status = kwargs.get('status', None)
+        self.load = kwargs.get('load', None)
+        self.tokens = kwargs.get('tokens', None)
+        self.size = kwargs.get('size', None)
+        self.host_id = kwargs.get('host_id', None)
+        self.rack = kwargs.get('rack', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.disk_used_kb = kwargs.get('disk_used_kb', None)
+        self.disk_free_kb = kwargs.get('disk_free_kb', None)
+        self.memory_used_kb = kwargs.get('memory_used_kb', None)
+        self.memory_buffers_and_cached_kb = kwargs.get('memory_buffers_and_cached_kb', None)
+        self.memory_free_kb = kwargs.get('memory_free_kb', None)
+        self.memory_total_kb = kwargs.get('memory_total_kb', None)
+        self.cpu_usage = kwargs.get('cpu_usage', None)
 
 
 class CompositePath(msrest.serialization.Model):

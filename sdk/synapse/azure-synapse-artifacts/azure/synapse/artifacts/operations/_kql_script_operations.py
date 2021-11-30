@@ -477,6 +477,7 @@ class KqlScriptOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_by_name.metadata = {'url': '/kqlScripts/{kqlScriptName}'}  # type: ignore
 
     def _rename_initial(
@@ -594,4 +595,5 @@ class KqlScriptOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename.metadata = {'url': '/kqlScripts/{kqlScriptName}/rename'}  # type: ignore

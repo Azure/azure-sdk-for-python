@@ -298,6 +298,7 @@ class DatasetOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -605,6 +606,7 @@ class DatasetOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_dataset.metadata = {'url': '/datasets/{datasetName}'}  # type: ignore
 
     def _rename_dataset_initial(
@@ -722,4 +724,5 @@ class DatasetOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_dataset.metadata = {'url': '/datasets/{datasetName}/rename'}  # type: ignore

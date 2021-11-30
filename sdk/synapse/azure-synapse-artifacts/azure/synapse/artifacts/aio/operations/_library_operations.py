@@ -121,6 +121,7 @@ class LibraryOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -662,3 +663,4 @@ class LibraryOperations:
             return cls(pipeline_response, None, {})
 
     append.metadata = {'url': '/libraries/{libraryName}'}  # type: ignore
+

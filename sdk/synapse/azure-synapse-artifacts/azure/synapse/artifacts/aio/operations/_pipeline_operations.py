@@ -122,6 +122,7 @@ class PipelineOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -423,6 +424,7 @@ class PipelineOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_pipeline.metadata = {'url': '/pipelines/{pipelineName}'}  # type: ignore
 
     async def _rename_pipeline_initial(

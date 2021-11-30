@@ -122,6 +122,7 @@ class SqlScriptOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -423,6 +424,7 @@ class SqlScriptOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_sql_script.metadata = {'url': '/sqlScripts/{sqlScriptName}'}  # type: ignore
 
     async def _rename_sql_script_initial(
@@ -538,4 +540,5 @@ class SqlScriptOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_sql_script.metadata = {'url': '/sqlScripts/{sqlScriptName}/rename'}  # type: ignore

@@ -524,6 +524,7 @@ class DataFlowOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
 
     def _rename_data_flow_initial(
@@ -718,6 +719,7 @@ class DataFlowOperations(object):
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data

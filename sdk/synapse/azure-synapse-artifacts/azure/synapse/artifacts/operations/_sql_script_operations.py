@@ -299,6 +299,7 @@ class SqlScriptOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -605,6 +606,7 @@ class SqlScriptOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_sql_script.metadata = {'url': '/sqlScripts/{sqlScriptName}'}  # type: ignore
 
     def _rename_sql_script_initial(
@@ -722,4 +724,5 @@ class SqlScriptOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_sql_script.metadata = {'url': '/sqlScripts/{sqlScriptName}/rename'}  # type: ignore

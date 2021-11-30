@@ -134,3 +134,4 @@ class NotebookOperationResultOperations(object):
             return cls(pipeline_response, None, {})
 
     get.metadata = {'url': '/notebookOperationResults/{operationId}'}  # type: ignore
+

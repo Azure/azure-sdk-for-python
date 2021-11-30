@@ -326,6 +326,7 @@ class NotebookOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -405,6 +406,7 @@ class NotebookOperations(object):
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
@@ -712,6 +714,7 @@ class NotebookOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_notebook.metadata = {'url': '/notebooks/{notebookName}'}  # type: ignore
 
     def _rename_notebook_initial(
@@ -829,4 +832,5 @@ class NotebookOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_notebook.metadata = {'url': '/notebooks/{notebookName}/rename'}  # type: ignore

@@ -122,6 +122,7 @@ class LinkedServiceOperations:
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
@@ -426,6 +427,7 @@ class LinkedServiceOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_linked_service.metadata = {'url': '/linkedservices/{linkedServiceName}'}  # type: ignore
 
     async def _rename_linked_service_initial(
@@ -541,4 +543,5 @@ class LinkedServiceOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_linked_service.metadata = {'url': '/linkedservices/{linkedServiceName}/rename'}  # type: ignore

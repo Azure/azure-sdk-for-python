@@ -300,6 +300,7 @@ class SparkConfigurationOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -609,6 +610,7 @@ class SparkConfigurationOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_delete_spark_configuration.metadata = {'url': '/sparkconfigurations/{sparkConfigurationName}'}  # type: ignore
 
     def _rename_spark_configuration_initial(
@@ -726,4 +728,5 @@ class SparkConfigurationOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_rename_spark_configuration.metadata = {'url': '/sparkconfigurations/{sparkConfigurationName}/rename'}  # type: ignore

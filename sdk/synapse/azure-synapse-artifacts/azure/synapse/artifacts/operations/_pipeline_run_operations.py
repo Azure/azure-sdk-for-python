@@ -428,3 +428,4 @@ class PipelineRunOperations(object):
             return cls(pipeline_response, None, {})
 
     cancel_pipeline_run.metadata = {'url': '/pipelineruns/{runId}/cancel'}  # type: ignore
+

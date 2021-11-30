@@ -403,6 +403,7 @@ class DataFlowDebugSessionOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
@@ -522,6 +523,7 @@ class DataFlowDebugSessionOperations(object):
             return cls(pipeline_response, None, {})
 
     delete_data_flow_debug_session.metadata = {'url': '/deleteDataFlowDebugSession'}  # type: ignore
+
 
     def _execute_command_initial(
         self,
@@ -647,4 +649,5 @@ class DataFlowDebugSessionOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     begin_execute_command.metadata = {'url': '/executeDataFlowDebugCommand'}  # type: ignore
