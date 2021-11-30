@@ -42,7 +42,7 @@
                 "description": "The application client secret used to run tests."
             }
         },
-        "docTranslationEndpointSuffix": {
+        "cognitiveServicesEndpointSuffix": {
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "string"
         },
@@ -56,7 +56,7 @@
         },
         "sourceResourceId": {
             "type": "string",
-            "defaultValue": "[resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('sourceStorageAccount'))]"
+            "defaultValue": "[resourceId('krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('sourceStorageAccount'))]"
         },
         "sourceContainerName": {
             "type": "string",
@@ -139,7 +139,7 @@
         "storageMgmtApiVersion": "2019-04-01",
         "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
         "location": "[resourceGroup().location]",
-        "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
+        "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('cognitiveServicesEndpointSuffix'))]",
         "azureStorageEndpoint": "[concat('https://', parameters('blobStorageAccount'), '.blob.core.windows.net/')]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "encryption": {
