@@ -8,9 +8,3 @@
 
 from ._edge_order_management_client import EdgeOrderManagementClient
 __all__ = ['EdgeOrderManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass

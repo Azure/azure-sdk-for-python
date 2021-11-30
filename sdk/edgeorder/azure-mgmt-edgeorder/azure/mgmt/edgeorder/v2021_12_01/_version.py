@@ -6,11 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._edge_order_management_client import EdgeOrderManagementClient
-__all__ = ['EdgeOrderManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+VERSION = "1.0.0b1"
