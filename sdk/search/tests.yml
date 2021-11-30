@@ -4,9 +4,6 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-search-documents
-      # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue
-      # https://github.com/Azure/azure-sdk-tools/issues/2216
-      Location: 'eastus2'
       ServiceDirectory: search
       EnvVars:
         AZURE_CLIENT_ID: $(SEARCH_CLIENT_ID)
