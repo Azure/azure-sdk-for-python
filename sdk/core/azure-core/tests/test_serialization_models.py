@@ -4,10 +4,10 @@
 # ------------------------------------
 import json
 import datetime
-from typing import Any, List, Literal, Dict, Set, Tuple, Optional
+from typing import Any, List, Literal, Dict, Sequence, Set, Tuple, Optional
 import pytest
 import isodate
-from azure.core.serialization import Model, rest_property
+from azure.core.serialization import Model, _deserialize_date, rest_property
 
 def modify_args(init):
     def _wrapper(self, **kwargs):
@@ -560,13 +560,17 @@ def test_list_of_tuple_deserialization_model():
     assert model.prop[1][0] == model.prop[1][1].pet
 
 class RecursiveModel(Model):
+    name: rest_property()
 
     @rest_property()
     def name(self) -> str:
         """My name"""
 
-    @rest_property(name="listOfMe")
-    def list_of_me(self) -> List["RecursiveModel"]:
+    def _callable(thing):
+        return [RecursiveModel(t) for t in thing]
+
+    @rest_property(name="listOfMe", type=_callable)
+    def list_of_me(self) -> Sequence["RecursiveModel"]:
         """A list of myself"""
 
     @rest_property(name="dictOfMe")
@@ -584,6 +588,12 @@ class RecursiveModel(Model):
     @rest_property(name="tupleOfMe")
     def tuple_of_me(self) -> Tuple["RecursiveModel", "RecursiveModel"]:
         """A tuple of me"""
+
+model = RecursiveModel(list_of_me="should work")
+
+model["listOfMe"] = this is not deserialized
+model.list_of_me = this is deserialized
+model["list_of_me"] should not work
 
 def test_model_recursion_complex():
 
@@ -653,6 +663,7 @@ def test_model_recursion_complex():
     }
 
     model = RecursiveModel(dict_response)
+    model.dict_of_me = {"hello": "world"}
     assert model.name == model['name'] == "it's me!"
     assert model['listOfMe'] == [
         {

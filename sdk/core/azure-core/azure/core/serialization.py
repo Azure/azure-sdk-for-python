@@ -10,7 +10,7 @@ import base64
 import re
 import isodate
 from json import JSONEncoder
-from typing import Any, Dict, Type, Union, cast, Literal, Optional, ForwardRef
+from typing import Any, Callable, Dict, Type, Union, cast, Literal, Optional, ForwardRef
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
@@ -288,7 +288,7 @@ class Model(dict):
         return Model(self.__dict__)
 
 class rest_property:
-    def __init__(self, name: Optional[str] = None):
+    def __init__(self, name: Optional[str] = None, type: Optional[Callable] = None):
         self._deserialization_type = None
         self._rest_name = name
         self._module = None
