@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Add response body to string representation of `HttpResponseError` if we're not able to parse out information #21800
+
 ### Other Changes
 
 ## 1.20.1 (2021-11-08)
