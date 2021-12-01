@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import functools
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
@@ -17,19 +18,24 @@ from azure.ai.metricsadvisor.models import (
     ChangeThresholdCondition,
     HardThresholdCondition,
 )
-from base_testcase import TestMetricsAdvisorAdministrationClientBase
+from devtools_testutils import recorded_by_proxy
+from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
+from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
-    def test_create_ad_config_whole_series_detection(self):
-
-        data_feed = self._create_data_feed("adconfig")
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy
+    def test_create_ad_config_whole_series_detection(self, client, variables):
+        detection_config_name = self.create_random_name("testdetectionconfig")
+        if self.is_live:
+            variables["detection_config_name"] = detection_config_name
         try:
-            detection_config_name = self.create_random_name("testdetectionconfig")
-            config = self.admin_client.create_detection_configuration(
-                name=detection_config_name,
-                metric_id=data_feed.metric_ids['cost'],
+            config = client.create_detection_configuration(
+                name=variables["detection_config_name"],
+                metric_id=variables["data_feed_metric_id"],
                 description="My test metric anomaly detection configuration",
                 whole_series_detection_condition=MetricDetectionCondition(
                     condition_operator="OR",
@@ -63,7 +69,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 )
             )
             assert config.id is not None
-            assert config.metric_id == data_feed.metric_ids['cost']
+            assert config.metric_id == variables["data_feed_metric_id"]
             assert config.description == "My test metric anomaly detection configuration"
             assert config.name is not None
             assert config.series_detection_conditions is None
@@ -84,21 +90,26 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert config.whole_series_detection_condition.smart_detection_condition.sensitivity == 50
             assert config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number == 5
             assert config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 5
-
-            self.admin_client.delete_detection_configuration(config.id)
+            if self.is_live:
+                variables["detection_config_id"] = config.id
+            client.delete_detection_configuration(variables["detection_config_id"])
 
             with pytest.raises(ResourceNotFoundError):
-                self.admin_client.get_detection_configuration(config.id)
+                client.get_detection_configuration(variables["detection_config_id"])
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
-    def test_create_ad_config_with_series_and_group_conds(self):
-        data_feed = self._create_data_feed("adconfigget")
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy
+    def test_create_ad_config_with_series_and_group_conds(self, client, variables):
+        detection_config_name = self.create_random_name("testdetectionconfig")
+        if self.is_live:
+            variables["detection_config_name"] = detection_config_name
         try:
-            detection_config_name = self.create_random_name("testdetectionconfiget")
-            detection_config = self.admin_client.create_detection_configuration(
-                name=detection_config_name,
-                metric_id=data_feed.metric_ids['cost'],
+            detection_config = client.create_detection_configuration(
+                name=variables["detection_config_name"],
+                metric_id=variables["data_feed_metric_id"],
                 description="My test metric anomaly detection configuration",
                 whole_series_detection_condition=MetricDetectionCondition(
                     condition_operator="AND",
@@ -155,7 +166,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
 
             assert detection_config.id is not None
-            assert detection_config.metric_id == data_feed.metric_ids['cost']
+            assert detection_config.metric_id == variables["data_feed_metric_id"]
             assert detection_config.description == "My test metric anomaly detection configuration"
             assert detection_config.name is not None
             assert detection_config.whole_series_detection_condition.condition_operator == "AND"
@@ -184,17 +195,20 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert detection_config.series_group_detection_conditions[0].smart_detection_condition.sensitivity == 63
             assert detection_config.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction == "Both"
             assert detection_config.series_group_detection_conditions[0].series_group_key == {'region': 'Sao Paulo'}
-
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
-    def test_create_ad_config_multiple_series_and_group_conds(self):
-        data_feed = self._create_data_feed("datafeedforconfig")
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy
+    def test_create_ad_config_multiple_series_and_group_conds(self, client, variables):
+        detection_config_name = self.create_random_name("testdetectionconfig")
+        if self.is_live:
+            variables["detection_config_name"] = detection_config_name
         try:
-            detection_config_name = self.create_random_name("multipledetectionconfigs")
-            detection_config = self.admin_client.create_detection_configuration(
-                name=detection_config_name,
-                metric_id=data_feed.metric_ids['cost'],
+            detection_config = client.create_detection_configuration(
+                name=variables["detection_config_name"],
+                metric_id=variables["data_feed_metric_id"],
                 description="My test metric anomaly detection configuration",
                 whole_series_detection_condition=MetricDetectionCondition(
                     condition_operator="AND",
@@ -319,7 +333,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
 
             assert detection_config.id is not None
-            assert detection_config.metric_id == data_feed.metric_ids['cost']
+            assert detection_config.metric_id == variables["data_feed_metric_id"]
             assert detection_config.description == "My test metric anomaly detection configuration"
             assert detection_config.name is not None
 
@@ -390,15 +404,20 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert detection_config.series_group_detection_conditions[1].smart_detection_condition.anomaly_detector_direction == "Both"
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
-    def test_list_detection_configs(self):
-        configs = self.admin_client.list_detection_configurations(metric_id=self.metric_id)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_detection_configs(self, client):
+        configs = client.list_detection_configurations(metric_id=self.metric_id)
         assert len(list(configs)) > 0
 
-    def test_update_detection_config_with_model(self):
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_update_detection_config_with_model(self, client, variables):
         try:
-            detection_config, data_feed = self._create_detection_config_for_update("updatedetection")
+            detection_config = client.get_detection_configuration(variables["detection_config_id"])
 
             detection_config.name = "updated"
             detection_config.description = "updated"
@@ -441,8 +460,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             detection_config.whole_series_detection_condition.change_threshold_condition = change_threshold_condition
             detection_config.whole_series_detection_condition.condition_operator = "OR"
 
-            self.admin_client.update_detection_configuration(detection_config)
-            updated = self.admin_client.get_detection_configuration(detection_config.id)
+            client.update_detection_configuration(detection_config)
+            updated = client.get_detection_configuration(variables["detection_config_id"])
 
             assert updated.name == "updated"
             assert updated.description == "updated"
@@ -494,11 +513,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 2
             assert updated.whole_series_detection_condition.condition_operator == "OR"
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
-    def test_update_detection_config_with_kwargs(self):
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_update_detection_config_with_kwargs(self, client, variables):
         try:
-            detection_config, data_feed = self._create_detection_config_for_update("updatedetection")
             change_threshold_condition = ChangeThresholdCondition(
                 anomaly_detector_direction="Both",
                 change_percentage=20,
@@ -525,8 +546,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     min_ratio=2
                 )
             )
-            self.admin_client.update_detection_configuration(
-                detection_config.id,
+            client.update_detection_configuration(
+                variables["detection_config_id"],
                 name="updated",
                 description="updated",
                 whole_series_detection_condition=MetricDetectionCondition(
@@ -550,7 +571,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     change_threshold_condition=change_threshold_condition
                 )]
             )
-            updated = self.admin_client.get_detection_configuration(detection_config.id)
+            updated = client.get_detection_configuration(variables["detection_config_id"])
             assert updated.name == "updated"
             assert updated.description == "updated"
             assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction == "Both"
@@ -603,11 +624,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 2
             assert updated.whole_series_detection_condition.condition_operator == "OR"
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
-    def test_update_detection_config_with_model_and_kwargs(self):
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_update_detection_config_with_model_and_kwargs(self, client, variables):
         try:
-            detection_config, data_feed = self._create_detection_config_for_update("updatedetection")
+            detection_config = client.get_detection_configuration(variables["detection_config_id"])
             change_threshold_condition = ChangeThresholdCondition(
                 anomaly_detector_direction="Both",
                 change_percentage=20,
@@ -637,7 +661,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
             detection_config.name = "updateMe"
             detection_config.description = "updateMe"
-            self.admin_client.update_detection_configuration(
+            client.update_detection_configuration(
                 detection_config,
                 whole_series_detection_condition=MetricDetectionCondition(
                     condition_operator="OR",
@@ -660,7 +684,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     change_threshold_condition=change_threshold_condition
                 )]
             )
-            updated = self.admin_client.get_detection_configuration(detection_config.id)
+            updated = client.get_detection_configuration(variables["detection_config_id"])
             assert updated.name == "updateMe"
             assert updated.description == "updateMe"
             assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction == "Both"
@@ -713,20 +737,21 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 2
             assert updated.whole_series_detection_condition.condition_operator == "OR"
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
-    def test_update_detection_config_by_resetting_properties(self):
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_update_detection_config_by_resetting_properties(self, client, variables):
         try:
-            detection_config, data_feed = self._create_detection_config_for_update("updatedetection")
-
-            self.admin_client.update_detection_configuration(
-                detection_config.id,
+            client.update_detection_configuration(
+                variables["detection_config_id"],
                 name="reset",
                 description="",
                 # series_detection_conditions=None,
                 # series_group_detection_conditions=None
             )
-            updated = self.admin_client.get_detection_configuration(detection_config.id)
+            updated = client.get_detection_configuration(variables["detection_config_id"])
             assert updated.name == "reset"
             assert updated.description == ""  # currently won't update with None
 
@@ -735,4 +760,5 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             # assert updated.series_group_detection_conditions == None
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            client.delete_data_feed(variables["data_feed_id"])
+        return variables
