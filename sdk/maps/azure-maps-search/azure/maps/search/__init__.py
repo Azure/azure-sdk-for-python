@@ -13,7 +13,7 @@ from ._generated.models import (
     PolygonResult
 )
 
-from ._models import LatLong
+from ._models import LatLon
 
 __all__ = [
     'SearchClient',
@@ -27,6 +27,6 @@ __all__ = [
     'SearchAddressBatchResult',
     'ReverseSearchAddressBatchProcessResult',
     'PolygonResult',
-    'LatLong'
+    'LatLon'
 ]
 __version__ = VERSION

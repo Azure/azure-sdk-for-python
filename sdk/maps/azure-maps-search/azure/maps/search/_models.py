@@ -1,7 +1,7 @@
 import msrest.serialization
 from typing import List, Optional
 
-class LatLong:
+class LatLon:
 
     def __init__(
         self,
@@ -11,7 +11,7 @@ class LatLong:
         self.lat = lat
         self.lon = lon
 
-    def toLatLongList(self):
+    def toLatLonList(self, **kwargs): # type: (...) -> List[float]
         return [self.lat, self.lon]
 
 

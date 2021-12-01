@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from ._models import LatLong
+    from ._models import LatLon
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
@@ -50,6 +50,7 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "PolygonResult"
+        
         """**Get Polygon**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-polygon>`_.
 
@@ -57,7 +58,6 @@ class SearchClient(object):
          Online Search request.
         :type geometry_ids: list[str]
         :return: PolygonResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.PolygonResult
         """
         return self._search_client.list_polygons(
             geometry_ids,
@@ -69,7 +69,7 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        coordinates=None, # type: Optional["LatLong"]
+        coordinates=None, # type: Optional["LatLon"]
         country_filter=None, # type Optional[list[str]]
         **kwargs  # type: Any
     ):
@@ -100,7 +100,7 @@ class SearchClient(object):
          search to the specified countries.
         :type country_filter: list[str]
         :param coordinates: coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -157,9 +157,10 @@ class SearchClient(object):
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        coordinates = {} if not coordinates else coordinates
+            
         return self._search_client.fuzzy_search(
             query,
             lat=coordinates.get('lat'),
@@ -185,7 +186,6 @@ class SearchClient(object):
          (English).
         :type language: str
         :return: PointOfInterestCategoryTreeResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.PointOfInterestCategoryTreeResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.get_point_of_interest_category_tree(
@@ -196,7 +196,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_address(
         self,
-        coordinates, # type: "LatLong"
+        coordinates, # type: "LatLon"
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchAddressResult"
@@ -205,7 +205,7 @@ class SearchClient(object):
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
 
         :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param language: Language in which search results should be returned.
         :type language: str
         :param include_speed_limit: Boolean. To enable return of the posted speed limit.
@@ -235,11 +235,10 @@ class SearchClient(object):
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :return: ReverseSearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.ReverseSearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_address(
-            query=coordinates.toLatLongList(),
+            query=coordinates.toLatLonList(),
             **kwargs
         )
 
@@ -247,7 +246,7 @@ class SearchClient(object):
     @distributed_trace
     def reverse_search_cross_street_address(
         self,
-        coordinates, # type: "LatLong"
+        coordinates, # type: "LatLon"
         **kwargs  # type: Any
     ):
         # type: (...) -> "ReverseSearchCrossStreetAddressResult"
@@ -256,7 +255,7 @@ class SearchClient(object):
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
 
         :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :type top: int
@@ -281,11 +280,10 @@ class SearchClient(object):
          ‘View=Auto’, which will return the map data based on the IP  address of the request.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :return: ReverseSearchCrossStreetAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.ReverseSearchCrossStreetAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.reverse_search_cross_street_address(
-            coordinates.toLatLongList(),
+            coordinates.toLatLonList(),
             **kwargs
         )
 
@@ -353,7 +351,6 @@ class SearchClient(object):
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_along_route(
@@ -426,7 +423,6 @@ class SearchClient(object):
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_inside_geometry(
@@ -440,7 +436,7 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates=None, # type: "LatLong"
+        coordinates=None, # type: "LatLon"
         country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
@@ -472,7 +468,7 @@ class SearchClient(object):
          search to the specified countries.
         :type country_filter: list[str]
         :param coordinates: coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -497,9 +493,10 @@ class SearchClient(object):
         :param operating_hours: Hours of operation for a POI (Points of Interest).
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """           
+        coordinates = {} if not coordinates else coordinates
+
         return self._search_client.search_point_of_interest(
             query,
             lat=coordinates.get('lat'),
@@ -512,7 +509,7 @@ class SearchClient(object):
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
-        coordinates, #type: "LatLong"
+        coordinates, #type: "LatLon"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -532,7 +529,7 @@ class SearchClient(object):
          search to the specified countries.
         :type country_filter: list[str]
         :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area, Min value is 1, Max Value is 50000.
         :type radius_in_meters: int
@@ -552,9 +549,9 @@ class SearchClient(object):
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        coordinates = {} if not coordinates else coordinates
 
         return self._search_client.search_nearby_point_of_interest(
             lat=coordinates.get('lat'),
@@ -567,7 +564,7 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates=None, #type: "LatLong"
+        coordinates=None, #type: "LatLon"
         country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
@@ -592,7 +589,7 @@ class SearchClient(object):
          minimum: 0 and maximum: 1900.
         :type skip: int
         :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param category_filter: A comma-separated list of category set IDs which could be used to
          restrict the result to specific Points of Interest categories. 
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
@@ -625,9 +622,10 @@ class SearchClient(object):
          Supported value: nextSevenDays.
         :type operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        coordinates = {} if not coordinates else coordinates
+
         return self._search_client.search_point_of_interest_category(
             query,
             lat=coordinates.get('lat'),
@@ -641,7 +639,7 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        coordinates=None, # type: "LatLong"
+        coordinates=None, # type: "LatLon"
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -674,7 +672,7 @@ class SearchClient(object):
          search to the specified countries.
         :type country_filter: list[str]
         :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLong
+        :type coordinates: ~azure.maps.search._models.LatLon
         :param radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :type radius_in_meters: int
@@ -690,9 +688,10 @@ class SearchClient(object):
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :type localized_map_view: str or ~azure.maps.search._generated.models.LocalizedMapView
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        coordinates = {} if not coordinates else coordinates
+        
         return self._search_client.search_address(
             query,
             lat=coordinates.get('lat'),
@@ -755,7 +754,6 @@ class SearchClient(object):
          you to show the correct maps for a certain country/region for geopolitically disputed regions.
         :type localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
         :return: SearchAddressResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_structured_address(
@@ -794,7 +792,6 @@ class SearchClient(object):
         :param format: Desired format of the response. Only ``json`` format is supported.
         :type format: str or ~azure.maps.search.models.JsonFormat
         :return: SearchAddressBatchResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressBatchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.fuzzy_search_batch_sync(
@@ -816,7 +813,6 @@ class SearchClient(object):
          contain  a max of 10,000 queries and must contain at least 1 query.
         :type batch_request: ~azure.maps.search._generated.models.BatchRequest
         :return: SearchAddressBatchResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.SearchAddressBatchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._search_client.search_address_batch_sync(
@@ -845,7 +841,6 @@ class SearchClient(object):
          contain  a max of 10,000 queries and must contain at least 1 query.
         :type batch_request: ~azure.maps.search._generated.models.BatchRequest
         :return: ReverseSearchAddressBatchProcessResult, or the result of cls(response)
-        :rtype: ~azure.maps.search._generated.models.ReverseSearchAddressBatchProcessResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
