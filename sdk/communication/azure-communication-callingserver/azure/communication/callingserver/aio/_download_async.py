@@ -61,7 +61,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         )
 
         #pylint: disable=protected-access
-        return await self._response.response.internal_response.content.read()
+        return await response.response.internal_response.content.read()
 
 class _AsyncChunkIterator(object):
     """Async iterator for chunks in content download stream."""

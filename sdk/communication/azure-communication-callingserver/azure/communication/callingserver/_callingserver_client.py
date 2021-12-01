@@ -6,7 +6,6 @@
 # pylint: disable=too-many-public-methods
 from typing import TYPE_CHECKING, Any, List  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.exceptions import (
     HttpResponseError,
     map_error
@@ -787,9 +786,6 @@ class CallingServerClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        start_range = kwargs.pop("start_range", None)
-        end_range = kwargs.pop("end_range", None)
-        parallel_download_options = kwargs.pop("parallel_download_options", None)
         # pylint:disable=protected-access
         content_downloader = ContentDownloader(
             self._callingserver_service_client._client,
