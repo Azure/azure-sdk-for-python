@@ -254,6 +254,7 @@ class Common:
         [sp.check_call(cmd, shell=True) for cmd in cmd_list]
 
     def run(self):
+        print(self.file_out_name,'77777777777777')
         items = []
         for item in self.issues_package:
             issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
