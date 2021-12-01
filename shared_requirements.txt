@@ -374,3 +374,4 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-monitor msrest>=0.6.21
 #override azure-mgmt-subscription msrest>=0.6.21
 #override azure-mgmt-orbital msrest>=0.6.21
+#override azure-mgmt-search msrest>=0.6.21
