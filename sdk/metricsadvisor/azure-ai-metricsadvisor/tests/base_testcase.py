@@ -300,69 +300,6 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
         return web_hook
 
 
-class TestMetricsAdvisorAdministrationClientBase(AzureRecordedTestCase):
-
-    @property
-    def sql_server_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING", "metrics_advisor_sql_server_connection_string")
-
-    @property
-    def azure_table_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_AZURE_TABLE_CONNECTION_STRING", "metrics_advisor_azure_table_connection_string")
-
-    @property
-    def azure_blob_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_AZURE_BLOB_CONNECTION_STRING", "metrics_advisor_azure_blob_connection_string")
-
-    @property
-    def azure_cosmosdb_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_COSMOS_DB_CONNECTION_STRING", "metrics_advisor_cosmos_db_connection_string")
-
-    @property
-    def application_insights_api_key(self):
-        return os.getenv("METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY", "metrics_advisor_application_insights_api_key")
-
-    @property
-    def azure_data_explorer_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING", "metrics_advisor_azure_data_explorer_connection_string")
-
-    @property
-    def influxdb_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_INFLUX_DB_CONNECTION_STRING", "metrics_advisor_influx_db_connection_string")
-
-    @property
-    def influxdb_password(self):
-        return os.getenv("METRICS_ADVISOR_INFLUX_DB_PASSWORD", "metrics_advisor_influx_db_password")
-
-    @property
-    def azure_datalake_account_key(self):
-        return os.getenv("METRICS_ADVISOR_AZURE_DATALAKE_ACCOUNT_KEY", "metrics_advisor_azure_datalake_account_key")
-
-    @property
-    def mongodb_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_AZURE_MONGO_DB_CONNECTION_STRING", "metrics_advisor_azure_mongo_db_connection_string")
-
-    @property
-    def mysql_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_MYSQL_CONNECTION_STRING", "metrics_advisor_mysql_connection_string")
-
-    @property
-    def postgresql_connection_string(self):
-        return os.getenv("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING", "metrics_advisor_postgresql_connection_string")
-
-    @property
-    def anomaly_detection_configuration_id(self):
-        return os.getenv("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID", "metrics_advisor_anomaly_detection_configuration_id")
-
-    @property
-    def data_feed_id(self):
-        return os.getenv("METRICS_ADVISOR_DATA_FEED_ID", "metrics_advisor_data_feed_id")
-
-    @property
-    def metric_id(self):
-        return os.getenv("METRICS_ADVISOR_METRIC_ID", "metrics_advisor_metric_id")
-
-
 class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
 
     @property
@@ -376,6 +313,14 @@ class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
     @property
     def api_key(self):
         return os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
+
+    @property
+    def sql_server_connection_string(self):
+        return os.getenv("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING", "metrics_advisor_sql_server_connection_string")
+
+    @property
+    def data_feed_id(self):
+        return os.getenv("METRICS_ADVISOR_DATA_FEED_ID", "metrics_advisor_data_feed_id")
 
     @property
     def anomaly_detection_configuration_id(self):
@@ -392,10 +337,6 @@ class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
     @property
     def incident_id(self):
         return os.getenv("METRICS_ADVISOR_INCIDENT_ID", "metrics_advisor_incident_id")
-
-    @property
-    def dimension_name(self):
-        return os.getenv("METRICS_ADVISOR_DIMENSION_NAME", "metrics_advisor_dimension_name")
 
     @property
     def feedback_id(self):

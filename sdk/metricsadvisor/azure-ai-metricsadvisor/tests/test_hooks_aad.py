@@ -15,11 +15,11 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=True)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
     @MetricsAdvisorPreparer()
     @recorded_by_proxy

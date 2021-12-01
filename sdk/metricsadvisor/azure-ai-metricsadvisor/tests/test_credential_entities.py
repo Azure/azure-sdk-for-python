@@ -15,11 +15,11 @@ from azure.ai.metricsadvisor.models import (
     DatasourceServicePrincipal,
     DatasourceServicePrincipalInKeyVault
 )
-from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -54,7 +54,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             credential = client.create_datasource_credential(
                 datasource_credential=DatasourceDataLakeGen2SharedKey(
                     name=variables["credential_name"],
-                    account_key=self.azure_datalake_account_key,
+                    account_key="azure_datalake_account_key",
                     description="my credential",
                 )
             )
@@ -176,7 +176,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             credential = client.create_datasource_credential(
                 datasource_credential=DatasourceDataLakeGen2SharedKey(
                     name=variables["credential_name"],
-                    account_key=self.azure_datalake_account_key,
+                    account_key="azure_datalake_account_key",
                     description="my credential",
                 )
             )

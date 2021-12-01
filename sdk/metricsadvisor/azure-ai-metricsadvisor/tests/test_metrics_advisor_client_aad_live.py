@@ -38,7 +38,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     def test_list_anomaly_dimension_values(self, client):
         results = list(client.list_anomaly_dimension_values(
             detection_configuration_id=self.anomaly_detection_configuration_id,
-            dimension_name=self.dimension_name,
+            dimension_name="region",
             start_time=datetime.datetime(2021, 1, 1),
             end_time=datetime.datetime(2021, 9, 9),
         ))
@@ -59,7 +59,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     def test_list_metric_dimension_values(self, client):
         results = list(client.list_metric_dimension_values(
             metric_id=self.metric_id,
-            dimension_name=self.dimension_name,
+            dimension_name="region",
         ))
         assert len(results) > 0
 

@@ -32,11 +32,11 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -267,7 +267,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=AzureTableDataFeedSource(
-                    connection_string=self.azure_table_connection_string,
+                    connection_string="azure_table_connection_string",
                     query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
                     table="adsample"
                 ),
@@ -312,7 +312,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=AzureBlobDataFeedSource(
-                    connection_string=self.azure_blob_connection_string,
+                    connection_string="azure_blob_connection_string",
                     container="adsample",
                     blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
                 ),
@@ -357,7 +357,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=AzureCosmosDbDataFeedSource(
-                    connection_string=self.azure_cosmosdb_connection_string,
+                    connection_string="azure_cosmosdb_connection_string",
                     sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
                     database="adsample",
                     collection_id="adsample"
@@ -410,7 +410,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 source=AzureApplicationInsightsDataFeedSource(
                     azure_cloud="Azure",
                     application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
-                    api_key=self.application_insights_api_key,
+                    api_key="application_insights_api_key",
                     query=query
                 ),
                 granularity=DataFeedGranularity(
@@ -456,7 +456,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=AzureDataExplorerDataFeedSource(
-                    connection_string=self.azure_data_explorer_connection_string,
+                    connection_string="azure_data_explorer_connection_string",
                     query=query
                 ),
                 granularity=DataFeedGranularity(
@@ -499,10 +499,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=InfluxDbDataFeedSource(
-                    connection_string=self.influxdb_connection_string,
+                    connection_string="influxdb_connection_string",
                     database="adsample",
                     user_name="adreadonly",
-                    password=self.influxdb_password,
+                    password="influxdb_password",
                     query="'select * from adsample2 where Timestamp = @StartTime'"
                 ),
                 granularity=DataFeedGranularity(
@@ -548,7 +548,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 name=name,
                 source=AzureDataLakeStorageGen2DataFeedSource(
                     account_name="adsampledatalakegen2",
-                    account_key=self.azure_datalake_account_key,
+                    account_key="azure_datalake_account_key",
                     file_system_name="adsample",
                     directory_template="%Y/%m/%d",
                     file_template="adsample.json"
@@ -596,7 +596,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=MongoDbDataFeedSource(
-                    connection_string=self.mongodb_connection_string,
+                    connection_string="mongodb_connection_string",
                     database="adsample",
                     command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
                 ),
@@ -641,7 +641,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=MySqlDataFeedSource(
-                    connection_string=self.mysql_connection_string,
+                    connection_string="mysql_connection_string",
                     query="'select * from adsample2 where Timestamp = @StartTime'"
                 ),
                 granularity=DataFeedGranularity(
@@ -684,7 +684,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed = client.create_data_feed(
                 name=name,
                 source=PostgreSqlDataFeedSource(
-                    connection_string=self.postgresql_connection_string,
+                    connection_string="postgresql_connection_string",
                     query="'select * from adsample2 where Timestamp = @StartTime'"
                 ),
                 granularity=DataFeedGranularity(
@@ -805,6 +805,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.source.query == "get data"
         finally:
             client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
@@ -858,6 +859,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.source.query == "get data"
         finally:
             client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
@@ -930,6 +932,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.source.query == "get data"
         finally:
             client.delete_data_feed(variables["data_feed_id"])
+        return variables
 
     @pytest.mark.skip("skip test")
     @MetricsAdvisorPreparer(data_feed=True)
@@ -978,3 +981,4 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             # assert updated.action_link_template == "updated"  # doesn't currently clear
         finally:
             client.delete_data_feed(variables["data_feed_id"])
+        return variables

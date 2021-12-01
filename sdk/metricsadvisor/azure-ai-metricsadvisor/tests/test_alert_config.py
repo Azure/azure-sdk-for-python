@@ -19,11 +19,11 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
