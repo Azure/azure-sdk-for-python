@@ -3,145 +3,175 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core import MatchConditions
-from devtools_testutils import AzureMgmtTestCase
-from azure.core.exceptions import (
-    ResourceModifiedError,
-    ResourceNotFoundError,
-    ResourceExistsError,
-    AzureError,
-)
+
+
+import pytest
+import datetime
+import os
+import functools
 from azure.ai.metricsadvisor.models import (
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
     PeriodFeedback,
 )
-import pytest
-import datetime
-import os
-from base_testcase_aad import TestMetricsAdvisorClientBase
+from devtools_testutils import recorded_by_proxy
+from azure.ai.metricsadvisor import MetricsAdvisorClient
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorClient, aad=True)
+
 
 class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
-    def test_list_anomalies_for_detection_configuration(self):
-        results = list(self.client.list_anomalies(
+
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_anomalies_for_detection_configuration(self, client):
+        results = list(client.list_anomalies(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
         ))
         assert len(results) > 0
 
-    def test_list_anomaly_dimension_values(self):
-        results = list(self.client.list_anomaly_dimension_values(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_anomaly_dimension_values(self, client):
+        results = list(client.list_anomaly_dimension_values(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             dimension_name=self.dimension_name,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
         ))
         assert len(results) > 0
 
-    def test_list_incidents_for_detection_configuration(self):
-        results = list(self.client.list_incidents(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_incidents_for_detection_configuration(self, client):
+        results = list(client.list_incidents(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
         ))
         assert len(results) > 0
 
-    def test_list_metric_dimension_values(self):
-        results = list(self.client.list_metric_dimension_values(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_metric_dimension_values(self, client):
+        results = list(client.list_metric_dimension_values(
             metric_id=self.metric_id,
             dimension_name=self.dimension_name,
         ))
         assert len(results) > 0
 
-    def test_list_incident_root_cause(self):
-        results = list(self.client.list_incident_root_causes(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_incident_root_cause(self, client):
+        results = list(client.list_incident_root_causes(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             incident_id=self.incident_id,
         ))
         assert len(results) > 0
 
-    def test_list_metric_enriched_series_data(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_metric_enriched_series_data(self, client):
         series_identity = {"region": "Los Angeles"}
-        results = list(self.client.list_metric_enriched_series_data(
+        results = list(client.list_metric_enriched_series_data(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
             series=[series_identity]
         ))
         assert len(results) > 0
 
-    def test_list_metric_enrichment_status(self):
-        results = list(self.client.list_metric_enrichment_status(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_metric_enrichment_status(self, client):
+        results = list(client.list_metric_enrichment_status(
             metric_id=self.metric_id,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
         ))
         assert len(results) > 0
 
-    def test_list_alerts(self):
-        results = list(self.client.list_alerts(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_alerts(self, client):
+        results = list(client.list_alerts(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
             time_mode="AnomalyTime",
         ))
         assert len(list(results)) > 0
 
-    def test_list_metrics_series_data(self):
-        results = list(self.client.list_metric_series_data(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_metrics_series_data(self, client):
+        results = list(client.list_metric_series_data(
             metric_id=self.metric_id,
             start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 10, 21),
+            end_time=datetime.datetime(2021, 9, 9),
             series_keys=[
                 {"region": "Los Angeles", "category": "Homemade"}
             ]
         ))
         assert len(results) > 0
 
-    def test_list_metric_series_definitions(self):
-        results = list(self.client.list_metric_series_definitions(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_metric_series_definitions(self, client):
+        results = list(client.list_metric_series_definitions(
             metric_id=self.metric_id,
             active_since=datetime.datetime(2021, 1, 1),
         ))
         assert len(results) > 0
 
-    def test_add_anomaly_feedback(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_add_anomaly_feedback(self, client):
         anomaly_feedback = AnomalyFeedback(metric_id=self.metric_id,
                                            dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                            start_time=datetime.datetime(2021, 8, 5),
                                            end_time=datetime.datetime(2021, 9, 9),
                                            value="NotAnomaly")
-        self.client.add_feedback(anomaly_feedback)
+        client.add_feedback(anomaly_feedback)
 
-    def test_add_change_point_feedback(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_add_change_point_feedback(self, client):
         change_point_feedback = ChangePointFeedback(metric_id=self.metric_id,
                                                     dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                                     start_time=datetime.datetime(2021, 8, 5),
                                                     end_time=datetime.datetime(2021, 9, 9),
                                                     value="NotChangePoint")
-        self.client.add_feedback(change_point_feedback)
+        client.add_feedback(change_point_feedback)
 
-    def test_add_comment_feedback(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_add_comment_feedback(self, client):
         comment_feedback = CommentFeedback(metric_id=self.metric_id,
                                            dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                            start_time=datetime.datetime(2021, 8, 5),
                                            end_time=datetime.datetime(2021, 9, 9),
                                            value="comment")
-        self.client.add_feedback(comment_feedback)
+        client.add_feedback(comment_feedback)
 
-    def test_add_period_feedback(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_add_period_feedback(self, client):
         period_feedback = PeriodFeedback(metric_id=self.metric_id,
                                          dimension_key={"category": "Shoes Handbags & Sunglasses"},
                                          start_time=datetime.datetime(2021, 8, 5),
                                          end_time=datetime.datetime(2021, 9, 9),
                                          period_type="AssignValue",
                                          value=2)
-        self.client.add_feedback(period_feedback)
+        client.add_feedback(period_feedback)
 
-    def test_list_feedback(self):
-        results = list(self.client.list_feedback(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_feedback(self, client):
+        results = list(client.list_feedback(
             metric_id=self.metric_id,
             start_time=datetime.datetime(2021, 9, 1),
             end_time=datetime.datetime(2021, 9, 9),
@@ -149,19 +179,25 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    def test_get_feedback(self):
-        result = self.client.get_feedback(feedback_id=self.feedback_id)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_get_feedback(self, client):
+        result = client.get_feedback(feedback_id=self.feedback_id)
         assert result
 
-    def test_list_anomalies_for_alert(self):
-        result = list(self.client.list_anomalies(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_anomalies_for_alert(self, client):
+        result = list(client.list_anomalies(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             alert_id=self.alert_id,
         ))
         assert len(result) > 0
 
-    def test_list_incidents_for_alert(self):
-        results = list(self.client.list_incidents(
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_incidents_for_alert(self, client):
+        results = list(client.list_incidents(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             alert_id=self.alert_id,
         ))
