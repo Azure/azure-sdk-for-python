@@ -37,7 +37,6 @@ def add_sanitizers():
     metrics_advisor_metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID", "metrics_advisor_metric_id")
     metrics_advisor_anomaly_alert_configuration_id = os.getenv("METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID", "metrics_advisor_anomaly_alert_configuration_id")
     metrics_advisor_incident_id = os.getenv("METRICS_ADVISOR_INCIDENT_ID", "metrics_advisor_incident_id")
-    metrics_advisor_dimension_name = os.getenv("METRICS_ADVISOR_DIMENSION_NAME", "metrics_advisor_dimension_name")
     metrics_advisor_feedback_id = os.getenv("METRICS_ADVISOR_FEEDBACK_ID", "metrics_advisor_feedback_id")
     metrics_advisor_alert_id = os.getenv("METRICS_ADVISOR_ALERT_ID", "metrics_advisor_alert_id")
 
@@ -61,7 +60,6 @@ def add_sanitizers():
     add_general_regex_sanitizer(regex=metrics_advisor_metric_id, value="metrics_advisor_metric_id")
     add_general_regex_sanitizer(regex=metrics_advisor_anomaly_alert_configuration_id, value="metrics_advisor_anomaly_alert_configuration_id")
     add_general_regex_sanitizer(regex=metrics_advisor_incident_id, value="metrics_advisor_incident_id")
-    add_general_regex_sanitizer(regex=metrics_advisor_dimension_name, value="metrics_advisor_dimension_name")
     add_general_regex_sanitizer(regex=metrics_advisor_feedback_id, value="metrics_advisor_feedback_id")
     add_general_regex_sanitizer(regex=metrics_advisor_alert_id, value="metrics_advisor_alert_id")
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
