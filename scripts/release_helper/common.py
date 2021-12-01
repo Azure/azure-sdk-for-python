@@ -253,14 +253,6 @@ class Common:
         cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
         [sp.check_call(cmd, shell=True) for cmd in cmd_list]
 
-    def traversal_files(self,path):
-        for dir in os.listdir(path):
-            dir = os.path.join(path, dir)
-            print(dir,'+++++++++++++++++++++++')
-            # 判断当前目录是否为文件夹
-            if os.path.isdir(dir):
-                self.traversal_files(dir)
-
     def run(self):
         items = []
         for item in self.issues_package:
@@ -271,7 +263,7 @@ class Common:
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
         self.output_md(items)
-        self.traversal_files('.')
+        print(os.listdir('.'),os.getcwd(),'+++++++++++')
         self.push_md_to_storage()
 
 
