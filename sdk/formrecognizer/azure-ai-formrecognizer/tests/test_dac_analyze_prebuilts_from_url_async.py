@@ -6,9 +6,9 @@
 
 import pytest
 import functools
-from io import BytesIO
 from datetime import date, time
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ServiceRequestError
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
