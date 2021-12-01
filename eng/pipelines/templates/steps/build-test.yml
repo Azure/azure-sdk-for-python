@@ -67,6 +67,7 @@ steps:
     - pwsh: |
         cat $(Build.SourcesDirectory)/test-proxy.log
       displayName: Dump Test-Proxy Logs
+      condition: succeededOrFailed()
 
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs
