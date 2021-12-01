@@ -1,8 +1,6 @@
 # Release History
 
-## 1.20.2 (Unreleased)
-
-### Features Added
+## 1.21.0 (2021-12-01)
 
 ### Breaking Changes
 
@@ -11,8 +9,6 @@
 ### Bugs Fixed
 
 - Add response body to string representation of `HttpResponseError` if we're not able to parse out information #21800
-
-### Other Changes
 
 ## 1.20.1 (2021-11-08)
 
