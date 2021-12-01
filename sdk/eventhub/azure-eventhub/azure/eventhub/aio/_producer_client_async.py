@@ -444,8 +444,8 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         async with self._lock:
             for pid in self._producers:
-                if self._producers[pid]:
-                    await self._producers[pid].close()
+                if self._producers[pid] is not None:
+                    await self._producers[pid].close()  # type: ignore
                 self._producers[pid] = None
 
         await super(EventHubProducerClient, self)._close_async()

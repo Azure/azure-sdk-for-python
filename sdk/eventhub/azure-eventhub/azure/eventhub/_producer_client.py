@@ -416,6 +416,6 @@ class EventHubProducerClient(ClientBase):
         with self._lock:
             for pid in self._producers:
                 if self._producers[pid]:
-                    self._producers[pid].close()
+                    self._producers[pid].close()  # type: ignore
                 self._producers[pid] = None
         super(EventHubProducerClient, self)._close()
