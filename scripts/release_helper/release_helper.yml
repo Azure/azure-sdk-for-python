@@ -1,0 +1,62 @@
+# Release status statistics
+
+name: ReleaseHelper
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+
+schedules:
+  - cron: "0,30 1-9 * * *"
+    displayName: Daily release
+    branches:
+      include:
+      - main
+    always: true
+
+jobs:
+- job: ReleaseHelper
+  displayName: ReleaseHelper Python 3.8
+  timeoutInMinutes: 30
+  strategy:
+    maxParallel: 3
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+        addToPath: true
+        architecture: 'x64'
+    - bash: |
+        script_path=$(pwd)/scripts/release_helper
+        cd ..
+        git config --global user.email "ReleaseHelper"
+        git config --global user.name "ReleaseHelper"
+
+        # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
+        # mkdir file-storage
+        # git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
+
+        # import env variable
+        export TOKEN=$(Yuchao-GitToken)
+        export PYTHON_BIGCAT_TOKEN=$(Jiefeng-GitToken)
+        export PYTHON_ZED_TOKEN=$(Zed-GitToken)
+        export PYTHON_MSYYC_TOKEN=$(Yuchao-GitToken)
+        export JAVA_WEIDONGXU_TOKEN=$(Weidong-GitToken)
+        export GO_DAPENGZHANG_TOKEN=$(Dapeng-GitToken)
+        export JS_QIAOQIAO_TOKEN=$(QiaoQiao-GitToken)
+        export LANGUAGE=$(RUN_LANGUAGE)
+
+        # create virtual env
+        python -m venv venv-sdk
+        source venv-sdk/bin/activate
+        pip install -r $script_path/requirement.txt
+
+        # checkout the target branch
+        # cd file-storage
+        # git checkout release-helper
+
+        # run
+        python $script_path/main.py
