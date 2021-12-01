@@ -247,9 +247,8 @@ class Common:
             self.date_from_target
         )
 
-    def push_md_to_storage(self):
-        with open('release_js_status.md','r') as f :
-            print(f.read(),'++++++++++++++++++')
+    @staticmethod
+    def push_md_to_storage():
         cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
         [sp.check_call(cmd, shell=True) for cmd in cmd_list]
 
@@ -263,8 +262,7 @@ class Common:
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
         self.output_md(items)
-        print(os.listdir('.'),os.getcwd(),'+++++++++++')
-        self.push_md_to_storage()
+
 
 
 def common_process(issues: List[IssuePackage]):
