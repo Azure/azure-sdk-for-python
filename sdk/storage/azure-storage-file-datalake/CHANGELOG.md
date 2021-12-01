@@ -1,5 +1,15 @@
 # Release History
 
+## 12.6.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.6.0b1 (2021-11-08)
 **New features**
 - Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`

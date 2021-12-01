@@ -7,7 +7,9 @@ import os
 import logging
 import requests
 import six
+import sys
 from typing import TYPE_CHECKING
+import pdb
 
 try:
     # py3
@@ -23,12 +25,11 @@ from azure.core.pipeline.transport import RequestsTransport
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from .azure_recorded_testcase import is_live
+from .helpers import is_live
 from .config import PROXY_URL
 
 if TYPE_CHECKING:
     from typing import Tuple
-
 
 # To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
@@ -40,9 +41,15 @@ RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
-# TODO, create a pytest scope="session" implementation that can be added to a fixture such that unit tests can
-# startup/shutdown the local test proxy
-# this should also fire the admin mapping updates, and start/end the session for commiting recording updates
+# we store recording IDs in a module-level variable so that sanitizers can access them
+# we map test IDs to recording IDs, rather than storing only the current test's recording ID, for parallelization
+this = sys.modules[__name__]
+this.recording_ids = {}
+
+
+def get_recording_id():
+    test_id = get_test_id()
+    return this.recording_ids.get(test_id)
 
 
 def get_test_id():
@@ -84,13 +91,16 @@ def start_record_or_playback(test_id):
             headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
         recording_id = result.headers["x-recording-id"]
-        try:
-            variables = result.json()
-        except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
-            six.raise_from(
-                ValueError("The response body returned from starting playback did not contain valid JSON"), ex
-            )
+        if result.text:
+            try:
+                variables = result.json()
+            except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
+                six.raise_from(
+                    ValueError("The response body returned from starting playback did not contain valid JSON"), ex
+                )
 
+    # set recording ID in a module-level variable so that sanitizers can access it
+    this.recording_ids[test_id] = recording_id
     return (recording_id, variables)
 
 

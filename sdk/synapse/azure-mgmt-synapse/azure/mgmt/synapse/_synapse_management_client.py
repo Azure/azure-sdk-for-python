@@ -84,7 +84,6 @@ from .operations import IntegrationRuntimeStatusOperations
 from .operations import SparkConfigurationOperations
 from .operations import SparkConfigurationsOperations
 from .operations import KustoOperationsOperations
-from .operations import KustoPoolOperations
 from .operations import KustoPoolsOperations
 from .operations import KustoPoolChildResourceOperations
 from .operations import KustoPoolAttachedDatabaseConfigurationsOperations
@@ -228,8 +227,6 @@ class SynapseManagementClient(object):
     :vartype spark_configurations: azure.mgmt.synapse.operations.SparkConfigurationsOperations
     :ivar kusto_operations: KustoOperationsOperations operations
     :vartype kusto_operations: azure.mgmt.synapse.operations.KustoOperationsOperations
-    :ivar kusto_pool: KustoPoolOperations operations
-    :vartype kusto_pool: azure.mgmt.synapse.operations.KustoPoolOperations
     :ivar kusto_pools: KustoPoolsOperations operations
     :vartype kusto_pools: azure.mgmt.synapse.operations.KustoPoolsOperations
     :ivar kusto_pool_child_resource: KustoPoolChildResourceOperations operations
@@ -399,8 +396,6 @@ class SynapseManagementClient(object):
         self.spark_configurations = SparkConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.kusto_operations = KustoOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.kusto_pool = KustoPoolOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.kusto_pools = KustoPoolsOperations(
             self._client, self._config, self._serialize, self._deserialize)

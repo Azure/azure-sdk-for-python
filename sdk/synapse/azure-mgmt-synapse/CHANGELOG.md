@@ -1,5 +1,16 @@
 # Release History
 
+## 2.1.0b3 (2021-11-08)
+
+**Features**
+
+  - Model EventHubDataConnection has a new parameter managed_identity_resource_id
+  - Added operation KustoPoolsOperations.list_skus
+
+**Breaking changes**
+
+  - Removed operation group KustoPoolOperations
+
 ## 2.1.0b2 (2021-10-09)
 
 **Features**

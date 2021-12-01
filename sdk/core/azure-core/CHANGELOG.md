@@ -6,7 +6,11 @@
 
 ### Breaking Changes
 
+- Sync stream downloading now raises `azure.core.exceptions.DecodeError` rather than `requests.exceptions.ContentDecodingError`
+
 ### Bugs Fixed
+
+- Add response body to string representation of `HttpResponseError` if we're not able to parse out information #21800
 
 ### Other Changes
 

@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 23:19:08 GMT
+      - Mon, 08 Nov 2021 19:21:29 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
       schema-group-name:
@@ -69,7 +69,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 23:19:09 GMT
+      - Mon, 08 Nov 2021 19:21:30 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
       schema-group-name:

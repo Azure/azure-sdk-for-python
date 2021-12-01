@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 23:19:13 GMT
+      date: Mon, 08 Nov 2021 19:21:34 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 1051144b7fa7490ba07184606fd25d21
@@ -45,7 +45,7 @@ interactions:
       string: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 05 Nov 2021 23:19:14 GMT
+      date: Mon, 08 Nov 2021 19:21:34 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 1051144b7fa7490ba07184606fd25d21
@@ -78,7 +78,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 05 Nov 2021 23:19:14 GMT
+      date: Mon, 08 Nov 2021 19:21:35 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic-asynce5e1482/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: 1051144b7fa7490ba07184606fd25d21

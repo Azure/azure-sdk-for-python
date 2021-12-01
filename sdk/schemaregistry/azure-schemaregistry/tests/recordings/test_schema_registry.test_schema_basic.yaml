@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 23:18:55 GMT
+      - Mon, 08 Nov 2021 19:21:14 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Fri, 05 Nov 2021 23:18:56 GMT
+      - Mon, 08 Nov 2021 19:21:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
@@ -113,7 +113,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Nov 2021 23:18:56 GMT
+      - Mon, 08 Nov 2021 19:21:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-basic31c70f88/versions/1?api-version=2021-10
       schema-group-name:
