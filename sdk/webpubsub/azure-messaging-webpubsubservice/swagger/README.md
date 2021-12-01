@@ -83,3 +83,165 @@ directive:
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post
     transform: $["operationId"] = "GetClientAccessToken"
 ```
+
+### Add hub to client on generate token
+
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/:generateToken"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### SendToAll
+
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/:send"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### ConnectionExistsImpl
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/connections/{connectionId}"].head.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### CloseConnection
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/connections/{connectionId}"].delete.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### SendToConnection
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/connections/{connectionId}/:send"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### GroupExistsImpl
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/groups/{group}"].head.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### SendToGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/groups/{group}/:send"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### AddConnectionToGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/groups/{group}/connections/{connectionId}"].put.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### RemoveConnectionFromGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/groups/{group}/connections/{connectionId}"].delete.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### UserExistsImpl
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/users/{userId}"].head.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### SendToUser
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/users/{userId}/:send"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### AddUserToGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/users/{userId}/groups/{group}"].put.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### RemoveUserFromGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/users/{userId}/groups/{group}"].delete.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### RemoveUserFromAllGroups
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/users/{userId}/groups"].delete.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### GrantPermission
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"].put.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### RevokePermission
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"].delete.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### CheckPermission
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"].head.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### CloseAllConnections
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/:closeConnections"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### CloseGroupConnections
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/groups/{group}/:closeConnections"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### CloseUserConnections
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/users/{userId}/:closeConnections"].post.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```

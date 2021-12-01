@@ -8,3 +8,9 @@
 
 from ._communication_network_traversal_client import CommunicationNetworkTraversalClient
 __all__ = ['CommunicationNetworkTraversalClient']
+
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass

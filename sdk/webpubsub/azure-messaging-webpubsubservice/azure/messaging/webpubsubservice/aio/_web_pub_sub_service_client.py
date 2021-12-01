@@ -25,6 +25,9 @@ if TYPE_CHECKING:
 class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     """WebPubSubServiceClient.
 
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
+     alpha-numeric characters or underscore.
+    :type hub: str
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
@@ -36,12 +39,13 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
 
     def __init__(
         self,
+        hub: str,
         endpoint: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}'
-        self._config = WebPubSubServiceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()

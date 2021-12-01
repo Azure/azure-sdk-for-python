@@ -13,7 +13,7 @@ from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import ResourceGroupPreparer
 from _shared.helper import URIIdentityReplacer
-from _shared.asynctestcase  import AsyncCommunicationTestCase
+from asynctestcase  import AsyncCommunicationIdentityTestCase
 from _shared.testcase import BodyReplacerProcessor
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
@@ -25,7 +25,7 @@ class FakeTokenCredential(object):
 
     async def get_token(self, *args):
         return self.token
-class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
+class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
     def setUp(self):
         super(CommunicationIdentityClientTestAsync, self).setUp()
         self.recording_processors.extend([

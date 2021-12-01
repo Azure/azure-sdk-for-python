@@ -475,7 +475,10 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
   catch
   {
-    LogError "Failed to retrieve package versions. `n$_"
+    if ($_.Exception.Response.StatusCode -ne 404) 
+    {
+      LogError "Failed to retrieve package versions for ${PackageName}. $($_.Exception.Message)"
+    }
     return $null
   }
 }
@@ -502,4 +505,13 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
     PreviewReadMeLocation = 'docs-ref-services/preview'
     Suffix = ''
   }
+}
+
+function Import-Dev-Cert-python
+{
+  Write-Host "Python Trust Methodology"
+
+  $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
+
+  python $pathToScript
 }

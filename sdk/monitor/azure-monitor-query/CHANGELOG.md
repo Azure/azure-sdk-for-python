@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.0.2 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,13 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where Metadata values in timestamp don't show up sometimes.
-
 ### Other Changes
+
+## 1.0.1 (2021-11-09)
+
+### Bugs Fixed
+
+- Fixed a bug where Metadata values in timestamp don't show up sometimes.
 
 ## 1.0.0 (2021-10-06)
 

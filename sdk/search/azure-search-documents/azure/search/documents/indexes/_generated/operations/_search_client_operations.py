@@ -22,20 +22,20 @@ from .._vendor import _convert_request
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_service_statistics_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/servicestats')
@@ -72,6 +72,9 @@ class SearchClientOperationsMixin(object):
 
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceStatistics, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ServiceStatistics
@@ -83,11 +86,14 @@ class SearchClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_service_statistics_request(
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get_service_statistics.metadata['url'],
         )

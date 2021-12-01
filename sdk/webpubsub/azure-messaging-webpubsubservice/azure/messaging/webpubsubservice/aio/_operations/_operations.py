@@ -25,7 +25,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def get_client_access_token(
         self,
-        hub: str,
         *,
         user_id: Optional[str] = None,
         roles: Optional[List[str]] = None,
@@ -36,9 +35,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Generate token for the client to connect Azure Web PubSub service.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :keyword user_id: User Id.
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
@@ -70,7 +66,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_get_client_access_token_request(
-            hub=hub,
+            hub=self._config.hub,
             api_version=api_version,
             user_id=user_id,
             roles=roles,
@@ -105,7 +101,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def close_all_connections(
         self,
-        hub: str,
         *,
         excluded: Optional[List[str]] = None,
         reason: Optional[str] = None,
@@ -115,9 +110,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Close the connections in the hub.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :keyword excluded: Exclude these connectionIds when closing the connections in the hub.
         :paramtype excluded: list[str]
         :keyword reason: The reason closing the client connection.
@@ -139,7 +131,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_close_all_connections_request(
-            hub=hub,
+            hub=self._config.hub,
             api_version=api_version,
             excluded=excluded,
             reason=reason,
@@ -166,7 +158,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def send_to_all(
         self,
-        hub: str,
         message: Union[IO, str, JSONType],
         *,
         excluded: Optional[List[str]] = None,
@@ -176,9 +167,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Broadcast content inside request body to all the connected client connections.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param message: The payload body.
         :type message: IO or str or JSONType
         :keyword excluded: Excluded connection Ids.
@@ -215,7 +203,7 @@ class WebPubSubServiceClientOperationsMixin:
             )
 
         request = build_send_to_all_request(
-            hub=hub,
+            hub=self._config.hub,
             api_version=api_version,
             content_type=content_type,
             json=json,
@@ -244,7 +232,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def connection_exists(
         self,
-        hub: str,
         connection_id: str,
         **kwargs: Any
     ) -> bool:
@@ -252,9 +239,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Check if the connection with the given connectionId exists.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param connection_id: The connection Id.
         :type connection_id: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -274,7 +258,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_connection_exists_request(
-            hub=hub,
+            hub=self._config.hub,
             connection_id=connection_id,
             api_version=api_version,
             template_url=self.connection_exists.metadata['url'],
@@ -301,7 +285,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def close_connection(
         self,
-        hub: str,
         connection_id: str,
         *,
         reason: Optional[str] = None,
@@ -311,9 +294,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Close the client connection.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param connection_id: Target connection Id.
         :type connection_id: str
         :keyword reason: The reason closing the client connection.
@@ -335,7 +315,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_close_connection_request(
-            hub=hub,
+            hub=self._config.hub,
             connection_id=connection_id,
             api_version=api_version,
             reason=reason,
@@ -362,7 +342,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def send_to_connection(
         self,
-        hub: str,
         connection_id: str,
         message: Union[IO, str, JSONType],
         **kwargs: Any
@@ -371,9 +350,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Send content inside request body to the specific connection.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param connection_id: The connection Id.
         :type connection_id: str
         :param message: The payload body.
@@ -410,7 +386,7 @@ class WebPubSubServiceClientOperationsMixin:
             )
 
         request = build_send_to_connection_request(
-            hub=hub,
+            hub=self._config.hub,
             connection_id=connection_id,
             api_version=api_version,
             content_type=content_type,
@@ -439,7 +415,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def group_exists(
         self,
-        hub: str,
         group: str,
         **kwargs: Any
     ) -> bool:
@@ -447,9 +422,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Check if there are any client connections inside the given group.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -469,7 +441,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_group_exists_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             api_version=api_version,
             template_url=self.group_exists.metadata['url'],
@@ -496,7 +468,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def close_group_connections(
         self,
-        hub: str,
         group: str,
         *,
         excluded: Optional[List[str]] = None,
@@ -507,9 +478,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Close connections in the specific group.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :keyword excluded: Exclude these connectionIds when closing the connections in the group.
@@ -533,7 +501,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_close_group_connections_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             api_version=api_version,
             excluded=excluded,
@@ -561,7 +529,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def send_to_group(
         self,
-        hub: str,
         group: str,
         message: Union[IO, str, JSONType],
         *,
@@ -572,9 +539,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Send content inside request body to a group of connections.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param message: The payload body.
@@ -613,7 +577,7 @@ class WebPubSubServiceClientOperationsMixin:
             )
 
         request = build_send_to_group_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             api_version=api_version,
             content_type=content_type,
@@ -643,7 +607,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def add_connection_to_group(
         self,
-        hub: str,
         group: str,
         connection_id: str,
         **kwargs: Any
@@ -652,9 +615,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Add a connection to the target group.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param connection_id: Target connection Id.
@@ -676,7 +636,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_add_connection_to_group_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             connection_id=connection_id,
             api_version=api_version,
@@ -703,7 +663,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def remove_connection_from_group(
         self,
-        hub: str,
         group: str,
         connection_id: str,
         **kwargs: Any
@@ -712,9 +671,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Remove a connection from the target group.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param connection_id: Target connection Id.
@@ -736,7 +692,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_remove_connection_from_group_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             connection_id=connection_id,
             api_version=api_version,
@@ -763,7 +719,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def user_exists(
         self,
-        hub: str,
         user_id: str,
         **kwargs: Any
     ) -> bool:
@@ -771,9 +726,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Check if there are any client connections connected for the given user.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -793,7 +745,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_user_exists_request(
-            hub=hub,
+            hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
             template_url=self.user_exists.metadata['url'],
@@ -820,7 +772,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def close_user_connections(
         self,
-        hub: str,
         user_id: str,
         *,
         excluded: Optional[List[str]] = None,
@@ -831,9 +782,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Close connections for the specific user.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param user_id: The user Id.
         :type user_id: str
         :keyword excluded: Exclude these connectionIds when closing the connections for the user.
@@ -857,7 +805,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_close_user_connections_request(
-            hub=hub,
+            hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
             excluded=excluded,
@@ -885,7 +833,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def send_to_user(
         self,
-        hub: str,
         user_id: str,
         message: Union[IO, str, JSONType],
         **kwargs: Any
@@ -894,9 +841,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Send content inside request body to the specific user.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param user_id: The user Id.
         :type user_id: str
         :param message: The payload body.
@@ -933,7 +877,7 @@ class WebPubSubServiceClientOperationsMixin:
             )
 
         request = build_send_to_user_request(
-            hub=hub,
+            hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
             content_type=content_type,
@@ -962,7 +906,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def add_user_to_group(
         self,
-        hub: str,
         group: str,
         user_id: str,
         **kwargs: Any
@@ -971,9 +914,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Add a user to the target group.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param user_id: Target user Id.
@@ -995,7 +935,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_add_user_to_group_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             user_id=user_id,
             api_version=api_version,
@@ -1022,7 +962,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def remove_user_from_group(
         self,
-        hub: str,
         group: str,
         user_id: str,
         **kwargs: Any
@@ -1031,9 +970,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Remove a user from the target group.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param group: Target group name, which length should be greater than 0 and less than 1025.
         :type group: str
         :param user_id: Target user Id.
@@ -1055,7 +991,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_remove_user_from_group_request(
-            hub=hub,
+            hub=self._config.hub,
             group=group,
             user_id=user_id,
             api_version=api_version,
@@ -1082,7 +1018,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def remove_user_from_all_groups(
         self,
-        hub: str,
         user_id: str,
         **kwargs: Any
     ) -> None:
@@ -1090,9 +1025,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Remove a user from all groups.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param user_id: Target user Id.
         :type user_id: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
@@ -1112,7 +1044,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_remove_user_from_all_groups_request(
-            hub=hub,
+            hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
             template_url=self.remove_user_from_all_groups.metadata['url'],
@@ -1138,7 +1070,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def grant_permission(
         self,
-        hub: str,
         permission: str,
         connection_id: str,
         *,
@@ -1149,9 +1080,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Grant permission to the connection.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param permission: The permission: current supported actions are joinLeaveGroup and
          sendToGroup. Possible values are: "sendToGroup" or "joinLeaveGroup".
         :type permission: str
@@ -1177,7 +1105,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_grant_permission_request(
-            hub=hub,
+            hub=self._config.hub,
             permission=permission,
             connection_id=connection_id,
             api_version=api_version,
@@ -1205,7 +1133,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def revoke_permission(
         self,
-        hub: str,
         permission: str,
         connection_id: str,
         *,
@@ -1216,9 +1143,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Revoke permission for the connection.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param permission: The permission: current supported actions are joinLeaveGroup and
          sendToGroup. Possible values are: "sendToGroup" or "joinLeaveGroup".
         :type permission: str
@@ -1244,7 +1168,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_revoke_permission_request(
-            hub=hub,
+            hub=self._config.hub,
             permission=permission,
             connection_id=connection_id,
             api_version=api_version,
@@ -1272,7 +1196,6 @@ class WebPubSubServiceClientOperationsMixin:
     @distributed_trace_async
     async def has_permission(
         self,
-        hub: str,
         permission: str,
         connection_id: str,
         *,
@@ -1283,9 +1206,6 @@ class WebPubSubServiceClientOperationsMixin:
 
         Check if a connection has permission to the specified action.
 
-        :param hub: Target hub name, which should start with alphabetic characters and only contain
-         alpha-numeric characters or underscore.
-        :type hub: str
         :param permission: The permission: current supported actions are joinLeaveGroup and
          sendToGroup. Possible values are: "sendToGroup" or "joinLeaveGroup".
         :type permission: str
@@ -1311,7 +1231,7 @@ class WebPubSubServiceClientOperationsMixin:
 
 
         request = build_has_permission_request(
-            hub=hub,
+            hub=self._config.hub,
             permission=permission,
             connection_id=connection_id,
             api_version=api_version,
