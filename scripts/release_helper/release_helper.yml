@@ -55,8 +55,8 @@ jobs:
         pip install -r $script_path/requirement.txt
 
         # checkout the target branch
-        # cd file-storage
-        # git checkout release-helper
+        cd file-storage
+        git checkout release-helper
 
         # run
         python $script_path/main.py
