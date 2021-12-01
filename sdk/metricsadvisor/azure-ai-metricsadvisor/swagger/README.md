@@ -35,12 +35,32 @@ add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 ```
 
-### Make getRootCauseOfIncidentByAnomalyDetectionConfiguration pageable
+### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"].get
-    transform: $["operationId"] = "HasPermission"
+- from: swagger-document
+  where: '$.paths["/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"].get'
+  transform: >
+    $["x-ms-pageable"] = {"nextLinkName": null};
 ```
-getRootCauseOfIncidentByAnomalyDetectionConfiguration
+
+### Make get_series_by_anomaly_detection_configuration pageable
+
+```yaml
+directive:
+- from: swagger-document
+  where: '$.paths["/enrichment/anomalyDetection/configurations/{configurationId}/series/query"].post'
+  transform: >
+    $["x-ms-pageable"] = {"nextLinkName": null};
+```
+
+### Make get_metric_data pageable
+
+```yaml
+directive:
+- from: swagger-document
+  where: '$.paths["/metrics/{metricId}/data/query"].post'
+  transform: >
+    $["x-ms-pageable"] = {"nextLinkName": null};
+```

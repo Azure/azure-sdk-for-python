@@ -887,13 +887,13 @@ class MetricsAdvisorOperationsMixin:
         )
     get_anomaly_alerting_configurations_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations'}  # type: ignore
 
-    @distributed_trace_async
-    async def get_series_by_anomaly_detection_configuration(
+    @distributed_trace
+    def get_series_by_anomaly_detection_configuration(
         self,
         configuration_id: str,
         body: "_models.DetectionSeriesQuery",
         **kwargs: Any
-    ) -> "_models.SeriesResultList":
+    ) -> AsyncIterable["_models.SeriesResultList"]:
         """Query series enriched by anomaly detection.
 
         Query series enriched by anomaly detection.
@@ -903,49 +903,80 @@ class MetricsAdvisorOperationsMixin:
         :param body: query series detection result request.
         :type body: ~azure.ai.metricsadvisor.models.DetectionSeriesQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SeriesResultList, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.SeriesResultList
+        :return: An iterator like instance of either SeriesResultList or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SeriesResultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                json = self._serialize.body(body, 'DetectionSeriesQuery')
+                
+                request = build_get_series_by_anomaly_detection_configuration_request(
+                    configuration_id=configuration_id,
+                    content_type=content_type,
+                    json=json,
+                    template_url=self.get_series_by_anomaly_detection_configuration.metadata['url'],
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+            else:
+                json = self._serialize.body(body, 'DetectionSeriesQuery')
+                
+                request = build_get_series_by_anomaly_detection_configuration_request(
+                    configuration_id=configuration_id,
+                    content_type=content_type,
+                    json=json,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        json = self._serialize.body(body, 'DetectionSeriesQuery')
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
 
-        request = build_get_series_by_anomaly_detection_configuration_request(
-            configuration_id=configuration_id,
-            content_type=content_type,
-            json=json,
-            template_url=self.get_series_by_anomaly_detection_configuration.metadata['url'],
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("SeriesResultList", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
         )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('SeriesResultList', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
     get_series_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/series/query'}  # type: ignore
-
 
     @distributed_trace
     def get_anomalies_by_anomaly_detection_configuration(
@@ -1336,13 +1367,13 @@ class MetricsAdvisorOperationsMixin:
         )
     get_incidents_by_anomaly_detection_configuration_next_pages.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query'}  # type: ignore
 
-    @distributed_trace_async
-    async def get_root_cause_of_incident_by_anomaly_detection_configuration(
+    @distributed_trace
+    def get_root_cause_of_incident_by_anomaly_detection_configuration(
         self,
         configuration_id: str,
         incident_id: str,
         **kwargs: Any
-    ) -> "_models.RootCauseList":
+    ) -> AsyncIterable["_models.RootCauseList"]:
         """Query root cause for incident.
 
         Query root cause for incident.
@@ -1352,8 +1383,8 @@ class MetricsAdvisorOperationsMixin:
         :param incident_id: incident id.
         :type incident_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RootCauseList, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.RootCauseList
+        :return: An iterator like instance of either RootCauseList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.RootCauseList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RootCauseList"]
@@ -1361,36 +1392,64 @@ class MetricsAdvisorOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
+                    configuration_id=configuration_id,
+                    incident_id=incident_id,
+                    template_url=self.get_root_cause_of_incident_by_anomaly_detection_configuration.metadata['url'],
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        
-        request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
-            configuration_id=configuration_id,
-            incident_id=incident_id,
-            template_url=self.get_root_cause_of_incident_by_anomaly_detection_configuration.metadata['url'],
+            else:
+                
+                request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
+                    configuration_id=configuration_id,
+                    incident_id=incident_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("RootCauseList", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
         )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('RootCauseList', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
     get_root_cause_of_incident_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause'}  # type: ignore
-
 
     @distributed_trace_async
     async def create_credential(
@@ -2737,13 +2796,13 @@ class MetricsAdvisorOperationsMixin:
     get_ingestion_progress.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionProgress'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_metric_data(
+    @distributed_trace
+    def get_metric_data(
         self,
         metric_id: str,
         body: "_models.MetricDataQueryOptions",
         **kwargs: Any
-    ) -> "_models.MetricDataList":
+    ) -> AsyncIterable["_models.MetricDataList"]:
         """Get time series data from metric.
 
         Get time series data from metric.
@@ -2753,49 +2812,79 @@ class MetricsAdvisorOperationsMixin:
         :param body: query time series data condition.
         :type body: ~azure.ai.metricsadvisor.models.MetricDataQueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MetricDataList, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.MetricDataList
+        :return: An iterator like instance of either MetricDataList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricDataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricDataList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                json = self._serialize.body(body, 'MetricDataQueryOptions')
+                
+                request = build_get_metric_data_request(
+                    metric_id=metric_id,
+                    content_type=content_type,
+                    json=json,
+                    template_url=self.get_metric_data.metadata['url'],
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+            else:
+                json = self._serialize.body(body, 'MetricDataQueryOptions')
+                
+                request = build_get_metric_data_request(
+                    metric_id=metric_id,
+                    content_type=content_type,
+                    json=json,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        json = self._serialize.body(body, 'MetricDataQueryOptions')
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
 
-        request = build_get_metric_data_request(
-            metric_id=metric_id,
-            content_type=content_type,
-            json=json,
-            template_url=self.get_metric_data.metadata['url'],
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("MetricDataList", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
         )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('MetricDataList', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
     get_metric_data.metadata = {'url': '/metrics/{metricId}/data/query'}  # type: ignore
-
 
     @distributed_trace
     def get_metric_series(
