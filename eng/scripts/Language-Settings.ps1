@@ -161,7 +161,7 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
+function ValidatePackage($packageName, $packageVersion, $workingDirectory, $PackageSourceOverride, $Doc) {
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
@@ -514,4 +514,15 @@ function Import-Dev-Cert-python
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
 
   python $pathToScript
+}
+
+fucntion Validate-Python-DocMsPackages ($PackageInfo) 
+{ 
+  $packageName = $PackageInfo.Name
+  $packageVersion = $PackageInfo.Version
+
+  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+  New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
+
+  ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder
 }
