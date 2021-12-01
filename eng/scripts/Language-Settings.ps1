@@ -175,8 +175,7 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory, $Pack
   }
 }
 function DockerValidation($packageName, $packageVersion) {
-  $packageExpression = "$packageName==$packageVersion"
-  docker run -e TARGET_PACKAGE=$packageExpression -t $ImageId
+  docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion$ -e EXTRA_INDEX_URL=$PackageSourceOverride -t $ImageId
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
   # If the docker failed because of docker itself instead of the application, 
   # we should skip the validation and keep the packages. 
