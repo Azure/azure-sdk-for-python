@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+from typing import Dict, Any, Optional, Union, Tuple
+
+from . import BlobLeaseClient
+
 try:
     from urllib.parse import quote
 except ImportError:
@@ -45,7 +49,7 @@ _SUPPORTED_API_VERSIONS = [
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (Dict[str, Any], str, str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # type: (Dict[str, Any], str, str) -> Tuple[Union[Optional[str], Any], Union[Optional[str], Any]]
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
@@ -106,7 +110,6 @@ def get_cpk_scope_info(kwargs):
     # type: (Dict[str, Any]) -> CpkScopeInfo
     if 'encryption_scope' in kwargs:
         return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
-    return None
 
 
 def get_container_cpk_scope_info(kwargs):
@@ -124,11 +127,10 @@ def get_container_cpk_scope_info(kwargs):
                 prevent_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
             )
         raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
-    return None
 
 
 def get_api_version(kwargs):
-    # type: (Dict[str, Any], str) -> str
+    # type: (Dict[str, Any]) -> str
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
@@ -163,43 +165,43 @@ def serialize_blob_tags(tags=None):
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater):
-    if formater == "ParquetDialect":
+def serialize_query_format(formatter):
+    if formatter == "ParquetDialect":
         qq_format = QueryFormat(
             type=QueryFormatType.PARQUET,
             parquet_text_configuration=' '
         )
-    elif isinstance(formater, DelimitedJsonDialect):
+    elif isinstance(formatter, DelimitedJsonDialect):
         serialization_settings = JsonTextConfiguration(
-            record_separator=formater.delimiter
+            record_separator=formatter.delimiter
         )
         qq_format = QueryFormat(
             type=QueryFormatType.json,
             json_text_configuration=serialization_settings)
-    elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
+    elif hasattr(formatter, 'quotechar'):  # This supports a csv.Dialect as well
         try:
-            headers = formater.has_header
+            headers = formatter.has_header
         except AttributeError:
             headers = False
         serialization_settings = DelimitedTextConfiguration(
-            column_separator=formater.delimiter,
-            field_quote=formater.quotechar,
-            record_separator=formater.lineterminator,
-            escape_char=formater.escapechar,
+            column_separator=formatter.delimiter,
+            field_quote=formatter.quotechar,
+            record_separator=formatter.lineterminator,
+            escape_char=formatter.escapechar,
             headers_present=headers
         )
         qq_format = QueryFormat(
             type=QueryFormatType.delimited,
             delimited_text_configuration=serialization_settings
         )
-    elif isinstance(formater, list):
+    elif isinstance(formatter, list):
         serialization_settings = ArrowConfiguration(
-            schema=formater
+            schema=formatter
         )
         qq_format = QueryFormat(
             type=QueryFormatType.arrow,
             arrow_configuration=serialization_settings)
-    elif not formater:
+    elif not formatter:
         return None
     else:
         raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect or ParquetDialect.")

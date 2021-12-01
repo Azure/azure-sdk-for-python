@@ -14,6 +14,7 @@ from azure.core.pipeline import AsyncPipeline
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
+from .. import ImmutabilityPolicy
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -805,8 +806,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+    async def set_immutability_policy(self,
+                                      immutability_policy,  # type: ImmutabilityPolicy
+                                      **kwargs,  # type: Any
+                                    ):
+        # type: (...) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0

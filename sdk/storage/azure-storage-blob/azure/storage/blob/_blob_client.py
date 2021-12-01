@@ -11,6 +11,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
     TypeVar, Type)
 
+from . import ImmutabilityPolicy
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -1407,8 +1409,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+    def set_immutability_policy(self,
+                                immutability_policy,  # type: ImmutabilityPolicy
+                                **kwargs,  # type: Any
+                                ):
+        # type: (...) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1532,10 +1537,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None, # type: Optional[Dict[str, str]]
+            metadata=None,  # type: Optional[Dict[str, str]]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
-        ):
+    ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """Creates a new Page Blob of the specified size.
 
