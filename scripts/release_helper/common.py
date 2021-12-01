@@ -239,9 +239,9 @@ class Common:
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
-            item.user.login,
+            item.issue_package.issue.user.login,
             self.package_name,
-            item.assignee.login,
+            item.issue_package.issue.assignee.login,
             self.bot_advice,
             create_date,
             self.target_release_date,
