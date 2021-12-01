@@ -15,7 +15,6 @@ from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
 import re
 
-import pdb
 from pypi_tools.pypi import PyPIClient
 
 setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
@@ -102,7 +101,6 @@ def process_requirement(req, dependency_type):
             v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
         ]
 
-    pdb.set_trace()
     if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
         versions = [
             v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
