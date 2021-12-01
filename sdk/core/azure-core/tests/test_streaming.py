@@ -26,6 +26,7 @@
 import pytest
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
+from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -94,6 +95,7 @@ def test_compress_compressed_no_header(http_request):
     except UnicodeDecodeError:
         pass
 
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_plain_header(http_request):
     # expect error
@@ -110,6 +112,15 @@ def test_decompress_plain_header(http_request):
         assert False
     except DecodeError:
         pass
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_decompress_plain_header_offline(port, http_request):
+    request = http_request(method="GET", url="http://localhost:{}/streams/compressed".format(port),
+                           headers={"Content-Type": "gzip"})
+    with RequestsTransport() as sender:
+        response = sender.send(request)
+        response.raise_for_status()
+        assert response.text() == '{"error": headers={"Content-Type": "gzip"}}'
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_plain_header(http_request):
