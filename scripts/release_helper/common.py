@@ -248,7 +248,7 @@ class Common:
         )
 
     def push_md_to_storage(self):
-        with open('release_go_status.md','r') as f :
+        with open('release_js_status.md','r') as f :
             print(f.read(),'++++++++++++++++++')
         cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
         [sp.check_call(cmd, shell=True) for cmd in cmd_list]
