@@ -1,6 +1,6 @@
 # Release History
 
-## 1.21.0 (2021-12-01)
+## 1.21.0 (2021-12-02)
 
 ### Breaking Changes
 
