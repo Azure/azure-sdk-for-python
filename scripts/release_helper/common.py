@@ -218,7 +218,6 @@ class Common:
         self.language_owner = language_owner
         # arguments add to language.md
         self.file_out_name = 'common.md'
-        self.bot_advice = ''
         self.target_release_date = ''
         self.date_from_target = ''
         self.package_name = ''
@@ -226,7 +225,7 @@ class Common:
         for assignee in assignee_token:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
 
-    def output_python_md(self, items):
+    def output_md(self, items):
         with open(self.file_out_name, 'w') as file_out:
             file_out.write(
                 '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
@@ -242,7 +241,7 @@ class Common:
             item.issue_package.issue.user.login,
             self.package_name,
             item.issue_package.issue.assignee.login,
-            self.bot_advice,
+            item.bot,
             create_date,
             self.target_release_date,
             self.date_from_target
@@ -261,7 +260,7 @@ class Common:
                 items.append(issue)
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
-        self.output_python_md(items)
+        self.output_md(items)
         self.push_md_to_storage()
 
 
