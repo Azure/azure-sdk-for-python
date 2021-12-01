@@ -60,13 +60,13 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_url_pdf(self, client):
         poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 3)
-        self.assertEqual(layout.tables[0].column_count, 5)
-        self.assertEqual(layout.tables[0].page_number, 1)
+        assert layout.tables[0].row_count == 3
+        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].page_number == 1
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -94,16 +94,16 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_url_jpg(self, client):
         poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 4)
-        self.assertEqual(layout.tables[1].row_count, 4)
-        self.assertEqual(layout.tables[1].column_count, 2)
-        self.assertEqual(layout.tables[0].page_number, 1)
-        self.assertEqual(layout.tables[1].page_number, 1)
+        assert layout.tables[0].row_count == 5
+        assert layout.tables[0].column_count== 4
+        assert layout.tables[1].row_count == 4
+        assert layout.tables[1].column_count== 2
+        assert layout.tables[0].page_number == 1
+        assert layout.tables[1].page_number== 1
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -111,7 +111,7 @@ class TestContentFromUrl(FormRecognizerTest):
         poller = client.begin_recognize_content_from_url(self.multipage_url_pdf)
         result = poller.result()
 
-        self.assertEqual(len(result), 3)
+        assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
@@ -144,7 +144,7 @@ class TestContentFromUrl(FormRecognizerTest):
 
         poller = client.begin_recognize_content_from_url(None, continuation_token=cont_token)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
@@ -152,22 +152,22 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_multipage_table_span_pdf(self, client):
         poller = client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
         result = poller.result()
-        self.assertEqual(len(result), 2)
+        assert len(result) == 2
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertEqual(len(layout.tables), 2)
-        self.assertEqual(layout.tables[0].row_count, 29)
-        self.assertEqual(layout.tables[0].column_count, 4)
-        self.assertEqual(layout.tables[0].page_number, 1)
-        self.assertEqual(layout.tables[1].row_count, 6)
-        self.assertEqual(layout.tables[1].column_count, 5)
-        self.assertEqual(layout.tables[1].page_number, 1)
+        assert layout.page_number == 1
+        assert len(layout.tables) == 2
+        assert layout.tables[0].row_count == 29
+        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].page_number == 1
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count== 5
+        assert layout.tables[1].page_number== 1
         layout = result[1]
-        self.assertEqual(len(layout.tables), 1)
-        self.assertEqual(layout.page_number, 2)
-        self.assertEqual(layout.tables[0].row_count, 23)
-        self.assertEqual(layout.tables[0].column_count, 5)
-        self.assertEqual(layout.tables[0].page_number, 2)
+        assert len(layout.tables) == 1
+        assert layout.page_number == 2
+        assert layout.tables[0].row_count == 23
+        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
@@ -175,9 +175,9 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_selection_marks(self, client):
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
@@ -185,9 +185,9 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_selection_marks_v2(self, client):
         poller = client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
         result = poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
