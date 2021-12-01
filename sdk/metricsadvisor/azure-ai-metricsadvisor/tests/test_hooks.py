@@ -6,23 +6,31 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import functools
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
     EmailNotificationHook,
     WebNotificationHook,
 )
-from base_testcase import TestMetricsAdvisorAdministrationClientBase
+from devtools_testutils import recorded_by_proxy
+from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
+from base_testcase import TestMetricsAdvisorAdministrationClientBase, MetricsAdvisorClientPreparer
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
-    def test_create_email_hook(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_create_email_hook(self, client, variables):
         email_hook_name = self.create_random_name("testemailhook")
+        if self.is_live:
+            variables["email_hook_name"] = email_hook_name
         try:
-            email_hook = self.admin_client.create_hook(
+            email_hook = client.create_hook(
                 hook=EmailNotificationHook(
-                    name=email_hook_name,
+                    name=variables["email_hook_name"],
                     emails_to_alert=["yournamehere@microsoft.com"],
                     description="my email hook",
                     external_link="external link"
@@ -35,18 +43,25 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert email_hook.description == "my email hook"
             assert email_hook.external_link == "external link"
             assert email_hook.hook_type == "Email"
+            if self.is_live:
+                variables["email_hook_id"] = email_hook.id
         finally:
-            self.admin_client.delete_hook(email_hook.id)
+            client.delete_hook(variables["email_hook_id"])
 
             with pytest.raises(ResourceNotFoundError):
-                self.admin_client.get_hook(email_hook.id)
+                client.get_hook(variables["email_hook_id"])
+        return variables
 
-    def test_create_web_hook(self):
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_create_web_hook(self, client, variables):
         web_hook_name = self.create_random_name("testwebhook")
+        if self.is_live:
+            variables["web_hook_name"] = web_hook_name
         try:
-            web_hook = self.admin_client.create_hook(
+            web_hook = client.create_hook(
                 hook=WebNotificationHook(
-                    name=web_hook_name,
+                    name=variables["web_hook_name"],
                     endpoint="https://httpbin.org/post",
                     description="my web hook",
                     external_link="external link"
@@ -59,27 +74,33 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert web_hook.description == "my web hook"
             assert web_hook.external_link == "external link"
             assert web_hook.hook_type == "Webhook"
+            if self.is_live:
+                variables["web_hook_id"] = web_hook.id
         finally:
-            self.admin_client.delete_hook(web_hook.id)
+            client.delete_hook(variables["web_hook_id"])
 
             with pytest.raises(ResourceNotFoundError):
-                self.admin_client.get_hook(web_hook.id)
+                client.get_hook(variables["web_hook_id"])
+        return variables
 
-    def test_list_hooks(self):
-        hooks = self.admin_client.list_hooks()
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_hooks(self, client):
+        hooks = client.list_hooks()
         assert len(list(hooks)) > 0
 
-    def test_update_email_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_with_model(self, client, variables):
+        hook = client.get_hook(variables["email_hook_id"])
         try:
-            hook = self._create_email_hook_for_update(name)
             hook.name = "update"
             hook.description = "update"
             hook.external_link = "update"
             hook.emails_to_alert = ["myemail@m.com"]
 
-            self.admin_client.update_hook(hook)
-            updated = self.admin_client.get_hook(hook.id)
+            client.update_hook(hook)
+            updated = client.get_hook(variables["email_hook_id"])
 
             assert updated.name == "update"
             assert updated.description == "update"
@@ -87,38 +108,40 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             assert updated.emails_to_alert == ["myemail@m.com"]
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["email_hook_id"])
+        return variables
 
-    def test_update_email_hook_with_kwargs(self):
-        name = self.create_random_name("testhook")
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_with_kwargs(self, client, variables):
         try:
-            hook = self._create_email_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            client.update_hook(
+                variables["email_hook_id"],
                 hook_type="Email",
                 name="update",
                 description="update",
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
-            updated = self.admin_client.get_hook(hook.id)
+            updated = client.get_hook(variables["email_hook_id"])
             assert updated.name == "update"
             assert updated.description == "update"
             assert updated.external_link == "update"
             assert updated.emails_to_alert == ["myemail@m.com"]
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["email_hook_id"])
+        return variables
 
-    def test_update_email_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testhook")
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_with_model_and_kwargs(self, client, variables):
         try:
-            hook = self._create_email_hook_for_update(name)
-
+            hook = client.get_hook(variables["email_hook_id"])
             hook.name = "don't update me"
             hook.description = "don't update me"
             hook.emails_to_alert = []
-            self.admin_client.update_hook(
+            client.update_hook(
                 hook,
                 hook_type="Email",
                 name="update",
@@ -126,27 +149,28 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
-            updated = self.admin_client.get_hook(hook.id)
+            updated = client.get_hook(variables["email_hook_id"])
             assert updated.name == "update"
             assert updated.description == "update"
             assert updated.external_link == "update"
             assert updated.emails_to_alert == ["myemail@m.com"]
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["email_hook_id"])
+        return variables
 
-    def test_update_email_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_by_resetting_properties(self, client, variables):
         try:
-            hook = self._create_email_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            client.update_hook(
+                variables["email_hook_id"],
                 hook_type="Email",
                 name="reset",
                 description=None,
                 external_link=None,
             )
-            updated = self.admin_client.get_hook(hook.id)
+            updated = client.get_hook(variables["email_hook_id"])
             assert updated.name == "reset"
 
             # sending null, but not clearing properties
@@ -154,34 +178,37 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             # assert updated.external_link == ""
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["email_hook_id"])
+        return variables
 
-    def test_update_web_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_with_model(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
+            hook = client.get_hook(variables["web_hook_id"])
             hook.name = "update"
             hook.description = "update"
             hook.external_link = "update"
             hook.username = "myusername"
             hook.password = "password"
 
-            self.admin_client.update_hook(hook)
-            updated = self.admin_client.get_hook(hook.id)
+            client.update_hook(hook)
+            updated = client.get_hook(variables["web_hook_id"])
             assert updated.name == "update"
             assert updated.description == "update"
             assert updated.external_link == "update"
             assert updated.username == "myusername"
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["web_hook_id"])
+        return variables
 
-    def test_update_web_hook_with_kwargs(self):
-        name = self.create_random_name("testwebhook")
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_with_kwargs(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            client.update_hook(
+                variables["web_hook_id"],
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
                 name="update",
@@ -190,26 +217,27 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 username="myusername",
                 password="password"
             )
-            updated = self.admin_client.get_hook(hook.id)
+            updated = client.get_hook(variables["web_hook_id"])
             assert updated.name == "update"
             assert updated.description == "update"
             assert updated.external_link == "update"
             assert updated.username == "myusername"
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["web_hook_id"])
+        return variables
 
-    def test_update_web_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testwebhook")
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_with_model_and_kwargs(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-
+            hook = client.get_hook(variables["web_hook_id"])
             hook.name = "don't update me"
             hook.description = "updateMe"
             hook.username = "don't update me"
             hook.password = "don't update me"
             hook.endpoint = "don't update me"
-            self.admin_client.update_hook(
+            client.update_hook(
                 hook,
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
@@ -218,21 +246,22 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 username="myusername",
                 password="password"
             )
-            updated = self.admin_client.get_hook(hook.id)
+            updated = client.get_hook(variables["web_hook_id"])
             assert updated.name == "update"
             assert updated.description == "updateMe"
             assert updated.external_link == "update"
             assert updated.username == "myusername"
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["web_hook_id"])
+        return variables
 
-    def test_update_web_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_by_resetting_properties(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            client.update_hook(
+                variables["web_hook_id"],
                 hook_type="Web",
                 name="reset",
                 description=None,
@@ -241,7 +270,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 username="myusername",
                 password=None
             )
-            updated = self.admin_client.get_hook(hook.id)
+            updated = client.get_hook(variables["web_hook_id"])
             assert updated.name == "reset"
             assert updated.password == ""
 
@@ -250,4 +279,5 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             # assert updated.external_link == ""
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            client.delete_hook(variables["web_hook_id"])
+        return variables
