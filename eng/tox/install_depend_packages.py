@@ -15,6 +15,7 @@ from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
 import re
 
+import pdb
 from pypi_tools.pypi import PyPIClient
 
 setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
@@ -39,7 +40,7 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     "six": "1.12.0",
 }
 
-MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "3.4.8"}
+MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "35.0.0"}
 
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -101,6 +102,7 @@ def process_requirement(req, dependency_type):
             v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
         ]
 
+    pdb.set_trace()
     if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
         versions = [
             v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
