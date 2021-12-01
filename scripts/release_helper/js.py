@@ -3,10 +3,10 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_JS_OWNER = {'lirenhe'}
+_JS_OWNER = {'qiaozha', 'lirenhe'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN_JS = {'lirenhe': os.getenv('JS_QIAOQIAO_TOKEN')}
+_ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('JS_QIAOQIAO_TOKEN')}
 
 
 class IssueProcessJs(IssueProcess):
