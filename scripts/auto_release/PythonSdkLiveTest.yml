@@ -44,7 +44,6 @@ jobs:
         output_path=$(pwd)/venv-sdk
         pip install packaging
         pip install -r $script_path/livetest_package.txt
-        pip show azure-identity
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
