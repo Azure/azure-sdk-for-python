@@ -14,7 +14,8 @@ import six
 
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
-from .utils import AsyncTimer
+from .utils_async import AsyncTimer
+
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
