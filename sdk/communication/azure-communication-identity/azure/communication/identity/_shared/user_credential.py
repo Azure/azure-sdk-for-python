@@ -85,7 +85,6 @@ class CommunicationTokenCredential(object):
                 with self._lock:
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
-
                 raise
         if self._refresh_proactively:
             self._schedule_refresh()
