@@ -161,28 +161,62 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-function ValidatePackage($packageName, $packageVersion, $workingDirectory, $PackageSourceOverride, $Doc) {
+function ValidatePackage
+{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$DocValidationImageId
+  ) 
+  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
+  if (!(Test-Path $installValidationFolder)) {
+    New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
+  }
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
-  if (!$ImageId) {
+  if (!$DocValidationImageId) {
     Write-Host "Validating using pip command directly on $packageName."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
   } 
   else {
-    Write-Host "Validating using $ImageId on $packageName."
-    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion"
+    Write-Host "Validating using $DocValidationImageId on $packageName."
+    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
   }
 }
-function DockerValidation($packageName, $packageVersion) {
-  docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion$ -e EXTRA_INDEX_URL=$PackageSourceOverride -t $ImageId
+function DockerValidation{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$DocValidationImageId
+  ) 
+  if ($PackageSourceOverride) {
+    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion$ -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId
+  }
+  else {
+    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion$ -t $DocValidationImageId
+  }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
   # If the docker failed because of docker itself instead of the application, 
   # we should skip the validation and keep the packages. 
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
     Write-Host $commandLine
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion"
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
     Write-Host $commandLine
@@ -192,7 +226,19 @@ function DockerValidation($packageName, $packageVersion) {
   return $true
 }
 
-function FallbackValidation($packageName, $packageVersion, $workingDirectory) {
+function FallbackValidation
+{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$true)]
+    [string]$workingDirectory,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$PackageSourceOverride
+  ) 
   $installTargetFolder = Join-Path $workingDirectory $packageName
   New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
   $packageExpression = "$packageName$packageVersion"
@@ -265,10 +311,6 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
   Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
   $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
 
-  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-  New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
-
-
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
     $packageName = $package.package_info.name
@@ -328,7 +370,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     # If upgrading the package, run basic sanity checks against the package
     if ($package.package_info.version -ne $packageVersion) {
       Write-Host "New version detected for $packageName ($packageVersion)"
-      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
         LogWarning "Package is not valid: $packageName. Keeping old version."
         $outputPackages += $package
         continue
@@ -383,7 +425,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
+    if (!(ValidatePackage -packageInfo $packageName -packageVersion $packageVersion)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
     }
@@ -515,13 +557,19 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-fucntion Validate-Python-DocMsPackages ($PackageInfo) 
+fucntion Validate-Python-DocMsPackages
 { 
-  $packageName = $PackageInfo.Name
-  $packageVersion = $PackageInfo.Version
-
-  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-  New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
-
-  ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder
+  Param(
+    [Parameter(Mandatory=$true)]
+    [PSCustomObject]$PackageInfo,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [AllowNull]
+    [string]$DocValidationImageId
+  ) 
+  $packageName = $packageInfo.Name
+  $packageVersion = $packageInfo.Version
+  ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
 }

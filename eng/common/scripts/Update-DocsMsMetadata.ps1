@@ -93,12 +93,25 @@ function GetAdjustedReadmeContent($ReadmeContent, $PackageInfo, $PackageMetadata
     $ReadmeContent = $ReadmeContent -replace $releaseReplaceRegex, $replacementPattern
   }
   
+  # Get the first code owners of the package.
+  $author = "ramya-rao-a"
+  $msauthor = "ramyar"
+  Write-Host "Retrieve the code owner from $($PackageInfo.DirectoryPath)."
+  $codeOwnerArray = ."$PSScriptRoot/get-codeowners.ps1" `
+                    -TargetDirectory $PackageInfo.DirectoryPath 
+  if ($codeOwnerArray) {
+    Write-Host "Code Owners are $($codeOwnerArray -join ",")"
+    $author = $codeOwnerArray[0]
+    $msauthor = $author # This is a placeholder for now. Will change to the right ms alias.
+  }
+  Write-Host "The author of package: $author"
+  Write-Host "The ms author of package: $msauthor"
   $header = @"
 ---
 title: $foundTitle
 keywords: Azure, $Language, SDK, API, $($PackageInfo.Name), $service
-author: maggiepint
-ms.author: magpint
+author: $author
+ms.author: $msauthor
 ms.date: $date
 ms.topic: reference
 ms.prod: azure
@@ -106,7 +119,6 @@ ms.technology: azure
 ms.devlang: $Language
 ms.service: $service
 ---
-
 "@
 
   return "$header`n$ReadmeContent"
@@ -189,7 +201,7 @@ foreach ($packageInfoLocation in $PackageInfoJsonLocations) {
   $packageInfo = GetPackageInfoJson $packageInfoLocation
   # Add validation step for daily update and release
   if ($ValidateDocsMsPackagesFn -and (Test-Path "Function:$ValidateDocsMsPackagesFn")) {
-    &$ValidateDocsMsPackagesFn -PackageInfo $packageInfo 
+    &$ValidateDocsMsPackagesFn -PackageInfo $packageInfo -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
     if ($LASTEXITCODE -ne 0) {
       LogError "The package failed Doc.Ms validation. Please fixed the doc and republish to Doc.Ms."
     }
