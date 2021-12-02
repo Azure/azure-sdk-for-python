@@ -12,7 +12,6 @@ class ListRepositoriesTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        # Create clients
         account_url = self.get_from_env("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
         audience = "https://management.azure.com"
         self.anon_client = ContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
@@ -23,9 +22,9 @@ class ListRepositoriesTest(PerfStressTest):
         await super().close()
 
     def run_sync(self):
-        for repository_name in self.anon_client.list_repository_names():
-            self.anon_client.get_repository_properties(repository_name)
+        for _ in self.anon_client.list_repository_names():
+            pass
 
     async def run_async(self):
-        async for repository_name in self.async_anon_client.list_repository_names():
-            await self.async_anon_client.get_repository_properties(repository_name)
+        async for _ in self.async_anon_client.list_repository_names():
+            pass

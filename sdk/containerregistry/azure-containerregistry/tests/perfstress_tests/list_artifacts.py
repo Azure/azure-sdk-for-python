@@ -12,7 +12,6 @@ class ListArtifactsTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        # Create clients
         account_url = self.get_from_env("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
         audience = "https://management.azure.com"
         self.anon_client = ContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
@@ -24,9 +23,9 @@ class ListArtifactsTest(PerfStressTest):
         await super().close()
 
     def run_sync(self):
-        for manifest in self.anon_client.list_manifest_properties(self.repository):
-            self.anon_client.get_manifest_properties(self.repository, manifest.digest)
+        for _ in self.anon_client.list_manifest_properties(self.repository):
+            pass
 
     async def run_async(self):
-        async for manifest in self.async_anon_client.list_manifest_properties(self.repository):
-            await self.async_anon_client.get_manifest_properties(self.repository, manifest.digest)
+        async for _ in self.async_anon_client.list_manifest_properties(self.repository):
+            pass
