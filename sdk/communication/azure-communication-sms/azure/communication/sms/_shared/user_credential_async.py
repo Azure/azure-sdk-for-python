@@ -5,62 +5,83 @@
 # --------------------------------------------------------------------------
 from asyncio import Condition, Lock
 from datetime import timedelta
+import sys
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
     Any
 )
+import six
 
 from .utils import get_current_utc_as_int
-from .user_token_refresh_options import CommunicationTokenRefreshOptions
+from .utils import create_access_token
+from .utils_async import AsyncTimer
 
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service
-    :keyword token_refresher: The async token refresher to provide capacity to fetch fresh token
+    :keyword callable token_refresher: The async token refresher to provide capacity to fetch fresh token
+    :keyword bool refresh_proactively: Whether to refresh the token proactively or not
+    :keyword timedelta refresh_time_before_expiry: The time before the token expires to refresh the token
     :raises: TypeError
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
+    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self, token: str, **kwargs: Any):
-        token_refresher = kwargs.pop('token_refresher', None)
-        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
-                                                                               token_refresher=token_refresher)
-        self._token = communication_token_refresh_options.get_token()
-        self._token_refresher = communication_token_refresh_options.get_token_refresher()
-        self._lock = Condition(Lock())
+        if not isinstance(token, six.string_types):
+            raise TypeError("Token must be a string.")
+        self._token = create_access_token(token)
+        self._token_refresher = kwargs.pop('token_refresher', None)
+        self._refresh_proactively = kwargs.pop('refresh_proactively', False)
+        self._refresh_time_before_expiry = kwargs.pop('refresh_time_before_expiry', timedelta(
+            minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
+        self._timer = None
+        self._async_mutex = Lock()
+        if sys.version_info[:3] == (3, 10, 0):
+            # Workaround for Python 3.10 bug(https://bugs.python.org/issue45416):
+            getattr(self._async_mutex, '_get_loop', lambda: None)()
+        self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
+        if self._refresh_proactively:
+            self._schedule_refresh()
 
-    async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
-        # type (*str, **Any) -> AccessToken
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        if self._timer is not None:
+            self._timer.cancel()
+
+    async def get_token(self):
+        # type () -> ~azure.core.credentials.AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
         if not self._token_refresher or not self._token_expiring():
             return self._token
+        await self._update_token_and_reschedule()
+        return self._token
 
+    async def _update_token_and_reschedule(self):
         should_this_thread_refresh = False
-
         async with self._lock:
-
             while self._token_expiring():
                 if self._some_thread_refreshing:
                     if self._is_currenttoken_valid():
                         return self._token
 
-                    await self._wait_till_inprogress_thread_finish_refreshing()
+                    self._wait_till_inprogress_thread_finish_refreshing()
                 else:
                     should_this_thread_refresh = True
                     self._some_thread_refreshing = True
                     break
 
-
         if should_this_thread_refresh:
             try:
-                newtoken = await self._token_refresher()  # pylint:disable=not-callable
-
+                newtoken = self._token_refresher()  # pylint:disable=not-callable
                 async with self._lock:
                     self._token = newtoken
                     self._some_thread_refreshing = False
@@ -69,27 +90,32 @@ class CommunicationTokenCredential(object):
                 async with self._lock:
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
-
                 raise
-
+        if self._refresh_proactively:
+            self._schedule_refresh()
         return self._token
 
-    async def _wait_till_inprogress_thread_finish_refreshing(self):
+    def _schedule_refresh(self):
+        if self._timer is not None:
+            self._timer.cancel()
+
+        timespan = self._token.expires_on - \
+            get_current_utc_as_int() - self._refresh_time_before_expiry.total_seconds()
+        self._timer = AsyncTimer(timespan, self._update_token_and_reschedule)
+        self._timer.start()
+
+    def _wait_till_inprogress_thread_finish_refreshing(self):
         self._lock.release()
-        await self._lock.acquire()
+        self._lock.acquire()
 
     def _token_expiring(self):
+        if self._refresh_proactively:
+            interval = self._refresh_time_before_expiry
+        else:
+            interval = timedelta(
+                minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
         return self._token.expires_on - get_current_utc_as_int() <\
-            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
+            interval.total_seconds()
 
     def _is_currenttoken_valid(self):
         return get_current_utc_as_int() < self._token.expires_on
-
-    async def close(self) -> None:
-        pass
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, *args):
-        await self.close()
