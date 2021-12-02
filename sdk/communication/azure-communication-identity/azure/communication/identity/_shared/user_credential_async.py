@@ -32,7 +32,7 @@ class CommunicationTokenCredential(object):
 
     def __init__(self, token: str, **kwargs: Any):
         if not isinstance(token, six.string_types):
-            raise TypeError("token must be a string.")
+            raise TypeError("Token must be a string.")
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
