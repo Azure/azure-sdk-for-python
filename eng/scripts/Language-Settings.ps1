@@ -169,10 +169,10 @@ function ValidatePackage
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$DocValidationImageId
   ) 
   $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
@@ -198,10 +198,10 @@ function DockerValidation{
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$DocValidationImageId
   ) 
   if ($PackageSourceOverride) {
@@ -236,7 +236,7 @@ function FallbackValidation
     [Parameter(Mandatory=$true)]
     [string]$workingDirectory,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$PackageSourceOverride
   ) 
   $installTargetFolder = Join-Path $workingDirectory $packageName
@@ -563,10 +563,10 @@ function Validate-Python-DocMsPackages
     [Parameter(Mandatory=$true)]
     [PSCustomObject]$PackageInfo,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [AllowNull]
+    [AllowEmptyString]
     [string]$DocValidationImageId
   ) 
   $packageName = $packageInfo.Name
