@@ -6,7 +6,16 @@
 
 from asyncio import Condition, Lock
 from datetime import timedelta
+<<<<<<< HEAD
 from typing import Any
+=======
+import sys
+from typing import (  # pylint: disable=unused-import
+    cast,
+    Tuple,
+    Any
+)
+>>>>>>> 594cd1d95c (lock issue for python 3.10 is fixed)
 import six
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
@@ -34,6 +43,12 @@ class CommunicationTokenCredential(object):
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
         self._timer = None
         self._async_mutex = Lock()
+<<<<<<< HEAD
+=======
+        if sys.version_info[:3] == (3, 10, 0):
+            # Workaround for Python 3.10 bug(https://bugs.python.org/issue45416):
+            getattr(self._async_mutex, '_get_loop', lambda: None)()
+>>>>>>> 594cd1d95c (lock issue for python 3.10 is fixed)
         self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
         if self._refresh_proactively:
