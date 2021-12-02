@@ -6,6 +6,7 @@
 
 import base64
 import functools
+import json
 from typing import TYPE_CHECKING, Generic
 from six.moves.urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
@@ -101,7 +102,14 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
             self.update_status()
 
         if TextAnalyticsLROPollingMethod._failed(self.status()):
-            raise OperationFailed("Operation failed or canceled")
+            try:
+                job = json.loads(self._pipeline_response.http_response.text())
+                error_message = ""
+                for err in job["errors"]:
+                    error_message += "({}) {}".format(err["code"], err["message"])
+                raise HttpResponseError(message=error_message, response=self._pipeline_response.http_response)
+            except KeyError:
+                raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:

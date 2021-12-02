@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b3 (2021-11-09)
 
 - Added device discovery and device detail request for ONVIF enabled devices.

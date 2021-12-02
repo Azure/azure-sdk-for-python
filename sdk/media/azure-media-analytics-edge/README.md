@@ -143,11 +143,11 @@ additional questions or comments.
 
 [package]: https://pypi.org/project/azure-media-analytics-edge/
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/media
-[samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
+[samples]: https://github.com/Azure-Samples/video-analyzer-iot-edge-python 
 
 [doc_direct_methods]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/direct-methods
 [doc_media_graph]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/media-graph-concept#media-graph-topologies-and-instances
-[doc_product]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/
+[doc_product]: https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/overview
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/

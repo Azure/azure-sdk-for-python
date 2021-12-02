@@ -29,7 +29,7 @@ from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECK
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 from urllib3.exceptions import (
-    DecodeError, ReadTimeoutError, ProtocolError
+    DecodeError as CoreDecodeError, ReadTimeoutError, ProtocolError
 )
 import requests
 
@@ -39,6 +39,7 @@ from azure.core.exceptions import (
     ServiceResponseError,
     IncompleteReadError,
     HttpResponseError,
+    DecodeError
 )
 from . import HttpRequest # pylint: disable=unused-import
 
@@ -71,11 +72,11 @@ def _read_raw_stream(response, chunk_size=1):
             for chunk in response.raw.stream(chunk_size, decode_content=False):
                 yield chunk
         except ProtocolError as e:
-            raise requests.exceptions.ChunkedEncodingError(e)
-        except DecodeError as e:
-            raise requests.exceptions.ContentDecodingError(e)
+            raise ServiceResponseError(e, error=e)
+        except CoreDecodeError as e:
+            raise DecodeError(e, error=e)
         except ReadTimeoutError as e:
-            raise requests.exceptions.ConnectionError(e)
+            raise ServiceRequestError(e, error=e)
     else:
         # Standard file-like object.
         while True:
@@ -174,6 +175,8 @@ class StreamDownloadGenerator(object):
             raise StopIteration()
         except requests.exceptions.StreamConsumedError:
             raise
+        except requests.exceptions.ContentDecodingError as err:
+            raise DecodeError(err, error=err)
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
             if 'IncompleteRead' in msg:

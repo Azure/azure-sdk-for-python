@@ -129,11 +129,6 @@ def analyze_general_documents():
                 table_idx, table.row_count, table.column_count
             )
         )
-        print(
-            "Table # {} has {} lines and {} words".format(
-                table_idx, len(table.get_lines()), len(table.get_words())
-            )
-        )
         for region in table.bounding_regions:
             print(
                 "Table # {} location on page: {} is {}".format(

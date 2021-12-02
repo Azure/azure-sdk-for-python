@@ -49,7 +49,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-        Default value and only accepted value currently is "2021-10".
+     Default value and only accepted value currently is "2021-10".
 
     .. admonition:: Example:
 
@@ -91,8 +91,8 @@ class SchemaRegistryClient(object):
     def register_schema(
         self,
         group_name,
-        schema_name,
-        schema_definition,
+        name,
+        definition,
         format,
         **kwargs  # pylint:disable=redefined-builtin
     ):
@@ -103,8 +103,8 @@ class SchemaRegistryClient(object):
         schema is created at latest version + 1.
 
         :param str group_name: Schema group under which schema should be registered.
-        :param str schema_name: Name of schema being registered.
-        :param str schema_definition: String representation of the schema being registered.
+        :param str name: Name of schema being registered.
+        :param str definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
@@ -126,19 +126,21 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_register_request(
             group_name=group_name,
-            schema_name=schema_name,
-            content=schema_definition,
-            serialization_type=format,
-            content_type=kwargs.pop("content_type", "application/json"),
+            schema_name=name,
+            content=definition,
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response, format)
 
     def get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> Schema
@@ -162,7 +164,7 @@ class SchemaRegistryClient(object):
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_get_by_id_request(
-            schema_id=schema_id, **http_request_kwargs
+            id=schema_id, **http_request_kwargs
         )
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
@@ -171,8 +173,8 @@ class SchemaRegistryClient(object):
     def get_schema_properties(
         self,
         group_name,
-        schema_name,
-        schema_definition,
+        name,
+        definition,
         format,
         **kwargs  # pylint:disable=redefined-builtin
     ):
@@ -182,8 +184,8 @@ class SchemaRegistryClient(object):
         as matched by schema definition comparison.
 
         :param str group_name: Schema group under which schema should be registered.
-        :param str schema_name: Name of schema being registered.
-        :param str schema_definition: String representation of the schema being registered.
+        :param str name: Name of schema being registered.
+        :param str definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
         :type format: Union[str, SchemaFormat]
         :rtype: ~azure.schemaregistry.SchemaProperties
@@ -204,16 +206,18 @@ class SchemaRegistryClient(object):
         except AttributeError:
             pass
 
+        format = format.capitalize()
         http_request_kwargs = get_http_request_kwargs(kwargs)
         request = schema_rest.build_query_id_by_content_request(
             group_name=group_name,
-            schema_name=schema_name,
-            content=schema_definition,
-            serialization_type=format,
-            content_type=kwargs.pop("content_type", "application/json"),
+            schema_name=name,
+            content=definition,
+            content_type=kwargs.pop(
+                "content_type", "application/json; serialization={}".format(format)
+            ),
             **http_request_kwargs
         )
 
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
-        return _parse_response_schema_properties(response)
+        return _parse_response_schema_properties(response, format)

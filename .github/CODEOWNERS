@@ -23,7 +23,7 @@
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
@@ -125,10 +125,13 @@
 /sdk/tables/                                                         @annatisch @YalinLi0312
 
 # PRLabel: %Media
-/sdk/media/                                                          @naiteeks @bennage @giakas
+/sdk/media/                                                          @naiteeks @giakas
 
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
+
+# PRLabel: %VideoAnalyzer
+/sdk/videoanalyzer/                                                  @hivyas
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve

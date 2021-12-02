@@ -1,14 +1,20 @@
 # Release History
 
-## 1.20.1 (Unreleased)
-
-### Features Added
+## 1.21.0 (2021-12-02)
 
 ### Breaking Changes
 
+- Sync stream downloading now raises `azure.core.exceptions.DecodeError` rather than `requests.exceptions.ContentDecodingError`
+
 ### Bugs Fixed
 
-### Other Changes
+- Add response body to string representation of `HttpResponseError` if we're not able to parse out information #21800
+
+## 1.20.1 (2021-11-08)
+
+### Bugs Fixed
+
+- Correctly set response's content to decompressed body when users are using aiohttp transport with decompression headers #21620
 
 ## 1.20.0 (2021-11-04)
 

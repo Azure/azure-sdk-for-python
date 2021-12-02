@@ -6,10 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from ._monitor_management_client_enums import *
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -41,12 +43,15 @@ class ErrorResponse(msrest.serialization.Model):
 class MetricNamespace(msrest.serialization.Model):
     """Metric namespace class specifies the metadata for a metric namespace.
 
-    :param id: The ID of the metricNamespace.
+    :param id: The ID of the metric namespace.
     :type id: str
     :param type: The type of the namespace.
     :type type: str
-    :param name: The name of the namespace.
+    :param name: The escaped name of the namespace.
     :type name: str
+    :param classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
+    :type classification: str or
+     ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
     :param properties: Properties which include the fully qualified namespace name.
     :type properties: ~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespaceName
     """
@@ -55,6 +60,7 @@ class MetricNamespace(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'classification': {'key': 'classification', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'MetricNamespaceName'},
     }
 
@@ -64,6 +70,7 @@ class MetricNamespace(msrest.serialization.Model):
         id: Optional[str] = None,
         type: Optional[str] = None,
         name: Optional[str] = None,
+        classification: Optional[Union[str, "NamespaceClassification"]] = None,
         properties: Optional["MetricNamespaceName"] = None,
         **kwargs
     ):
@@ -71,6 +78,7 @@ class MetricNamespace(msrest.serialization.Model):
         self.id = id
         self.type = type
         self.name = name
+        self.classification = classification
         self.properties = properties
 
 

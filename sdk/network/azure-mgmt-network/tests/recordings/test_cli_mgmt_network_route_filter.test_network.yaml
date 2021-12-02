@@ -14,14 +14,14 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRouteFilter\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter\",\r\n
-        \ \"etag\": \"W/\\\"65b28922-4aad-4a82-9a1b-dcc39d604779\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"4f44a847-7e4c-47e7-9693-f1c1bf457262\\\"\",\r\n  \"type\":
         \"Microsoft.Network/routeFilters\",\r\n  \"location\": \"eastus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Updating\",\r\n    \"rules\": []\r\n  }\r\n}"
@@ -29,7 +29,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/6f319d25-2c26-4dad-86ec-fb1b4211a07c?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/756e8bd2-da8f-42fe-922f-bfdb831568eb?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:30 GMT
+      - Fri, 05 Nov 2021 10:10:19 GMT
       expires:
       - '-1'
       pragma:
@@ -50,7 +50,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a2da8ef9-66c5-41e6-8999-2bc3d417127d
+      - 94f2c22e-f3f2-4349-9398-73af42ead3d7
       x-ms-ratelimit-remaining-subscription-writes:
       - '1196'
     status:
@@ -66,10 +66,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/6f319d25-2c26-4dad-86ec-fb1b4211a07c?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/756e8bd2-da8f-42fe-922f-bfdb831568eb?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:40 GMT
+      - Fri, 05 Nov 2021 10:10:30 GMT
       expires:
       - '-1'
       pragma:
@@ -98,7 +98,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d8b45e2c-9ad3-421c-8876-9b0ac44cf4c4
+      - aec17773-b790-4ef5-b743-a83704d50051
     status:
       code: 200
       message: OK
@@ -112,14 +112,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRouteFilter\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter\",\r\n
-        \ \"etag\": \"W/\\\"c0904849-df7f-42dd-a6cd-abdfda57610b\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"b3f8ca7b-7c17-4830-8e11-a1e489edace4\\\"\",\r\n  \"type\":
         \"Microsoft.Network/routeFilters\",\r\n  \"location\": \"eastus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"rules\": []\r\n  }\r\n}"
@@ -131,9 +131,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:40 GMT
+      - Fri, 05 Nov 2021 10:10:30 GMT
       etag:
-      - W/"c0904849-df7f-42dd-a6cd-abdfda57610b"
+      - W/"b3f8ca7b-7c17-4830-8e11-a1e489edace4"
       expires:
       - '-1'
       pragma:
@@ -150,7 +150,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 01940b33-9f92-488b-8554-f1f28e1288e3
+      - 7b44c6d8-7ab0-47a5-af4f-a8aecdb6de8e
     status:
       code: 200
       message: OK
@@ -164,10 +164,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/serviceTags?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/serviceTags?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"Public\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/serviceTags/Public\",\r\n
@@ -19558,7 +19558,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:41 GMT
+      - Fri, 05 Nov 2021 10:10:31 GMT
       expires:
       - '-1'
       pragma:
@@ -19575,7 +19575,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c912f726-43a2-46ff-b0c2-29aa91d6972f
+      - 57702900-5597-45db-8462-825989eb9bea
     status:
       code: 200
       message: OK
@@ -19594,20 +19594,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRule\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule\",\r\n
-        \ \"etag\": \"W/\\\"b86668b2-9bed-4452-ba44-cfc5a9058510\\\"\",\r\n  \"properties\":
+        \ \"etag\": \"W/\\\"cc4d6dc7-5982-44d0-be63-30be5a5499db\\\"\",\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Updating\",\r\n    \"access\": \"Allow\",\r\n
         \   \"routeFilterRuleType\": \"Community\",\r\n    \"communities\": [\r\n
         \     \"12076:51004\"\r\n    ]\r\n  },\r\n  \"type\": \"Microsoft.Network/routeFilters/routeFilterRules\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e5611c24-f6b4-49bb-8e96-79c1c38f8489?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/5090352f-07e9-42c0-92e2-e11ddbd04910?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
@@ -19615,7 +19615,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:41 GMT
+      - Fri, 05 Nov 2021 10:10:31 GMT
       expires:
       - '-1'
       pragma:
@@ -19628,7 +19628,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6f5e4e82-10d7-4ef0-8f85-b8dfe8e42598
+      - 09c17bb2-b91e-4c8b-983f-0a72a63ae9aa
       x-ms-ratelimit-remaining-subscription-writes:
       - '1195'
     status:
@@ -19644,10 +19644,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e5611c24-f6b4-49bb-8e96-79c1c38f8489?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/5090352f-07e9-42c0-92e2-e11ddbd04910?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -19659,7 +19659,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:51 GMT
+      - Fri, 05 Nov 2021 10:10:41 GMT
       expires:
       - '-1'
       pragma:
@@ -19676,7 +19676,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 68d766e7-5069-4387-9a81-a38cb813a01a
+      - 75f83eca-f815-429e-bc33-e7bd29fc58a8
     status:
       code: 200
       message: OK
@@ -19690,14 +19690,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRule\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule\",\r\n
-        \ \"etag\": \"W/\\\"a70a906f-4cc9-4c80-b73d-a15013aa3b78\\\"\",\r\n  \"properties\":
+        \ \"etag\": \"W/\\\"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd\\\"\",\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"access\": \"Allow\",\r\n
         \   \"routeFilterRuleType\": \"Community\",\r\n    \"communities\": [\r\n
         \     \"12076:51004\"\r\n    ]\r\n  },\r\n  \"type\": \"Microsoft.Network/routeFilters/routeFilterRules\"\r\n}"
@@ -19709,9 +19709,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:51 GMT
+      - Fri, 05 Nov 2021 10:10:41 GMT
       etag:
-      - W/"a70a906f-4cc9-4c80-b73d-a15013aa3b78"
+      - W/"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd"
       expires:
       - '-1'
       pragma:
@@ -19728,7 +19728,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - ed7c3817-e28e-44dd-80b7-e0b8ab94ceda
+      - d8e3104a-96f9-4e17-8ea0-63c8bf118514
     status:
       code: 200
       message: OK
@@ -19742,14 +19742,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRule\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule\",\r\n
-        \ \"etag\": \"W/\\\"a70a906f-4cc9-4c80-b73d-a15013aa3b78\\\"\",\r\n  \"properties\":
+        \ \"etag\": \"W/\\\"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd\\\"\",\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"access\": \"Allow\",\r\n
         \   \"routeFilterRuleType\": \"Community\",\r\n    \"communities\": [\r\n
         \     \"12076:51004\"\r\n    ]\r\n  },\r\n  \"type\": \"Microsoft.Network/routeFilters/routeFilterRules\"\r\n}"
@@ -19761,9 +19761,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:52 GMT
+      - Fri, 05 Nov 2021 10:10:41 GMT
       etag:
-      - W/"a70a906f-4cc9-4c80-b73d-a15013aa3b78"
+      - W/"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd"
       expires:
       - '-1'
       pragma:
@@ -19780,7 +19780,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b6052880-c079-4f4a-93e8-c358d1251853
+      - 246726b5-bedb-4fc5-8888-d99095634d7b
     status:
       code: 200
       message: OK
@@ -19794,19 +19794,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRouteFilter\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter\",\r\n
-        \ \"etag\": \"W/\\\"a70a906f-4cc9-4c80-b73d-a15013aa3b78\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd\\\"\",\r\n  \"type\":
         \"Microsoft.Network/routeFilters\",\r\n  \"location\": \"eastus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"rules\": [\r\n      {\r\n        \"name\": \"myRule\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule\",\r\n
-        \       \"etag\": \"W/\\\"a70a906f-4cc9-4c80-b73d-a15013aa3b78\\\"\",\r\n
+        \       \"etag\": \"W/\\\"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"access\": \"Allow\",\r\n          \"routeFilterRuleType\": \"Community\",\r\n
         \         \"communities\": [\r\n            \"12076:51004\"\r\n          ]\r\n
@@ -19820,9 +19820,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:52 GMT
+      - Fri, 05 Nov 2021 10:10:41 GMT
       etag:
-      - W/"a70a906f-4cc9-4c80-b73d-a15013aa3b78"
+      - W/"2e3d7945-9d4d-4e69-aaa8-5f55a2a125cd"
       expires:
       - '-1'
       pragma:
@@ -19839,7 +19839,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - fa2d20cc-f8bb-479f-8819-6c7131586e43
+      - e4906baf-3318-4c7e-ba33-1240ce4d3643
     status:
       code: 200
       message: OK
@@ -19857,19 +19857,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"myRouteFilter\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter\",\r\n
-        \ \"etag\": \"W/\\\"4cb11ba1-d22d-498e-b592-fbea496f25a4\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"726f2e73-665f-4058-9d61-5c22794906d7\\\"\",\r\n  \"type\":
         \"Microsoft.Network/routeFilters\",\r\n  \"location\": \"eastus\",\r\n  \"tags\":
         {\r\n    \"key1\": \"value1\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"rules\": [\r\n      {\r\n        \"name\": \"myRule\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule\",\r\n
-        \       \"etag\": \"W/\\\"4cb11ba1-d22d-498e-b592-fbea496f25a4\\\"\",\r\n
+        \       \"etag\": \"W/\\\"726f2e73-665f-4058-9d61-5c22794906d7\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"access\": \"Allow\",\r\n          \"routeFilterRuleType\": \"Community\",\r\n
         \         \"communities\": [\r\n            \"12076:51004\"\r\n          ]\r\n
@@ -19885,7 +19885,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:10:53 GMT
+      - Fri, 05 Nov 2021 10:10:42 GMT
       expires:
       - '-1'
       pragma:
@@ -19902,7 +19902,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 18391811-539d-405b-ba19-ce0e3219ed45
+      - fac1d61d-51e1-4ca2-b1ea-d82d796ee23a
       x-ms-ratelimit-remaining-subscription-writes:
       - '1194'
     status:
@@ -19920,26 +19920,26 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter/routeFilterRules/myRule?api-version=2021-05-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/557aa1df-562d-4c28-ac73-6371ef67ae8d?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/6d1483c3-a60b-40da-9fd6-9c42681478a7?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Thu, 21 Oct 2021 03:10:53 GMT
+      - Fri, 05 Nov 2021 10:10:42 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/557aa1df-562d-4c28-ac73-6371ef67ae8d?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/6d1483c3-a60b-40da-9fd6-9c42681478a7?api-version=2021-05-01
       pragma:
       - no-cache
       server:
@@ -19950,7 +19950,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f7265aa0-df09-4965-8b33-947648c10c42
+      - 9ce37219-70b2-4ad1-b283-ccfc0da19a57
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14998'
     status:
@@ -19966,10 +19966,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/557aa1df-562d-4c28-ac73-6371ef67ae8d?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/6d1483c3-a60b-40da-9fd6-9c42681478a7?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -19981,7 +19981,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:11:04 GMT
+      - Fri, 05 Nov 2021 10:10:52 GMT
       expires:
       - '-1'
       pragma:
@@ -19998,7 +19998,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2d031393-97fc-4bb6-aeda-1f624ff6bd8c
+      - bbeb22bd-6597-48c9-81be-1aed61281f9d
     status:
       code: 200
       message: OK
@@ -20014,10 +20014,10 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/routeFilters/myRouteFilter?api-version=2021-05-01
   response:
     body:
       string: ''
@@ -20025,17 +20025,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/5eaab82a-33f6-4e09-99ab-9270f4e3a34e?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c1845658-fd05-433a-be5b-04a2f7d6c058?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Thu, 21 Oct 2021 03:11:05 GMT
+      - Fri, 05 Nov 2021 10:10:53 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/5eaab82a-33f6-4e09-99ab-9270f4e3a34e?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/c1845658-fd05-433a-be5b-04a2f7d6c058?api-version=2021-05-01
       pragma:
       - no-cache
       server:
@@ -20046,7 +20046,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - cb05a201-8dca-4837-8e5b-64a2e9ef1e61
+      - 768b543a-f109-4564-bbe7-d9e5468d65f8
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14997'
     status:
@@ -20062,10 +20062,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/5eaab82a-33f6-4e09-99ab-9270f4e3a34e?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c1845658-fd05-433a-be5b-04a2f7d6c058?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -20077,7 +20077,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:11:15 GMT
+      - Fri, 05 Nov 2021 10:11:03 GMT
       expires:
       - '-1'
       pragma:
@@ -20094,7 +20094,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0b3c4d92-050d-4ba6-bd05-27688ca7c1a8
+      - 24b8b826-135d-4fdd-a855-a9cbadb78201
     status:
       code: 200
       message: OK

@@ -31,8 +31,9 @@ class SchemaFormat(str, Enum):
     Represents the format of the schema to be stored by the Schema Registry service.
     """
 
-    AVRO = "avro"
+    AVRO = "Avro"
     """Represents the Apache Avro schema format."""
+
 
 class ApiVersion(str, Enum):
     """

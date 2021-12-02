@@ -167,13 +167,7 @@ class AzureMgmtPreparer(AbstractPreparer):
         return self.resource_moniker
 
     def create_mgmt_client(self, client_class, **kwargs):
-        subscription_id = None
-        if self.is_live:
-            subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
-        if not subscription_id:
-            subscription_id = self.test_class_instance.settings.SUBSCRIPTION_ID
-
-        return self.test_class_instance.create_basic_client(client_class, subscription_id=subscription_id, **kwargs)
+        return self.test_class_instance.create_mgmt_client(client_class, **kwargs)
 
 
 class RENameReplacer(GeneralNameReplacer):

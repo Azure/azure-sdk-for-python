@@ -35,7 +35,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link)
+    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link, issue_info)
     # Check readme tag format
     if 'package' not in readme_tag:
         readme_tag = 'package-{}'.format(readme_tag)
@@ -53,7 +53,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     return package_name, readme_link, output_folder
 
 
-def _get_pkname_and_readme_link(rest_repo, link):
+def _get_pkname_and_readme_link(rest_repo, link, issue_info):
     # change commit link to pull json link(i.e. https://github.com/Azure/azure-rest-api-specs/commit/77f5d3b5d2fbae17621ea124485788f496786758#diff-708c2fb843b022cac4af8c6f996a527440c1e0d328abb81f54670747bf14ab1a)
     pk_name = ''
     if 'commit' in link:
@@ -68,6 +68,11 @@ def _get_pkname_and_readme_link(rest_repo, link):
 
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
+        
+        if not pr_info.merged:
+            issue_info.create_comment(f' @{issue_info.user.login},please merge your pr first. {link}')
+            raise Exception('PR has not been merged')
+            
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url

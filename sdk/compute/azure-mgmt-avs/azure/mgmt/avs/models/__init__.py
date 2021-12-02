@@ -14,6 +14,7 @@ try:
     from ._models_py3 import AddonSrmProperties
     from ._models_py3 import AddonVrProperties
     from ._models_py3 import AdminCredentials
+    from ._models_py3 import AvailabilityProperties
     from ._models_py3 import Circuit
     from ._models_py3 import CloudLink
     from ._models_py3 import CloudLinkList
@@ -25,6 +26,8 @@ try:
     from ._models_py3 import Datastore
     from ._models_py3 import DatastoreList
     from ._models_py3 import DiskPoolVolume
+    from ._models_py3 import Encryption
+    from ._models_py3 import EncryptionKeyVaultProperties
     from ._models_py3 import Endpoints
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
@@ -45,7 +48,12 @@ try:
     from ._models_py3 import OperationList
     from ._models_py3 import OperationProperties
     from ._models_py3 import PSCredentialExecutionParameter
+    from ._models_py3 import PlacementPoliciesList
+    from ._models_py3 import PlacementPolicy
+    from ._models_py3 import PlacementPolicyProperties
+    from ._models_py3 import PlacementPolicyUpdate
     from ._models_py3 import PrivateCloud
+    from ._models_py3 import PrivateCloudIdentity
     from ._models_py3 import PrivateCloudList
     from ._models_py3 import PrivateCloudProperties
     from ._models_py3 import PrivateCloudUpdate
@@ -67,6 +75,11 @@ try:
     from ._models_py3 import Sku
     from ._models_py3 import TrackedResource
     from ._models_py3 import Trial
+    from ._models_py3 import VirtualMachine
+    from ._models_py3 import VirtualMachineRestrictMovement
+    from ._models_py3 import VirtualMachinesList
+    from ._models_py3 import VmHostPlacementPolicyProperties
+    from ._models_py3 import VmPlacementPolicyProperties
     from ._models_py3 import WorkloadNetworkDhcp
     from ._models_py3 import WorkloadNetworkDhcpEntity
     from ._models_py3 import WorkloadNetworkDhcpList
@@ -98,6 +111,7 @@ except (SyntaxError, ImportError):
     from ._models import AddonSrmProperties  # type: ignore
     from ._models import AddonVrProperties  # type: ignore
     from ._models import AdminCredentials  # type: ignore
+    from ._models import AvailabilityProperties  # type: ignore
     from ._models import Circuit  # type: ignore
     from ._models import CloudLink  # type: ignore
     from ._models import CloudLinkList  # type: ignore
@@ -109,6 +123,8 @@ except (SyntaxError, ImportError):
     from ._models import Datastore  # type: ignore
     from ._models import DatastoreList  # type: ignore
     from ._models import DiskPoolVolume  # type: ignore
+    from ._models import Encryption  # type: ignore
+    from ._models import EncryptionKeyVaultProperties  # type: ignore
     from ._models import Endpoints  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorResponse  # type: ignore
@@ -129,7 +145,12 @@ except (SyntaxError, ImportError):
     from ._models import OperationList  # type: ignore
     from ._models import OperationProperties  # type: ignore
     from ._models import PSCredentialExecutionParameter  # type: ignore
+    from ._models import PlacementPoliciesList  # type: ignore
+    from ._models import PlacementPolicy  # type: ignore
+    from ._models import PlacementPolicyProperties  # type: ignore
+    from ._models import PlacementPolicyUpdate  # type: ignore
     from ._models import PrivateCloud  # type: ignore
+    from ._models import PrivateCloudIdentity  # type: ignore
     from ._models import PrivateCloudList  # type: ignore
     from ._models import PrivateCloudProperties  # type: ignore
     from ._models import PrivateCloudUpdate  # type: ignore
@@ -151,6 +172,11 @@ except (SyntaxError, ImportError):
     from ._models import Sku  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import Trial  # type: ignore
+    from ._models import VirtualMachine  # type: ignore
+    from ._models import VirtualMachineRestrictMovement  # type: ignore
+    from ._models import VirtualMachinesList  # type: ignore
+    from ._models import VmHostPlacementPolicyProperties  # type: ignore
+    from ._models import VmPlacementPolicyProperties  # type: ignore
     from ._models import WorkloadNetworkDhcp  # type: ignore
     from ._models import WorkloadNetworkDhcpEntity  # type: ignore
     from ._models import WorkloadNetworkDhcpList  # type: ignore
@@ -178,12 +204,18 @@ except (SyntaxError, ImportError):
 from ._avs_client_enums import (
     AddonProvisioningState,
     AddonType,
+    AffinityType,
+    AvailabilityStrategy,
     CloudLinkStatus,
     ClusterProvisioningState,
     DatastoreProvisioningState,
+    DatastoreStatus,
     DhcpTypeEnum,
     DnsServiceLogLevelEnum,
     DnsServiceStatusEnum,
+    EncryptionKeyStatus,
+    EncryptionState,
+    EncryptionVersionType,
     ExpressRouteAuthorizationProvisioningState,
     GlobalReachConnectionProvisioningState,
     GlobalReachConnectionStatus,
@@ -191,10 +223,14 @@ from ._avs_client_enums import (
     InternetEnum,
     MountOptionEnum,
     OptionalParamEnum,
+    PlacementPolicyProvisioningState,
+    PlacementPolicyState,
+    PlacementPolicyType,
     PortMirroringDirectionEnum,
     PortMirroringStatusEnum,
     PrivateCloudProvisioningState,
     QuotaEnabled,
+    ResourceIdentityType,
     ScriptExecutionParameterType,
     ScriptExecutionProvisioningState,
     ScriptOutputStreamType,
@@ -204,6 +240,7 @@ from ._avs_client_enums import (
     TrialStatus,
     VMGroupStatusEnum,
     VMTypeEnum,
+    VirtualMachineRestrictMovementState,
     VisibilityParameterEnum,
     WorkloadNetworkDhcpProvisioningState,
     WorkloadNetworkDnsServiceProvisioningState,
@@ -222,6 +259,7 @@ __all__ = [
     'AddonSrmProperties',
     'AddonVrProperties',
     'AdminCredentials',
+    'AvailabilityProperties',
     'Circuit',
     'CloudLink',
     'CloudLinkList',
@@ -233,6 +271,8 @@ __all__ = [
     'Datastore',
     'DatastoreList',
     'DiskPoolVolume',
+    'Encryption',
+    'EncryptionKeyVaultProperties',
     'Endpoints',
     'ErrorAdditionalInfo',
     'ErrorResponse',
@@ -253,7 +293,12 @@ __all__ = [
     'OperationList',
     'OperationProperties',
     'PSCredentialExecutionParameter',
+    'PlacementPoliciesList',
+    'PlacementPolicy',
+    'PlacementPolicyProperties',
+    'PlacementPolicyUpdate',
     'PrivateCloud',
+    'PrivateCloudIdentity',
     'PrivateCloudList',
     'PrivateCloudProperties',
     'PrivateCloudUpdate',
@@ -275,6 +320,11 @@ __all__ = [
     'Sku',
     'TrackedResource',
     'Trial',
+    'VirtualMachine',
+    'VirtualMachineRestrictMovement',
+    'VirtualMachinesList',
+    'VmHostPlacementPolicyProperties',
+    'VmPlacementPolicyProperties',
     'WorkloadNetworkDhcp',
     'WorkloadNetworkDhcpEntity',
     'WorkloadNetworkDhcpList',
@@ -300,12 +350,18 @@ __all__ = [
     'WorkloadNetworkVirtualMachinesList',
     'AddonProvisioningState',
     'AddonType',
+    'AffinityType',
+    'AvailabilityStrategy',
     'CloudLinkStatus',
     'ClusterProvisioningState',
     'DatastoreProvisioningState',
+    'DatastoreStatus',
     'DhcpTypeEnum',
     'DnsServiceLogLevelEnum',
     'DnsServiceStatusEnum',
+    'EncryptionKeyStatus',
+    'EncryptionState',
+    'EncryptionVersionType',
     'ExpressRouteAuthorizationProvisioningState',
     'GlobalReachConnectionProvisioningState',
     'GlobalReachConnectionStatus',
@@ -313,10 +369,14 @@ __all__ = [
     'InternetEnum',
     'MountOptionEnum',
     'OptionalParamEnum',
+    'PlacementPolicyProvisioningState',
+    'PlacementPolicyState',
+    'PlacementPolicyType',
     'PortMirroringDirectionEnum',
     'PortMirroringStatusEnum',
     'PrivateCloudProvisioningState',
     'QuotaEnabled',
+    'ResourceIdentityType',
     'ScriptExecutionParameterType',
     'ScriptExecutionProvisioningState',
     'ScriptOutputStreamType',
@@ -326,6 +386,7 @@ __all__ = [
     'TrialStatus',
     'VMGroupStatusEnum',
     'VMTypeEnum',
+    'VirtualMachineRestrictMovementState',
     'VisibilityParameterEnum',
     'WorkloadNetworkDhcpProvisioningState',
     'WorkloadNetworkDnsServiceProvisioningState',

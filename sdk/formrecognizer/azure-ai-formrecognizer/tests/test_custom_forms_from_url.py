@@ -52,7 +52,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         for form in forms:
             if form.form_type is None:
                 continue  # blank page
-            self.assertEqual(form.form_type, "form-0")
+            assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
     @FormRecognizerPreparer()
@@ -74,7 +74,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         forms = poller.result()
 
         for form in forms:
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
+            assert form.form_type ==  "custom:"+model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
     @FormRecognizerPreparer()
@@ -108,10 +108,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
 
         for form, actual in zip(recognized_form, page_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page)
-            self.assertEqual(form.page_range.last_page_number, actual.page)
-            self.assertIsNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page
+            assert form.page_range.last_page_number ==  actual.page
+            assert form.form_type_confidence is None
+            assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @FormRecognizerPreparer()
@@ -145,16 +145,16 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page_range[0]
+            assert form.page_range.last_page_number ==  actual.page_range[1]
+            assert form.form_type ==  "custom:"+model.model_id
+            assert form.form_type_confidence is not None
+            assert form.model_id ==  model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    @pytest.mark.live_test_only
     def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2):
         fr_client = client.get_form_recognizer_client()
 
@@ -173,7 +173,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             continuation_token=cont_token
         )
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
@@ -207,10 +207,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, page_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page)
-            self.assertEqual(form.page_range.last_page_number, actual.page)
-            self.assertIsNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page
+            assert form.page_range.last_page_number ==  actual.page
+            assert form.form_type_confidence is None
+            assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @FormRecognizerPreparer()
@@ -244,17 +244,17 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
-            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertIsNotNone(form.form_type_confidence)
-            self.assertEqual(form.model_id, model.model_id)
+            assert form.page_range.first_page_number ==  actual.page_range[0]
+            assert form.page_range.last_page_number ==  actual.page_range[1]
+            assert form.form_type ==  "custom:"+model.model_id
+            assert form.form_type_confidence is not None
+            assert form.model_id ==  model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
@@ -262,12 +262,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document_from_url(
+        poller = da_client.begin_analyze_document_from_url(
             model=model.model_id,
             document_url=self.selection_mark_url_pdf,
             cls=callback
@@ -309,7 +309,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url)
         model = build_poller.result()
@@ -317,12 +317,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document_from_url(
+        poller = da_client.begin_analyze_document_from_url(
             model.model_id,
             self.label_table_variable_row_url_pdf,
             cls=callback
@@ -349,7 +349,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url)
         model = build_poller.result()
@@ -357,12 +357,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document_from_url(
+        poller = da_client.begin_analyze_document_from_url(
             model.model_id,
             self.label_table_fixed_row_url_pdf,
             cls=callback
