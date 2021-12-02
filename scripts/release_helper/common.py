@@ -226,7 +226,6 @@ class Common:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
 
     def output_md(self, items):
-        print('++++file out name',self.file_out_name)
         with open(self.file_out_name, 'w') as file_out:
             file_out.write(
                 '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
