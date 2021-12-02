@@ -225,8 +225,7 @@ class Common:
         for assignee in assignee_token:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
 
-    def output_md(self, items):     
-        print('++++file out name',self.file_out_name)
+    def output_md(self, items):
         with open(self.file_out_name, 'w') as file_out:
             file_out.write(
                 '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
@@ -254,7 +253,6 @@ class Common:
         [sp.check_call(cmd, shell=True) for cmd in cmd_list]
 
     def run(self):
-        print(self.file_out_name,'77777777777777')
         items = []
         for item in self.issues_package:
             issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
