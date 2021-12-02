@@ -557,7 +557,7 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-fucntion Validate-Python-DocMsPackages
+function Validate-Python-DocMsPackages
 { 
   Param(
     [Parameter(Mandatory=$true)]
