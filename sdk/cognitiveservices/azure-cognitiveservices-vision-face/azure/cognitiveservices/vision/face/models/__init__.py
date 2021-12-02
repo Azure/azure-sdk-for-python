@@ -41,6 +41,7 @@ try:
     from ._models_py3 import MetaDataContract
     from ._models_py3 import NameAndUserDataContract
     from ._models_py3 import Noise
+    from ._models_py3 import NonNullableNameAndNullableUserDataContract
     from ._models_py3 import Occlusion
     from ._models_py3 import OperationStatus
     from ._models_py3 import PersistedFace
@@ -87,6 +88,7 @@ except (SyntaxError, ImportError):
     from ._models import MetaDataContract
     from ._models import NameAndUserDataContract
     from ._models import Noise
+    from ._models import NonNullableNameAndNullableUserDataContract
     from ._models import Occlusion
     from ._models import OperationStatus
     from ._models import PersistedFace
@@ -114,6 +116,7 @@ from ._face_client_enums import (
     MaskType,
     NoiseLevel,
     OperationStatusType,
+    QualityForRecognition,
     RecognitionModel,
     SnapshotApplyMode,
     SnapshotObjectType,
@@ -152,6 +155,7 @@ __all__ = [
     'MetaDataContract',
     'NameAndUserDataContract',
     'Noise',
+    'NonNullableNameAndNullableUserDataContract',
     'Occlusion',
     'OperationStatus',
     'PersistedFace',
@@ -175,6 +179,7 @@ __all__ = [
     'ExposureLevel',
     'NoiseLevel',
     'MaskType',
+    'QualityForRecognition',
     'FindSimilarMatchMode',
     'TrainingStatusType',
     'SnapshotApplyMode',
