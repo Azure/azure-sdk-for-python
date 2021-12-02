@@ -83,7 +83,7 @@ async def query_items(container, doc_id):
     # In this case, we do have to await the asynchronous iterator object since logic
     # within the query_items() method makes network calls to verify the partition key
     # deifnition in the container
-    query_items_response = await container.query_items(
+    query_items_response = container.query_items(
         query="SELECT * FROM r WHERE r.id=@id",
         parameters=[
             { "name":"@id", "value": doc_id }

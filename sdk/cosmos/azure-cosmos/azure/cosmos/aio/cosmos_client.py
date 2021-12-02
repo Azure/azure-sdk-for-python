@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Iterable, List
+from typing import Any, Dict, Optional, Union, cast, List
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options
+from .._base import build_options as _build_options
 from ._retry_utility_async import _ConnectionRetryPolicy
 from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
@@ -207,7 +207,7 @@ class CosmosClient(object):
                 :name: create_database
         """
 
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
@@ -257,8 +257,8 @@ class CosmosClient(object):
                 **kwargs
             )
 
-    def get_database_client(self, database_id):
-        # type: (str) -> DatabaseProxy
+    def get_database_client(self, database):
+        # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
         """Retrieve an existing database with the ID (name) `id`.
 
         :param database: The ID (name) representing the properties of the database to read.
@@ -266,8 +266,15 @@ class CosmosClient(object):
         :returns: A `DatabaseProxy` instance representing the retrieved database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
+        try:
+            id_value = database.id
+        except AttributeError:
+            try:
+                id_value = database['id']
+            except TypeError:
+                id_value = database
 
-        return DatabaseProxy(self.client_connection, database_id)
+        return DatabaseProxy(self.client_connection, id_value)
 
     @distributed_trace
     def list_databases(
@@ -282,10 +289,10 @@ class CosmosClient(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
+        :returns: An AsyncItemPaged of database properties (dicts).
+        :rtype: AsyncItemPaged[dict[str, str]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -314,10 +321,10 @@ class CosmosClient(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
+        :returns: An AsyncItemPaged of database properties (dicts).
+        :rtype: AsyncItemPaged[dict[str, str]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -351,7 +358,7 @@ class CosmosClient(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         
         database_link = self._get_database_link(database)

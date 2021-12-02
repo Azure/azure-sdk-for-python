@@ -77,6 +77,11 @@ class QueryIterable(AsyncPageIterator):
         )
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
+    async def __aiter__(self):
+        if 'partition_key' in self._options:
+            self._options['partition_key'] = await self._options['partition_key']
+        return self
+
     async def _unpack(self, block):
         continuation = None
         if self._client.last_response_headers:

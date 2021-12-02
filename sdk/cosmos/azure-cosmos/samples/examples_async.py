@@ -89,7 +89,7 @@ async def examples_async():
     # [START query_items]
     import json
 
-    async for item in await container.query_items(
+    async for item in container.query_items(
         query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
         enable_cross_partition_query=True,
     ):
@@ -99,7 +99,7 @@ async def examples_async():
     # Parameterized queries are also supported. This example
     # gets all items whose product model has been discontinued.
     # [START query_items_param]
-    discontinued_items = await container.query_items(
+    discontinued_items = container.query_items(
         query='SELECT * FROM products p WHERE p.productModel = @model AND p.productName="Widget"',
         parameters=[dict(name="@model", value="DISCONTINUED")],
     )
@@ -112,7 +112,7 @@ async def examples_async():
     # so deletes must be done with the delete_item method
     # on the container.
     # [START delete_items]
-    async for item in await container.query_items(
+    async for item in container.query_items(
         query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED" AND p.productName="Widget"'
     ):
         await container.delete_item(item, partition_key="Widget")

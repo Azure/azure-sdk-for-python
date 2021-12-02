@@ -141,7 +141,7 @@ async def query_items(container, doc_id):
     print('\n1.4 Querying for an  Item by Id\n')
 
     # enable_cross_partition_query should be set to True as the container is partitioned
-    items = [item async for item in await container.query_items(
+    items = [item async for item in container.query_items(
         query="SELECT * FROM r WHERE r.id=@id",
         parameters=[
             {"name": "@id", "value": doc_id}

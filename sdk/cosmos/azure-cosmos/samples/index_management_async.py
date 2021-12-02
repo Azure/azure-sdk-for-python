@@ -73,7 +73,7 @@ async def query_entities(parent, entity_type, id = None):
             if id == None:
                 entities = [entity async for entity in parent.read_all_items()]
             else:
-                entities = [entity async for entity in await parent.query_items(find_entity_by_id_query)]
+                entities = [entity async for entity in parent.query_items(find_entity_by_id_query)]
     except exceptions.AzureError as e:
         print("The following error occured while querying for the entity / entities ", entity_type, id if id != None else "")
         print(e)
@@ -114,7 +114,7 @@ async def fetch_all_databases(client):
 
 async def query_documents_with_custom_query(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
-        results = await container.query_items(query_with_optional_parameters, enable_cross_partition_query=True)
+        results = container.query_items(query_with_optional_parameters, enable_cross_partition_query=True)
         print(message)
         async for doc in results:
             print(doc)

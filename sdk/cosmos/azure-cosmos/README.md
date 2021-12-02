@@ -499,7 +499,7 @@ container_name = 'products'
 container = database.get_container_client(container_name)
 
 async def create_lists():
-    results = await container.query_items(
+    results = container.query_items(
             query='SELECT * FROM products p WHERE p.productModel = "Model 2"')
 
     # Iterating directly on results

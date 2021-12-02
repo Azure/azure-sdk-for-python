@@ -22,15 +22,14 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast
+from typing import Any, Dict, List, Optional, Union, cast
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
-from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options
+from .._base import build_options as _build_options
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import Offer
@@ -131,7 +130,7 @@ class ContainerProxy(object):
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
@@ -175,7 +174,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         pre_trigger_include = kwargs.pop('pre_trigger_include', None)
         post_trigger_include = kwargs.pop('post_trigger_include', None)
@@ -226,7 +225,7 @@ class ContainerProxy(object):
                 :name: update_item
         """
         doc_link = self._get_document_link(item)
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -242,17 +241,17 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -267,8 +266,8 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    @distributed_trace_async
-    async def query_items(
+    @distributed_trace
+    def query_items(
         self,
         query,  # type: str
         parameters=None,  # type: Optional[List[Dict[str, Any]]]
@@ -299,8 +298,8 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -320,7 +319,7 @@ class ContainerProxy(object):
                 :caption: Parameterized query to get all products that have been discontinued:
                 :name: query_items_param
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -329,7 +328,7 @@ class ContainerProxy(object):
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if partition_key is not None:
-            feed_options["partitionKey"] = await self._set_partition_key(partition_key)
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
 
@@ -368,10 +367,10 @@ class ContainerProxy(object):
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
@@ -422,7 +421,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableIdGeneration"] = True
         if pre_trigger_include is not None:
@@ -470,7 +469,7 @@ class ContainerProxy(object):
         :rtype: dict[str, Any]
         """
         item_link = self._get_document_link(item)
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableIdGeneration"] = True
         if pre_trigger_include is not None:
@@ -513,7 +512,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -528,9 +527,9 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace_async
-    async def read_throughput(self, **kwargs):
+    async def read_offer(self, **kwargs):
         # type: (Any) -> Offer
-        """Read the throughput offer for this container.
+        """Read the Offer object for this container.
 
         If no Offer already exists for the container, an exception is raised.
 
@@ -600,10 +599,10 @@ class ContainerProxy(object):
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of conflicts (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of conflicts (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -615,8 +614,8 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    @distributed_trace_async
-    async def query_conflicts(
+    @distributed_trace
+    def query_conflicts(
         self,
         query,  # type: str
         parameters=None,  # type: Optional[List[Dict[str, Any]]]
@@ -633,15 +632,15 @@ class ContainerProxy(object):
             cross partition query will be executed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of conflicts (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of conflicts (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if partition_key is not None:
-            feed_options["partitionKey"] = await self._set_partition_key(partition_key)
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
 
@@ -672,7 +671,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -703,7 +702,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)

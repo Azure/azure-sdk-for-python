@@ -24,14 +24,15 @@
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, cast, Iterable, Optional
+from typing import Any, List, Dict, Union, cast, Optional
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-from ..permission import Permission
+from ..permission import Permission as _permission
 
 
 class UserProxy(object):
@@ -90,13 +91,13 @@ class UserProxy(object):
 
     @distributed_trace
     def list_permissions(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List all permission for the user.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of permissions (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of permissions (dicts).
+        :rtype: AsyncItemPaged[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -118,15 +119,15 @@ class UserProxy(object):
         max_item_count=None,
         **kwargs
     ):
-        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """Return all permissions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: An Iterable of permissions (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of permissions (dicts).
+        :rtype: AsyncItemPaged[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -146,7 +147,7 @@ class UserProxy(object):
         return result
 
     @distributed_trace_async
-    async def read_permission(self, permission, **kwargs):
+    async def get_permission(self, permission, **kwargs):
         # type: (Union[str, Dict[str, Any], Permission], Any) -> Permission
         """Get the permission identified by `id`.
 
@@ -167,7 +168,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
 
-        return Permission(
+        return _permission(
             id=permission_resp["id"],
             user_link=self.user_link,
             permission_mode=permission_resp["permissionMode"],
@@ -198,7 +199,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
-        return Permission(
+        return _permission(
             id=permission["id"],
             user_link=self.user_link,
             permission_mode=permission["permissionMode"],
@@ -230,7 +231,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
-        return Permission(
+        return _permission(
             id=permission["id"],
             user_link=self.user_link,
             permission_mode=permission["permissionMode"],
@@ -264,7 +265,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
 
-        return Permission(
+        return _permission(
             id=permission_resp["id"],
             user_link=self.user_link,
             permission_mode=permission_resp["permissionMode"],

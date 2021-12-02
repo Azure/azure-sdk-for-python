@@ -22,13 +22,14 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, Iterable, Optional
+from typing import Any, List, Dict, Union, Optional
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
-from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options
+from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as _cosmos_client_connection
+from .._base import build_options as _build_options
 from ..partition_key import NonePartitionKeyValue
 
 # pylint: disable=protected-access
@@ -62,14 +63,14 @@ class ScriptsProxy(object):
 
     @distributed_trace
     def list_stored_procedures(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List all stored procedures in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of stored procedures (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of stored procedures (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -85,16 +86,16 @@ class ScriptsProxy(object):
         max_item_count=None,
         **kwargs
     ):
-        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """Return all stored procedures matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of stored procedures (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of stored procedures (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -106,7 +107,7 @@ class ScriptsProxy(object):
         )
 
     @distributed_trace_async
-    async def read_stored_procedure(self, sproc, **kwargs):
+    async def get_stored_procedure(self, sproc, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get the stored procedure identified by `id`.
 
@@ -115,7 +116,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.ReadStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
@@ -133,7 +134,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.CreateStoredProcedure(
             collection_link=self.container_link, sproc=body, options=request_options, **kwargs
@@ -158,7 +159,7 @@ class ScriptsProxy(object):
             procedure with given id does not exist.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.ReplaceStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
@@ -179,7 +180,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The sproc does not exist in the container.
         :rtype: None
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         await self.client_connection.DeleteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
@@ -209,10 +210,10 @@ class ScriptsProxy(object):
         :rtype: dict[str, Any]
         """
 
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+                _cosmos_client_connection._return_undefined_or_empty_partition_key(self.is_system_key)
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )
@@ -228,14 +229,14 @@ class ScriptsProxy(object):
 
     @distributed_trace
     def list_triggers(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List all triggers in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of triggers (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of triggers (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -245,16 +246,16 @@ class ScriptsProxy(object):
 
     @distributed_trace
     def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """Return all triggers matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of triggers (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of triggers (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -266,7 +267,7 @@ class ScriptsProxy(object):
         )
 
     @distributed_trace_async
-    async def read_trigger(self, trigger, **kwargs):
+    async def get_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get a trigger identified by `id`.
 
@@ -275,7 +276,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.ReadTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
@@ -293,7 +294,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be created.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.CreateTrigger(
             collection_link=self.container_link, trigger=body, options=request_options, **kwargs
@@ -313,7 +314,7 @@ class ScriptsProxy(object):
             id does not exist.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.ReplaceTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
@@ -334,7 +335,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The trigger does not exist in the container.
         :rtype: None
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         await self.client_connection.DeleteTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
@@ -342,14 +343,14 @@ class ScriptsProxy(object):
 
     @distributed_trace
     def list_user_defined_functions(self, max_item_count=None, **kwargs):
-        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List all the user-defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of user-defined functions (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of user-defined functions (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -359,16 +360,16 @@ class ScriptsProxy(object):
 
     @distributed_trace
     def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> AsyncItemPaged[Dict[str, Any]]
         """Return user-defined functions matching a given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of user-defined functions (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: An AsyncItemPaged of user-defined functions (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        feed_options = build_options(kwargs)
+        feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -380,7 +381,7 @@ class ScriptsProxy(object):
         )
 
     @distributed_trace_async
-    async def read_user_defined_function(self, udf, **kwargs):
+    async def get_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """Get a user-defined function identified by `id`.
 
@@ -389,7 +390,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.ReadUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
@@ -407,7 +408,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be created.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.CreateUserDefinedFunction(
             collection_link=self.container_link, udf=body, options=request_options, **kwargs
@@ -427,7 +428,7 @@ class ScriptsProxy(object):
             with the given id does not exist.
         :rtype: dict[str, Any]
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         return await self.client_connection.ReplaceUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
@@ -448,7 +449,7 @@ class ScriptsProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The UDF does not exist in the container.
         :rtype: None
         """
-        request_options = build_options(kwargs)
+        request_options = _build_options(kwargs)
 
         await self.client_connection.DeleteUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
