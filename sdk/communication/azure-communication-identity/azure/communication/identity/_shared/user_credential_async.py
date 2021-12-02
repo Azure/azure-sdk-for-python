@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from asyncio import Condition, Lock
 from datetime import timedelta
+import sys
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
@@ -38,7 +39,11 @@ class CommunicationTokenCredential(object):
         self._refresh_time_before_expiry = kwargs.pop('refresh_time_before_expiry', timedelta(
             minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
         self._timer = None
-        self._lock = Condition(Lock())
+        self._async_mutex = Lock()
+        if sys.version_info[:3] == (3, 10, 0):
+            # Workaround for Python 3.10 bug(https://bugs.python.org/issue45416):
+            getattr(self._async_mutex, '_get_loop', lambda: None)()
+        self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
         if self._refresh_proactively:
             self._schedule_refresh()
