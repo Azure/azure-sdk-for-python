@@ -11,10 +11,10 @@ try:
     from unittest.mock import MagicMock, patch
 except ImportError:  # python < 3.3
     from mock import MagicMock, patch
-from azure.communication.chat._shared.user_credential_async import CommunicationTokenCredential
-import azure.communication.chat._shared.user_credential_async as user_credential_async
-from azure.communication.chat._shared.utils import create_access_token
-from azure.communication.chat._shared.utils import get_current_utc_as_int
+from azure.communication.sms._shared.user_credential_async import CommunicationTokenCredential
+import azure.communication.sms._shared.user_credential_async as user_credential_async
+from azure.communication.sms._shared.utils import create_access_token
+from azure.communication.sms._shared.utils import get_current_utc_as_int
 from _shared.helper import generate_token_with_custom_expiry
 
 
