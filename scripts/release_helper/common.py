@@ -31,7 +31,7 @@ class IssueProcess:
     # will be changed by order
     issue = None  # issue that needs to handle
     assignee = ''
-    bot = []  # bot advice to help SDK owner
+    bot = ''  # bot advice to help SDK owner
     target_readme_tag = ''  # swagger content that customers want
     readme_link = ''  # https link which swagger definition is in
     default_readme_tag = ''  # configured in `README.md`
@@ -199,10 +199,23 @@ class IssueProcess:
             self.update_issue_instance()
         self.add_label(AUTO_ASSIGN_LABEL)
 
+    def bot_advice(self):
+        latest_comments = ''
+        comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in
+                    self.issue_package.issue.get_comments()]
+        comments.sort()
+        if comments:
+            latest_comments = comments[-1][1]
+        if self.issue_package.issue.comments == 0:
+            self.bot = 'new issue ! <br>'
+        elif latest_comments not in self.language_owner:
+            self.bot = 'new comment.  <br>'
+
     def run(self) -> None:
         # common part(don't change the order)
         self.auto_assign()  # necessary flow
         self.auto_parse()  # necessary flow
+        self.bot_advice()
 
 
 class Common:
@@ -262,7 +275,6 @@ class Common:
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
         self.output_md(items)
-
 
 
 def common_process(issues: List[IssuePackage]):

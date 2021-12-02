@@ -38,6 +38,7 @@ class Java(Common):
         self.file_out_name = 'release_java_status.md'
 
 
+
 def java_process(issues: List[Any]):
     instance = Java(issues, _ASSIGNEE_TOKEN_JAVA, _JAVA_OWNER)
     instance.run()
