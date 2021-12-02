@@ -201,10 +201,10 @@ function DockerValidation{
     [string]$DocValidationImageId
   ) 
   if ($PackageSourceOverride) {
-    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion$ -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId
+    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId
   }
   else {
-    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion$ -t $DocValidationImageId
+    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId
   }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
   # If the docker failed because of docker itself instead of the application, 
