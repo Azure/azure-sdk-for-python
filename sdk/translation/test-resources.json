@@ -50,32 +50,7 @@
             "type": "string",
             "defaultValue": "[concat(parameters('baseName'), 'prim')]"
         },
-        "sourceStorageAccount": {
-            "type": "string",
-            "defaultValue": "krpraticstorageacc"
-        },
-        "sourceResourceId": {
-            "type": "string",
-            "defaultValue": "[resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('sourceStorageAccount'))]"
-        },
-        "sourceContainerName": {
-            "type": "string",
-            "defaultValue": "testingtranslation"
-        },
-        "glossaryFileName": {
-            "type": "string",
-            "defaultValue": "glosario.tsv"
-        },
-        "sourceContainerSasProperties": {
-            "type": "object",
-            "defaultValue": {
-                "canonicalizedResource": "[concat('/blob/', parameters('sourceStorageAccount'), '/', parameters('sourceContainerName'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
-                "signedPermission": "rl",
-                "signedResource": "c"
-            }
-        },
-        "targetResourceId": {
+        "storageAccResourceId": {
             "type": "string",
             "defaultValue": "[resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
         },
@@ -130,6 +105,23 @@
                 "signedPermission": "wl",
                 "signedResource": "c"
             }
+        },
+        "sourceContainerName": {
+            "type": "string",
+            "defaultValue": "sourcecontainer"
+        },
+        "sourceContainerSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('sourceContainerName'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "wl",
+                "signedResource": "c"
+            }
+        },
+        "glossaryFileName": {
+            "type": "string",
+            "defaultValue": "glosario.tsv"
         }
     },
     "variables": {
@@ -231,6 +223,14 @@
                   "dependsOn": [
                     "[parameters('blobStorageAccount')]"
                   ]
+                }, 
+                {
+                  "type": "blobServices/containers",
+                  "apiVersion": "[variables('storageMgmtApiVersion')]",
+                  "name": "[concat('default/', parameters('sourceContainerName'))]",
+                  "dependsOn": [
+                    "[parameters('blobStorageAccount')]"
+                  ]
                 }
             ]
         }
@@ -290,35 +290,35 @@
         },
         "AZURE_SOURCE_CONTAINER_URL": {
             "type": "string",
-            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_SOURCE_CONTAINER_URL_1": {
             "type": "string",
-            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_SOURCE_CONTAINER_URL_2": {
             "type": "string",
-            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_TRANSLATION_GLOSSARY_URL": {
             "type": "string",
-            "value": "[concat(reference(parameters('sourceResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '/', parameters('glossaryFileName'), '?', listServiceSas(parameters('sourceResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '/', parameters('glossaryFileName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL": {
             "type": "string",
-            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_1'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_1')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_1'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_1')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL_FR": {
             "type": "string",
-            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_2'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_2')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_2'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_2')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL_AR": {
             "type": "string",
-            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_3'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_3')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_3'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_3')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL_ES": {
             "type": "string",
-            "value": "[concat(reference(parameters('targetResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('targetResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken)]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken)]"
         }
     }
 }
