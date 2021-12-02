@@ -276,6 +276,8 @@ def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
     except Exception:
         return _DESERIALIZE_MAPPING.get(deserialization_type, lambda x: x)(obj)
 
+from dataclasses import dataclass
+
 class Model(dict):
 
     def __eq__(self, other):
@@ -287,14 +289,34 @@ class Model(dict):
     def copy(self):
         return Model(self.__dict__)
 
-class rest_property:
+_FIELDS = '__dataclass_fields__'
+
+def _process_class(cls):
+    a = "b"
+
+
+def rest_dataclass(cls=None, /):
+    def wrap(cls):
+        return _process_class(cls)
+
+    # See if we're being called as @dataclass or @dataclass().
+    if cls is None:
+        # We're called with parens.
+        return wrap
+
+    # We're called as @dataclass without parens.
+    return wrap(cls)
+
+class _RestField:
     def __init__(self, name: Optional[str] = None, type: Optional[Callable] = None):
-        self._deserialization_type = None
+        self._type = type
         self._rest_name = name
-        self._module = None
+        # self._module = None
 
     def __get__(self, obj: Model, type=None):
-        return _deserialize(obj.__getitem__(self._rest_name), self._deserialization_type, self._module)
+        if type == "get_rest_name":
+            return self._rest_name
+        return _deserialize(obj.__getitem__(self._rest_name), self._type)#, self._module)
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
@@ -302,12 +324,16 @@ class rest_property:
     def __delete__(self, obj) -> None:
         obj.__delitem__(self._rest_name)
 
-    def __call__(self, func):
-        try:
-            self._deserialization_type = func.__annotations__['return']
-        except KeyError:
-            raise TypeError(f"You need to add a response type annotation to the property {func.__name__}.")
-        if not self._rest_name:
-            self._rest_name = func.__name__
-        self._module = func.__module__
-        return self
+def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
+    return _RestField(name=name, type=type)
+
+    # def __call__(self, func):
+    #     if not self._type:
+    #         try:
+    #             self._type = func.__annotations__['return']
+    #         except KeyError:
+    #             self._type = lambda x: x
+    #     if not self._rest_name:
+    #         self._rest_name = func.__name__
+    #     self._module = func.__module__
+    #     return self
