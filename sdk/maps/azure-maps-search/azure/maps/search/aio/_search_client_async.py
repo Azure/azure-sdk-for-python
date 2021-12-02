@@ -10,7 +10,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from .._generated.aio._search_client import SearchClient as SearchClientGen
 from .._generated.models import BatchRequest
-from ..utils import get_authentication_policy
+# from ..utils import get_authentication_policy
 
 if TYPE_CHECKING:
     from typing import Any, List
@@ -21,8 +21,6 @@ if TYPE_CHECKING:
 class SearchClient(object):
     """Azure Maps Search REST APIs.
 
-    :ivar search: SearchOperations operations
-    :vartype search: azure.maps.search.operations.SearchOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param client_id: Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for guidance.
@@ -42,7 +40,8 @@ class SearchClient(object):
 
         self._search_client = SearchClientGen(
             authentication_policy=get_authentication_policy(credential, is_async=True),
-            **kwargs).search
+            **kwargs
+        ).search
 
    
     @distributed_trace_async
@@ -52,7 +51,13 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        """begin_fuzzy_search_batch
 
+        :param batch_request: BatchRequest
+        :type batch_request: "BatchRequest"
+        :return: LROPoller["SearchAddressBatchResult"]
+        :rtype: "LROPoller["SearchAddressBatchResult"]"
+        """
         return self._search_client.begin_fuzzy_search_batch(
             batch_request,
             **kwargs

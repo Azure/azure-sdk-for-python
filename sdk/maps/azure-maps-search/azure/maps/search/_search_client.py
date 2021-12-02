@@ -10,19 +10,16 @@ from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
 from ._generated.models import SearchAddressResult, PointOfInterestCategoryTreeResult, ReverseSearchAddressResult, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, ReverseSearchAddressBatchProcessResult, PolygonResult
 # from .utils import get_authentication_policy, get_headers_policy
-from ._models import *
+# from .models._models import *
 
 if TYPE_CHECKING:
     from typing import Any, List, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from ._models import LatLon
+    from .models._models import LatLon, StructuredAddress
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
-
-    :ivar search: SearchOperations operations
-    :vartype search: azure.maps.search.operations.SearchOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     """
@@ -81,12 +78,12 @@ class SearchClient(object):
          as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
          -122.125679"). Must be properly URL encoded.
         :type query: str
-        :param is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
+        :keyword is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
          partial input and the search will enter predictive mode.
-        :type is_type_ahead: bool
-        :param top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+        :type is_type_ahead: str
+        :keyword top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
-        :type top: int
+        :rtype top: str
         :param skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
         :type skip: int
