@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from devtools_testutils import AzureTestCase
+import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase
+from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
 from azure.core.exceptions import ResourceNotFoundError
-
 from azure.ai.metricsadvisor.models import (
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
@@ -17,23 +19,27 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
-class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
+class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_top_n_alert_direction_both(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_top_n_alert_direction_both(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -45,7 +51,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -69,27 +75,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-                await self.admin_client.delete_alert_configuration(alert_config.id)
+                if self.is_live:
+                    variables["alert_config_id"] = alert_config.id
+                await client.delete_alert_configuration(variables["alert_config_id"])
 
                 with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
+                    await client.get_alert_configuration(variables["alert_config_id"])
 
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_top_n_alert_direction_down(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_top_n_alert_direction_down(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -101,7 +112,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                 )
                             )
@@ -125,27 +136,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_top_n_alert_direction_up(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_top_n_alert_direction_up(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -157,7 +166,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     upper=5.0,
                                 )
                             )
@@ -181,27 +190,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_top_n_severity_condition(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_top_n_severity_condition(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -233,27 +240,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_snooze_condition(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_snooze_condition(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -284,34 +289,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_snooze_condition.auto_snooze == 5
                 assert alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope == "Metric"
                 assert alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_whole_series_alert_direction_both(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_whole_series_alert_direction_both(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries",
                             ),
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -332,35 +335,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_whole_series_alert_direction_down(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_whole_series_alert_direction_down(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries"
                             ),
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                 )
                             )
@@ -380,35 +380,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_whole_series_alert_direction_up(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_whole_series_alert_direction_up(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries"
                             ),
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     upper=5.0,
                                 )
                             )
@@ -428,28 +425,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_whole_series_severity_condition(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_whole_series_severity_condition(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries"
                             ),
@@ -472,28 +466,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_series_group_alert_direction_both(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_series_group_alert_direction_both(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -501,7 +492,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -523,28 +514,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_series_group_alert_direction_down(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_series_group_alert_direction_down(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -552,7 +540,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                 )
                             )
@@ -573,28 +561,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_series_group_alert_direction_up(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_series_group_alert_direction_up(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -602,7 +587,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     upper=5.0,
                                 )
                             )
@@ -623,28 +608,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_series_group_severity_condition(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("seriesgroupsev")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_series_group_severity_condition(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -669,29 +651,26 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_alert_config_multiple_configurations(self):
-
-        detection_config, data_feed = await self._create_data_feed_and_detection_config("multiple")
-        alert_config_name = self.create_random_name("testalert")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy_async
+    async def test_create_alert_config_multiple_configurations(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
+        async with client:
             try:
-                alert_config = await self.admin_client.create_alert_configuration(
-                    name=alert_config_name,
+                alert_config = await client.create_alert_configuration(
+                    variables["alert_config_name"],
                     cross_metrics_operator="AND",
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -703,14 +682,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                     upper=5.0
                                 )
                             )
                         ),
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -723,7 +702,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             )
                         ),
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries"
                             ),
@@ -758,20 +737,17 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert alert_config.metric_alert_configurations[2].alert_scope.scope_type == "WholeSeries"
                 assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity == "High"
-
-                await self.admin_client.delete_alert_configuration(alert_config.id)
-
-                with pytest.raises(ResourceNotFoundError):
-                    await self.admin_client.get_alert_configuration(alert_config.id)
-
             finally:
-                await self.admin_client.delete_detection_configuration(detection_config.id)
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_alert_configs(self):
-        async with self.admin_client:
-            configs = self.admin_client.list_alert_configurations(
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_alert_configs(self, client):
+        async with client:
+            configs = client.list_alert_configurations(
                 detection_configuration_id=self.anomaly_detection_configuration_id
             )
             config_list = []
@@ -779,12 +755,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 config_list.append(config)
             assert len(list(config_list)) > 0
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_alert_config_with_model(self):
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy_async
+    async def test_update_alert_config_with_model(self, client, variables):
+        async with client:
             try:
-                alert_config, data_feed, _ = await self._create_alert_config_for_update("alertupdate")
-
+                alert_config = await client.get_alert_configuration(variables["alert_config_id"])
                 alert_config.name = "update"
                 alert_config.description = "update description"
                 alert_config.cross_metrics_operator = "OR"
@@ -803,8 +781,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         lower=1
                     )
 
-                await self.admin_client.update_alert_configuration(alert_config)
-                updated = await self.admin_client.get_alert_configuration(alert_config.id)
+                await client.update_alert_configuration(alert_config)
+                updated = await client.get_alert_configuration(variables["alert_config_id"])
                 assert updated.name == "update"
                 assert updated.description == "update description"
                 assert updated.cross_metrics_operator == "OR"
@@ -818,21 +796,24 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_alert_config_with_kwargs(self):
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy_async
+    async def test_update_alert_config_with_kwargs(self, client, variables):
+        async with client:
             try:
-                alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-                await self.admin_client.update_alert_configuration(
-                    alert_config.id,
+                await client.update_alert_configuration(
+                    variables["alert_config_id"],
                     name="update",
                     description="update description",
                     cross_metrics_operator="OR",
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -844,7 +825,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                     upper=5.0
                                 ),
@@ -852,7 +833,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             )
                         ),
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -870,7 +851,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             )
                         ),
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries"
                             ),
@@ -888,7 +869,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-                updated = await self.admin_client.get_alert_configuration(alert_config.id)
+                updated = await client.get_alert_configuration(variables["alert_config_id"])
                 assert updated.name == "update"
                 assert updated.description == "update description"
                 assert updated.cross_metrics_operator == "OR"
@@ -902,14 +883,17 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_alert_config_with_model_and_kwargs(self):
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy_async
+    async def test_update_alert_config_with_model_and_kwargs(self, client, variables):
+        async with client:
             try:
-                alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-
+                alert_config = await client.get_alert_configuration(variables["alert_config_id"])
                 alert_config.name = "updateMe"
                 alert_config.description = "updateMe"
                 alert_config.cross_metrics_operator = "don't update me"
@@ -917,12 +901,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 alert_config.metric_alert_configurations[1].alert_conditions.metric_boundary_condition = None
                 alert_config.metric_alert_configurations[2].alert_conditions.metric_boundary_condition = None
 
-                await self.admin_client.update_alert_configuration(
+                await client.update_alert_configuration(
                     alert_config,
                     cross_metrics_operator="OR",
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -934,7 +918,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids['cost'],
+                                    companion_metric_id=variables["data_feed_metric_id"],
                                     lower=1.0,
                                     upper=5.0
                                 ),
@@ -942,7 +926,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             )
                         ),
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="SeriesGroup",
                                 series_group_in_scope={'region': 'Shenzhen'}
@@ -960,7 +944,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             )
                         ),
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="WholeSeries"
                             ),
@@ -978,7 +962,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-                updated = await self.admin_client.get_alert_configuration(alert_config.id)
+                updated = await client.get_alert_configuration(variables["alert_config_id"])
                 assert updated.name == "updateMe"
                 assert updated.description == "updateMe"
                 assert updated.cross_metrics_operator == "OR"
@@ -992,20 +976,23 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_anomaly_alert_by_resetting_properties(self):
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy_async
+    async def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
+        async with client:
             try:
-                alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-                await self.admin_client.update_alert_configuration(
-                    alert_config.id,
+                await client.update_alert_configuration(
+                    variables["alert_config_id"],
                     name="reset",
                     description="",  # can't pass None currently, bug says description is required
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
+                            detection_configuration_id=variables["detection_config_id"],
                             alert_scope=MetricAnomalyAlertScope(
                                 scope_type="TopN",
                                 top_n_group_in_scope=TopNGroupScope(
@@ -1018,13 +1005,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-                updated = await self.admin_client.get_alert_configuration(alert_config.id)
+                updated = await client.get_alert_configuration(variables["alert_config_id"])
                 assert updated.name == "reset"
                 assert updated.description == ""
-                assert updated.cross_metrics_operator == None
+                assert updated.cross_metrics_operator is None
                 assert len(updated.metric_alert_configurations) == 1
-                assert updated.metric_alert_configurations[0].alert_conditions.severity_condition == None
-                assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition == None
+                assert updated.metric_alert_configurations[0].alert_conditions.severity_condition is None
+                assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition is None
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await client.delete_data_feed(variables["data_feed_id"])
+            return variables

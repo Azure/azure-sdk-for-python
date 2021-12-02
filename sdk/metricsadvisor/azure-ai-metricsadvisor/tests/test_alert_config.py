@@ -134,15 +134,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -194,15 +187,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -250,15 +236,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -306,15 +285,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_snooze_condition.auto_snooze == 5
             assert alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope == "Metric"
             assert alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -359,15 +331,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -411,15 +376,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -463,15 +421,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -511,15 +462,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -566,15 +510,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -620,15 +557,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -674,15 +604,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -724,15 +647,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
@@ -817,15 +733,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[2].alert_scope.scope_type == "WholeSeries"
             assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity == "Low"
             assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity == "High"
-            if self.is_live:
-                variables["alert_config_id"] = alert_config.id
-            client.delete_alert_configuration(variables["alert_config_id"])
-
-            with pytest.raises(ResourceNotFoundError):
-                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
