@@ -204,6 +204,7 @@ foreach ($packageInfoLocation in $PackageInfoJsonLocations) {
     &$ValidateDocsMsPackagesFn -PackageInfo $packageInfo $PackageSourceOverride $DocValidationImageId
     if ($LASTEXITCODE -ne 0) {
       LogError "The package failed Doc.Ms validation. Please fixed the doc and republish to Doc.Ms."
+      exit 1
     }
   }
   UpdateDocsMsMetadataForPackage $packageInfoLocation $packageInfo
