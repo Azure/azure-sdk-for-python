@@ -4,3 +4,4 @@ package_pprint_name = "Application Insights"
 package_doc_id = ""
 is_stable = false
 is_arn = false
+auto_update = false
