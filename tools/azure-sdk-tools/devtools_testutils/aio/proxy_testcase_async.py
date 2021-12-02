@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 import logging
 
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
@@ -57,7 +59,12 @@ def recorded_by_proxy_async(test_func):
                 "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
                 "`variables` parameter to make use of recorded test variables."
             )
+        try:
             test_output = await test_func(*args, **trimmed_kwargs)
+        except ResourceNotFoundError as error:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
+            raise error_with_message
         finally:
             AioHttpTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)

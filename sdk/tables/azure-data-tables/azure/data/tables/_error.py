@@ -80,6 +80,13 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):
                     error_message = error_body["odata.error"][info]["value"]
                 else:
                     additional_data[info.tag] = info.text
+
+            # Special case: there was a playback error during test execution (test proxy only)
+            if error_message == "Operation returned an invalid status \'Not Found\'":
+                error = ResourceNotFoundError(message=error_message, response=response)
+                error.error_code = 404
+                error.additional_info = additional_data
+                return error
         else:
             if error_body:
                 for info in error_body.iter():
