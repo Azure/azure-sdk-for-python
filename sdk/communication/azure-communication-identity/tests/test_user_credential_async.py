@@ -157,6 +157,7 @@ class TestCommunicationTokenCredential:
     async def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_seconds = 2
         expired_token = self.generate_token_with_custom_expiry(-5 * 60)
+        skip_to_timestamp = get_current_utc_as_int() + refresh_seconds + 4
         first_refreshed_token = create_access_token(self.generate_token_with_custom_expiry(4))
         last_refreshed_token = create_access_token(self.generate_token_with_custom_expiry(10*60))
         refresher = MagicMock(side_effect=[first_refreshed_token, last_refreshed_token])
@@ -167,8 +168,9 @@ class TestCommunicationTokenCredential:
                 refresh_proactively=True,
                 refresh_time_before_expiry=timedelta(seconds=refresh_seconds))
         async with credential:
-            await asyncio.sleep(4)
             access_token = await credential.get_token() 
+            with patch(user_credential_async.__name__+'.get_current_utc_as_int', return_value=skip_to_timestamp):
+               access_token = await credential.get_token()  
            
         assert refresher.call_count == 2
         assert access_token.token == last_refreshed_token.token
@@ -181,10 +183,9 @@ class TestCommunicationTokenCredential:
         refresher = MagicMock(return_value=refreshed_token)
         expired_token = self.generate_token_with_custom_expiry(-10*60)
         
-        credential = CommunicationTokenCredential(
+        async with CommunicationTokenCredential(
                 expired_token,
                 token_refresher=refresher,
-                refresh_proactively=True)
-        credential._timer.cancel() 
-        await asyncio.sleep(3)   
+                refresh_proactively=True) as credential:
+            assert credential._timer is not None
         assert refresher.call_count == 0
