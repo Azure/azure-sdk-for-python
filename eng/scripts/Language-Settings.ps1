@@ -169,10 +169,8 @@ function ValidatePackage
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$DocValidationImageId
   ) 
   $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
@@ -184,11 +182,11 @@ function ValidatePackage
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
   if (!$DocValidationImageId) {
     Write-Host "Validating using pip command directly on $packageName."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder $PackageSourceOverride
   } 
   else {
     Write-Host "Validating using $DocValidationImageId on $packageName."
-    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" $PackageSourceOverride $DocValidationImageId
   }
 }
 function DockerValidation{
@@ -198,10 +196,8 @@ function DockerValidation{
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$DocValidationImageId
   ) 
   if ($PackageSourceOverride) {
@@ -236,7 +232,6 @@ function FallbackValidation
     [Parameter(Mandatory=$true)]
     [string]$workingDirectory,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$PackageSourceOverride
   ) 
   $installTargetFolder = Join-Path $workingDirectory $packageName
@@ -563,13 +558,11 @@ function Validate-Python-DocMsPackages
     [Parameter(Mandatory=$true)]
     [PSCustomObject]$PackageInfo,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [AllowEmptyString]
     [string]$DocValidationImageId
   ) 
   $packageName = $packageInfo.Name
   $packageVersion = $packageInfo.Version
-  ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  ValidatePackage -packageName $packageName -packageVersion $packageVersion $PackageSourceOverride $DocValidationImageId
 }
