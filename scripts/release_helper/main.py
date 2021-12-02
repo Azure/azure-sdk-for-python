@@ -51,7 +51,6 @@ def main():
     issues = collect_open_issues()
     language = os.getenv('LANGUAGE')
     languages = {_CONVERT[language]: _LANGUAGES[_CONVERT[language]]} if language in _CONVERT else _LANGUAGES
-    print(languages,'++++++++++')
     for language in languages:
         language_issues = select_language_issues(issues, language)
         languages[language](language_issues)
