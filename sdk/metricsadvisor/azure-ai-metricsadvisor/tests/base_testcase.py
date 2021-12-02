@@ -7,7 +7,8 @@
 
 import os
 import datetime
-from devtools_testutils import AzureRecordedTestCase, AzureMgmtPreparer
+import functools
+from devtools_testutils import AzureRecordedTestCase, is_live
 from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
 from azure.ai.metricsadvisor.models import (
@@ -36,22 +37,16 @@ from azure.ai.metricsadvisor.models import (
     WebNotificationHook,
 )
 
+subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
+api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
+CREDENTIALS = [MetricsAdvisorKeyCredential(subscription_key, api_key), "AAD"]
 
-class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, aad, client_kwargs={}, **kwargs):
-        super(MetricsAdvisorClientPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-        service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
-        if aad:
-            credential = AzureRecordedTestCase().get_credential(client_cls)
-            self.client = client_cls(service_endpoint, credential, **client_kwargs)
-        else:
-            subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
-            api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
-            self.client = client_cls(service_endpoint, MetricsAdvisorKeyCredential(subscription_key, api_key), **client_kwargs)
 
+class MetricsAdvisorClientPreparer(object):
+    def __init__(self, client_cls,  client_kwargs={}, **kwargs):
+        self.client_cls = client_cls
+        self.client_kwargs = client_kwargs
+        self.service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
         self.data_feed = kwargs.pop("data_feed", False)
         self.detection_config = kwargs.pop("detection_config", False)
         self.alert_config = kwargs.pop("alert_config", False)
@@ -59,9 +54,24 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
         self.web_hook = kwargs.pop("web_hook", False)
         self.variables = kwargs.pop("variables", {})
 
-    def create_resource(self, name, **kwargs):
-        kwargs.update({"client": self.client})
-        if not self.is_live:
+    def __call__(self, fn):
+        def _preparer_wrapper(test_class, credential, **kwargs):
+            self.create_test_client(credential)
+            self.create_resources(**kwargs)
+            if self.variables:
+                fn(test_class, self.client, self.variables)
+            else:
+                fn(test_class, self.client)
+        functools.wraps(_preparer_wrapper, fn)
+        return _preparer_wrapper
+
+    def create_test_client(self, credential):
+        if credential == "AAD":
+            credential = AzureRecordedTestCase().get_credential(self.client_cls)
+        self.client = self.client_cls(self.service_endpoint, credential, **self.client_kwargs)
+
+    def create_resources(self, **kwargs):
+        if not is_live():
             return kwargs
 
         try:
@@ -87,12 +97,9 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
                 pass
             raise e
 
-        kwargs.update({"variables": self.variables})
-        return kwargs
-
     def create_data_feed(self, name):
         name = create_random_name(name)
-        if self.is_live:
+        if is_live():
             self.variables["data_feed_name"] = name
         data_feed = self.client.create_data_feed(
             name=self.variables["data_feed_name"],
@@ -135,14 +142,14 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
             action_link_template="action link template"
         )
 
-        if self.is_live:
+        if is_live():
             self.variables["data_feed_id"] = data_feed.id
             self.variables["data_feed_metric_id"] = data_feed.metric_ids['cost']
         return data_feed
 
     def create_detection_config(self, name):
         detection_config_name = create_random_name(name)
-        if self.is_live:
+        if is_live():
             self.variables["detection_config_name"] = detection_config_name
         detection_config = self.client.create_detection_configuration(
             name=self.variables["detection_config_name"],
@@ -201,13 +208,13 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
                 )
             )]
         )
-        if self.is_live:
+        if is_live():
             self.variables["detection_config_id"] = detection_config.id
         return detection_config
 
     def create_alert_config(self, name):
         alert_config_name = create_random_name(name)
-        if self.is_live:
+        if is_live():
             self.variables["alert_config_name"] = alert_config_name
         alert_config = self.client.create_alert_configuration(
             name=self.variables["alert_config_name"],
@@ -260,13 +267,13 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
             ],
             hook_ids=[]
         )
-        if self.is_live:
+        if is_live():
             self.variables["alert_config_id"] = alert_config.id
         return alert_config
 
     def create_email_hook(self, name):
         email_hook_name = create_random_name(name)
-        if self.is_live:
+        if is_live():
             self.variables["email_hook_name"] = email_hook_name
         email_hook = self.client.create_hook(
             hook=EmailNotificationHook(
@@ -276,13 +283,13 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
                 external_link="external link"
             )
         )
-        if self.is_live:
+        if is_live():
             self.variables["email_hook_id"] = email_hook.id
         return email_hook
 
     def create_web_hook(self, name):
         web_hook_name = create_random_name(name)
-        if self.is_live:
+        if is_live():
             self.variables["web_hook_name"] = web_hook_name
         web_hook = self.client.create_hook(
             hook=WebNotificationHook(
@@ -295,7 +302,7 @@ class MetricsAdvisorClientPreparer(AzureMgmtPreparer):
             )
         )
 
-        if self.is_live:
+        if is_live():
             self.variables["web_hook_id"] = web_hook.id
         return web_hook
 

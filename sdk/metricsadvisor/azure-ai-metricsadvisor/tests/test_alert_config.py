@@ -19,12 +19,13 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
-MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_alert_direction_both(self, client, variables):
@@ -85,6 +86,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_alert_direction_down(self, client, variables):
@@ -144,6 +146,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_alert_direction_up(self, client, variables):
@@ -203,6 +206,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_severity_condition(self, client, variables):
@@ -258,6 +262,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_snooze_condition(self, client, variables):
@@ -313,6 +318,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_alert_direction_both(self, client, variables):
@@ -365,6 +371,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_alert_direction_down(self, client, variables):
@@ -416,6 +423,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_alert_direction_up(self, client, variables):
@@ -467,6 +475,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_severity_condition(self, client, variables):
@@ -514,6 +523,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_alert_direction_both(self, client, variables):
@@ -568,6 +578,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_alert_direction_down(self, client, variables):
@@ -621,6 +632,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_alert_direction_up(self, client, variables):
@@ -674,6 +686,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_severity_condition(self, client, variables):
@@ -723,6 +736,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_multiple_configurations(self, client, variables):
@@ -815,6 +829,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_alert_configs(self, client):
@@ -824,6 +839,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         )
         assert len(list(configs)) > 0
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_alert_config_with_model(self, client, variables):
@@ -867,6 +883,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_alert_config_with_kwargs(self, client, variables):
@@ -952,6 +969,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_alert_config_with_model_and_kwargs(self, client, variables):
@@ -1043,6 +1061,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_anomaly_alert_by_resetting_properties(self, client, variables):

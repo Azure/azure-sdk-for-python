@@ -15,12 +15,13 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
-MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_email_hook(self, client, variables):
@@ -52,6 +53,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 client.get_hook(variables["email_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_web_hook(self, client, variables):
@@ -83,12 +85,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 client.get_hook(variables["web_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_hooks(self, client):
         hooks = client.list_hooks()
         assert len(list(hooks)) > 0
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
     def test_update_email_hook_with_model(self, client, variables):
@@ -111,6 +115,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["email_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
     def test_update_email_hook_with_kwargs(self, client, variables):
@@ -133,6 +138,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["email_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
     def test_update_email_hook_with_model_and_kwargs(self, client, variables):
@@ -159,6 +165,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["email_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy
     def test_update_email_hook_by_resetting_properties(self, client, variables):
@@ -181,6 +188,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["email_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
     def test_update_web_hook_with_model(self, client, variables):
@@ -203,6 +211,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["web_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
     def test_update_web_hook_with_kwargs(self, client, variables):
@@ -227,6 +236,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["web_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
     def test_update_web_hook_with_model_and_kwargs(self, client, variables):
@@ -256,6 +266,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_hook(variables["web_hook_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy
     def test_update_web_hook_by_resetting_properties(self, client, variables):

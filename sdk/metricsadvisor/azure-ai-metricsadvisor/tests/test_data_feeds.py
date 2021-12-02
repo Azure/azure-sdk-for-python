@@ -32,12 +32,13 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer
-MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_simple_data_feed(self, client, variables):
@@ -71,6 +72,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_from_sql_server(self, client, variables):
@@ -162,6 +164,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         return variables
 
     @pytest.mark.skip("skip test")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_from_sql_server_with_custom_values(self, client, variables):
@@ -257,6 +260,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 client.get_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_azure_table(self, client, variables):
@@ -302,6 +306,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_azure_blob(self, client, variables):
@@ -347,6 +352,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_azure_cosmos_db(self, client, variables):
@@ -394,6 +400,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_application_insights(self, client, variables):
@@ -444,6 +451,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_data_explorer(self, client, variables):
@@ -489,6 +497,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_influxdb(self, client, variables):
@@ -537,6 +546,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_datalake(self, client, variables):
@@ -586,6 +596,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_mongodb(self, client, variables):
@@ -631,6 +642,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_mysql(self, client, variables):
@@ -674,6 +686,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_data_feed_with_postgresql(self, client, variables):
@@ -717,12 +730,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds(self, client):
         feeds = client.list_data_feeds()
         assert len(list(feeds)) > 0
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_data_feed_name(self, client):
@@ -730,6 +745,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         feed_list = list(feeds)
         assert len(feed_list) == 1
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_skip(self, client):
@@ -739,24 +755,28 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         skipped_feeds_list = list(skipped_feeds)
         assert len(all_feeds_list) > len(skipped_feeds_list)
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_status(self, client):
         feeds = client.list_data_feeds(status="Paused")
         assert len(list(feeds)) == 0
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_source_type(self, client):
         feeds = client.list_data_feeds(data_source_type="SqlServer")
         assert len(list(feeds)) > 0
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_granularity_type(self, client):
         feeds = client.list_data_feeds(granularity_type="Daily")
         assert len(list(feeds)) > 0
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_update_data_feed_with_model(self, client, variables):
@@ -807,6 +827,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_update_data_feed_with_kwargs(self, client, variables):
@@ -861,6 +882,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.delete_data_feed(variables["data_feed_id"])
         return variables
 
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_update_data_feed_with_model_and_kwargs(self, client, variables):
@@ -935,6 +957,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         return variables
 
     @pytest.mark.skip("skip test")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_update_data_feed_by_reseting_properties(self, client, variables):
