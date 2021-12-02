@@ -7,7 +7,6 @@
 import base64
 import json
 import calendar
-import asyncio
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
@@ -15,6 +14,7 @@ from typing import (  # pylint: disable=unused-import
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
+
 
 def _convert_datetime_to_utc_int(expires_on):
     return int(calendar.timegm(expires_on.utctimetuple()))
@@ -124,24 +124,3 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
-
-class AsyncTimer:
-    """A non-blocking timer, that calls a function after a specified number of seconds:
-    :param int interval: time interval in seconds
-    :param callable callback: function to be called after the interval has elapsed
-    """
-    def __init__(self, interval, callback):
-        self._interval = interval
-        self._callback = callback
-        self._task = None
-
-    def start(self):
-        self._task = asyncio.ensure_future(self._job())
-
-    async def _job(self):
-        await asyncio.sleep(self._interval)
-        await self._callback()
-
-    def cancel(self):
-        if self._task is not None:
-            self._task.cancel()
