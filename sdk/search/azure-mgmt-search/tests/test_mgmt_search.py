@@ -61,7 +61,6 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
             service.name
         )
 
-    @unittest.skip('hard to test')
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_search_query_keys(self, resource_group, location):
@@ -103,7 +102,6 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
             key_name
         )
 
-    @pytest.mark.skipif(reason='test hard')
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_search_admin_keys(self, resource_group, location):
