@@ -404,7 +404,7 @@ class CallingServerClient(object):
         call_locator,  # type: CallLocator
         participant,  # type: CommunicationIdentifier
         audio_url,  # type: str
-        is_looped: bool = False,
+        is_looped=False,  # type: bool
         **kwargs  # type: Any
     ):  # type: (...) -> PlayAudioResult
         """Redirect the call.
