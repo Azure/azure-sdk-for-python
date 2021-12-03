@@ -7,6 +7,12 @@ stages:
       ServiceDirectory: translation
       MatrixReplace:
         - TestSamples=.*/true
+      Clouds: Public,Int
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations: $(sub-config-azure-cloud-test-resources)
+        Int:
+          SubscriptionConfiguration: $(sub-config-translation-int-test-resources)
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
