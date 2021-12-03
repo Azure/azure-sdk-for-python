@@ -115,7 +115,7 @@
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('sourceContainerName'))]",
                 "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
-                "signedPermission": "wl",
+                "signedPermission": "rl",
                 "signedResource": "c"
             }
         },
