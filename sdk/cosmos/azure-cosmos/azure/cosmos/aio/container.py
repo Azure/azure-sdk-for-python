@@ -89,7 +89,7 @@ class ContainerProxy(object):
     def scripts(self):
         # type: () -> ScriptsProxy
         if self._scripts is None:
-            self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
+            self._scripts = ScriptsProxy(self.client_connection, self.container_link)
         return cast('ScriptsProxy', self._scripts)
 
     def _get_document_link(self, item_or_link):
