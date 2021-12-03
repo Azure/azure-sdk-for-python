@@ -8,7 +8,7 @@
 
 import sys
 import pytest
-from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer
+from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer, add_oauth_response_sanitizer
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -28,3 +28,4 @@ def add_sanitizers():
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
         value="fakeendpoint",
     )
+    add_oauth_response_sanitizer()
