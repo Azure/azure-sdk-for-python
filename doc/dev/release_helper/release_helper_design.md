@@ -4,46 +4,28 @@
 
 ![img.png](release_official_SDK.png)
 
+## Pain Point
+
+For every release, there are duplicated but necessary manual work. While there are hundreds of release request for each language, which means a huge load. With the development of Azure, there will be more and more requirements for Azure SDK, which means the load will become larger and larger. If we don't take steps in advance, it may delay our release in the future and influence usage experience of customers. 
+
 # Release Helper
 
-The project aims to help SDK team release request issue automatically for all languages including Python, Java, Javascript, Go, etc.
+## Overview
 
-By summarizing the process of SDK release, the project shall have the following functions:
+`Release Helper` aims to resolve [Pain Point](#Pain Point) for all languages including Python, Java, Javascript, Go, etc.
 
-1. Auto Parse 
+## Target
 
-   It will parse the issue and judge which SDK package and what content customers want to release
-2. Auto Trigger
+1. Help SDK team to reduce manual work
+2. Help SDK team to achieve `One-hour shippable`
 
-   After `Auto Parse`, project could trigger specific pipeline to generate package to test and PR to merge for SDK team.
-3. Auto Reply
+## Project Structure
 
-   Usually, SDK team will prepare private package for customers to check in case of potential problems
-4. Auto Assignee
+`Release Helper` support multiple languages which may have difference about release flow. So it shall define common flow for languages to reference. The common flow consists of independent modules, which allow languages to define their customized module. It will be much clear to show some code here:
 
-   When SDK teams have multi members to handle issues, project could assign to them averagely
-5. Auto Close
+### main
 
-   When SDK is released, project will close the issue with released package link.
-6. Auto Summary
-
-   Project will handle all open issues and output tables for SDK team to query
-7. Auto Bot
-
-   Project will provide corresponding advice for SDK team about what to do next or error that may happen
-8. Auto Ping
-
-   When issue author does not respond necessary comment, project could ping author or close it.
-
-The project will provide general workflow, at the same time, it permits SDK team to develop customized function.
-
-# Code structure
-
-The project will be deployed in ADO pipeline and run regularly to handle `open` issues. And it could also be triggered manually.
-
-## main
-
-It is the entrance to handle issues of different languages
+It is the entrance to handle release request issues of different languages
 
 ```python
 languages = {'Python': Python_process, 
@@ -59,105 +41,118 @@ def main():
 
 
 
-## General Class
+### Common Class
 
-It is the general class to provide common flow of handling issues.
+It is the common class to provide common flow of handling issues.
 
 ```python
-class IssueProcess:
+class CommonIssueProcess:
     ...
     
     def run():
-        self.auto_assign()
-        self.auto_parse()
-        self.auto_reply()
-        self.auto_trigger()
-        self.auto_bot()
-        self.auto_close()
+        self.module1()
+        self.module2()
+        ...
 
-class General:
+class Common:
     ...
     
     def run():
     	for item in self.issues:
-            issue = IssueProcess(item)
-            issue.run()
-            self.handled_issues.append(issue)
-        self.auto_summary()
-    
+            issue_process = CommonIssueProcess(item)
+            issue_process.run()
         
-def general_process(issues):
-    instance = General(issues, token)
+def Common_process(issues):
+    instance = Common(issues, token)
     instance.run()
         
 ```
 
-# Deploy
+
+
+### JavaClass
+
+It is the example of customized class for language to define customized module.
+
+```python
+class JavaIssueProcess(CommonIssueProcess):
+    ...
+    
+    # customized module
+    def module1():
+        # customized code
+        ...
+
+class Java(Common):
+    ...
+    
+    def run():
+    	for item in self.issues:
+            issue_process = JavaIssueProcess(item)
+            issue_process.run()
+        
+def java_process(issues):
+    instance = Java(issues, token)
+    instance.run()
+        
+```
+
+
+
+## Module Design
+
+Each module is independent function which could cover some manual work for SDK team. After analysis of release flow, we extract some common modules:
+
+### Parse Module
+
+its function is:
+
+1. Parse link in issue to extract valid swagger definition link
+2. Notice customers automatically to change link if it is invalid
+
+Here is the example:
+
+![img.png](origin_issue_0.png)(original issue)
+
+![img.png](auto_parse.png)
+
+(after `Parse` if `Link` is valid)
+
+![img.png](invalid_link.png)(after `Parse` if `Link` is invalid)
+
+### Generation Module
+
+This module could generate SDK code and create PR automatically. Example: 
+
+![img.png](auto_trigger.png)
+
+### Signoff Module
+
+This module will generate private package and CHANGELOG for customers to check in case of potential problems. Example:
+
+![img.png](auto_reply.png)
+
+### Report Module
+
+This module could help summarize all the open issues and provide moderate suggestion. With this module, SDK team could concentrate on some issues instead of checking every issue.
+
+![img.png](auto_summary.png)
+
+### Auto-Close Module
+
+Once the package is released, the module will notice the customers with public package link and close the issue. Example:
+
+![img.png](auto_close.png)
+
+### Clean module
+
+This module can remind customers to answer some necessary questions and close inactive open issues
+
+![img.png](auto_ping.png)
+
+ ## Deploy
 
 The code will be stored in [SDK repo](https://github.com/Azure/azure-sdk-for-python) and deployed in ADO pipeline. It will run regularly to handle all the open release request issues for all languages and output summary info in [file-storage](https://github.com/msyyc/file-storage/tree/release-issue-status) like [python release status](https://github.com/msyyc/file-storage/blob/release-issue-status/release_python_status.md). Of course, It could be also triggered manually.
-
-# Final Effect
-
-Here is origin issue:
-
-![img.png](origin_issue_0.png)
-
-![img.png](origin_issue_1.png)
-
-1. Auto Parse
-
-   After `Auto Parse`, `Release Helper` extracts swagger link to indicate which service to publish.
-
-   ![img.png](auto_parse.png)
-
-2. Auto Trigger
-
-   After `Auto Trigger`, `Release Helper` prepares SDK PR which contains corresponding content asked by service team.
-
-   ![img.png](auto_trigger.png)
-
-3. Auto Reply
-
-   After `Auto Reply`, `Release Helper` prepares private package and CHANGELOG for service team to check in case of potential problems.
-
-   ![img.png](auto_reply.png)
-
-4. Auto Summary
-
-   After `Auto Summary`, `Release Helper` could help summarize all the issues and provide moderate suggestion.
-
-   ![img.png](auto_summary.png)
-
-5. Auto Close
-
-   After `Auto Close`, `Release Helper` can help close the issue with released link.
-
-   ![img.png](auto_close.png)
-
-6. Auto Ping
-
-   `Auto Ping` will remind author to reply for some necessary questions.
-
-   ![img.png](auto_ping.png)
-
-# Vision
-
-In the future, especially after the large-scale adoption of LLC, there will be considerable efficiency promotion for data-plan package. At that time, data-plan may have the same release flow with mgmt-plan and `Release Helper` could also work for data-plan. So the project will be designed to be extensible and flexible enough to support possible evolution.
-
-# Plan
-
-| step | annotation                                                   | cost(days) |
-| :--- | ------------------------------------------------------------ | ---------- |
-| 1    | develop `Auto Parse` for all languages                       | 7          |
-| 2    | develop `Auto Summary` for all languages                     | 7          |
-| 2    | develop general flow                                         | 21         |
-| 3    | develop customized flow for Python                           | 5          |
-| 4    | develop customized flow according to priority for Go, Js, Java | 15         |
-| 5    | evolution(new feature, etc)                                  | ...        |
-
-
-
- 
 
 
 
