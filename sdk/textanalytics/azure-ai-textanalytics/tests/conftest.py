@@ -8,7 +8,12 @@
 
 import sys
 import pytest
-from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer, add_body_key_sanitizer
+from devtools_testutils import (
+    add_remove_header_sanitizer,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_oauth_response_sanitizer,
+)
 
 
 # Ignore async tests for Python < 3.6
@@ -48,3 +53,4 @@ def add_sanitizers():
         json_path="tasks['customEntityRecognitionTasks'][*]['parameters']['deployment-name']",
         value="custom_entities_deployment_name"
     )
+    add_oauth_response_sanitizer()
