@@ -49,11 +49,11 @@ class ScriptsProxy(object):
     :func:`ContainerProxy.scripts` attribute.
     """
 
-    def __init__(self, client_connection, container_link, is_system_key):
-        # type: (CosmosClientConnection, str, bool) -> None
+    def __init__(self, container, client_connection, container_link):
+        # type: (ContainerProxy, CosmosClientConnection, str) -> None
         self.client_connection = client_connection
         self.container_link = container_link
-        self.is_system_key = is_system_key
+        self.container_proxy = container
 
     def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
@@ -213,7 +213,7 @@ class ScriptsProxy(object):
         request_options = _build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                _cosmos_client_connection._return_undefined_or_empty_partition_key(self.is_system_key)
+                _cosmos_client_connection._return_undefined_or_empty_partition_key(await self.container_proxy.is_system_key)
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )
