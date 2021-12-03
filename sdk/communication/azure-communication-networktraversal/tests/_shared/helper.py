@@ -7,11 +7,19 @@ import re
 import base64
 from azure_devtools.scenario_tests import RecordingProcessor
 from urllib.parse import urlparse
+from datetime import datetime, timedelta
+from functools import wraps
+import sys
 
-
-def generate_token_with_custom_expiry(valid_for_seconds):
-    return generate_token_with_custom_expiry_epoch((datetime.now() + timedelta(seconds=valid_for_seconds)).timestamp())
-
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+    # python version < 3.3
+    import time
+    def generate_token_with_custom_expiry(valid_for_seconds):
+        date = datetime.now() + timedelta(seconds=valid_for_seconds)
+        return generate_token_with_custom_expiry_epoch(time.mktime(date.timetuple()))
+else:
+    def generate_token_with_custom_expiry(valid_for_seconds):
+        return generate_token_with_custom_expiry_epoch((datetime.now() + timedelta(seconds=valid_for_seconds)).timestamp())
 
 def generate_token_with_custom_expiry_epoch(expires_on_epoch):
     expiry_json = '{"exp": ' + str(expires_on_epoch) + '}'

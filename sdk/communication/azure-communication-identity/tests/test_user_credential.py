@@ -68,8 +68,8 @@ class TestCommunicationTokenCredential(TestCase):
             return_value=self.expired_token)
         credential = CommunicationTokenCredential(
             self.sample_token, token_refresher=refresher, refresh_proactively=True)
-
-        access_token = credential.get_token()
+        with credential:
+            access_token = credential.get_token()
 
         self.assertEqual(refresher.call_count, 0)
         self.assertEqual(access_token.token, self.sample_token)
@@ -165,7 +165,7 @@ class TestCommunicationTokenCredential(TestCase):
                 token_refresher=refresher,
                 refresh_proactively=True) as credential:
             assert credential._timer is not None
-        assert credential._timer.finished._flag == True
+        assert credential._timer.finished.is_set() == True
 
     def test_refresher_should_not_be_called_when_token_still_valid(self):
         generated_token = generate_token_with_custom_expiry(15 * 60)
