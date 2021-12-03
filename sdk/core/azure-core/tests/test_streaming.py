@@ -122,6 +122,7 @@ def test_decompress_plain_header_offline(port, http_request):
         try:
             result = response.read()
             assert result.text() == '{"error": headers={"Content-Type": "gzip"}}'
+            assert False
         except AttributeError:
             pass
 
