@@ -61,6 +61,7 @@ class ContainerProxy(object):
         self.client_connection = client_connection
         self.id = id
         self._properties = properties
+        self.database_link = database_link
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
         self._scripts = None  # type: Optional[ScriptsProxy]
@@ -554,7 +555,7 @@ class ContainerProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
-            
+
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
     @distributed_trace_async
@@ -628,7 +629,7 @@ class ContainerProxy(object):
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param partition_key: Specifies the partition key value for the item. If none is passed in, a 
+        :param partition_key: Specifies the partition key value for the item. If none is passed in, a
             cross partition query will be executed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.

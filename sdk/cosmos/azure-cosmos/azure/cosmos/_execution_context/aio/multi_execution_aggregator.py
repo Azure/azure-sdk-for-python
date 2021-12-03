@@ -78,6 +78,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         else:
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProduerComparator()
 
+        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+
     async def __anext__(self):
         """Returns the next result
 
@@ -101,7 +103,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             return res
         raise StopAsyncIteration
 
-    def fetch_next_block(self):
+    async def fetch_next_block(self):
 
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
@@ -144,8 +146,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             targetPartitionQueryExecutionContextList.append(
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
-
-        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
 

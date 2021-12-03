@@ -230,8 +230,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self):
-        if not 'database_account' in self._setup_kwargs:
-            self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
+        if 'database_account' not in self._setup_kwargs:
+            self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(
+                **self._setup_kwargs)
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
@@ -1809,10 +1810,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             )
 
         return AsyncItemPaged(
-            self, 
-            query, 
-            options, 
-            fetch_function=fetch_fn, 
+            self,
+            query,
+            options,
+            fetch_function=fetch_fn,
             page_iterator_class=query_iterable.QueryIterable
         )
 

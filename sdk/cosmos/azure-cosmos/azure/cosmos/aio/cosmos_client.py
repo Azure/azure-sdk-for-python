@@ -124,7 +124,7 @@ class CosmosClient(object):
         )
 
     def __repr__(self):
-        # type () -> str
+        # type: () -> str
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     async def __aenter__(self):
@@ -136,6 +136,8 @@ class CosmosClient(object):
         return await self.client_connection.pipeline_client.__aexit__(*args)
 
     async def close(self):
+        # type: () -> None
+        """Close this instance of CosmosClient."""
         await self.__aexit__()
 
     @classmethod
@@ -215,7 +217,7 @@ class CosmosClient(object):
         result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)        
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace_async
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
@@ -360,7 +362,7 @@ class CosmosClient(object):
         """
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        
+
         database_link = self._get_database_link(database)
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:

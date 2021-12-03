@@ -23,13 +23,14 @@
 Cosmos database service.
 """
 
-from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info, _get_partitioned_execution_info
-from azure.cosmos._execution_context.aio import multi_execution_aggregator
-from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase, _DefaultQueryExecutionContext
-from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos._execution_context.aio import endpoint_component
+from azure.cosmos._execution_context.aio import multi_execution_aggregator
+from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info
+from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes
 
 # pylint: disable=protected-access

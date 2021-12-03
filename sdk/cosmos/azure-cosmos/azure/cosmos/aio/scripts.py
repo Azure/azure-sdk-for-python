@@ -213,7 +213,8 @@ class ScriptsProxy(object):
         request_options = _build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                _cosmos_client_connection._return_undefined_or_empty_partition_key(await self.container_proxy.is_system_key)
+                _cosmos_client_connection._return_undefined_or_empty_partition_key(
+                    await self.container_proxy.is_system_key)
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )
