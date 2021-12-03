@@ -7,7 +7,7 @@
 import sys
 import os
 import pytest
-from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer
+from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer, add_oauth_response_sanitizer
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -42,3 +42,4 @@ def add_sanitizers():
     add_general_regex_sanitizer(regex=metrics_advisor_alert_id, value="metrics_advisor_alert_id")
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
     add_remove_header_sanitizer(headers="x-api-key")
+    add_oauth_response_sanitizer()
