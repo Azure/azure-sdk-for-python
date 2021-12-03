@@ -67,7 +67,7 @@ def _validate_table_name(table_name):
         )
 
 
-def _decode_error(response, error_message=None, error_type=None, **kwargs):
+def _decode_error(response, error_message=None, error_type=None, **kwargs):  # pylint: disable=too-many-branches
     error_code = response.headers.get("x-ms-error-code")
     additional_data = {}
     try:
@@ -82,7 +82,8 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):
                     additional_data[info.tag] = info.text
 
             # Special case: there was a playback error during test execution (test proxy only)
-            if error_message == "Operation returned an invalid status \'Not Found\'":
+            message = error_body.get("Message")
+            if message and message.startswith("Unable to find a record for the request"):
                 error = ResourceNotFoundError(message=error_message, response=response)
                 error.error_code = 404
                 error.additional_info = additional_data
