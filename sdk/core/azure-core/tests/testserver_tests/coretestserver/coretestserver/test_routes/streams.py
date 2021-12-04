@@ -25,6 +25,9 @@ def stream_json_error():
     yield '{"error": {"code": "BadRequest", '
     yield' "message": "You made a bad request"}}'
 
+def streaming_test():
+    yield b"test"
+
 @streams_api.route('/basic', methods=['GET'])
 def basic():
     return Response(streaming_body(), status=200)
@@ -40,5 +43,5 @@ def error():
 @streams_api.route('/string', methods=['GET'])
 def string():
     return Response(
-        "test", status=200, mimetype="text/plain"
+        streaming_test(), status=200, mimetype="text/plain"
     )

@@ -50,9 +50,12 @@ def test_compress_plain_no_header_offline(port, http_request):
     # expect plain text
     request = http_request(method="GET", url="http://localhost:{}/streams/string".format(port))
     with RequestsTransport() as sender:
-        response = sender.send(request)
+        response = sender.send(request, stream=True)
         response.raise_for_status()
-        assert response.text() == "test"
+        data = response.stream_download(sender, decompress=False)
+        content = b"".join(list(data))
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
