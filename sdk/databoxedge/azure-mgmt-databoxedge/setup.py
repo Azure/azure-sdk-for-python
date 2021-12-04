@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-databoxedge"
-PACKAGE_PPRINT_NAME = "Databoxedge Management"
+PACKAGE_PPRINT_NAME = "Data Box Edge Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
