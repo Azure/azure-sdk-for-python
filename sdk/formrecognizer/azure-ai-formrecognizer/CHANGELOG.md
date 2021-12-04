@@ -3,6 +3,7 @@
 ## 3.2.0b3 (Unreleased)
 
 ### Features Added
+- Added samples showing how to use the `to_dict()` and `from_dict()` methods that can be found on the convenience models in v3.1 and v3.2-beta. Look for `sample_convert_to_and_from_dict.py` and `sample_convert_to_and_from_dict_async.py` in the samples directory under the `v3.1` and `v3.2-beta` directories depending on the version of the SDK library that is being used.
 
 ### Breaking Changes
 
