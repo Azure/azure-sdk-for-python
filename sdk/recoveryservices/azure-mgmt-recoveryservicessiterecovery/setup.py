@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-recoveryservicessiterecovery"
-PACKAGE_PPRINT_NAME = "Recoveryservicessiterecovery Management"
+PACKAGE_PPRINT_NAME = "Recovery Services Site Recovery Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
