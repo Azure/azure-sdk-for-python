@@ -127,7 +127,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 # Add Participant
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 OperationContext = str(uuid.uuid4())
-                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-f01d-c9e0-f40f-343a0d009ab8")
+                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-2293-8e3d-f6c7-593a0d004c21")
                 add_participant_result = await self.callingserver_client.add_participant(
                     call_locator=GroupCallLocator(group_id),
                     participant=CommunicationUserIdentifier(added_participant),

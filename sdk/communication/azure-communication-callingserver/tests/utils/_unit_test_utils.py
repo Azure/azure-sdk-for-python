@@ -467,7 +467,9 @@ class CallingServerUnitTestUtils:
     @staticmethod
     def verify_add_participant_result(result):
         # type: (AddParticipantResult) -> None
-        assert _test_constants.PARTICIPANT_ID_01 == result.participant_id
+        assert _test_constants.OPERATION_ID == result.operation_id
+        assert CallingOperationStatus.RUNNING == result.status
+        assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
     @staticmethod
     def verify_answer_call_result(result):
@@ -932,7 +934,9 @@ class CallConnectionUnitTestUtils:
     @staticmethod
     def verify_add_participant_result(result):
         # type: (AddParticipantResult) -> None
-        assert _test_constants.PARTICIPANT_ID_01 == result.participant_id
+        assert _test_constants.OPERATION_ID == result.operation_id
+        assert CallingOperationStatus.RUNNING == result.status
+        assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
     @staticmethod
     def verify_get_call_result(result):
