@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-changeanalysis"
-PACKAGE_PPRINT_NAME = "Changeanalysis Management"
+PACKAGE_PPRINT_NAME = "Change Analysis Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
