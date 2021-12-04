@@ -107,11 +107,8 @@ def test_decompress_plain_header(http_request):
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=True)
-    try:
-        content = b"".join(list(data))
-        assert False
-    except DecodeError:
-        pass
+    with pytest.raises(DecodeError):
+        list(data)
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_plain_header_offline(port, http_request):
@@ -119,12 +116,9 @@ def test_decompress_plain_header_offline(port, http_request):
     with RequestsTransport() as sender:
         response = sender.send(request, stream=True)
         response.raise_for_status()
-        try:
-            result = response.read()
-            assert result.text() == '{"error": headers={"Content-Type": "gzip"}}'
-            assert False
-        except AttributeError:
-            pass
+        data = response.stream_download(sender, decompress=True)
+        with pytest.raises(DecodeError):
+            list(data)
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_plain_header(http_request):

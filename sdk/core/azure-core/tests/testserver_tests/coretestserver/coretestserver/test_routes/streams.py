@@ -26,7 +26,7 @@ def stream_json_error():
     yield' "message": "You made a bad request"}}'
 
 def stream_compressed_header_error():
-    yield '{"error": headers={"Content-Type": "gzip"}}'
+    yield b'test'
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
@@ -42,5 +42,5 @@ def error():
 
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
-    return Response(stream_compressed_header_error(), status=300, headers={"Content-Type": "gzip"})
+    return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
     
