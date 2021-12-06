@@ -515,7 +515,7 @@ async def create_lists():
     # Asynchronously creates a complete list of the actual query results. This code performs the same action as the for-loop example above.
     item_list = [item async for item in results]
     await client.close()
-
+```
 ## Troubleshooting
 
 ### General
