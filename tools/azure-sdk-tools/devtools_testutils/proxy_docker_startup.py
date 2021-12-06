@@ -35,22 +35,13 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", 
 def get_image_tag():
     # type: () -> str
     """Gets the test proxy Docker image tag from the docker-start-proxy.ps1 script in /eng/common"""
-    pwsh_script_location = os.path.relpath("eng/common/testproxy/docker-start-proxy.ps1")
-    pwsh_script_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, pwsh_script_location))
+    pwsh_script_location = os.path.join(REPO_ROOT, os.path.relpath("eng/common/testproxy/docker-start-proxy.ps1"))
 
-    def parse_tag(file):
+    with open(pwsh_script_location, "r") as f:
         for line in file:
             if line.startswith("$SELECTED_IMAGE_TAG"):
                 image_tag_with_quotes = line.split()[-1]
-                return image_tag_with_quotes.strip('"')
-
-    try:
-        with open(pwsh_script_location_from_root, "r") as f:
-            image_tag = parse_tag(f)
-    except FileNotFoundError:
-        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(os.getcwd(), pwsh_script_location))
-        with open(pwsh_script_location_from_cwd, "r") as f:
-            image_tag = parse_tag(f)
+                image_tag = image_tag_with_quotes.strip('"')
 
     return image_tag
 
