@@ -2,9 +2,9 @@
 
 ## 1.21.1 (2021-12-06)
 
-### Bugs Fixed
+### Other Changes
 
-- Revert exposure of response body in string representation of `HttpResponseError`  #22023
+- Revert change in str method  #22023
 
 ## 1.21.0 (2021-12-02)
 
