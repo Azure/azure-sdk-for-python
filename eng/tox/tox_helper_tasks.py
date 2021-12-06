@@ -18,12 +18,12 @@ import zipfile
 import fnmatch
 import subprocess
 import re
-import pdb
 
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
 
 logging.getLogger().setLevel(logging.INFO)
+
 
 def get_package_details(setup_filename):
     mock_setup = textwrap.dedent(
@@ -59,7 +59,7 @@ def get_package_details(setup_filename):
 
     package_name = kwargs["name"]
     # default namespace for the package
-    name_space = package_name.replace('-', '.')
+    name_space = package_name.replace("-", ".")
     if "packages" in kwargs.keys():
         packages = kwargs["packages"]
         if packages:
@@ -67,6 +67,7 @@ def get_package_details(setup_filename):
             logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
     return package_name, name_space, kwargs["version"]
+
 
 def parse_req(req):
     """
@@ -77,22 +78,18 @@ def parse_req(req):
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return pkg_name, spec
 
+
 def get_pip_list_output():
-    """Uses the invoking python executable to get the output from pip list.
-    """
-    out = subprocess.Popen([
-            sys.executable,
-            "-m",
-            "pip",
-            "list",
-            "--disable-pip-version-check"
-        ],
+    """Uses the invoking python executable to get the output from pip list."""
+    out = subprocess.Popen(
+        [sys.executable, "-m", "pip", "list", "--disable-pip-version-check"],
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+        stderr=subprocess.STDOUT,
+    )
 
     stdout, stderr = out.communicate()
 
-    collected_output = {};
+    collected_output = {}
 
     if stdout and (stderr is None):
         # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
@@ -105,10 +102,12 @@ def get_pip_list_output():
 
     return collected_output
 
+
 def unzip_sdist_to_directory(containing_folder):
     # grab the first one
     path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.zip"))[0]
     return unzip_file_to_directory(path_to_zip_file, containing_folder)
+
 
 def unzip_file_to_directory(path_to_zip_file, extract_location):
     # unzip file in given path
@@ -118,10 +117,12 @@ def unzip_file_to_directory(path_to_zip_file, extract_location):
         extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
         return os.path.join(extract_location, extracted_dir)
 
+
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
     os.rename(source_location, new_location)
     return new_location
+
 
 def find_sdist(dist_dir, pkg_name, pkg_version):
     # This function will find a sdist for given package name
@@ -157,7 +158,6 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         logging.error("Package name cannot be empty to find whl")
         return
 
-
     pkg_name_format = "{0}-{1}*.whl".format(pkg_name.replace("-", "_"), pkg_version)
     whls = []
     for root, dirnames, filenames in os.walk(whl_dir):
@@ -165,7 +165,7 @@ def find_whl(whl_dir, pkg_name, pkg_version):
             whls.append(os.path.join(root, filename))
 
     whls = [os.path.relpath(w, whl_dir) for w in whls]
-    
+
     if not whls:
         logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
         logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
@@ -181,9 +181,13 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         if len(whls) > 1:
             # if we have reached here, that means we have whl specific to platform as well.
             # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
-            logging.error("More than one whl is found in wheel directory for package {}. Platform specific whl discovery is not supported now".format(pkg_name))
+            logging.error(
+                "More than one whl is found in wheel directory for package {}. Platform specific whl discovery is not supported now".format(
+                    pkg_name
+                )
+            )
             sys.exit(1)
-    
+
     # Additional filtering based on arch type willbe required in future if that need arises.
     # for now assumption is that no arch specific whl is generated
     if len(whls) == 1:

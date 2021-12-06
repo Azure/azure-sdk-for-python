@@ -17,8 +17,6 @@ import sys
 import glob
 import shutil
 from pkg_resources import parse_version
-import pdb
-
 
 from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
 
@@ -27,6 +25,7 @@ logging.getLogger().setLevel(logging.INFO)
 setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires
+
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
@@ -111,6 +110,7 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
         logging.info("Cleaning up build directories and files")
         cleanup_build_artifacts(target_setup)
     return prebuilt_packages
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -237,15 +237,15 @@ if __name__ == "__main__":
                         # get all installed packages
                         installed_pkgs = get_pip_list_output()
 
-                        # parse the specifier 
+                        # parse the specifier
                         req_name, req_specifier = parse_req(req)
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:
                             # ...do we need to install the new version? if the existing specifier matches, we're fine
                             if installed_pkgs[req_name] in req_specifier:
-                               addition_necessary = False 
-                        
+                                addition_necessary = False
+
                         if addition_necessary:
                             installation_additions.append(req)
 
@@ -257,13 +257,7 @@ if __name__ == "__main__":
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
                         ]
 
-            commands = [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                built_pkg_path
-            ]
+            commands = [sys.executable, "-m", "pip", "install", built_pkg_path]
 
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
