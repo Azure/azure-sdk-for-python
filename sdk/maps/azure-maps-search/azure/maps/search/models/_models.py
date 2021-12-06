@@ -3,41 +3,31 @@ from typing import List, Optional
 
 class LatLon(object):
 
-    def __init__(
-        self,
-        lat: float=None,
-        lon: float=None
-    ):
-        self.lat = lat
-        self.lon = lon
-        self.latlon = [self.lat, self.lon]
-
-    def __transform__(self, **kwargs): # type: (...) -> List[float]
-        return [self.lat, self.lon]
+    def __init__(self):
+        self._lat=None,
+        self._lon=None
 
     @property
     def lat(self) -> float:
-        return self.lat
+        return self._lat
 
     @lat.setter
     def lat(self, value: float) -> None:
-        if type(value) is not float:
-            raise TypeError('lat.setter(): got {} but expected type is float'
-                            .format(type(value).__name__))
+        if not isinstance(value, float):
+            raise TypeError(f'lat.setter(): got {type(value).__name__} but expected type is float')
         else:
-            self.lat = value
+            self._lat = value
 
     @property
     def lon(self) -> float:
-        return self.lon
+        return self._lon
 
     @lon.setter
-    def age(self, value) -> None:
-        if type(value) is not float:
-            raise TypeError('lon.setter(): got {} but expected type is float'
-                            .format(type(value).__name__))
+    def lon(self, value) -> None:
+        if not isinstance(value, float):
+            raise TypeError(f'lon.setter(): got {type(value).__name__} but expected type is float')
         else:
-            self.lon = value
+            self._lon = value
 
 class BoundingBox(object):
 
