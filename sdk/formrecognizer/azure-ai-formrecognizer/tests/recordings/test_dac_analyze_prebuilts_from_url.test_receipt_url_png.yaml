@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '223'
+      - '240'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
@@ -21,19 +21,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - ff2b6fe7-1d1c-4ff3-8547-7a818163620a
+      - 4b61373d-8c7c-4ee9-8964-d3c8d0f63586
       content-length:
       - '0'
       date:
-      - Tue, 14 Sep 2021 00:27:37 GMT
+      - Mon, 06 Dec 2021 19:06:31 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/ff2b6fe7-1d1c-4ff3-8547-7a818163620a?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/4b61373d-8c7c-4ee9-8964-d3c8d0f63586?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1306'
+      - '1212'
     status:
       code: 202
       message: Accepted
@@ -47,13 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/ff2b6fe7-1d1c-4ff3-8547-7a818163620a?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/4b61373d-8c7c-4ee9-8964-d3c8d0f63586?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-14T00:27:37Z",
-        "lastUpdatedDateTime": "2021-09-14T00:27:41Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-06T19:06:31Z",
+        "lastUpdatedDateTime": "2021-12-06T19:06:35Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
         "content": "Contoso\nContoso\n123 Main Street\nRedmond, WA 98052\n123-456-7890\n6/10/2019
         13:59\nSales Associate: Paul\n1 Surface Pro 6\n256GB / Intel Core i5 /\n8GB
@@ -219,11 +219,11 @@ interactions:
         1, "spans": [{"offset": 0, "length": 233}]}]}}'
     headers:
       apim-request-id:
-      - 271db037-860a-457f-a684-306917706129
+      - c63800a0-239e-4500-9b5b-3820cfd666fa
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Sep 2021 00:27:42 GMT
+      - Mon, 06 Dec 2021 19:06:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -231,7 +231,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '177'
+      - '178'
     status:
       code: 200
       message: OK

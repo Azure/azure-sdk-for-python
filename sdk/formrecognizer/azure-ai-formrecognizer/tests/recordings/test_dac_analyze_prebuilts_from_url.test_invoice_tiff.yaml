@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '230'
+      - '235'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-invoice:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
@@ -21,19 +21,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 08c1f5c4-e552-45e3-b635-31d72c6766ae
+      - 399e7b22-f278-4f81-8ce7-42ae034d6521
       content-length:
       - '0'
       date:
-      - Wed, 22 Sep 2021 05:37:39 GMT
+      - Mon, 06 Dec 2021 19:05:17 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/08c1f5c4-e552-45e3-b635-31d72c6766ae?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/399e7b22-f278-4f81-8ce7-42ae034d6521?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '866'
+      - '632'
     status:
       code: 202
       message: Accepted
@@ -47,13 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/08c1f5c4-e552-45e3-b635-31d72c6766ae?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-invoice/analyzeResults/399e7b22-f278-4f81-8ce7-42ae034d6521?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-22T05:37:38Z",
-        "lastUpdatedDateTime": "2021-09-22T05:37:42Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-06T19:05:17Z",
+        "lastUpdatedDateTime": "2021-12-06T19:05:22Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-invoice", "stringIndexType": "unicodeCodePoint",
         "content": "Contoso\nAddress:\nInvoice For: Microsoft\n1 Redmond way Suite\n1020
         Enterprise Way\n6000 Redmond, WA\nSunnayvale, CA 87659\n99243\nInvoice Number\nInvoice
@@ -231,11 +231,11 @@ interactions:
         0, "length": 7}]}}, "confidence": 1, "spans": [{"offset": 0, "length": 226}]}]}}'
     headers:
       apim-request-id:
-      - 9480d9de-8d14-43c0-8191-7827db5bcd68
+      - 019e1366-d7e7-4afc-b6f9-7d937b92e834
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Sep 2021 05:37:44 GMT
+      - Mon, 06 Dec 2021 19:05:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -243,7 +243,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '387'
+      - '313'
     status:
       code: 200
       message: OK

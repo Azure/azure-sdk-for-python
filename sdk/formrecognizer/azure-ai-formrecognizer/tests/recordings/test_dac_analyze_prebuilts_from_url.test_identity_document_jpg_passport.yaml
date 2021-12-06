@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '230'
+      - '235'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-idDocument:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
@@ -21,19 +21,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - b2b0fde7-b1c0-47d5-9497-96472f0f209b
+      - 51f4b774-7a68-4add-a7f9-72f26d5dcbfb
       content-length:
       - '0'
       date:
-      - Thu, 23 Sep 2021 22:13:09 GMT
+      - Mon, 06 Dec 2021 19:05:11 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/b2b0fde7-b1c0-47d5-9497-96472f0f209b?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/51f4b774-7a68-4add-a7f9-72f26d5dcbfb?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '640'
+      - '890'
     status:
       code: 202
       message: Accepted
@@ -47,13 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/b2b0fde7-b1c0-47d5-9497-96472f0f209b?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/51f4b774-7a68-4add-a7f9-72f26d5dcbfb?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-23T22:13:09Z",
-        "lastUpdatedDateTime": "2021-09-23T22:13:11Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-06T19:05:10Z",
+        "lastUpdatedDateTime": "2021-12-06T19:05:13Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-idDocument", "stringIndexType":
         "unicodeCodePoint", "content": "ENDORSEMENTS AND LIMITATIONS\nof the countries
         to Be wond.\nSEE COSUINATIONS BEGINNING ON\nPACE S OF APPLICARLA\nMENTIONS
@@ -358,11 +358,11 @@ interactions:
         "confidence": 0.995, "spans": [{"offset": 0, "length": 770}]}]}}'
     headers:
       apim-request-id:
-      - 75d5b27f-b474-4a8b-bf8b-6ff818b3d2d1
+      - af2b979d-a265-4dd4-a359-c6c6c7d2c9d7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Sep 2021 22:13:14 GMT
+      - Mon, 06 Dec 2021 19:05:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -370,7 +370,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '149'
+      - '321'
     status:
       code: 200
       message: OK

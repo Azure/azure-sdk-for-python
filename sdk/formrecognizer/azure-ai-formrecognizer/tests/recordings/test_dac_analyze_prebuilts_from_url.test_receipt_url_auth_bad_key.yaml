@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '232'
+      - '241'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: '{"error": {"code": "401", "message": "Access denied due to invalid
@@ -23,13 +23,13 @@ interactions:
         an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       apim-request-id:
-      - 0a610e48-0bb7-401c-b838-a369a4b4ca04
+      - 7c362809-fa90-487e-9709-a3568683a673
       content-length:
       - '224'
       content-type:
       - application/json
       date:
-      - Tue, 14 Sep 2021 09:14:20 GMT
+      - Mon, 06 Dec 2021 19:06:29 GMT
     status:
       code: 401
       message: PermissionDenied

@@ -9,31 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '224'
+      - '241'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?locale=en-IN&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 20128ffe-58b7-444d-b9ad-f9d83bc33c56
+      - 13e980da-7461-4573-9d7e-e75d9277e765
       content-length:
       - '0'
       date:
-      - Sat, 25 Sep 2021 02:32:34 GMT
+      - Mon, 06 Dec 2021 19:06:00 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/20128ffe-58b7-444d-b9ad-f9d83bc33c56?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/13e980da-7461-4573-9d7e-e75d9277e765?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '852'
+      - '436'
     status:
       code: 202
       message: Accepted
@@ -47,13 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/20128ffe-58b7-444d-b9ad-f9d83bc33c56?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/13e980da-7461-4573-9d7e-e75d9277e765?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-25T02:32:34Z",
-        "lastUpdatedDateTime": "2021-09-25T02:32:38Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-06T19:06:00Z",
+        "lastUpdatedDateTime": "2021-12-06T19:06:04Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-receipt", "stringIndexType": "unicodeCodePoint",
         "content": "Contoso\nContoso\n123 Main Street\nRedmond, WA 98052\n987-654-3210\n6/10/2019
         13:59\nSales Associate: Paul\n-\n1 Cappuccino\n1 BACON & EGGS\n$2.20\nSunny-side-up\n$9.5\n-\nSub-Total\n$
@@ -183,15 +183,15 @@ interactions:
         {"type": "number", "valueNumber": 9.5, "content": "$9.5", "boundingRegions":
         [{"pageNumber": 1, "boundingBox": [1135, 1954, 1266, 1954, 1266, 2036, 1135,
         2035]}], "confidence": 0.987, "spans": [{"offset": 151, "length": 4}]}}}]},
-        "Locale": {"type": "string", "valueString": "en-US", "confidence": 0.995},
-        "MerchantAddress": {"type": "string", "valueString": "123 Main Street Redmond,
-        WA 98052", "content": "123 Main Street Redmond, WA 98052", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [303, 677, 845, 797, 808, 966, 266, 846]}],
-        "confidence": 0.974, "spans": [{"offset": 16, "length": 33}]}, "MerchantName":
-        {"type": "string", "valueString": "Contoso", "content": "Contoso", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [311, 573, 515, 625, 502, 681, 297, 632]}],
-        "confidence": 0.979, "spans": [{"offset": 8, "length": 7}]}, "MerchantPhoneNumber":
-        {"type": "phoneNumber", "valuePhoneNumber": "+19876543210", "content": "987-654-3210",
+        "Locale": {"type": "string", "valueString": "en-IN", "confidence": 1}, "MerchantAddress":
+        {"type": "string", "valueString": "123 Main Street Redmond, WA 98052", "content":
+        "123 Main Street Redmond, WA 98052", "boundingRegions": [{"pageNumber": 1,
+        "boundingBox": [303, 677, 845, 797, 808, 966, 266, 846]}], "confidence": 0.974,
+        "spans": [{"offset": 16, "length": 33}]}, "MerchantName": {"type": "string",
+        "valueString": "Contoso", "content": "Contoso", "boundingRegions": [{"pageNumber":
+        1, "boundingBox": [311, 573, 515, 625, 502, 681, 297, 632]}], "confidence":
+        0.979, "spans": [{"offset": 8, "length": 7}]}, "MerchantPhoneNumber": {"type":
+        "phoneNumber", "valuePhoneNumber": "+919876543210", "content": "987-654-3210",
         "boundingRegions": [{"pageNumber": 1, "boundingBox": [275, 1006, 648, 1055,
         643, 1120, 268, 1072]}], "confidence": 0.989, "spans": [{"offset": 50, "length":
         12}]}, "ReceiptType": {"type": "string", "valueString": "Itemized", "confidence":
@@ -207,7 +207,7 @@ interactions:
         197, "length": 4}]}, "Total": {"type": "number", "valueNumber": 14.5, "content":
         "$14,50", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1024, 2621,
         1377, 2639, 1371, 2760, 1018, 2742]}], "confidence": 0.978, "spans": [{"offset":
-        202, "length": 6}]}, "TransactionDate": {"type": "date", "valueDate": "2019-06-10",
+        202, "length": 6}]}, "TransactionDate": {"type": "date", "valueDate": "2019-10-06",
         "content": "6/10/2019", "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [265, 1227, 511, 1247, 507, 1329, 259, 1313]}], "confidence": 0.99, "spans":
         [{"offset": 63, "length": 9}]}, "TransactionTime": {"type": "time", "valueTime":
@@ -217,11 +217,11 @@ interactions:
         "length": 208}]}]}}'
     headers:
       apim-request-id:
-      - 4f8a3642-f530-40d8-97d3-2d7f8bfae2cd
+      - c1336508-bee4-4dad-89cc-0e4c0ee8498d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 25 Sep 2021 02:32:39 GMT
+      - Mon, 06 Dec 2021 19:06:05 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -229,7 +229,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '157'
+      - '153'
     status:
       code: 200
       message: OK

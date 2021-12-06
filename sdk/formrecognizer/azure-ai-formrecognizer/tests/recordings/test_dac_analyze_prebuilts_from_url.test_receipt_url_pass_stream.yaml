@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"urlSource": "https://badurl.jpg"}'''
+    body: 'b''{"urlSource": "<_io.BufferedReader name=\''C:\\\\\\\\Users\\\\\\\\caperal\\\\\\\\Documents\\\\\\\\Python\\\\\\\\azure-sdk-for-python\\\\\\\\sdk\\\\\\\\formrecognizer\\\\\\\\azure-ai-formrecognizer\\\\\\\\tests\\\\\\\\sample_forms\\\\\\\\receipt\\\\\\\\contoso-receipt.png\''>"}'''
     headers:
       Accept:
       - application/json
@@ -9,26 +9,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '35'
+      - '225'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
-      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
-        "innererror": {"code": "InvalidContent", "message": "The file is corrupted
-        or format is unsupported. Refer to documentation for the list of supported
-        formats."}}}'
+      string: '{"error": {"code": "InvalidArgument", "message": "Invalid argument.",
+        "innererror": {"code": "InvalidContentSourceFormat", "message": "Invalid content
+        source: Url must be http or https."}}}'
     headers:
       apim-request-id:
-      - 84828fbf-06c7-453e-be21-8ef2077ca9ec
+      - 598c916f-de11-4168-9f41-06f014f76400
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 14 Sep 2021 00:25:13 GMT
+      - Mon, 06 Dec 2021 19:06:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '137'
+      - '4'
     status:
       code: 400
       message: Bad Request
