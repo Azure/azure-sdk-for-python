@@ -144,9 +144,9 @@ class KeysTestCase(AzureTestCase):
     def _get_attestation_uri(self):
         playback_uri = "https://fakeattestation.azurewebsites.net"
         if self.is_live:
-            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URI")
+            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL")
             if real_uri is None:
-                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URI environment variable")
+                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
             self._scrub_url(real_uri, playback_uri)
             return real_uri
         return playback_uri
