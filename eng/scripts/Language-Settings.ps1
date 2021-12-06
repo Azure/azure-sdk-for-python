@@ -182,12 +182,12 @@ function ValidatePackage
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
   if (!$DocValidationImageId) {
     Write-Host "Validating using pip command directly on $packageName."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder- PackageSourceOverride $PackageSourceOverride
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
   } 
   else {
     Write-Host "Validating using $DocValidationImageId on $packageName."
     DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
-        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
   }
 }
 function DockerValidation{
@@ -199,13 +199,17 @@ function DockerValidation{
     [Parameter(Mandatory=$false)]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId
+    [string]$DocValidationImageId,
+    [Parameter(Mandatory=$false)]
+    [string]$workingDirectory
   ) 
   if ($PackageSourceOverride) {
-    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId
+    docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 | Out-Null
   }
   else {
-    docker run -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId
+    docker run -v "${workingDirectory}:/workdir/out" `
+      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1 | Out-Null
   }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
   # If the docker failed because of docker itself instead of the application, 
@@ -247,7 +251,7 @@ function FallbackValidation
         $packageExpression `
         --no-cache-dir `
         --target $installTargetFolder `
-        --extra-index-url=$PackageSourceOverride 2>&1
+        --extra-index-url=$PackageSourceOverride 2>&1 | Out-Null
     }
     else {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
@@ -255,7 +259,7 @@ function FallbackValidation
         install `
         $packageExpression `
         --no-cache-dir `
-        --target $installTargetFolder 2>&1
+        --target $installTargetFolder 2>&1 | Out-Null
     }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
