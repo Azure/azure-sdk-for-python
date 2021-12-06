@@ -48,7 +48,7 @@ def get_image_tag():
         with open(pwsh_script_location_from_root, "r") as f:
             image_tag = parse_tag(f)
     except FileNotFoundError:
-        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(os.path.dirname(__file__), pwsh_script_location))
+        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(os.getcwd(), pwsh_script_location))
         with open(pwsh_script_location_from_cwd, "r") as f:
             image_tag = parse_tag(f)
 
