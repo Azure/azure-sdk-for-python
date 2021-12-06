@@ -97,7 +97,7 @@ ErrorPayload={
     "operationId": OPERATION_ID,
     "status": "failed",
     "operationContext": OPERATION_CONTEXT,
-    "resultInfo": {
+    "resultDetails": {
         "code": 404,
         "subcode": 404,
         "message": "Resource not found on the server."
@@ -178,7 +178,7 @@ PlayAudioResponsePayload = {
     "operationId": OPERATION_ID,
     "status": "running",
     "operationContext": OPERATION_CONTEXT,
-    "resultInfo": {
+    "resultDetails": {
         "code": 202,
         "subcode": 202,
         "message": "Good."
@@ -187,7 +187,14 @@ PlayAudioResponsePayload = {
 
 # AddParticipantPayload
 AddParticipantResultPayload = {
-    "participantId": PARTICIPANT_ID_01
+    "operationId": OPERATION_ID,
+    "status": "running",
+    "operationContext": OPERATION_CONTEXT,
+    "resultDetails": {
+        "code": 202,
+        "subcode": 202,
+        "message": "Good."
+        }
     }
 
 # TransferPayload
@@ -195,7 +202,7 @@ TransferResultPayload = {
     "operationId": OPERATION_ID,
     "status": "completed",
     "operationContext": OPERATION_CONTEXT,
-    "resultInfo": {
+    "resultDetails": {
         "code": 202,
         "subcode": 202,
         "message": "Good."

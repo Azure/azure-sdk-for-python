@@ -123,7 +123,7 @@ class ServerCallTest(CommunicationTestCase):
             # Add Participant
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
-            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000d-f01d-c9e0-f40f-343a0d009ab8")
+            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-2293-8e3d-f6c7-593a0d004c21")
             add_participant_result = self.callingserver_client.add_participant(
                 call_locator=GroupCallLocator(group_id),
                 participant=CommunicationUserIdentifier(added_participant),
@@ -134,7 +134,6 @@ class ServerCallTest(CommunicationTestCase):
             CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
 
             # Remove Participant
-            participant_id=add_participant_result.participant_id
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             self.callingserver_client.remove_participant(
                 GroupCallLocator(group_id),

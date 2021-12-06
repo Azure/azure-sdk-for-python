@@ -56,8 +56,10 @@ class CallingServerLiveTestUtils:
     def validate_add_participant(add_participant_result):
         # type: (AddParticipantResult) -> None
         assert add_participant_result is not None
-        assert add_participant_result.participant_id is not None
-        assert len(add_participant_result.participant_id) != 0
+        assert add_participant_result.operation_id is not None
+        assert len(add_participant_result.operation_id) != 0
+        assert add_participant_result.status is not None
+        assert add_participant_result.status == CallingOperationStatus.RUNNING
 
     @staticmethod
     def cancel_all_media_operations_for_group_call(call_connections):

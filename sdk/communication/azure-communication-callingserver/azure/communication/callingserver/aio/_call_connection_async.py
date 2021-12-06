@@ -382,7 +382,7 @@ class CallConnection:
             participant: CommunicationIdentifier,
             **kwargs: Any
         ) -> None:
-        """Mutes the participant
+        """Mute the participant
 
         :param participant: Required. The identifier of the participant to be muted in the call.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier

@@ -65,26 +65,57 @@ class AddParticipantRequest(msrest.serialization.Model):
 class AddParticipantResult(msrest.serialization.Model):
     """The add participant result.
 
-    :ivar participant_id: The id of the added participant.
-    :vartype participant_id: str
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operation_id: The operation id.
+    :vartype operation_id: str
+    :ivar status: Required. The status of the operation. Possible values include: "notStarted",
+     "running", "completed", "failed".
+    :vartype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    :ivar result_details: The result info for the operation.
+    :vartype result_details:
+     ~azure.communication.callingserver.models.CallingOperationResultDetails
     """
 
+    _validation = {
+        'status': {'required': True},
+    }
+
     _attribute_map = {
-        'participant_id': {'key': 'participantId', 'type': 'str'},
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'operation_context': {'key': 'operationContext', 'type': 'str'},
+        'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
     }
 
     def __init__(
         self,
         *,
-        participant_id: Optional[str] = None,
+        status: Union[str, "CallingOperationStatus"],
+        operation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_details: Optional["CallingOperationResultDetails"] = None,
         **kwargs
     ):
         """
-        :keyword participant_id: The id of the added participant.
-        :paramtype participant_id: str
+        :keyword operation_id: The operation id.
+        :paramtype operation_id: str
+        :keyword status: Required. The status of the operation. Possible values include: "notStarted",
+         "running", "completed", "failed".
+        :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+        :keyword operation_context: The operation context provided by client.
+        :paramtype operation_context: str
+        :keyword result_details: The result info for the operation.
+        :paramtype result_details:
+         ~azure.communication.callingserver.models.CallingOperationResultDetails
         """
         super(AddParticipantResult, self).__init__(**kwargs)
-        self.participant_id = participant_id
+        self.operation_id = operation_id
+        self.status = status
+        self.operation_context = operation_context
+        self.result_details = result_details
 
 
 class AddParticipantResultEvent(msrest.serialization.Model):
@@ -1444,7 +1475,7 @@ class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
 
 
 class MuteParticipantRequest(msrest.serialization.Model):
-    """The request payload for muting any participant.
+    """The request payload to mute a participant.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2516,7 +2547,7 @@ class TransferToParticipantRequest(msrest.serialization.Model):
 
 
 class UnmuteParticipantRequest(msrest.serialization.Model):
-    """The request payload for unmuting any participant.
+    """The request payload to unmute a participant.
 
     All required parameters must be populated in order to send to Azure.
 
