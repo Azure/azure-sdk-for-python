@@ -363,7 +363,7 @@ class Similarity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.BM25Similarity': 'BM25Similarity', '#Microsoft.Azure.Search.ClassicSimilarity': 'ClassicSimilarity'}
+        'odata_type': {'#Microsoft.Azure.Search.BM25Similarity': 'BM25SimilarityAlgorithm', '#Microsoft.Azure.Search.ClassicSimilarity': 'ClassicSimilarityAlgorithm'}
     }
 
     def __init__(
