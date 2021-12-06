@@ -33,7 +33,10 @@ class IssueProcessJava(IssueProcess):
 
 
 class Java(Common):
-    pass
+    def __init__(self, issues, assignee_token, language_owner):
+        super(Java, self).__init__(issues, assignee_token, language_owner)
+        self.file_out_name = 'release_java_status.md'
+
 
 
 def java_process(issues: List[Any]):
