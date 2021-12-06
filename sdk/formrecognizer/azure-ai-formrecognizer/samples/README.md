@@ -181,5 +181,5 @@ what you can do with the Azure Form Recognizer client library.
 [sample_create_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/async_samples/sample_create_composed_model_async.py
 [sample_differentiate_output_labeled_tables]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_differentiate_output_labeled_tables.py
 [sample_differentiate_output_labeled_tables_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/async_samples/sample_differentiate_output_labeled_tables_async.py
-[sample_convert_to_and_from_dict_v3_1]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_convert_to_and_from_dict.py
-[sample_convert_to_and_from_dict_async_v3_1]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_convert_to_and_from_dict_async.py
+[sample_convert_to_and_from_dict_v3_1]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_convert_to_and_from_dict.py
+[sample_convert_to_and_from_dict_async_v3_1]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/async_samples/sample_convert_to_and_from_dict_async.py
