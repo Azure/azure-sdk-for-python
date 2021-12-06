@@ -128,7 +128,7 @@
         "authorizationApiVersion": "2018-09-01-preview",
         "docTranslationBaseName": "[parameters('baseName')]",
         "docTranslationApiVersion": "2017-04-18",
-        "storageMgmtApiVersion": "2019-04-01",
+        "storageMgmtApiVersion": "2017-10-01",
         "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
