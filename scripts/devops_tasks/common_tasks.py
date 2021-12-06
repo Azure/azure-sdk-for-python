@@ -9,7 +9,7 @@
 # package targeting during release.
 
 import glob
-from subprocess import check_call, CalledProcessError
+from subprocess import check_call, CalledProcessError, Popen
 import os
 import errno
 import shutil
@@ -331,7 +331,6 @@ def run_check_call(
             else:
                 return err
 
-
 # This function generates code coverage parameters
 def create_code_coverage_params(parsed_args, package_name):
     coverage_args = []
@@ -368,8 +367,12 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
         return False
 
 
-# This function parses requirement and return package name and specifier
 def parse_require(req):
+    """
+    Parses the incoming version specification and returns a tuple of the requirement name and specifier.
+
+    "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
+    """
     req_object = Requirement.parse(req.split(";")[0])
     pkg_name = req_object.key
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))

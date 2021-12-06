@@ -11,9 +11,10 @@ import os
 import sys
 from subprocess import check_call
 import logging
-from packaging.specifiers import SpecifierSet
-from pkg_resources import Requirement, parse_version
+from pkg_resources import parse_version
 import re
+
+from .tox_helper_tasks import parse_req
 
 from pypi_tools.pypi import PyPIClient
 
@@ -76,14 +77,6 @@ def find_released_packages(setup_py_path, dependency_type):
     # Get available version on PyPI for each required package
     avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
     return avlble_packages
-
-
-def parse_req(req):
-    req_object = Requirement.parse(req.split(";")[0])
-    pkg_name = req_object.key
-    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
-    return pkg_name, spec
-
 
 def process_requirement(req, dependency_type):
     # this method finds either latest or minimum version of a package that is available on PyPI

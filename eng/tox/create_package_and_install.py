@@ -16,15 +16,16 @@ import logging
 import sys
 import glob
 import shutil
+from pkg_resources import parse_version
 
-from tox_helper_tasks import find_whl, find_sdist, get_package_details
+
+from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
 
 logging.getLogger().setLevel(logging.INFO)
 
 setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires
-
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
@@ -109,7 +110,6 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
         logging.info("Cleaning up build directories and files")
         cleanup_build_artifacts(target_setup)
     return prebuilt_packages
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -227,7 +227,22 @@ if __name__ == "__main__":
                         "--no-deps",
                     ]
 
-                    download_command.extend(azure_requirements)
+                    # only download a package if the requirement is not already met, so walk across
+                    # direct install_requires
+                    for req in azure_requirements:
+                        # get all installed packages
+                        installed_pkgs = get_pip_list_output()
+
+                        # parse the specifier 
+                        req_name, req_specifier = parse_req(req)
+
+                        # if we've already got a version installed...
+                        if req_name in installed_pkgs:
+                            installed_version = parse_version(installed_pkgs[req_name])
+                            # do we need to install the new version? if the existing specifier matches, we're fine
+                            if installed_version in req_specifier:
+                                download_command.extend(req)
+
                     download_command.extend(commands_options)
 
                     check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))

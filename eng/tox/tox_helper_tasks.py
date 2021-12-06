@@ -9,15 +9,19 @@
 
 import sys
 import logging
-import argparse
 import ast
 import os
-import platform
 import textwrap
 import io
 import glob
 import zipfile
 import fnmatch
+import subprocess
+import re
+import pdb
+
+from packaging.specifiers import SpecifierSet
+from pkg_resources import Requirement, parse_version
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -63,6 +67,43 @@ def get_package_details(setup_filename):
             logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
     return package_name, name_space, kwargs["version"]
+
+def parse_req(req):
+    """
+    Parses a valid python requirement, EG: EG: azure-core<2.0.0,>=1.11.0. Returns the package name and spec.
+    """
+    req_object = Requirement.parse(req.split(";")[0])
+    pkg_name = req_object.key
+    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
+    return pkg_name, spec
+
+def get_pip_list_output():
+    """Uses the invoking python executable to get the output from pip list.
+    """
+    out = subprocess.Popen([
+            sys.executable,
+            "-m",
+            "pip",
+            "list",
+            "--disable-pip-version-check"
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+
+    stdout, stderr = out.communicate()
+
+    collected_output = {};
+
+    if stdout and (stderr is None):
+        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
+        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
+            if line:
+                package, version = re.split("\s+", line)
+                collected_output[package] = version
+    else:
+        raise Exception(stderr)
+
+    return collected_output
 
 def unzip_sdist_to_directory(containing_folder):
     # grab the first one
