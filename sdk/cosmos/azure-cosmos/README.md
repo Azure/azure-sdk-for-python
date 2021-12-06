@@ -434,7 +434,7 @@ For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_
 
 ### Using the asynchronous client
 
-The asynchronous cosmos client looks and works in a very similar fashion to the already existing client, with the exception of its package within the sdk and the need of using async/await keywords in order to interact with it.
+The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -449,14 +449,14 @@ CONTAINER_NAME = 'products'
 container = database.get_container_client(CONTAINER_NAME)
 
 async def create_items():
-    for i in range(1, 10):
+    for i in range(10):
         await container.upsert_item({
                 'id': 'item{0}'.format(i),
                 'productName': 'Widget',
                 'productModel': 'Model {0}'.format(i)
             }
         )
-    await client.close()
+    await client.close() # the async client must be closed manually if it's not initialized in a with statement
 ```
 
 It is also worth pointing out that the asynchronous client has to be closed manually after its use, either by initializing it using async with or calling the close() method directly like shown above.
@@ -470,10 +470,10 @@ KEY = os.environ['ACCOUNT_KEY']
 DATABASE_NAME = 'testDatabase'
 CONTAINER_NAME = 'products'
 
-async with CosmosClient(URL, credential=KEY) as client:
+async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically close the async client
     database = client.get_database_client(DATABASE_NAME)
     container = database.get_container_client(CONTAINER_NAME)
-    for i in range(1, 10):
+    for i in range(10):
         await container.upsert_item({
                 'id': 'item{0}'.format(i),
                 'productName': 'Widget',
@@ -484,7 +484,11 @@ async with CosmosClient(URL, credential=KEY) as client:
 
 ### Queries with the asynchronous client
 
-Queries work the same way for the most part, with one exception being the absence of the `enable_cross_partition` flag in the request; queries without a specified partition key value will now by default attempt to do a cross partition query. Results can be directly iterated on, but because queries made by the asynchronous client return AsyncIterable objects, results can't be cast into lists directly; instead, if you need to create lists from your results, use Python's list comprehension to populate a list:
+Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
+
+Query results can be iterated, but query results return an asynchronous iterator. This means that each object from the iterator is already being "awaited" and does not contain that actual query result, only an awaitable object to asynchronously retrieve it. 
+
+These results can't be cast into lists directly; instead, if you need to create lists from your results, use an async for loop or Python's list comprehension to populate a list:
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -502,13 +506,15 @@ async def create_lists():
     results = container.query_items(
             query='SELECT * FROM products p WHERE p.productModel = "Model 2"')
 
-    # Iterating directly on results
-    async for item in results:
-        print(item)
+    # iterates on "results" iterator to asynchronously create a complete list of the actual query results
 
-    # Making a list from the results
+    item_list = []
+    async for item in results:
+        item_list.append(item)
+
+    # Asynchronously creates a complete list of the actual query results. This code performs the same action as the for-loop example above.
     item_list = [item async for item in results]
-```
+    await client.close()
 
 ## Troubleshooting
 
