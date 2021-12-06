@@ -17,6 +17,7 @@ import sys
 import glob
 import shutil
 from pkg_resources import parse_version
+import pdb
 
 
 from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
@@ -227,28 +228,34 @@ if __name__ == "__main__":
                         "--no-deps",
                     ]
 
+                    installation_additions = []
+
                     # only download a package if the requirement is not already met, so walk across
                     # direct install_requires
                     for req in azure_requirements:
+                        addition_necessary = True
                         # get all installed packages
                         installed_pkgs = get_pip_list_output()
 
                         # parse the specifier 
                         req_name, req_specifier = parse_req(req)
 
-                        # if we've already got a version installed...
+                        # if we have the package already present...
                         if req_name in installed_pkgs:
-                            installed_version = parse_version(installed_pkgs[req_name])
-                            # do we need to install the new version? if the existing specifier matches, we're fine
-                            if installed_version in req_specifier:
-                                download_command.extend(req)
+                            # ...do we need to install the new version? if the existing specifier matches, we're fine
+                            if installed_pkgs[req_name] in req_specifier:
+                               addition_necessary = False 
+                        
+                        if addition_necessary:
+                            installation_additions.append(req)
 
-                    download_command.extend(commands_options)
+                    if installation_additions:
+                        download_command.extend(commands_options)
 
-                    check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
-                    additional_downloaded_reqs = [
-                        os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                    ]
+                        check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
+                        additional_downloaded_reqs = [
+                            os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
+                        ]
 
             commands = [
                 sys.executable,
