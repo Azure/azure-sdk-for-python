@@ -1,5 +1,11 @@
 # Release History
 
+## 1.21.1 (2021-12-06)
+
+### Bugs Fixed
+
+- Revert exposure of response body in string representation of `HttpResponseError`
+
 ## 1.21.0 (2021-12-02)
 
 ### Breaking Changes
