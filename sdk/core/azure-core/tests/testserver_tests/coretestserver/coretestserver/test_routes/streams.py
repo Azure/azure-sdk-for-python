@@ -25,6 +25,14 @@ def stream_json_error():
     yield '{"error": {"code": "BadRequest", '
     yield' "message": "You made a bad request"}}'
 
+def stream_compress():
+    with open("testserver_tests/coretestserver/coretestserver/files/test.tar.gz", "rb") as fd:
+        yield fd.read()
+
+@streams_api.route('/compress', methods=['GET'])
+def compress():
+    return Response(stream_compress(), status=200)
+
 @streams_api.route('/basic', methods=['GET'])
 def basic():
     return Response(streaming_body(), status=200)
