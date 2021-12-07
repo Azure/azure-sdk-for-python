@@ -7,60 +7,58 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
-from . import models
-from ._configuration import RecoveryServicesBackupClientConfiguration
+from .. import models
+from ._configuration import CrossRegionRestoreClientConfiguration
 from .operations import AadPropertiesOperations, BackupCrrJobDetailsOperations, BackupCrrJobsOperations, BackupProtectedItemsCrrOperations, BackupResourceStorageConfigsOperations, BackupUsageSummariesCRROperations, CrossRegionRestoreOperations, CrrOperationResultsOperations, CrrOperationStatusOperations, RecoveryPointsCrrOperations, RecoveryPointsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from azure.core.credentials_async import AsyncTokenCredential
 
-    from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
-
-class RecoveryServicesBackupClient(object):
+class CrossRegionRestoreClient:
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
     :ivar backup_usage_summaries_crr: BackupUsageSummariesCRROperations operations
     :vartype backup_usage_summaries_crr:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.BackupUsageSummariesCRROperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.BackupUsageSummariesCRROperations
     :ivar aad_properties: AadPropertiesOperations operations
     :vartype aad_properties:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.AadPropertiesOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.AadPropertiesOperations
     :ivar cross_region_restore: CrossRegionRestoreOperations operations
     :vartype cross_region_restore:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.CrossRegionRestoreOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.CrossRegionRestoreOperations
     :ivar backup_crr_job_details: BackupCrrJobDetailsOperations operations
     :vartype backup_crr_job_details:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.BackupCrrJobDetailsOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.BackupCrrJobDetailsOperations
     :ivar backup_crr_jobs: BackupCrrJobsOperations operations
     :vartype backup_crr_jobs:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.BackupCrrJobsOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.BackupCrrJobsOperations
     :ivar crr_operation_results: CrrOperationResultsOperations operations
     :vartype crr_operation_results:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.CrrOperationResultsOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.CrrOperationResultsOperations
     :ivar crr_operation_status: CrrOperationStatusOperations operations
     :vartype crr_operation_status:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.CrrOperationStatusOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.CrrOperationStatusOperations
     :ivar recovery_points: RecoveryPointsOperations operations
     :vartype recovery_points:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.RecoveryPointsOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.RecoveryPointsOperations
     :ivar backup_resource_storage_configs: BackupResourceStorageConfigsOperations operations
     :vartype backup_resource_storage_configs:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.BackupResourceStorageConfigsOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.BackupResourceStorageConfigsOperations
     :ivar recovery_points_crr: RecoveryPointsCrrOperations operations
     :vartype recovery_points_crr:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.RecoveryPointsCrrOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.RecoveryPointsCrrOperations
     :ivar backup_protected_items_crr: BackupProtectedItemsCrrOperations operations
     :vartype backup_protected_items_crr:
-     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.operations.BackupProtectedItemsCrrOperations
+     azure.mgmt.recoveryservicesbackup.crossregionregionrestore.aio.operations.BackupProtectedItemsCrrOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription Id.
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
@@ -74,14 +72,13 @@ class RecoveryServicesBackupClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url="https://management.azure.com",  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        self._config = RecoveryServicesBackupClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = CrossRegionRestoreClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -102,17 +99,16 @@ class RecoveryServicesBackupClient(object):
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -120,22 +116,19 @@ class RecoveryServicesBackupClient(object):
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> RecoveryServicesBackupClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "CrossRegionRestoreClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

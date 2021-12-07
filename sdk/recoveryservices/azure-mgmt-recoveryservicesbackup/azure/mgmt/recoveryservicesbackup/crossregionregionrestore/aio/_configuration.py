@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RecoveryServicesBackupClientConfiguration(Configuration):
-    """Configuration for RecoveryServicesBackupClient.
+class CrossRegionRestoreClientConfiguration(Configuration):
+    """Configuration for CrossRegionRestoreClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -39,7 +39,7 @@ class RecoveryServicesBackupClientConfiguration(Configuration):
         subscription_id: str,
         **kwargs: Any
     ) -> None:
-        super(RecoveryServicesBackupClientConfiguration, self).__init__(**kwargs)
+        super(CrossRegionRestoreClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2018-12-20")  # type: str
 
         if credential is None:

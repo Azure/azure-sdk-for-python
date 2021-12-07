@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._recovery_services_backup_client_enums import *
+from ._cross_region_region_restore_client_enums import *
 
 
 class AADProperties(msrest.serialization.Model):

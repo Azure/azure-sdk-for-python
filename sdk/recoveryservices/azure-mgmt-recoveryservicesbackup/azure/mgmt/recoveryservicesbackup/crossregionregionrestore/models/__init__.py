@@ -251,7 +251,7 @@ except (SyntaxError, ImportError):
     from ._models import TargetRestoreInfo  # type: ignore
     from ._models import WorkloadCrrAccessToken  # type: ignore
 
-from ._recovery_services_backup_client_enums import (
+from ._cross_region_region_restore_client_enums import (
     BackupManagementType,
     CopyOptions,
     CreateMode,

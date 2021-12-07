@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._recovery_services_backup_client import RecoveryServicesBackupClient
+from ._cross_region_region_restore_client import CrossRegionRestoreClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['RecoveryServicesBackupClient']
+__all__ = ['CrossRegionRestoreClient']
 
 # `._patch.py` is used for handwritten extensions to the generated code
 # Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
