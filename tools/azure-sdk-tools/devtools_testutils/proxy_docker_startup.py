@@ -35,13 +35,30 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", 
 def get_image_tag():
     # type: () -> str
     """Gets the test proxy Docker image tag from the docker-start-proxy.ps1 script in /eng/common"""
-    pwsh_script_location = os.path.join(REPO_ROOT, os.path.relpath("eng/common/testproxy/docker-start-proxy.ps1"))
+    pwsh_script_location = os.path.relpath("eng/common/testproxy/docker-start-proxy.ps1")
+    pwsh_script_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, pwsh_script_location))
 
-    with open(pwsh_script_location, "r") as f:
+    def parse_tag(file):
         for line in file:
             if line.startswith("$SELECTED_IMAGE_TAG"):
                 image_tag_with_quotes = line.split()[-1]
-                image_tag = image_tag_with_quotes.strip('"')
+                return image_tag_with_quotes.strip('"')
+
+    try:
+        with open(pwsh_script_location_from_root, "r") as f:
+            image_tag = parse_tag(f)
+    # In live pipeline tests the root of the repo is in a different location relative to this file
+    except FileNotFoundError:
+        # REPO_ROOT only gets us to /sdk/tables/azure-data-tables/.tox/whl on Windows
+        if sys.platform.startswith("win"):
+            repo_root = os.path.abspath(os.path.join(REPO_ROOT, "..", "..", "..", "..", ".."))
+        # REPO_ROOT only gets us to /sdk/tables/azure-data-tables/.tox/whl/lib on Ubuntu
+        else:
+            repo_root = os.path.abspath(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..", ".."))
+
+        pwsh_script_location_from_cwd = os.path.abspath(repo_root, pwsh_script_location)
+        with open(pwsh_script_location_from_cwd, "r") as f:
+            image_tag = parse_tag(f)
 
     return image_tag
 
