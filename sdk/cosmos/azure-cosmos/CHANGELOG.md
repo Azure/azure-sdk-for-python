@@ -1,7 +1,6 @@
-## 4.3.0 (Unreleased)
+## 4.3.0b1 (Unreleased)
 **New features**
 - Added language native async i/o client
-
 
 ## 4.2.0 (2020-10-08)
 
