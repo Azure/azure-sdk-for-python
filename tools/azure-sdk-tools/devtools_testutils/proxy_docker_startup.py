@@ -56,7 +56,7 @@ def get_image_tag():
         else:
             repo_root = os.path.abspath(os.path.join(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..", "..")))
 
-        pwsh_script_location_from_cwd = os.path.abspath(repo_root, pwsh_script_location)
+        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(repo_root, pwsh_script_location))
         with open(pwsh_script_location_from_cwd, "r") as f:
             image_tag = parse_tag(f)
 
