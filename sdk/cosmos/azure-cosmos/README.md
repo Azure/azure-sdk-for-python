@@ -486,9 +486,9 @@ async with CosmosClient(URL, credential=KEY) as client: # the with statement wil
 
 Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
 
-Query results can be iterated, but query results return an asynchronous iterator. This means that each object from the iterator is already being "awaited" and does not contain that actual query result, only an awaitable object to asynchronously retrieve it. 
+Query results can be iterated, but the query's raw output returns an asynchronous iterator. This means that each object from the iterator is an awaitable object, and does not yet contain the true query result. In order to obtain the query results you can use an async for loop, which awaits each result as you iterate on the object, or manually await each query result as you iterate over the asynchronous iterator.
 
-These results can't be cast into lists directly; instead, if you need to create lists from your results, use an async for loop or Python's list comprehension to populate a list:
+Since the query results are an asynchronous iterator, they can't be cast into lists directly; instead, if you need to create lists from your results, use an async for loop or Python's list comprehension to populate a list:
 
 ```Python
 from azure.cosmos.aio import CosmosClient
