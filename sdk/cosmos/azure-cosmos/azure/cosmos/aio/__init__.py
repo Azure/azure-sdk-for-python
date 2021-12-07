@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) 2021 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,4 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION = "4.3.0b1"
+from .container import ContainerProxy
+from .cosmos_client import CosmosClient
+from .database import DatabaseProxy
+from .user import UserProxy
+from .scripts import ScriptsProxy
+
+__all__ = (
+    "CosmosClient",
+    "DatabaseProxy",
+    "ContainerProxy",
+    "ScriptsProxy",
+    "UserProxy"
+)
