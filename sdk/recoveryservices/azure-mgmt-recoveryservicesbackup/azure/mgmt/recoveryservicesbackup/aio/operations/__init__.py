@@ -34,6 +34,9 @@ from ._export_jobs_operation_results_operations import ExportJobsOperationResult
 from ._jobs_operations import JobsOperations
 from ._backup_protected_items_operations import BackupProtectedItemsOperations
 from ._operation_operations import OperationOperations
+from ._validate_operation_operations import ValidateOperationOperations
+from ._validate_operation_results_operations import ValidateOperationResultsOperations
+from ._validate_operation_statuses_operations import ValidateOperationStatusesOperations
 from ._backup_engines_operations import BackupEnginesOperations
 from ._protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
 from ._protectable_containers_operations import ProtectableContainersOperations
@@ -52,16 +55,6 @@ from ._security_pins_operations import SecurityPINsOperations
 from ._recovery_points_recommended_for_move_operations import RecoveryPointsRecommendedForMoveOperations
 from ._resource_guard_proxies_operations import ResourceGuardProxiesOperations
 from ._resource_guard_proxy_operations import ResourceGuardProxyOperations
-from ._backup_usage_summaries_crr_operations import BackupUsageSummariesCRROperations
-from ._aad_properties_operations import AadPropertiesOperations
-from ._cross_region_restore_operations import CrossRegionRestoreOperations
-from ._backup_crr_job_details_operations import BackupCrrJobDetailsOperations
-from ._backup_crr_jobs_operations import BackupCrrJobsOperations
-from ._crr_operation_results_operations import CrrOperationResultsOperations
-from ._crr_operation_status_operations import CrrOperationStatusOperations
-from ._backup_resource_storage_configs_operations import BackupResourceStorageConfigsOperations
-from ._recovery_points_crr_operations import RecoveryPointsCrrOperations
-from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOperations
 
 __all__ = [
     'BackupResourceStorageConfigsNonCRROperations',
@@ -92,6 +85,9 @@ __all__ = [
     'JobsOperations',
     'BackupProtectedItemsOperations',
     'OperationOperations',
+    'ValidateOperationOperations',
+    'ValidateOperationResultsOperations',
+    'ValidateOperationStatusesOperations',
     'BackupEnginesOperations',
     'ProtectionContainerRefreshOperationResultsOperations',
     'ProtectableContainersOperations',
@@ -110,14 +106,4 @@ __all__ = [
     'RecoveryPointsRecommendedForMoveOperations',
     'ResourceGuardProxiesOperations',
     'ResourceGuardProxyOperations',
-    'BackupUsageSummariesCRROperations',
-    'AadPropertiesOperations',
-    'CrossRegionRestoreOperations',
-    'BackupCrrJobDetailsOperations',
-    'BackupCrrJobsOperations',
-    'CrrOperationResultsOperations',
-    'CrrOperationStatusOperations',
-    'BackupResourceStorageConfigsOperations',
-    'RecoveryPointsCrrOperations',
-    'BackupProtectedItemsCrrOperations',
 ]

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-from azure.mgmt.core.policies import ARMHttpLoggingPolicy
+from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
 from ._version import VERSION
 
@@ -31,6 +31,8 @@ class RecoveryServicesBackupClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription Id.
     :type subscription_id: str
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -40,14 +42,17 @@ class RecoveryServicesBackupClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(RecoveryServicesBackupClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(RecoveryServicesBackupClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-recoveryservicesbackup/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -67,4 +72,4 @@ class RecoveryServicesBackupClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)
