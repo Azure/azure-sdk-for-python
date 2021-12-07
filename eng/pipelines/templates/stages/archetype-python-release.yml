@@ -8,6 +8,8 @@ parameters:
   DevFeedName: 'public/azure-sdk-for-python'
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
+  PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+  DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -175,7 +177,8 @@ stages:
                               SparseCheckoutPaths:
                                 - docs-ref-services/
                                 - metadata/
-
+                              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+                              DocValidationImageId: ${{parameters.DocValidationImageId}}
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
@@ -291,3 +294,5 @@ stages:
             SparseCheckoutPaths:
               - docs-ref-services/
               - metadata/
+            PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+            DocValidationImageId: ${{parameters.DocValidationImageId}}
