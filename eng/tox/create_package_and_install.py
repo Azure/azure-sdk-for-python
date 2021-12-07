@@ -250,6 +250,7 @@ if __name__ == "__main__":
                             installation_additions.append(req)
 
                     if installation_additions:
+                        download_command.extend(installation_additions)
                         download_command.extend(commands_options)
 
                         check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
