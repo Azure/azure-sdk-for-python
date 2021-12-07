@@ -158,4 +158,4 @@ class BalancesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_for_billing_period_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/balances'}  # type: ignore
+    get_for_billing_period_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/balances'}  # type: ignore
