@@ -5,38 +5,91 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '147362'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 63777354-eec7-4ba2-b4b1-1857559f9b3d
-      content-length: '0'
-      date: Mon, 27 Sep 2021 22:17:26 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/63777354-eec7-4ba2-b4b1-1857559f9b3d?api-version=2021-09-30-preview
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '377'
+      apim-request-id:
+      - 611fe3fd-ed25-4209-9c3a-978528d04058
+      content-length:
+      - '0'
+      date:
+      - Tue, 07 Dec 2021 01:43:53 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/611fe3fd-ed25-4209-9c3a-978528d04058?api-version=2021-09-30-preview
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '365'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/63777354-eec7-4ba2-b4b1-1857559f9b3d?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/611fe3fd-ed25-4209-9c3a-978528d04058?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-27T22:17:27Z",
-        "lastUpdatedDateTime": "2021-09-27T22:17:31Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "running", "createdDateTime": "2021-12-07T01:43:53Z", "lastUpdatedDateTime":
+        "2021-12-07T01:43:57Z"}'
+    headers:
+      apim-request-id:
+      - 5156de2b-ab83-47a9-b565-ef4fee7f4dc8
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 07 Dec 2021 01:43:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '72'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/611fe3fd-ed25-4209-9c3a-978528d04058?api-version=2021-09-30-preview
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:43:53Z",
+        "lastUpdatedDateTime": "2021-12-07T01:44:02Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
         "content": "Contoso\nAddress:\n1 Redmond way Suite\n6000 Redmond, WA\n99243\nInvoice
         For: Microsoft\n1020 Enterprise Way\nSunnayvale, CA 87659\nInvoice Number\nInvoice
@@ -236,15 +289,15 @@ interactions:
         "confidence": 0.8, "spans": [{"offset": 213, "length": 10}]}, {"category":
         "Organization", "content": "PT", "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [6.2285, 3.4114, 6.3919, 3.4114, 6.3919, 3.5119, 6.2285, 3.5119]}], "confidence":
-        0.91, "spans": [{"offset": 224, "length": 2}]}, {"category": "Organization",
+        0.92, "spans": [{"offset": 224, "length": 2}]}, {"category": "Organization",
         "content": "Contoso", "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534]}], "confidence":
-        0.44, "spans": [{"offset": 0, "length": 7}]}, {"category": "Address", "content":
+        0.58, "spans": [{"offset": 0, "length": 7}]}, {"category": "Address", "content":
         "1 Redmond way Suite 6000 Redmond, WA 99243", "boundingRegions": [{"pageNumber":
         1, "boundingBox": [0.8106, 1.7033, 2.1445, 1.7033, 2.1445, 1.8342, 0.8106,
         1.8342]}, {"pageNumber": 1, "boundingBox": [0.8019, 1.896, 2.0384, 1.896,
         2.0384, 2.0171, 0.8019, 2.0171]}, {"pageNumber": 1, "boundingBox": [0.8025,
-        2.0876, 1.175, 2.0876, 1.175, 2.1911, 0.8025, 2.1911]}], "confidence": 0.74,
+        2.0876, 1.175, 2.0876, 1.175, 2.1911, 0.8025, 2.1911]}], "confidence": 0.84,
         "spans": [{"offset": 17, "length": 42}]}, {"category": "Quantity", "subCategory":
         "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [0.8106, 1.708, 0.8463, 1.708, 0.8463, 1.8053, 0.8106, 1.8053]}], "confidence":
@@ -257,31 +310,34 @@ interactions:
         0.8, "spans": [{"offset": 54, "length": 5}]}, {"category": "Organization",
         "content": "Microsoft", "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151]}], "confidence":
-        0.78, "spans": [{"offset": 73, "length": 9}]}, {"category": "Address", "content":
+        0.84, "spans": [{"offset": 73, "length": 9}]}, {"category": "Address", "content":
         "1020 Enterprise Way Sunnayvale, CA 87659", "boundingRegions": [{"pageNumber":
         1, "boundingBox": [5.2036, 1.716, 6.5436, 1.716, 6.5436, 1.8459, 5.2036, 1.8459]},
         {"pageNumber": 1, "boundingBox": [5.196, 1.9047, 6.6526, 1.9047, 6.6526, 2.0359,
-        5.196, 2.0359]}], "confidence": 0.86, "spans": [{"offset": 83, "length": 40}]},
+        5.196, 2.0359]}], "confidence": 0.71, "spans": [{"offset": 83, "length": 40}]},
         {"category": "Quantity", "subCategory": "Number", "content": "1020", "boundingRegions":
         [{"pageNumber": 1, "boundingBox": [5.2036, 1.716, 5.4935, 1.716, 5.4935, 1.8185,
         5.2036, 1.8185]}], "confidence": 0.8, "spans": [{"offset": 83, "length": 4}]},
         {"category": "Quantity", "subCategory": "Number", "content": "87659", "boundingRegions":
         [{"pageNumber": 1, "boundingBox": [6.2801, 1.906, 6.6526, 1.906, 6.6526, 2.0086,
         6.2801, 2.0086]}], "confidence": 0.8, "spans": [{"offset": 118, "length":
-        5}]}], "documents": [{"docType": "prebuilt:document", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [0, 0, 8.5, 0, 8.5, 11, 0, 11]}], "fields": {"Locale": {"type":
-        "string", "valueString": "en-US", "confidence": 1}}, "confidence": 1, "spans":
-        [{"offset": 0, "length": 226}]}]}}'
+        5}]}]}}'
     headers:
-      apim-request-id: 9efcbb96-0102-4618-9716-0a6df27df5a7
-      content-type: application/json; charset=utf-8
-      date: Mon, 27 Sep 2021 22:17:32 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '175'
+      apim-request-id:
+      - f7662f33-3be3-41e6-9bd2-d384a78d960c
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 07 Dec 2021 01:44:04 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '189'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/63777354-eec7-4ba2-b4b1-1857559f9b3d?api-version=2021-09-30-preview
 version: 1

@@ -1919,82 +1919,36 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 9bad1202-da07-4b17-82cb-260d61a30cc2
+      apim-request-id: 40e6dc85-00c0-4242-b4be-a1dc77a23a6a
       content-length: '0'
-      date: Wed, 29 Sep 2021 00:22:06 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
+      date: Tue, 07 Dec 2021 01:39:59 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/40e6dc85-00c0-4242-b4be-a1dc77a23a6a?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '270'
+      x-envoy-upstream-service-time: '401'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/40e6dc85-00c0-4242-b4be-a1dc77a23a6a?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:07Z", "lastUpdatedDateTime":
-        "2021-09-29T00:22:12Z"}'
-    headers:
-      apim-request-id: 835df26b-2327-4214-985e-9de1ea6718be
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:12 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '967'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:07Z", "lastUpdatedDateTime":
-        "2021-09-29T00:22:12Z"}'
-    headers:
-      apim-request-id: e61b5217-c9c3-4721-b28a-89c530d7e533
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:17 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '85'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-29T00:22:07Z",
-        "lastUpdatedDateTime": "2021-09-29T00:22:22Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:39:59Z",
+        "lastUpdatedDateTime": "2021-12-07T01:40:04Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Company A Invoice\nInvoice For:\nAddress:\n567 Main St.\nRedmond,
         WA\n555-555-5555\nBilbo Baggins\n123 Hobbit Lane\nRedmond, WA\n555-555-5555\nItem\nQuantity\nPrice\nA\n1\n10.99\nB\n2\n14.67\nC\n4\n15.66\nD\n1\n12.00\nE\n4\n10.00\nF\n6\n12.00\nG\n8\n22.00\nSubtotal:
         300.00\nTax: 30.00\nTip: 100.00\nTotal: 430.00\nSignature: ____Bilbo Baggins__________\n:unselected:",
@@ -2261,136 +2215,19 @@ interactions:
         1, "boundingBox": [5.3305, 4.4103, 7.4971, 4.4165, 7.4971, 4.6228, 5.3305,
         4.6228]}], "spans": [{"offset": 217, "length": 5}]}], "boundingRegions": [{"pageNumber":
         1, "boundingBox": [0.983, 2.9323, 7.5022, 2.9324, 7.5016, 4.6275, 0.9822,
-        4.6276]}], "spans": [{"offset": 133, "length": 89}]}], "keyValuePairs": [{"key":
-        {"content": "Invoice For:", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.0211, 1.0656, 7.0357, 1.0656, 7.0357, 1.2121, 6.0211, 1.2121]}], "spans":
-        [{"offset": 18, "length": 12}]}, "value": {"content": "Bilbo Baggins 123 Hobbit
-        Lane Redmond, WA 555-555-5555", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.0105, 1.4503, 7.1006, 1.4503, 7.1006, 2.2254, 6.0105, 2.2254]}], "spans":
-        [{"offset": 78, "length": 54}]}, "confidence": 0.916}, {"key": {"content":
-        "Address:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8791,
-        1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791, 1.6155]}], "spans": [{"offset":
-        31, "length": 8}]}, "value": {"content": "567 Main St. Redmond, WA 555-555-5555",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8852, 1.846, 1.8537,
-        1.846, 1.8537, 2.3954, 0.8852, 2.3954]}], "spans": [{"offset": 40, "length":
-        37}]}, "confidence": 0.917}, {"key": {"content": "Subtotal:", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [5.5075, 4.8981, 6.1249, 4.8981, 6.1249,
-        5.0131, 5.5075, 5.0131]}], "spans": [{"offset": 223, "length": 9}]}, "value":
-        {"content": "300.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}], "spans":
-        [{"offset": 233, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Tax:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.1263,
-        5.7812, 5.1263, 5.7812, 5.2333, 5.5034, 5.2333]}], "spans": [{"offset": 240,
-        "length": 4}]}, "value": {"content": "30.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}],
-        "spans": [{"offset": 245, "length": 5}]}, "confidence": 0.954}, {"key": {"content":
-        "Tip:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.3412,
-        5.7515, 5.3412, 5.7515, 5.481, 5.5034, 5.481]}], "spans": [{"offset": 251,
-        "length": 4}]}, "value": {"content": "100.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}],
-        "spans": [{"offset": 256, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Total:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.5583,
-        5.8915, 5.5583, 5.8915, 5.6733, 5.5034, 5.6733]}], "spans": [{"offset": 263,
-        "length": 6}]}, "value": {"content": "430.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}],
-        "spans": [{"offset": 270, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Signature:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.0055,
-        6.6581, 1.6987, 6.6581, 1.6987, 6.7981, 1.0055, 6.7981]}], "spans": [{"offset":
-        277, "length": 10}]}, "value": {"content": "____Bilbo Baggins__________",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.747, 6.6553, 3.8342,
-        6.6553, 3.8342, 6.7981, 1.747, 6.7981]}], "spans": [{"offset": 288, "length":
-        27}]}, "confidence": 0.497}], "entities": [{"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.2116, 3.3202, 3.2116, 3.3202, 3.3176, 3.2589, 3.3176]}], "confidence":
-        0.8, "spans": [{"offset": 155, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.99", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.2108, 5.7784, 3.2108, 5.7784, 3.319, 5.4232, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 157, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "2", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2541, 3.4241, 3.3199, 3.4241, 3.3199, 3.531, 3.2541, 3.531]}], "confidence":
-        0.8, "spans": [{"offset": 165, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "14.67", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.4241, 5.7789, 3.4241, 5.7789, 3.5323, 5.4232, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 167, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 3.6351, 3.3244, 3.6351, 3.3244, 3.7413, 3.2486, 3.7413]}], "confidence":
-        0.8, "spans": [{"offset": 175, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "15.66", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.6341, 5.78, 3.6341, 5.78, 3.7423, 5.4232, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 177, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.845, 3.3202, 3.845, 3.3202, 3.951, 3.2589, 3.951]}], "confidence":
-        0.8, "spans": [{"offset": 185, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.8441, 5.7809, 3.8441, 5.7809, 3.9523, 5.4232, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 187, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 4.0556, 3.3244, 4.0556, 3.3244, 4.1617, 3.2486, 4.1617]}], "confidence":
-        0.8, "spans": [{"offset": 195, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.0546, 5.781, 4.0546, 5.781, 4.1627, 5.4232, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 197, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "6", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2534, 4.2646, 3.3226, 4.2646, 3.3226, 4.3727, 3.2534, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 205, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.2646, 5.7809, 4.2646, 5.7809, 4.3727, 5.4232, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 207, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "8", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2514, 4.4746, 3.3224, 4.4746, 3.3224, 4.5827, 3.2514, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 215, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "22.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4184, 4.4746, 5.781, 4.4746, 5.781, 4.5827, 5.4184, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 217, "length": 5}]}, {"category": "Address", "content":
-        "567 Main St. Redmond", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554]}, {"pageNumber":
-        1, "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975]}],
-        "confidence": 0.96, "spans": [{"offset": 40, "length": 20}]}, {"category":
-        "Quantity", "subCategory": "Number", "content": "567", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203,
-        1.9554, 0.8852, 1.9554]}], "confidence": 0.8, "spans": [{"offset": 40, "length":
-        3}]}, {"category": "Address", "content": "WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744]}], "confidence": 0.38, "spans": [{"offset": 62, "length": 2}]}, {"category":
-        "Address", "content": "123 Hobbit Lane Redmond, WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165,
-        1.7854]}, {"pageNumber": 1, "boundingBox": [6.0164, 1.891, 6.9793, 1.891,
-        6.9793, 2.0275, 6.0164, 2.0275]}], "confidence": 0.79, "spans": [{"offset":
-        92, "length": 27}]}, {"category": "Quantity", "subCategory": "Number", "content":
-        "123", "boundingRegions": [{"pageNumber": 1, "boundingBox": [6.0165, 1.6772,
-        6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854]}], "confidence": 0.8, "spans":
-        [{"offset": 92, "length": 3}]}, {"category": "Quantity", "subCategory": "Number",
-        "content": "300.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}], "confidence":
-        0.8, "spans": [{"offset": 233, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "30.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}], "confidence":
-        0.8, "spans": [{"offset": 245, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}], "confidence":
-        0.8, "spans": [{"offset": 256, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "430", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 270, "length": 3}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": ".00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 273, "length": 3}]}], "documents": [{"docType":
-        "prebuilt:document", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0, 0, 8.5, 0, 8.5, 11, 0, 11]}], "fields": {"Locale": {"type": "string",
-        "valueString": "en-US", "confidence": 1}}, "confidence": 1, "spans": [{"offset":
-        0, "length": 328}]}]}}'
+        4.6276]}], "spans": [{"offset": 133, "length": 89}]}]}}'
     headers:
-      apim-request-id: 7067430f-5deb-492f-99b0-7af27b6249bb
+      apim-request-id: 9a383377-2a1b-47df-8c22-0d0dd9a986f7
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:24 GMT
+      date: Tue, 07 Dec 2021 01:40:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '394'
+      x-envoy-upstream-service-time: '332'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/9bad1202-da07-4b17-82cb-260d61a30cc2?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/40e6dc85-00c0-4242-b4be-a1dc77a23a6a?api-version=2021-09-30-preview
 - request:
     body: !!binary |
       JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFu
@@ -4311,82 +4148,36 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 71e0296f-c58c-4326-90dc-2f71835167f3
+      apim-request-id: d5732768-e274-42d2-b9b8-4bc610ed4131
       content-length: '0'
-      date: Wed, 29 Sep 2021 00:22:24 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
+      date: Tue, 07 Dec 2021 01:40:06 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/d5732768-e274-42d2-b9b8-4bc610ed4131?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '292'
+      x-envoy-upstream-service-time: '583'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/d5732768-e274-42d2-b9b8-4bc610ed4131?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:24Z", "lastUpdatedDateTime":
-        "2021-09-29T00:22:29Z"}'
-    headers:
-      apim-request-id: ea0d16cb-f045-47b1-8851-dbdc6c32f709
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:30 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1119'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:24Z", "lastUpdatedDateTime":
-        "2021-09-29T00:22:29Z"}'
-    headers:
-      apim-request-id: 2c16fcaa-1423-4095-99e6-8677611224cc
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:36 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '88'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-29T00:22:24Z",
-        "lastUpdatedDateTime": "2021-09-29T00:22:39Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:40:05Z",
+        "lastUpdatedDateTime": "2021-12-07T01:40:10Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Company A Invoice\nInvoice For:\nAddress:\n567 Main St.\nRedmond,
         WA\n555-555-5555\nBilbo Baggins\n123 Hobbit Lane\nRedmond, WA\n555-555-5555\nItem\nQuantity\nPrice\nA\n1\n10.99\nB\n2\n14.67\nC\n4\n15.66\nD\n1\n12.00\nE\n4\n10.00\nF\n6\n12.00\nG\n8\n22.00\nSubtotal:
         300.00\nTax: 30.00\nTip: 100.00\nTotal: 430.00\nSignature: ____Bilbo Baggins__________\n:unselected:\nCompany
@@ -4919,251 +4710,19 @@ interactions:
         [{"pageNumber": 3, "boundingBox": [5.3287, 4.4103, 7.4975, 4.4165, 7.4975,
         4.6228, 5.3287, 4.6228]}], "spans": [{"offset": 559, "length": 6}]}], "boundingRegions":
         [{"pageNumber": 3, "boundingBox": [0.9942, 2.9332, 7.5018, 2.9333, 7.5015,
-        4.6271, 0.9938, 4.6273]}], "spans": [{"offset": 462, "length": 103}]}], "keyValuePairs":
-        [{"key": {"content": "Invoice For:", "boundingRegions": [{"pageNumber": 1,
-        "boundingBox": [6.0211, 1.0656, 7.0357, 1.0656, 7.0357, 1.2121, 6.0211, 1.2121]}],
-        "spans": [{"offset": 18, "length": 12}]}, "value": {"content": "Bilbo Baggins
-        123 Hobbit Lane Redmond, WA 555-555-5555", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.0105, 1.4503, 7.1006, 1.4503, 7.1006, 2.2254, 6.0105,
-        2.2254]}], "spans": [{"offset": 78, "length": 54}]}, "confidence": 0.916},
-        {"key": {"content": "Address:", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8791, 1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791, 1.6155]}], "spans":
-        [{"offset": 31, "length": 8}]}, "value": {"content": "567 Main St. Redmond,
-        WA 555-555-5555", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8852,
-        1.846, 1.8537, 1.846, 1.8537, 2.3954, 0.8852, 2.3954]}], "spans": [{"offset":
-        40, "length": 37}]}, "confidence": 0.917}, {"key": {"content": "Subtotal:",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5075, 4.8981, 6.1249,
-        4.8981, 6.1249, 5.0131, 5.5075, 5.0131]}], "spans": [{"offset": 223, "length":
-        9}]}, "value": {"content": "300.00", "boundingRegions": [{"pageNumber": 1,
-        "boundingBox": [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}],
-        "spans": [{"offset": 233, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Tax:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.1263,
-        5.7812, 5.1263, 5.7812, 5.2333, 5.5034, 5.2333]}], "spans": [{"offset": 240,
-        "length": 4}]}, "value": {"content": "30.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}],
-        "spans": [{"offset": 245, "length": 5}]}, "confidence": 0.954}, {"key": {"content":
-        "Tip:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.3412,
-        5.7515, 5.3412, 5.7515, 5.481, 5.5034, 5.481]}], "spans": [{"offset": 251,
-        "length": 4}]}, "value": {"content": "100.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}],
-        "spans": [{"offset": 256, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Total:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.5583,
-        5.8915, 5.5583, 5.8915, 5.6733, 5.5034, 5.6733]}], "spans": [{"offset": 263,
-        "length": 6}]}, "value": {"content": "430.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}],
-        "spans": [{"offset": 270, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Signature:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.0055,
-        6.6581, 1.6987, 6.6581, 1.6987, 6.7981, 1.0055, 6.7981]}], "spans": [{"offset":
-        277, "length": 10}]}, "value": {"content": "____Bilbo Baggins__________",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.747, 6.6553, 3.8342,
-        6.6553, 3.8342, 6.7981, 1.747, 6.7981]}], "spans": [{"offset": 288, "length":
-        27}]}, "confidence": 0.497}, {"key": {"content": "Invoice For:", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [6.0211, 1.0656, 7.0357, 1.0656, 7.0357,
-        1.2121, 6.0211, 1.2121]}], "spans": [{"offset": 347, "length": 12}]}, "value":
-        {"content": "Frodo Baggins 123 Hobbit Lane Redmond, WA 555-555-5555", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [6.0105, 1.4506, 7.1006, 1.4506, 7.1006,
-        2.2254, 6.0105, 2.2254]}], "spans": [{"offset": 407, "length": 54}]}, "confidence":
-        0.915}, {"key": {"content": "Address:", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [0.8791, 1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791,
-        1.6155]}], "spans": [{"offset": 360, "length": 8}]}, "value": {"content":
-        "567 Main St. Redmond, WA 555-555-5555", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [0.8852, 1.846, 1.8537, 1.846, 1.8537, 2.3954, 0.8852, 2.3954]}],
-        "spans": [{"offset": 369, "length": 37}]}, "confidence": 0.917}, {"key": {"content":
-        "Subtotal:", "boundingRegions": [{"pageNumber": 3, "boundingBox": [5.5075,
-        4.8981, 6.1249, 4.8981, 6.1249, 5.0131, 5.5075, 5.0131]}], "spans": [{"offset":
-        566, "length": 9}]}, "value": {"content": "3000.00", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [6.1794, 4.9042, 6.7158, 4.9042, 6.7158, 5.0131, 6.1794,
-        5.0131]}], "spans": [{"offset": 576, "length": 7}]}, "confidence": 0.954},
-        {"key": {"content": "Tax:", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.5034, 5.1263, 5.7812, 5.1263, 5.7812, 5.2333, 5.5034, 5.2333]}], "spans":
-        [{"offset": 584, "length": 4}]}, "value": {"content": "300.00", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [5.836, 5.1245, 6.2887, 5.1245, 6.2887,
-        5.2333, 5.836, 5.2333]}], "spans": [{"offset": 589, "length": 6}]}, "confidence":
-        0.954}, {"key": {"content": "Tip:", "boundingRegions": [{"pageNumber": 3,
-        "boundingBox": [5.5034, 5.3412, 5.7515, 5.3412, 5.7515, 5.481, 5.5034, 5.481]}],
-        "spans": [{"offset": 596, "length": 4}]}, "value": {"content": "1000.00",
-        "boundingRegions": [{"pageNumber": 3, "boundingBox": [5.811, 5.3445, 6.3422,
-        5.3445, 6.3422, 5.4533, 5.811, 5.4533]}], "spans": [{"offset": 601, "length":
-        7}]}, "confidence": 0.954}, {"key": {"content": "Total:", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [5.5034, 5.5583, 5.8915, 5.5583, 5.8915,
-        5.6733, 5.5034, 5.6733]}], "spans": [{"offset": 609, "length": 6}]}, "value":
-        {"content": "4300.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.942, 5.5645, 6.4825, 5.5645, 6.4825, 5.6733, 5.942, 5.6733]}], "spans":
-        [{"offset": 616, "length": 7}]}, "confidence": 0.954}, {"key": {"content":
-        "Signature:", "boundingRegions": [{"pageNumber": 3, "boundingBox": [1.0055,
-        6.6581, 1.6987, 6.6581, 1.6987, 6.7981, 1.0055, 6.7981]}], "spans": [{"offset":
-        624, "length": 10}]}, "value": {"content": "____Frodo Baggins__________",
-        "boundingRegions": [{"pageNumber": 3, "boundingBox": [1.747, 6.6556, 3.8842,
-        6.6556, 3.8842, 6.7981, 1.747, 6.7981]}], "spans": [{"offset": 635, "length":
-        27}]}, "confidence": 0.945}], "entities": [{"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.2116, 3.3202, 3.2116, 3.3202, 3.3176, 3.2589, 3.3176]}], "confidence":
-        0.8, "spans": [{"offset": 155, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.99", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.2108, 5.7784, 3.2108, 5.7784, 3.319, 5.4232, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 157, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "2", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2541, 3.4241, 3.3199, 3.4241, 3.3199, 3.531, 3.2541, 3.531]}], "confidence":
-        0.8, "spans": [{"offset": 165, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "14.67", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.4241, 5.7789, 3.4241, 5.7789, 3.5323, 5.4232, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 167, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 3.6351, 3.3244, 3.6351, 3.3244, 3.7413, 3.2486, 3.7413]}], "confidence":
-        0.8, "spans": [{"offset": 175, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "15.66", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.6341, 5.78, 3.6341, 5.78, 3.7423, 5.4232, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 177, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.845, 3.3202, 3.845, 3.3202, 3.951, 3.2589, 3.951]}], "confidence":
-        0.8, "spans": [{"offset": 185, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.8441, 5.7809, 3.8441, 5.7809, 3.9523, 5.4232, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 187, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 4.0556, 3.3244, 4.0556, 3.3244, 4.1617, 3.2486, 4.1617]}], "confidence":
-        0.8, "spans": [{"offset": 195, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.0546, 5.781, 4.0546, 5.781, 4.1627, 5.4232, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 197, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "6", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2534, 4.2646, 3.3226, 4.2646, 3.3226, 4.3727, 3.2534, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 205, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.2646, 5.7809, 4.2646, 5.7809, 4.3727, 5.4232, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 207, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "8", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2514, 4.4746, 3.3224, 4.4746, 3.3224, 4.5827, 3.2514, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 215, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "22.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4184, 4.4746, 5.781, 4.4746, 5.781, 4.5827, 5.4184, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 217, "length": 5}]}, {"category": "Address", "content":
-        "567 Main St. Redmond", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554]}, {"pageNumber":
-        1, "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975]}],
-        "confidence": 0.96, "spans": [{"offset": 40, "length": 20}]}, {"category":
-        "Quantity", "subCategory": "Number", "content": "567", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203,
-        1.9554, 0.8852, 1.9554]}], "confidence": 0.8, "spans": [{"offset": 40, "length":
-        3}]}, {"category": "Address", "content": "WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744]}], "confidence": 0.38, "spans": [{"offset": 62, "length": 2}]}, {"category":
-        "Address", "content": "123 Hobbit Lane Redmond, WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165,
-        1.7854]}, {"pageNumber": 1, "boundingBox": [6.0164, 1.891, 6.9793, 1.891,
-        6.9793, 2.0275, 6.0164, 2.0275]}], "confidence": 0.79, "spans": [{"offset":
-        92, "length": 27}]}, {"category": "Quantity", "subCategory": "Number", "content":
-        "123", "boundingRegions": [{"pageNumber": 1, "boundingBox": [6.0165, 1.6772,
-        6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854]}], "confidence": 0.8, "spans":
-        [{"offset": 92, "length": 3}]}, {"category": "Quantity", "subCategory": "Number",
-        "content": "300.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}], "confidence":
-        0.8, "spans": [{"offset": 233, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "30.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}], "confidence":
-        0.8, "spans": [{"offset": 245, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}], "confidence":
-        0.8, "spans": [{"offset": 256, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "430", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 270, "length": 3}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": ".00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 273, "length": 3}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2589, 3.2108, 3.4067, 3.2108, 3.4067, 3.319, 3.2589, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 484, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.99", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.2108, 5.8617, 3.2108, 5.8617, 3.319, 5.4232, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 487, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "20", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2541, 3.4241, 3.4067, 3.4241, 3.4067, 3.5323, 3.2541, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 496, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "140.67", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.4241, 5.8622, 3.4241, 5.8622, 3.5323, 5.4232, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 499, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "40", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2486, 3.6341, 3.4067, 3.6341, 3.4067, 3.7423, 3.2486, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 508, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "150.66", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.6341, 5.8634, 3.6341, 5.8634, 3.7423, 5.4232, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 511, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2589, 3.8441, 3.4067, 3.8441, 3.4067, 3.9523, 3.2589, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 520, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "120.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.8441, 5.8642, 3.8441, 5.8642, 3.9523, 5.4232, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 523, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "40", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2486, 4.0546, 3.4067, 4.0546, 3.4067, 4.1627, 3.2486, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 532, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 4.0546, 5.8644, 4.0546, 5.8644, 4.1627, 5.4232, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 535, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "60", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2534, 4.2646, 3.4067, 4.2646, 3.4067, 4.3727, 3.2534, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 544, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "120.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 4.2646, 5.8642, 4.2646, 5.8642, 4.3727, 5.4232, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 547, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "80", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2514, 4.4746, 3.4067, 4.4746, 3.4067, 4.5827, 3.2514, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 556, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "220.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4184, 4.4746, 5.8644, 4.4746, 5.8644, 4.5827, 5.4184, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 559, "length": 6}]}, {"category": "Address", "content":
-        "567 Main St. Redmond", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554]}, {"pageNumber":
-        3, "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975]}],
-        "confidence": 0.95, "spans": [{"offset": 369, "length": 20}]}, {"category":
-        "Quantity", "subCategory": "Number", "content": "567", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203,
-        1.9554, 0.8852, 1.9554]}], "confidence": 0.8, "spans": [{"offset": 369, "length":
-        3}]}, {"category": "Address", "content": "WA", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744]}], "confidence": 0.36, "spans": [{"offset": 391, "length": 2}]}, {"category":
-        "Address", "content": "123 Hobbit Lane Redmond, WA", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165,
-        1.7854]}, {"pageNumber": 3, "boundingBox": [6.0164, 1.891, 6.9793, 1.891,
-        6.9793, 2.0275, 6.0164, 2.0275]}], "confidence": 0.76, "spans": [{"offset":
-        421, "length": 27}]}, {"category": "Quantity", "subCategory": "Number", "content":
-        "123", "boundingRegions": [{"pageNumber": 3, "boundingBox": [6.0165, 1.6772,
-        6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854]}], "confidence": 0.8, "spans":
-        [{"offset": 421, "length": 3}]}, {"category": "Quantity", "subCategory": "Number",
-        "content": "3000.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [6.1794, 4.9042, 6.7158, 4.9042, 6.7158, 5.0131, 6.1794, 5.0131]}], "confidence":
-        0.8, "spans": [{"offset": 576, "length": 7}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "300.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.836, 5.1245, 6.2887, 5.1245, 6.2887, 5.2333, 5.836, 5.2333]}], "confidence":
-        0.8, "spans": [{"offset": 589, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1000.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.811, 5.3445, 6.3422, 5.3445, 6.3422, 5.4533, 5.811, 5.4533]}], "confidence":
-        0.8, "spans": [{"offset": 601, "length": 7}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4300", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.942, 5.5645, 6.4825, 5.5645, 6.4825, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 616, "length": 4}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": ".00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.942, 5.5645, 6.4825, 5.5645, 6.4825, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 620, "length": 3}]}], "documents": [{"docType":
-        "prebuilt:document", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0, 0, 8.5, 0, 8.5, 11, 0, 11]}], "fields": {"Locale": {"type": "string",
-        "valueString": "en-US", "confidence": 1}}, "confidence": 1, "spans": [{"offset":
-        0, "length": 328}]}, {"docType": "prebuilt:document", "boundingRegions": [],
-        "fields": {"Locale": {"type": "string", "valueString": "en-US", "confidence":
-        1}}, "confidence": 1, "spans": []}]}}'
+        4.6271, 0.9938, 4.6273]}], "spans": [{"offset": 462, "length": 103}]}]}}'
     headers:
-      apim-request-id: 3bab281e-7a43-4b07-9e19-f7d00ed2b835
+      apim-request-id: 83efb0b3-7cdf-474d-a105-c822baebf02b
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:41 GMT
+      date: Tue, 07 Dec 2021 01:40:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '374'
+      x-envoy-upstream-service-time: '338'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/71e0296f-c58c-4326-90dc-2f71835167f3?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/d5732768-e274-42d2-b9b8-4bc610ed4131?api-version=2021-09-30-preview
 - request:
     body: !!binary |
       JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFu
@@ -7084,82 +6643,36 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1-2&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1-2&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 61af3f4d-969f-4b8a-88cc-e003602b2ff8
+      apim-request-id: b1876b3f-42ec-4b7e-9fe9-6047f2850e3d
       content-length: '0'
-      date: Wed, 29 Sep 2021 00:22:42 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
+      date: Tue, 07 Dec 2021 01:40:12 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/b1876b3f-42ec-4b7e-9fe9-6047f2850e3d?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '291'
+      x-envoy-upstream-service-time: '462'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1-2&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1-2&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/b1876b3f-42ec-4b7e-9fe9-6047f2850e3d?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:42Z", "lastUpdatedDateTime":
-        "2021-09-29T00:22:47Z"}'
-    headers:
-      apim-request-id: 07ee699a-6e6a-49a6-8c04-8ad0901cc608
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:47 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '83'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:42Z", "lastUpdatedDateTime":
-        "2021-09-29T00:22:49Z"}'
-    headers:
-      apim-request-id: 040d010d-026a-4b58-badd-e4040a9f5d45
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:52 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '74'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-29T00:22:42Z",
-        "lastUpdatedDateTime": "2021-09-29T00:22:58Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:40:12Z",
+        "lastUpdatedDateTime": "2021-12-07T01:40:16Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Company A Invoice\nInvoice For:\nAddress:\n567 Main St.\nRedmond,
         WA\n555-555-5555\nBilbo Baggins\n123 Hobbit Lane\nRedmond, WA\n555-555-5555\nItem\nQuantity\nPrice\nA\n1\n10.99\nB\n2\n14.67\nC\n4\n15.66\nD\n1\n12.00\nE\n4\n10.00\nF\n6\n12.00\nG\n8\n22.00\nSubtotal:
         300.00\nTax: 30.00\nTip: 100.00\nTotal: 430.00\nSignature: ____Bilbo Baggins__________\n:unselected:",
@@ -7428,132 +6941,19 @@ interactions:
         1, "boundingBox": [5.3305, 4.4103, 7.4971, 4.4165, 7.4971, 4.6228, 5.3305,
         4.6228]}], "spans": [{"offset": 217, "length": 5}]}], "boundingRegions": [{"pageNumber":
         1, "boundingBox": [0.983, 2.9323, 7.5022, 2.9324, 7.5016, 4.6275, 0.9822,
-        4.6276]}], "spans": [{"offset": 133, "length": 89}]}], "keyValuePairs": [{"key":
-        {"content": "Invoice For:", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.0211, 1.0656, 7.0357, 1.0656, 7.0357, 1.2121, 6.0211, 1.2121]}], "spans":
-        [{"offset": 18, "length": 12}]}, "value": {"content": "Bilbo Baggins 123 Hobbit
-        Lane Redmond, WA 555-555-5555", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.0105, 1.4503, 7.1006, 1.4503, 7.1006, 2.2254, 6.0105, 2.2254]}], "spans":
-        [{"offset": 78, "length": 54}]}, "confidence": 0.916}, {"key": {"content":
-        "Address:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8791,
-        1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791, 1.6155]}], "spans": [{"offset":
-        31, "length": 8}]}, "value": {"content": "567 Main St. Redmond, WA 555-555-5555",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8852, 1.846, 1.8537,
-        1.846, 1.8537, 2.3954, 0.8852, 2.3954]}], "spans": [{"offset": 40, "length":
-        37}]}, "confidence": 0.917}, {"key": {"content": "Subtotal:", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [5.5075, 4.8981, 6.1249, 4.8981, 6.1249,
-        5.0131, 5.5075, 5.0131]}], "spans": [{"offset": 223, "length": 9}]}, "value":
-        {"content": "300.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}], "spans":
-        [{"offset": 233, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Tax:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.1263,
-        5.7812, 5.1263, 5.7812, 5.2333, 5.5034, 5.2333]}], "spans": [{"offset": 240,
-        "length": 4}]}, "value": {"content": "30.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}],
-        "spans": [{"offset": 245, "length": 5}]}, "confidence": 0.954}, {"key": {"content":
-        "Tip:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.3412,
-        5.7515, 5.3412, 5.7515, 5.481, 5.5034, 5.481]}], "spans": [{"offset": 251,
-        "length": 4}]}, "value": {"content": "100.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}],
-        "spans": [{"offset": 256, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Total:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.5583,
-        5.8915, 5.5583, 5.8915, 5.6733, 5.5034, 5.6733]}], "spans": [{"offset": 263,
-        "length": 6}]}, "value": {"content": "430.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}],
-        "spans": [{"offset": 270, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Signature:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.0055,
-        6.6581, 1.6987, 6.6581, 1.6987, 6.7981, 1.0055, 6.7981]}], "spans": [{"offset":
-        277, "length": 10}]}, "value": {"content": "____Bilbo Baggins__________",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.747, 6.6553, 3.8342,
-        6.6553, 3.8342, 6.7981, 1.747, 6.7981]}], "spans": [{"offset": 288, "length":
-        27}]}, "confidence": 0.497}], "entities": [{"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.2116, 3.3202, 3.2116, 3.3202, 3.3176, 3.2589, 3.3176]}], "confidence":
-        0.8, "spans": [{"offset": 155, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.99", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.2108, 5.7784, 3.2108, 5.7784, 3.319, 5.4232, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 157, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "2", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2541, 3.4241, 3.3199, 3.4241, 3.3199, 3.531, 3.2541, 3.531]}], "confidence":
-        0.8, "spans": [{"offset": 165, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "14.67", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.4241, 5.7789, 3.4241, 5.7789, 3.5323, 5.4232, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 167, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 3.6351, 3.3244, 3.6351, 3.3244, 3.7413, 3.2486, 3.7413]}], "confidence":
-        0.8, "spans": [{"offset": 175, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "15.66", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.6341, 5.78, 3.6341, 5.78, 3.7423, 5.4232, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 177, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.845, 3.3202, 3.845, 3.3202, 3.951, 3.2589, 3.951]}], "confidence":
-        0.8, "spans": [{"offset": 185, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.8441, 5.7809, 3.8441, 5.7809, 3.9523, 5.4232, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 187, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 4.0556, 3.3244, 4.0556, 3.3244, 4.1617, 3.2486, 4.1617]}], "confidence":
-        0.8, "spans": [{"offset": 195, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.0546, 5.781, 4.0546, 5.781, 4.1627, 5.4232, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 197, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "6", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2534, 4.2646, 3.3226, 4.2646, 3.3226, 4.3727, 3.2534, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 205, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.2646, 5.7809, 4.2646, 5.7809, 4.3727, 5.4232, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 207, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "8", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2514, 4.4746, 3.3224, 4.4746, 3.3224, 4.5827, 3.2514, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 215, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "22.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4184, 4.4746, 5.781, 4.4746, 5.781, 4.5827, 5.4184, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 217, "length": 5}]}, {"category": "Address", "content":
-        "567 Main St. Redmond", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554]}, {"pageNumber":
-        1, "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975]}],
-        "confidence": 0.96, "spans": [{"offset": 40, "length": 20}]}, {"category":
-        "Quantity", "subCategory": "Number", "content": "567", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203,
-        1.9554, 0.8852, 1.9554]}], "confidence": 0.8, "spans": [{"offset": 40, "length":
-        3}]}, {"category": "Address", "content": "WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744]}], "confidence": 0.38, "spans": [{"offset": 62, "length": 2}]}, {"category":
-        "Address", "content": "123 Hobbit Lane Redmond, WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165,
-        1.7854]}, {"pageNumber": 1, "boundingBox": [6.0164, 1.891, 6.9793, 1.891,
-        6.9793, 2.0275, 6.0164, 2.0275]}], "confidence": 0.79, "spans": [{"offset":
-        92, "length": 27}]}, {"category": "Quantity", "subCategory": "Number", "content":
-        "123", "boundingRegions": [{"pageNumber": 1, "boundingBox": [6.0165, 1.6772,
-        6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854]}], "confidence": 0.8, "spans":
-        [{"offset": 92, "length": 3}]}, {"category": "Quantity", "subCategory": "Number",
-        "content": "300.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}], "confidence":
-        0.8, "spans": [{"offset": 233, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "30.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}], "confidence":
-        0.8, "spans": [{"offset": 245, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}], "confidence":
-        0.8, "spans": [{"offset": 256, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "430", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 270, "length": 3}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": ".00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 273, "length": 3}]}]}}'
+        4.6276]}], "spans": [{"offset": 133, "length": 89}]}]}}'
     headers:
-      apim-request-id: 584cec50-be15-4bb3-bb39-6af13808322d
+      apim-request-id: 7c9023f4-a8e9-401d-b25d-21b82e996d97
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:22:58 GMT
+      date: Tue, 07 Dec 2021 01:40:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '531'
+      x-envoy-upstream-service-time: '343'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/61af3f4d-969f-4b8a-88cc-e003602b2ff8?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/b1876b3f-42ec-4b7e-9fe9-6047f2850e3d?api-version=2021-09-30-preview
 - request:
     body: !!binary |
       JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFu
@@ -9474,105 +8874,36 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1-2,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1-2,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3fd811a6-78be-4df3-9adb-b59345aee95b
+      apim-request-id: 4f637c51-b52e-4230-9606-eefffe992c22
       content-length: '0'
-      date: Wed, 29 Sep 2021 00:22:59 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
+      date: Tue, 07 Dec 2021 01:40:18 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/4f637c51-b52e-4230-9606-eefffe992c22?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '394'
+      x-envoy-upstream-service-time: '690'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?pages=1-2,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?pages=1-2,%203&stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/4f637c51-b52e-4230-9606-eefffe992c22?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:59Z", "lastUpdatedDateTime":
-        "2021-09-29T00:23:04Z"}'
-    headers:
-      apim-request-id: 4b69e45e-9483-499f-823e-c7421b21ca67
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:23:04 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '84'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:59Z", "lastUpdatedDateTime":
-        "2021-09-29T00:23:05Z"}'
-    headers:
-      apim-request-id: 3a1c448d-ff2d-4447-bb44-aceb2b903554
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:23:09 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '80'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "running", "createdDateTime": "2021-09-29T00:22:59Z", "lastUpdatedDateTime":
-        "2021-09-29T00:23:05Z"}'
-    headers:
-      apim-request-id: 5b3cb079-64f2-4132-ba97-35ea7792f69b
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:23:14 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '80'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-29T00:22:59Z",
-        "lastUpdatedDateTime": "2021-09-29T00:23:15Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:40:18Z",
+        "lastUpdatedDateTime": "2021-12-07T01:40:23Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Company A Invoice\nInvoice For:\nAddress:\n567 Main St.\nRedmond,
         WA\n555-555-5555\nBilbo Baggins\n123 Hobbit Lane\nRedmond, WA\n555-555-5555\nItem\nQuantity\nPrice\nA\n1\n10.99\nB\n2\n14.67\nC\n4\n15.66\nD\n1\n12.00\nE\n4\n10.00\nF\n6\n12.00\nG\n8\n22.00\nSubtotal:
         300.00\nTax: 30.00\nTip: 100.00\nTotal: 430.00\nSignature: ____Bilbo Baggins__________\n:unselected:\nCompany
@@ -10107,247 +9438,17 @@ interactions:
         [{"pageNumber": 3, "boundingBox": [5.3287, 4.4103, 7.4975, 4.4165, 7.4975,
         4.6228, 5.3287, 4.6228]}], "spans": [{"offset": 559, "length": 6}]}], "boundingRegions":
         [{"pageNumber": 3, "boundingBox": [0.9942, 2.9332, 7.5018, 2.9333, 7.5015,
-        4.6271, 0.9938, 4.6273]}], "spans": [{"offset": 462, "length": 103}]}], "keyValuePairs":
-        [{"key": {"content": "Invoice For:", "boundingRegions": [{"pageNumber": 1,
-        "boundingBox": [6.0211, 1.0656, 7.0357, 1.0656, 7.0357, 1.2121, 6.0211, 1.2121]}],
-        "spans": [{"offset": 18, "length": 12}]}, "value": {"content": "Bilbo Baggins
-        123 Hobbit Lane Redmond, WA 555-555-5555", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.0105, 1.4503, 7.1006, 1.4503, 7.1006, 2.2254, 6.0105,
-        2.2254]}], "spans": [{"offset": 78, "length": 54}]}, "confidence": 0.916},
-        {"key": {"content": "Address:", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8791, 1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791, 1.6155]}], "spans":
-        [{"offset": 31, "length": 8}]}, "value": {"content": "567 Main St. Redmond,
-        WA 555-555-5555", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8852,
-        1.846, 1.8537, 1.846, 1.8537, 2.3954, 0.8852, 2.3954]}], "spans": [{"offset":
-        40, "length": 37}]}, "confidence": 0.917}, {"key": {"content": "Subtotal:",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5075, 4.8981, 6.1249,
-        4.8981, 6.1249, 5.0131, 5.5075, 5.0131]}], "spans": [{"offset": 223, "length":
-        9}]}, "value": {"content": "300.00", "boundingRegions": [{"pageNumber": 1,
-        "boundingBox": [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}],
-        "spans": [{"offset": 233, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Tax:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.1263,
-        5.7812, 5.1263, 5.7812, 5.2333, 5.5034, 5.2333]}], "spans": [{"offset": 240,
-        "length": 4}]}, "value": {"content": "30.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}],
-        "spans": [{"offset": 245, "length": 5}]}, "confidence": 0.954}, {"key": {"content":
-        "Tip:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.3412,
-        5.7515, 5.3412, 5.7515, 5.481, 5.5034, 5.481]}], "spans": [{"offset": 251,
-        "length": 4}]}, "value": {"content": "100.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}],
-        "spans": [{"offset": 256, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Total:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.5034, 5.5583,
-        5.8915, 5.5583, 5.8915, 5.6733, 5.5034, 5.6733]}], "spans": [{"offset": 263,
-        "length": 6}]}, "value": {"content": "430.00", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}],
-        "spans": [{"offset": 270, "length": 6}]}, "confidence": 0.954}, {"key": {"content":
-        "Signature:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.0055,
-        6.6581, 1.6987, 6.6581, 1.6987, 6.7981, 1.0055, 6.7981]}], "spans": [{"offset":
-        277, "length": 10}]}, "value": {"content": "____Bilbo Baggins__________",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.747, 6.6553, 3.8342,
-        6.6553, 3.8342, 6.7981, 1.747, 6.7981]}], "spans": [{"offset": 288, "length":
-        27}]}, "confidence": 0.497}, {"key": {"content": "Invoice For:", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [6.0211, 1.0656, 7.0357, 1.0656, 7.0357,
-        1.2121, 6.0211, 1.2121]}], "spans": [{"offset": 347, "length": 12}]}, "value":
-        {"content": "Frodo Baggins 123 Hobbit Lane Redmond, WA 555-555-5555", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [6.0105, 1.4506, 7.1006, 1.4506, 7.1006,
-        2.2254, 6.0105, 2.2254]}], "spans": [{"offset": 407, "length": 54}]}, "confidence":
-        0.915}, {"key": {"content": "Address:", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [0.8791, 1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791,
-        1.6155]}], "spans": [{"offset": 360, "length": 8}]}, "value": {"content":
-        "567 Main St. Redmond, WA 555-555-5555", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [0.8852, 1.846, 1.8537, 1.846, 1.8537, 2.3954, 0.8852, 2.3954]}],
-        "spans": [{"offset": 369, "length": 37}]}, "confidence": 0.917}, {"key": {"content":
-        "Subtotal:", "boundingRegions": [{"pageNumber": 3, "boundingBox": [5.5075,
-        4.8981, 6.1249, 4.8981, 6.1249, 5.0131, 5.5075, 5.0131]}], "spans": [{"offset":
-        566, "length": 9}]}, "value": {"content": "3000.00", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [6.1794, 4.9042, 6.7158, 4.9042, 6.7158, 5.0131, 6.1794,
-        5.0131]}], "spans": [{"offset": 576, "length": 7}]}, "confidence": 0.954},
-        {"key": {"content": "Tax:", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.5034, 5.1263, 5.7812, 5.1263, 5.7812, 5.2333, 5.5034, 5.2333]}], "spans":
-        [{"offset": 584, "length": 4}]}, "value": {"content": "300.00", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [5.836, 5.1245, 6.2887, 5.1245, 6.2887,
-        5.2333, 5.836, 5.2333]}], "spans": [{"offset": 589, "length": 6}]}, "confidence":
-        0.954}, {"key": {"content": "Tip:", "boundingRegions": [{"pageNumber": 3,
-        "boundingBox": [5.5034, 5.3412, 5.7515, 5.3412, 5.7515, 5.481, 5.5034, 5.481]}],
-        "spans": [{"offset": 596, "length": 4}]}, "value": {"content": "1000.00",
-        "boundingRegions": [{"pageNumber": 3, "boundingBox": [5.811, 5.3445, 6.3422,
-        5.3445, 6.3422, 5.4533, 5.811, 5.4533]}], "spans": [{"offset": 601, "length":
-        7}]}, "confidence": 0.954}, {"key": {"content": "Total:", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [5.5034, 5.5583, 5.8915, 5.5583, 5.8915,
-        5.6733, 5.5034, 5.6733]}], "spans": [{"offset": 609, "length": 6}]}, "value":
-        {"content": "4300.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.942, 5.5645, 6.4825, 5.5645, 6.4825, 5.6733, 5.942, 5.6733]}], "spans":
-        [{"offset": 616, "length": 7}]}, "confidence": 0.954}, {"key": {"content":
-        "Signature:", "boundingRegions": [{"pageNumber": 3, "boundingBox": [1.0055,
-        6.6581, 1.6987, 6.6581, 1.6987, 6.7981, 1.0055, 6.7981]}], "spans": [{"offset":
-        624, "length": 10}]}, "value": {"content": "____Frodo Baggins__________",
-        "boundingRegions": [{"pageNumber": 3, "boundingBox": [1.747, 6.6556, 3.8842,
-        6.6556, 3.8842, 6.7981, 1.747, 6.7981]}], "spans": [{"offset": 635, "length":
-        27}]}, "confidence": 0.945}], "entities": [{"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.2116, 3.3202, 3.2116, 3.3202, 3.3176, 3.2589, 3.3176]}], "confidence":
-        0.8, "spans": [{"offset": 155, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.99", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.2108, 5.7784, 3.2108, 5.7784, 3.319, 5.4232, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 157, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "2", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2541, 3.4241, 3.3199, 3.4241, 3.3199, 3.531, 3.2541, 3.531]}], "confidence":
-        0.8, "spans": [{"offset": 165, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "14.67", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.4241, 5.7789, 3.4241, 5.7789, 3.5323, 5.4232, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 167, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 3.6351, 3.3244, 3.6351, 3.3244, 3.7413, 3.2486, 3.7413]}], "confidence":
-        0.8, "spans": [{"offset": 175, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "15.66", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.6341, 5.78, 3.6341, 5.78, 3.7423, 5.4232, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 177, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2589, 3.845, 3.3202, 3.845, 3.3202, 3.951, 3.2589, 3.951]}], "confidence":
-        0.8, "spans": [{"offset": 185, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 3.8441, 5.7809, 3.8441, 5.7809, 3.9523, 5.4232, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 187, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2486, 4.0556, 3.3244, 4.0556, 3.3244, 4.1617, 3.2486, 4.1617]}], "confidence":
-        0.8, "spans": [{"offset": 195, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.0546, 5.781, 4.0546, 5.781, 4.1627, 5.4232, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 197, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "6", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2534, 4.2646, 3.3226, 4.2646, 3.3226, 4.3727, 3.2534, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 205, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "12.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4232, 4.2646, 5.7809, 4.2646, 5.7809, 4.3727, 5.4232, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 207, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "8", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.2514, 4.4746, 3.3224, 4.4746, 3.3224, 4.5827, 3.2514, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 215, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "22.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.4184, 4.4746, 5.781, 4.4746, 5.781, 4.5827, 5.4184, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 217, "length": 5}]}, {"category": "Address", "content":
-        "567 Main St. Redmond", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554]}, {"pageNumber":
-        1, "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975]}],
-        "confidence": 0.96, "spans": [{"offset": 40, "length": 20}]}, {"category":
-        "Quantity", "subCategory": "Number", "content": "567", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203,
-        1.9554, 0.8852, 1.9554]}], "confidence": 0.8, "spans": [{"offset": 40, "length":
-        3}]}, {"category": "Address", "content": "WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744]}], "confidence": 0.38, "spans": [{"offset": 62, "length": 2}]}, {"category":
-        "Address", "content": "123 Hobbit Lane Redmond, WA", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165,
-        1.7854]}, {"pageNumber": 1, "boundingBox": [6.0164, 1.891, 6.9793, 1.891,
-        6.9793, 2.0275, 6.0164, 2.0275]}], "confidence": 0.79, "spans": [{"offset":
-        92, "length": 27}]}, {"category": "Quantity", "subCategory": "Number", "content":
-        "123", "boundingRegions": [{"pageNumber": 1, "boundingBox": [6.0165, 1.6772,
-        6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854]}], "confidence": 0.8, "spans":
-        [{"offset": 92, "length": 3}]}, {"category": "Quantity", "subCategory": "Number",
-        "content": "300.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.1794, 4.9042, 6.632, 4.9042, 6.632, 5.0131, 6.1794, 5.0131]}], "confidence":
-        0.8, "spans": [{"offset": 233, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "30.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.836, 5.1245, 6.2022, 5.1245, 6.2022, 5.2333, 5.836, 5.2333]}], "confidence":
-        0.8, "spans": [{"offset": 245, "length": 5}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.811, 5.3445, 6.2587, 5.3445, 6.2587, 5.4533, 5.811, 5.4533]}], "confidence":
-        0.8, "spans": [{"offset": 256, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "430", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 270, "length": 3}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": ".00", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.942, 5.5645, 6.3987, 5.5645, 6.3987, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 273, "length": 3}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2589, 3.2108, 3.4067, 3.2108, 3.4067, 3.319, 3.2589, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 484, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.99", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.2108, 5.8617, 3.2108, 5.8617, 3.319, 5.4232, 3.319]}], "confidence":
-        0.8, "spans": [{"offset": 487, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "20", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2541, 3.4241, 3.4067, 3.4241, 3.4067, 3.5323, 3.2541, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 496, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "140.67", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.4241, 5.8622, 3.4241, 5.8622, 3.5323, 5.4232, 3.5323]}], "confidence":
-        0.8, "spans": [{"offset": 499, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "40", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2486, 3.6341, 3.4067, 3.6341, 3.4067, 3.7423, 3.2486, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 508, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "150.66", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.6341, 5.8634, 3.6341, 5.8634, 3.7423, 5.4232, 3.7423]}], "confidence":
-        0.8, "spans": [{"offset": 511, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "10", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2589, 3.8441, 3.4067, 3.8441, 3.4067, 3.9523, 3.2589, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 520, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "120.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 3.8441, 5.8642, 3.8441, 5.8642, 3.9523, 5.4232, 3.9523]}], "confidence":
-        0.8, "spans": [{"offset": 523, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "40", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2486, 4.0546, 3.4067, 4.0546, 3.4067, 4.1627, 3.2486, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 532, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "100.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 4.0546, 5.8644, 4.0546, 5.8644, 4.1627, 5.4232, 4.1627]}], "confidence":
-        0.8, "spans": [{"offset": 535, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "60", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2534, 4.2646, 3.4067, 4.2646, 3.4067, 4.3727, 3.2534, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 544, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "120.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4232, 4.2646, 5.8642, 4.2646, 5.8642, 4.3727, 5.4232, 4.3727]}], "confidence":
-        0.8, "spans": [{"offset": 547, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "80", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [3.2514, 4.4746, 3.4067, 4.4746, 3.4067, 4.5827, 3.2514, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 556, "length": 2}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "220.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.4184, 4.4746, 5.8644, 4.4746, 5.8644, 4.5827, 5.4184, 4.5827]}], "confidence":
-        0.8, "spans": [{"offset": 559, "length": 6}]}, {"category": "Address", "content":
-        "567 Main St. Redmond", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554]}, {"pageNumber":
-        3, "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975]}],
-        "confidence": 0.95, "spans": [{"offset": 369, "length": 20}]}, {"category":
-        "Quantity", "subCategory": "Number", "content": "567", "boundingRegions":
-        [{"pageNumber": 3, "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203,
-        1.9554, 0.8852, 1.9554]}], "confidence": 0.8, "spans": [{"offset": 369, "length":
-        3}]}, {"category": "Address", "content": "WA", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744]}], "confidence": 0.36, "spans": [{"offset": 391, "length": 2}]}, {"category":
-        "Address", "content": "123 Hobbit Lane Redmond, WA", "boundingRegions": [{"pageNumber":
-        3, "boundingBox": [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165,
-        1.7854]}, {"pageNumber": 3, "boundingBox": [6.0164, 1.891, 6.9793, 1.891,
-        6.9793, 2.0275, 6.0164, 2.0275]}], "confidence": 0.76, "spans": [{"offset":
-        421, "length": 27}]}, {"category": "Quantity", "subCategory": "Number", "content":
-        "123", "boundingRegions": [{"pageNumber": 3, "boundingBox": [6.0165, 1.6772,
-        6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854]}], "confidence": 0.8, "spans":
-        [{"offset": 421, "length": 3}]}, {"category": "Quantity", "subCategory": "Number",
-        "content": "3000.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [6.1794, 4.9042, 6.7158, 4.9042, 6.7158, 5.0131, 6.1794, 5.0131]}], "confidence":
-        0.8, "spans": [{"offset": 576, "length": 7}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "300.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.836, 5.1245, 6.2887, 5.1245, 6.2887, 5.2333, 5.836, 5.2333]}], "confidence":
-        0.8, "spans": [{"offset": 589, "length": 6}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1000.00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.811, 5.3445, 6.3422, 5.3445, 6.3422, 5.4533, 5.811, 5.4533]}], "confidence":
-        0.8, "spans": [{"offset": 601, "length": 7}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "4300", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.942, 5.5645, 6.4825, 5.5645, 6.4825, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 616, "length": 4}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": ".00", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [5.942, 5.5645, 6.4825, 5.5645, 6.4825, 5.6733, 5.942, 5.6733]}], "confidence":
-        0.8, "spans": [{"offset": 620, "length": 3}]}], "documents": [{"docType":
-        "prebuilt:document", "boundingRegions": [{"pageNumber": 3, "boundingBox":
-        [0, 0, 8.5, 0, 8.5, 11, 0, 11]}], "fields": {"Locale": {"type": "string",
-        "valueString": "en-US", "confidence": 1}}, "confidence": 1, "spans": [{"offset":
-        328, "length": 334}]}]}}'
+        4.6271, 0.9938, 4.6273]}], "spans": [{"offset": 462, "length": 103}]}]}}'
     headers:
-      apim-request-id: fece3627-e3fd-4220-bc6c-7639cdfa1935
+      apim-request-id: f343d604-ffa2-4de7-809c-1fcf32a89c07
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Sep 2021 00:23:20 GMT
+      date: Tue, 07 Dec 2021 01:40:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '517'
+      x-envoy-upstream-service-time: '293'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/3fd811a6-78be-4df3-9adb-b59345aee95b?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/4f637c51-b52e-4230-9606-eefffe992c22?api-version=2021-09-30-preview
 version: 1

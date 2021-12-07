@@ -5,38 +5,56 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '479269'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 84572af7-a667-4d2f-b80b-c82700bdf0c9
-      content-length: '0'
-      date: Wed, 15 Sep 2021 21:32:09 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/84572af7-a667-4d2f-b80b-c82700bdf0c9?api-version=2021-09-30-preview
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '473'
+      apim-request-id:
+      - 1f9c7537-c230-44a3-b616-cfaf1f764d78
+      content-length:
+      - '0'
+      date:
+      - Tue, 07 Dec 2021 01:41:33 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/1f9c7537-c230-44a3-b616-cfaf1f764d78?api-version=2021-09-30-preview
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '487'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/84572af7-a667-4d2f-b80b-c82700bdf0c9?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/1f9c7537-c230-44a3-b616-cfaf1f764d78?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-15T21:32:09Z",
-        "lastUpdatedDateTime": "2021-09-15T21:32:11Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:41:33Z",
+        "lastUpdatedDateTime": "2021-12-07T01:41:36Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Purchase Order\nHero Limited\nCompany Phone: 555-348-6512\nWebsite:
         www.herolimited.com\nEmail:\nPurchase Order\nDated As: 12/20/2020\nPurchase
@@ -476,15 +494,21 @@ interactions:
         40}]}], "styles": [{"isHandwritten": true, "confidence": 0.9, "spans": [{"offset":
         606, "length": 14}]}]}}'
     headers:
-      apim-request-id: 3df9a0cc-b333-49c9-ae77-0d8cea440d5a
-      content-type: application/json; charset=utf-8
-      date: Wed, 15 Sep 2021 21:32:14 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '132'
+      apim-request-id:
+      - 93625b0b-1a9c-4210-996e-5a3cb2dad209
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 07 Dec 2021 01:41:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '138'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/84572af7-a667-4d2f-b80b-c82700bdf0c9?api-version=2021-09-30-preview
 version: 1

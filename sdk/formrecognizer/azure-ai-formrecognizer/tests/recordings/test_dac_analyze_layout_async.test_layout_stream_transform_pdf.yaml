@@ -5,57 +5,39 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '147362'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id:
-      - 401232da-552c-4cbb-8cd1-f433e6c50bf7
-      content-length:
-      - '0'
-      date:
-      - Mon, 27 Sep 2021 22:12:42 GMT
-      operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/401232da-552c-4cbb-8cd1-f433e6c50bf7?api-version=2021-09-30-preview
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '344'
+      apim-request-id: d598c3d2-c660-4cf4-860e-48c8859d0fbd
+      content-length: '0'
+      date: Tue, 07 Dec 2021 01:40:31 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/d598c3d2-c660-4cf4-860e-48c8859d0fbd?api-version=2021-09-30-preview
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '309'
     status:
       code: 202
       message: Accepted
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-document/analyzeResults/401232da-552c-4cbb-8cd1-f433e6c50bf7?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/d598c3d2-c660-4cf4-860e-48c8859d0fbd?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-27T22:12:42Z",
-        "lastUpdatedDateTime": "2021-09-27T22:12:47Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "prebuilt-document", "stringIndexType": "unicodeCodePoint",
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:40:31Z",
+        "lastUpdatedDateTime": "2021-12-07T01:40:34Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Contoso\nAddress:\n1 Redmond way Suite\n6000 Redmond, WA\n99243\nInvoice
         For: Microsoft\n1020 Enterprise Way\nSunnayvale, CA 87659\nInvoice Number\nInvoice
         Date\nInvoice Due Date\nCharges\nVAT ID\n34278587\n6/18/2017\n6/24/2017\n$56,651.49\nPT",
@@ -200,112 +182,17 @@ interactions:
         3.3133, 7.4945, 3.3133, 7.4945, 3.8523, 6.1021, 3.8523]}], "spans": [{"offset":
         224, "length": 2}]}], "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [0.5052, 2.7836, 7.4995, 2.7844, 7.4985, 3.8596, 0.5038, 3.859]}], "spans":
-        [{"offset": 124, "length": 102}]}], "keyValuePairs": [{"key": {"content":
-        "Address:", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.7994,
-        1.5143, 1.3836, 1.5143, 1.3836, 1.6154, 0.7994, 1.6154]}], "spans": [{"offset":
-        8, "length": 8}]}, "value": {"content": "1 Redmond way Suite 6000 Redmond,
-        WA 99243", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.8019, 1.7033,
-        2.1445, 1.7033, 2.1445, 2.1911, 0.8019, 2.1911]}], "spans": [{"offset": 17,
-        "length": 42}]}, "confidence": 0.959}, {"key": {"content": "Invoice For:",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [4.4033, 1.5143, 5.1013,
-        1.5143, 5.1013, 1.6155, 4.4033, 1.6155]}], "spans": [{"offset": 60, "length":
-        12}]}, "value": {"content": "Microsoft 1020 Enterprise Way Sunnayvale, CA
-        87659", "boundingRegions": [{"pageNumber": 1, "boundingBox": [5.196, 1.5114,
-        6.6526, 1.5114, 6.6526, 2.0359, 5.196, 2.0359]}], "spans": [{"offset": 73,
-        "length": 50}]}, "confidence": 0.761}, {"key": {"content": "Invoice Number",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.5439, 2.8733, 1.5729,
-        2.8733, 1.5729, 2.9754, 0.5439, 2.9754]}], "spans": [{"offset": 124, "length":
-        14}]}, "value": {"content": "34278587", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [0.5397, 3.411, 1.1457, 3.411, 1.1457, 3.5144, 0.5397, 3.5144]}],
-        "spans": [{"offset": 184, "length": 8}]}, "confidence": 0.972}, {"key": {"content":
-        "Invoice Date", "boundingRegions": [{"pageNumber": 1, "boundingBox": [1.9491,
-        2.8733, 2.7527, 2.8733, 2.7527, 2.9754, 1.9491, 2.9754]}], "spans": [{"offset":
-        139, "length": 12}]}, "value": {"content": "6/18/2017", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [1.9455, 3.41, 2.551, 3.41, 2.551, 3.5144,
-        1.9455, 3.5144]}], "spans": [{"offset": 193, "length": 9}]}, "confidence":
-        0.972}, {"key": {"content": "Invoice Due Date", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [3.3495, 2.8733, 4.4547, 2.8733, 4.4547, 2.9754, 3.3495,
-        2.9754]}], "spans": [{"offset": 152, "length": 16}]}, "value": {"content":
-        "6/24/2017", "boundingRegions": [{"pageNumber": 1, "boundingBox": [3.346,
-        3.41, 3.9514, 3.41, 3.9514, 3.5144, 3.346, 3.5144]}], "spans": [{"offset":
-        203, "length": 9}]}, "confidence": 0.951}, {"key": {"content": "Charges",
-        "boundingRegions": [{"pageNumber": 1, "boundingBox": [4.7468, 2.8717, 5.289,
-        2.8717, 5.289, 3.0035, 4.7468, 3.0035]}], "spans": [{"offset": 169, "length":
-        7}]}, "value": {"content": "$56,651.49", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.3871, 3.4047, 6.0702, 3.4047, 6.0702, 3.5321, 5.3871,
-        3.5321]}], "spans": [{"offset": 213, "length": 10}]}, "confidence": 0.339},
-        {"key": {"content": "VAT ID", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.141, 2.873, 6.5875, 2.873, 6.5875, 2.9736, 6.141, 2.9736]}], "spans": [{"offset":
-        177, "length": 6}]}, "value": {"content": "PT", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [6.2285, 3.4114, 6.3919, 3.4114, 6.3919, 3.5119, 6.2285,
-        3.5119]}], "spans": [{"offset": 224, "length": 2}]}, "confidence": 0.972}],
-        "entities": [{"category": "Quantity", "subCategory": "Number", "content":
-        "34278587", "boundingRegions": [{"pageNumber": 1, "boundingBox": [0.5397,
-        3.411, 1.1457, 3.411, 1.1457, 3.5144, 0.5397, 3.5144]}], "confidence": 0.8,
-        "spans": [{"offset": 184, "length": 8}]}, {"category": "DateTime", "subCategory":
-        "Date", "content": "6/18/2017", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [1.9455, 3.41, 2.551, 3.41, 2.551, 3.5144, 1.9455, 3.5144]}], "confidence":
-        0.8, "spans": [{"offset": 193, "length": 9}]}, {"category": "DateTime", "subCategory":
-        "Date", "content": "6/24/2017", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [3.346, 3.41, 3.9514, 3.41, 3.9514, 3.5144, 3.346, 3.5144]}], "confidence":
-        0.8, "spans": [{"offset": 203, "length": 9}]}, {"category": "Quantity", "subCategory":
-        "Currency", "content": "$56,651.49", "boundingRegions": [{"pageNumber": 1,
-        "boundingBox": [5.3871, 3.4047, 6.0702, 3.4047, 6.0702, 3.5321, 5.3871, 3.5321]}],
-        "confidence": 0.8, "spans": [{"offset": 213, "length": 10}]}, {"category":
-        "Organization", "content": "PT", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [6.2285, 3.4114, 6.3919, 3.4114, 6.3919, 3.5119, 6.2285, 3.5119]}], "confidence":
-        0.91, "spans": [{"offset": 224, "length": 2}]}, {"category": "Organization",
-        "content": "Contoso", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534]}], "confidence":
-        0.44, "spans": [{"offset": 0, "length": 7}]}, {"category": "Address", "content":
-        "1 Redmond way Suite 6000 Redmond, WA 99243", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [0.8106, 1.7033, 2.1445, 1.7033, 2.1445, 1.8342, 0.8106,
-        1.8342]}, {"pageNumber": 1, "boundingBox": [0.8019, 1.896, 2.0384, 1.896,
-        2.0384, 2.0171, 0.8019, 2.0171]}, {"pageNumber": 1, "boundingBox": [0.8025,
-        2.0876, 1.175, 2.0876, 1.175, 2.1911, 0.8025, 2.1911]}], "confidence": 0.74,
-        "spans": [{"offset": 17, "length": 42}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "1", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8106, 1.708, 0.8463, 1.708, 0.8463, 1.8053, 0.8106, 1.8053]}], "confidence":
-        0.8, "spans": [{"offset": 17, "length": 1}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "6000", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8019, 1.896, 1.0991, 1.896, 1.0991, 1.9994, 0.8019, 1.9994]}], "confidence":
-        0.8, "spans": [{"offset": 37, "length": 4}]}, {"category": "Quantity", "subCategory":
-        "Number", "content": "99243", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [0.8025, 2.0876, 1.175, 2.0876, 1.175, 2.1911, 0.8025, 2.1911]}], "confidence":
-        0.8, "spans": [{"offset": 54, "length": 5}]}, {"category": "Organization",
-        "content": "Microsoft", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151]}], "confidence":
-        0.78, "spans": [{"offset": 73, "length": 9}]}, {"category": "Address", "content":
-        "1020 Enterprise Way Sunnayvale, CA 87659", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [5.2036, 1.716, 6.5436, 1.716, 6.5436, 1.8459, 5.2036, 1.8459]},
-        {"pageNumber": 1, "boundingBox": [5.196, 1.9047, 6.6526, 1.9047, 6.6526, 2.0359,
-        5.196, 2.0359]}], "confidence": 0.86, "spans": [{"offset": 83, "length": 40}]},
-        {"category": "Quantity", "subCategory": "Number", "content": "1020", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [5.2036, 1.716, 5.4935, 1.716, 5.4935, 1.8185,
-        5.2036, 1.8185]}], "confidence": 0.8, "spans": [{"offset": 83, "length": 4}]},
-        {"category": "Quantity", "subCategory": "Number", "content": "87659", "boundingRegions":
-        [{"pageNumber": 1, "boundingBox": [6.2801, 1.906, 6.6526, 1.906, 6.6526, 2.0086,
-        6.2801, 2.0086]}], "confidence": 0.8, "spans": [{"offset": 118, "length":
-        5}]}], "documents": [{"docType": "prebuilt:document", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [0, 0, 8.5, 0, 8.5, 11, 0, 11]}], "fields": {"Locale": {"type":
-        "string", "valueString": "en-US", "confidence": 1}}, "confidence": 1, "spans":
-        [{"offset": 0, "length": 226}]}]}}'
+        [{"offset": 124, "length": 102}]}]}}'
     headers:
-      apim-request-id:
-      - 70292a66-f2ae-4c8a-80b3-8f422ce1cfdc
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 27 Sep 2021 22:12:48 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '164'
+      apim-request-id: c0fd25de-1e15-4be0-ba50-3b01fbdf989c
+      content-type: application/json; charset=utf-8
+      date: Tue, 07 Dec 2021 01:40:36 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '137'
     status:
       code: 200
       message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/d598c3d2-c660-4cf4-860e-48c8859d0fbd?api-version=2021-09-30-preview
 version: 1

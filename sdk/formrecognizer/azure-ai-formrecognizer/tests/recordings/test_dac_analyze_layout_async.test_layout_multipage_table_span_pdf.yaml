@@ -8,20 +8,20 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 422746d2-7c02-4953-93e3-7268ac7ce04a
+      apim-request-id: e2283c61-d322-4861-93f0-2e45706cf7c9
       content-length: '0'
-      date: Wed, 15 Sep 2021 21:31:30 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/422746d2-7c02-4953-93e3-7268ac7ce04a?api-version=2021-09-30-preview
+      date: Tue, 07 Dec 2021 01:39:46 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/e2283c61-d322-4861-93f0-2e45706cf7c9?api-version=2021-09-30-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '492'
+      x-envoy-upstream-service-time: '875'
     status:
       code: 202
       message: Accepted
@@ -30,13 +30,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/422746d2-7c02-4953-93e3-7268ac7ce04a?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/e2283c61-d322-4861-93f0-2e45706cf7c9?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-15T21:31:30Z",
-        "lastUpdatedDateTime": "2021-09-15T21:31:35Z", "analyzeResult": {"apiVersion":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-07T01:39:46Z",
+        "lastUpdatedDateTime": "2021-12-07T01:39:51Z", "analyzeResult": {"apiVersion":
         "2021-09-30-preview", "modelId": "prebuilt-layout", "stringIndexType": "unicodeCodePoint",
         "content": "Quarterly Sales Update: Q3 2019\nRegion\nDivision\nSales Team\nUnits
         Shipped (Thousands)\nYoY\nNortheast\nNew England\nCT, ME, MA, NH, RI, VT\n526\n0.7%\nMid-Atlantic\nNJ,
@@ -1892,15 +1892,15 @@ interactions:
         [{"pageNumber": 2, "boundingBox": [1.0053, 0.988, 7.8519, 0.99, 7.8507, 5.1006,
         1.0029, 5.0975]}], "spans": [{"offset": 1063, "length": 543}]}]}}'
     headers:
-      apim-request-id: 34e36e8f-a39c-4159-ad15-225006c21ada
+      apim-request-id: 5d1741a7-cb2f-4c39-8b05-2c969ae9ec1c
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Sep 2021 21:31:35 GMT
+      date: Tue, 07 Dec 2021 01:39:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '542'
+      x-envoy-upstream-service-time: '382'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/422746d2-7c02-4953-93e3-7268ac7ce04a?api-version=2021-09-30-preview
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-layout/analyzeResults/e2283c61-d322-4861-93f0-2e45706cf7c9?api-version=2021-09-30-preview
 version: 1
