@@ -71,11 +71,16 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["SearchAddressBatchResult"]
-        return self._search_client.begin_search_address_batch(
+        poller =  self._search_client.begin_search_address_batch(
             batch_request,
             **kwargs
         )
 
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(message=result_properties['error']['message'])
+
+        return poller
 
     @distributed_trace_async
     def begin_reverse_search_address_batch(
