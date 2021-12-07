@@ -2,7 +2,6 @@ variables:
   NugetSecurityAnalysisWarningLevel: 'none'
   skipComponentGovernanceDetection: 'true'
   PythonVersion: '3.7'
-  System.Debug: 'true'
 
 pool:
   name: "azsdk-pool-mms-ubuntu-2004-perf"
