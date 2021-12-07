@@ -38,7 +38,7 @@ from .._generated.models import (
     CallParticipant,
     AudioRoutingMode
     )
-from .._shared.models import CommunicationIdentifier
+from .._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
 from .._generated.aio._azure_communication_calling_server_service import \
     AzureCommunicationCallingServerService  # pylint: disable=unused-import
 
@@ -200,7 +200,7 @@ class CallConnection:
             self,
             participant: CommunicationIdentifier,
             *,
-            alternate_caller_id: Optional[str] = None,
+            alternate_caller_id: Optional[PhoneNumberIdentifier] = None,
             operation_context: Optional[str] = None,
             **kwargs: Any
         ) -> AddParticipantResult:
@@ -209,7 +209,7 @@ class CallConnection:
         :param participant: Required. The participant identity.
         :type participant: ~azure.communication.callingserver.models.CommunicationIdentifier
         :keyword alternate_caller_id: The alternate caller id.
-        :paramtype alternate_caller_id: str
+        :paramtype alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifier
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :return: AddParticipantResult
@@ -217,13 +217,11 @@ class CallConnection:
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        alternate_caller_id = (None
-            if alternate_caller_id is None
-            else PhoneNumberIdentifierModel(value=alternate_caller_id))
-
         add_participant_request = AddParticipantRequestConverter.convert(
             participant=serialize_identifier(participant),
-            alternate_caller_id=alternate_caller_id,
+            alternate_caller_id=(None
+                if alternate_caller_id is None
+                else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value'])),
             operation_context=operation_context
             )
 
@@ -483,7 +481,7 @@ class CallConnection:
             self,
             target_participant: CommunicationIdentifier,
             *,
-            alternate_caller_id: Optional[str] = None,
+            alternate_caller_id: Optional[PhoneNumberIdentifier] = None,
             user_to_user_information: Optional[str] = None,
             operation_context: Optional[str] = None,
             **kwargs: Any
@@ -494,7 +492,7 @@ class CallConnection:
         :type target_participant: ~azure.communication.callingserver.models.CommunicationIdentifier
         :keyword alternate_caller_id: The alternate identity of the transferor if transferring to a pstn
          number.
-        :paramtype alternate_caller_id: str
+        :paramtype alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifier
         :keyword user_to_user_information: The user to user information.
         :paramtype user_to_user_information: str
         :keyword operation_context: The operation context.
@@ -504,13 +502,11 @@ class CallConnection:
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        alternate_caller_id = (None
-            if alternate_caller_id is None
-            else PhoneNumberIdentifierModel(value=alternate_caller_id))
-
         transfer_to_participant_request = TransferToParticipantRequestConverter.convert(
             target_participant=serialize_identifier(target_participant),
-            alternate_caller_id=alternate_caller_id,
+            alternate_caller_id=(None
+                if alternate_caller_id is None
+                else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value'])),
             user_to_user_information=user_to_user_information,
             operation_context=operation_context
             )

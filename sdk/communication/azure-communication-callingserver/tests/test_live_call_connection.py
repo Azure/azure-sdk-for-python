@@ -62,6 +62,7 @@ class CallConnectionTest(CommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_create_play_cancel_hangup_scenario(self):
         # create call option and establish a call
         call_connection = self.callingserver_client.create_call_connection(
@@ -70,7 +71,7 @@ class CallConnectionTest(CommunicationTestCase):
                     callback_uri=CONST.AppCallbackUrl,
                     requested_media_types=[CallMediaType.AUDIO],
                     requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
-                    alternate_caller_id = self.from_phone_number
+                    alternate_caller_id = PhoneNumberIdentifier(self.from_phone_number)
                     )
 
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
@@ -96,6 +97,7 @@ class CallConnectionTest(CommunicationTestCase):
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             call_connection.hang_up()
 
+    @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     def test_create_add_remove_hangup_scenario(self):
         # create option and establish a call
         call_connection = self.callingserver_client.create_call_connection(
@@ -104,7 +106,7 @@ class CallConnectionTest(CommunicationTestCase):
                     callback_uri=CONST.AppCallbackUrl,
                     requested_media_types=[CallMediaType.AUDIO],
                     requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED, CallingEventSubscriptionType.TONE_RECEIVED],
-                    alternate_caller_id = self.from_phone_number
+                    alternate_caller_id = PhoneNumberIdentifier(self.from_phone_number)
                     )
         CallingServerLiveTestUtils.validate_callconnection(call_connection)
 
@@ -112,7 +114,7 @@ class CallConnectionTest(CommunicationTestCase):
             # Add Participant
             CallingServerLiveTestUtils.sleep_if_in_live_mode()
             OperationContext = str(uuid.uuid4())
-            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-2293-8e3d-f6c7-593a0d004c21")
+            added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-33ea-48b2-99c6-593a0d001849")
             add_participant_result = call_connection.add_participant(
                 participant=CommunicationUserIdentifier(added_participant),
                 alternate_caller_id=None,

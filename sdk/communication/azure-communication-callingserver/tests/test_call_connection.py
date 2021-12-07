@@ -13,6 +13,7 @@ from typing import List
 from azure.communication.callingserver import (
     AudioRoutingMode,
     CommunicationIdentifier,
+    PhoneNumberIdentifier
     )
 
 from utils._unit_test_utils import CallConnectionUnitTestUtils
@@ -348,8 +349,8 @@ class TestCallConnection(unittest.TestCase):
         test_name, # type: str
         call_connection_id, # type: str
         participant, # type: CommunicationIdentifier
-        alternate_caller_id, # type: str
-        operation_context, # type: str
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
+        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -373,8 +374,8 @@ class TestCallConnection(unittest.TestCase):
         test_name, # type: str
         call_connection_id, # type: str
         participant, # type: CommunicationIdentifier
-        alternate_caller_id, # type: str
-        operation_context, # type: str
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
+        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -768,9 +769,9 @@ class TestCallConnection(unittest.TestCase):
         test_name, # type: str
         call_connection_id, # type: str
         target_participant, # type: CommunicationIdentifier
-        alternate_caller_id, # type: str
-        user_to_user_information, # type: str
-        operation_context, # type: str
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
+        user_to_user_information = None, # type: str
+        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -796,9 +797,9 @@ class TestCallConnection(unittest.TestCase):
         test_name, # type: str
         call_connection_id, # type: str
         target_participant, # type: CommunicationIdentifier
-        alternate_caller_id, # type: str
-        user_to_user_information, # type: str
-        operation_context, # type: str
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
+        user_to_user_information = None, # type: str
+        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 

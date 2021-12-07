@@ -44,6 +44,7 @@ class CallingServerUnitTestUtils:
             _test_constants.CALLBACK_URI,
             [CallMediaType.AUDIO],
             [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             ))
 
         parameters.append((
@@ -53,6 +54,7 @@ class CallingServerUnitTestUtils:
             _test_constants.CALLBACK_URI,
             [CallMediaType.AUDIO],
             [CallingEventSubscriptionType.PARTICIPANTS_UPDATED],
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             True,
             ))
 
@@ -266,7 +268,7 @@ class CallingServerUnitTestUtils:
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             _test_constants.CALLBACK_URI,
-            _test_constants.PHONE_NUMBER,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.OPERATION_CONTEXT,
             ))
 
@@ -275,7 +277,7 @@ class CallingServerUnitTestUtils:
             ServerCallLocator(_test_constants.SEVERCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             _test_constants.CALLBACK_URI,
-            _test_constants.PHONE_NUMBER,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.OPERATION_CONTEXT,
             True,
             ))
@@ -285,7 +287,7 @@ class CallingServerUnitTestUtils:
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             _test_constants.CALLBACK_URI,
-            _test_constants.PHONE_NUMBER,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.OPERATION_CONTEXT,
             ))
 
@@ -294,7 +296,7 @@ class CallingServerUnitTestUtils:
             GroupCallLocator(_test_constants.GROUPCALL_ID),
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
             _test_constants.CALLBACK_URI,
-            _test_constants.PHONE_NUMBER,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.OPERATION_CONTEXT,
             True,
             ))
@@ -643,7 +645,7 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.PHONE_NUMBER,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.OPERATION_CONTEXT,
             ))
 
@@ -651,7 +653,7 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.PHONE_NUMBER,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.OPERATION_CONTEXT,
             True,
             ))
@@ -665,7 +667,7 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.COMMUNICATION_USER_Id_02,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
             ))
@@ -674,7 +676,7 @@ class CallConnectionUnitTestUtils:
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
             CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE),
-            _test_constants.COMMUNICATION_USER_Id_02,
+            PhoneNumberIdentifier(_test_constants.PHONE_NUMBER),
             _test_constants.USER_TO_USER_INFORMATION,
             _test_constants.OPERATION_CONTEXT,
             True,

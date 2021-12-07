@@ -15,14 +15,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 04 Dec 2021 00:01:41 GMT
+      - Tue, 07 Dec 2021 18:07:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-22a0-bbd7-ec8d-084822004bcd"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-35f5-f187-e3c7-593a0d002465"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 04 Dec 2021 00:01:40 GMT
+      - Tue, 07 Dec 2021 18:07:31 GMT
       ms-cv:
-      - bfUWYeG2kk2gmXzqB0pP+g.0
+      - hvtNR+DwzEuEsCa5xDmnew.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 25ms
+      - 40ms
     status:
       code: 201
       message: Created
@@ -62,14 +62,14 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 04 Dec 2021 00:01:41 GMT
+      - Tue, 07 Dec 2021 18:07:32 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
   response:
     body:
-      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-22a0-bd23-f6c7-593a0d004cf1"}}'
+      string: '{"identity":{"id":"8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-35f5-f475-d68a-084822004218"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 04 Dec 2021 00:01:41 GMT
+      - Tue, 07 Dec 2021 18:07:32 GMT
       ms-cv:
-      - 0JRdR1q0P0u1dWnDeeTErA.0
+      - zbscgj/pHE2qGeU8VXE4yQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,12 +89,12 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 24ms
+      - 23ms
     status:
       code: 201
       message: Created
 - request:
-    body: '{"callLocator": {"groupCallId": "6d64d57f-2d97-4266-a047-af1916131a13",
+    body: '{"callLocator": {"groupCallId": "67e50556-dd88-468f-8ae3-98fcc9a8464e",
       "kind": "groupCallLocator"}, "source": "sanitized", "callbackUri": "sanitized",
       "requestedMediaTypes": ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
     headers:
@@ -116,23 +116,23 @@ interactions:
     uri: https://sanitized.communication.azure.com/calling:join?api-version=2021-11-15-preview
   response:
     body:
-      string: '{"callConnectionId": "28201300-1da7-4a9c-be94-dca35b70f631"}'
+      string: '{"callConnectionId": "8e1f1300-c98d-4f75-be0a-b1034d768925"}'
     headers:
       content-length:
       - '59'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 04 Dec 2021 00:01:43 GMT
+      - Tue, 07 Dec 2021 18:07:35 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 0238539b-a94b-445c-a18e-364fcccc13d3
+      - 90a7eb51-03f1-406a-8b13-9d62725821de
     status:
       code: 202
       message: Accepted
 - request:
-    body: '{"callLocator": {"groupCallId": "6d64d57f-2d97-4266-a047-af1916131a13",
+    body: '{"callLocator": {"groupCallId": "67e50556-dd88-468f-8ae3-98fcc9a8464e",
       "kind": "groupCallLocator"}, "source": "sanitized", "callbackUri": "sanitized",
       "requestedMediaTypes": ["audio"], "requestedCallEvents": ["participantsUpdated"]}'
     headers:
@@ -154,26 +154,26 @@ interactions:
     uri: https://sanitized.communication.azure.com/calling:join?api-version=2021-11-15-preview
   response:
     body:
-      string: '{"callConnectionId": "28201300-b780-4c91-a1d9-569b1bc37e51"}'
+      string: '{"callConnectionId": "8e1f1300-1ceb-407c-a030-cb207b455d25"}'
     headers:
       content-length:
       - '59'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 04 Dec 2021 00:01:53 GMT
+      - Tue, 07 Dec 2021 18:07:46 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 27a521dd-1f69-487b-b6b6-c14917e3cee5
+      - 9ae98e91-bdaf-493b-8892-d1a968f77bb6
     status:
       code: 202
       message: Accepted
 - request:
-    body: '{"callLocator": {"groupCallId": "6d64d57f-2d97-4266-a047-af1916131a13",
+    body: '{"callLocator": {"groupCallId": "67e50556-dd88-468f-8ae3-98fcc9a8464e",
       "kind": "groupCallLocator"}, "callbackUri": "sanitized", "participant": {"communicationUser":
-      {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-2293-8e3d-f6c7-593a0d004c21"}},
-      "operationContext": "5fbebd83-b3c9-4ff0-b4b2-4432066586c5"}'
+      {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-33ea-48b2-99c6-593a0d001849"}},
+      "operationContext": "3a38bd73-1269-407f-8ebd-8f377028beb1"}'
     headers:
       Accept:
       - application/json
@@ -193,25 +193,25 @@ interactions:
     uri: https://sanitized.communication.azure.com/calling/participants?api-version=2021-11-15-preview
   response:
     body:
-      string: '{"operationId": "dead1886-8efb-4cae-b44e-7658aa8e758d", "status": "running",
-        "operationContext": "5fbebd83-b3c9-4ff0-b4b2-4432066586c5"}'
+      string: '{"operationId": "973a810f-4e2e-4e7a-a7cb-507eaed500a8", "status": "running",
+        "operationContext": "3a38bd73-1269-407f-8ebd-8f377028beb1"}'
     headers:
       content-length:
       - '131'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 04 Dec 2021 00:02:14 GMT
+      - Tue, 07 Dec 2021 18:08:06 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 7750442a-54ca-4c07-a973-98640c78ca98
+      - e48571ea-a9f4-417d-a787-94916e99c61f
     status:
       code: 202
       message: Accepted
 - request:
-    body: '{"callLocator": {"groupCallId": "6d64d57f-2d97-4266-a047-af1916131a13",
-      "kind": "groupCallLocator"}, "identifier": {"communicationUser": {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-2293-8e3d-f6c7-593a0d004c21"}}}'
+    body: '{"callLocator": {"groupCallId": "67e50556-dd88-468f-8ae3-98fcc9a8464e",
+      "kind": "groupCallLocator"}, "identifier": {"communicationUser": {"id": "8:acs:016a7064-0581-40b9-be73-6dde64d69d72_0000000e-33ea-48b2-99c6-593a0d001849"}}}'
     headers:
       Accept:
       - application/json
@@ -236,11 +236,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 04 Dec 2021 00:02:24 GMT
+      - Tue, 07 Dec 2021 18:08:17 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 8c5e1a25-f913-496e-b3f9-94beabb2d586
+      - 49f069bc-e280-443a-934b-372bcee71def
     status:
       code: 202
       message: Accepted
@@ -260,7 +260,7 @@ interactions:
       x-ms-host:
       - acstestbot1.communication.azure.com
     method: POST
-    uri: https://sanitized.communication.azure.com/calling/callConnections/28201300-1da7-4a9c-be94-dca35b70f631/:hangup?api-version=2021-11-15-preview
+    uri: https://sanitized.communication.azure.com/calling/callConnections/8e1f1300-c98d-4f75-be0a-b1034d768925/:hangup?api-version=2021-11-15-preview
   response:
     body:
       string: ''
@@ -268,11 +268,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 04 Dec 2021 00:02:35 GMT
+      - Tue, 07 Dec 2021 18:08:27 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - 5fb4d67b-3ec3-4316-9612-cd2194eb185f
+      - 9027b5f3-d5c7-4dc4-9986-75df74f9ba50
     status:
       code: 202
       message: Accepted
@@ -292,7 +292,7 @@ interactions:
       x-ms-host:
       - acstestbot1.communication.azure.com
     method: POST
-    uri: https://sanitized.communication.azure.com/calling/callConnections/28201300-b780-4c91-a1d9-569b1bc37e51/:hangup?api-version=2021-11-15-preview
+    uri: https://sanitized.communication.azure.com/calling/callConnections/8e1f1300-1ceb-407c-a030-cb207b455d25/:hangup?api-version=2021-11-15-preview
   response:
     body:
       string: ''
@@ -300,11 +300,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 04 Dec 2021 00:02:35 GMT
+      - Tue, 07 Dec 2021 18:08:27 GMT
       x-cache:
       - CONFIG_NOCACHE
       x-microsoft-skype-chain-id:
-      - bcb1abb3-6fc6-4d33-b55d-d1ddf33e89b6
+      - c13fb5ba-a9dd-432c-aa73-48c9e3d55963
     status:
       code: 202
       message: Accepted

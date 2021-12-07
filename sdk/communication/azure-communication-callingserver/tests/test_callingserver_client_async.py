@@ -14,7 +14,8 @@ from azure.communication.callingserver import (
     CallLocator,
     CallMediaType,
     CallingEventSubscriptionType,
-    CallRejectReason
+    CallRejectReason,
+    PhoneNumberIdentifier
     )
 from utils._unit_test_utils import CallingServerUnitTestUtils
 
@@ -27,6 +28,7 @@ async def test_create_connection_succeed(
     callback_uri, # type: str
     requested_media_types, # type: List[CallMediaType]
     requested_call_events, # type: List[CallingEventSubscriptionType]
+    alternate_caller_id = None, # type: PhoneNumberIdentifier
     use_managed_identity = False # type: bool
     ):
 
@@ -41,7 +43,8 @@ async def test_create_connection_succeed(
         target_users,
         callback_uri,
         requested_media_types,
-        requested_call_events
+        requested_call_events,
+        alternate_caller_id = alternate_caller_id
         )
 
     assert call_connection.call_connection_id == _test_constants.CALL_ID
@@ -55,6 +58,7 @@ async def test_create_connection_failed(
     callback_uri, # type: str
     requested_media_types, # type: List[CallMediaType]
     requested_call_events, # type: List[CallingEventSubscriptionType]
+    alternate_caller_id = None, # type: PhoneNumberIdentifier
     use_managed_identity = False # type: bool
     ):
 
@@ -71,7 +75,8 @@ async def test_create_connection_failed(
             target_users,
             callback_uri,
             requested_media_types,
-            requested_call_events
+            requested_call_events,
+            alternate_caller_id = alternate_caller_id
             )
     except:
         raised = True
@@ -417,8 +422,8 @@ async def test_add_participant_succeed(
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
     callback_uri, # type: str
-    alternate_caller_id, # type: str
-    operation_context, # type: str
+    alternate_caller_id = None, # type: PhoneNumberIdentifier
+    operation_context = None, # type: str
     use_managed_identity = False # type: bool
     ):
 
@@ -445,8 +450,8 @@ async def test_add_participant_failed(
     call_locator, # type: CallLocator
     participant, # type: CommunicationIdentifier
     callback_uri, # type: str
-    alternate_caller_id, # type: str
-    operation_context, # type: str
+    alternate_caller_id = None, # type: PhoneNumberIdentifier
+    operation_context = None, # type: str
     use_managed_identity = False # type: bool
     ):
 
