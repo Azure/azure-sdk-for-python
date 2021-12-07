@@ -127,7 +127,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 # Add Participant
                 CallingServerLiveTestUtils.sleep_if_in_live_mode()
                 OperationContext = str(uuid.uuid4())
-                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-2293-8e3d-f6c7-593a0d004c21")
+                added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-33ea-48b2-99c6-593a0d001849")
                 add_participant_result = await self.callingserver_client.add_participant(
                     call_locator=GroupCallLocator(group_id),
                     participant=CommunicationUserIdentifier(added_participant),
@@ -203,7 +203,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_delete_success(self):
-        delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()       
+        delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()
         async with self.callingserver_client:
             await self.callingserver_client.delete_recording(delete_url)
 
@@ -217,8 +217,8 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
 
     @pytest.mark.skipif(CONST.SKIP_CALLINGSERVER_INTERACTION_LIVE_TESTS, reason=CONST.CALLINGSERVER_INTERACTION_LIVE_TESTS_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_delete_content_unauthorized(self):       
-        delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()       
+    async def test_delete_content_unauthorized(self):
+        delete_url = CallingServerLiveTestUtilsAsync.get_delete_url()
         unauthorized_client = CallingServerClient.from_connection_string("endpoint=https://test.communication.azure.com/;accesskey=1234")
         async with unauthorized_client:
             with self.assertRaises(HttpResponseError):

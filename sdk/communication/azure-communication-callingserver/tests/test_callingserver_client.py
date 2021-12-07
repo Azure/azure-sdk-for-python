@@ -14,7 +14,8 @@ from azure.communication.callingserver import (
     CallLocator,
     CallMediaType,
     CallingEventSubscriptionType,
-    CallRejectReason
+    CallRejectReason,
+    PhoneNumberIdentifier
     )
 
 from utils._unit_test_utils import CallingServerUnitTestUtils
@@ -30,6 +31,7 @@ class TestCallingServerClient(unittest.TestCase):
         callback_uri, # type: str
         requested_media_types, # type: List[CallMediaType]
         requested_call_events, # type: List[CallingEventSubscriptionType]
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
         use_managed_identity = False # type: bool
         ):
 
@@ -44,7 +46,8 @@ class TestCallingServerClient(unittest.TestCase):
             target_users,
             callback_uri,
             requested_media_types,
-            requested_call_events
+            requested_call_events,
+            alternate_caller_id = alternate_caller_id
             )
         assert call_connection.call_connection_id == _test_constants.CALL_ID
 
@@ -57,6 +60,7 @@ class TestCallingServerClient(unittest.TestCase):
         callback_uri, # type: str
         requested_media_types, # type: List[CallMediaType]
         requested_call_events, # type: List[CallingEventSubscriptionType]
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
         use_managed_identity = False # type: bool
         ):
 
@@ -73,7 +77,8 @@ class TestCallingServerClient(unittest.TestCase):
             target_users,
             callback_uri,
             requested_media_types,
-            requested_call_events
+            requested_call_events,
+            alternate_caller_id = alternate_caller_id
             )
         except:
             raised = True
@@ -419,8 +424,8 @@ class TestCallingServerClient(unittest.TestCase):
         call_locator, # type: CallLocator
         participant, # type: CommunicationIdentifier
         callback_uri, # type: str
-        alternate_caller_id, # type: str
-        operation_context, # type: str
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
+        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 
@@ -447,8 +452,8 @@ class TestCallingServerClient(unittest.TestCase):
         call_locator, # type: CallLocator
         participant, # type: CommunicationIdentifier
         callback_uri, # type: str
-        alternate_caller_id, # type: str
-        operation_context, # type: str
+        alternate_caller_id = None, # type: PhoneNumberIdentifier
+        operation_context = None, # type: str
         use_managed_identity = False # type: bool
         ):
 

@@ -33,7 +33,7 @@ from ._generated.models import (
     AnswerCallResult
     )
 
-from ._shared.models import CommunicationIdentifier
+from ._shared.models import CommunicationIdentifier, PhoneNumberIdentifier  # pylint: disable=unused-import
 from ._call_connection import CallConnection
 from ._converters import (
     JoinCallRequestConverter,
@@ -168,7 +168,7 @@ class CallingServerClient(object):
         :type requested_call_events: list[str or
          ~azure.communication.callingserver.models.CallingEventSubscriptionType]
         :keyword alternate_caller_id: The alternate caller id.
-        :paramtype alternate_caller_id: str
+        :paramtype alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifier
         :keyword subject: The subject.
         :paramtype subject: str
         :return: CallConnection
@@ -187,7 +187,7 @@ class CallingServerClient(object):
             requested_call_events=requested_call_events,
             alternate_caller_id=(None
                 if alternate_caller_id is None
-                else PhoneNumberIdentifierModel(value=alternate_caller_id)),
+                else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value'])),
             subject=subject
         )
 
@@ -468,7 +468,7 @@ class CallingServerClient(object):
         :param callback_uri: Required. The callback URI.
         :type callback_uri: str
         :keyword alternate_caller_id: The alternate caller id.
-        :paramtype alternate_caller_id: str
+        :paramtype alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifier
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :return: AddParticipantResult
@@ -479,14 +479,12 @@ class CallingServerClient(object):
         alternate_caller_id = kwargs.pop("alternate_caller_id", None)
         operation_context = kwargs.pop("operation_context", None)
 
-        alternate_caller_id = (None
-            if alternate_caller_id is None
-            else PhoneNumberIdentifierModel(value=alternate_caller_id))
-
         add_participant_with_call_locator_request = AddParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant),
-            alternate_caller_id=alternate_caller_id,
+            alternate_caller_id=(None
+                if alternate_caller_id is None
+                else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value'])),
             operation_context=operation_context,
             callback_uri=callback_uri
             )
