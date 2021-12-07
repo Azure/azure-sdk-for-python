@@ -8,11 +8,9 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date, time
-from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import FormRecognizerClient
-from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion, AnalyzeResult
+from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer

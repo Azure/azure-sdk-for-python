@@ -6,7 +6,6 @@
 
 import pytest
 import functools
-from datetime import date
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
