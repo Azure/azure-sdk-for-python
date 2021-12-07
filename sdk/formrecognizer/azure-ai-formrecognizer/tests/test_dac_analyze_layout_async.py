@@ -5,22 +5,22 @@
 # ------------------------------------
 
 import functools
-from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
-from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
-from testcase import FormRecognizerTest
+from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
-class TestDocumentFromStream(FormRecognizerTest):
+class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_stream_transform_pdf(self, client):
+    async def test_layout_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -28,12 +28,13 @@ class TestDocumentFromStream(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_document = AnalyzeResult._from_generated(analyze_result.analyze_result)
+            extracted_layout = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(extracted_document)
+            responses.append(extracted_layout)
 
-        poller = client.begin_analyze_document("prebuilt-document", document, cls=callback)
-        result = poller.result()
+        async with client:
+            poller = await client.begin_analyze_document("prebuilt-layout", document, cls=callback)
+            result = await poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
 
@@ -54,7 +55,7 @@ class TestDocumentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_stream_transform_jpg(self, client):
+    async def test_layout_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
 
@@ -62,12 +63,13 @@ class TestDocumentFromStream(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_document = AnalyzeResult._from_generated(analyze_result.analyze_result)
+            extracted_layout = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(extracted_document)
+            responses.append(extracted_layout)
 
-        poller = client.begin_analyze_document("prebuilt-document", document, cls=callback)
-        result = poller.result()
+        async with client:
+            poller = await client.begin_analyze_document("prebuilt-layout", document, cls=callback)
+            result = await poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
 
@@ -88,7 +90,7 @@ class TestDocumentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_multipage_transform(self, client):
+    async def test_layout_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -96,12 +98,13 @@ class TestDocumentFromStream(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_document = AnalyzeResult._from_generated(analyze_result.analyze_result)
+            extracted_layout = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
-            responses.append(extracted_document)
+            responses.append(extracted_layout)
 
-        poller = client.begin_analyze_document("prebuilt-document", document, cls=callback)
-        result = poller.result()
+        async with client:
+            poller = await client.begin_analyze_document("prebuilt-layout", document, cls=callback)
+            result = await poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
 
@@ -122,37 +125,39 @@ class TestDocumentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_multipage_table_span_pdf(self, client):
+    async def test_layout_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
             myfile = fd.read()
-        poller = client.begin_analyze_document("prebuilt-document", myfile)
-        document = poller.result()
-        assert len(document.tables) == 3
-        assert document.tables[0].row_count == 29
-        assert document.tables[0].column_count == 5
-        assert document.tables[1].row_count == 6
-        assert document.tables[1].column_count == 4
-        assert document.tables[2].row_count == 23
-        assert document.tables[2].column_count == 5
+        async with client:
+            poller = await client.begin_analyze_document("prebuilt-layout", myfile)
+            layout = await poller.result()
+        assert len(layout.tables) == 3
+        assert layout.tables[0].row_count == 29
+        assert layout.tables[0].column_count == 5
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count == 4
+        assert layout.tables[2].row_count == 23
+        assert layout.tables[2].column_count == 5
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_document_specify_pages(self, client):
+    async def test_layout_specify_pages(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages="1")
-        result = poller.result()
-        assert len(result.pages) == 1
+        async with client:
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1")
+            result = await poller.result()
+            assert len(result.pages) == 1
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages="1, 3")
-        result = poller.result()
-        assert len(result.pages) == 2
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1, 3")
+            result = await poller.result()
+            assert len(result.pages) == 2
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages="1-2")
-        result = poller.result()
-        assert len(result.pages) == 2
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1-2")
+            result = await poller.result()
+            assert len(result.pages) == 2
 
-        poller = client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
-        result = poller.result()
-        assert len(result.pages) == 3
+            poller = await client.begin_analyze_document("prebuilt-layout", document, pages="1-2, 3")
+            result = await poller.result()
+            assert len(result.pages) == 3
