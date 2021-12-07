@@ -51,10 +51,10 @@ def get_image_tag():
     except FileNotFoundError:
         # REPO_ROOT only gets us to /sdk/tables/azure-data-tables/.tox/whl on Windows
         if sys.platform.startswith("win"):
-            repo_root = os.path.abspath(os.path.join(REPO_ROOT, "..", "..", "..", "..", ".."))
+            repo_root = os.path.abspath(os.path.join(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..")))
         # REPO_ROOT only gets us to /sdk/tables/azure-data-tables/.tox/whl/lib on Ubuntu
         else:
-            repo_root = os.path.abspath(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..", ".."))
+            repo_root = os.path.abspath(os.path.join(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..", "..")))
 
         pwsh_script_location_from_cwd = os.path.abspath(repo_root, pwsh_script_location)
         with open(pwsh_script_location_from_cwd, "r") as f:
