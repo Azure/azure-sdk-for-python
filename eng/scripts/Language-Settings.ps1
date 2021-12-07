@@ -288,7 +288,7 @@ $PackageExclusions = @{
   'azure-mgmt-network' = 'Manual process used to build';
 }
 
-function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
+function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
     Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
@@ -299,15 +299,19 @@ function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
   UpdateDocsMsPackages `
     (Join-Path $DocsRepoLocation 'ci-configs/packages-preview.json') `
     'preview' `
-    $FilteredMetadata
+    $FilteredMetadata `
+    $PackageSourceOverride `
+    $DocValidationImageId
 
   UpdateDocsMsPackages `
     (Join-Path $DocsRepoLocation 'ci-configs/packages-latest.json') `
     'latest' `
-    $FilteredMetadata
+    $FilteredMetadata `
+    $PackageSourceOverride `
+    $DocValidationImageId
 }
 
-function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
+function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
   Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
   $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
 
@@ -370,7 +374,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     # If upgrading the package, run basic sanity checks against the package
     if ($package.package_info.version -ne $packageVersion) {
       Write-Host "New version detected for $packageName ($packageVersion)"
-      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
         LogWarning "Package is not valid: $packageName. Keeping old version."
         $outputPackages += $package
         continue
@@ -425,7 +429,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion)) {
+    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
     }
