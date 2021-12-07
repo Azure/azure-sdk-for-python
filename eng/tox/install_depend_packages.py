@@ -9,12 +9,11 @@
 import argparse
 import os
 import sys
-from subprocess import check_call
 import logging
-from pkg_resources import parse_version
 import re
-
-from .tox_helper_tasks import parse_req
+from subprocess import check_call
+from pkg_resources import parse_version
+from tox_helper_tasks import parse_req
 
 from pypi_tools.pypi import PyPIClient
 
