@@ -107,7 +107,7 @@
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
-/sdk/template/                                                       @Azure/azure-sdk-eng
+/sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
@@ -125,10 +125,13 @@
 /sdk/tables/                                                         @annatisch @YalinLi0312
 
 # PRLabel: %Media
-/sdk/media/                                                          @naiteeks @bennage @giakas
+/sdk/media/                                                          @naiteeks @giakas
 
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
+
+# PRLabel: %VideoAnalyzer
+/sdk/videoanalyzer/                                                  @hivyas
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
@@ -140,9 +143,9 @@
 ###########
 # Eng Sys
 ###########
-/eng/                                                                @weshaggard @scbedd @danieljurek
-/**/tests.yml                                                        @benbp
-/**/ci.yml                                                           @scbedd
+/eng/                                                                @scbedd @weshaggard @benbp
+/**/tests.yml                                                        @scbedd @benbp
+/**/ci.yml                                                           @scbedd @benbp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
