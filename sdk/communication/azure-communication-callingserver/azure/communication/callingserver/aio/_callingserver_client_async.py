@@ -38,7 +38,7 @@ from .._generated.models import (
     AnswerCallResult,
     CallRejectReason
     )
-from .._shared.models import CommunicationIdentifier
+from .._shared.models import CommunicationIdentifier, PhoneNumberIdentifier
 from ._content_downloader_async import ContentDownloader
 from ._download_async import ContentStreamDownloader
 from .._models import CallLocator
@@ -152,7 +152,7 @@ class CallingServerClient:
         requested_media_types: List[CallMediaType],
         requested_call_events: List[CallingEventSubscriptionType],
         *,
-        alternate_caller_id: Optional[str] = None,
+        alternate_caller_id: Optional[PhoneNumberIdentifier] = None,
         subject: Optional[str] = None,
         **kwargs: Any
     ) -> CallConnection:
@@ -171,7 +171,7 @@ class CallingServerClient:
         :type requested_call_events: list[str or
          ~azure.communication.callingserver.models.CallingEventSubscriptionType]
         :keyword alternate_caller_id: The alternate caller id.
-        :paramtype alternate_caller_id: str
+        :paramtype alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifier
         :keyword subject: The subject.
         :paramtype subject: str
         :return: CallConnection
@@ -187,7 +187,7 @@ class CallingServerClient:
             requested_call_events=requested_call_events,
             alternate_caller_id=(None
                 if alternate_caller_id is None
-                else PhoneNumberIdentifierModel(value=alternate_caller_id)),
+                else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value'])),
             subject=subject
         )
 
@@ -463,7 +463,7 @@ class CallingServerClient:
         participant: 'CommunicationIdentifier',
         callback_uri: str,
         *,
-        alternate_caller_id: Optional[str] = None,
+        alternate_caller_id: Optional[PhoneNumberIdentifier] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> AddParticipantResult:
@@ -476,7 +476,7 @@ class CallingServerClient:
         :param callback_uri: Required. The callback URI.
         :type callback_uri: str
         :keyword alternate_caller_id: The alternate caller id.
-        :paramtype alternate_caller_id: str
+        :paramtype alternate_caller_id: ~azure.communication.callingserver.models.PhoneNumberIdentifier
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :return: AddParticipantResult
@@ -484,14 +484,12 @@ class CallingServerClient:
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        alternate_caller_id = (None
-            if alternate_caller_id is None
-            else PhoneNumberIdentifierModel(value=alternate_caller_id))
-
         add_participant_with_call_locator_request = AddParticipantWithCallLocatorRequestConverter.convert(
             serialize_call_locator(call_locator),
             serialize_identifier(participant),
-            alternate_caller_id=alternate_caller_id,
+            alternate_caller_id=(None
+                if alternate_caller_id is None
+                else PhoneNumberIdentifierModel(value=alternate_caller_id.properties['value'])),
             operation_context=operation_context,
             callback_uri=callback_uri
             )
