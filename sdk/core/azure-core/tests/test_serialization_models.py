@@ -18,25 +18,26 @@ def modify_args(init):
         })
     return _wrapper
 
-class BasicResource(Model):
+@rest_dataclass
+class BasicResource:
     platform_update_domain_count: int = rest_field(name="platformUpdateDomainCount")  # How many times the platform update domain has been counted
     platform_fault_domain_count: int = rest_field(name="platformFaultDomainCount")  # How many times the platform fault domain has been counted
     virtual_machines: List[Any] = rest_field(name="virtualMachines")  # List of virtual machines
 
-    # def __init__(
-    #     self,
-    #     *,
-    #     platform_update_domain_count: int,
-    #     platform_fault_domain_count: int,
-    #     virtual_machines: List[Any],
-    #     **kwargs
-    # ):
-    #     super().__init__(
-    #         platform_update_domain_count=platform_update_domain_count,
-    #         platform_fault_domain_count=platform_fault_domain_count,
-    #         virtual_machines=virtual_machines,
-    #         **kwargs
-    #     )
+    def __init__(
+        self,
+        *,
+        platform_update_domain_count: int,
+        platform_fault_domain_count: int,
+        virtual_machines: List[Any],
+        **kwargs
+    ):
+        super().__init__(
+            platform_update_domain_count=platform_update_domain_count,
+            platform_fault_domain_count=platform_fault_domain_count,
+            virtual_machines=virtual_machines,
+            **kwargs
+        )
 
 class Pet(Model):
 
@@ -50,7 +51,7 @@ def test_model_and_dict_equal():
         "platformFaultDomainCount": 3,
         "virtualMachines": []
     }
-    model = BasicResource(dict_response)
+    model = BasicResource(platform_update_domain_count=5, platform_fault_domain_count=3, virtual_machines=[])
     model.platform_update_domain_count
     assert model == dict_response
     assert (
@@ -68,9 +69,37 @@ def test_model_and_dict_equal():
     assert (
         model.virtual_machines ==
         model['virtualMachines'] ==
-        dict_response['virtualMachines'] ==
-        []
-    )
+        dict_response['virtualMachines'])
+
+
+# def test_model_and_dict_equal():
+
+#     dict_response = {
+#         "platformUpdateDomainCount": 5,
+#         "platformFaultDomainCount": 3,
+#         "virtualMachines": []
+#     }
+#     model = BasicResource(dict_response)
+#     model.platform_update_domain_count
+#     assert model == dict_response
+#     assert (
+#         model.platform_update_domain_count ==
+#         model["platformUpdateDomainCount"] ==
+#         dict_response["platformUpdateDomainCount"] ==
+#         5
+#     )
+#     assert (
+#         model.platform_fault_domain_count ==
+#         model['platformFaultDomainCount'] ==
+#         dict_response['platformFaultDomainCount'] ==
+#         3
+#     )
+#     assert (
+#         model.virtual_machines ==
+#         model['virtualMachines'] ==
+#         dict_response['virtualMachines'] ==
+#         []
+#    )
 
 # def test_model_initialization():
 #     dict_response = {

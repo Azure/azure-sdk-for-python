@@ -278,7 +278,45 @@ def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
 
 from dataclasses import dataclass
 
+
+
+_FIELDS = '__dataclass_fields__'
+
+def _process_class(cls):
+    a = "b"
+
+
+def rest_dataclass(cls=None, /):
+    # def wrap(cls):
+    #     return _process_class(cls)
+
+    # # See if we're being called as @dataclass or @dataclass().
+    # if cls is None:
+    #     # We're called with parens.
+    #     return wrap
+
+    # # We're called as @dataclass without parens.
+    # return wrap(cls)
+
+    def _wrapper(cls):
+        __name = str(cls.__name__)
+        __bases = tuple(cls.__bases__)
+        __dict = dict(cls.__dict__)
+
+        for each_slot in __dict.get("__slots__", tuple()):
+            __dict.pop(each_slot, None)
+
+        __dict["__metaclass__"] = MyMetaclass
+
+        __dict["__wrapped__"] = cls
+
+        return(MyMetaclass(__name, __bases, __dict))
+    return _wrapper(cls)
+
 class Model(dict):
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        a = "b"
 
     def __eq__(self, other):
         """Compare objects by comparing all attributes."""
@@ -289,23 +327,30 @@ class Model(dict):
     def copy(self):
         return Model(self.__dict__)
 
-_FIELDS = '__dataclass_fields__'
+class MyMetaclass(type):
 
-def _process_class(cls):
-    a = "b"
+    def __new__(cls, name, bases, dct):
+        public_attrs = [k for k in dct if k[0] != "_"]
+        for attr in public_attrs:
+            rest_field = dct[attr]
+            if rest_field._type:
+                continue
+            rest_field._type = dct.get('__annotations__', {}).get(attr, lambda x: x)
+        new_class = super().__new__(cls, name, tuple([Model]), dct)
+        new_class.__init__ == Model.__init__
+        cls._attr_to_rest_name = {
+            k: v._rest_name
+            for k, v in dct.items() if k[0] != "_"
+        }
+        # here's where we add all of the dict stuff
+        return new_class
 
-
-def rest_dataclass(cls=None, /):
-    def wrap(cls):
-        return _process_class(cls)
-
-    # See if we're being called as @dataclass or @dataclass().
-    if cls is None:
-        # We're called with parens.
-        return wrap
-
-    # We're called as @dataclass without parens.
-    return wrap(cls)
+    # def __call__(self, *args: Any, **kwargs: Any) -> Any:
+    #     new_kwargs = {
+    #         self._attr_to_rest_name.get(k, k): v
+    #         for k, v in kwargs.items()
+    #     }
+    #     return super().__call__(*args, **new_kwargs)
 
 class _RestField:
     def __init__(self, name: Optional[str] = None, type: Optional[Callable] = None):
