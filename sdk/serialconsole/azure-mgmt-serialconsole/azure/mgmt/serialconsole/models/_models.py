@@ -12,17 +12,17 @@ import msrest.serialization
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -36,6 +36,19 @@ class CloudErrorBody(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
@@ -46,8 +59,8 @@ class CloudErrorBody(msrest.serialization.Model):
 class DisableSerialConsoleResult(msrest.serialization.Model):
     """Returns whether or not Serial Console is disabled.
 
-    :param disabled: Whether or not Serial Console is disabled.
-    :type disabled: bool
+    :ivar disabled: Whether or not Serial Console is disabled.
+    :vartype disabled: bool
     """
 
     _attribute_map = {
@@ -58,6 +71,10 @@ class DisableSerialConsoleResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword disabled: Whether or not Serial Console is disabled.
+        :paramtype disabled: bool
+        """
         super(DisableSerialConsoleResult, self).__init__(**kwargs)
         self.disabled = kwargs.get('disabled', None)
 
@@ -65,8 +82,8 @@ class DisableSerialConsoleResult(msrest.serialization.Model):
 class EnableSerialConsoleResult(msrest.serialization.Model):
     """Returns whether or not Serial Console is disabled (enabled).
 
-    :param disabled: Whether or not Serial Console is disabled (enabled).
-    :type disabled: bool
+    :ivar disabled: Whether or not Serial Console is disabled (enabled).
+    :vartype disabled: bool
     """
 
     _attribute_map = {
@@ -77,6 +94,10 @@ class EnableSerialConsoleResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword disabled: Whether or not Serial Console is disabled (enabled).
+        :paramtype disabled: bool
+        """
         super(EnableSerialConsoleResult, self).__init__(**kwargs)
         self.disabled = kwargs.get('disabled', None)
 
@@ -84,10 +105,10 @@ class EnableSerialConsoleResult(msrest.serialization.Model):
 class GetSerialConsoleSubscriptionNotFound(msrest.serialization.Model):
     """Error saying that the provided subscription could not be found.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Subscription not found message.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Subscription not found message.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -99,6 +120,12 @@ class GetSerialConsoleSubscriptionNotFound(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Subscription not found message.
+        :paramtype message: str
+        """
         super(GetSerialConsoleSubscriptionNotFound, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
@@ -133,6 +160,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -168,14 +197,16 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
 class SerialConsoleOperations(msrest.serialization.Model):
     """Serial Console operations.
 
-    :param value: A list of Serial Console operations.
-    :type value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
+    :ivar value: A list of Serial Console operations.
+    :vartype value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
     """
 
     _attribute_map = {
@@ -186,6 +217,10 @@ class SerialConsoleOperations(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: A list of Serial Console operations.
+        :paramtype value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
+        """
         super(SerialConsoleOperations, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
 
@@ -193,12 +228,12 @@ class SerialConsoleOperations(msrest.serialization.Model):
 class SerialConsoleOperationsValueItem(msrest.serialization.Model):
     """SerialConsoleOperationsValueItem.
 
-    :param name:
-    :type name: str
-    :param is_data_action:
-    :type is_data_action: str
-    :param display:
-    :type display: ~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItemDisplay
+    :ivar name:
+    :vartype name: str
+    :ivar is_data_action:
+    :vartype is_data_action: str
+    :ivar display:
+    :vartype display: ~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItemDisplay
     """
 
     _attribute_map = {
@@ -211,6 +246,14 @@ class SerialConsoleOperationsValueItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword is_data_action:
+        :paramtype is_data_action: str
+        :keyword display:
+        :paramtype display: ~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItemDisplay
+        """
         super(SerialConsoleOperationsValueItem, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.is_data_action = kwargs.get('is_data_action', None)
@@ -220,14 +263,14 @@ class SerialConsoleOperationsValueItem(msrest.serialization.Model):
 class SerialConsoleOperationsValueItemDisplay(msrest.serialization.Model):
     """SerialConsoleOperationsValueItemDisplay.
 
-    :param provider:
-    :type provider: str
-    :param resource:
-    :type resource: str
-    :param operation:
-    :type operation: str
-    :param description:
-    :type description: str
+    :ivar provider:
+    :vartype provider: str
+    :ivar resource:
+    :vartype resource: str
+    :ivar operation:
+    :vartype operation: str
+    :ivar description:
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -241,6 +284,16 @@ class SerialConsoleOperationsValueItemDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword provider:
+        :paramtype provider: str
+        :keyword resource:
+        :paramtype resource: str
+        :keyword operation:
+        :paramtype operation: str
+        :keyword description:
+        :paramtype description: str
+        """
         super(SerialConsoleOperationsValueItemDisplay, self).__init__(**kwargs)
         self.provider = kwargs.get('provider', None)
         self.resource = kwargs.get('resource', None)
@@ -251,8 +304,8 @@ class SerialConsoleOperationsValueItemDisplay(msrest.serialization.Model):
 class SerialConsoleStatus(msrest.serialization.Model):
     """Returns whether or not Serial Console is disabled.
 
-    :param disabled: Whether or not Serial Console is disabled.
-    :type disabled: bool
+    :ivar disabled: Whether or not Serial Console is disabled.
+    :vartype disabled: bool
     """
 
     _attribute_map = {
@@ -263,6 +316,10 @@ class SerialConsoleStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword disabled: Whether or not Serial Console is disabled.
+        :paramtype disabled: bool
+        """
         super(SerialConsoleStatus, self).__init__(**kwargs)
         self.disabled = kwargs.get('disabled', None)
 
@@ -278,9 +335,9 @@ class SerialPort(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: Specifies whether the port is enabled for a serial console connection. Possible
+    :ivar state: Specifies whether the port is enabled for a serial console connection. Possible
      values include: "enabled", "disabled".
-    :type state: str or ~azure.mgmt.serialconsole.models.SerialPortState
+    :vartype state: str or ~azure.mgmt.serialconsole.models.SerialPortState
     """
 
     _validation = {
@@ -300,6 +357,11 @@ class SerialPort(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword state: Specifies whether the port is enabled for a serial console connection. Possible
+         values include: "enabled", "disabled".
+        :paramtype state: str or ~azure.mgmt.serialconsole.models.SerialPortState
+        """
         super(SerialPort, self).__init__(**kwargs)
         self.state = kwargs.get('state', None)
 
@@ -307,8 +369,8 @@ class SerialPort(ProxyResource):
 class SerialPortConnectResult(msrest.serialization.Model):
     """Returns a connection string to the serial port of the resource.
 
-    :param connection_string: Connection string to the serial port of the resource.
-    :type connection_string: str
+    :ivar connection_string: Connection string to the serial port of the resource.
+    :vartype connection_string: str
     """
 
     _attribute_map = {
@@ -319,6 +381,10 @@ class SerialPortConnectResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword connection_string: Connection string to the serial port of the resource.
+        :paramtype connection_string: str
+        """
         super(SerialPortConnectResult, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
 
@@ -326,8 +392,8 @@ class SerialPortConnectResult(msrest.serialization.Model):
 class SerialPortListResult(msrest.serialization.Model):
     """The list serial ports operation response.
 
-    :param value: The list of serial ports.
-    :type value: list[~azure.mgmt.serialconsole.models.SerialPort]
+    :ivar value: The list of serial ports.
+    :vartype value: list[~azure.mgmt.serialconsole.models.SerialPort]
     """
 
     _attribute_map = {
@@ -338,5 +404,9 @@ class SerialPortListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: The list of serial ports.
+        :paramtype value: list[~azure.mgmt.serialconsole.models.SerialPort]
+        """
         super(SerialPortListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
