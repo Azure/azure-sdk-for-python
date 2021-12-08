@@ -1,104 +1,142 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "acfa0f55-8bfd-47a0-852c-27f76c6b97a0", "azureBlobSource":
+    body: 'b''{"modelId": "054702d4-11d8-4f17-83fc-af18b83734a8", "azureBlobSource":
       {"containerUrl": "container_sas_url"}}'''
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
-      - '316'
+      - '318'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: c8ce4cdc-8d13-422a-be74-29aade0969ed
-      content-length: '0'
-      date: Fri, 24 Sep 2021 06:55:53 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533901449_c8ce4cdc-8d13-422a-be74-29aade0969ed?api-version=2021-09-30-preview
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2010'
+      apim-request-id:
+      - 966c5dd4-40e5-448b-9a00-29ebc44ddaaf
+      content-length:
+      - '0'
+      date:
+      - Wed, 08 Dec 2021 23:08:19 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527363102_966c5dd4-40e5-448b-9a00-29ebc44ddaaf?api-version=2021-09-30-preview
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2057'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533901449_c8ce4cdc-8d13-422a-be74-29aade0969ed?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527363102_966c5dd4-40e5-448b-9a00-29ebc44ddaaf?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"operationId": "31533901449_c8ce4cdc-8d13-422a-be74-29aade0969ed",
-        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-09-24T06:55:51Z",
-        "lastUpdatedDateTime": "2021-09-24T06:55:53Z", "resourceLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/acfa0f55-8bfd-47a0-852c-27f76c6b97a0?api-version=2021-09-30-preview",
-        "percentCompleted": 100, "result": {"docTypes": {"acfa0f55-8bfd-47a0-852c-27f76c6b97a0":
+      string: '{"operationId": "31527363102_966c5dd4-40e5-448b-9a00-29ebc44ddaaf",
+        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-12-08T23:08:17Z",
+        "lastUpdatedDateTime": "2021-12-08T23:08:21Z", "resourceLocation": "https://region.api.cognitive.microsoft.com//formrecognizer/documentModels/054702d4-11d8-4f17-83fc-af18b83734a8?api-version=2021-09-30-preview",
+        "percentCompleted": 100, "result": {"docTypes": {"054702d4-11d8-4f17-83fc-af18b83734a8":
         {"fieldSchema": {"table": {"type": "array", "items": {"type": "object", "properties":
         {"Item": {"type": "string"}, "Price": {"type": "string"}, "Tax": {"type":
-        "string"}, "Total": {"type": "string"}}}}}, "fieldConfidence": {"table": 0.95,
-        "table: Item": 0.95, "table: Price": 0.95, "table: Tax": 0.95, "table: Total":
-        0.95}}}, "modelId": "acfa0f55-8bfd-47a0-852c-27f76c6b97a0", "createdDateTime":
-        "2021-09-24T06:55:53Z"}}'
+        "string"}, "Total": {"type": "string"}}}}}, "technique": "fixedTemplate-2021-07-30",
+        "modelType": "form", "fieldConfidence": {"table": 0.95, "table: Item": 0.95,
+        "table: Price": 0.95, "table: Tax": 0.95, "table: Total": 0.95}}}, "modelId":
+        "054702d4-11d8-4f17-83fc-af18b83734a8", "createdDateTime": "2021-12-08T23:08:20Z"}}'
     headers:
-      apim-request-id: 9ed0b027-ddab-4fb9-a96a-51170b00e224
-      content-type: application/json; charset=utf-8
-      date: Fri, 24 Sep 2021 06:55:58 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '42'
+      apim-request-id:
+      - ba6d337b-d600-48e5-9ab1-9106b3a990cd
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 08 Dec 2021 23:08:24 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '42'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533901449_c8ce4cdc-8d13-422a-be74-29aade0969ed?api-version=2021-09-30-preview
 - request:
     body: 'b''{"urlSource": "blob_sas_url"}'''
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
-      - '246'
+      - '251'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/acfa0f55-8bfd-47a0-852c-27f76c6b97a0:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/054702d4-11d8-4f17-83fc-af18b83734a8:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 927d7d3b-f96e-46e5-88c4-5b657c2d3d97
-      content-length: '0'
-      date: Fri, 24 Sep 2021 06:55:59 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/acfa0f55-8bfd-47a0-852c-27f76c6b97a0/analyzeResults/927d7d3b-f96e-46e5-88c4-5b657c2d3d97?api-version=2021-09-30-preview
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '752'
+      apim-request-id:
+      - c56cfa6d-6303-4edd-92e0-aa8119c64b17
+      content-length:
+      - '0'
+      date:
+      - Wed, 08 Dec 2021 23:08:25 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/054702d4-11d8-4f17-83fc-af18b83734a8/analyzeResults/c56cfa6d-6303-4edd-92e0-aa8119c64b17?api-version=2021-09-30-preview
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '790'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/acfa0f55-8bfd-47a0-852c-27f76c6b97a0:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/acfa0f55-8bfd-47a0-852c-27f76c6b97a0/analyzeResults/927d7d3b-f96e-46e5-88c4-5b657c2d3d97?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/054702d4-11d8-4f17-83fc-af18b83734a8/analyzeResults/c56cfa6d-6303-4edd-92e0-aa8119c64b17?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-24T06:55:58Z",
-        "lastUpdatedDateTime": "2021-09-24T06:56:01Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "acfa0f55-8bfd-47a0-852c-27f76c6b97a0", "stringIndexType":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-08T23:08:25Z",
+        "lastUpdatedDateTime": "2021-12-08T23:08:29Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "054702d4-11d8-4f17-83fc-af18b83734a8", "stringIndexType":
         "unicodeCodePoint", "content": "Con\nt\noso, Ltd.\nItem\nPrice\nTax\nTotal\nApple\n5.00\n2.00\n7.00\nOrange\n2.00\n1.00\n3.00\n1.00\n4.00\n5.00\nPear\n2.00\n2.00",
         "pages": [{"pageNumber": 1, "angle": 0, "width": 8.5, "height": 11, "unit":
         "inch", "words": [{"content": "Con", "boundingBox": [1.0075, 1.0471, 1.2329,
@@ -249,7 +287,7 @@ interactions:
         2.5945]}], "spans": [{"offset": 105, "length": 4}]}], "boundingRegions": [{"pageNumber":
         1, "boundingBox": [1.0003, 1.6221, 6.2055, 1.6229, 6.2053, 2.6011, 0.9999,
         2.6006]}], "spans": [{"offset": 16, "length": 93}]}], "documents": [{"docType":
-        "acfa0f55-8bfd-47a0-852c-27f76c6b97a0:acfa0f55-8bfd-47a0-852c-27f76c6b97a0",
+        "054702d4-11d8-4f17-83fc-af18b83734a8:054702d4-11d8-4f17-83fc-af18b83734a8",
         "boundingRegions": [{"pageNumber": 1, "boundingBox": [0, 0, 8.5, 0, 8.5, 11,
         0, 11]}], "fields": {"table": {"type": "array", "valueArray": [{"type": "object",
         "valueObject": {"Item": {"type": "string", "valueString": "Apple", "content":
@@ -300,15 +338,21 @@ interactions:
         "spans": [{"offset": 105, "length": 4}]}}}]}}, "confidence": 0.95, "spans":
         [{"offset": 0, "length": 109}]}]}}'
     headers:
-      apim-request-id: 231e30ac-413b-471f-a2d8-4cbe4224a86e
-      content-type: application/json; charset=utf-8
-      date: Fri, 24 Sep 2021 06:56:04 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '359'
+      apim-request-id:
+      - 84063f09-0af1-4ae5-897f-a33ffd3a6934
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 08 Dec 2021 23:08:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '157'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/acfa0f55-8bfd-47a0-852c-27f76c6b97a0/analyzeResults/927d7d3b-f96e-46e5-88c4-5b657c2d3d97?api-version=2021-09-30-preview
 version: 1

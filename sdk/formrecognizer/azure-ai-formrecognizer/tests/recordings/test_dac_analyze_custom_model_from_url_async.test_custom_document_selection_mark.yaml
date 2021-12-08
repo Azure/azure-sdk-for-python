@@ -1,141 +1,104 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "0650439d-01be-4a50-8b23-e7e6a0b589c3", "azureBlobSource":
+    body: 'b''{"modelId": "38d565e4-7464-4182-9f18-07931316e473", "azureBlobSource":
       {"containerUrl": "container_sas_url"}}'''
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '300'
+      - '297'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id:
-      - 9d5d4505-3582-4550-9593-c265217b3039
-      content-length:
-      - '0'
-      date:
-      - Fri, 24 Sep 2021 06:58:50 GMT
-      operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533901272_9d5d4505-3582-4550-9593-c265217b3039?api-version=2021-09-30-preview
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3140'
+      apim-request-id: 88682852-bbf7-498b-b0d5-930a3542031e
+      content-length: '0'
+      date: Wed, 08 Dec 2021 23:02:22 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527363460_88682852-bbf7-498b-b0d5-930a3542031e?api-version=2021-09-30-preview
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2927'
     status:
       code: 202
       message: Accepted
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31533901272_9d5d4505-3582-4550-9593-c265217b3039?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527363460_88682852-bbf7-498b-b0d5-930a3542031e?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"operationId": "31533901272_9d5d4505-3582-4550-9593-c265217b3039",
-        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-09-24T06:58:47Z",
-        "lastUpdatedDateTime": "2021-09-24T06:58:51Z", "resourceLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/0650439d-01be-4a50-8b23-e7e6a0b589c3?api-version=2021-09-30-preview",
-        "percentCompleted": 100, "result": {"docTypes": {"0650439d-01be-4a50-8b23-e7e6a0b589c3":
+      string: '{"operationId": "31527363460_88682852-bbf7-498b-b0d5-930a3542031e",
+        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-12-08T23:02:19Z",
+        "lastUpdatedDateTime": "2021-12-08T23:02:24Z", "resourceLocation": "https://region.api.cognitive.microsoft.com//formrecognizer/documentModels/38d565e4-7464-4182-9f18-07931316e473?api-version=2021-09-30-preview",
+        "percentCompleted": 100, "result": {"docTypes": {"38d565e4-7464-4182-9f18-07931316e473":
         {"fieldSchema": {"VISA_SELECTION_MARK": {"type": "selectionMark"}, "AMEX_SELECTION_MARK":
         {"type": "selectionMark"}, "MASTERCARD_SELECTION_MARK": {"type": "selectionMark"}},
-        "fieldConfidence": {"AMEX_SELECTION_MARK": 0.95, "MASTERCARD_SELECTION_MARK":
-        0.95, "VISA_SELECTION_MARK": 0.95}}}, "modelId": "0650439d-01be-4a50-8b23-e7e6a0b589c3",
-        "createdDateTime": "2021-09-24T06:58:51Z"}}'
+        "technique": "fixedTemplate-2021-07-30", "modelType": "form", "fieldConfidence":
+        {"AMEX_SELECTION_MARK": 0.95, "MASTERCARD_SELECTION_MARK": 0.95, "VISA_SELECTION_MARK":
+        0.95}}}, "modelId": "38d565e4-7464-4182-9f18-07931316e473", "createdDateTime":
+        "2021-12-08T23:02:24Z"}}'
     headers:
-      apim-request-id:
-      - ea1072a6-cecc-4c8a-a9ff-b60f7f944052
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 24 Sep 2021 06:58:56 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '41'
+      apim-request-id: 8a8b8758-4890-4b9e-b129-83b599a8f15f
+      content-type: application/json; charset=utf-8
+      date: Wed, 08 Dec 2021 23:02:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '41'
     status:
       code: 200
       message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527363460_88682852-bbf7-498b-b0d5-930a3542031e?api-version=2021-09-30-preview
 - request:
     body: 'b''{"urlSource": "blob_sas_url"}'''
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '239'
+      - '244'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/0650439d-01be-4a50-8b23-e7e6a0b589c3:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/38d565e4-7464-4182-9f18-07931316e473:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id:
-      - f8ce00d1-4e77-4e47-970b-fa31de529075
-      content-length:
-      - '0'
-      date:
-      - Fri, 24 Sep 2021 06:58:57 GMT
-      operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/0650439d-01be-4a50-8b23-e7e6a0b589c3/analyzeResults/f8ce00d1-4e77-4e47-970b-fa31de529075?api-version=2021-09-30-preview
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '910'
+      apim-request-id: 932afc12-bc16-47da-bbee-467fafca2fa2
+      content-length: '0'
+      date: Wed, 08 Dec 2021 23:02:29 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/38d565e4-7464-4182-9f18-07931316e473/analyzeResults/932afc12-bc16-47da-bbee-467fafca2fa2?api-version=2021-09-30-preview
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '1206'
     status:
       code: 202
       message: Accepted
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/38d565e4-7464-4182-9f18-07931316e473:analyze?stringIndexType=unicodeCodePoint&api-version=2021-09-30-preview
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/0650439d-01be-4a50-8b23-e7e6a0b589c3/analyzeResults/f8ce00d1-4e77-4e47-970b-fa31de529075?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/38d565e4-7464-4182-9f18-07931316e473/analyzeResults/932afc12-bc16-47da-bbee-467fafca2fa2?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-09-24T06:58:56Z",
-        "lastUpdatedDateTime": "2021-09-24T06:59:00Z", "analyzeResult": {"apiVersion":
-        "2021-09-30-preview", "modelId": "0650439d-01be-4a50-8b23-e7e6a0b589c3", "stringIndexType":
+      string: '{"status": "succeeded", "createdDateTime": "2021-12-08T23:02:28Z",
+        "lastUpdatedDateTime": "2021-12-08T23:02:33Z", "analyzeResult": {"apiVersion":
+        "2021-09-30-preview", "modelId": "38d565e4-7464-4182-9f18-07931316e473", "stringIndexType":
         "unicodeCodePoint", "content": "STATE OF CALIFORNIA: CONTOSO\nBUREAU OF INSURANCE\n124
         Main Street Palo Alto CA 842325\n(650)768-2322\nAUTHORIZATION OF CREDIT CARD
         PAYMENT\nFees owed to this Department may be paid by the use of a credit card.
@@ -735,37 +698,31 @@ interactions:
         [1.8862, 8.2595, 3.2329, 8.2691, 3.2329, 8.5556, 1.8862, 8.5508], "spans":
         [{"offset": 1499, "length": 11}]}], "spans": [{"offset": 0, "length": 1547}]}],
         "tables": [], "styles": [{"isHandwritten": true, "confidence": 0.9, "spans":
-        [{"offset": 1499, "length": 11}]}], "documents": [{"docType": "0650439d-01be-4a50-8b23-e7e6a0b589c3:0650439d-01be-4a50-8b23-e7e6a0b589c3",
+        [{"offset": 1499, "length": 11}]}], "documents": [{"docType": "38d565e4-7464-4182-9f18-07931316e473:38d565e4-7464-4182-9f18-07931316e473",
         "boundingRegions": [{"pageNumber": 1, "boundingBox": [0, 0, 8.5, 0, 8.5, 11,
-        0, 11]}], "fields": {"AMEX_SELECTION_MARK": {"type": "selectionMark", "valueSelectionMark":
-        "selected", "content": "selected", "boundingRegions": [{"pageNumber": 1, "boundingBox":
-        [2.38, 5.4750000000000005, 2.445, 5.4750000000000005, 2.445, 5.545, 2.38,
-        5.545]}], "confidence": 0.95, "spans": [{"offset": 1524, "length": 10}]},
+        0, 11]}], "fields": {"MASTERCARD_SELECTION_MARK": {"type": "selectionMark",
+        "valueSelectionMark": "unselected", "content": "unselected", "boundingRegions":
+        [{"pageNumber": 1, "boundingBox": [3.085, 5.45, 3.245, 5.45, 3.245, 5.61,
+        3.085, 5.61]}], "confidence": 0.95, "spans": [{"offset": 1535, "length": 12}]},
         "VISA_SELECTION_MARK": {"type": "selectionMark", "valueSelectionMark": "unselected",
         "content": "unselected", "boundingRegions": [{"pageNumber": 1, "boundingBox":
         [1.615, 5.43, 1.7750000000000001, 5.43, 1.7750000000000001, 5.595, 1.615,
         5.595]}], "confidence": 0.95, "spans": [{"offset": 1511, "length": 12}]},
-        "MASTERCARD_SELECTION_MARK": {"type": "selectionMark", "valueSelectionMark":
-        "unselected", "content": "unselected", "boundingRegions": [{"pageNumber":
-        1, "boundingBox": [3.085, 5.45, 3.245, 5.45, 3.245, 5.61, 3.085, 5.61]}],
-        "confidence": 0.95, "spans": [{"offset": 1535, "length": 12}]}}, "confidence":
-        0.92, "spans": [{"offset": 0, "length": 1547}]}]}}'
+        "AMEX_SELECTION_MARK": {"type": "selectionMark", "valueSelectionMark": "selected",
+        "content": "selected", "boundingRegions": [{"pageNumber": 1, "boundingBox":
+        [2.38, 5.4750000000000005, 2.445, 5.4750000000000005, 2.445, 5.545, 2.38,
+        5.545]}], "confidence": 0.95, "spans": [{"offset": 1524, "length": 10}]}},
+        "confidence": 0.95, "spans": [{"offset": 0, "length": 1547}]}]}}'
     headers:
-      apim-request-id:
-      - 2189eb06-6ec0-423c-b501-8e986ac20749
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 24 Sep 2021 06:59:02 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '504'
+      apim-request-id: f1d7a495-11f4-434f-aabb-63434e2c180f
+      content-type: application/json; charset=utf-8
+      date: Wed, 08 Dec 2021 23:02:34 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '406'
     status:
       code: 200
       message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/38d565e4-7464-4182-9f18-07931316e473/analyzeResults/932afc12-bc16-47da-bbee-467fafca2fa2?api-version=2021-09-30-preview
 version: 1
