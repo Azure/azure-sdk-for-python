@@ -231,7 +231,15 @@ class SearchAddressResultItem(object):
 
 
 class SearchAddressResult(object):
+    """This object is returned from a successful Search calls.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar summary: Summary object for a Search API response.
+    :vartype summary: ~azure.maps.search.models.SearchSummary
+    :ivar results: A list of Search API results.
+    :vartype results: list[~azure.maps.search.models.SearchAddressResultItem]
+    """
     def __init__(
         self,
         summary: SearchSummary = None,
