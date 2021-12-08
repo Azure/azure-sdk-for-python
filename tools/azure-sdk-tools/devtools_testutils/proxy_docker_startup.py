@@ -52,7 +52,7 @@ def get_image_tag():
     except FileNotFoundError:
         # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl on Windows
         # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl/lib on Ubuntu
-        head, tail = os.path.split(os.getcwd())
+        head, tail = os.path.split(REPO_ROOT)
         while tail != "sdk":
             head, tail = os.path.split(head)
 
