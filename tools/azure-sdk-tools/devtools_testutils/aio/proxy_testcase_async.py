@@ -4,12 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from ..helpers import is_live
 from ..proxy_testcase import (
     get_test_id,
     start_record_or_playback,
@@ -26,8 +28,6 @@ def recorded_by_proxy_async(test_func):
     """
 
     async def record_wrap(*args, **kwargs):
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
@@ -40,6 +40,11 @@ def recorded_by_proxy_async(test_func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
+        if is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
+            return await test_func(*args, **trimmed_kwargs)
+
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
         original_transport_func = AioHttpTransport.send
 
         async def combined_call(*args, **kwargs):

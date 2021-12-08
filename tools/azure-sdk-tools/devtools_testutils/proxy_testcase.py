@@ -150,8 +150,6 @@ def recorded_by_proxy(test_func):
     """
 
     def record_wrap(*args, **kwargs):
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
@@ -164,6 +162,11 @@ def recorded_by_proxy(test_func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
+        if is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
+            return test_func(*args, **trimmed_kwargs)
+
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
         original_transport_func = RequestsTransport.send
 
         def combined_call(*args, **kwargs):
