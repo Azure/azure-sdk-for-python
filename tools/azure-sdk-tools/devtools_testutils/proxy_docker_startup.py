@@ -16,6 +16,7 @@ import pytest
 import subprocess
 
 from .config import PROXY_URL
+from .helpers import is_live_and_not_recording
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -49,14 +50,13 @@ def get_image_tag():
             image_tag = parse_tag(f)
     # In live pipeline tests the root of the repo is in a different location relative to this file
     except FileNotFoundError:
-        # REPO_ROOT only gets us to /sdk/tables/azure-data-tables/.tox/whl on Windows
-        if sys.platform.startswith("win"):
-            repo_root = os.path.abspath(os.path.join(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..")))
-        # REPO_ROOT only gets us to /sdk/tables/azure-data-tables/.tox/whl/lib on Ubuntu
-        else:
-            repo_root = os.path.abspath(os.path.join(os.path.join(REPO_ROOT, "..", "..", "..", "..", "..", "..")))
+        # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl on Windows
+        # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl/lib on Ubuntu
+        head, tail = os.path.split(os.getcwd())
+        while tail != "sdk":
+            head, tail = os.path.split(head)
 
-        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(repo_root, pwsh_script_location))
+        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(head, pwsh_script_location))
         with open(pwsh_script_location_from_cwd, "r") as f:
             image_tag = parse_tag(f)
 
@@ -167,8 +167,9 @@ def stop_test_proxy():
 @pytest.fixture(scope="session")
 def test_proxy():
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
-    start_test_proxy()
-    # Everything before this yield will be run before fixtures that invoke this one are run
-    # Everything after it will be run after invoking fixtures are done executing
-    yield
-    stop_test_proxy()
+    if not is_live_and_not_recording():
+        start_test_proxy()
+        # Everything before this yield will be run before fixtures that invoke this one are run
+        # Everything after it will be run after invoking fixtures are done executing
+        yield
+        stop_test_proxy()
