@@ -1,5 +1,5 @@
 from typing import List, Optional
-from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, LatLongPairAbbreviated, ReverseSearchAddressResultItem, ReverseSearchAddressBatchItem, BatchResultSummary
+from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, ReverseSearchAddressResultItem, ReverseSearchAddressBatchItem, BatchResultSummary
 
 class LatLon(object):
 
@@ -201,7 +201,7 @@ class SearchAddressResultItem(object):
         entity_type: str = None,
         point_of_interest: PointOfInterest = None,
         address: Address = None,
-        position: LatLongPairAbbreviated = None,
+        position: LatLon = None,
         viewport: BoundingBox = None,
         entry_points: EntryPoint = None,
         address_ranges: AddressRanges = None,
