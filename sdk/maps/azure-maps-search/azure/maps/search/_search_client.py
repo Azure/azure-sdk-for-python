@@ -8,15 +8,15 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
-from ._generated.models import SearchAddressResult, PointOfInterestCategoryTreeResult, ReverseSearchAddressResult, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, ReverseSearchAddressBatchProcessResult, Polygon
-from .models._models import LatLon
+from ._generated.models import PointOfInterestCategory, ReverseSearchAddressResult, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, Polygon
+from .models._models import LatLon, SearchAddressResult
 # from .utils import get_authentication_policy, get_headers_policy
 
 if TYPE_CHECKING:
-    from typing import Any, List, Optional
+    from typing import Any, List, Optional, Object
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from .models._models import LatLon, StructuredAddress
+    from .models._models import LatLon, StructuredAddress, SearchAddressResult
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
@@ -164,7 +164,7 @@ class SearchClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "PointOfInterestCategoryTreeResult"
+        # type: (...) -> List[PointOfInterestCategory]
 
         """**Get POI Category Tree**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-poi-category-tree-preview>`_.
@@ -176,9 +176,10 @@ class SearchClient(object):
         :return: PointOfInterestCategoryTreeResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.get_point_of_interest_category_tree(
+        result = self._search_client.get_point_of_interest_category_tree(
             **kwargs
         )
+        return result.categories
 
 
     @distributed_trace
@@ -341,7 +342,6 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
-        
         """
         The Search Geometry endpoint allows you to perform a free form search inside a single geometry
         or many of them. 
@@ -453,7 +453,7 @@ class SearchClient(object):
         :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
-        """           
+        """         
         coordinates = LatLon() if not coordinates else coordinates
 
         return self._search_client.search_point_of_interest(
@@ -529,7 +529,7 @@ class SearchClient(object):
         location and classification.
 
         :param query: The POI category to search for (e.g., "AIRPORT", "RESTAURANT"), must be properly
-         URL encoded. 
+         URL encoded.
         :type query: str
         :keyword bool is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
          partial input and the search will enter predictive mode.
@@ -622,7 +622,7 @@ class SearchClient(object):
         :keyword str language: Language in which search results should be returned. 
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
-        :paramstype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
+        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
         :keyword entity_type: Specifies the level of filtering performed on geographies.
         :paramtype entity_type: str or ~azure.maps.search.models.GeographicEntityType
         :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
@@ -632,7 +632,7 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         coordinates = LatLon() if not coordinates else coordinates
-        
+       
         return self._search_client.search_address(
             query,
             lat=coordinates.lat,
@@ -685,7 +685,7 @@ class SearchClient(object):
             **kwargs
         )
 
-    
+   
     @distributed_trace
     def fuzzy_search_batch_sync(
         self,
@@ -704,8 +704,6 @@ class SearchClient(object):
         :param batch_request: The list of search fuzzy queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
         :type batch_request: ~azure.maps.search._generated.models.BatchRequest
-        :param format: Desired format of the response. Only ``json`` format is supported.
-        :type format: str or ~azure.maps.search.models.JsonFormat
         :return: SearchAddressBatchResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -742,7 +740,7 @@ class SearchClient(object):
         batch_request,  # type: "BatchRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "ReverseSearchAddressBatchProcessResult"
+        # type: (...) -> Object
         """**Search Address Reverse Batch API**
 
         **Applies to**\ : S1 pricing tier.
@@ -759,8 +757,14 @@ class SearchClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        return self._search_client.reverse_search_address_batch_sync(
+        batch_result = self._search_client.reverse_search_address_batch_sync(
             batch_request,
             **kwargs
         )
+
+        result = {
+            "items": batch_result.get("batch_items", None),
+            "summary": batch_result.get("batch_summary", None)
+        }
+        return result
 
