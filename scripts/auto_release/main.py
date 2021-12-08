@@ -190,7 +190,8 @@ def edit_file_setup():
     with open(f'{path}/setup.py', 'r') as file_in:
         list_in = file_in.readlines()
     for i in range(0, len(list_in)):
-        list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.2.0,<2.0.0')
+        list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
+        list_in[i] = list_in[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
         list_in[i] = list_in[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
     with open(f'{path}/setup.py', 'w') as file_out:
         file_out.writelines(list_in)
