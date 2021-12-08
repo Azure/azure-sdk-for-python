@@ -185,6 +185,17 @@ def print_changelog(add_content):
         _LOG.info('[CHANGELOG] ' + line)
 
 
+def edit_dependency_check_file(dependency):
+    with open(f'shared_requirements.txt', 'r') as file_in:
+        list_in = file_in.readlines()
+    new_line = f'#override azure-mgmt-{SERVICE_NAME} {dependency}'
+    for i in range(0, len(list_in)):
+        if list_in[i].find(f'{new_line}') > -1:
+            return
+    list_in.append(f'{new_line}\n')
+    with open(f'shared_requirements.txt', 'w') as file_out:
+        file_out.writelines(list_in)
+
 def edit_file_setup():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/setup.py', 'r') as file_in:
@@ -197,15 +208,8 @@ def edit_file_setup():
         file_out.writelines(list_in)
 
     # avoid pipeline check fail
-    with open(f'shared_requirements.txt', 'r') as file_in:
-        list_in = file_in.readlines()
-    new_line = f'#override azure-mgmt-{SERVICE_NAME} msrest>=0.6.21'
-    for i in range(0, len(list_in)):
-        if list_in[i].find(f'{new_line}') > -1:
-            return
-    list_in.append(f'{new_line}\n')
-    with open(f'shared_requirements.txt', 'w') as file_out:
-        file_out.writelines(list_in)
+    edit_dependency_check_file('msrest>=0.6.21')
+    edit_dependency_check_file('azure-mgmt-core>=1.3.0,<2.0.0')
 
 
 def edit_file_readme():
