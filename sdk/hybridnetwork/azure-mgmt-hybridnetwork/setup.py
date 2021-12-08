@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-hybridnetwork"
-PACKAGE_PPRINT_NAME = "Hybridnetwork Management"
+PACKAGE_PPRINT_NAME = "Hybrid Network Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

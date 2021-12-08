@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-iotcentral"
-PACKAGE_PPRINT_NAME = "Iotcentral Management"
+PACKAGE_PPRINT_NAME = "Iot Central Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

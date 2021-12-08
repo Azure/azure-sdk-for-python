@@ -1,6 +1,6 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure CustomProviders Management Client Library.
+This is the Microsoft Azure Custom Providers Management Client Library.
 This package has been tested with Python 2.7, 3.6+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 

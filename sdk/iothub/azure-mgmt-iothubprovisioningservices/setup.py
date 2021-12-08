@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-iothubprovisioningservices"
-PACKAGE_PPRINT_NAME = "IoTHub Provisioning Services"
+PACKAGE_PPRINT_NAME = "IoT Hub Provisioning Services"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

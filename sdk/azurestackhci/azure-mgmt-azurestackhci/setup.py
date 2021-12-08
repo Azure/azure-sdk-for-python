@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-azurestackhci"
-PACKAGE_PPRINT_NAME = "AzureStackHCI Management"
+PACKAGE_PPRINT_NAME = "Azure Stack HCI Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

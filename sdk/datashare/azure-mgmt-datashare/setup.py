@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-datashare"
-PACKAGE_PPRINT_NAME = "Datashare Management"
+PACKAGE_PPRINT_NAME = "Data Share Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
