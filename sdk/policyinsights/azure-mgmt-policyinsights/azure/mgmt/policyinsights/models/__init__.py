@@ -57,6 +57,7 @@ try:
     from ._models_py3 import RemediationDeploymentsListResult
     from ._models_py3 import RemediationFilters
     from ._models_py3 import RemediationListResult
+    from ._models_py3 import RemediationPropertiesFailureThreshold
     from ._models_py3 import Resource
     from ._models_py3 import SlimPolicyMetadata
     from ._models_py3 import SummarizeResults
@@ -116,6 +117,7 @@ except (SyntaxError, ImportError):
     from ._models import RemediationDeploymentsListResult  # type: ignore
     from ._models import RemediationFilters  # type: ignore
     from ._models import RemediationListResult  # type: ignore
+    from ._models import RemediationPropertiesFailureThreshold  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import SlimPolicyMetadata  # type: ignore
     from ._models import SummarizeResults  # type: ignore
@@ -184,6 +186,7 @@ __all__ = [
     'RemediationDeploymentsListResult',
     'RemediationFilters',
     'RemediationListResult',
+    'RemediationPropertiesFailureThreshold',
     'Resource',
     'SlimPolicyMetadata',
     'SummarizeResults',
