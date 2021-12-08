@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from typing import Set, List, Dict
 import os
 from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag
@@ -6,6 +7,7 @@ import logging
 import time
 from github import Github
 from github.Repository import Repository
+import subprocess as sp
 
 _LOG = logging.getLogger(__name__)
 
@@ -14,6 +16,9 @@ _LANGUAGE_OWNER = {'msyyc'}
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN = {'msyyc': os.getenv('PYTHON_MSYYC_TOKEN')}
+
+_SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
+_SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'
 
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
@@ -75,7 +80,9 @@ class IssueProcess:
         if len(readme_link) > 1:
             multi_link = ', '.join(readme_link)
             pr = f"{_SWAGGER_PULL}/{pr_number}"
-            self.comment(f'Hi, @{self.assignee}, by parsing {pr}, there are multi service link: {multi_link}. Please decide which one is the right.')
+            self.comment(
+                f'Hi, @{self.assignee}, by parsing {pr}, there are multi service link: {multi_link}. Please decide which one is the right.')
+
             self.bot.append('multi readme link!')
             raise Exception(f'multi link in "{pr}"')
 
@@ -196,10 +203,23 @@ class IssueProcess:
             self.update_issue_instance()
         self.add_label(AUTO_ASSIGN_LABEL)
 
+    def bot_advice(self):
+        latest_comments = ''
+        comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in
+                    self.issue_package.issue.get_comments()]
+        comments.sort()
+        if comments:
+            latest_comments = comments[-1][1]
+        if self.issue_package.issue.comments == 0:
+            self.bot = 'new issue ! <br>'
+        elif latest_comments not in self.language_owner:
+            self.bot = 'new comment.  <br>'
+
     def run(self) -> None:
         # common part(don't change the order)
         self.auto_assign()  # necessary flow
         self.auto_parse()  # necessary flow
+        self.bot_advice()
 
 
 class Common:
@@ -213,16 +233,53 @@ class Common:
         self.issues_package = issues
         self.assignee_candidates = set(assignee_token.keys())
         self.language_owner = language_owner
+        # arguments add to language.md
+        self.file_out_name = 'common.md'
+        self.target_release_date = ''
+        self.date_from_target = ''
+        self.package_name = ''
+
         for assignee in assignee_token:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
 
+    def output_md(self, items):
+        with open(self.file_out_name, 'w') as file_out:
+            file_out.write(
+                '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
+            file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+            file_out.writelines([self.output_python(item) for item in items])
+
+    def output_python(self, item):
+        create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
+
+        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
+            item.issue_package.issue.html_url.split('/')[-1],
+            item.issue_package.issue.html_url,
+            item.issue_package.issue.user.login,
+            self.package_name,
+            item.issue_package.issue.assignee.login,
+            item.bot,
+            create_date,
+            self.target_release_date,
+            self.date_from_target
+        )
+
+    @staticmethod
+    def push_md_to_storage():
+        cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
+        [sp.check_call(cmd, shell=True) for cmd in cmd_list]
+
     def run(self):
+        items = []
         for item in self.issues_package:
             issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
             try:
                 issue.run()
+                items.append(issue)
             except Exception as e:
                 _LOG.error(f'Error happened during handling issue {item.issue.number}: {e}')
+        self.output_md(items)
+
 
 
 def common_process(issues: List[IssuePackage]):

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.21.1 (Unreleased)
+## 1.21.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.21.1 (2021-12-06)
+
+### Other Changes
+
+- Revert change in str method  #22023
 
 ## 1.21.0 (2021-12-02)
 
