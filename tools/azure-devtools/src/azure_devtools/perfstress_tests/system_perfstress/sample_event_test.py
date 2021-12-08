@@ -64,7 +64,6 @@ class MockEventProcessor():
                     self._process_error_after(partition)
                 else:
                     self._process_event(**event_args)
-                    self._events_raised[partition] += 1
 
 
 class AsyncMockEventProcessor():
@@ -119,7 +118,6 @@ class AsyncMockEventProcessor():
                     await self._process_error_after(partition)
                 else:
                     await self._process_event(**event_args)
-                    self._events_raised[partition] += 1
                 if sleep_count % 500 == 0:
                     await asyncio.sleep(0)
 
@@ -144,14 +142,14 @@ class SampleEventTest(EventPerfTest):
             max_events_per_second=self.args.max_events_per_second
         )
 
-    def process_event_sync(self, partition=None, **kwargs):
-        self.event_raised_sync(partition, 1)
+    def process_event_sync(self, **kwargs):
+        self.event_raised_sync()
 
     def process_error_sync(self, error=None, **kwargs):
         self.error_raised_sync(error)
 
-    async def process_event_async(self, partition=None, **kwargs):
-        await self.event_raised_async(partition, 1)
+    async def process_event_async(self, **kwargs):
+        await self.event_raised_async()
 
     async def process_error_async(self, error=None, **kwargs):
         await self.error_raised_async(error)

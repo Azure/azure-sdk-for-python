@@ -8,6 +8,7 @@ import threading
 import time
 from collections import defaultdict
 
+from ._repeated_timer import AtomicCounter
 from ._perf_stress_base import _PerfTestBase
 
 
@@ -25,7 +26,7 @@ class EventPerfTest(_PerfTestBase):
         self._start_time = time.time()
         self._error = None
         self._processing = None
-        self._completed_parallel_operations = defaultdict(int)
+        self._completed_operations = AtomicCounter()
 
     @property
     def completed_operations(self) -> int:
@@ -33,19 +34,19 @@ class EventPerfTest(_PerfTestBase):
         Total number of operations completed by run_all().
         Reset after warmup.
         """
-        return sum(self._completed_parallel_operations.values())
+        return self._completed_operations.value()
 
-    def event_raised_sync(self, index, num_events=1):
-        self._completed_parallel_operations[index] += num_events
+    def event_raised_sync(self):
+        self._completed_operations.increment()
         self._last_completion_time = time.time() - self._start_time
-    
+
     def error_raised_sync(self, error):
         with self._condition:
             self._error = error
             self._condition.notify_all()
 
-    async def event_raised_async(self, index, num_events=1):
-        self._completed_parallel_operations[index] += num_events
+    async def event_raised_async(self):
+        self._completed_operations.increment()
         self._last_completion_time = time.time() - self._start_time
 
     async def error_raised_async(self, error):
@@ -86,7 +87,7 @@ class EventPerfTest(_PerfTestBase):
         Run all sync tests, including both warmup and duration.
         """
         with self._condition:
-            self._completed_parallel_operations = defaultdict(int)
+            self._completed_operations.reset()
             self._last_completion_time = 0.0
             self._start_time = time.time()
             self._condition.wait(timeout=duration)
@@ -96,7 +97,7 @@ class EventPerfTest(_PerfTestBase):
         Run all async tests, including both warmup and duration.
         """
         async with self._condition:
-            self._completed_parallel_operations = defaultdict(int)
+            self._completed_operations.reset()
             self._last_completion_time = 0.0
             self._start_time = time.time()
             try:
