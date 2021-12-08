@@ -1,5 +1,5 @@
 from typing import List, Optional
-from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, LatLongPairAbbreviated
+from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, LatLongPairAbbreviated, ReverseSearchAddressResultItem, ReverseSearchAddressBatchItem, BatchResultSummary
 
 class LatLon(object):
 
@@ -40,11 +40,19 @@ class BoundingBox(object):
 
     def __init__(
         self,
-        top_left: str=None,
-        bottom_right: str=None
+        top_left: LatLon=None,
+        bottom_right: LatLon=None,
+        top_right: LatLon=None,
+        bottom_left: LatLon=None
     ):
         self.top_left = top_left
         self.bottom_right = bottom_right
+        self.top = top_left.lat
+        self.bottom = bottom_right.lat
+        self.left = top_left.lon
+        self.right = bottom_right.lon
+        self.top_right = top_right if top_right else LatLon(top_left.lat, bottom_right.lon)
+        self.bottom_left = bottom_left if bottom_left else LatLon(bottom_right.lat, top_left.lon)
 
 
 class StructuredAddress(object):
@@ -100,19 +108,100 @@ class SearchSummary(object):
         self.geo_bias = geo_bias
 
 
+class AddressRanges(object):
+
+    def __init__(
+        self,
+        range_left: str = None,
+        range_right: str = None,
+        from_property: LatLon = None,
+        to_: LatLon = None
+    ):
+        self.range_left = range_left,
+        self.range_right = range_right,
+        self.from_property = LatLon() if not from_property else LatLon(
+            from_property.lat, from_property.lon
+        ),
+        self.to =  LatLon() if not to_ else LatLon(
+            to_.lat, to_.lon
+        )
+
+
+class EntryPoint(object):
+    
+    def __init__(
+        self,
+        type: str = None,
+        position: LatLon = None
+    ):
+        self.type = type
+        self.position = LatLon() if not position else LatLon(
+            position.lat, position.lon
+        )
+
+
+class Address(object):
+
+    def __init__(
+        self,
+        building_number: str,
+        street: str,
+        cross_street: str = None,
+        street_number: str = None,
+        route_numbers: List[int] = None,
+        street_name: str = None,
+        street_name_and_number: str = None,
+        municipality: str = None,
+        municipality_subdivision: str = None,
+        country_tertiary_subdivision:str = None,
+        country_secondary_subdivision: str = None,
+        country_subdivision: str = None,
+        postal_code: str = None,
+        extended_postal_code: str = None,
+        country_code: str = None,
+        country: str = None,
+        country_code_iso3: str = None,
+        freeform_address: str = None,
+        country_subdivision_name: str = None,
+        local_name: str = None,
+        bounding_box: BoundingBox = None,
+    ):
+        self.building_number = building_number
+        self.street = street
+        self.cross_street = cross_street
+        self.street_number = street_number
+        self.route_numbers = route_numbers
+        self.street_name = street_name
+        self.street_name_and_number = street_name_and_number
+        self.municipality = municipality
+        self.municipality_subdivision = municipality_subdivision
+        self.country_tertiary_subdivision = country_tertiary_subdivision
+        self.country_secondary_subdivision = country_secondary_subdivision
+        self.country_subdivision = country_subdivision
+        self.postal_code = postal_code
+        self.extended_postal_code = extended_postal_code
+        self.country_code = country_code
+        self.country = country
+        self.country_code_iso3 = country_code_iso3
+        self.freeform_address = freeform_address
+        self.country_subdivision_name = country_subdivision_name
+        self.local_name = local_name
+        self.bounding_box = bounding_box
+
+
 class SearchAddressResultItem(object):
 
     def __init__(
         self,
-        type: str = None,
-        id: str = None,
+        type_: str = None,
+        id_: str = None,
         score: float = None,
         distance_in_meters: float = None,
         info: str = None,
         entity_type: str = None,
         point_of_interest: PointOfInterest = None,
         address: Address = None,
-        position: LatLon = None,
+        position: LatLongPairAbbreviated = None,
         viewport: BoundingBox = None,
         entry_points: EntryPoint = None,
         address_ranges: AddressRanges = None,
@@ -120,15 +209,17 @@ class SearchAddressResultItem(object):
         match_type: str = None,
         detour_time: int = None
     ):
-        self.type = type
-        self.id = id
+        self.type = type_
+        self.id = id_
         self.score = score
         self.distance_in_meters = distance_in_meters
         self.info = info
         self.entity_type = entity_type
         self.point_of_interest = point_of_interest
         self.address = address
-        self.position = LatLon() if not position else LatLon(position.lat, position.lon) 
+        self.position = LatLon() if not position else LatLon(
+            position.lat, position.lon
+        )
         self.viewport = viewport
         self.entry_points = entry_points
         self.address_ranges = LatLon() if not position else LatLon(
@@ -158,3 +249,43 @@ class SearchAddressResult(object):
             summary.geo_bias.lat, summary.geo_bias.lon
         )
         self.results = results
+
+
+class ReverseSearchAddressResultItem(object):
+
+    def __init__(
+        self,
+        address: Address = None,
+        position: str = None,
+        road_use: List[str] = None,
+        match_type: str = None
+    ):
+        self.address = address
+        self.position = LatLon() if not position else LatLon(
+            float(position.split(',')[0]), float(position.split(',')[1])
+        )
+        self.road_use = road_use
+        self.match_type = match_type
+
+
+class ReverseSearchAddressResult(object):
+
+    def __init__(
+        self,
+        summary: SearchSummary = None,
+        results: List[ReverseSearchAddressResultItem] = None
+    ):
+        self.query_type = summary.query_type
+        self.query_time = summary.query_time
+        self.results = results
+
+
+class ReverseSearchAddressBatchProcessResult(object):
+
+    def __init__(
+        self,
+        summary: BatchResultSummary = None,
+        items: List[ReverseSearchAddressBatchItem] = None
+    ):
+        self.summary = summary
+        self.items = items

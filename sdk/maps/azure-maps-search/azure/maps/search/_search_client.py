@@ -8,15 +8,15 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
-from ._generated.models import PointOfInterestCategory, ReverseSearchAddressResult, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, Polygon
-from .models._models import LatLon, SearchAddressResult
+from ._generated.models import PointOfInterestCategory, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, Polygon
+from .models import LatLon, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
 # from .utils import get_authentication_policy, get_headers_policy
 
 if TYPE_CHECKING:
     from typing import Any, List, Optional, Object
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from .models._models import LatLon, StructuredAddress, SearchAddressResult
+    from .models import LatLon, StructuredAddress, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
@@ -173,7 +173,7 @@ class SearchClient(object):
          supported IETF language tags, except NGT and NGT-Latn. Language tag is case insensitive. When
          data in specified language is not available for a specific field, default language is used
          (English).
-        :return: PointOfInterestCategoryTreeResult, or the result of cls(response)
+        :return: List[PointOfInterestCategory], or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         result = self._search_client.get_point_of_interest_category_tree(
@@ -219,10 +219,11 @@ class SearchClient(object):
         :return: ReverseSearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.reverse_search_address(
+        result = self._search_client.reverse_search_address(
             query=[coordinates.lat, coordinates.lat]
             **kwargs
         )
+        return ReverseSearchAddressResult(result.summary, result.addresses)
 
 
     @distributed_trace
@@ -326,13 +327,13 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.search_along_route(
+        result = self._search_client.search_along_route(
             query,
             max_detour_time,
             route,
             **kwargs
         )
-
+        return SearchAddressResult(result.summary, result.results)
 
     @distributed_trace
     def search_inside_geometry(
@@ -392,11 +393,12 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.search_inside_geometry(
+        result = self._search_client.search_inside_geometry(
             query,
             geometry,
             **kwargs
         )
+        return SearchAddressResult(result.summary, result.results)
 
 
     @distributed_trace
@@ -456,13 +458,14 @@ class SearchClient(object):
         """         
         coordinates = LatLon() if not coordinates else coordinates
 
-        return self._search_client.search_point_of_interest(
+        result = self._search_client.search_point_of_interest(
             query,
             lat=coordinates.lat,
             lon=coordinates.lon,
             country_filter=country_filter,
             **kwargs
         )
+        return SearchAddressResult(result.summary, result.results)
 
 
     @distributed_trace
@@ -505,12 +508,12 @@ class SearchClient(object):
         """
         coordinates = LatLon() if not coordinates else coordinates
 
-        return self._search_client.search_nearby_point_of_interest(
+        result = self._search_client.search_nearby_point_of_interest(
             lat=coordinates.lat,
             lon=coordinates.lon,
             **kwargs
         )
-
+        return SearchAddressResult(result.summary, result.results)
 
     @distributed_trace
     def search_point_of_interest_category(
@@ -572,14 +575,14 @@ class SearchClient(object):
         """
         coordinates = LatLon() if not coordinates else coordinates
 
-        return self._search_client.search_point_of_interest_category(
+        result = self._search_client.search_point_of_interest_category(
             query,
             lat=coordinates.lat,
             lon=coordinates.lon,
             country_filter=country_filter,
             **kwargs
         )
-
+        return SearchAddressResult(result.summary, result.results)
 
     @distributed_trace
     def search_address(
@@ -633,12 +636,13 @@ class SearchClient(object):
         """
         coordinates = LatLon() if not coordinates else coordinates
        
-        return self._search_client.search_address(
+        result = self._search_client.search_address(
             query,
             lat=coordinates.lat,
             lon=coordinates.lon,
             **kwargs
         )
+        return SearchAddressResult(result.summary, result.results)
 
 
     @distributed_trace
@@ -671,7 +675,7 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.search_structured_address(
+        result = self._search_client.search_structured_address(
             country_code=structured_address.country_code,
             cross_street=structured_address.cross_street,
             street_number=structured_address.street_number,
@@ -684,6 +688,7 @@ class SearchClient(object):
             postal_code=structured_address.postal_code,
             **kwargs
         )
+        return SearchAddressResult(result.summary, result.results)
 
    
     @distributed_trace
@@ -740,7 +745,7 @@ class SearchClient(object):
         batch_request,  # type: "BatchRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Object
+        # type: (...) -> "ReverseSearchAddressBatchProcessResult"
         """**Search Address Reverse Batch API**
 
         **Applies to**\ : S1 pricing tier.
@@ -761,10 +766,8 @@ class SearchClient(object):
             batch_request,
             **kwargs
         )
-
-        result = {
-            "items": batch_result.get("batch_items", None),
-            "summary": batch_result.get("batch_summary", None)
-        }
+        result = ReverseSearchAddressBatchProcessResult(
+            batch_result.batch_summary, batch_result.batch_items
+        )
         return result
 

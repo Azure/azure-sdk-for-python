@@ -1,37 +1,46 @@
 
 from .._generated.models import (
-    SearchAddressResult,
-    PointOfInterestCategoryTreeResult,
-    ReverseSearchAddressResult,
     ReverseSearchCrossStreetAddressResult,
-    SearchAlongRouteRequest,
-    GeoJsonObject,
     BatchRequest,
-    SearchAddressBatchResult,
-    ReverseSearchAddressBatchProcessResult,
-    PolygonResult
+    BatchResultSummary,
+    Polygon,
+    ReverseSearchAddressBatchItem
 )
 
 from ._models import (
     LatLon,
     StructuredAddress,
-    BoundingBox
+    BoundingBox,
+    AddressRanges,
+    EntryPoint,
+    SearchAddressResultItem,
+    ReverseSearchAddressResultItem,
+    SearchSummary,
+    Address,
+    SearchAddressResult,
+    ReverseSearchAddressResult,
+    ReverseSearchAddressBatchProcessResult
 )
 
 
 __all__ = [
     'SearchClient',
-    'SearchAddressResult',
-    'PointOfInterestCategoryTreeResult',
-    'ReverseSearchAddressResult',
-    'ReverseSearchCrossStreetAddressResult',
-    'SearchAlongRouteRequest',
     'GeoJsonObject',
     'BatchRequest',
-    'SearchAddressBatchResult',
-    'ReverseSearchAddressBatchProcessResult',
-    'PolygonResult',
     'LatLon',
+    'AddressRanges',
     'StructuredAddress',
-    'BoundingBox'
+    'BoundingBox',
+    'Polygon',
+    'EntryPoint',
+    'Address',
+    'SearchAddressResultItem',
+    'ReverseSearchAddressBatchItem',
+    'ReverseSearchAddressResultItem',
+    'SearchSummary',
+    'SearchAddressResult',
+    'BatchResultSummary',
+    'ReverseSearchAddressBatchProcessResult',
+    'ReverseSearchAddressResult',
+    'ReverseSearchCrossStreetAddressResult',
 ]
