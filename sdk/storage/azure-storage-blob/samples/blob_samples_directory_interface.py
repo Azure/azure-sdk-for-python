@@ -100,9 +100,10 @@ class DirectoryClient:
     print(f'Downloading {source} to {blob_dest}')
     os.makedirs(os.path.dirname(blob_dest), exist_ok=True)
     bc = self.client.get_blob_client(blob=source)
-    with open(blob_dest, 'wb') as file:
-      data = bc.download_blob()
-      file.write(data.readall())
+    if not dest.endswith('/'):
+        with open(blob_dest, 'wb') as file:
+          data = bc.download_blob()
+          file.write(data.readall())
 
   def ls_files(self, path, recursive=False):
     '''
