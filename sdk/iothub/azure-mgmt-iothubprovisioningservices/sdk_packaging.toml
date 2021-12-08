@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-iothubprovisioningservices"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "IoTHub Provisioning Services"
+package_pprint_name = "IoT Hub Provisioning Services"
 package_doc_id = "iot"
 is_stable = false
 is_arm = true
