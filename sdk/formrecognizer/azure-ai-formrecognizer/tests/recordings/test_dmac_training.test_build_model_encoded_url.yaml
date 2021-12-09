@@ -1,16 +1,20 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "6986d80e-719c-4752-b3b5-80966765b13e", "azureBlobSource":
+    body: 'b''{"modelId": "60cabed4-4c89-4516-b93a-28ae73ad1478", "azureBlobSource":
       {"containerUrl": "https://fakeuri.com/blank%20space"}}'''
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '125'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
@@ -19,15 +23,21 @@ interactions:
         "innererror": {"code": "InvalidContentSourceFormat", "message": "Invalid content
         source: Source Uri must include container path"}}}'
     headers:
-      apim-request-id: 814714ca-f720-49ee-8765-067d61fca1d8
-      content-type: application/json
-      date: Wed, 15 Sep 2021 00:50:00 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
+      apim-request-id:
+      - 5e5586a1-797f-440a-80d6-727f43b0c1f6
+      content-type:
+      - application/json
+      date:
+      - Thu, 09 Dec 2021 23:38:50 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '46'
     status:
       code: 400
       message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
 version: 1

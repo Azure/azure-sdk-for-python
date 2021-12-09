@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "d8ce5d62-d289-4a58-9d32-7c6609744557", "azureBlobSource":
-      {"containerUrl": "https://fakeuri.com/blank%20space"}}'''
+    body: 'b''{"modelId": "6efe6126-2554-422d-8809-719ebf86392b", "azureBlobSource":
+      {"containerUrl": "container_sas_url", "prefix": "subfolder"}}'''
     headers:
       Accept:
       - application/json
@@ -10,25 +10,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '125'
+      - '323'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"error": {"code": "InvalidArgument", "message": "Invalid argument.",
-        "innererror": {"code": "InvalidContentSourceFormat", "message": "Invalid content
-        source: Source Uri must include container path"}}}'
+      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
+        "innererror": {"code": "TrainingContentMissing", "message": "Training data
+        is missing: Could not find any training data at the given path."}}}'
     headers:
       apim-request-id:
-      - d65ad45a-d9f1-4e99-b61f-f28998750f00
+      - d3fda473-d021-478b-9567-e8f4e346268e
       content-type:
       - application/json
       date:
-      - Tue, 14 Sep 2021 23:31:34 GMT
+      - Thu, 09 Dec 2021 23:38:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '64'
+      - '777'
     status:
       code: 400
       message: Bad Request

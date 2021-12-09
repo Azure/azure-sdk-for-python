@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "a404cac6-0b23-4e0f-aafa-91bf6897d7c7", "azureBlobSource":
+    body: 'b''{"modelId": "f15e7e1d-66e9-4e4c-96ca-3baf718a7093", "azureBlobSource":
       {"containerUrl": "container_sas_url"}}'''
     headers:
       Accept:
@@ -10,11 +10,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '299'
+      - '307'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 7dafd750-11fe-4cd5-9ff9-151bda85defc
+      - c3bda26f-358a-44c4-baed-26f134e7de3e
       content-length:
       - '0'
       date:
-      - Wed, 15 Sep 2021 00:23:49 GMT
+      - Thu, 09 Dec 2021 23:39:02 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/operations/31534702573_7dafd750-11fe-4cd5-9ff9-151bda85defc?api-version=2021-09-30-preview
+      - https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527274860_c3bda26f-358a-44c4-baed-26f134e7de3e?api-version=2021-09-30-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2508'
+      - '1973'
     status:
       code: 202
       message: Accepted
@@ -48,15 +48,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31534702573_7dafd750-11fe-4cd5-9ff9-151bda85defc?api-version=2021-09-30-preview
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/operations/31527274860_c3bda26f-358a-44c4-baed-26f134e7de3e?api-version=2021-09-30-preview
   response:
     body:
-      string: '{"operationId": "31534702573_7dafd750-11fe-4cd5-9ff9-151bda85defc",
-        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-09-15T00:23:46Z",
-        "lastUpdatedDateTime": "2021-09-15T00:23:51Z", "resourceLocation": "https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/a404cac6-0b23-4e0f-aafa-91bf6897d7c7?api-version=2021-09-30-preview",
-        "percentCompleted": 100, "result": {"docTypes": {"a404cac6-0b23-4e0f-aafa-91bf6897d7c7":
+      string: '{"operationId": "31527274860_c3bda26f-358a-44c4-baed-26f134e7de3e",
+        "kind": "documentModelBuild", "status": "succeeded", "createdDateTime": "2021-12-09T23:39:00Z",
+        "lastUpdatedDateTime": "2021-12-09T23:39:04Z", "resourceLocation": "https://region.api.cognitive.microsoft.com//formrecognizer/documentModels/f15e7e1d-66e9-4e4c-96ca-3baf718a7093?api-version=2021-09-30-preview",
+        "percentCompleted": 100, "result": {"docTypes": {"f15e7e1d-66e9-4e4c-96ca-3baf718a7093":
         {"fieldSchema": {"Merchant": {"type": "string"}, "MerchantAddress": {"type":
         "string"}, "MerchantPhoneNumber": {"type": "string"}, "CustomerName": {"type":
         "string"}, "CustomerAddress": {"type": "string"}, "CustomerPhoneNumber": {"type":
@@ -65,19 +65,20 @@ interactions:
         "string"}, "Tip": {"type": "string"}, "Total": {"type": "string"}, "Signature":
         {"type": "string"}, "Merchant2": {"type": "string"}, "Customer2": {"type":
         "string"}, "Total2": {"type": "string"}, "Signature2": {"type": "string"}},
-        "fieldConfidence": {"Customer2": 0.95, "CustomerAddress": 0.95, "CustomerName":
-        0.95, "CustomerPhoneNumber": 0.95, "FirstItem": 0.95, "FirstPrice": 0.95,
-        "FirstQuantity": 0.95, "Merchant": 0, "Merchant2": 0, "MerchantAddress": 0.95,
-        "MerchantPhoneNumber": 0.95, "Signature": 0.95, "Signature2": 0.95, "Subtotal":
-        0.95, "Tax": 0.95, "Tip": 0.95, "Total": 0.95, "Total2": 0.95}}}, "modelId":
-        "a404cac6-0b23-4e0f-aafa-91bf6897d7c7", "createdDateTime": "2021-09-15T00:23:50Z"}}'
+        "technique": "fixedTemplate-2021-07-30", "modelType": "form", "fieldConfidence":
+        {"Customer2": 0.95, "CustomerAddress": 0.95, "CustomerName": 0.95, "CustomerPhoneNumber":
+        0.95, "FirstItem": 0.95, "FirstPrice": 0.95, "FirstQuantity": 0.95, "Merchant":
+        0, "Merchant2": 0, "MerchantAddress": 0.95, "MerchantPhoneNumber": 0.95, "Signature":
+        0.95, "Signature2": 0.95, "Subtotal": 0.95, "Tax": 0.95, "Tip": 0.95, "Total":
+        0.95, "Total2": 0.95}}}, "modelId": "f15e7e1d-66e9-4e4c-96ca-3baf718a7093",
+        "createdDateTime": "2021-12-09T23:39:03Z"}}'
     headers:
       apim-request-id:
-      - 5968a034-7e8a-4559-9890-b4acc9fd62b7
+      - fe2654c3-b521-447c-b612-a551db457115
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Sep 2021 00:23:53 GMT
+      - Thu, 09 Dec 2021 23:39:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

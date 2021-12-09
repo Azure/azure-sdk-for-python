@@ -1,20 +1,16 @@
 interactions:
 - request:
-    body: 'b''{"modelId": "ca5a2dff-c745-48d4-a406-a3ab2f2d1a16", "azureBlobSource":
+    body: 'b''{"modelId": "69d857ad-a595-40b5-be0c-fd306e20a928", "azureBlobSource":
       {"containerUrl": "container_sas_url", "prefix": "subfolder"}}'''
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '307'
+      - '323'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
   response:
@@ -23,21 +19,15 @@ interactions:
         "innererror": {"code": "TrainingContentMissing", "message": "Training data
         is missing: Could not find any training data at the given path."}}}'
     headers:
-      apim-request-id:
-      - e5487715-1e66-46d6-a419-0db6e3ac9a22
-      content-type:
-      - application/json
-      date:
-      - Wed, 15 Sep 2021 00:39:14 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '599'
+      apim-request-id: 8487b156-7157-47f9-9594-c5272536642f
+      content-type: application/json
+      date: Thu, 09 Dec 2021 23:35:54 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '821'
     status:
       code: 400
       message: Bad Request
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
 version: 1
