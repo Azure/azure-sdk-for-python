@@ -107,7 +107,7 @@
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
 
 # PRLabel: %EngSys
-/sdk/template/                                                       @Azure/azure-sdk-eng
+/sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
@@ -143,9 +143,9 @@
 ###########
 # Eng Sys
 ###########
-/eng/                                                                @weshaggard @scbedd @danieljurek
-/**/tests.yml                                                        @benbp
-/**/ci.yml                                                           @scbedd
+/eng/                                                                @scbedd @weshaggard @benbp
+/**/tests.yml                                                        @scbedd @benbp
+/**/ci.yml                                                           @scbedd @benbp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
