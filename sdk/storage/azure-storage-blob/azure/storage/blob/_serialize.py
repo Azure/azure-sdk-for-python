@@ -6,8 +6,6 @@
 # pylint: disable=no-self-use
 from typing import Dict, Any, Optional, Union, Tuple
 
-from . import BlobLeaseClient
-
 try:
     from urllib.parse import quote
 except ImportError:
@@ -15,6 +13,7 @@ except ImportError:
 
 from azure.core import MatchConditions
 
+from ._lease import BlobLeaseClient
 from ._models import (
     ContainerEncryptionScope,
     DelimitedJsonDialect)
@@ -107,13 +106,14 @@ def get_source_conditions(kwargs):
 
 
 def get_cpk_scope_info(kwargs):
-    # type: (Dict[str, Any]) -> CpkScopeInfo
+    # type: (Dict[str, Any]) -> Union[None, CpkScopeInfo]
     if 'encryption_scope' in kwargs:
         return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
+    return None
 
 
 def get_container_cpk_scope_info(kwargs):
-    # type: (Dict[str, Any]) -> ContainerCpkScopeInfo
+    # type: (Dict[str, Any]) -> Union[None, ContainerCpkScopeInfo]
     encryption_scope = kwargs.pop('container_encryption_scope', None)
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
@@ -127,6 +127,7 @@ def get_container_cpk_scope_info(kwargs):
                 prevent_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
             )
         raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
+    return None
 
 
 def get_api_version(kwargs):

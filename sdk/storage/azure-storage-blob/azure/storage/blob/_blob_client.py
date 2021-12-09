@@ -11,8 +11,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
     TypeVar, Type)
 
-from . import ImmutabilityPolicy
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -58,7 +56,7 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob, _any_conditions)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect
+    DelimitedJsonDialect, DelimitedTextDialect, ImmutabilityPolicy
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
 
