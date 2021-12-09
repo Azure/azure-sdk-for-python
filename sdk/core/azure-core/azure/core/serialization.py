@@ -218,8 +218,6 @@ def _get_model(module_name: str, model_name: str):
 def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
     try:
         if deserialization_type.__origin__ == Literal:
-            if obj not in deserialization_type.__args__:
-                raise ValueError("Not one of the literal values")
             return obj
     except AttributeError:
         pass
@@ -272,51 +270,18 @@ def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
             pass
 
     try:
-        return deserialization_type(obj)
+        return deserialization_type(**obj)
     except Exception:
         return _DESERIALIZE_MAPPING.get(deserialization_type, lambda x: x)(obj)
 
-from dataclasses import dataclass
-
-
-
-_FIELDS = '__dataclass_fields__'
-
-def _process_class(cls):
-    a = "b"
-
-
-def rest_dataclass(cls=None, /):
-    # def wrap(cls):
-    #     return _process_class(cls)
-
-    # # See if we're being called as @dataclass or @dataclass().
-    # if cls is None:
-    #     # We're called with parens.
-    #     return wrap
-
-    # # We're called as @dataclass without parens.
-    # return wrap(cls)
-
-    def _wrapper(cls):
-        __name = str(cls.__name__)
-        __bases = tuple(cls.__bases__)
-        __dict = dict(cls.__dict__)
-
-        for each_slot in __dict.get("__slots__", tuple()):
-            __dict.pop(each_slot, None)
-
-        __dict["__metaclass__"] = MyMetaclass
-
-        __dict["__wrapped__"] = cls
-
-        return(MyMetaclass(__name, __bases, __dict))
-    return _wrapper(cls)
-
 class Model(dict):
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        a = "b"
+    def __init__(self, **kwargs):
+        super().__init__({
+            self._attr_to_rest_name.get(k, k): v
+            for k, v in kwargs.items()
+        })
+
 
     def __eq__(self, other):
         """Compare objects by comparing all attributes."""
@@ -327,41 +292,32 @@ class Model(dict):
     def copy(self):
         return Model(self.__dict__)
 
-class MyMetaclass(type):
-
-    def __new__(cls, name, bases, dct):
-        public_attrs = [k for k in dct if k[0] != "_"]
-        for attr in public_attrs:
-            rest_field = dct[attr]
+    def __new__(cls, *args: Any, **kwargs: Any):
+        attr_to_rest_field = {
+            k: v
+            for k, v in cls.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+        }
+        for attr, rest_field in attr_to_rest_field.items():
+            rest_field._module = cls.__module__
             if rest_field._type:
                 continue
-            rest_field._type = dct.get('__annotations__', {}).get(attr, lambda x: x)
-        new_class = super().__new__(cls, name, tuple([Model]), dct)
-        new_class.__init__ == Model.__init__
+            rest_field._type = cls.__annotations__.get(attr, lambda x: x)
+            if not rest_field._rest_name:
+                rest_field._rest_name = attr
         cls._attr_to_rest_name = {
             k: v._rest_name
-            for k, v in dct.items() if k[0] != "_"
+            for k, v in attr_to_rest_field.items()
         }
-        # here's where we add all of the dict stuff
-        return new_class
-
-    # def __call__(self, *args: Any, **kwargs: Any) -> Any:
-    #     new_kwargs = {
-    #         self._attr_to_rest_name.get(k, k): v
-    #         for k, v in kwargs.items()
-    #     }
-    #     return super().__call__(*args, **new_kwargs)
+        return super().__new__(cls, *args, **kwargs)
 
 class _RestField:
     def __init__(self, name: Optional[str] = None, type: Optional[Callable] = None):
         self._type = type
         self._rest_name = name
-        # self._module = None
+        self._module = None
 
     def __get__(self, obj: Model, type=None):
-        if type == "get_rest_name":
-            return self._rest_name
-        return _deserialize(obj.__getitem__(self._rest_name), self._type)#, self._module)
+        return _deserialize(obj.__getitem__(self._rest_name), self._type, self._module)
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
@@ -371,14 +327,3 @@ class _RestField:
 
 def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
     return _RestField(name=name, type=type)
-
-    # def __call__(self, func):
-    #     if not self._type:
-    #         try:
-    #             self._type = func.__annotations__['return']
-    #         except KeyError:
-    #             self._type = lambda x: x
-    #     if not self._rest_name:
-    #         self._rest_name = func.__name__
-    #     self._module = func.__module__
-    #     return self
