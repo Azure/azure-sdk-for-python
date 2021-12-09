@@ -89,8 +89,7 @@ This table shows the relationship between SDK versions and supported API version
 | 5.0.0  | 3.0 |
 
 API version can be selected by passing the [api_version][text_analytics_client] keyword argument into the client.
-For the latest Text Analytics features, consider selecting the most recent preview API version. For production scenarios, the latest GA API version is recommended.
-Setting to an older version may result in reduced feature compatibility.
+For the latest Text Analytics features, consider selecting the most recent preview API version. For production scenarios, the latest GA version is recommended. Setting to an older version may result in reduced feature compatibility.
 
 ### Authenticate the client
 
