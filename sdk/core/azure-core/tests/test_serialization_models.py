@@ -639,3 +639,40 @@ def test_literals():
     assert model.species == "invalid"
 
     assert model.age == 5
+
+def test_deserialization_callback_override():
+
+    def _callback(obj):
+        return [str(entry) for entry in obj]
+
+    class MyModel(Model):
+        prop: Sequence[int] = rest_field()
+
+    model_without_callback = MyModel(prop=[1.3, 2.4, 3.5])
+    assert model_without_callback.prop == [1, 2, 3]
+    assert model_without_callback['prop'] == [1.3, 2.4, 3.5]
+
+    class MyModel(Model):
+        prop: Any = rest_field(type=_callback)
+
+    model_with_callback = MyModel(prop=[1.3, 2.4, 3.5])
+    assert model_with_callback.prop == ["1.3", "2.4", "3.5"]
+    assert model_with_callback['prop'] == model_without_callback['prop']
+
+def test_deserialization_callback_override_parent():
+
+    class ParentNoCallback(Model):
+        prop: Sequence[float] = rest_field()
+
+    def _callback(obj):
+        return set([str(entry) for entry in obj])
+
+    class ChildWithCallback(ParentNoCallback):
+        prop: Sequence[float] = rest_field(type=_callback)
+
+    parent_model = ParentNoCallback(prop=[1, 1, 2, 3])
+    assert parent_model.prop == parent_model["prop"] == [1, 1, 2, 3]
+
+    child_model = ChildWithCallback(prop=[1, 1, 2, 3])
+    assert child_model.prop == set(["1", "1", "2", "3"])
+    assert child_model['prop'] == [1, 1, 2, 3]

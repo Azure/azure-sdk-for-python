@@ -241,9 +241,8 @@ class Model(dict):
         }
         for attr, rest_field in attr_to_rest_field.items():
             rest_field._module = cls.__module__
-            if rest_field._type:
-                continue
-            rest_field._type = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
+            if not rest_field._type:
+                rest_field._type = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
             if not rest_field._rest_name:
                 rest_field._rest_name = attr
         cls._attr_to_rest_name = {
@@ -328,20 +327,15 @@ class _RestField:
         except (AttributeError, IndexError):
             pass
 
+            list
         try:
-            if annotation._name in ["List", "Set", "Tuple"]:
-                obj_type = {
-                    "List": list,
-                    "Set": set,
-                    "Tuple": tuple,
-                }[annotation._name]
+            if annotation._name in ["List", "Set", "Tuple", "Sequence"]:
                 if len(annotation.__args__) > 1:
                     def _deserialize_sequence(
-                        obj_type: Callable,
                         entry_deserializers: List[Callable],
                         obj
                     ):
-                        return obj_type(
+                        return type(obj)(
                             deserializer(entry)
                             for entry, deserializer in zip(obj, entry_deserializers)
                         )
@@ -351,21 +345,18 @@ class _RestField:
                     ]
                     return functools.partial(
                         _deserialize_sequence,
-                        obj_type,
                         entry_deserializers
                     )
                 deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[0])
                 def _deserialize_sequence(
-                    obj_type: Callable,
                     deserializer: Callable,
                     obj,
                 ):
-                    return obj_type(
+                    return type(obj)(
                         deserializer(entry) for entry in obj
                     )
                 return functools.partial(
                     _deserialize_sequence,
-                    obj_type,
                     deserializer
                 )
         except (TypeError, IndexError, AttributeError, SyntaxError):
