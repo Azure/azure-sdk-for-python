@@ -11,16 +11,14 @@ import sys
 
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import (
     EdmType,
-    TableEntity,
     EntityProperty,
-    UpdateMode,
     TableTransactionError,
     TableEntity,
     UpdateMode,
@@ -29,7 +27,7 @@ from azure.data.tables import (
     TableSasPermissions,
     TableServiceClient,
     generate_table_sas,
-    TableErrorCode
+    TableErrorCode,
 )
 
 from _shared.testcase import TableTestCase
@@ -41,6 +39,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -72,6 +72,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -108,6 +110,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -148,6 +152,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -177,6 +183,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -206,6 +214,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -237,6 +247,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -268,6 +280,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -301,6 +315,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -337,6 +353,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -408,6 +426,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -434,6 +454,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -453,6 +475,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -469,6 +493,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_delete_batch_with_bad_kwarg(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -498,6 +524,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator
     def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -547,6 +575,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only  # Request bodies are very large
     @cosmos_decorator
     def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -571,6 +601,8 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_with_specialchar_partitionkey(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        set_bodiless_matcher()
+
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:

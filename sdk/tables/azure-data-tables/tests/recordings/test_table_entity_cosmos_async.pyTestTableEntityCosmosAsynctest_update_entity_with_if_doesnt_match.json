@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltbtestsprim.table.cosmos.azure.com/Tables",
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
@@ -10,29 +10,29 @@
         "Content-Length": "31",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 18 Oct 2021 23:33:16 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c4a25038-306b-11ec-a650-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 23:33:16 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:05 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "5700f3d6-5898-11ec-b085-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 02:33:05 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022TableName\u0022: \u0022uttable83f3898\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 18 Oct 2021 23:33:10 GMT",
-        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A10.6476040Z\u0027\u0022",
-        "Location": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027uttable83f3898\u0027)",
+        "Date": "Thu, 09 Dec 2021 02:33:06 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T02%3A33%3A05.9175431Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttable83f3898\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "4900737b-b77c-4e86-a402-ed2f0c03f040"
+        "x-ms-request-id": "90375613-e0eb-4293-8385-3a2c1b2d1c97"
       },
       "ResponseBody": {
         "TableName": "uttable83f3898",
-        "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/$metadata#Tables/@Element"
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables/@Element"
       }
     },
     {
-      "RequestUri": "https://yalltbtestsprim.table.cosmos.azure.com/uttable83f3898",
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttable83f3898",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
@@ -41,25 +41,25 @@
         "Content-Length": "709",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 18 Oct 2021 23:33:17 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c53ec29a-306b-11ec-a463-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 23:33:17 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:07 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "57a8ce9e-5898-11ec-a653-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 02:33:07 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pk83f3898\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rk83f3898\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022age\u0022: 39, \u0022sex\u0022: \u0022male\u0022, \u0022sex@odata.type\u0022: \u0022Edm.String\u0022, \u0022married\u0022: true, \u0022deceased\u0022: false, \u0022ratio\u0022: 3.1, \u0022ratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022evenratio\u0022: 3.0, \u0022evenratio@odata.type\u0022: \u0022Edm.Double\u0022, \u0022double\u0022: 5, \u0022double@odata.type\u0022: \u0022Edm.Double\u0022, \u0022large\u0022: 933311100, \u0022Birthday\u0022: \u00221973-10-04T00:00:00.000000Z\u0022, \u0022Birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022birthday\u0022: \u00221970-10-04T00:00:00.000000Z\u0022, \u0022birthday@odata.type\u0022: \u0022Edm.DateTime\u0022, \u0022binary\u0022: \u0022YmluYXJ5\u0022, \u0022binary@odata.type\u0022: \u0022Edm.Binary\u0022, \u0022other\u0022: 20, \u0022clsid\u0022: \u0022c9da6455-213d-42c9-9a79-3e9149a57833\u0022, \u0022clsid@odata.type\u0022: \u0022Edm.Guid\u0022}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 18 Oct 2021 23:33:10 GMT",
-        "ETag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A11.3406472Z\u0027\u0022",
-        "Location": "https://yalltbtestsprim.table.cosmos.azure.com/uttable83f3898(PartitionKey=\u0027pk83f3898\u0027,RowKey=\u0027rk83f3898\u0027)",
+        "Date": "Thu, 09 Dec 2021 02:33:06 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T02%3A33%3A06.4550407Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/uttable83f3898(PartitionKey=\u0027pk83f3898\u0027,RowKey=\u0027rk83f3898\u0027)",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "b6cfaf20-399b-4cb6-a5d4-92ef647e49a8"
+        "x-ms-request-id": "315bc387-8912-4e5a-9272-613b8b33bd2e"
       },
       "ResponseBody": {
-        "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/uttable83f3898/$metadata#uttable83f3898/@Element",
-        "odata.etag": "W/\u0022datetime\u00272021-10-18T23%3A33%3A11.3406472Z\u0027\u0022",
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/uttable83f3898/$metadata#uttable83f3898/@Element",
+        "odata.etag": "W/\u0022datetime\u00272021-12-09T02%3A33%3A06.4550407Z\u0027\u0022",
         "PartitionKey": "pk83f3898",
         "RowKey": "rk83f3898",
         "age": 39,
@@ -79,11 +79,11 @@
         "other": 20,
         "clsid@odata.type": "Edm.Guid",
         "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-        "Timestamp": "2021-10-18T23:33:11.3406472Z"
+        "Timestamp": "2021-12-09T02:33:06.4550407Z"
       }
     },
     {
-      "RequestUri": "https://yalltbtestsprim.table.cosmos.azure.com/uttable83f3898(PartitionKey=\u0027pk83f3898\u0027,RowKey=\u0027rk83f3898\u0027)",
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttable83f3898(PartitionKey=\u0027pk83f3898\u0027,RowKey=\u0027rk83f3898\u0027)",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -92,46 +92,46 @@
         "Content-Length": "358",
         "Content-Type": "application/json",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 18 Oct 2021 23:33:17 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:07 GMT",
         "If-Match": "W/\u0022datetime\u00272012-06-15T22%3A51%3A44.9662825Z\u0027\u0022",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c54abf73-306b-11ec-a3a5-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 23:33:17 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "57b6f2bc-5898-11ec-9ffa-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 02:33:07 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": "{\u0022PartitionKey\u0022: \u0022pk83f3898\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022rk83f3898\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022age\u0022: \u0022abc\u0022, \u0022age@odata.type\u0022: \u0022Edm.String\u0022, \u0022sex\u0022: \u0022female\u0022, \u0022sex@odata.type\u0022: \u0022Edm.String\u0022, \u0022sign\u0022: \u0022aquarius\u0022, \u0022sign@odata.type\u0022: \u0022Edm.String\u0022, \u0022birthday\u0022: \u00221991-10-04T00:00:00.000000Z\u0022, \u0022birthday@odata.type\u0022: \u0022Edm.DateTime\u0022}",
       "StatusCode": 412,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Mon, 18 Oct 2021 23:33:10 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:06 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "05adf383-7f74-4166-bd16-acca7fae45a1"
+        "x-ms-request-id": "4100d5b6-8b59-4260-a558-d068e450573e"
       },
       "ResponseBody": [
-        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022UpdateConditionNotSatisfied\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The update condition specified in the request was not satisfied.\\nRequestID:05adf383-7f74-4166-bd16-acca7fae45a1\\n\u0022}}}\r\n"
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022UpdateConditionNotSatisfied\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The update condition specified in the request was not satisfied.\\nRequestID:4100d5b6-8b59-4260-a558-d068e450573e\\n\u0022}}}\r\n"
       ]
     },
     {
-      "RequestUri": "https://yalltbtestsprim.table.cosmos.azure.com/Tables",
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 18 Oct 2021 23:33:17 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c54ead86-306b-11ec-ae8a-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 23:33:17 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:07 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "57becb06-5898-11ec-8ded-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 02:33:07 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 18 Oct 2021 23:33:10 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:06 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "607dab24-63ec-4a23-b20e-2ab20021d691"
+        "x-ms-request-id": "095b3209-103b-4306-918e-3c5c012f28a5"
       },
       "ResponseBody": {
         "value": [
@@ -139,28 +139,28 @@
             "TableName": "uttable83f3898"
           }
         ],
-        "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/$metadata#Tables"
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables"
       }
     },
     {
-      "RequestUri": "https://yalltbtestsprim.table.cosmos.azure.com/Tables(\u0027uttable83f3898\u0027)",
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttable83f3898\u0027)",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "Date": "Mon, 18 Oct 2021 23:33:17 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c5513959-306b-11ec-97bd-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 23:33:17 GMT",
+        "Date": "Thu, 09 Dec 2021 02:33:07 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "57c416d4-5898-11ec-82e9-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 02:33:07 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Mon, 18 Oct 2021 23:33:11 GMT",
-        "x-ms-request-id": "4a828a81-6b86-45d1-9b98-b7b611a45db3"
+        "Date": "Thu, 09 Dec 2021 02:33:06 GMT",
+        "x-ms-request-id": "16603da5-9aea-453f-8914-04c92fd51eae"
       },
       "ResponseBody": null
     }

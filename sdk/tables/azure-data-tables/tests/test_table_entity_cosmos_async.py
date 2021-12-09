@@ -20,9 +20,9 @@ from azure.data.tables import (
     UpdateMode,
     generate_table_sas,
     TableSasPermissions,
-    TableAccessPolicy,
 )
 from azure.data.tables.aio import TableServiceClient
+from azure.data.tables._common_conversion import TZ_UTC
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -1836,7 +1836,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         entity = {
             'PartitionKey': partition,
             'RowKey': row,
-            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
         }
         try:
             await self.table.create_entity(entity)
@@ -1847,7 +1847,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
         
-            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
             await self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = await self.table.get_entity(partition, row)
 

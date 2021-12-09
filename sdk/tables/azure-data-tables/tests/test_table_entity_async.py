@@ -33,6 +33,7 @@ from azure.data.tables import (
     EdmType
 )
 from azure.data.tables.aio import TableServiceClient
+from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
@@ -2003,7 +2004,7 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
         entity = {
             'PartitionKey': partition,
             'RowKey': row,
-            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
         }
         try:
             await self.table.create_entity(entity)
@@ -2014,7 +2015,7 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
 
-            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
             await self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = await self.table.get_entity(partition, row)
 

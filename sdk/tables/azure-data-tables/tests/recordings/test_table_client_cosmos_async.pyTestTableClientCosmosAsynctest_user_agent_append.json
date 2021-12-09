@@ -1,30 +1,30 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://yalltbtestsprim.table.cosmos.azure.com/Tables",
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 18 Oct 2021 22:59:54 GMT",
+        "Date": "Thu, 09 Dec 2021 00:54:37 GMT",
         "User-Agent": "customer_user_agent",
-        "x-ms-client-request-id": "1bcaff2f-3067-11ec-8d0a-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 22:59:54 GMT",
+        "x-ms-client-request-id": "953657b8-588a-11ec-8bfc-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:54:37 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 18 Oct 2021 22:59:48 GMT",
+        "Date": "Thu, 09 Dec 2021 00:54:36 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "1b8760d2-fbbc-464e-aaa1-5117fc6843a8"
+        "x-ms-request-id": "541df477-81b9-49cc-9a8b-0429d0b5e900"
       },
       "ResponseBody": {
         "value": [],
-        "odata.metadata": "https://yalltbtestsprim.table.cosmos.azure.com/$metadata#Tables"
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables"
       }
     }
   ],

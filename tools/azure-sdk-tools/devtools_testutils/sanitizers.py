@@ -7,6 +7,7 @@ import requests
 from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
+from .helpers import is_live_and_not_recording
 from .proxy_testcase import get_recording_id
 
 if TYPE_CHECKING:
@@ -192,9 +193,15 @@ def _send_matcher_request(matcher, headers):
     # type: (str, Dict) -> None
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
     :param str matcher: The name of the matcher to set.
     :param dict headers: Any matcher headers, as a dictionary.
     """
+
+    if is_live_and_not_recording():
+        return
 
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
@@ -208,9 +215,15 @@ def _send_sanitizer_request(sanitizer, parameters):
     # type: (str, Dict) -> None
     """Sends a POST request to the test proxy endpoint to register the specified sanitizer.
 
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
     :param str sanitizer: The name of the sanitizer to add.
     :param dict parameters: The sanitizer constructor parameters, as a dictionary.
     """
+
+    if is_live_and_not_recording():
+        return
 
     requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),

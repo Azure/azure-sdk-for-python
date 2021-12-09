@@ -9,7 +9,7 @@ from devtools_testutils import PowerShellPreparer, is_live
 CosmosPreparer = functools.partial(
     PowerShellPreparer,
     "tables",
-    tables_cosmos_account_name="fake_cosmos_account",
+    tables_cosmos_account_name="fakecosmosaccount",
     tables_primary_cosmos_account_key="fakecosmosaccountkey",
 )
 

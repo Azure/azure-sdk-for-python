@@ -56,8 +56,8 @@ def get_image_tag():
         while tail != "sdk":
             head, tail = os.path.split(head)
 
-        pwsh_script_location_from_cwd = os.path.abspath(os.path.join(head, pwsh_script_location))
-        with open(pwsh_script_location_from_cwd, "r") as f:
+        pwsh_script_location_from_root = os.path.abspath(os.path.join(head, pwsh_script_location))
+        with open(pwsh_script_location_from_root, "r") as f:
             image_tag = parse_tag(f)
 
     return image_tag
@@ -167,7 +167,9 @@ def stop_test_proxy():
 @pytest.fixture(scope="session")
 def test_proxy():
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
-    if not is_live_and_not_recording():
+    if is_live_and_not_recording():
+        yield
+    else:
         start_test_proxy()
         # Everything before this yield will be run before fixtures that invoke this one are run
         # Everything after it will be run after invoking fixtures are done executing

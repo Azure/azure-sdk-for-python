@@ -26,7 +26,7 @@
 import sys
 
 import pytest
-from devtools_testutils import add_general_regex_sanitizer
+from devtools_testutils import add_general_regex_sanitizer, test_proxy
 
 # fixture needs to be visible from conftest
 
@@ -36,8 +36,16 @@ if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers():
+def add_sanitizers(test_proxy):
+    # sanitizes table/cosmos account names in URLs
     add_general_regex_sanitizer(
         value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)"
+        regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.(?:cosmos|core)\\."
+              "(?:azure|windows)\\.(?:com|net))",
+    )
+    # sanitizes random UUIDs that are sent in batch request headers and bodies
+    add_general_regex_sanitizer(
+        value="00000000-0000-0000-0000-000000000000",
+        regex="batch[a-z]*_([0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b)",
+        group_for_replace="1",
     )

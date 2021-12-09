@@ -20,12 +20,14 @@ except:
 
 import subprocess
 
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from .helpers import is_live
+from .helpers import is_live, is_live_and_not_recording
 from .config import PROXY_URL
 
 if TYPE_CHECKING:
@@ -162,7 +164,7 @@ def recorded_by_proxy(test_func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
-        if is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
+        if is_live_and_not_recording():
             return test_func(*args, **trimmed_kwargs)
 
         test_id = get_test_id()
@@ -186,7 +188,12 @@ def recorded_by_proxy(test_func):
                 "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
                 "`variables` parameter to make use of recorded test variables."
             )
+        try:
             test_output = test_func(*args, **trimmed_kwargs)
+        except ResourceNotFoundError as error:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
+            raise error_with_message
         finally:
             RequestsTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)

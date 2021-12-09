@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from ..helpers import is_live
+from ..helpers import is_live_and_not_recording
 from ..proxy_testcase import (
     get_test_id,
     start_record_or_playback,
@@ -40,7 +40,7 @@ def recorded_by_proxy_async(test_func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
-        if is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
+        if is_live_and_not_recording():
             return await test_func(*args, **trimmed_kwargs)
 
         test_id = get_test_id()

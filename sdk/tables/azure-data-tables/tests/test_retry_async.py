@@ -113,6 +113,7 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert 'Timeout on reading' in str(error.value), 'Expected socket timeout but got different exception.'
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 
