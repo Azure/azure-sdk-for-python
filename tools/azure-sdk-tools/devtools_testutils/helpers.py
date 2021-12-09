@@ -3,6 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from azure_devtools.scenario_tests.config import TestConfig
+
+
+def is_live():
+    """A module version of is_live, that could be used in pytest marker."""
+    if not hasattr(is_live, "_cache"):
+        is_live._cache = TestConfig().record_mode
+    return is_live._cache
+
+
 class RetryCounter(object):
     def __init__(self):
         self.count = 0

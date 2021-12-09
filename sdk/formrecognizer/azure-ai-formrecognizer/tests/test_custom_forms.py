@@ -216,7 +216,7 @@ class TestCustomForms(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -224,7 +224,7 @@ class TestCustomForms(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
@@ -232,7 +232,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = fr_client.begin_analyze_document(
+        poller = da_client.begin_analyze_document(
             model.model_id,
             myfile,
             cls=callback
@@ -260,7 +260,7 @@ class TestCustomForms(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
         model = poller.result()
@@ -268,7 +268,7 @@ class TestCustomForms(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
@@ -276,7 +276,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = fr_client.begin_analyze_document(
+        poller = da_client.begin_analyze_document(
             model.model_id,
             myfile,
             cls=callback
@@ -409,7 +409,7 @@ class TestCustomForms(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
@@ -420,12 +420,12 @@ class TestCustomForms(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._deserialize(AnalyzeResultOperation, raw_response)
+            analyze_result = da_client._deserialize(AnalyzeResultOperation, raw_response)
             document = AnalyzeResult._from_generated(analyze_result.analyze_result)
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = fr_client.begin_analyze_document(
+        poller = da_client.begin_analyze_document(
             model.model_id,
             myfile,
             cls=callback
@@ -453,7 +453,7 @@ class TestCustomForms(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -461,7 +461,7 @@ class TestCustomForms(FormRecognizerTest):
         build_poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = build_poller.result()
 
-        poller = fr_client.begin_analyze_document(model.model_id, myfile, pages="1")
+        poller = da_client.begin_analyze_document(model.model_id, myfile, pages="1")
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
@@ -470,7 +470,7 @@ class TestCustomForms(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_document_analysis_client()
+        da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -478,7 +478,7 @@ class TestCustomForms(FormRecognizerTest):
         build_polling = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = build_polling.result()
 
-        poller = fr_client.begin_analyze_document(
+        poller = da_client.begin_analyze_document(
             model.model_id,
             myfile,
         )
