@@ -16,34 +16,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\"\
-        :{\"positive\":0.15,\"neutral\":0.81,\"negative\":0.04},\"sentences\":[{\"\
-        sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\"\
-        :0.81,\"negative\":0.04},\"offset\":0,\"length\":41,\"text\":\"I should take\
-        \ my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"4\",\"sentiment\"\
-        :\"neutral\",\"confidenceScores\":{\"positive\":0.38,\"neutral\":0.48,\"negative\"\
-        :0.14},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"\
-        positive\":0.38,\"neutral\":0.48,\"negative\":0.14},\"offset\":0,\"length\"\
-        :39,\"text\":\"Este es un document escrito en Espa\xF1ol.\"}],\"warnings\"\
-        :[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\"\
-        :0.15,\"neutral\":0.79,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"\
-        neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.79,\"negative\"\
-        :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
-        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
+      string: "{\"documents\":[{\"id\":\"1\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.81,\"negative\":0.04},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.81,\"negative\":0.04},\"offset\":0,\"length\":41,\"text\":\"I
+        should take my cat to the veterinarian.\"}],\"warnings\":[]},{\"id\":\"4\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.38,\"neutral\":0.48,\"negative\":0.14},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.38,\"neutral\":0.48,\"negative\":0.14},\"offset\":0,\"length\":39,\"text\":\"Este
+        es un document escrito en Espa\xF1ol.\"}],\"warnings\":[]},{\"id\":\"3\",\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.79,\"negative\":0.06},\"sentences\":[{\"sentiment\":\"neutral\",\"confidenceScores\":{\"positive\":0.15,\"neutral\":0.79,\"negative\":0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
     headers:
       apim-request-id:
-      - 40a00784-a226-494e-aad4-1fed404259ac
+      - 72d8f3b2-4056-46d9-848e-886750b8eeff
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 06 Oct 2021 21:03:47 GMT
+      - Wed, 08 Dec 2021 22:57:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -51,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '111'
+      - '130'
     status:
       code: 200
       message: OK
