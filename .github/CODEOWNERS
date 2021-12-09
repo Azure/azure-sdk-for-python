@@ -68,6 +68,9 @@
 # PRLabel: %Cosmos
 /sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh 
 
+# ServiceLabel: %Cosmos %Service Attention
+#/<NotInRepo>/                                                       @simorenoh @gahl-levy
+
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
@@ -303,9 +306,6 @@
 
 # ServiceLabel: %Container Service %Service Attention
 #/<NotInRepo>/          @qike-ms @jwilder @thomas1206 @seanmck
-
-# ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/          @simorenoh @gahl-levy
 
 # ServiceLabel: %Customer Insights %Service Attention
 #/<NotInRepo>/          @shefymk
