@@ -4,6 +4,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
+
 from flask import (
     Response,
     Blueprint,
@@ -28,6 +30,11 @@ def stream_json_error():
 def stream_compressed_header_error():
     yield b'test'
 
+def stream_decompress():
+    file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test_with_header.tar.gz"))
+    with open(file_path, "rb") as fd:
+        yield fd.read()
+
 @streams_api.route('/basic', methods=['GET'])
 def basic():
     return Response(streaming_body(), status=200)
@@ -40,7 +47,16 @@ def iterable():
 def error():
     return Response(stream_json_error(), status=400)
 
+@streams_api.route('/string', methods=['GET'])
+def string():
+    return Response(
+        "test", status=200, mimetype="text/plain"
+    )
+
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
-    
+
+@streams_api.route('/decompress', methods=['GET'])
+def decompress():
+    return Response(stream_decompress(), status=200)
