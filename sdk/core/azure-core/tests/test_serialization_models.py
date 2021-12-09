@@ -470,10 +470,10 @@ def test_list_of_tuple_deserialization_model():
 
 class RecursiveModel(Model):
     name: str = rest_field()
-    list_of_me: List["RecursiveModel"] = rest_field(name="listOfMe")
-    dict_of_me: Dict[str, "RecursiveModel"] = rest_field(name="dictOfMe")
-    dict_of_list_of_me: Dict[str, List["RecursiveModel"]] = rest_field(name="dictOfListOfMe")
-    list_of_dict_of_me: List[Dict[str, "RecursiveModel"]] = rest_field(name="listOfDictOfMe")
+    list_of_me: Optional[List["RecursiveModel"]] = rest_field(name="listOfMe")
+    dict_of_me: Optional[Dict[str, "RecursiveModel"]] = rest_field(name="dictOfMe")
+    dict_of_list_of_me: Optional[Dict[str, List["RecursiveModel"]]] = rest_field(name="dictOfListOfMe")
+    list_of_dict_of_me: Optional[List[Dict[str, "RecursiveModel"]]] = rest_field(name="listOfDictOfMe")
 
 def test_model_recursion_complex():
 

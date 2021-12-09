@@ -4,13 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import sys
 import logging
 import base64
 import re
 import isodate
 from json import JSONEncoder
-from typing import Any, Callable, Dict, Type, Union, cast, Literal, Optional, ForwardRef
+from typing import Any, Callable, Dict, List, Union, cast, Literal, Optional, ForwardRef
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
@@ -215,65 +216,6 @@ def _get_model(module_name: str, model_name: str):
         return model_name
     return models[model_name]
 
-def _deserialize(obj: Any, deserialization_type, module_name: str) -> Any:
-    try:
-        if deserialization_type.__origin__ == Literal:
-            return obj
-    except AttributeError:
-        pass
-
-    try:
-        # right now, assuming we don't have unions (since we're getting rid of the only)
-        # union we used to have in msrest models, which was union of str and enum
-        if any(a for a in deserialization_type.__args__ if a == type(None)):
-            if obj is None:
-                return obj
-            return _deserialize(
-                obj,
-                next(a for  a in deserialization_type.__args__ if a != type(None)),
-                module_name
-            )
-    except (AttributeError):
-        pass
-    if isinstance(deserialization_type, str) or type(deserialization_type) == ForwardRef:
-        try:
-            model_name = deserialization_type.__forward_arg__
-        except AttributeError:
-            model_name = deserialization_type
-        deserialization_type = _get_model(module_name, model_name)
-
-    try:
-        # i'm a dict-like thing
-        return {
-            _deserialize(k, deserialization_type.__args__[0], module_name): _deserialize(v, deserialization_type.__args__[1], module_name)
-            for k, v in obj.items()
-        }
-    except (AttributeError, IndexError):
-        pass
-
-    if type(obj) in [list, set, tuple]:
-        try:
-            if len(deserialization_type.__args__) > 1:
-                if len(deserialization_type.__args__) > len(obj):
-                    raise ValueError("There are more type hints than elements in the iterable.")
-                if len(deserialization_type.__args__) < len(obj):
-                    raise ValueError("There are more type hints than elements in the iterable.")
-                return type(obj)(
-                    _deserialize(entry, dt, module_name)
-                    for entry, dt in zip(obj, deserialization_type.__args__)
-                )
-            return type(obj)(
-                _deserialize(entry, deserialization_type.__args__[0], module_name)
-                for entry in obj
-            )
-        except (TypeError, IndexError, AttributeError, SyntaxError):
-            pass
-
-    try:
-        return deserialization_type(**obj)
-    except Exception:
-        return _DESERIALIZE_MAPPING.get(deserialization_type, lambda x: x)(obj)
-
 class Model(dict):
 
     def __init__(self, **kwargs):
@@ -301,7 +243,7 @@ class Model(dict):
             rest_field._module = cls.__module__
             if rest_field._type:
                 continue
-            rest_field._type = cls.__annotations__.get(attr, lambda x: x)
+            rest_field._type = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
             if not rest_field._rest_name:
                 rest_field._rest_name = attr
         cls._attr_to_rest_name = {
@@ -317,13 +259,143 @@ class _RestField:
         self._module = None
 
     def __get__(self, obj: Model, type=None):
-        return _deserialize(obj.__getitem__(self._rest_name), self._type, self._module)
+        return self._type(obj.__getitem__(self._rest_name))
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
 
     def __delete__(self, obj) -> None:
         obj.__delitem__(self._rest_name)
+
+    def _get_deserialize_callable_from_annotation(self, annotation: Any) -> Callable[[Any], Any]:
+        default: Callable = lambda x: x
+        if not annotation:
+            return default
+
+        # is it a literal?
+        try:
+            if annotation.__origin__ == Literal:
+                return default
+        except AttributeError:
+            pass
+
+        # is it optional?
+        try:
+            # right now, assuming we don't have unions (since we're getting rid of the only)
+            # union we used to have in msrest models, which was union of str and enum
+            if any(a for a in annotation.__args__ if a == type(None)):
+
+                if_obj_deserializer = self._get_deserialize_callable_from_annotation(
+                    next(a for  a in annotation.__args__ if a != type(None)),
+                )
+                def _deserialize_with_optional(if_obj_deserializer: Callable, obj):
+                    if obj is None:
+                        return obj
+                    return if_obj_deserializer(obj)
+
+                return functools.partial(_deserialize_with_optional, if_obj_deserializer)
+        except (AttributeError):
+            pass
+
+
+        # is it a forward ref / in quotes?
+        if isinstance(annotation, str) or type(annotation) == ForwardRef:
+            try:
+                model_name = annotation.__forward_arg__
+            except AttributeError:
+                model_name = annotation
+            if self._module is not None:
+                annotation = _get_model(self._module, model_name)
+
+        try:
+            if annotation._name == "Dict":
+                key_deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[0])
+                value_deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[1])
+                def _deserialize_dict(
+                    key_deserializer: Callable,
+                    value_deserializer: Callable,
+                    obj: Dict[Any, Any]
+                ):
+                    return {
+                        key_deserializer(k): value_deserializer(v)
+                        for k, v in obj.items()
+                    }
+                return functools.partial(
+                    _deserialize_dict,
+                    key_deserializer,
+                    value_deserializer,
+                )
+        except (AttributeError, IndexError):
+            pass
+
+        try:
+            if annotation._name in ["List", "Set", "Tuple"]:
+                obj_type = {
+                    "List": list,
+                    "Set": set,
+                    "Tuple": tuple,
+                }[annotation._name]
+                if len(annotation.__args__) > 1:
+                    def _deserialize_sequence(
+                        obj_type: Callable,
+                        entry_deserializers: List[Callable],
+                        obj
+                    ):
+                        return obj_type(
+                            deserializer(entry)
+                            for entry, deserializer in zip(obj, entry_deserializers)
+                        )
+                    entry_deserializers = [
+                        self._get_deserialize_callable_from_annotation(dt)
+                        for dt in annotation.__args__
+                    ]
+                    return functools.partial(
+                        _deserialize_sequence,
+                        obj_type,
+                        entry_deserializers
+                    )
+                deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[0])
+                def _deserialize_sequence(
+                    obj_type: Callable,
+                    deserializer: Callable,
+                    obj,
+                ):
+                    return obj_type(
+                        deserializer(entry) for entry in obj
+                    )
+                return functools.partial(
+                    _deserialize_sequence,
+                    obj_type,
+                    deserializer
+                )
+        except (TypeError, IndexError, AttributeError, SyntaxError):
+            pass
+
+        def _deserialize(
+            annotation,
+            deserializer_from_mapping,
+            obj,
+        ):
+            try:
+                return annotation(**obj)
+            except Exception:
+                pass
+
+            try:
+                return annotation(*obj)
+            except Exception:
+                pass
+
+            try:
+                return annotation(obj)
+            except Exception:
+                pass
+            return deserializer_from_mapping(obj)
+        return functools.partial(
+            _deserialize,
+            annotation,
+            _DESERIALIZE_MAPPING.get(annotation, lambda x: x)
+        )
 
 def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
     return _RestField(name=name, type=type)
