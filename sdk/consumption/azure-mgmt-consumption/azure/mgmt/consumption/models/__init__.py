@@ -8,6 +8,7 @@
 
 try:
     from ._models_py3 import Amount
+    from ._models_py3 import AmountWithExchangeRate
     from ._models_py3 import Balance
     from ._models_py3 import BalancePropertiesAdjustmentDetailsItem
     from ._models_py3 import BalancePropertiesNewPurchasesDetailsItem
@@ -22,16 +23,20 @@ try:
     from ._models_py3 import CreditBalanceSummary
     from ._models_py3 import CreditSummary
     from ._models_py3 import CurrentSpend
+    from ._models_py3 import DownloadProperties
     from ._models_py3 import ErrorDetails
     from ._models_py3 import ErrorResponse
     from ._models_py3 import EventSummary
     from ._models_py3 import Events
-    from ._models_py3 import Forecast
-    from ._models_py3 import ForecastPropertiesConfidenceLevelsItem
-    from ._models_py3 import ForecastsListResult
+    from ._models_py3 import ForecastSpend
+    from ._models_py3 import HighCasedErrorDetails
+    from ._models_py3 import HighCasedErrorResponse
     from ._models_py3 import LegacyChargeSummary
     from ._models_py3 import LegacyReservationRecommendation
+    from ._models_py3 import LegacyReservationRecommendationProperties
     from ._models_py3 import LegacyReservationTransaction
+    from ._models_py3 import LegacySharedScopeReservationRecommendationProperties
+    from ._models_py3 import LegacySingleScopeReservationRecommendationProperties
     from ._models_py3 import LegacyUsageDetail
     from ._models_py3 import LotSummary
     from ._models_py3 import Lots
@@ -52,6 +57,7 @@ try:
     from ._models_py3 import PriceSheetProperties
     from ._models_py3 import PriceSheetResult
     from ._models_py3 import ProxyResource
+    from ._models_py3 import Reseller
     from ._models_py3 import ReservationDetail
     from ._models_py3 import ReservationDetailsListResult
     from ._models_py3 import ReservationRecommendation
@@ -75,6 +81,7 @@ try:
     from ._models_py3 import UsageDetailsListResult
 except (SyntaxError, ImportError):
     from ._models import Amount  # type: ignore
+    from ._models import AmountWithExchangeRate  # type: ignore
     from ._models import Balance  # type: ignore
     from ._models import BalancePropertiesAdjustmentDetailsItem  # type: ignore
     from ._models import BalancePropertiesNewPurchasesDetailsItem  # type: ignore
@@ -89,16 +96,20 @@ except (SyntaxError, ImportError):
     from ._models import CreditBalanceSummary  # type: ignore
     from ._models import CreditSummary  # type: ignore
     from ._models import CurrentSpend  # type: ignore
+    from ._models import DownloadProperties  # type: ignore
     from ._models import ErrorDetails  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import EventSummary  # type: ignore
     from ._models import Events  # type: ignore
-    from ._models import Forecast  # type: ignore
-    from ._models import ForecastPropertiesConfidenceLevelsItem  # type: ignore
-    from ._models import ForecastsListResult  # type: ignore
+    from ._models import ForecastSpend  # type: ignore
+    from ._models import HighCasedErrorDetails  # type: ignore
+    from ._models import HighCasedErrorResponse  # type: ignore
     from ._models import LegacyChargeSummary  # type: ignore
     from ._models import LegacyReservationRecommendation  # type: ignore
+    from ._models import LegacyReservationRecommendationProperties  # type: ignore
     from ._models import LegacyReservationTransaction  # type: ignore
+    from ._models import LegacySharedScopeReservationRecommendationProperties  # type: ignore
+    from ._models import LegacySingleScopeReservationRecommendationProperties  # type: ignore
     from ._models import LegacyUsageDetail  # type: ignore
     from ._models import LotSummary  # type: ignore
     from ._models import Lots  # type: ignore
@@ -119,6 +130,7 @@ except (SyntaxError, ImportError):
     from ._models import PriceSheetProperties  # type: ignore
     from ._models import PriceSheetResult  # type: ignore
     from ._models import ProxyResource  # type: ignore
+    from ._models import Reseller  # type: ignore
     from ._models import ReservationDetail  # type: ignore
     from ._models import ReservationDetailsListResult  # type: ignore
     from ._models import ReservationRecommendation  # type: ignore
@@ -143,20 +155,20 @@ except (SyntaxError, ImportError):
 
 from ._consumption_management_client_enums import (
     BillingFrequency,
-    Bound,
     BudgetOperatorType,
     CategoryType,
     ChargeSummaryKind,
-    ChargeType,
+    CultureCode,
     Datagrain,
     EventType,
-    Grain,
     LookBackPeriod,
     LotSource,
     Metrictype,
     OperatorType,
+    PricingModelType,
     ReservationRecommendationKind,
     Scope,
+    Status,
     Term,
     ThresholdType,
     TimeGrainType,
@@ -165,6 +177,7 @@ from ._consumption_management_client_enums import (
 
 __all__ = [
     'Amount',
+    'AmountWithExchangeRate',
     'Balance',
     'BalancePropertiesAdjustmentDetailsItem',
     'BalancePropertiesNewPurchasesDetailsItem',
@@ -179,16 +192,20 @@ __all__ = [
     'CreditBalanceSummary',
     'CreditSummary',
     'CurrentSpend',
+    'DownloadProperties',
     'ErrorDetails',
     'ErrorResponse',
     'EventSummary',
     'Events',
-    'Forecast',
-    'ForecastPropertiesConfidenceLevelsItem',
-    'ForecastsListResult',
+    'ForecastSpend',
+    'HighCasedErrorDetails',
+    'HighCasedErrorResponse',
     'LegacyChargeSummary',
     'LegacyReservationRecommendation',
+    'LegacyReservationRecommendationProperties',
     'LegacyReservationTransaction',
+    'LegacySharedScopeReservationRecommendationProperties',
+    'LegacySingleScopeReservationRecommendationProperties',
     'LegacyUsageDetail',
     'LotSummary',
     'Lots',
@@ -209,6 +226,7 @@ __all__ = [
     'PriceSheetProperties',
     'PriceSheetResult',
     'ProxyResource',
+    'Reseller',
     'ReservationDetail',
     'ReservationDetailsListResult',
     'ReservationRecommendation',
@@ -231,20 +249,20 @@ __all__ = [
     'UsageDetail',
     'UsageDetailsListResult',
     'BillingFrequency',
-    'Bound',
     'BudgetOperatorType',
     'CategoryType',
     'ChargeSummaryKind',
-    'ChargeType',
+    'CultureCode',
     'Datagrain',
     'EventType',
-    'Grain',
     'LookBackPeriod',
     'LotSource',
     'Metrictype',
     'OperatorType',
+    'PricingModelType',
     'ReservationRecommendationKind',
     'Scope',
+    'Status',
     'Term',
     'ThresholdType',
     'TimeGrainType',
