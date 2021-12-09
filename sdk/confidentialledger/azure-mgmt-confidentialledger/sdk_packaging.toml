@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-confidentialledger"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Confidentialledger Management"
+package_pprint_name = "Confidential Ledger Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
