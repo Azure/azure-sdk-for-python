@@ -22,14 +22,13 @@ import time
 import unittest
 
 import azure.mgmt.automation
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtAutomationClientTest(AzureMgmtTestCase):
+class TestMgmtAutomationClient(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtAutomationClientTest, self).setUp()
+    def setup_method(self, method):
         self.re_replacer.register_pattern_pair('"value": ".{64}"', '"value": "FakeValue"')
         self.re_replacer.register_pattern_pair('"Value":".{88}"', '"Value":"FakeValue"')
         self.re_replacer.register_pattern_pair(
@@ -41,6 +40,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_automation(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
