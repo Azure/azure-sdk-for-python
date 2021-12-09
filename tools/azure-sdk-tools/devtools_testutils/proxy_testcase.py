@@ -18,6 +18,7 @@ except:
     # py2
     import urlparse as url_parse
 
+import pytest
 import subprocess
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -152,6 +153,8 @@ def recorded_by_proxy(test_func):
     """
 
     def record_wrap(*args, **kwargs):
+        if sys.version_info.major == 2 and not is_live():
+            pytest.skip("Playback testing is incompatible with the azure-sdk-tools test proxy on Python 2")
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
