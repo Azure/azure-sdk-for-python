@@ -64,8 +64,8 @@ class Address(msrest.serialization.Model):
      locality that groups a number of addressable objects for addressing purposes, without being an
      administrative unit. This field is used to build the ``freeformAddress`` property.
     :vartype local_name: str
-    :ivar bounding_box: Bounding box coordinates.
-    :vartype bounding_box: object
+    :ivar bounding_box: The bounding box of the location.
+    :vartype bounding_box: ~azure.maps.search.models.BoundingBoxCompassNotation
     """
 
     _validation = {
@@ -113,7 +113,7 @@ class Address(msrest.serialization.Model):
         'freeform_address': {'key': 'freeformAddress', 'type': 'str'},
         'country_subdivision_name': {'key': 'countrySubdivisionName', 'type': 'str'},
         'local_name': {'key': 'localName', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': 'object'},
+        'bounding_box': {'key': 'boundingBox', 'type': 'BoundingBoxCompassNotation'},
     }
 
     def __init__(
@@ -330,6 +330,44 @@ class BoundingBox(msrest.serialization.Model):
         super(BoundingBox, self).__init__(**kwargs)
         self.top_left = top_left
         self.bottom_right = bottom_right
+
+
+class BoundingBoxCompassNotation(msrest.serialization.Model):
+    """The bounding box of the location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar north_east: North-east (top-left) latitude,longitude coordinate of the bounding box as
+     comma-separated floats.
+    :vartype north_east: str
+    :ivar south_west: South-west (bottom-right) latitude,longitude coordinate of the bounding box
+     as comma-separated floats.
+    :vartype south_west: str
+    :ivar entity: Entity type source of the bounding box. For reverse-geocoding this is always
+     equal to position. Possible values include: "position".
+    :vartype entity: str or ~azure.maps.search.models.Entity
+    """
+
+    _validation = {
+        'north_east': {'readonly': True},
+        'south_west': {'readonly': True},
+        'entity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'north_east': {'key': 'northEast', 'type': 'str'},
+        'south_west': {'key': 'southWest', 'type': 'str'},
+        'entity': {'key': 'entity', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BoundingBoxCompassNotation, self).__init__(**kwargs)
+        self.north_east = None
+        self.south_west = None
+        self.entity = None
 
 
 class BrandName(msrest.serialization.Model):

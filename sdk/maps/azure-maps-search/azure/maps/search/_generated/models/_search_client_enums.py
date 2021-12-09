@@ -29,7 +29,8 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 class ElectricVehicleConnector(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     STANDARD_HOUSEHOLD_COUNTRY_SPECIFIC = "StandardHouseholdCountrySpecific"  #: These are the standard household connectors for a certain region. They are all AC single phase and the standard Voltage and standard Amperage.
-    #See also: `Plug & socket types - World Standards <https://www.worldstandards.eu/electricity/plugs-and-sockets>`_.
+
+    # See also: `Plug & socket types - World Standards <https://www.worldstandards.eu/electricity/plugs-and-sockets>`_.
     IEC62196_TYPE1 = "IEC62196Type1"  #: Type 1 connector as defined in the IEC 62196-2 standard. Also called Yazaki after the original manufacturer or SAE J1772 after the standard that first published it. Mostly used in combination with 120V single phase or up to 240V single phase infrastructure.
     IEC62196_TYPE1_CCS = "IEC62196Type1CCS"  #: Type 1 based combo connector as defined in the IEC 62196-3 standard. The connector is based on the Type 1 connector – as defined in the IEC 62196-2 standard – with two additional direct current (DC) contacts to allow DC fast charging.
     IEC62196_TYPE2_CABLE_ATTACHED = "IEC62196Type2CableAttached"  #: Type 2 connector as defined in the IEC 62196-2 standard. Provided as a cable and plug attached to the charging point.
@@ -40,6 +41,12 @@ class ElectricVehicleConnector(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     IEC60309_AC1_PHASE_BLUE = "IEC60309AC1PhaseBlue"  #: Industrial Blue connector is a connector defined in the IEC 60309 standard. It is sometime referred to as by some combination of the standard, the color and the fact that is a single phase connector. The connector usually has the "P+N+E, 6h" configuration.
     IEC60309_DC_WHITE = "IEC60309DCWhite"  #: Industrial White connector is a DC connector defined in the IEC 60309 standard.
     TESLA = "Tesla"  #: The Tesla connector is the regionally specific Tesla Supercharger connector. I.e. it refers to either Tesla's proprietary connector, sometimes referred to as Tesla Port mostly limited to North America or the modified Type 2 (DC over Type 2) in Europe.
+
+class Entity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Entity type source of the bounding box. For reverse-geocoding this is always equal to position.
+    """
+
+    POSITION = "position"  #: Position entity.
 
 class EntryPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of entry point. Value can be either *main* or *minor*.

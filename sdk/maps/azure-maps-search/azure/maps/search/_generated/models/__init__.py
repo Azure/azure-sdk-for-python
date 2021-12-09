@@ -15,6 +15,7 @@ try:
     from ._models_py3 import BatchResultItem
     from ._models_py3 import BatchResultSummary
     from ._models_py3 import BoundingBox
+    from ._models_py3 import BoundingBoxCompassNotation
     from ._models_py3 import BrandName
     from ._models_py3 import Classification
     from ._models_py3 import ClassificationName
@@ -79,6 +80,7 @@ except (SyntaxError, ImportError):
     from ._models import BatchResultItem  # type: ignore
     from ._models import BatchResultSummary  # type: ignore
     from ._models import BoundingBox  # type: ignore
+    from ._models import BoundingBoxCompassNotation  # type: ignore
     from ._models import BrandName  # type: ignore
     from ._models import Classification  # type: ignore
     from ._models import ClassificationName  # type: ignore
@@ -137,6 +139,7 @@ except (SyntaxError, ImportError):
 
 from ._search_client_enums import (
     ElectricVehicleConnector,
+    Entity,
     EntryPointType,
     GeoJsonObjectType,
     GeographicEntityType,
@@ -161,6 +164,7 @@ __all__ = [
     'BatchResultItem',
     'BatchResultSummary',
     'BoundingBox',
+    'BoundingBoxCompassNotation',
     'BrandName',
     'Classification',
     'ClassificationName',
@@ -217,6 +221,7 @@ __all__ = [
     'SearchSummary',
     'Viewport',
     'ElectricVehicleConnector',
+    'Entity',
     'EntryPointType',
     'GeoJsonObjectType',
     'GeographicEntityType',

@@ -3,8 +3,7 @@ from .._generated.models import (
     ReverseSearchCrossStreetAddressResult,
     BatchRequest,
     BatchResultSummary,
-    Polygon,
-    ReverseSearchAddressBatchItem
+    Polygon
 )
 
 from ._models import (
@@ -35,7 +34,6 @@ __all__ = [
     'EntryPoint',
     'Address',
     'SearchAddressResultItem',
-    'ReverseSearchAddressBatchItem',
     'ReverseSearchAddressResultItem',
     'SearchSummary',
     'SearchAddressResult',

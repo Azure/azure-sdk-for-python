@@ -13,7 +13,7 @@ from .models import LatLon, SearchAddressResult, ReverseSearchAddressResult, Rev
 # from .utils import get_authentication_policy, get_headers_policy
 
 if TYPE_CHECKING:
-    from typing import Any, List, Optional, Object
+    from typing import Any, List, Union, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
     from .models import LatLon, StructuredAddress, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
@@ -67,7 +67,7 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        coordinates=None, # type: Optional["LatLon"]
+        coordinates=None, # type: Union[str, "LatLon"]
         country_filter=None, # type Optional[list[str]]
         **kwargs  # type: Any
     ):
@@ -93,8 +93,8 @@ class SearchClient(object):
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :type country_filter: list[str]
-        :param coordinates: coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
@@ -193,8 +193,8 @@ class SearchClient(object):
         """**Search Address Reverse Batch API**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/post-search-address-reverse-batch>`_.
 
-        :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :param language: Language in which search results should be returned.
         :type language: str
         :keyword bool include_speed_limit: Boolean. To enable return of the posted speed limit.
@@ -237,8 +237,8 @@ class SearchClient(object):
         """**Reverse Geocode to a Cross Street**
         `Reference Document <https://docs.microsoft.com/en-us/rest/api/maps/search/get-search-address-reverse-cross-street>`_.
 
-        :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword int heading: The directional heading of the vehicle in degrees, for travel along a segment
@@ -405,7 +405,7 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates=None, # type: "LatLon"
+        coordinates=None, # type: Union[str, "LatLon"]
         country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
@@ -431,8 +431,8 @@ class SearchClient(object):
          restrict the result to specific Points of Interest categories. 
         :keyword list[int] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
-        :param coordinates: coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
@@ -486,8 +486,8 @@ class SearchClient(object):
          restrict the result to specific Points of Interest categories. ID order does not matter. 
         :keyword list[str] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
-        :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area, Min value is 1, Max Value is 50000.
         :keyword str language: Language in which search results should be returned. Should be one of
@@ -519,7 +519,7 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates=None, #type: "LatLon"
+        coordinates=None, #type: Union[str, "LatLon"]
         country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
@@ -540,8 +540,8 @@ class SearchClient(object):
          maximum: 100.
         :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
-        :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
          restrict the result to specific Points of Interest categories. 
         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
@@ -588,7 +588,7 @@ class SearchClient(object):
     def search_address(
         self,
         query,  # type: str
-        coordinates=None, # type: "LatLon"
+        coordinates=None, # type: Union[str, "LatLon"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -614,8 +614,8 @@ class SearchClient(object):
          minimum: 0 and maximum: 1900.
         :keyword list[str] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
-        :param coordinates: The applicable coordinates
-        :type coordinates: ~azure.maps.search._models.LatLon
+        :param coordinates: coordinates as LatLon or WKT representation of the point
+        :type coordinates: str or  ~azure.maps.search._models.LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
