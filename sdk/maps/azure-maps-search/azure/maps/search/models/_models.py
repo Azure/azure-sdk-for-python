@@ -11,9 +11,6 @@ class LatLon(object):
         self._lat = lat
         self._lon = lon
 
-    def __transform__(self, **kwargs): # type: (...) -> List[float]
-        return [self._lat, self._lon]
-
     @property
     def lat(self) -> float:
         return self._lat
@@ -30,7 +27,7 @@ class LatLon(object):
         return self._lon
 
     @lon.setter
-    def lon(self, value) -> None:
+    def lon(self, value: float) -> None:
         if not isinstance(value, float):
             raise TypeError(f'lon.setter(): got {type(value).__name__} but expected type is float')
         else:
@@ -54,12 +51,10 @@ class BoundingBox(object):
         self.top_right = top_right if top_right else LatLon(top_left.lat, bottom_right.lon)
         self.bottom_left = bottom_left if bottom_left else LatLon(bottom_right.lat, top_left.lon)
 
-
 class StructuredAddress(object):
 
     def __init__(
         self,
-        *,
         country_code: str,
         cross_street: Optional[str] = None,
         street_number: Optional[str] = None,
@@ -71,7 +66,7 @@ class StructuredAddress(object):
         country_subdivision: Optional[str] = None,
         postal_code: Optional[str] = None
     ):
-        self.country_code = country_code
+        self._country_code = country_code
         self.cross_street = cross_street
         self.street_number = street_number
         self.street_name = street_name
@@ -81,6 +76,116 @@ class StructuredAddress(object):
         self.country_secondary_subdivision = country_secondary_subdivision
         self.country_subdivision = country_subdivision
         self.postal_code = postal_code
+
+    @property
+    def country_code(self) -> str:
+        return self._country_code
+
+    @country_code.setter
+    def country_code(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'country_code.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._country_code = value
+
+    @property
+    def cross_street(self) -> str:
+        return self._cross_street
+
+    @cross_street.setter
+    def cross_street(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'cross_street.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._cross_street = value
+
+    @property
+    def street_number(self) -> str:
+        return self._street_number
+
+    @street_number.setter
+    def street_number(self, value) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'street_number.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._street_number = value
+
+    @property
+    def street_name(self) -> str:
+        return self._street_name
+
+    @street_name.setter
+    def street_name(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'street_name.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._street_name = value
+
+    @property
+    def municipality(self) -> str:
+        return self._municipality
+
+    @municipality.setter
+    def municipality(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'municipality.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._municipality = value
+
+    @property
+    def municipality_subdivision(self) -> str:
+        return self._municipality_subdivision
+
+    @municipality_subdivision.setter
+    def municipality_subdivision(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'municipality_subdivision.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._municipality_subdivision = value
+
+    @property
+    def country_tertiary_subdivision(self) -> str:
+        return self._country_tertiary_subdivision
+
+    @country_tertiary_subdivision.setter
+    def country_tertiary_subdivision(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'country_tertiary_subdivision.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._country_tertiary_subdivision = value
+
+    @property
+    def country_secondary_subdivision(self) -> str:
+        return self._country_secondary_subdivision
+
+    @country_secondary_subdivision.setter
+    def country_secondary_subdivision(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'country_secondary_subdivision.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._country_secondary_subdivision = value
+
+    @property
+    def country_subdivision(self) -> str:
+        return self._country_subdivision
+
+    @country_subdivision.setter
+    def country_subdivision(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'country_subdivision.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._country_subdivision = value
+
+    @property
+    def postal_code(self) -> str:
+        return self._postal_code
+
+    @postal_code.setter
+    def postal_code(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f'postal_code.setter(): got {type(value).__name__} but expected type is string')
+        else:
+            self._postal_code = value
 
 
 class SearchSummary(object):
@@ -260,7 +365,19 @@ class SearchAddressResult(object):
 
 
 class ReverseSearchAddressResultItem(object):
+    """Result object for a Search Address Reverse response.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar address: The address of the result.
+    :vartype address: ~azure.maps.search.models.Address
+    :ivar position: Position property in the form of "latitude,longitude".
+    :vartype position: str
+    :ivar road_use:
+    :vartype road_use: list[str]
+    :ivar match_type: Information on the type of match.
+    :vartype match_type: str or ~azure.maps.search.models.MatchType
+    """
     def __init__(
         self,
         address: Address = None,
@@ -277,7 +394,15 @@ class ReverseSearchAddressResultItem(object):
 
 
 class ReverseSearchAddressResult(object):
+    """This object is returned from a successful Search Address Reverse call.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar summary: Summary object for a Search Address Reverse response.
+    :vartype summary: ~azure.maps.search.models.SearchSummary
+    :ivar addresses: Addresses array.
+    :vartype addresses: list[~azure.maps.search.models.ReverseSearchAddressResultItem]
+    """
     def __init__(
         self,
         summary: SearchSummary = None,
@@ -289,6 +414,15 @@ class ReverseSearchAddressResult(object):
 
 
 class ReverseSearchAddressBatchProcessResult(object):
+    """This object is returned from a successful Search Address Reverse Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar summary: Summary of the results for the batch request.
+    :vartype batch_summary: ~azure.maps.search._generated.models.BatchResultSummary
+    :ivar items: Array containing the batch results.
+    :vartype batch_items: list[~azure.maps.search._generated.models.ReverseSearchAddressBatchItem]
+    """
 
     def __init__(
         self,

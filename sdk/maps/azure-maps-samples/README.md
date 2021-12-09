@@ -12,27 +12,6 @@ urlFragment: maps-service-samples
 
 The following are code samples that show common scenario operations with the Azure Maps Service API client library.
 
-* [alias.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/maps/azure-maps-samples/alias.py) - Azure Maps Alias Samples:
-  * Creates alias
-  * Assign a `creator_data_item` to an alias
-  * Get details of an alias
-  * List aliases
-  * Delete an alias
-
-* [geolocation.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/maps/azure-maps-samples/geolocation.py) - Azure Maps Geolocation Samples:
-  * Get location by ip
-
-* [render.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/maps/azure-maps-samples/render.py) - Azure Maps Render Samples:
-  * Get Copyright Caption
-  * Get Copyright for Tile
-  * Get Copyright for World
-  * Get Copyright from Bounding Box
-  * Get Map Imagery Tile
-  * Get Map State Tile
-  * Get Map Static Image
-  * Get Map Tile for V2
-  * Get Map Tile for V1
-
 * [search.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/maps/azure-maps-samples/search.py) - Azure Maps Search Samples:
   * Get Search Address
   * Get Search Address Reverse

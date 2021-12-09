@@ -39,7 +39,7 @@ class SearchClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._search_client = SearchClientGen(
-            authentication_policy=get_authentication_policy(credential, is_async=True),
+            credential,
             **kwargs
         ).search
 
@@ -53,15 +53,21 @@ class SearchClient(object):
         # type: (...) -> LROPoller["SearchAddressBatchResult"]
         """begin_fuzzy_search_batch
 
-        :param batch_request: BatchRequest
-        :type batch_request: "BatchRequest"
+        :param batch_request: The list of address geocoding queries/requests to process. The list can
+         contain  a max of 10,000 queries and must contain at least 1 query.
+        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
         :return: LROPoller["SearchAddressBatchResult"]
-        :rtype: "LROPoller["SearchAddressBatchResult"]"
+        :returntype: ~azure.core.polling.LROPoller[~azure.maps.search._generated.models.SearchAddressBatchResult]
         """
-        return self._search_client.begin_fuzzy_search_batch(
+        poller = self._search_client.begin_fuzzy_search_batch(
             batch_request,
             **kwargs
         )
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(message=result_properties['error']['message'])
+
+        return poller
 
 
     @distributed_trace_async
@@ -71,6 +77,14 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        """begin_search_address_batch
+
+        :param batch_request: The list of address geocoding queries/requests to process. The list can
+         contain  a max of 10,000 queries and must contain at least 1 query.
+        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
+        :return: LROPoller["SearchAddressBatchResult"]
+        :paramtype: ~azure.core.polling.LROPoller[~azure.maps.search._generated.models.SearchAddressBatchResult]
+        """
         poller =  self._search_client.begin_search_address_batch(
             batch_request,
             **kwargs
@@ -82,6 +96,7 @@ class SearchClient(object):
 
         return poller
 
+
     @distributed_trace_async
     def begin_reverse_search_address_batch(
         self,
@@ -89,7 +104,20 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["ReverseSearchAddressBatchProcessResult"]
-        return self._search_client.begin_reverse_search_address_batch(
+        """begin_reverse_search_address_batch
+
+        :param batch_request: The list of address geocoding queries/requests to process. The list can
+         contain  a max of 10,000 queries and must contain at least 1 query.
+        :type batch_request: ~azure.maps.search._generated.models.BatchRequest
+        :return: LROPoller["ReverseSearchAddressBatchProcessResult"]
+        :paramtype: ~azure.core.polling.LROPoller[~azure.maps.search._generated.models.ReverseSearchAddressBatchProcessResult]
+        """
+        poller =  self._search_client.begin_reverse_search_address_batch(
             batch_request,
             **kwargs
         )
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(message=result_properties['error']['message'])
+
+        return poller
