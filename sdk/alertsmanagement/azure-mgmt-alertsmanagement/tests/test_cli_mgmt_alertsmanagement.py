@@ -19,20 +19,20 @@
 import unittest
 
 import azure.mgmt.alertsmanagement
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtAlertsTest(AzureMgmtTestCase):
+class TestMgmtAlerts(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtAlertsTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.alertsmanagement.AlertsManagementClient
         )
     
     @unittest.skip("skip")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_alertsmanagement(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
