@@ -46,7 +46,7 @@
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "string"
         },
-        "UseStaticStorageResource": {
+        "useStaticStorageResource": {
             "type": "bool",
             "defaultValue": false,
             "metadata": {
@@ -59,11 +59,11 @@
         },
         "blobStorageAccount": {
             "type": "string",
-            "defaultValue": "[if(parameters('UseStaticStorageResource'), parameters('staticStorageName'), parameters('baseName'))]"
+            "defaultValue": "[if(parameters('useStaticStorageResource'), parameters('staticStorageName'), parameters('baseName'))]"
         },
         "storageAccResourceId": {
             "type": "string",
-            "defaultValue": "[if(parameters('UseStaticStorageResource'), resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')), resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')))]"
+            "defaultValue": "[if(parameters('useStaticStorageResource'), resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')), resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')))]"
         },
         "targetContainerName_1": {
             "type": "string",
@@ -187,7 +187,7 @@
             }
         },
         {
-            "condition": "[not(parameters('UseStaticStorageResource'))]",
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "[variables('storageMgmtApiVersion')]",
             "name": "[variables('storageAccountName')]",
@@ -205,7 +205,7 @@
             },
             "resources": [
                 {
-                  "condition": "[not(parameters('UseStaticStorageResource'))]",
+                  "condition": "[not(parameters('useStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_1'))]",
@@ -214,7 +214,7 @@
                   ]
                 },
                 {
-                  "condition": "[not(parameters('UseStaticStorageResource'))]",
+                  "condition": "[not(parameters('useStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_2'))]",
@@ -223,7 +223,7 @@
                   ]
                 },
                 {
-                  "condition": "[not(parameters('UseStaticStorageResource'))]",
+                  "condition": "[not(parameters('useStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_3'))]",
@@ -232,7 +232,7 @@
                   ]
                 },
                 {
-                  "condition": "[not(parameters('UseStaticStorageResource'))]",
+                  "condition": "[not(parameters('useStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_4'))]",
@@ -241,7 +241,7 @@
                   ]
                 }, 
                 {
-                  "condition": "[not(parameters('UseStaticStorageResource'))]",
+                  "condition": "[not(parameters('useStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('sourceContainerName'))]",
