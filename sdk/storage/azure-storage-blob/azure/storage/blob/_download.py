@@ -16,6 +16,8 @@ import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 
 from azure.core.tracing.common import with_current_context
+from ._shared.base_client import TransportWrapper
+from ._shared.constants import READ_TIMEOUT
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
@@ -370,6 +372,16 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     def __len__(self):
         return self.size
 
+    def get_transfer_timeout(self, request_data_size):
+        # Get the transport object - it might be wrapped so iterate through wrappers
+        transport = self._config.transport
+        while isinstance(transport, TransportWrapper):
+            transport = transport._transport
+        if not self._request_options.get("read_timeout", None) and \
+                transport.connection_config.read_timeout == READ_TIMEOUT:
+            self._request_options["read_timeout"] = max(
+                (request_data_size / (50*1024), READ_TIMEOUT))
+
     def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
@@ -378,6 +390,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             end_range_required=False,
             check_content_md5=self._validate_content
         )
+        self.get_transfer_timeout(self._first_get_size)
 
         retry_active = True
         retry_total = 3
@@ -488,6 +501,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             if self._end_range is not None:
                 # Use the end range index unless it is over the end of the file
                 data_end = min(self._file_size, self._end_range + 1)
+            self.get_transfer_timeout(self._config.max_chunk_get_size)
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
                 non_empty_ranges=self._non_empty_ranges,
@@ -569,6 +583,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :rtype: int
         """
         # The stream must be seekable if parallel download is required
+
+        self.get_transfer_timeout(self._config.max_chunk_get_size)
         parallel = self._max_concurrency > 1
         if parallel:
             error_message = "Target stream handle must be seekable."
