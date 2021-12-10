@@ -82,7 +82,7 @@ directive:
 
 ### Change "parameters.ApiVersionParameter.required" to true
 
-so that the generated client/clientcontext constructors take apiVersion as a parameter.
+so that the generated client/clientcontext constructors take api_version as a parameter.
 ```yaml
 directive:
   - from: swagger-document
