@@ -46,5 +46,10 @@ backward_compat = {
     'EventGridSubscriptionDeletedEventName': "Microsoft.EventGrid.SubscriptionDeletedEvent",
     'AcsChatThreadParticipantRemovedEventName': "Microsoft.Communication.ChatThreadParticipantRemoved",
     'ResourceActionCancelEventName': "Microsoft.Resources.ResourceActionCancel",
-    'IoTHubDeviceCreatedEventName': "Microsoft.Devices.DeviceCreated"
+    'IoTHubDeviceCreatedEventName': "Microsoft.Devices.DeviceCreated",
+    'ContainerRegistryArtifactEventName': 'Microsoft.AppConfiguration.KeyValueModified',
+    'KeyVaultAccessPolicyChangedEventName': 'Microsoft.KeyVault.VaultAccessPolicyChanged',
+    'ContainerRegistryEventName': 'Microsoft.ContainerRegistry.ChartPushed',
+    'SubscriptionDeletedEventName': 'Microsoft.EventGrid.SubscriptionDeletedEvent',
+    'SubscriptionValidationEventName': 'Microsoft.EventGrid.SubscriptionValidationEvent'
 }
