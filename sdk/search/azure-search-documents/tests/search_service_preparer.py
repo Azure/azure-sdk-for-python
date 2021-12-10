@@ -3,14 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import datetime
 from os.path import dirname, realpath
-import time
-
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock
 
 import json
 import requests
