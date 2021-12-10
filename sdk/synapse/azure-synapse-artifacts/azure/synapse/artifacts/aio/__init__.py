@@ -8,3 +8,9 @@
 
 from ._artifacts_client import ArtifactsClient
 __all__ = ['ArtifactsClient']
+
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass

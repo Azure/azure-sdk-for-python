@@ -1,5 +1,28 @@
 # Release History
 
+## 7.0.0 (2021-11-11)
+
+**Features**
+
+  - Model PrivateCloudUpdateProperties has a new parameter encryption
+  - Model PrivateCloudUpdateProperties has a new parameter availability
+  - Model PrivateCloud has a new parameter secondary_circuit
+  - Model PrivateCloud has a new parameter identity
+  - Model PrivateCloud has a new parameter encryption
+  - Model PrivateCloud has a new parameter availability
+  - Model PrivateCloudProperties has a new parameter secondary_circuit
+  - Model PrivateCloudProperties has a new parameter encryption
+  - Model PrivateCloudProperties has a new parameter availability
+  - Model PrivateCloudUpdate has a new parameter identity
+  - Model PrivateCloudUpdate has a new parameter encryption
+  - Model PrivateCloudUpdate has a new parameter availability
+  - Model GlobalReachConnection has a new parameter express_route_id
+  - Model ClusterUpdate has a new parameter hosts
+  - Model ExpressRouteAuthorization has a new parameter express_route_id
+  - Model Datastore has a new parameter status
+  - Added operation group VirtualMachinesOperations
+  - Added operation group PlacementPoliciesOperations
+
 ## 7.0.0b1 (2021-07-13)
 
 This is beta preview version.

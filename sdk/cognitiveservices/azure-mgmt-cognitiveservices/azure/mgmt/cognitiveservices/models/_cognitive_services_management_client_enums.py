@@ -41,6 +41,31 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class DeploymentProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the status of the resource at the time the operation was called.
+    """
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+
+class DeploymentScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Deployment scale type.
+    """
+
+    MANUAL = "Manual"
+
+class HostingModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Account hosting model.
+    """
+
+    WEB = "Web"
+    CONNECTED_CONTAINER = "ConnectedContainer"
+    DISCONNECTED_CONTAINER = "DisconnectedContainer"
+
 class KeyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """key name to generate (Key1|Key2)
     """

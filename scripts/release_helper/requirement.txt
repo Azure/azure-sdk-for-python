@@ -1,0 +1,6 @@
+PyGithub
+datetime
+requests
+bs4
+azure-devops
+msrest

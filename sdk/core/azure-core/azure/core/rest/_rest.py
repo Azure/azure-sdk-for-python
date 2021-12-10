@@ -60,9 +60,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 ################################## CLASSES ######################################
 
 class HttpRequest(HttpRequestBackcompatMixin):
-    """Provisional object that represents an HTTP request.
-
-    **This object is provisional**, meaning it may be changed in a future release.
+    """HTTP request.
 
     It should be passed to your client's `send_request` method.
 
@@ -321,9 +319,8 @@ class _HttpResponseBase(ABC):
 
 
 class HttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for HTTP responses.
+    """Abstract base class for HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your client's `send_request` method

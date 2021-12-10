@@ -9,11 +9,11 @@
 from ._usages_operations import UsagesOperations
 from ._quota_operations import QuotaOperations
 from ._quota_request_status_operations import QuotaRequestStatusOperations
-from ._operation_operations import OperationOperations
+from ._quota_operation_operations import QuotaOperationOperations
 
 __all__ = [
     'UsagesOperations',
     'QuotaOperations',
     'QuotaRequestStatusOperations',
-    'OperationOperations',
+    'QuotaOperationOperations',
 ]

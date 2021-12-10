@@ -45,8 +45,8 @@ class ActivityLogAlertActionList(msrest.serialization.Model):
     """A list of activity log alert actions.
 
     :param action_groups: The list of activity log alerts.
-    :type action_groups: list[~$(python-base-
-     namespace).v2017_03_01_preview.models.ActivityLogAlertActionGroup]
+    :type action_groups:
+     list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertActionGroup]
     """
 
     _attribute_map = {
@@ -67,8 +67,8 @@ class ActivityLogAlertAllOfCondition(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param all_of: Required. The list of activity log alert conditions.
-    :type all_of: list[~$(python-base-
-     namespace).v2017_03_01_preview.models.ActivityLogAlertLeafCondition]
+    :type all_of:
+     list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertLeafCondition]
     """
 
     _validation = {
@@ -125,8 +125,8 @@ class ActivityLogAlertList(msrest.serialization.Model):
     """A list of activity log alerts.
 
     :param value: The list of activity log alerts.
-    :type value: list[~$(python-base-
-     namespace).v2017_03_01_preview.models.ActivityLogAlertResource]
+    :type value:
+     list[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource]
     """
 
     _attribute_map = {
@@ -212,8 +212,8 @@ class ActivityLogAlertResource(Resource):
      is not enabled, then none of its actions will be activated.
     :type enabled: bool
     :param condition: The condition that will cause this alert to activate.
-    :type condition: ~$(python-base-
-     namespace).v2017_03_01_preview.models.ActivityLogAlertAllOfCondition
+    :type condition:
+     ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertAllOfCondition
     :param actions: The actions that will activate when the condition is met.
     :type actions: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertActionList
     :param description: A description of this activity log alert.

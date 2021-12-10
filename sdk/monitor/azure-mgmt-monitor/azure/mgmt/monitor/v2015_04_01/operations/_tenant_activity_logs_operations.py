@@ -69,10 +69,11 @@ class TenantActivityLogsOperations(object):
          ':code:`<End Time>`' and eventChannels eq 'Admin, Operation'.:code:`<br>`- List events for a
          resource provider: $filter=eventTimestamp ge ':code:`<Start Time>`' and eventTimestamp le
          ':code:`<End Time>`' and eventChannels eq 'Admin, Operation' and resourceProvider eq
-         ':code:`<ResourceProviderName>`'.:code:`<br>`- List events for a correlation Id: api-
-         version=2014-04-01&$filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and eventTimestamp
-         le '2014-07-20T04:36:37.6407898Z' and eventChannels eq 'Admin, Operation' and correlationId eq
-         ':code:`<CorrelationID>`'.:code:`<br>`\ **NOTE**\ : No other syntax is allowed.
+         ':code:`<ResourceProviderName>`'.:code:`<br>`- List events for a correlation Id:
+         api-version=2014-04-01&$filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and
+         eventTimestamp le '2014-07-20T04:36:37.6407898Z' and eventChannels eq 'Admin, Operation' and
+         correlationId eq ':code:`<CorrelationID>`'.:code:`<br>`\ **NOTE**\ : No other syntax is
+         allowed.
         :type filter: str
         :param select: Used to fetch events with only the given properties.:code:`<br>`The **$select**
          argument is a comma separated list of property names to be returned. Possible values are:
@@ -131,7 +132,7 @@ class TenantActivityLogsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -140,4 +141,4 @@ class TenantActivityLogsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/microsoft.insights/eventtypes/management/values'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.Insights/eventtypes/management/values'}  # type: ignore

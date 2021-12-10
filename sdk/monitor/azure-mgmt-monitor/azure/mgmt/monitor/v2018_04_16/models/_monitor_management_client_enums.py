@@ -41,6 +41,8 @@ class ConditionalOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     'Equal'.
     """
 
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
     GREATER_THAN = "GreaterThan"
     LESS_THAN = "LessThan"
     EQUAL = "Equal"

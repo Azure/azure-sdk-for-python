@@ -212,6 +212,7 @@ def read_Container(db, id):
 
     try:
         container = db.get_container_client(id)
+        container.read()
         print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
     except exceptions.CosmosResourceNotFoundError:

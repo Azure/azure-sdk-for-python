@@ -53,9 +53,7 @@ ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 ################################## CLASSES ######################################
 
 class HttpRequest(HttpRequestBackcompatMixin):
-    """**Provisional** object that represents an HTTP request.
-
-    **This object is provisional**, meaning it may be changed in a future release.
+    """An HTTP request.
 
     It should be passed to your client's `send_request` method.
 
@@ -315,9 +313,8 @@ class _HttpResponseBase(abc.ABC):
         ...
 
 class HttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for HTTP responses.
+    """Abstract base class for HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your client's `send_request` method
@@ -378,9 +375,8 @@ class HttpResponse(_HttpResponseBase):
         )
 
 class AsyncHttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for Async HTTP responses.
+    """Abstract base class for Async HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your async client's `send_request`

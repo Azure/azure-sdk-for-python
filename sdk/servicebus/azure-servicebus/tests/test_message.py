@@ -188,3 +188,11 @@ def test_amqp_message():
     assert amqp_annotated_message.properties.group_id == 'id'
     assert amqp_annotated_message.properties.group_sequence == 1
     assert amqp_annotated_message.properties.reply_to_group_id == 'id'
+
+
+def test_servicebus_message_time_to_live():
+    message = ServiceBusMessage(body="hello")
+    message.time_to_live = timedelta(seconds=30)
+    assert message.time_to_live == timedelta(seconds=30)
+    message.time_to_live = timedelta(days=1)
+    assert message.time_to_live == timedelta(days=1)

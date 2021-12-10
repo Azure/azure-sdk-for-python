@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-06-01",
-    "total_api_version_list": ["2021-06-01"],
+    "chosen_version": "2021-12-01",
+    "total_api_version_list": ["2021-12-01"],
     "client": {
         "name": "AVSClient",
         "filename": "_avs_client",
@@ -109,6 +109,8 @@
         "workload_networks": "WorkloadNetworksOperations",
         "cloud_links": "CloudLinksOperations",
         "addons": "AddonsOperations",
+        "virtual_machines": "VirtualMachinesOperations",
+        "placement_policies": "PlacementPoliciesOperations",
         "script_packages": "ScriptPackagesOperations",
         "script_cmdlets": "ScriptCmdletsOperations",
         "script_executions": "ScriptExecutionsOperations"

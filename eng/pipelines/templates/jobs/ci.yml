@@ -58,6 +58,9 @@ parameters:
   - name: UnsupportedToxEnvironments
     type: string
     default: ''
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -147,6 +150,7 @@ jobs:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
+        TestProxy: ${{ parameters.TestProxy }}
 
   - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -170,6 +174,7 @@ jobs:
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
           CondaArtifacts: ${{ parameters.CondaArtifacts}}
+          TestProxy: ${{ parameters.TestProxy }}
 
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))

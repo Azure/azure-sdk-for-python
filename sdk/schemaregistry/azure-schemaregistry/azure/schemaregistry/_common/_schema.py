@@ -33,39 +33,34 @@ class SchemaProperties(object):
     :ivar id: References specific schema in registry namespace.
     :vartype id: str
     :ivar format: Format for the schema being stored.
-    :vartype format: str
-    :ivar version: Version of the returned schema.
-    :vartype version: int
+    :vartype format: ~azure.schemaregistry.SchemaFormat
     """
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.id = kwargs.pop("id")
         self.format = kwargs.pop("format")
-        self.version = kwargs.pop("version")
 
     def __repr__(self):
-        return "SchemaProperties(id={}, format={}, version={})".format(
-            self.id, self.format, self.version
-        )[:1024]
+        return "SchemaProperties(id={}, format={})".format(self.id, self.format)[:1024]
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar schema_definition: The content of the schema.
-    :vartype schema_definition: str
+    :ivar definition: The content of the schema.
+    :vartype definition: str
     :ivar properties: The properties of the schema.
     :vartype properties: SchemaProperties
     """
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.schema_definition = kwargs.pop("schema_definition")
+        self.definition = kwargs.pop("definition")
         self.properties = kwargs.pop("properties")
 
     def __repr__(self):
-        return "Schema(schema_definition={}, properties={})".format(
-            self.schema_definition, self.properties
+        return "Schema(definition={}, properties={})".format(
+            self.definition, self.properties
         )[:1024]
