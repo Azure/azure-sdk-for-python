@@ -17,6 +17,7 @@ from azure.core.exceptions import HttpResponseError, ServiceResponseError
 
 from azure.core.tracing.common import with_current_context
 from ._shared.base_client import TransportWrapper
+from ._shared.base_client_async import AsyncTransportWrapper
 from ._shared.constants import READ_TIMEOUT
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -27,6 +28,8 @@ from ._deserialize import get_page_ranges_result
 def get_transfer_timeout(client, request_data_size):
     # Get the transport object - it might be wrapped so iterate through wrappers
     transport = client._config.transport
+    while isinstance(transport, AsyncTransportWrapper):
+        transport = transport._transport
     while isinstance(transport, TransportWrapper):
         transport = transport._transport
     # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
