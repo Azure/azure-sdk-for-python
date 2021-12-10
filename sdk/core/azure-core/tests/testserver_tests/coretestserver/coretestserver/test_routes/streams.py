@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
 from flask import (
     Response,
     Blueprint,
@@ -26,7 +27,8 @@ def stream_json_error():
     yield' "message": "You made a bad request"}}'
 
 def stream_compress():
-    with open("testserver_tests/coretestserver/coretestserver/files/test.tar.gz", "rb") as fd:
+    file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
+    with open(file_path, "rb") as fd:
         yield fd.read()
 
 @streams_api.route('/compress', methods=['GET'])
