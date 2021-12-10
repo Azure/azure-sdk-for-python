@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,7 +22,7 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -31,16 +30,18 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_list_request(
+def build_check_name_availability_request(
     subscription_id,  # type: str
     location_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
     api_version = "2019-11-04-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.Quantum/locations/{locationName}/offerings')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.Quantum/locations/{locationName}/checkNameAvailability')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "locationName": _SERIALIZER.url("location_name", location_name, 'str'),
@@ -54,10 +55,12 @@ def build_list_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="GET",
+        method="POST",
         url=url,
         params=query_parameters,
         headers=header_parameters,
@@ -65,8 +68,8 @@ def build_list_request(
     )
 
 # fmt: on
-class OfferingsOperations(object):
-    """OfferingsOperations operations.
+class WorkspaceOperations(object):
+    """WorkspaceOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -88,71 +91,59 @@ class OfferingsOperations(object):
         self._config = config
 
     @distributed_trace
-    def list(
+    def check_name_availability(
         self,
         location_name,  # type: str
+        check_name_availability_parameters,  # type: "_models.CheckNameAvailabilityParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OfferingsListResult"]
-        """Returns the list of all provider offerings available for the given location.
+        # type: (...) -> "_models.CheckNameAvailabilityResult"
+        """Check the availability of the resource name.
 
         :param location_name: Location.
         :type location_name: str
+        :param check_name_availability_parameters: The name and type of the resource.
+        :type check_name_availability_parameters:
+         ~azure.mgmt.quantum.models.CheckNameAvailabilityParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OfferingsListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.quantum.models.OfferingsListResult]
+        :return: CheckNameAvailabilityResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.quantum.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OfferingsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    location_name=location_name,
-                    template_url=self.list.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
 
-            else:
-                
-                request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    location_name=location_name,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("OfferingsListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+        _json = self._serialize.body(check_name_availability_parameters, 'CheckNameAvailabilityParameters')
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
+        request = build_check_name_availability_request(
+            subscription_id=self._config.subscription_id,
+            location_name=location_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self.check_name_availability.metadata['url'],
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Quantum/locations/{locationName}/offerings'}  # type: ignore
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Quantum/locations/{locationName}/checkNameAvailability'}  # type: ignore
+

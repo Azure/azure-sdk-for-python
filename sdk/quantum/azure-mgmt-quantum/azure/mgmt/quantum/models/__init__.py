@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
@@ -26,11 +28,14 @@ try:
     from ._models_py3 import QuotaDimension
     from ._models_py3 import Resource
     from ._models_py3 import SkuDescription
+    from ._models_py3 import SystemData
     from ._models_py3 import TagsObject
     from ._models_py3 import TargetDescription
     from ._models_py3 import TrackedResource
     from ._models_py3 import WorkspaceListResult
 except (SyntaxError, ImportError):
+    from ._models import CheckNameAvailabilityParameters  # type: ignore
+    from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
@@ -50,12 +55,14 @@ except (SyntaxError, ImportError):
     from ._models import QuotaDimension  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import SkuDescription  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TagsObject  # type: ignore
     from ._models import TargetDescription  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
 
 from ._azure_quantum_management_client_enums import (
+    CreatedByType,
     ProvisioningStatus,
     ResourceIdentityType,
     Status,
@@ -63,6 +70,8 @@ from ._azure_quantum_management_client_enums import (
 )
 
 __all__ = [
+    'CheckNameAvailabilityParameters',
+    'CheckNameAvailabilityResult',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
@@ -82,10 +91,12 @@ __all__ = [
     'QuotaDimension',
     'Resource',
     'SkuDescription',
+    'SystemData',
     'TagsObject',
     'TargetDescription',
     'TrackedResource',
     'WorkspaceListResult',
+    'CreatedByType',
     'ProvisioningStatus',
     'ResourceIdentityType',
     'Status',
