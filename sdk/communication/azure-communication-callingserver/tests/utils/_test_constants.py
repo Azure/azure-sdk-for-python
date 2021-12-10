@@ -33,7 +33,10 @@ IncomingRequestSecret = "helloworld"
 AppBaseUrl = "https://dummy.ngrok.io"
 AppCallbackUrl = "{}/api/incident/callback?SecretKey={}".format(AppBaseUrl,quote(IncomingRequestSecret))
 AudioFileName = "sample-message.wav"
-AudioFileUrl = "{}/audio/{}".format(AppBaseUrl,AudioFileName)
+AUDIO_FILE_URL = os.getenv(
+    "AUDIO_FILE_URL",
+    "{}/audio/{}".format(AppBaseUrl,AudioFileName)
+    )
 
 # Common
 PHONE_NUMBER = "+14255550123"
@@ -97,7 +100,7 @@ ErrorPayload={
     "operationId": OPERATION_ID,
     "status": "failed",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
+    "resultInfo": {
         "code": 404,
         "subcode": 404,
         "message": "Resource not found on the server."
@@ -178,7 +181,7 @@ PlayAudioResponsePayload = {
     "operationId": OPERATION_ID,
     "status": "running",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
+    "resultInfo": {
         "code": 202,
         "subcode": 202,
         "message": "Good."
@@ -187,14 +190,7 @@ PlayAudioResponsePayload = {
 
 # AddParticipantPayload
 AddParticipantResultPayload = {
-    "operationId": OPERATION_ID,
-    "status": "running",
-    "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
-        "code": 202,
-        "subcode": 202,
-        "message": "Good."
-        }
+    "participantId": PARTICIPANT_ID_01
     }
 
 # TransferPayload
@@ -202,7 +198,7 @@ TransferResultPayload = {
     "operationId": OPERATION_ID,
     "status": "completed",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
+    "resultInfo": {
         "code": 202,
         "subcode": 202,
         "message": "Good."
