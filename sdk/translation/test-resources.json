@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "baseName": {
@@ -46,13 +46,24 @@
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "string"
         },
+        "UseStaticStorageResource": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "A static storage resource is used for Dogfood env."
+            }
+        },
+        "staticStorageName": {
+            "defaultValue": "krpraticstorageacc",
+            "type": "string"
+        },
         "blobStorageAccount": {
             "type": "string",
-            "defaultValue": "[concat(parameters('baseName'), 'prim')]"
+            "defaultValue": "[if(parameters('UseStaticStorageResource'), parameters('staticStorageName'), parameters('baseName'))]"
         },
         "storageAccResourceId": {
             "type": "string",
-            "defaultValue": "[resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
+            "defaultValue": "[if(parameters('UseStaticStorageResource'), resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')), resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')))]"
         },
         "targetContainerName_1": {
             "type": "string",
@@ -129,7 +140,7 @@
         "docTranslationBaseName": "[parameters('baseName')]",
         "docTranslationApiVersion": "2017-04-18",
         "storageMgmtApiVersion": "2017-10-01",
-        "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
+        "storageAccountName": "[parameters('blobStorageAccount')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('cognitiveServicesEndpointSuffix'))]",
         "azureStorageEndpoint": "[concat('https://', parameters('blobStorageAccount'), '.blob.core.windows.net/')]",
@@ -176,6 +187,7 @@
             }
         },
         {
+            "condition": "[not(parameters('UseStaticStorageResource'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "[variables('storageMgmtApiVersion')]",
             "name": "[variables('storageAccountName')]",
@@ -193,6 +205,7 @@
             },
             "resources": [
                 {
+                  "condition": "[not(parameters('UseStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_1'))]",
@@ -201,6 +214,7 @@
                   ]
                 },
                 {
+                  "condition": "[not(parameters('UseStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_2'))]",
@@ -209,6 +223,7 @@
                   ]
                 },
                 {
+                  "condition": "[not(parameters('UseStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_3'))]",
@@ -217,6 +232,7 @@
                   ]
                 },
                 {
+                  "condition": "[not(parameters('UseStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('targetContainerName_4'))]",
@@ -225,6 +241,7 @@
                   ]
                 }, 
                 {
+                  "condition": "[not(parameters('UseStaticStorageResource'))]",
                   "type": "blobServices/containers",
                   "apiVersion": "[variables('storageMgmtApiVersion')]",
                   "name": "[concat('default/', parameters('sourceContainerName'))]",
