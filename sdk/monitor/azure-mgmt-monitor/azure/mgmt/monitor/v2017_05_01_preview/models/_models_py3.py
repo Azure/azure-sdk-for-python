@@ -93,8 +93,8 @@ class DiagnosticSettingsCategoryResourceCollection(msrest.serialization.Model):
     """Represents a collection of diagnostic setting category resources.
 
     :param value: The collection of diagnostic settings category resources.
-    :type value: list[~$(python-base-
-     namespace).v2017_05_01_preview.models.DiagnosticSettingsCategoryResource]
+    :type value:
+     list[~$(python-base-namespace).v2017_05_01_preview.models.DiagnosticSettingsCategoryResource]
     """
 
     _attribute_map = {
@@ -139,8 +139,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :type logs: list[~$(python-base-namespace).v2017_05_01_preview.models.LogSettings]
     :param workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
     :type workspace_id: str
     :param log_analytics_destination_type: A string indicating whether the export to Log Analytics
      should use the default destination type, i.e. AzureDiagnostics, or use a destination type
@@ -197,8 +196,8 @@ class DiagnosticSettingsResourceCollection(msrest.serialization.Model):
     """Represents a collection of alert rule resources.
 
     :param value: The collection of diagnostic settings resources;.
-    :type value: list[~$(python-base-
-     namespace).v2017_05_01_preview.models.DiagnosticSettingsResource]
+    :type value:
+     list[~$(python-base-namespace).v2017_05_01_preview.models.DiagnosticSettingsResource]
     """
 
     _attribute_map = {
@@ -350,9 +349,15 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
+    :param display_description: Detailed description of this metric.
+    :type display_description: str
+    :param error_code: 'Success' or the error details on query failures for this metric.
+    :type error_code: str
+    :param error_message: Error message encountered querying this specific metric.
+    :type error_message: str
     :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
-     "Unspecified".
+     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2017_05_01_preview.models.Unit
     :param timeseries: Required. the time series returned when a data query is performed.
     :type timeseries: list[~$(python-base-namespace).v2017_05_01_preview.models.TimeSeriesElement]
@@ -370,6 +375,9 @@ class Metric(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'error_code': {'key': 'errorCode', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'timeseries': {'key': 'timeseries', 'type': '[TimeSeriesElement]'},
     }
@@ -382,12 +390,18 @@ class Metric(msrest.serialization.Model):
         name: "LocalizableString",
         unit: Union[str, "Unit"],
         timeseries: List["TimeSeriesElement"],
+        display_description: Optional[str] = None,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
         **kwargs
     ):
         super(Metric, self).__init__(**kwargs)
         self.id = id
         self.type = type
         self.name = name
+        self.display_description = display_description
+        self.error_code = error_code
+        self.error_message = error_message
         self.unit = unit
         self.timeseries = timeseries
 
@@ -429,18 +443,23 @@ class MetricDefinition(msrest.serialization.Model):
     :type resource_id: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
+    :param display_description: Detailed description of this metric.
+    :type display_description: str
+    :param category: Custom category name for this metric.
+    :type category: str
     :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
-     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified".
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2017_05_01_preview.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :type primary_aggregation_type: str or ~$(python-base-
-     namespace).v2017_05_01_preview.models.AggregationType
+    :type primary_aggregation_type: str or
+     ~$(python-base-namespace).v2017_05_01_preview.models.AggregationType
     :param metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :type metric_availabilities: list[~$(python-base-
-     namespace).v2017_05_01_preview.models.MetricAvailability]
+    :type metric_availabilities:
+     list[~$(python-base-namespace).v2017_05_01_preview.models.MetricAvailability]
     :param id: the resource identifier of the metric definition.
     :type id: str
     :param dimensions: the name and the display name of the dimension, i.e. it is a localizable
@@ -452,6 +471,8 @@ class MetricDefinition(msrest.serialization.Model):
         'is_dimension_required': {'key': 'isDimensionRequired', 'type': 'bool'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'primary_aggregation_type': {'key': 'primaryAggregationType', 'type': 'str'},
         'metric_availabilities': {'key': 'metricAvailabilities', 'type': '[MetricAvailability]'},
@@ -465,6 +486,8 @@ class MetricDefinition(msrest.serialization.Model):
         is_dimension_required: Optional[bool] = None,
         resource_id: Optional[str] = None,
         name: Optional["LocalizableString"] = None,
+        display_description: Optional[str] = None,
+        category: Optional[str] = None,
         unit: Optional[Union[str, "Unit"]] = None,
         primary_aggregation_type: Optional[Union[str, "AggregationType"]] = None,
         metric_availabilities: Optional[List["MetricAvailability"]] = None,
@@ -476,6 +499,8 @@ class MetricDefinition(msrest.serialization.Model):
         self.is_dimension_required = is_dimension_required
         self.resource_id = resource_id
         self.name = name
+        self.display_description = display_description
+        self.category = category
         self.unit = unit
         self.primary_aggregation_type = primary_aggregation_type
         self.metric_availabilities = metric_availabilities
@@ -612,7 +637,7 @@ class Response(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cost: The integer value representing the cost of the query, for data case.
+    :param cost: The integer value representing the relative cost of the query.
     :type cost: int
     :param timespan: Required. The timespan for which the data was retrieved. Its value consists of
      two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
@@ -758,8 +783,7 @@ class SubscriptionDiagnosticSettingsResource(SubscriptionProxyOnlyResource):
     :type logs: list[~$(python-base-namespace).v2017_05_01_preview.models.SubscriptionLogSettings]
     :param workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
     :type workspace_id: str
     """
 
@@ -807,8 +831,8 @@ class SubscriptionDiagnosticSettingsResourceCollection(msrest.serialization.Mode
     """Represents a collection of subscription diagnostic settings resources.
 
     :param value: The collection of subscription diagnostic settings resources.
-    :type value: list[~$(python-base-
-     namespace).v2017_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
+    :type value:
+     list[~$(python-base-namespace).v2017_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
     """
 
     _attribute_map = {

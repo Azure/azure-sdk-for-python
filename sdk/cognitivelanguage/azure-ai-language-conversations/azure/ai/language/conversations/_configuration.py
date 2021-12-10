@@ -47,7 +47,7 @@ class ConversationAnalysisClientConfiguration(Configuration):
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = "2021-07-15-preview"
+        self.api_version = "2021-11-01-preview"
         kwargs.setdefault('sdk_moniker', 'ai-language-conversations/{}'.format(VERSION))
         self._configure(**kwargs)
 

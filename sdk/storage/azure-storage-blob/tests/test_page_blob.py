@@ -1872,6 +1872,7 @@ class StoragePageBlobTest(StorageTestCase):
     #         container.delete_container()
 
     @BlobPreparer()
+    @pytest.mark.playback_test_only
     def test_blob_tier_copy_blob(self, premium_storage_account_name, premium_storage_account_key):
         bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)

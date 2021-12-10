@@ -3,7 +3,6 @@ trigger: none
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      DeployArmTemplate: true
       BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translation
       MatrixReplace:

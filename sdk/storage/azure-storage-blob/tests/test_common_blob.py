@@ -1706,13 +1706,16 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_snapshot = blob_client.create_snapshot()
         blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
 
+        permission = BlobSasPermissions(read=True, write=True, delete=True, delete_previous_version=True,
+                                          permanent_delete=True, list=True, add=True, create=True, update=True)
+        self.assertIn('y', str(permission))
         token = generate_blob_sas(
             blob_snapshot_client.account_name,
             blob_snapshot_client.container_name,
             blob_snapshot_client.blob_name,
             snapshot=blob_snapshot_client.snapshot,
             account_key=blob_snapshot_client.credential.account_key,
-            permission=BlobSasPermissions(read=True, delete=True),
+            permission=permission,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1886,11 +1889,15 @@ class StorageCommonBlobTest(StorageTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
 
+        account_sas_permission = AccountSasPermissions(read=True, write=True, delete=True, add=True,
+                                                       permanent_delete=True, list=True)
+        self.assertIn('y', str(account_sas_permission))
+
         token = generate_account_sas(
             self.bsc.account_name,
             self.bsc.credential.account_key,
             ResourceTypes(container=True, object=True),
-            AccountSasPermissions(read=True),
+            account_sas_permission,
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1958,7 +1965,6 @@ class StorageCommonBlobTest(StorageTestCase):
             blob_client.container_name,
             blob_client.blob_name,
             snapshot=blob_client.snapshot,
-            account_key=storage_account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
@@ -2186,11 +2192,15 @@ class StorageCommonBlobTest(StorageTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         container = self.bsc.get_container_client(self.container_name)
+        permission = ContainerSasPermissions(read=True, write=True, delete=True, delete_previous_version=True,
+                                             list=True, tag=True, set_immutability_policy=True,
+                                             permanent_delete=True)
+        self.assertIn('y', str(permission))
         token = generate_container_sas(
             container.account_name,
             container.container_name,
             account_key=container.credential.account_key,
-            permission=ContainerSasPermissions(read=True),
+            permission=permission,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_container = ContainerClient.from_container_url(container.url, credential=token)

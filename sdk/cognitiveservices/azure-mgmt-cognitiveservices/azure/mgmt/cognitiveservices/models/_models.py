@@ -483,6 +483,8 @@ class CheckDomainAvailabilityParameter(msrest.serialization.Model):
     :type subdomain_name: str
     :param type: Required. The Type of the resource.
     :type type: str
+    :param kind: The Kind of the resource.
+    :type kind: str
     """
 
     _validation = {
@@ -493,6 +495,7 @@ class CheckDomainAvailabilityParameter(msrest.serialization.Model):
     _attribute_map = {
         'subdomain_name': {'key': 'subdomainName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
     def __init__(
@@ -502,6 +505,7 @@ class CheckDomainAvailabilityParameter(msrest.serialization.Model):
         super(CheckDomainAvailabilityParameter, self).__init__(**kwargs)
         self.subdomain_name = kwargs['subdomain_name']
         self.type = kwargs['type']
+        self.kind = kwargs.get('kind', None)
 
 
 class CheckSkuAvailabilityParameter(msrest.serialization.Model):
@@ -539,6 +543,491 @@ class CheckSkuAvailabilityParameter(msrest.serialization.Model):
         self.type = kwargs['type']
 
 
+class CommitmentCost(msrest.serialization.Model):
+    """Cognitive Services account commitment cost.
+
+    :param commitment_meter_id: Commitment meter Id.
+    :type commitment_meter_id: str
+    :param overage_meter_id: Overage meter Id.
+    :type overage_meter_id: str
+    """
+
+    _attribute_map = {
+        'commitment_meter_id': {'key': 'commitmentMeterId', 'type': 'str'},
+        'overage_meter_id': {'key': 'overageMeterId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentCost, self).__init__(**kwargs)
+        self.commitment_meter_id = kwargs.get('commitment_meter_id', None)
+        self.overage_meter_id = kwargs.get('overage_meter_id', None)
+
+
+class CommitmentPeriod(msrest.serialization.Model):
+    """Cognitive Services account commitment period.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param tier: Commitment period commitment tier.
+    :type tier: str
+    :param count: Commitment period commitment count.
+    :type count: int
+    :ivar quota: Cognitive Services account commitment quota.
+    :vartype quota: ~azure.mgmt.cognitiveservices.models.CommitmentQuota
+    :ivar start_date: Commitment period start date.
+    :vartype start_date: str
+    :ivar end_date: Commitment period end date.
+    :vartype end_date: str
+    """
+
+    _validation = {
+        'quota': {'readonly': True},
+        'start_date': {'readonly': True},
+        'end_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tier': {'key': 'tier', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'quota': {'key': 'quota', 'type': 'CommitmentQuota'},
+        'start_date': {'key': 'startDate', 'type': 'str'},
+        'end_date': {'key': 'endDate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentPeriod, self).__init__(**kwargs)
+        self.tier = kwargs.get('tier', None)
+        self.count = kwargs.get('count', None)
+        self.quota = None
+        self.start_date = None
+        self.end_date = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class CommitmentPlan(ProxyResource):
+    """Cognitive Services account commitment plan.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param properties: Properties of Cognitive Services account commitment plan.
+    :type properties: ~azure.mgmt.cognitiveservices.models.CommitmentPlanProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CommitmentPlanProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentPlan, self).__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.properties = kwargs.get('properties', None)
+
+
+class CommitmentPlanListResult(msrest.serialization.Model):
+    """The list of cognitive services accounts operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param next_link: The link used to get the next page of CommitmentPlan.
+    :type next_link: str
+    :ivar value: Gets the list of Cognitive Services accounts CommitmentPlan and their properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.CommitmentPlan]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[CommitmentPlan]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentPlanListResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = None
+
+
+class CommitmentPlanProperties(msrest.serialization.Model):
+    """Properties of Cognitive Services account commitment plan.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param hosting_model: Account hosting model. Possible values include: "Web",
+     "ConnectedContainer", "DisconnectedContainer".
+    :type hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
+    :param plan_type: Commitment plan type.
+    :type plan_type: str
+    :param current: Cognitive Services account commitment period.
+    :type current: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+    :param auto_renew: AutoRenew commitment plan.
+    :type auto_renew: bool
+    :param next: Cognitive Services account commitment period.
+    :type next: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+    :ivar last: Cognitive Services account commitment period.
+    :vartype last: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
+    """
+
+    _validation = {
+        'last': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'hosting_model': {'key': 'hostingModel', 'type': 'str'},
+        'plan_type': {'key': 'planType', 'type': 'str'},
+        'current': {'key': 'current', 'type': 'CommitmentPeriod'},
+        'auto_renew': {'key': 'autoRenew', 'type': 'bool'},
+        'next': {'key': 'next', 'type': 'CommitmentPeriod'},
+        'last': {'key': 'last', 'type': 'CommitmentPeriod'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentPlanProperties, self).__init__(**kwargs)
+        self.hosting_model = kwargs.get('hosting_model', None)
+        self.plan_type = kwargs.get('plan_type', None)
+        self.current = kwargs.get('current', None)
+        self.auto_renew = kwargs.get('auto_renew', None)
+        self.next = kwargs.get('next', None)
+        self.last = None
+
+
+class CommitmentQuota(msrest.serialization.Model):
+    """Cognitive Services account commitment quota.
+
+    :param quantity: Commitment quota quantity.
+    :type quantity: long
+    :param unit: Commitment quota unit.
+    :type unit: str
+    """
+
+    _attribute_map = {
+        'quantity': {'key': 'quantity', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentQuota, self).__init__(**kwargs)
+        self.quantity = kwargs.get('quantity', None)
+        self.unit = kwargs.get('unit', None)
+
+
+class CommitmentTier(msrest.serialization.Model):
+    """Cognitive Services account commitment tier.
+
+    :param kind: The Kind of the resource.
+    :type kind: str
+    :param sku_name: The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :type sku_name: str
+    :param hosting_model: Account hosting model. Possible values include: "Web",
+     "ConnectedContainer", "DisconnectedContainer".
+    :type hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
+    :param plan_type: Commitment plan type.
+    :type plan_type: str
+    :param tier: Commitment period commitment tier.
+    :type tier: str
+    :param max_count: Commitment period commitment max count.
+    :type max_count: int
+    :param quota: Cognitive Services account commitment quota.
+    :type quota: ~azure.mgmt.cognitiveservices.models.CommitmentQuota
+    :param cost: Cognitive Services account commitment cost.
+    :type cost: ~azure.mgmt.cognitiveservices.models.CommitmentCost
+    """
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
+        'hosting_model': {'key': 'hostingModel', 'type': 'str'},
+        'plan_type': {'key': 'planType', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'max_count': {'key': 'maxCount', 'type': 'int'},
+        'quota': {'key': 'quota', 'type': 'CommitmentQuota'},
+        'cost': {'key': 'cost', 'type': 'CommitmentCost'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentTier, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.sku_name = kwargs.get('sku_name', None)
+        self.hosting_model = kwargs.get('hosting_model', None)
+        self.plan_type = kwargs.get('plan_type', None)
+        self.tier = kwargs.get('tier', None)
+        self.max_count = kwargs.get('max_count', None)
+        self.quota = kwargs.get('quota', None)
+        self.cost = kwargs.get('cost', None)
+
+
+class CommitmentTierListResult(msrest.serialization.Model):
+    """The list of cognitive services accounts operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param next_link: The link used to get the next page of CommitmentTier.
+    :type next_link: str
+    :ivar value: Gets the list of Cognitive Services accounts CommitmentTier and their properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.CommitmentTier]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[CommitmentTier]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommitmentTierListResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = None
+
+
+class Deployment(ProxyResource):
+    """Cognitive Services account deployment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param properties: Properties of Cognitive Services account deployment.
+    :type properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Deployment, self).__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.properties = kwargs.get('properties', None)
+
+
+class DeploymentListResult(msrest.serialization.Model):
+    """The list of cognitive services accounts operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param next_link: The link used to get the next page of Deployment.
+    :type next_link: str
+    :ivar value: Gets the list of Cognitive Services accounts Deployment and their properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.Deployment]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Deployment]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeploymentListResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = None
+
+
+class DeploymentModel(msrest.serialization.Model):
+    """Properties of Cognitive Services account deployment model.
+
+    :param format: Deployment model format.
+    :type format: str
+    :param name: Deployment model name.
+    :type name: str
+    :param version: Deployment model version.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'format': {'key': 'format', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeploymentModel, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)
+
+
+class DeploymentProperties(msrest.serialization.Model):
+    """Properties of Cognitive Services account deployment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Gets the status of the resource at the time the operation was called.
+     Possible values include: "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.DeploymentProvisioningState
+    :param model: Properties of Cognitive Services account deployment model.
+    :type model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :param scale_settings: Properties of Cognitive Services account deployment model.
+    :type scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'model': {'key': 'model', 'type': 'DeploymentModel'},
+        'scale_settings': {'key': 'scaleSettings', 'type': 'DeploymentScaleSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeploymentProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.model = kwargs.get('model', None)
+        self.scale_settings = kwargs.get('scale_settings', None)
+
+
+class DeploymentScaleSettings(msrest.serialization.Model):
+    """Properties of Cognitive Services account deployment model.
+
+    :param scale_type: Deployment scale type. Possible values include: "Manual".
+    :type scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
+    :param capacity: Deployment capacity.
+    :type capacity: int
+    """
+
+    _attribute_map = {
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DeploymentScaleSettings, self).__init__(**kwargs)
+        self.scale_type = kwargs.get('scale_type', None)
+        self.capacity = kwargs.get('capacity', None)
+
+
 class DomainAvailability(msrest.serialization.Model):
     """Domain availability.
 
@@ -550,6 +1039,8 @@ class DomainAvailability(msrest.serialization.Model):
     :type subdomain_name: str
     :param type: The Type of the resource.
     :type type: str
+    :param kind: The Kind of the resource.
+    :type kind: str
     """
 
     _attribute_map = {
@@ -557,6 +1048,7 @@ class DomainAvailability(msrest.serialization.Model):
         'reason': {'key': 'reason', 'type': 'str'},
         'subdomain_name': {'key': 'subdomainName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
     def __init__(
@@ -568,6 +1060,7 @@ class DomainAvailability(msrest.serialization.Model):
         self.reason = kwargs.get('reason', None)
         self.subdomain_name = kwargs.get('subdomain_name', None)
         self.type = kwargs.get('type', None)
+        self.kind = kwargs.get('kind', None)
 
 
 class Encryption(msrest.serialization.Model):

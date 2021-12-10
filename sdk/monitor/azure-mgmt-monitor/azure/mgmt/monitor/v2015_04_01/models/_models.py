@@ -10,6 +10,209 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class Resource(msrest.serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs['location']
+        self.tags = kwargs.get('tags', None)
+
+
+class AlertRuleResource(Resource):
+    """The alert rule resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param name_properties_name: Required. the name of the alert rule.
+    :type name_properties_name: str
+    :param description: the description of the alert rule that will be included in the alert email.
+    :type description: str
+    :param provisioning_state: the provisioning state.
+    :type provisioning_state: str
+    :param is_enabled: Required. the flag that indicates whether the alert rule is enabled.
+    :type is_enabled: bool
+    :param condition: Required. the condition that results in the alert rule being activated.
+    :type condition: ~$(python-base-namespace).v2015_04_01.models.RuleCondition
+    :param action: action that is performed when the alert rule becomes active, and when an alert
+     condition is resolved.
+    :type action: ~$(python-base-namespace).v2015_04_01.models.RuleAction
+    :param actions: the array of actions that are performed when the alert rule becomes active, and
+     when an alert condition is resolved.
+    :type actions: list[~$(python-base-namespace).v2015_04_01.models.RuleAction]
+    :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
+    :vartype last_updated_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'name_properties_name': {'required': True},
+        'is_enabled': {'required': True},
+        'condition': {'required': True},
+        'last_updated_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
+        'condition': {'key': 'properties.condition', 'type': 'RuleCondition'},
+        'action': {'key': 'properties.action', 'type': 'RuleAction'},
+        'actions': {'key': 'properties.actions', 'type': '[RuleAction]'},
+        'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AlertRuleResource, self).__init__(**kwargs)
+        self.name_properties_name = kwargs['name_properties_name']
+        self.description = kwargs.get('description', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.is_enabled = kwargs['is_enabled']
+        self.condition = kwargs['condition']
+        self.action = kwargs.get('action', None)
+        self.actions = kwargs.get('actions', None)
+        self.last_updated_time = None
+
+
+class AlertRuleResourceCollection(msrest.serialization.Model):
+    """Represents a collection of alert rule resources.
+
+    :param value: the values for the alert rule resources.
+    :type value: list[~$(python-base-namespace).v2015_04_01.models.AlertRuleResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AlertRuleResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AlertRuleResourceCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class AlertRuleResourcePatch(msrest.serialization.Model):
+    """The alert rule object for patch operations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param name: the name of the alert rule.
+    :type name: str
+    :param description: the description of the alert rule that will be included in the alert email.
+    :type description: str
+    :param provisioning_state: the provisioning state.
+    :type provisioning_state: str
+    :param is_enabled: the flag that indicates whether the alert rule is enabled.
+    :type is_enabled: bool
+    :param condition: the condition that results in the alert rule being activated.
+    :type condition: ~$(python-base-namespace).v2015_04_01.models.RuleCondition
+    :param action: action that is performed when the alert rule becomes active, and when an alert
+     condition is resolved.
+    :type action: ~$(python-base-namespace).v2015_04_01.models.RuleAction
+    :param actions: the array of actions that are performed when the alert rule becomes active, and
+     when an alert condition is resolved.
+    :type actions: list[~$(python-base-namespace).v2015_04_01.models.RuleAction]
+    :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
+    :vartype last_updated_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'last_updated_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'name': {'key': 'properties.name', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
+        'condition': {'key': 'properties.condition', 'type': 'RuleCondition'},
+        'action': {'key': 'properties.action', 'type': 'RuleAction'},
+        'actions': {'key': 'properties.actions', 'type': '[RuleAction]'},
+        'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AlertRuleResourcePatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.condition = kwargs.get('condition', None)
+        self.action = kwargs.get('action', None)
+        self.actions = kwargs.get('actions', None)
+        self.last_updated_time = None
+
+
 class AutoscaleNotification(msrest.serialization.Model):
     """Autoscale notification.
 
@@ -17,8 +220,8 @@ class AutoscaleNotification(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation: Required. the operation associated with the notification and its value must be
-     "scale". Default value: "Scale".
+    :ivar operation: the operation associated with the notification and its value must be "scale".
+     Has constant value: "Scale".
     :vartype operation: str
     :param email: the email notification.
     :type email: ~$(python-base-namespace).v2015_04_01.models.EmailNotification
@@ -93,52 +296,6 @@ class AutoscaleProfile(msrest.serialization.Model):
         self.recurrence = kwargs.get('recurrence', None)
 
 
-class Resource(msrest.serialization.Model):
-    """An azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
-
-
 class AutoscaleSettingResource(Resource):
     """The autoscale setting resource.
 
@@ -169,6 +326,9 @@ class AutoscaleSettingResource(Resource):
     :param target_resource_uri: the resource identifier of the resource that the autoscale setting
      should be added to.
     :type target_resource_uri: str
+    :param target_resource_location: the location of the resource that the autoscale setting should
+     be added to.
+    :type target_resource_location: str
     """
 
     _validation = {
@@ -190,6 +350,7 @@ class AutoscaleSettingResource(Resource):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'target_resource_uri': {'key': 'properties.targetResourceUri', 'type': 'str'},
+        'target_resource_location': {'key': 'properties.targetResourceLocation', 'type': 'str'},
     }
 
     def __init__(
@@ -202,6 +363,7 @@ class AutoscaleSettingResource(Resource):
         self.enabled = kwargs.get('enabled', True)
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.target_resource_uri = kwargs.get('target_resource_uri', None)
+        self.target_resource_location = kwargs.get('target_resource_location', None)
 
 
 class AutoscaleSettingResourceCollection(msrest.serialization.Model):
@@ -251,6 +413,9 @@ class AutoscaleSettingResourcePatch(msrest.serialization.Model):
     :param target_resource_uri: the resource identifier of the resource that the autoscale setting
      should be added to.
     :type target_resource_uri: str
+    :param target_resource_location: the location of the resource that the autoscale setting should
+     be added to.
+    :type target_resource_location: str
     """
 
     _validation = {
@@ -264,6 +429,7 @@ class AutoscaleSettingResourcePatch(msrest.serialization.Model):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'name': {'key': 'properties.name', 'type': 'str'},
         'target_resource_uri': {'key': 'properties.targetResourceUri', 'type': 'str'},
+        'target_resource_location': {'key': 'properties.targetResourceLocation', 'type': 'str'},
     }
 
     def __init__(
@@ -277,6 +443,7 @@ class AutoscaleSettingResourcePatch(msrest.serialization.Model):
         self.enabled = kwargs.get('enabled', True)
         self.name = kwargs.get('name', None)
         self.target_resource_uri = kwargs.get('target_resource_uri', None)
+        self.target_resource_location = kwargs.get('target_resource_location', None)
 
 
 class EmailNotification(msrest.serialization.Model):
@@ -304,8 +471,8 @@ class EmailNotification(msrest.serialization.Model):
         **kwargs
     ):
         super(EmailNotification, self).__init__(**kwargs)
-        self.send_to_subscription_administrator = kwargs.get('send_to_subscription_administrator', None)
-        self.send_to_subscription_co_administrators = kwargs.get('send_to_subscription_co_administrators', None)
+        self.send_to_subscription_administrator = kwargs.get('send_to_subscription_administrator', False)
+        self.send_to_subscription_co_administrators = kwargs.get('send_to_subscription_co_administrators', False)
         self.custom_emails = kwargs.get('custom_emails', None)
 
 
@@ -606,6 +773,159 @@ class LocalizableString(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class RuleCondition(msrest.serialization.Model):
+    """The condition that results in the alert rule being activated.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LocationThresholdRuleCondition, ManagementEventRuleCondition, ThresholdRuleCondition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of condition. This can be one of three types:
+     ManagementEventRuleCondition (occurrences of management events), LocationThresholdRuleCondition
+     (based on the number of failures of a web test), and ThresholdRuleCondition (based on the
+     threshold of a metric).Constant filled by server.
+    :type odata_type: str
+    :param data_source: the resource from which the rule collects its data. For this type
+     dataSource will always be of type RuleMetricDataSource.
+    :type data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition': 'LocationThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition': 'ManagementEventRuleCondition', 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition': 'ThresholdRuleCondition'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleCondition, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+        self.data_source = kwargs.get('data_source', None)
+
+
+class LocationThresholdRuleCondition(RuleCondition):
+    """A rule condition based on a certain number of locations failing.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of condition. This can be one of three types:
+     ManagementEventRuleCondition (occurrences of management events), LocationThresholdRuleCondition
+     (based on the number of failures of a web test), and ThresholdRuleCondition (based on the
+     threshold of a metric).Constant filled by server.
+    :type odata_type: str
+    :param data_source: the resource from which the rule collects its data. For this type
+     dataSource will always be of type RuleMetricDataSource.
+    :type data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :param window_size: the period of time (in ISO 8601 duration format) that is used to monitor
+     alert activity based on the threshold. If specified then it must be between 5 minutes and 1
+     day.
+    :type window_size: ~datetime.timedelta
+    :param failed_location_count: Required. the number of locations that must fail to activate the
+     alert.
+    :type failed_location_count: int
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'failed_location_count': {'required': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
+        'window_size': {'key': 'windowSize', 'type': 'duration'},
+        'failed_location_count': {'key': 'failedLocationCount', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LocationThresholdRuleCondition, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'  # type: str
+        self.window_size = kwargs.get('window_size', None)
+        self.failed_location_count = kwargs['failed_location_count']
+
+
+class ManagementEventAggregationCondition(msrest.serialization.Model):
+    """How the data that is collected should be combined over time.
+
+    :param operator: the condition operator. Possible values include: "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :type operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
+    :param threshold: The threshold value that activates the alert.
+    :type threshold: float
+    :param window_size: the period of time (in ISO 8601 duration format) that is used to monitor
+     alert activity based on the threshold. If specified then it must be between 5 minutes and 1
+     day.
+    :type window_size: ~datetime.timedelta
+    """
+
+    _attribute_map = {
+        'operator': {'key': 'operator', 'type': 'str'},
+        'threshold': {'key': 'threshold', 'type': 'float'},
+        'window_size': {'key': 'windowSize', 'type': 'duration'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagementEventAggregationCondition, self).__init__(**kwargs)
+        self.operator = kwargs.get('operator', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.window_size = kwargs.get('window_size', None)
+
+
+class ManagementEventRuleCondition(RuleCondition):
+    """A management event rule condition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of condition. This can be one of three types:
+     ManagementEventRuleCondition (occurrences of management events), LocationThresholdRuleCondition
+     (based on the number of failures of a web test), and ThresholdRuleCondition (based on the
+     threshold of a metric).Constant filled by server.
+    :type odata_type: str
+    :param data_source: the resource from which the rule collects its data. For this type
+     dataSource will always be of type RuleMetricDataSource.
+    :type data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :param aggregation: How the data that is collected should be combined over time and when the
+     alert is activated. Note that for management event alerts aggregation is optional – if it is
+     not provided then any event will cause the alert to activate.
+    :type aggregation:
+     ~$(python-base-namespace).v2015_04_01.models.ManagementEventAggregationCondition
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
+        'aggregation': {'key': 'aggregation', 'type': 'ManagementEventAggregationCondition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagementEventRuleCondition, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'  # type: str
+        self.aggregation = kwargs.get('aggregation', None)
+
+
 class MetricTrigger(msrest.serialization.Model):
     """The trigger that results in a scaling action.
 
@@ -618,12 +938,14 @@ class MetricTrigger(msrest.serialization.Model):
     :param metric_resource_uri: Required. the resource identifier of the resource the rule
      monitors.
     :type metric_resource_uri: str
+    :param metric_resource_location: the location of the resource the rule monitors.
+    :type metric_resource_location: str
     :param time_grain: Required. the granularity of metrics the rule monitors. Must be one of the
      predefined values returned from metric definitions for the metric. Must be between 12 hours and
      1 minute.
     :type time_grain: ~datetime.timedelta
     :param statistic: Required. the metric statistic type. How the metrics from multiple instances
-     are combined. Possible values include: "Average", "Min", "Max", "Sum".
+     are combined. Possible values include: "Average", "Min", "Max", "Sum", "Count".
     :type statistic: str or ~$(python-base-namespace).v2015_04_01.models.MetricStatisticType
     :param time_window: Required. the range of time in which instance data is collected. This value
      must be greater than the delay in metric collection, which can vary from resource-to-resource.
@@ -642,6 +964,8 @@ class MetricTrigger(msrest.serialization.Model):
     :param dimensions: List of dimension conditions. For example:
      [{"DimensionName":"AppName","Operator":"Equals","Values":["App1"]},{"DimensionName":"Deployment","Operator":"Equals","Values":["default"]}].
     :type dimensions: list[~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimension]
+    :param divide_per_instance: a value indicating whether metric should divide per instance.
+    :type divide_per_instance: bool
     """
 
     _validation = {
@@ -659,6 +983,7 @@ class MetricTrigger(msrest.serialization.Model):
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'metric_resource_uri': {'key': 'metricResourceUri', 'type': 'str'},
+        'metric_resource_location': {'key': 'metricResourceLocation', 'type': 'str'},
         'time_grain': {'key': 'timeGrain', 'type': 'duration'},
         'statistic': {'key': 'statistic', 'type': 'str'},
         'time_window': {'key': 'timeWindow', 'type': 'duration'},
@@ -666,6 +991,7 @@ class MetricTrigger(msrest.serialization.Model):
         'operator': {'key': 'operator', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
         'dimensions': {'key': 'dimensions', 'type': '[ScaleRuleMetricDimension]'},
+        'divide_per_instance': {'key': 'dividePerInstance', 'type': 'bool'},
     }
 
     def __init__(
@@ -676,6 +1002,7 @@ class MetricTrigger(msrest.serialization.Model):
         self.metric_name = kwargs['metric_name']
         self.metric_namespace = kwargs.get('metric_namespace', None)
         self.metric_resource_uri = kwargs['metric_resource_uri']
+        self.metric_resource_location = kwargs.get('metric_resource_location', None)
         self.time_grain = kwargs['time_grain']
         self.statistic = kwargs['statistic']
         self.time_window = kwargs['time_window']
@@ -683,6 +1010,7 @@ class MetricTrigger(msrest.serialization.Model):
         self.operator = kwargs['operator']
         self.threshold = kwargs['threshold']
         self.dimensions = kwargs.get('dimensions', None)
+        self.divide_per_instance = kwargs.get('divide_per_instance', None)
 
 
 class Operation(msrest.serialization.Model):
@@ -863,6 +1191,303 @@ class RecurrentSchedule(msrest.serialization.Model):
         self.minutes = kwargs['minutes']
 
 
+class RuleAction(msrest.serialization.Model):
+    """The action that is performed when the alert rule becomes active, and when an alert condition is resolved.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: RuleEmailAction, RuleWebhookAction.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of the action. There are two types of actions:
+     RuleEmailAction and RuleWebhookAction.Constant filled by server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'Microsoft.Azure.Management.Insights.Models.RuleEmailAction': 'RuleEmailAction', 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction': 'RuleWebhookAction'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleAction, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+
+
+class RuleDataSource(msrest.serialization.Model):
+    """The resource from which the rule collects its data.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: RuleManagementEventDataSource, RuleMetricDataSource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of data source. There are two types of rule
+     data sources: RuleMetricDataSource and RuleManagementEventDataSource.Constant filled by server.
+    :type odata_type: str
+    :param resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
+     this property cannot be updated for an existing rule.
+    :type resource_uri: str
+    :param legacy_resource_id: the legacy resource identifier of the resource the rule monitors.
+     **NOTE**\ : this property cannot be updated for an existing rule.
+    :type legacy_resource_id: str
+    :param resource_location: the location of the resource.
+    :type resource_location: str
+    :param metric_namespace: the namespace of the metric.
+    :type metric_namespace: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        'legacy_resource_id': {'key': 'legacyResourceId', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource': 'RuleManagementEventDataSource', 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource': 'RuleMetricDataSource'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleDataSource, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+        self.resource_uri = kwargs.get('resource_uri', None)
+        self.legacy_resource_id = kwargs.get('legacy_resource_id', None)
+        self.resource_location = kwargs.get('resource_location', None)
+        self.metric_namespace = kwargs.get('metric_namespace', None)
+
+
+class RuleEmailAction(RuleAction):
+    """Specifies the action to send email when the rule condition is evaluated. The discriminator is always RuleEmailAction in this case.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of the action. There are two types of actions:
+     RuleEmailAction and RuleWebhookAction.Constant filled by server.
+    :type odata_type: str
+    :param send_to_service_owners: Whether the administrators (service and co-administrators) of
+     the service should be notified when the alert is activated.
+    :type send_to_service_owners: bool
+    :param custom_emails: the list of administrator's custom email addresses to notify of the
+     activation of the alert.
+    :type custom_emails: list[str]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'send_to_service_owners': {'key': 'sendToServiceOwners', 'type': 'bool'},
+        'custom_emails': {'key': 'customEmails', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleEmailAction, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'  # type: str
+        self.send_to_service_owners = kwargs.get('send_to_service_owners', None)
+        self.custom_emails = kwargs.get('custom_emails', None)
+
+
+class RuleManagementEventClaimsDataSource(msrest.serialization.Model):
+    """The claims for a rule management event data source.
+
+    :param email_address: the email address.
+    :type email_address: str
+    """
+
+    _attribute_map = {
+        'email_address': {'key': 'emailAddress', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleManagementEventClaimsDataSource, self).__init__(**kwargs)
+        self.email_address = kwargs.get('email_address', None)
+
+
+class RuleManagementEventDataSource(RuleDataSource):
+    """A rule management event data source. The discriminator fields is always RuleManagementEventDataSource in this case.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of data source. There are two types of rule
+     data sources: RuleMetricDataSource and RuleManagementEventDataSource.Constant filled by server.
+    :type odata_type: str
+    :param resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
+     this property cannot be updated for an existing rule.
+    :type resource_uri: str
+    :param legacy_resource_id: the legacy resource identifier of the resource the rule monitors.
+     **NOTE**\ : this property cannot be updated for an existing rule.
+    :type legacy_resource_id: str
+    :param resource_location: the location of the resource.
+    :type resource_location: str
+    :param metric_namespace: the namespace of the metric.
+    :type metric_namespace: str
+    :param event_name: the event name.
+    :type event_name: str
+    :param event_source: the event source.
+    :type event_source: str
+    :param level: the level.
+    :type level: str
+    :param operation_name: The name of the operation that should be checked for. If no name is
+     provided, any operation will match.
+    :type operation_name: str
+    :param resource_group_name: the resource group name.
+    :type resource_group_name: str
+    :param resource_provider_name: the resource provider name.
+    :type resource_provider_name: str
+    :param status: The status of the operation that should be checked for. If no status is
+     provided, any status will match.
+    :type status: str
+    :param sub_status: the substatus.
+    :type sub_status: str
+    :param claims: the claims.
+    :type claims: ~$(python-base-namespace).v2015_04_01.models.RuleManagementEventClaimsDataSource
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        'legacy_resource_id': {'key': 'legacyResourceId', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
+        'event_name': {'key': 'eventName', 'type': 'str'},
+        'event_source': {'key': 'eventSource', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'str'},
+        'operation_name': {'key': 'operationName', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'resource_provider_name': {'key': 'resourceProviderName', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'sub_status': {'key': 'subStatus', 'type': 'str'},
+        'claims': {'key': 'claims', 'type': 'RuleManagementEventClaimsDataSource'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleManagementEventDataSource, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'  # type: str
+        self.event_name = kwargs.get('event_name', None)
+        self.event_source = kwargs.get('event_source', None)
+        self.level = kwargs.get('level', None)
+        self.operation_name = kwargs.get('operation_name', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.resource_provider_name = kwargs.get('resource_provider_name', None)
+        self.status = kwargs.get('status', None)
+        self.sub_status = kwargs.get('sub_status', None)
+        self.claims = kwargs.get('claims', None)
+
+
+class RuleMetricDataSource(RuleDataSource):
+    """A rule metric data source. The discriminator value is always RuleMetricDataSource in this case.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of data source. There are two types of rule
+     data sources: RuleMetricDataSource and RuleManagementEventDataSource.Constant filled by server.
+    :type odata_type: str
+    :param resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
+     this property cannot be updated for an existing rule.
+    :type resource_uri: str
+    :param legacy_resource_id: the legacy resource identifier of the resource the rule monitors.
+     **NOTE**\ : this property cannot be updated for an existing rule.
+    :type legacy_resource_id: str
+    :param resource_location: the location of the resource.
+    :type resource_location: str
+    :param metric_namespace: the namespace of the metric.
+    :type metric_namespace: str
+    :param metric_name: the name of the metric that defines what the rule monitors.
+    :type metric_name: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        'legacy_resource_id': {'key': 'legacyResourceId', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
+        'metric_name': {'key': 'metricName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleMetricDataSource, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'  # type: str
+        self.metric_name = kwargs.get('metric_name', None)
+
+
+class RuleWebhookAction(RuleAction):
+    """Specifies the action to post to service when the rule condition is evaluated. The discriminator is always RuleWebhookAction in this case.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of the action. There are two types of actions:
+     RuleEmailAction and RuleWebhookAction.Constant filled by server.
+    :type odata_type: str
+    :param service_uri: the service uri to Post the notification when the alert activates or
+     resolves.
+    :type service_uri: str
+    :param properties: the dictionary of custom properties to include with the post operation.
+     These data are appended to the webhook payload.
+    :type properties: dict[str, str]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleWebhookAction, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'  # type: str
+        self.service_uri = kwargs.get('service_uri', None)
+        self.properties = kwargs.get('properties', None)
+
+
 class ScaleAction(msrest.serialization.Model):
     """The parameters for the scaling action.
 
@@ -872,7 +1497,7 @@ class ScaleAction(msrest.serialization.Model):
      decreases the number of instances. Possible values include: "None", "Increase", "Decrease".
     :type direction: str or ~$(python-base-namespace).v2015_04_01.models.ScaleDirection
     :param type: Required. the type of action that should occur when the scale rule fires. Possible
-     values include: "ChangeCount", "PercentChangeCount", "ExactCount".
+     values include: "ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue".
     :type type: str or ~$(python-base-namespace).v2015_04_01.models.ScaleType
     :param value: the number of instances that are involved in the scaling action. This value must
      be 1 or greater. The default value is 1.
@@ -984,8 +1609,8 @@ class ScaleRuleMetricDimension(msrest.serialization.Model):
     :param operator: Required. the dimension operator. Only 'Equals' and 'NotEquals' are supported.
      'Equals' being equal to any of the values. 'NotEquals' being not equal to all of the values.
      Possible values include: "Equals", "NotEquals".
-    :type operator: str or ~$(python-base-
-     namespace).v2015_04_01.models.ScaleRuleMetricDimensionOperationType
+    :type operator: str or
+     ~$(python-base-namespace).v2015_04_01.models.ScaleRuleMetricDimensionOperationType
     :param values: Required. list of dimension values. For example: ["App1","App2"].
     :type values: list[str]
     """
@@ -1037,6 +1662,62 @@ class SenderAuthorization(msrest.serialization.Model):
         self.action = kwargs.get('action', None)
         self.role = kwargs.get('role', None)
         self.scope = kwargs.get('scope', None)
+
+
+class ThresholdRuleCondition(RuleCondition):
+    """A rule condition based on a metric crossing a threshold.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. specifies the type of condition. This can be one of three types:
+     ManagementEventRuleCondition (occurrences of management events), LocationThresholdRuleCondition
+     (based on the number of failures of a web test), and ThresholdRuleCondition (based on the
+     threshold of a metric).Constant filled by server.
+    :type odata_type: str
+    :param data_source: the resource from which the rule collects its data. For this type
+     dataSource will always be of type RuleMetricDataSource.
+    :type data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
+    :param operator: Required. the operator used to compare the data and the threshold. Possible
+     values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :type operator: str or ~$(python-base-namespace).v2015_04_01.models.ConditionOperator
+    :param threshold: Required. the threshold value that activates the alert.
+    :type threshold: float
+    :param window_size: the period of time (in ISO 8601 duration format) that is used to monitor
+     alert activity based on the threshold. If specified then it must be between 5 minutes and 1
+     day.
+    :type window_size: ~datetime.timedelta
+    :param time_aggregation: the time aggregation operator. How the data that are collected should
+     be combined over time. The default value is the PrimaryAggregationType of the Metric. Possible
+     values include: "Average", "Minimum", "Maximum", "Total", "Last".
+    :type time_aggregation: str or
+     ~$(python-base-namespace).v2015_04_01.models.TimeAggregationOperator
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'operator': {'required': True},
+        'threshold': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': 'odata\\.type', 'type': 'str'},
+        'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'threshold': {'key': 'threshold', 'type': 'float'},
+        'window_size': {'key': 'windowSize', 'type': 'duration'},
+        'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ThresholdRuleCondition, self).__init__(**kwargs)
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'  # type: str
+        self.operator = kwargs['operator']
+        self.threshold = kwargs['threshold']
+        self.window_size = kwargs.get('window_size', None)
+        self.time_aggregation = kwargs.get('time_aggregation', None)
 
 
 class TimeWindow(msrest.serialization.Model):

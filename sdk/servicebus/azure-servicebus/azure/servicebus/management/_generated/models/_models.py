@@ -20,7 +20,7 @@ class AuthorizationRule(msrest.serialization.Model):
     :param claim_value: The claim value.
     :type claim_value: str
     :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
-    :type rights: list[str]
+    :type rights: list[str or ~azure.servicebus.management._generated.models.AccessRights]
     :param created_time: The date and time when the authorization rule was created.
     :type created_time: ~datetime.datetime
     :param modified_time: The date and time when the authorization rule was modified.
@@ -757,6 +757,9 @@ class QueueDescription(msrest.serialization.Model):
     :param forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
+    :param max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that can
+     be accepted by the queue.
+    :type max_message_size_in_kilobytes: int
     """
 
     _attribute_map = {
@@ -786,6 +789,7 @@ class QueueDescription(msrest.serialization.Model):
         'entity_availability_status': {'key': 'entityAvailabilityStatus', 'type': 'str', 'xml': {'name': 'EntityAvailabilityStatus', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'enable_express': {'key': 'enableExpress', 'type': 'bool', 'xml': {'name': 'EnableExpress', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'forward_dead_lettered_messages_to': {'key': 'forwardDeadLetteredMessagesTo', 'type': 'str', 'xml': {'name': 'ForwardDeadLetteredMessagesTo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_message_size_in_kilobytes': {'key': 'maxMessageSizeInKilobytes', 'type': 'int', 'xml': {'name': 'MaxMessageSizeInKilobytes', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -822,6 +826,7 @@ class QueueDescription(msrest.serialization.Model):
         self.entity_availability_status = kwargs.get('entity_availability_status', None)
         self.enable_express = kwargs.get('enable_express', None)
         self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
+        self.max_message_size_in_kilobytes = kwargs.get('max_message_size_in_kilobytes', None)
 
 
 class QueueDescriptionEntry(msrest.serialization.Model):
@@ -1468,6 +1473,9 @@ class TopicDescription(msrest.serialization.Model):
     :type enable_express: bool
     :param user_metadata: Metadata associated with the topic.
     :type user_metadata: str
+    :param max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that can
+     be accepted by the topic.
+    :type max_message_size_in_kilobytes: int
     """
 
     _attribute_map = {
@@ -1493,6 +1501,7 @@ class TopicDescription(msrest.serialization.Model):
         'enable_subscription_partitioning': {'key': 'enableSubscriptionPartitioning', 'type': 'bool', 'xml': {'name': 'EnableSubscriptionPartitioning', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'enable_express': {'key': 'enableExpress', 'type': 'bool', 'xml': {'name': 'EnableExpress', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'user_metadata': {'key': 'userMetadata', 'type': 'str', 'xml': {'name': 'UserMetadata', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_message_size_in_kilobytes': {'key': 'maxMessageSizeInKilobytes', 'type': 'int', 'xml': {'name': 'MaxMessageSizeInKilobytes', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'TopicDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -1525,6 +1534,7 @@ class TopicDescription(msrest.serialization.Model):
         self.enable_subscription_partitioning = kwargs.get('enable_subscription_partitioning', None)
         self.enable_express = kwargs.get('enable_express', None)
         self.user_metadata = kwargs.get('user_metadata', None)
+        self.max_message_size_in_kilobytes = kwargs.get('max_message_size_in_kilobytes', None)
 
 
 class TopicDescriptionEntry(msrest.serialization.Model):

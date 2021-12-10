@@ -59,31 +59,36 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
         name = "test-ss"
 
-        s1 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+        s1 = EntityRecognitionSkill(name="skill1",
+                                    inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                     outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS1")],
                                     description="Skill Version 1",
                                     model_version="1",
                                     include_typeless_entities=True)
 
-        s2 = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+        s2 = EntityRecognitionSkill(name="skill2",
+                                    inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                     outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizationsS2")],
                                     skill_version=EntityRecognitionSkillVersion.LATEST,
                                     description="Skill Version 3",
                                     model_version="3",
                                     include_typeless_entities=True)
-        s3 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+        s3 = SentimentSkill(name="skill3",
+                            inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                             outputs=[OutputFieldMappingEntry(name="score", target_name="scoreS3")],
                             skill_version=SentimentSkillVersion.V1,
                             description="Sentiment V1",
                             include_opinion_mining=True)
 
-        s4 = SentimentSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+        s4 = SentimentSkill(name="skill4",
+                            inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                             outputs=[OutputFieldMappingEntry(name="confidenceScores", target_name="scoreS4")],
                             skill_version=SentimentSkillVersion.V3,
                             description="Sentiment V3",
                             include_opinion_mining=True)
 
-        s5 = EntityLinkingSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
+        s5 = EntityLinkingSkill(name="skill5",
+                                inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                 outputs=[OutputFieldMappingEntry(name="entities", target_name="entitiesS5")],
                                 minimum_precision=0.5)
 
@@ -107,6 +112,8 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         assert result.skills[4].minimum_precision == 0.5
 
         assert len(await client.get_skillsets()) == 1
+
+        await client.reset_skills(result, [x.name for x in result.skills])
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

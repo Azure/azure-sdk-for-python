@@ -36,7 +36,7 @@ def build_analyze_conversations_request(
     project_name = kwargs.pop('project_name')  # type: str
     deployment_name = kwargs.pop('deployment_name')  # type: str
 
-    api_version = "2021-07-15-preview"
+    api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/:analyze-conversations')
@@ -67,15 +67,15 @@ class ConversationAnalysisClientOperationsMixin(object):
     @distributed_trace
     def analyze_conversations(
         self,
-        analyze_conversation_options,  # type: "_models.AnalyzeConversationOptions"
+        conversation_analysis_options,  # type: "_models.ConversationAnalysisOptions"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AnalyzeConversationResult"
         """Analyzes the input conversation utterance.
 
-        :param analyze_conversation_options: Post body of the request.
-        :type analyze_conversation_options:
-         ~azure.ai.language.conversations.models.AnalyzeConversationOptions
+        :param conversation_analysis_options: Post body of the request.
+        :type conversation_analysis_options:
+         ~azure.ai.language.conversations.models.ConversationAnalysisOptions
         :keyword project_name: The name of the project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -94,7 +94,7 @@ class ConversationAnalysisClientOperationsMixin(object):
         project_name = kwargs.pop('project_name')  # type: str
         deployment_name = kwargs.pop('deployment_name')  # type: str
 
-        json = self._serialize.body(analyze_conversation_options, 'AnalyzeConversationOptions')
+        json = self._serialize.body(conversation_analysis_options, 'ConversationAnalysisOptions')
 
         request = build_analyze_conversations_request(
             content_type=content_type,

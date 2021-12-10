@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import ClientSecretCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
@@ -207,7 +206,9 @@ def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        assert "tenant_id" not in kwargs, "tenant_id kwarg shouldn't get passed to send method"
+
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant, "common"), 'unexpected tenant "{}"'.format(tenant)
@@ -232,6 +233,18 @@ def test_multitenant_authentication():
     # should still default to the first tenant
     token = credential.get_token("scope")
     assert token.token == first_token
+
+
+def test_live_multitenant_authentication(live_service_principal):
+    # first create a credential with a non-existent tenant
+    credential = ClientSecretCredential(
+        "...", live_service_principal["client_id"], live_service_principal["client_secret"]
+    )
+    # then get a valid token for an actual tenant
+    token = credential.get_token("https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"])
+    assert token.token
+    assert token.expires_on
+
 
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"

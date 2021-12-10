@@ -71,7 +71,6 @@ from ._integration_runtime_status_operations import IntegrationRuntimeStatusOper
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._spark_configurations_operations import SparkConfigurationsOperations
 from ._kusto_operations_operations import KustoOperationsOperations
-from ._kusto_pool_operations import KustoPoolOperations
 from ._kusto_pools_operations import KustoPoolsOperations
 from ._kusto_pool_child_resource_operations import KustoPoolChildResourceOperations
 from ._kusto_pool_attached_database_configurations_operations import KustoPoolAttachedDatabaseConfigurationsOperations
@@ -146,7 +145,6 @@ __all__ = [
     'SparkConfigurationOperations',
     'SparkConfigurationsOperations',
     'KustoOperationsOperations',
-    'KustoPoolOperations',
     'KustoPoolsOperations',
     'KustoPoolChildResourceOperations',
     'KustoPoolAttachedDatabaseConfigurationsOperations',

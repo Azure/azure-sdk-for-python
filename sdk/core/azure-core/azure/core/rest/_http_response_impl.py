@@ -392,8 +392,8 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         self._set_read_checks()
         return self.content
 
-    def iter_bytes(self):
-        # type: () -> Iterator[bytes]
+    def iter_bytes(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -413,8 +413,8 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
                 yield part
         self.close()
 
-    def iter_raw(self):
-        # type: () -> Iterator[bytes]
+    def iter_raw(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -453,10 +453,10 @@ class RestHttpClientTransportResponse(_RestHttpClientTransportResponseBase, Http
     """Create a Rest HTTPResponse from an http.client response.
     """
 
-    def iter_bytes(self):
+    def iter_bytes(self, **kwargs):
         raise TypeError("We do not support iter_bytes for this transport response")
 
-    def iter_raw(self):
+    def iter_raw(self, **kwargs):
         raise TypeError("We do not support iter_raw for this transport response")
 
     def read(self):

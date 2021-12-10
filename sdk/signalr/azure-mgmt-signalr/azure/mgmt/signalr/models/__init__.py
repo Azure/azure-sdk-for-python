@@ -32,6 +32,8 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegenerateKeyParameters
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceLogCategory
+    from ._models_py3 import ResourceLogConfiguration
     from ._models_py3 import ResourceSku
     from ._models_py3 import ServerlessUpstreamSettings
     from ._models_py3 import ServiceSpecification
@@ -49,6 +51,9 @@ try:
     from ._models_py3 import SignalRUsage
     from ._models_py3 import SignalRUsageList
     from ._models_py3 import SignalRUsageName
+    from ._models_py3 import Sku
+    from ._models_py3 import SkuCapacity
+    from ._models_py3 import SkuList
     from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpstreamAuthSettings
@@ -80,6 +85,8 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource  # type: ignore
     from ._models import RegenerateKeyParameters  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import ResourceLogCategory  # type: ignore
+    from ._models import ResourceLogConfiguration  # type: ignore
     from ._models import ResourceSku  # type: ignore
     from ._models import ServerlessUpstreamSettings  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
@@ -97,6 +104,9 @@ except (SyntaxError, ImportError):
     from ._models import SignalRUsage  # type: ignore
     from ._models import SignalRUsageList  # type: ignore
     from ._models import SignalRUsageName  # type: ignore
+    from ._models import Sku  # type: ignore
+    from ._models import SkuCapacity  # type: ignore
+    from ._models import SkuList  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UpstreamAuthSettings  # type: ignore
@@ -111,6 +121,7 @@ from ._signal_rmanagement_client_enums import (
     ManagedIdentityType,
     PrivateLinkServiceConnectionStatus,
     ProvisioningState,
+    ScaleType,
     ServiceKind,
     SharedPrivateLinkResourceStatus,
     SignalRRequestType,
@@ -144,6 +155,8 @@ __all__ = [
     'ProxyResource',
     'RegenerateKeyParameters',
     'Resource',
+    'ResourceLogCategory',
+    'ResourceLogConfiguration',
     'ResourceSku',
     'ServerlessUpstreamSettings',
     'ServiceSpecification',
@@ -161,6 +174,9 @@ __all__ = [
     'SignalRUsage',
     'SignalRUsageList',
     'SignalRUsageName',
+    'Sku',
+    'SkuCapacity',
+    'SkuList',
     'SystemData',
     'TrackedResource',
     'UpstreamAuthSettings',
@@ -173,6 +189,7 @@ __all__ = [
     'ManagedIdentityType',
     'PrivateLinkServiceConnectionStatus',
     'ProvisioningState',
+    'ScaleType',
     'ServiceKind',
     'SharedPrivateLinkResourceStatus',
     'SignalRRequestType',

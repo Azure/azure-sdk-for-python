@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: PUT
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/users/some_user/groups/some_group?api-version=2021-10-01
+  response:
+    body:
+      string: '{"code":"Warning.User.NotExisted","message":"User `some_user` is not
+        found.","target":"User","details":null,"innererror":null}'
+    headers:
+      api-supported-versions:
+      - '2021-10-01'
+      connection:
+      - keep-alive
+      content-length:
+      - '126'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 10 Nov 2021 01:09:11 GMT
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-ms-error-code:
+      - Warning.User.NotExisted
+    status:
+      code: 404
+      message: Not Found
+version: 1

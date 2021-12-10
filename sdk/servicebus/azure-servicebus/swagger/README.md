@@ -16,5 +16,5 @@ no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 python: true
-package-version: "2017-04"
+package-version: "2021-05"
 ```

@@ -37,6 +37,7 @@ from ._models import (
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyResult,
     MultiCategoryClassifyResult,
+    ActionPointerKind
 )
 
 
@@ -340,7 +341,65 @@ def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-re
     return "key_phrase_extraction_tasks"
 
 
-def _get_good_result(task, doc_id_order, response_headers, returned_tasks_object):
+def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
+    if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
+        return "entity_recognition_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
+        return "entity_recognition_pii_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_LINKED_ENTITIES:
+        return "entity_linking_tasks"
+    if task_type == ActionPointerKind.ANALYZE_SENTIMENT:
+        return "sentiment_analysis_tasks"
+    if task_type == ActionPointerKind.EXTRACT_SUMMARY:
+        return "extractive_summarization_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_CUSTOM_ENTITIES:
+        return "custom_entity_recognition_tasks"
+    if task_type == ActionPointerKind.SINGLE_CATEGORY_CLASSIFY:
+        return "custom_single_classification_tasks"
+    if task_type == ActionPointerKind.MULTI_CATEGORY_CLASSIFY:
+        return "custom_multi_classification_tasks"
+    return "key_phrase_extraction_tasks"
+
+
+def resolve_action_pointer(pointer):
+    import re
+    pointer_union = "|".join(value for value in ActionPointerKind)
+    found = re.search(r"#/tasks/({})/\d+".format(pointer_union), pointer)
+    if found:
+        index = int(pointer[-1])
+        task = pointer.split("#/tasks/")[1].split("/")[0]
+        property_name = get_task_from_pointer(task)
+        return property_name, index
+    raise ValueError(
+        "Unexpected response from service - action pointer '{}' is not a valid action pointer.".format(pointer)
+    )
+
+
+def get_ordered_errors(tasks_obj, task_name, doc_id_order):
+    # throw exception if error missing a target
+    missing_target = any([error for error in tasks_obj.errors if error.target is None])
+    if missing_target:
+        message = "".join(["({}) {}".format(err.code, err.message) for err in tasks_obj.errors])
+        raise HttpResponseError(message=message)
+
+    # create a DocumentError per input doc with the action error details
+    for err in tasks_obj.errors:
+        property_name, index = resolve_action_pointer(err.target)
+        actions = getattr(tasks_obj.tasks, property_name)
+        action = actions[index]
+        if action.task_name == task_name:
+            errors = [
+                DocumentError(
+                    id=doc_id,
+                    error=TextAnalyticsError(code=err.code, message=err.message)
+                ) for doc_id in doc_id_order
+            ]
+            return errors
+    raise ValueError("Unexpected response from service - no errors for missing action results.")
+
+
+def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object):
+    returned_tasks = returned_tasks_object.tasks
     current_task_type, task_name = task
     deserialization_callback = _get_deserialization_callback_from_task_type(
         current_task_type
@@ -348,9 +407,13 @@ def _get_good_result(task, doc_id_order, response_headers, returned_tasks_object
     property_name = _get_property_name_from_task_type(current_task_type)
     try:
         response_task_to_deserialize = \
-            next(task for task in getattr(returned_tasks_object, property_name) if task.task_name == task_name)
+            next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
     except StopIteration:
         raise ValueError("Unexpected response from service - unable to deserialize result.")
+
+    # if no results present, check for action errors
+    if response_task_to_deserialize.results is None:
+        return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
     )
@@ -358,9 +421,9 @@ def _get_good_result(task, doc_id_order, response_headers, returned_tasks_object
 
 def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
     iter_items = defaultdict(list)  # map doc id to action results
-    returned_tasks_object = analyze_job_state.tasks
+    returned_tasks_object = analyze_job_state
     for task in task_order:
-        results = _get_good_result(
+        results = _get_doc_results(
             task,
             doc_id_order,
             response_headers,

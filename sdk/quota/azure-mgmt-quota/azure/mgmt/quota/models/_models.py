@@ -166,7 +166,7 @@ class LimitJsonObject(msrest.serialization.Model):
     """LimitJson abstract class.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LimitValue.
+    sub-classes are: LimitObject.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -184,7 +184,7 @@ class LimitJsonObject(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'limit_object_type': {'LimitValue': 'LimitValue'}
+        'limit_object_type': {'LimitValue': 'LimitObject'}
     }
 
     def __init__(
@@ -195,27 +195,29 @@ class LimitJsonObject(msrest.serialization.Model):
         self.limit_object_type = None  # type: Optional[str]
 
 
-class LimitObject(msrest.serialization.Model):
+class LimitObject(LimitJsonObject):
     """The resource quota limit value.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param limit_object_type: Required. The limit object type.Constant filled by server.  Possible
+     values include: "LimitValue".
+    :type limit_object_type: str or ~azure.mgmt.quota.models.LimitType
     :param value: Required. The quota/limit value.
     :type value: int
-    :param limit_object_type: The limit object type. Possible values include: "LimitValue".
-    :type limit_object_type: str or ~azure.mgmt.quota.models.LimitType
     :param limit_type: The quota or usages limit types. Possible values include: "Independent",
      "Shared".
     :type limit_type: str or ~azure.mgmt.quota.models.QuotaLimitTypes
     """
 
     _validation = {
+        'limit_object_type': {'required': True},
         'value': {'required': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'int'},
         'limit_object_type': {'key': 'limitObjectType', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'int'},
         'limit_type': {'key': 'limitType', 'type': 'str'},
     }
 
@@ -224,46 +226,9 @@ class LimitObject(msrest.serialization.Model):
         **kwargs
     ):
         super(LimitObject, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.limit_object_type = kwargs.get('limit_object_type', None)
-        self.limit_type = kwargs.get('limit_type', None)
-
-
-class LimitValue(LimitJsonObject, LimitObject):
-    """The resource quota limit.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The quota/limit value.
-    :type value: int
-    :param limit_type: The quota or usages limit types. Possible values include: "Independent",
-     "Shared".
-    :type limit_type: str or ~azure.mgmt.quota.models.QuotaLimitTypes
-    :param limit_object_type: Required. The limit object type.Constant filled by server.  Possible
-     values include: "LimitValue".
-    :type limit_object_type: str or ~azure.mgmt.quota.models.LimitType
-    """
-
-    _validation = {
-        'value': {'required': True},
-        'limit_object_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'int'},
-        'limit_type': {'key': 'limitType', 'type': 'str'},
-        'limit_object_type': {'key': 'limitObjectType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LimitValue, self).__init__(**kwargs)
+        self.limit_object_type = 'LimitValue'  # type: str
         self.value = kwargs['value']
         self.limit_type = kwargs.get('limit_type', None)
-        self.limit_object_type = 'LimitValue'  # type: str
-        self.limit_object_type = 'LimitValue'  # type: str
 
 
 class OperationDisplay(msrest.serialization.Model):

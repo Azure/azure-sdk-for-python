@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-04-01-preview",
-    "total_api_version_list": ["2021-04-01-preview"],
+    "chosen_version": "2021-10-01",
+    "total_api_version_list": ["2021-10-01"],
     "client": {
         "name": "SignalRManagementClient",
         "filename": "_signal_rmanagement_client",

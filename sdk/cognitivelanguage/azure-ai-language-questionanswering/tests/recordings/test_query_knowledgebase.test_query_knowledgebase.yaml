@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Ports
@@ -67,29 +67,29 @@ interactions:
         on Surface.com. |\\n| Sensors | Six sensors\u2014 accelerometer, magnetometer,
         gyro, ambient light sensor, Hall effect, Wi-Fi SAR\u2014let apps do things
         like track motion and determine location. |\",\n      \"confidenceScore\":
-        1.0,\n      \"id\": 5,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        1.0,\n      \"id\": 114,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
-        6,\n            \"displayText\": \"Software\"\n          },\n          {\n
-        \           \"displayOrder\": 1,\n            \"qnaId\": 7,\n            \"displayText\":
+        115,\n            \"displayText\": \"Software\"\n          },\n          {\n
+        \           \"displayOrder\": 1,\n            \"qnaId\": 116,\n            \"displayText\":
         \"Processor\"\n          },\n          {\n            \"displayOrder\": 2,\n
-        \           \"qnaId\": 8,\n            \"displayText\": \"Memory and storage\"\n
+        \           \"qnaId\": 117,\n            \"displayText\": \"Memory and storage\"\n
         \         },\n          {\n            \"displayOrder\": 3,\n            \"qnaId\":
-        9,\n            \"displayText\": \"Sensors\"\n          }\n        ]\n      }\n
+        118,\n            \"displayText\": \"Sensors\"\n          }\n        ]\n      }\n
         \   },\n    {\n      \"questions\": [\n        \"Connect monitors, accessories,
         and other devices\"\n      ],\n      \"answer\": \"**Connect monitors, accessories,
         and other devices**\\n\\nYou can connect monitors, accessories, and other
         devices directly to your Surface Pro 4 using the USB port, Mini DisplayPort,
         or Bluetooth. Or, connect everything to a Surface Dock (sold separately).
         With Surface Dock, you can switch between fully connected and fully mobile
-        with a single connector.\",\n      \"confidenceScore\": 0.4067,\n      \"id\":
-        64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        with a single connector.\",\n      \"confidenceScore\": 0.5997,\n      \"id\":
+        173,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {\n        \"explicitlytaggedheading\": \"connect monitors, accessories, and
         other devices\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
         false,\n        \"prompts\": [\n          {\n            \"displayOrder\":
-        0,\n            \"qnaId\": 65,\n            \"displayText\": \"Set up your
+        0,\n            \"qnaId\": 174,\n            \"displayText\": \"Set up your
         workspace with Surface Dock\"\n          },\n          {\n            \"displayOrder\":
-        1,\n            \"qnaId\": 66,\n            \"displayText\": \"Connect or
+        1,\n            \"qnaId\": 175,\n            \"displayText\": \"Connect or
         project to a monitor, screen, or other display\"\n          }\n        ]\n
         \     }\n    },\n    {\n      \"questions\": [\n        \"Projector or monitor.\"\n
         \     ],\n      \"answer\": \"If your monitor has a DisplayPort, you can connect
@@ -99,27 +99,27 @@ interactions:
         is for video only. Audio will play from your Surface speakers unless you\u2019ve
         connected external speakers. For more info about this, see [Surface sound,](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
         [volume, and audio accessories](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
-        on Surface.com.\",\n      \"confidenceScore\": 0.3392,\n      \"id\": 68,\n
+        on Surface.com.\",\n      \"confidenceScore\": 0.4511,\n      \"id\": 177,\n
         \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - d0dc208c-60f1-4669-bddb-4522e3949ecf
+      - 3c370c26-52a7-44e4-a59e-5e9567dd9f2a
       content-length:
-      - '7123'
+      - '7137'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Thu, 30 Sep 2021 15:52:34 GMT
+      - Thu, 28 Oct 2021 03:30:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1273'
+      - '421'
     status:
       code: 200
       message: OK

@@ -81,7 +81,7 @@ setup(
             "azure.keyvault",
         ]
     ),
-    install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.11.0", "msrest>=0.6.21", "six>=1.11.0"],
+    install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.15.0", "msrest>=0.6.21", "six>=1.11.0"],
     extras_require={
         ":python_version<'3.0'": ["azure-keyvault-nspkg"],
         ":python_version<'3.4'": ["enum34>=1.0.4"],

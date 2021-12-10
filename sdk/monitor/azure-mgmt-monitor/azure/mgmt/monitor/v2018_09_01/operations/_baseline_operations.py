@@ -66,7 +66,9 @@ class BaselineOperations(object):
          For example:
          subscriptions/b368ca2f-e298-46b7-b0ab-012281956afa/resourceGroups/vms/providers/Microsoft.Compute/virtualMachines/vm1.
         :type resource_uri: str
-        :param metricnames: The names of the metrics (comma separated) to retrieve.
+        :param metricnames: The names of the metrics (comma separated) to retrieve. Special case: If a
+         metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
+         **'Metric%2Name1'**.
         :type metricnames: str
         :param timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
@@ -135,7 +137,7 @@ class BaselineOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
@@ -144,4 +146,4 @@ class BaselineOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline'}  # type: ignore
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline'}  # type: ignore

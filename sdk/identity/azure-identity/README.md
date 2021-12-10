@@ -387,19 +387,19 @@ additional questions or comments.
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
 [b2c]: https://docs.microsoft.com/azure/active-directory-b2c/overview
-[cert_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.CertificateCredential
-[chain_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ChainedTokenCredential
-[cli_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureCliCredential
-[client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ClientSecretCredential
-[default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
-[device_code_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DeviceCodeCredential
-[environment_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.EnvironmentCredential
-[interactive_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.InteractiveBrowserCredential
-[managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
+[cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
+[chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
+[cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential
+[client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/clientsecretcredential
+[default_cred_ref]: https://aka.ms/azsdk/python/identity/defaultazurecredential
+[device_code_cred_ref]: https://aka.ms/azsdk/python/identity/devicecodecredential
+[environment_cred_ref]: https://aka.ms/azsdk/python/identity/environmentcredential
+[interactive_cred_ref]: https://aka.ms/azsdk/python/identity/interactivebrowsercredential
+[managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/managedidentitycredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/Troubleshoot.md
-[userpass_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.UsernamePasswordCredential
-[vscode_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.VisualStudioCodeCredential
+[userpass_cred_ref]: https://aka.ms/azsdk/python/identity/usernamepasswordcredential
+[vscode_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2FREADME.png)
