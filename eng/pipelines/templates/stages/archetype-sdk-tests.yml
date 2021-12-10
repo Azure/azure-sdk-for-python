@@ -86,6 +86,9 @@ parameters:
   - name: PlatformPostSteps
     type: object
     default: []
+  - name: TestProxy
+    type: boolean
+    default: false
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
@@ -118,6 +121,7 @@ stages:
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+              TestProxy: ${{ parameters.TestProxy }}
             MatrixConfigs:
               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
               - ${{ each config in parameters.MatrixConfigs }}:

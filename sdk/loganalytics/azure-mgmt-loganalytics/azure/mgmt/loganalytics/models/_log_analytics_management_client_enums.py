@@ -35,6 +35,29 @@ class BillingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CLUSTER = "Cluster"
     WORKSPACES = "Workspaces"
 
+class Capacity(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+    """The capacity value
+    """
+
+    FIVE_HUNDRED = 500
+    TEN_HUNDRED = 1000
+    TWO_THOUSAND = 2000
+    FIVE_THOUSAND = 5000
+
+class CapacityReservationLevel(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+    """The capacity reservation level in GB for this workspace, when CapacityReservation sku is
+    selected.
+    """
+
+    ONE_HUNDRED = 100
+    TWO_HUNDRED = 200
+    THREE_HUNDRED = 300
+    FOUR_HUNDRED = 400
+    FIVE_HUNDRED = 500
+    TEN_HUNDRED = 1000
+    TWO_THOUSAND = 2000
+    FIVE_THOUSAND = 5000
+
 class ClusterEntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the cluster.
     """

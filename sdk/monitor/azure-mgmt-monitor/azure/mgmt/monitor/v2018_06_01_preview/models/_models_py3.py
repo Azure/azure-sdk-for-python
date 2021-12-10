@@ -23,8 +23,8 @@ class DataSource(msrest.serialization.Model):
      "ETWProviders", "WindowsEventLogs".
     :type kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
     :param configuration: Required.
-    :type configuration: ~$(python-base-
-     namespace).v2018_06_01_preview.models.DataSourceConfiguration
+    :type configuration:
+     ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceConfiguration
     :param sinks: Required.
     :type sinks: list[~$(python-base-namespace).v2018_06_01_preview.models.SinkConfiguration]
     """
@@ -59,14 +59,14 @@ class DataSourceConfiguration(msrest.serialization.Model):
     """DataSourceConfiguration.
 
     :param providers: ETW providers configuration.
-    :type providers: list[~$(python-base-
-     namespace).v2018_06_01_preview.models.EtwProviderConfiguration]
+    :type providers:
+     list[~$(python-base-namespace).v2018_06_01_preview.models.EtwProviderConfiguration]
     :param perf_counters: Performance counter configuration.
-    :type perf_counters: list[~$(python-base-
-     namespace).v2018_06_01_preview.models.PerformanceCounterConfiguration]
+    :type perf_counters:
+     list[~$(python-base-namespace).v2018_06_01_preview.models.PerformanceCounterConfiguration]
     :param event_logs: Windows event logs configuration.
-    :type event_logs: list[~$(python-base-
-     namespace).v2018_06_01_preview.models.EventLogConfiguration]
+    :type event_logs:
+     list[~$(python-base-namespace).v2018_06_01_preview.models.EventLogConfiguration]
     """
 
     _attribute_map = {
@@ -222,8 +222,8 @@ class GuestDiagnosticSettingsAssociationList(msrest.serialization.Model):
     """A list of guest diagnostic settings association.
 
     :param value: The list of guest diagnostic settings association.
-    :type value: list[~$(python-base-
-     namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource]
+    :type value:
+     list[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource]
     :param next_link: Provides the link to retrieve the next set of elements.
     :type next_link: str
     """
@@ -374,8 +374,8 @@ class GuestDiagnosticSettingsList(msrest.serialization.Model):
     """A list of guest diagnostic settings.
 
     :param value: The list of guest diagnostic settings.
-    :type value: list[~$(python-base-
-     namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsResource]
+    :type value:
+     list[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsResource]
     :param next_link: Provides the link to retrieve the next set of elements.
     :type next_link: str
     """
@@ -404,8 +404,8 @@ class GuestDiagnosticSettingsPatchResource(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param os_type: Operating system type for the configuration. Possible values include:
      "Windows", "Linux".
-    :type os_type: str or ~$(python-base-
-     namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
+    :type os_type: str or
+     ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :param data_sources: the array of data source object which are configured to collect and send
      data.
     :type data_sources: list[~$(python-base-namespace).v2018_06_01_preview.models.DataSource]
@@ -455,8 +455,8 @@ class GuestDiagnosticSettingsResource(Resource):
     :type tags: dict[str, str]
     :param os_type: Operating system type for the configuration. Possible values include:
      "Windows", "Linux".
-    :type os_type: str or ~$(python-base-
-     namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
+    :type os_type: str or
+     ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :param data_sources: the array of data source object which are configured to collect and send
      data.
     :type data_sources: list[~$(python-base-namespace).v2018_06_01_preview.models.DataSource]

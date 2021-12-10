@@ -208,9 +208,7 @@ class AsyncPipelineClient(PipelineClientBase):
         stream: bool = False,
         **kwargs: Any
     ) -> Awaitable[AsyncHTTPResponseType]:
-        """**Provisional** method that runs the network request through the client's chained policies.
-
-        This method is marked as **provisional**, meaning it may be changed in a future release.
+        """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest('GET', 'http://www.example.com')

@@ -14,7 +14,8 @@ When constructing an SDK, a developer may consume the pipeline like so:
 
 ```python
 from azure.core.pipeline import Pipeline
-from azure.core.transport import RequestsTransport, HttpRequest
+from azure.core.rest import HttpRequest
+from azure.core.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
@@ -193,106 +194,126 @@ proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 
 ### HttpRequest and HttpResponse
 
-The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
+The `HttpRequest` and `HttpResponse` objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
 
-The HttpRequest has the following API. It does not vary between transports:
+The `HttpRequest` has the following API. It does not vary between transports:
 
 ```python
-class HttpRequest(object):
+class HttpRequest:
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        self.method = method
+    def __init__(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Optional[ParamsType] = None,
+        headers: Optional[MutableMapping[str, str]] = None,
+        json: Any = None,
+        content: Optional[ContentType] = None,
+        data: Optional[dict] = None,
+        files: Optional[FilesType] = None,
+        **kwargs
+    ):
         self.url = url
-        self.headers = CaseInsensitiveDict(headers)
-        self.files = files
-        self.data = data
+        self.method = method
+        self.headers = CaseInsensitiveDict(default_headers)
 
     @property
-    def body(self):
-        return self.data
-
-    @body.setter
-    def body(self, value):
-        self.data = value
-
-    def format_parameters(self, params):
-        """Format parameters into a valid query string.
-        It's assumed all parameters have already been quoted as
-        valid URL strings."""
-
-    def set_xml_body(self, data):
-        """Set an XML element tree as the body of the request."""
-
-    def set_json_body(self, data):
-        """Set a JSON-friendly object as the body of the request."""
-
-    def set_multipart_body(self, data=None):
-        """Set form-encoded data as the body of the request.
-        Supported content-types are:
-            - application/x-www-form-urlencoded
-            - multipart/form-data
-        """
-
-    def set_bytes_body(self, data):
-        """Set generic bytes as the body of the request."""
-
-    def set_multipart_mixed(self, *requests, **kwargs):
-        """Set requests for a multipart/mixed body.
-        Optionally apply "policies" in kwargs to each request.
-        """
+    def content(self) -> Any:
+        """Get's the request's content"""
 ```
 
-The HttpResponse object on the other hand will generally have a transport-specific derivative.
-This is to accomodate how the data is extracted for the object returned by the HTTP library.
-There is also an async flavor: AsyncHttpResponse. This is to allow for the asynchronous streaming of
-data from the response.
-For example:
+`HttpResponse` on the other hand is an abstract base class that will have to be implemented
+for a transport-specific derivative to accommodate how data is extracted from the object
+returned by the HTTP library.
 
-```python
-from azure.core.pipeline.transport import (
-    RequestsTransportResponse,  # HttpResponse
-    AioHttpTransportResponse, # AsyncHttpResponse
-    TrioRequestsTransportResponse,  # AsyncHttpResponse
-    AsyncioRequestsTransportResponse,  # AsyncHttpResponse
-)
-```
-
-The API for each of these response types is identical, so the consumer of the Response need not know about these
+The API for each of these response types is identical, so the consumer of the `HttpResponse` need not know about these
 particular types.
 
-The HttpResponse has the following API. It does not vary between transports:
+The `HttpResponse` has the following API. It does not vary between transports, and has the following surface area:
 
 ```python
-class HttpResponse(object):
+class HttpResponse:
 
-    def __init__(self, request, internal_response):
-        self.request = request
-        self.internal_response = internal_response  # The object returned by the HTTP library
-        self.status_code = None
-        self.headers = CaseInsensitiveDict()
-        self.reason = None
-        self.content_type = None
+    @property
+    def request(self) -> HttpRequest:
+        """The request that resulted in this response."""
 
-    def body(self):
-        """Return the whole body as bytes in memory."""
+    @property
+    def status_code(self) -> int:
+        """The status code of this response."""
 
-    def text(self, encoding=None):
-        """Return the whole body as a string."""
+    @property
+    def headers(self) -> MutableMapping[str, str]:
+        """The response headers. Must be case-insensitive."""
 
-    def stream_download(self, pipeline, **kwargs):
-        """Generator for streaming request body data.
-        Should be implemented by sub-classes if streaming download
-        is supported.
-        For the AsyncHttpResponse object this function will return
-        and asynchronous generator.
-        """
+    @property
+    def reason(self) -> str:
+        """The reason phrase for this response."""
 
-    def parts(self):
-        """An iterator of parts if content-type is multipart/mixed.
-        For the AsyncHttpResponse object this function will return
-        and asynchronous iterator.
-        """
+    @property
+    def content_type(self) -> Optional[str]:
+        """The content type of the response."""
 
+    @property
+    def is_closed(self) -> bool:
+        """Whether the network connection has been closed yet."""
+
+    @property
+    def is_stream_consumed(self) -> bool:
+        """Whether the stream has been consumed."""
+
+    @property
+    def encoding(self) -> Optional[str]:
+        """Returns the response encoding."""
+
+    @encoding.setter
+    def encoding(self, value: Optional[str]) -> None:
+        """Sets the response encoding."""
+
+    @property
+    def url(self) -> str:
+        """The URL that resulted in this response."""
+
+    @property
+    def content(self) -> bytes:
+        """Return the response's content in bytes."""
+
+    def text(self, encoding: Optional[str] = None) -> str:
+        """Returns the response body as a string."""
+
+    def json(self) -> Any:
+        """Returns the whole body as a json object."""
+
+    def raise_for_status(self) -> None:
+        """Raises an HttpResponseError if the response has an error status code."""
+
+    def read(self) -> bytes:
+        """Read the response's bytes."""
+
+    def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will not decompress in the process."""
+
+    def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will decompress in the process."""
+
+```
+
+Async calls to networks will return an `AsyncHttpResponse` instead. It shares most of its properties with an `HttpResponse` with the following exceptions:
+
+```python
+class AsyncHttpResponse:
+
+    ...
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory."""
+
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process."""
+
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process."""
 ```
 
 ### PipelineRequest and PipelineResponse
@@ -448,7 +469,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
 |  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is `exponential`. |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is `exponential`. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 | AsyncRetryPolicy | AsyncHTTPPolicy |  |  |  |  |
 |  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
@@ -457,7 +478,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
 |  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 
 ### The Pipeline
@@ -467,7 +488,7 @@ A pipeline can either be synchronous or asynchronous.
 The pipeline does not expose the policy chain, so individual policies cannot/should not be further
 configured once the pipeline has been instantiated.
 
-The pipeline has a single exposed operation: `run(request)` which will send a new HttpRequest object down
+The pipeline has a single exposed operation: `run(request)` which will send a new `HttpRequest` object down
 the pipeline. This operation returns a `PipelineResponse` object.
 
 ```python

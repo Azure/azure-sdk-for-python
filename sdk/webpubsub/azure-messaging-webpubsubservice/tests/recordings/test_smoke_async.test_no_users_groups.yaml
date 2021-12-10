@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: HEAD
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/users/fake%20user?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: '2021-10-01'
+      connection: keep-alive
+      content-length: '126'
+      content-type: application/json; charset=utf-8
+      date: Wed, 10 Nov 2021 19:28:29 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-error-code: Warning.User.NotExisted
+    status:
+      code: 404
+      message: Not Found
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/hub/users/fake%20user?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: HEAD
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/groups/fake%20group?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: '2021-10-01'
+      connection: keep-alive
+      content-length: '126'
+      content-type: application/json; charset=utf-8
+      date: Wed, 10 Nov 2021 19:28:29 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-error-code: Warning.Group.NotExisted
+    status:
+      code: 404
+      message: Not Found
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/hub/groups/fake%20group?api-version=2021-10-01
+version: 1

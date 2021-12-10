@@ -163,7 +163,6 @@
         "spark_configuration": "SparkConfigurationOperations",
         "spark_configurations": "SparkConfigurationsOperations",
         "kusto_operations": "KustoOperationsOperations",
-        "kusto_pool": "KustoPoolOperations",
         "kusto_pools": "KustoPoolsOperations",
         "kusto_pool_child_resource": "KustoPoolChildResourceOperations",
         "kusto_pool_attached_database_configurations": "KustoPoolAttachedDatabaseConfigurationsOperations",

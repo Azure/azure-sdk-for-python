@@ -21,18 +21,13 @@ if TYPE_CHECKING:
 from ._configuration import EventGridManagementClientConfiguration
 from .operations import DomainsOperations
 from .operations import DomainTopicsOperations
-from .operations import EventChannelsOperations
 from .operations import EventSubscriptionsOperations
 from .operations import SystemTopicEventSubscriptionsOperations
-from .operations import PartnerTopicEventSubscriptionsOperations
 from .operations import Operations
-from .operations import PartnerNamespacesOperations
-from .operations import PartnerRegistrationsOperations
-from .operations import PartnerTopicsOperations
+from .operations import TopicsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import SystemTopicsOperations
-from .operations import TopicsOperations
 from .operations import ExtensionTopicsOperations
 from .operations import TopicTypesOperations
 from . import models
@@ -45,30 +40,20 @@ class EventGridManagementClient(object):
     :vartype domains: azure.mgmt.eventgrid.operations.DomainsOperations
     :ivar domain_topics: DomainTopicsOperations operations
     :vartype domain_topics: azure.mgmt.eventgrid.operations.DomainTopicsOperations
-    :ivar event_channels: EventChannelsOperations operations
-    :vartype event_channels: azure.mgmt.eventgrid.operations.EventChannelsOperations
     :ivar event_subscriptions: EventSubscriptionsOperations operations
     :vartype event_subscriptions: azure.mgmt.eventgrid.operations.EventSubscriptionsOperations
     :ivar system_topic_event_subscriptions: SystemTopicEventSubscriptionsOperations operations
     :vartype system_topic_event_subscriptions: azure.mgmt.eventgrid.operations.SystemTopicEventSubscriptionsOperations
-    :ivar partner_topic_event_subscriptions: PartnerTopicEventSubscriptionsOperations operations
-    :vartype partner_topic_event_subscriptions: azure.mgmt.eventgrid.operations.PartnerTopicEventSubscriptionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.eventgrid.operations.Operations
-    :ivar partner_namespaces: PartnerNamespacesOperations operations
-    :vartype partner_namespaces: azure.mgmt.eventgrid.operations.PartnerNamespacesOperations
-    :ivar partner_registrations: PartnerRegistrationsOperations operations
-    :vartype partner_registrations: azure.mgmt.eventgrid.operations.PartnerRegistrationsOperations
-    :ivar partner_topics: PartnerTopicsOperations operations
-    :vartype partner_topics: azure.mgmt.eventgrid.operations.PartnerTopicsOperations
+    :ivar topics: TopicsOperations operations
+    :vartype topics: azure.mgmt.eventgrid.operations.TopicsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.eventgrid.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.eventgrid.operations.PrivateLinkResourcesOperations
     :ivar system_topics: SystemTopicsOperations operations
     :vartype system_topics: azure.mgmt.eventgrid.operations.SystemTopicsOperations
-    :ivar topics: TopicsOperations operations
-    :vartype topics: azure.mgmt.eventgrid.operations.TopicsOperations
     :ivar extension_topics: ExtensionTopicsOperations operations
     :vartype extension_topics: azure.mgmt.eventgrid.operations.ExtensionTopicsOperations
     :ivar topic_types: TopicTypesOperations operations
@@ -103,29 +88,19 @@ class EventGridManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.domain_topics = DomainTopicsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.event_channels = EventChannelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.event_subscriptions = EventSubscriptionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.system_topic_event_subscriptions = SystemTopicEventSubscriptionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.partner_topic_event_subscriptions = PartnerTopicEventSubscriptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.partner_namespaces = PartnerNamespacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.partner_registrations = PartnerRegistrationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.partner_topics = PartnerTopicsOperations(
+        self.topics = TopicsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.system_topics = SystemTopicsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.topics = TopicsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.extension_topics = ExtensionTopicsOperations(
             self._client, self._config, self._serialize, self._deserialize)

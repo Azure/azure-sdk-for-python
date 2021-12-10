@@ -46,7 +46,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         resource_uri: str,
         association_name: str,
         diagnostic_settings_association: "_models.GuestDiagnosticSettingsAssociationResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GuestDiagnosticSettingsAssociationResource":
         """Creates or updates guest diagnostics settings association.
 
@@ -98,7 +98,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -117,7 +117,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         self,
         resource_uri: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GuestDiagnosticSettingsAssociationResource":
         """Gets guest diagnostics association settings.
 
@@ -161,7 +161,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GuestDiagnosticSettingsAssociationResource', pipeline_response)
@@ -176,7 +176,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         self,
         resource_uri: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete guest diagnostics association settings.
 
@@ -220,7 +220,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -233,7 +233,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         resource_uri: str,
         association_name: str,
         parameters: "_models.GuestDiagnosticSettingsAssociationResourcePatch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GuestDiagnosticSettingsAssociationResource":
         """Updates an existing guestDiagnosticsSettingsAssociation Resource. To update other fields use
         the CreateOrUpdate method.
@@ -285,7 +285,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GuestDiagnosticSettingsAssociationResource', pipeline_response)
@@ -298,7 +298,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GuestDiagnosticSettingsAssociationList"]:
         """Get a list of all guest diagnostic settings association in a subscription.
 
@@ -324,7 +324,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -352,7 +352,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -366,7 +366,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GuestDiagnosticSettingsAssociationList"]:
         """Get a list of all guest diagnostic settings association in a resource group.
 
@@ -395,7 +395,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -423,7 +423,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

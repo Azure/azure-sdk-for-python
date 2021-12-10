@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2020-10-15-preview",
-    "total_api_version_list": ["2020-10-15-preview"],
+    "chosen_version": "2021-12-01",
+    "total_api_version_list": ["2021-12-01"],
     "client": {
         "name": "EventGridManagementClient",
         "filename": "_event_grid_management_client",
@@ -100,18 +100,13 @@
     "operation_groups": {
         "domains": "DomainsOperations",
         "domain_topics": "DomainTopicsOperations",
-        "event_channels": "EventChannelsOperations",
         "event_subscriptions": "EventSubscriptionsOperations",
         "system_topic_event_subscriptions": "SystemTopicEventSubscriptionsOperations",
-        "partner_topic_event_subscriptions": "PartnerTopicEventSubscriptionsOperations",
         "operations": "Operations",
-        "partner_namespaces": "PartnerNamespacesOperations",
-        "partner_registrations": "PartnerRegistrationsOperations",
-        "partner_topics": "PartnerTopicsOperations",
+        "topics": "TopicsOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
         "system_topics": "SystemTopicsOperations",
-        "topics": "TopicsOperations",
         "extension_topics": "ExtensionTopicsOperations",
         "topic_types": "TopicTypesOperations"
     }

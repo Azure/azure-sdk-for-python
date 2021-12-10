@@ -71,7 +71,7 @@ class RemediationsOperations:
         if query_options is not None:
             _top = query_options.top
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -149,7 +149,7 @@ class RemediationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -215,7 +215,7 @@ class RemediationsOperations:
             _top = query_options.top
             _filter = query_options.filter
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -297,7 +297,7 @@ class RemediationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -366,7 +366,7 @@ class RemediationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -426,7 +426,7 @@ class RemediationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -491,7 +491,7 @@ class RemediationsOperations:
         _top = None
         if query_options is not None:
             _top = query_options.top
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -564,7 +564,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -625,7 +625,7 @@ class RemediationsOperations:
         if query_options is not None:
             _top = query_options.top
             _filter = query_options.filter
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -702,7 +702,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -766,7 +766,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -821,7 +821,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -888,7 +888,7 @@ class RemediationsOperations:
         _top = None
         if query_options is not None:
             _top = query_options.top
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -965,7 +965,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1030,7 +1030,7 @@ class RemediationsOperations:
         if query_options is not None:
             _top = query_options.top
             _filter = query_options.filter
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1111,7 +1111,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1179,7 +1179,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1238,7 +1238,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1306,7 +1306,7 @@ class RemediationsOperations:
         _top = None
         if query_options is not None:
             _top = query_options.top
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1382,7 +1382,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1446,7 +1446,7 @@ class RemediationsOperations:
         if query_options is not None:
             _top = query_options.top
             _filter = query_options.filter
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1526,7 +1526,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1593,7 +1593,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1651,7 +1651,7 @@ class RemediationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL

@@ -68,8 +68,8 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'msrest>=0.5.0',
-        'azure-core<2.0.0,>=1.19.0'
+        'msrest>=0.6.21',
+        'azure-core<2.0.0,>=1.20.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg']

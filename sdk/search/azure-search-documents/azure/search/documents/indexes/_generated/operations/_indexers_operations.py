@@ -22,11 +22,11 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_reset_request(
@@ -34,9 +34,9 @@ def build_reset_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')/search.reset')
@@ -70,11 +70,11 @@ def build_reset_docs_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     overwrite = kwargs.pop('overwrite', False)  # type: Optional[bool]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')/search.resetdocs')
@@ -112,9 +112,9 @@ def build_run_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')/search.run')
@@ -148,6 +148,8 @@ def build_create_or_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    prefer = kwargs.pop('prefer', "return=representation")  # type: str
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
@@ -155,8 +157,6 @@ def build_create_or_update_request(
     skip_indexer_reset_requirement_for_cache = kwargs.pop('skip_indexer_reset_requirement_for_cache', None)  # type: Optional[bool]
     disable_cache_reprocessing_change_detection = kwargs.pop('disable_cache_reprocessing_change_detection', None)  # type: Optional[bool]
 
-    prefer = "return=representation"
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')')
@@ -201,11 +201,11 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')')
@@ -243,9 +243,9 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')')
@@ -278,10 +278,10 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     select = kwargs.pop('select', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers')
@@ -311,10 +311,10 @@ def build_create_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers')
@@ -345,9 +345,9 @@ def build_get_status_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/indexers(\'{indexerName}\')/search.status')
@@ -412,6 +412,9 @@ class IndexersOperations(object):
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -423,12 +426,15 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_reset_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.reset.metadata['url'],
         )
@@ -473,6 +479,9 @@ class IndexersOperations(object):
         :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -484,6 +493,7 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -496,10 +506,11 @@ class IndexersOperations(object):
 
         request = build_reset_docs_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             overwrite=overwrite,
             x_ms_client_request_id=_x_ms_client_request_id,
-            json=json,
             template_url=self.reset_docs.metadata['url'],
         )
         request = _convert_request(request)
@@ -536,6 +547,9 @@ class IndexersOperations(object):
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -547,12 +561,15 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_run_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.run.metadata['url'],
         )
@@ -608,6 +625,13 @@ class IndexersOperations(object):
         :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword prefer: For HTTP PUT requests, instructs the service to return the created/updated
+         resource on success. The default value is "return=representation". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype prefer: str
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -619,6 +643,8 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        prefer = kwargs.pop('prefer', "return=representation")  # type: str
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -628,13 +654,15 @@ class IndexersOperations(object):
 
         request = build_create_or_update_request(
             indexer_name=indexer_name,
+            prefer=prefer,
+            api_version=api_version,
             content_type=content_type,
+            json=json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
-            json=json,
             template_url=self.create_or_update.metadata['url'],
         )
         request = _convert_request(request)
@@ -687,6 +715,9 @@ class IndexersOperations(object):
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -698,12 +729,15 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_delete_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -743,6 +777,9 @@ class IndexersOperations(object):
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -754,12 +791,15 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
         )
@@ -803,6 +843,9 @@ class IndexersOperations(object):
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListIndexersResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListIndexersResult
@@ -814,11 +857,14 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_list_request(
+            api_version=api_version,
             select=select,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.list.metadata['url'],
@@ -861,6 +907,9 @@ class IndexersOperations(object):
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -872,6 +921,7 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -880,9 +930,10 @@ class IndexersOperations(object):
         json = self._serialize.body(indexer, 'SearchIndexer')
 
         request = build_create_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
@@ -923,6 +974,9 @@ class IndexersOperations(object):
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerStatus, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
@@ -934,12 +988,15 @@ class IndexersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_status_request(
             indexer_name=indexer_name,
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get_status.metadata['url'],
         )

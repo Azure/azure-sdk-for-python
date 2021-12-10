@@ -264,7 +264,7 @@ class KeyReleasePolicy(object):
 
     def __init__(self, data, **kwargs):
         # type: (bytes, **Any) -> None
-        self.data = data
+        self.encoded_policy = data
         self.content_type = kwargs.get("content_type", None)
 
 
@@ -286,9 +286,11 @@ class KeyRotationLifetimeAction(object):
     :type action: ~azure.keyvault.keys.KeyRotationPolicyAction or str
 
     :keyword str time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
-        For example, 90 days is "P90D".
+        For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
+        information on ISO 8601 durations.
     :keyword str time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
-        For example, 90 days is "P90D".
+        For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
+        information on ISO 8601 durations.
     """
 
     def __init__(self, action, **kwargs):
@@ -315,7 +317,8 @@ class KeyRotationPolicy(object):
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
     :type lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
     :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO
-        8601 duration. For example, 90 days is "P90D".
+        8601 duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_
+        for more information on ISO 8601 durations.
     :ivar created_on: When the policy was created, in UTC
     :type created_on: ~datetime.datetime
     :ivar updated_on: When the policy was last updated, in UTC
@@ -573,13 +576,3 @@ class DeletedKey(KeyVaultKey):
         :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date
-
-
-class RandomBytes(object):
-    """Contains random bytes returned from a managed HSM.
-
-    :param bytes value: the random bytes
-    """
-
-    def __init__(self, value):
-        self.value = value
