@@ -7,11 +7,15 @@
 
 from ._deserialize import (
     process_storage_error)
+from ._shared.base_client import TransportWrapper
+from ._shared.constants import READ_TIMEOUT
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import (
     upload_data_chunks,
     DataLakeFileChunkUploader, upload_substream_blocks)
-from ...core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError
+
+DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
@@ -21,6 +25,20 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
         modified_access_conditions.if_none_match,
         modified_access_conditions.if_match
     ])
+
+
+def get_transfer_timeout(client, request_data_size, **kwargs):
+    # Get the transport object - it might be wrapped so iterate through wrappers
+    transport = client._client._pipeline._transport
+    while isinstance(transport, TransportWrapper):
+        transport = transport._transport
+    # Using the transport object retrieve the current read_timeout configuration
+    current_read_timeout = transport.connection_config.read_timeout
+    # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
+    # We can dynamically set it
+    if not kwargs.get("read_timeout") and current_read_timeout == READ_TIMEOUT:
+        kwargs.update({"read_timeout": max((request_data_size / (50*1024), READ_TIMEOUT))})
+    return kwargs
 
 
 def upload_datalake_file(  # pylint: disable=unused-argument
@@ -40,7 +58,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         permissions = kwargs.pop('permissions', None)
         path_http_headers = kwargs.pop('path_http_headers', None)
         modified_access_conditions = kwargs.pop('modified_access_conditions', None)
-        chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
+        chunk_size = kwargs.pop('chunk_size', DEFAULT_CHUNK_SIZE)
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
@@ -72,6 +90,9 @@ def upload_datalake_file(  # pylint: disable=unused-argument
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
+        options = get_transfer_timeout(client, chunk_size, **kwargs)
+        # Update our kwargs with the new options
+        kwargs.update(options)
         if use_original_upload_path:
             upload_data_chunks(
                 service=client,

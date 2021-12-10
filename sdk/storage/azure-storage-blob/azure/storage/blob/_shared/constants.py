@@ -17,10 +17,8 @@ READ_TIMEOUT = 20
 # for python 3.5+, there was a change to the definition of the socket timeout (as far as socket.sendall is concerned)
 # The socket timeout is now the maximum total duration to send all data.
 if sys.version_info >= (3, 5):
-    # the timeout to connect is 20 seconds, and the read timeout is 80000 seconds
-    # the 80000 seconds was calculated with:
-    # 4MB -> default block size and assume 50KB/s = 82s for round-trip is reasonable for most operations - more heavy ops
-    # (like upload and download) set this value dynamically
+    # 4MB -> default block size and assume 50KB/s = 82s for round-trip is reasonable for most operations
+    # - more heavy ops (like upload and download) set this value dynamically
     READ_TIMEOUT = 82
 
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"

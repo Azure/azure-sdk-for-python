@@ -11,6 +11,7 @@ from .._shared.response_handlers import return_response_headers
 from .._shared.uploads_async import (
     upload_data_chunks,
     DataLakeFileChunkUploader, upload_substream_blocks)
+from .._upload_helper import get_transfer_timeout, DEFAULT_CHUNK_SIZE
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
@@ -39,7 +40,7 @@ async def upload_datalake_file(  # pylint: disable=unused-argument
         permissions = kwargs.pop('permissions', None)
         path_http_headers = kwargs.pop('path_http_headers', None)
         modified_access_conditions = kwargs.pop('modified_access_conditions', None)
-        chunk_size = kwargs.pop('chunk_size', 100 * 1024 * 1024)
+        chunk_size = kwargs.pop('chunk_size', DEFAULT_CHUNK_SIZE)
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
@@ -71,6 +72,9 @@ async def upload_datalake_file(  # pylint: disable=unused-argument
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
+        options = get_transfer_timeout(client, chunk_size, **kwargs)
+        # Update our kwargs with the new options
+        kwargs.update(options)
         if use_original_upload_path:
             await upload_data_chunks(
                 service=client,

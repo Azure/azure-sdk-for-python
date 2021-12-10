@@ -24,6 +24,18 @@ from ._shared.response_handlers import process_storage_error, parse_length_from_
 from ._deserialize import get_page_ranges_result
 
 
+def get_transfer_timeout(client, request_data_size):
+    # Get the transport object - it might be wrapped so iterate through wrappers
+    transport = client._config.transport
+    while isinstance(transport, TransportWrapper):
+        transport = transport._transport
+    # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
+    # We can dynamically set it
+    if not client._request_options.get("read_timeout", None) and \
+            transport.connection_config.read_timeout == READ_TIMEOUT:
+        client._request_options["read_timeout"] = max(
+            (request_data_size / (50 * 1024), READ_TIMEOUT))
+
 def process_range_and_offset(start_range, end_range, length, encryption):
     start_offset, end_offset = 0, 0
     if encryption.get("key") is not None or encryption.get("resolver") is not None:
@@ -372,16 +384,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     def __len__(self):
         return self.size
 
-    def get_transfer_timeout(self, request_data_size):
-        # Get the transport object - it might be wrapped so iterate through wrappers
-        transport = self._config.transport
-        while isinstance(transport, TransportWrapper):
-            transport = transport._transport
-        if not self._request_options.get("read_timeout", None) and \
-                transport.connection_config.read_timeout == READ_TIMEOUT:
-            self._request_options["read_timeout"] = max(
-                (request_data_size / (50*1024), READ_TIMEOUT))
-
     def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
@@ -390,7 +392,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             end_range_required=False,
             check_content_md5=self._validate_content
         )
-        self.get_transfer_timeout(self._first_get_size)
+        get_transfer_timeout(self, self._first_get_size)
 
         retry_active = True
         retry_total = 3
@@ -501,7 +503,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             if self._end_range is not None:
                 # Use the end range index unless it is over the end of the file
                 data_end = min(self._file_size, self._end_range + 1)
-            self.get_transfer_timeout(self._config.max_chunk_get_size)
+            get_transfer_timeout(self, self._config.max_chunk_get_size)
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
                 non_empty_ranges=self._non_empty_ranges,
@@ -584,7 +586,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         """
         # The stream must be seekable if parallel download is required
 
-        self.get_transfer_timeout(self._config.max_chunk_get_size)
+        get_transfer_timeout(self, self._config.max_chunk_get_size)
         parallel = self._max_concurrency > 1
         if parallel:
             error_message = "Target stream handle must be seekable."

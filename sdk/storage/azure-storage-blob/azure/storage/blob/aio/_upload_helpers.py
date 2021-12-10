@@ -10,6 +10,7 @@ from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disabl
 
 import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
+from .._shared.constants import READ_TIMEOUT
 
 from .._shared.response_handlers import (
     process_storage_error,
@@ -26,7 +27,7 @@ from .._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
-from .._upload_helpers import _convert_mod_error, _any_conditions
+from .._upload_helpers import _convert_mod_error, _any_conditions, get_transfer_timeout
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import
@@ -71,6 +72,11 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(data, encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
+            # Here we know that the size of data is <= blob_settings.max_single_put_size
+            # This value can be set by the user or the default value - it doesn't matter
+            options = get_transfer_timeout(client, blob_settings.max_single_put_size, **kwargs)
+            # Update our kwargs with the new options
+            kwargs.update(options)
             return await client.upload(
                 body=data,
                 content_length=adjusted_count,
@@ -93,6 +99,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
+        # We hit this when it takes more than a single put so we must use the block size instead to get our read_timeout
+        options = get_transfer_timeout(client, blob_settings.max_block_size, **kwargs)
+        kwargs.update(options)
         if use_original_upload_path:
             if encryption_options.get('key'):
                 cek, iv, encryption_data = generate_blob_encryption_data(encryption_options['key'])
@@ -124,6 +133,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 **kwargs
             )
 
+        # Committing the block list is a simple operation reset to default read_timeout
+        kwargs.update({"read_timeout": READ_TIMEOUT})
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         block_lookup.latest = block_ids
         return await client.commit_block_list(
@@ -189,6 +200,8 @@ async def upload_page_blob(
             return response
 
         kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
+        options = get_transfer_timeout(client, blob_settings.max_page_size, **kwargs)
+        kwargs.update(options)
         return await upload_data_chunks(
             service=client,
             uploader_class=PageBlobChunkUploader,
@@ -238,6 +251,8 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                     headers=headers,
                     blob_tags_string=blob_tags_string,
                     **kwargs)
+            options = get_transfer_timeout(client, blob_settings.max_block_size, **kwargs)
+            kwargs.update(options)
             return await upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
@@ -266,6 +281,8 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 headers=headers,
                 blob_tags_string=blob_tags_string,
                 **kwargs)
+            options = get_transfer_timeout(client, blob_settings.max_block_size, **kwargs)
+            kwargs.update(options)
             return await upload_data_chunks(
                 service=client,
                 uploader_class=AppendBlobChunkUploader,
