@@ -27,16 +27,16 @@ from ._deserialize import get_page_ranges_result
 
 def get_transfer_timeout(client, request_data_size):
     # Get the transport object - it might be wrapped so iterate through wrappers
-    transport = client._config.transport
+    transport = client._config.transport    # pylint: disable=protected-access
     while isinstance(transport, AsyncTransportWrapper):
-        transport = transport._transport
+        transport = transport._transport    # pylint: disable=protected-access
     while isinstance(transport, TransportWrapper):
-        transport = transport._transport
+        transport = transport._transport    # pylint: disable=protected-access
     # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
     # We can dynamically set it
-    if not client._request_options.get("read_timeout", None) and \
-            transport.connection_config.read_timeout == READ_TIMEOUT:
-        client._request_options["read_timeout"] = max(
+    if not client._request_options.get( # pylint: disable=protected-access
+            "read_timeout", None) and transport.connection_config.read_timeout == READ_TIMEOUT:
+        client._request_options["read_timeout"] = max(  # pylint: disable=protected-access
             (request_data_size / (50 * 1024), READ_TIMEOUT))
 
 def process_range_and_offset(start_range, end_range, length, encryption):

@@ -41,11 +41,11 @@ _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.
 
 def get_transfer_timeout(client, request_data_size, **kwargs):
     # Get the transport object - it might be wrapped so iterate through wrappers
-    transport = client._client._pipeline._transport
+    transport = client._client._pipeline._transport # pylint: disable=protected-access
     while isinstance(transport, AsyncTransportWrapper):
-        transport = transport._transport
+        transport = transport._transport    # pylint: disable=protected-access
     while isinstance(transport, TransportWrapper):
-        transport = transport._transport
+        transport = transport._transport    # pylint: disable=protected-access
     # Using the transport object retrieve the current read_timeout configuration
     current_read_timeout = transport.connection_config.read_timeout
     # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
