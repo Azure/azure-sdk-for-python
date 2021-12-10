@@ -12,37 +12,37 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Make
         your battery last\"\n      ],\n      \"answer\": \"**Make your battery last**\\n\\nFor
         info on how to care for your battery and power supply, conserve power, and
         make your Surface battery last longer, see [Surface battery and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.9201999999999999,\n      \"id\":
-        27,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        on Surface.com.\",\n      \"confidenceScore\": 0.9079,\n      \"id\": 136,\n
+        \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
         level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
         can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.4412,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.48469999999999996,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
         level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: e780b038-2930-45fc-99b3-35255fff74ec
-      content-length: '1140'
+      apim-request-id: 301d9bbc-0b73-4bf8-99e0-1f2a269478d4
+      content-length: '1143'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 30 Sep 2021 15:52:36 GMT
+      date: Thu, 28 Oct 2021 03:30:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '578'
+      x-envoy-upstream-service-time: '498'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
 version: 1

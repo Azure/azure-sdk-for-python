@@ -7,89 +7,99 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AnalyzeConversationOptions
+    from ._models_py3 import AnalysisParameters
     from ._models_py3 import AnalyzeConversationResult
-    from ._models_py3 import AnalyzeParameters
+    from ._models_py3 import AnswerSpan
     from ._models_py3 import BasePrediction
-    from ._models_py3 import DSTargetIntentResult
-    from ._models_py3 import DeepStackEntityResolution
-    from ._models_py3 import DeepstackCallingOptions
-    from ._models_py3 import DeepstackEntity
-    from ._models_py3 import DeepstackIntent
-    from ._models_py3 import DeepstackParameters
-    from ._models_py3 import DeepstackPrediction
-    from ._models_py3 import DeepstackResult
-    from ._models_py3 import DictionaryNormalizedValueResolution
+    from ._models_py3 import ConversationAnalysisOptions
+    from ._models_py3 import ConversationCallingOptions
+    from ._models_py3 import ConversationEntity
+    from ._models_py3 import ConversationIntent
+    from ._models_py3 import ConversationParameters
+    from ._models_py3 import ConversationPrediction
+    from ._models_py3 import ConversationResult
+    from ._models_py3 import ConversationTargetIntentResult
     from ._models_py3 import Error
     from ._models_py3 import ErrorResponse
     from ._models_py3 import InnerErrorModel
+    from ._models_py3 import KnowledgeBaseAnswer
+    from ._models_py3 import KnowledgeBaseAnswerDialog
+    from ._models_py3 import KnowledgeBaseAnswerPrompt
+    from ._models_py3 import KnowledgeBaseAnswers
     from ._models_py3 import LUISCallingOptions
     from ._models_py3 import LUISParameters
     from ._models_py3 import LUISTargetIntentResult
+    from ._models_py3 import NoneLinkedTargetIntentResult
+    from ._models_py3 import OrchestratorPrediction
     from ._models_py3 import QuestionAnsweringParameters
     from ._models_py3 import QuestionAnsweringTargetIntentResult
     from ._models_py3 import TargetIntentResult
-    from ._models_py3 import WorkflowPrediction
 except (SyntaxError, ImportError):
-    from ._models import AnalyzeConversationOptions  # type: ignore
+    from ._models import AnalysisParameters  # type: ignore
     from ._models import AnalyzeConversationResult  # type: ignore
-    from ._models import AnalyzeParameters  # type: ignore
+    from ._models import AnswerSpan  # type: ignore
     from ._models import BasePrediction  # type: ignore
-    from ._models import DSTargetIntentResult  # type: ignore
-    from ._models import DeepStackEntityResolution  # type: ignore
-    from ._models import DeepstackCallingOptions  # type: ignore
-    from ._models import DeepstackEntity  # type: ignore
-    from ._models import DeepstackIntent  # type: ignore
-    from ._models import DeepstackParameters  # type: ignore
-    from ._models import DeepstackPrediction  # type: ignore
-    from ._models import DeepstackResult  # type: ignore
-    from ._models import DictionaryNormalizedValueResolution  # type: ignore
+    from ._models import ConversationAnalysisOptions  # type: ignore
+    from ._models import ConversationCallingOptions  # type: ignore
+    from ._models import ConversationEntity  # type: ignore
+    from ._models import ConversationIntent  # type: ignore
+    from ._models import ConversationParameters  # type: ignore
+    from ._models import ConversationPrediction  # type: ignore
+    from ._models import ConversationResult  # type: ignore
+    from ._models import ConversationTargetIntentResult  # type: ignore
     from ._models import Error  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import InnerErrorModel  # type: ignore
+    from ._models import KnowledgeBaseAnswer  # type: ignore
+    from ._models import KnowledgeBaseAnswerDialog  # type: ignore
+    from ._models import KnowledgeBaseAnswerPrompt  # type: ignore
+    from ._models import KnowledgeBaseAnswers  # type: ignore
     from ._models import LUISCallingOptions  # type: ignore
     from ._models import LUISParameters  # type: ignore
     from ._models import LUISTargetIntentResult  # type: ignore
+    from ._models import NoneLinkedTargetIntentResult  # type: ignore
+    from ._models import OrchestratorPrediction  # type: ignore
     from ._models import QuestionAnsweringParameters  # type: ignore
     from ._models import QuestionAnsweringTargetIntentResult  # type: ignore
     from ._models import TargetIntentResult  # type: ignore
-    from ._models import WorkflowPrediction  # type: ignore
 
 from ._conversation_analysis_client_enums import (
     ErrorCode,
     InnerErrorCode,
     ProjectKind,
-    ResolutionKind,
     TargetKind,
 )
 
 __all__ = [
-    'AnalyzeConversationOptions',
+    'AnalysisParameters',
     'AnalyzeConversationResult',
-    'AnalyzeParameters',
+    'AnswerSpan',
     'BasePrediction',
-    'DSTargetIntentResult',
-    'DeepStackEntityResolution',
-    'DeepstackCallingOptions',
-    'DeepstackEntity',
-    'DeepstackIntent',
-    'DeepstackParameters',
-    'DeepstackPrediction',
-    'DeepstackResult',
-    'DictionaryNormalizedValueResolution',
+    'ConversationAnalysisOptions',
+    'ConversationCallingOptions',
+    'ConversationEntity',
+    'ConversationIntent',
+    'ConversationParameters',
+    'ConversationPrediction',
+    'ConversationResult',
+    'ConversationTargetIntentResult',
     'Error',
     'ErrorResponse',
     'InnerErrorModel',
+    'KnowledgeBaseAnswer',
+    'KnowledgeBaseAnswerDialog',
+    'KnowledgeBaseAnswerPrompt',
+    'KnowledgeBaseAnswers',
     'LUISCallingOptions',
     'LUISParameters',
     'LUISTargetIntentResult',
+    'NoneLinkedTargetIntentResult',
+    'OrchestratorPrediction',
     'QuestionAnsweringParameters',
     'QuestionAnsweringTargetIntentResult',
     'TargetIntentResult',
-    'WorkflowPrediction',
     'ErrorCode',
     'InnerErrorCode',
     'ProjectKind',
-    'ResolutionKind',
     'TargetKind',
 ]

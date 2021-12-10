@@ -9,31 +9,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Charge
-        your Surface Pro 4\"\n      ],\n      \"answer\": \"**Charge your Surface
-        Pro 4**\\n\\n1.  Connect the two parts of the power cord.\\n\\n2.  Connect
-        the power cord securely to the charging port.\\n\\n3.  Plug the power supply
-        into an electrical outlet.\",\n      \"confidenceScore\": 1.0,\n      \"id\":
-        19,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
-        {\n        \"explicitlytaggedheading\": \"charge your surface pro 4\"\n      },\n
-        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    }\n  ]\n}"
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [],\n      \"answer\":
+        \"No good match found in KB\",\n      \"confidenceScore\": 0.0,\n      \"id\":
+        -1,\n      \"metadata\": {}\n    }\n  ]\n}"
     headers:
-      apim-request-id: 824a47b2-1f4a-4056-8c26-ddba66a21497
-      content-length: '583'
+      apim-request-id: a9b84106-3ca9-434d-8295-4256bafc7d95
+      content-length: '169'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 30 Sep 2021 15:52:35 GMT
+      date: Thu, 28 Oct 2021 03:30:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '879'
+      x-envoy-upstream-service-time: '129'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-07-15-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
 version: 1

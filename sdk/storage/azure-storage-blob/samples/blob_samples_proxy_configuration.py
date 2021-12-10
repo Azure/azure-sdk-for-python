@@ -27,7 +27,6 @@ import os
 import sys
 
 from azure.storage.blob import BlobServiceClient
-from azure.storage.blob._shared.base_client import create_configuration
 
 # Retrieve connection string from environment variables
 connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING', None)
@@ -44,14 +43,12 @@ logger.setLevel(logging.DEBUG)
 http_proxy = 'http://10.10.1.10:1180'
 https_proxy = 'http://user:password@10.10.1.10:1180/'
 
-# Create a storage Configuration object and update the proxy policy.
-config = create_configuration(storage_sdk='blob')
-config.proxy_policy.proxies = {
+proxies = {
     'http': http_proxy,
     'https': https_proxy
 }
 # Construct the BlobServiceClient, including the customized configuation.
-service_client = BlobServiceClient.from_connection_string(connection_string, _configuration=config)
+service_client = BlobServiceClient.from_connection_string(connection_string, proxies=proxies)
 containers = list(service_client.list_containers(logging_enable=True))
 print("{} containers.".format(len(containers)))
 

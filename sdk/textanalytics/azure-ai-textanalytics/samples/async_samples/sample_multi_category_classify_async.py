@@ -11,10 +11,12 @@ FILE: sample_multi_category_classify_async.py
 
 DESCRIPTION:
     This sample demonstrates how to classify documents into multiple custom categories. For example,
-    movie plot summaries can be categorized into multiple movie genres like Sci-Fi and Horror, or Comedy and Romance, etc.
-    Classifying documents is available as an action type through the begin_analyze_actions API.
+    movie plot summaries can be categorized into multiple movie genres like "Action" and "Thriller",
+    or "Comedy" and "Drama", etc. Classifying documents is available as an action type through
+    the begin_analyze_actions API.
 
-    To train a model to classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
+    For information on regional support of custom features and how to train a model to
+    classify your documents, see https://aka.ms/azsdk/textanalytics/customfunctionalities
 
 USAGE:
     python sample_multi_category_classify_async.py

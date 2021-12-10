@@ -73,7 +73,7 @@ class MetricAlertsStatusOperations(object):
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
         }
@@ -93,7 +93,7 @@ class MetricAlertsStatusOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)
@@ -136,7 +136,7 @@ class MetricAlertsStatusOperations(object):
         # Construct URL
         url = self.list_by_name.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'statusName': self._serialize.url("status_name", status_name, 'str'),
@@ -157,7 +157,7 @@ class MetricAlertsStatusOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)

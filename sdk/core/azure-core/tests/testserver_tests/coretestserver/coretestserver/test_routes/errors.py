@@ -26,3 +26,10 @@ def get_stream():
             yield b"Hello, "
             yield b"world!"
     return Response(StreamingBody(), status=500)
+
+@errors_api.route('/short-data', methods=['GET'])
+def get_short_data():
+    response = Response(b"X" * 4, status=200)
+    response.automatically_set_content_length = False
+    response.headers["Content-Length"] = "8"
+    return response

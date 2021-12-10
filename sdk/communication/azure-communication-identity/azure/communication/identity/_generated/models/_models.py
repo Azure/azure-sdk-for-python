@@ -17,10 +17,10 @@ class CommunicationError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error code.
-    :type code: str
-    :param message: Required. The error message.
-    :type message: str
+    :ivar code: Required. The error code.
+    :vartype code: str
+    :ivar message: Required. The error message.
+    :vartype message: str
     :ivar target: The error target.
     :vartype target: str
     :ivar details: Further details about specific errors that led to this error.
@@ -49,6 +49,12 @@ class CommunicationError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: Required. The error code.
+        :paramtype code: str
+        :keyword message: Required. The error message.
+        :paramtype message: str
+        """
         super(CommunicationError, self).__init__(**kwargs)
         self.code = kwargs['code']
         self.message = kwargs['message']
@@ -62,8 +68,8 @@ class CommunicationErrorResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param error: Required. The Communication Services error.
-    :type error: ~azure.communication.identity.models.CommunicationError
+    :ivar error: Required. The Communication Services error.
+    :vartype error: ~azure.communication.identity.models.CommunicationError
     """
 
     _validation = {
@@ -78,6 +84,10 @@ class CommunicationErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword error: Required. The Communication Services error.
+        :paramtype error: ~azure.communication.identity.models.CommunicationError
+        """
         super(CommunicationErrorResponse, self).__init__(**kwargs)
         self.error = kwargs['error']
 
@@ -87,8 +97,8 @@ class CommunicationIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Identifier of the identity.
-    :type id: str
+    :ivar id: Required. Identifier of the identity.
+    :vartype id: str
     """
 
     _validation = {
@@ -103,6 +113,10 @@ class CommunicationIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Required. Identifier of the identity.
+        :paramtype id: str
+        """
         super(CommunicationIdentity, self).__init__(**kwargs)
         self.id = kwargs['id']
 
@@ -112,10 +126,10 @@ class CommunicationIdentityAccessToken(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param token: Required. The access token issued for the identity.
-    :type token: str
-    :param expires_on: Required. The expiry time of the token.
-    :type expires_on: ~datetime.datetime
+    :ivar token: Required. The access token issued for the identity.
+    :vartype token: str
+    :ivar expires_on: Required. The expiry time of the token.
+    :vartype expires_on: ~datetime.datetime
     """
 
     _validation = {
@@ -132,6 +146,12 @@ class CommunicationIdentityAccessToken(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword token: Required. The access token issued for the identity.
+        :paramtype token: str
+        :keyword expires_on: Required. The expiry time of the token.
+        :paramtype expires_on: ~datetime.datetime
+        """
         super(CommunicationIdentityAccessToken, self).__init__(**kwargs)
         self.token = kwargs['token']
         self.expires_on = kwargs['expires_on']
@@ -142,8 +162,8 @@ class CommunicationIdentityAccessTokenRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scopes: Required. List of scopes attached to the token.
-    :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+    :ivar scopes: Required. List of scopes attached to the token.
+    :vartype scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
     """
 
     _validation = {
@@ -158,6 +178,10 @@ class CommunicationIdentityAccessTokenRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword scopes: Required. List of scopes attached to the token.
+        :paramtype scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+        """
         super(CommunicationIdentityAccessTokenRequest, self).__init__(**kwargs)
         self.scopes = kwargs['scopes']
 
@@ -167,10 +191,10 @@ class CommunicationIdentityAccessTokenResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param identity: Required. A communication identity.
-    :type identity: ~azure.communication.identity.models.CommunicationIdentity
-    :param access_token: An access token.
-    :type access_token: ~azure.communication.identity.models.CommunicationIdentityAccessToken
+    :ivar identity: Required. A communication identity.
+    :vartype identity: ~azure.communication.identity.models.CommunicationIdentity
+    :ivar access_token: An access token.
+    :vartype access_token: ~azure.communication.identity.models.CommunicationIdentityAccessToken
     """
 
     _validation = {
@@ -186,6 +210,12 @@ class CommunicationIdentityAccessTokenResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword identity: Required. A communication identity.
+        :paramtype identity: ~azure.communication.identity.models.CommunicationIdentity
+        :keyword access_token: An access token.
+        :paramtype access_token: ~azure.communication.identity.models.CommunicationIdentityAccessToken
+        """
         super(CommunicationIdentityAccessTokenResult, self).__init__(**kwargs)
         self.identity = kwargs['identity']
         self.access_token = kwargs.get('access_token', None)
@@ -194,8 +224,8 @@ class CommunicationIdentityAccessTokenResult(msrest.serialization.Model):
 class CommunicationIdentityCreateRequest(msrest.serialization.Model):
     """CommunicationIdentityCreateRequest.
 
-    :param create_token_with_scopes: Also create access token for the created identity.
-    :type create_token_with_scopes: list[str or
+    :ivar create_token_with_scopes: Also create access token for the created identity.
+    :vartype create_token_with_scopes: list[str or
      ~azure.communication.identity.models.CommunicationTokenScope]
     """
 
@@ -207,5 +237,41 @@ class CommunicationIdentityCreateRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword create_token_with_scopes: Also create access token for the created identity.
+        :paramtype create_token_with_scopes: list[str or
+         ~azure.communication.identity.models.CommunicationTokenScope]
+        """
         super(CommunicationIdentityCreateRequest, self).__init__(**kwargs)
         self.create_token_with_scopes = kwargs.get('create_token_with_scopes', None)
+
+
+class TeamsUserAccessTokenRequest(msrest.serialization.Model):
+    """TeamsUserAccessTokenRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar token: Required. AAD access token of a Teams User to acquire a new Communication Identity
+     access token.
+    :vartype token: str
+    """
+
+    _validation = {
+        'token': {'required': True},
+    }
+
+    _attribute_map = {
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword token: Required. AAD access token of a Teams User to acquire a new Communication
+         Identity access token.
+        :paramtype token: str
+        """
+        super(TeamsUserAccessTokenRequest, self).__init__(**kwargs)
+        self.token = kwargs['token']

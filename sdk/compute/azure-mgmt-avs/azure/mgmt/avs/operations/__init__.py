@@ -17,6 +17,8 @@ from ._global_reach_connections_operations import GlobalReachConnectionsOperatio
 from ._workload_networks_operations import WorkloadNetworksOperations
 from ._cloud_links_operations import CloudLinksOperations
 from ._addons_operations import AddonsOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
+from ._placement_policies_operations import PlacementPoliciesOperations
 from ._script_packages_operations import ScriptPackagesOperations
 from ._script_cmdlets_operations import ScriptCmdletsOperations
 from ._script_executions_operations import ScriptExecutionsOperations
@@ -33,6 +35,8 @@ __all__ = [
     'WorkloadNetworksOperations',
     'CloudLinksOperations',
     'AddonsOperations',
+    'VirtualMachinesOperations',
+    'PlacementPoliciesOperations',
     'ScriptPackagesOperations',
     'ScriptCmdletsOperations',
     'ScriptExecutionsOperations',

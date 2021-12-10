@@ -79,7 +79,7 @@ class PrivateLinkScopedResourcesOperations(object):
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -131,7 +131,7 @@ class PrivateLinkScopedResourcesOperations(object):
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -192,8 +192,8 @@ class PrivateLinkScopedResourcesOperations(object):
         :type parameters: ~$(python-base-namespace).v2019_10_17.models.ScopedResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ScopedResource or the result of cls(response)
@@ -228,7 +228,7 @@ class PrivateLinkScopedResourcesOperations(object):
             return deserialized
 
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -266,7 +266,7 @@ class PrivateLinkScopedResourcesOperations(object):
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -311,8 +311,8 @@ class PrivateLinkScopedResourcesOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -343,7 +343,7 @@ class PrivateLinkScopedResourcesOperations(object):
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -398,7 +398,7 @@ class PrivateLinkScopedResourcesOperations(object):
                 # Construct URL
                 url = self.list_by_private_link_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
                 }

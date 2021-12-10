@@ -6,6 +6,8 @@
 # --------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
 from azure.communication.identity.aio import CommunicationIdentityClient
+from azure.communication.networktraversal import RouteType
+from azure.communication.identity._api_versions import ApiVersion
 from azure.communication.networktraversal.aio import CommunicationRelayClient
 from _shared.helper import URIIdentityReplacer
 from _shared.testcase import (
@@ -50,7 +52,6 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
             print('Getting relay config:\n')
             config = await networkTraversalClient.get_relay_configuration(user)
         
-        print('Ice Servers Async:\n')
         for iceServer in config.ice_servers:
             assert iceServer.username is not None
             print('Username: ' + iceServer.username)
@@ -62,8 +63,10 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
             for url in iceServer.urls:
                 print('Url:' + url)
 
-        assert config is not None
+            assert iceServer.route_type is not None
 
+        assert config is not None
+    
     @CommunicationPreparer()
     async def test_get_relay_configuration_without_identity(self, communication_livetest_dynamic_connection_string):     
 
@@ -87,6 +90,76 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
             assert iceServer.urls is not None
             for url in iceServer.urls:
                 print('Url:' + url)
+
+        assert config is not None
+        
+    @CommunicationPreparer()
+    async def test_get_relay_configuration_with_route_type_nearest(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        async with identity_client: 
+            user = await identity_client.create_user()        
+
+        networkTraversalClient = CommunicationRelayClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        async with networkTraversalClient:
+            print('Getting relay config with nearest type:\n')
+            config = await networkTraversalClient.get_relay_configuration(user, RouteType.NEAREST)
+        
+        print('Ice Servers Async:\n')
+        for iceServer in config.ice_servers:
+            assert iceServer.username is not None
+            print('Username: ' + iceServer.username)
+
+            assert iceServer.credential is not None
+            print('Credential: ' + iceServer.credential)
+            
+            assert iceServer.urls is not None
+            for url in iceServer.urls:
+                print('Url:' + url)
+            
+            assert iceServer.route_type == RouteType.NEAREST
+
+        assert config is not None
+
+    @CommunicationPreparer()
+    async def test_get_relay_configuration_with_route_type_any(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        async with identity_client: 
+            user = await identity_client.create_user()        
+
+        networkTraversalClient = CommunicationRelayClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        async with networkTraversalClient:
+            print('Getting relay config with nearest type:\n')
+            config = await networkTraversalClient.get_relay_configuration(user, RouteType.ANY)
+        
+        print('Ice Servers Async:\n')
+        for iceServer in config.ice_servers:
+            assert iceServer.username is not None
+            print('Username: ' + iceServer.username)
+
+            assert iceServer.credential is not None
+            print('Credential: ' + iceServer.credential)
+            
+            assert iceServer.urls is not None
+            for url in iceServer.urls:
+                print('Url:' + url)
+            
+            assert iceServer.route_type == RouteType.ANY
 
         assert config is not None
         

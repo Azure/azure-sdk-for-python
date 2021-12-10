@@ -43,7 +43,7 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
 
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
@@ -67,7 +67,7 @@ setup(
         'azure.ai.language',
     ]),
     install_requires=[
-        'azure-core<2.0.0,>=1.19.0',
+        'azure-core<2.0.0,>=1.19.1',
         'msrest>=0.6.21',
     ],
     extras_require={

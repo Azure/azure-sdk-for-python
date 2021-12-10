@@ -5,9 +5,7 @@ stages:
     parameters:
       Location: westcentralus
       ServiceDirectory: agrifood
-      DeployArmTemplate: true
       Clouds: Public_FarmBeats
-      AllocateResourceGroup: false
       CloudConfig:
         Public_Farmbeats:
           SubscriptionConfiguration: $(sub-config-farmbeats-azure-cloud-test-resources)

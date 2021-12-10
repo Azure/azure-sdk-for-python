@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/$namespaceinfo?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/$namespaceinfo?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestv2fvof4o5i.servicebus.windows.net/$namespaceinfo?api-version=2017-04</id><title
-        type="text">servicebustestv2fvof4o5i</title><updated>2020-08-19T23:16:14Z</updated><author><name>servicebustestv2fvof4o5i</name></author><link
-        rel="self" href="https://servicebustestv2fvof4o5i.servicebus.windows.net/$namespaceinfo?api-version=2017-04"></link><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestaweyco6xnr.servicebus.windows.net/$namespaceinfo?api-version=2021-05</id><title
+        type="text">servicebustestaweyco6xnr</title><updated>2021-10-21T05:18:27Z</updated><author><name>servicebustestaweyco6xnr</name></author><link
+        rel="self" href="https://servicebustestaweyco6xnr.servicebus.windows.net/$namespaceinfo?api-version=2021-05"></link><content
         type="application/xml"><NamespaceInfo xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><CreatedTime>2020-08-19T23:15:11.6Z</CreatedTime><MessagingSKU>Standard</MessagingSKU><ModifiedTime>2020-08-19T23:15:11.6Z</ModifiedTime><Name>servicebustestv2fvof4o5i</Name><NamespaceType>Messaging</NamespaceType></NamespaceInfo></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><CreatedTime>2021-10-21T05:17:26.17Z</CreatedTime><MessagingSKU>Standard</MessagingSKU><ModifiedTime>2021-10-21T05:17:26.17Z</ModifiedTime><Name>servicebustestaweyco6xnr</Name><NamespaceType>Messaging</NamespaceType></NamespaceInfo></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Wed, 19 Aug 2020 23:16:14 GMT
+      - Thu, 21 Oct 2021 05:18:26 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

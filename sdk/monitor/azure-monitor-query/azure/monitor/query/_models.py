@@ -509,7 +509,7 @@ class TimeSeriesElement(object):
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.metadata_values = kwargs.get("metadatavalues", None)
+        self.metadata_values = kwargs.get("metadata_values", None)
         self.data = kwargs.get("data", None)
 
     @classmethod

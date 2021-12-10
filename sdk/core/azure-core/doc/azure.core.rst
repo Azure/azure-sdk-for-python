@@ -75,9 +75,6 @@ azure.core.serialization
 
 azure.core.rest
 -------------------
-***THIS MODULE IS PROVISIONAL***
-
-This module is ***provisional***, meaning any of the objects and methods in this module may be changed.
 
 .. automodule:: azure.core.rest
    :members:

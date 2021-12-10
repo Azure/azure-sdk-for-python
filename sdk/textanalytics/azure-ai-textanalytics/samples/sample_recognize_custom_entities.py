@@ -13,7 +13,8 @@ DESCRIPTION:
     This sample demonstrates how to recognize custom entities in documents.
     Recognizing custom entities is available as an action type through the begin_analyze_actions API.
 
-    To train a model to recognize your custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
+    For information on regional support of custom features and how to train a model to
+    recognize custom entities, see https://aka.ms/azsdk/textanalytics/customentityrecognition
 
 USAGE:
     python sample_recognize_custom_entities.py

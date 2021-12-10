@@ -21,16 +21,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Power and charging.
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"1\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"1\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
@@ -48,7 +48,7 @@ interactions:
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 00eefdf8-2d1a-4d4b-9d64-6d28ebc6b0a5
+      - dd49d00b-e5e4-4a26-8744-74680c9a9382
       content-length:
       - '1478'
       content-type:
@@ -56,13 +56,13 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
       date:
-      - Thu, 30 Sep 2021 15:52:34 GMT
+      - Thu, 28 Oct 2021 17:25:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '203'
+      - '266'
     status:
       code: 200
       message: OK

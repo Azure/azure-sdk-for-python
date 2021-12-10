@@ -14,10 +14,10 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\":
@@ -25,11 +25,11 @@ interactions:
         \     \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"Updating\"\r\n
         \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\",\r\n
         \ \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\",\r\n
-        \ \"etag\": \"753bf6f8-7df3-4ee7-87ec-f4b58a09694c\",\r\n  \"location\": \"westus\",\r\n
+        \ \"etag\": \"068cea02-dd72-4d0b-9299-bab5e7fa1ba4\",\r\n  \"location\": \"westus\",\r\n
         \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/d13f8f65-bddb-4897-a891-7b30172063db?api-version=2021-03-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/9efb8dfe-a2c4-46fa-b01d-a12d1aedf7e1?api-version=2021-05-01
       cache-control:
       - no-cache
       content-length:
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:07:16 GMT
+      - Fri, 05 Nov 2021 10:07:19 GMT
       expires:
       - '-1'
       pragma:
@@ -63,10 +63,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/d13f8f65-bddb-4897-a891-7b30172063db?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/9efb8dfe-a2c4-46fa-b01d-a12d1aedf7e1?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -78,7 +78,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:07:26 GMT
+      - Fri, 05 Nov 2021 10:07:29 GMT
       expires:
       - '-1'
       pragma:
@@ -106,10 +106,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\":
@@ -117,7 +117,7 @@ interactions:
         \     \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n
         \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\",\r\n
         \ \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\",\r\n
-        \ \"etag\": \"753bf6f8-7df3-4ee7-87ec-f4b58a09694c\",\r\n  \"location\": \"westus\",\r\n
+        \ \"etag\": \"068cea02-dd72-4d0b-9299-bab5e7fa1ba4\",\r\n  \"location\": \"westus\",\r\n
         \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -127,9 +127,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:07:26 GMT
+      - Fri, 05 Nov 2021 10:07:29 GMT
       etag:
-      - '"753bf6f8-7df3-4ee7-87ec-f4b58a09694c"'
+      - '"068cea02-dd72-4d0b-9299-bab5e7fa1ba4"'
       expires:
       - '-1'
       pragma:
@@ -157,10 +157,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-05-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\":
@@ -168,7 +168,7 @@ interactions:
         \     \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n
         \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\",\r\n
         \ \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\",\r\n
-        \ \"etag\": \"753bf6f8-7df3-4ee7-87ec-f4b58a09694c\",\r\n  \"location\": \"westus\",\r\n
+        \ \"etag\": \"068cea02-dd72-4d0b-9299-bab5e7fa1ba4\",\r\n  \"location\": \"westus\",\r\n
         \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -178,9 +178,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 03:07:27 GMT
+      - Fri, 05 Nov 2021 10:07:29 GMT
       etag:
-      - '"753bf6f8-7df3-4ee7-87ec-f4b58a09694c"'
+      - '"068cea02-dd72-4d0b-9299-bab5e7fa1ba4"'
       expires:
       - '-1'
       pragma:
@@ -210,10 +210,10 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/19.2.0 Python/3.8.12 (Linux-5.8.0-1042-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-azure-mgmt-network/19.3.0 Python/3.8.12 (Linux-5.11.0-1020-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2021-05-01
   response:
     body:
       string: ''
@@ -223,7 +223,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 21 Oct 2021 03:07:28 GMT
+      - Fri, 05 Nov 2021 10:07:30 GMT
       expires:
       - '-1'
       pragma:

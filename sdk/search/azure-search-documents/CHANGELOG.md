@@ -1,6 +1,25 @@
 # Release History
 
-## 11.3.0b5 (Unreleased)
+## 11.3.0b7 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.3.0b6 (2021-11-19)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `semantic_configuration_name`
+- Added properties to `SearchIndex`: `semantic_settings`
+- Added models: `PrioritizedFields`, `SemanticConfiguration`, `SemanticField`, `SemanticSettings`
+- Added new values to model `QueryLanguage`
+
+## 11.3.0b5 (2021-11-09)
 
 ### Features Added
 
@@ -8,8 +27,8 @@
 - Added properties to `SearchIndexerDataSourceConnection`: `identity`, `encryption_key`.
 - Added `select` property to the following `SearchIndexClient` operations: `get_synonym_maps`, `list_indexes`.
 - Added `select` property to the following `SearchIndexersClient` operations: `get_data_source_connections`, `get_indexers`, `get_skillsets`.
-
-### Other Changes
+- Added operations to `SearchIndexerClient`: `reset_skills`, `reset_documents`.
+- Added model: `DocumentKeysOrIds`
 
 ## 11.3.0b4 (2021-10-05)
 

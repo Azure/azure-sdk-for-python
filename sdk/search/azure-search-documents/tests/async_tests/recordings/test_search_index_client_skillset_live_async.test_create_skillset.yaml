@@ -1,45 +1,46 @@
 interactions:
 - request:
     body: '{"name": "test-ss", "description": "desc", "skills": [{"@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
-      "inputs": [{"name": "text", "source": "/document/content"}], "outputs": [{"name":
-      "organizations", "targetName": "organizationsS1"}], "includeTypelessEntities":
-      true}, {"@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill", "inputs":
-      [{"name": "text", "source": "/document/content"}], "outputs": [{"name": "organizations",
-      "targetName": "organizationsS2"}], "modelVersion": "3"}, {"@odata.type": "#Microsoft.Skills.Text.SentimentSkill",
+      "name": "skill1", "inputs": [{"name": "text", "source": "/document/content"}],
+      "outputs": [{"name": "organizations", "targetName": "organizationsS1"}], "includeTypelessEntities":
+      true}, {"@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill", "name":
+      "skill2", "inputs": [{"name": "text", "source": "/document/content"}], "outputs":
+      [{"name": "organizations", "targetName": "organizationsS2"}], "modelVersion":
+      "3"}, {"@odata.type": "#Microsoft.Skills.Text.SentimentSkill", "name": "skill3",
       "inputs": [{"name": "text", "source": "/document/content"}], "outputs": [{"name":
       "score", "targetName": "scoreS3"}]}, {"@odata.type": "#Microsoft.Skills.Text.V3.SentimentSkill",
-      "inputs": [{"name": "text", "source": "/document/content"}], "outputs": [{"name":
-      "confidenceScores", "targetName": "scoreS4"}], "includeOpinionMining": true},
-      {"@odata.type": "#Microsoft.Skills.Text.V3.EntityLinkingSkill", "inputs": [{"name":
-      "text", "source": "/document/content"}], "outputs": [{"name": "entities", "targetName":
-      "entitiesS5"}], "minimumPrecision": 0.5}]}'
+      "name": "skill4", "inputs": [{"name": "text", "source": "/document/content"}],
+      "outputs": [{"name": "confidenceScores", "targetName": "scoreS4"}], "includeOpinionMining":
+      true}, {"@odata.type": "#Microsoft.Skills.Text.V3.EntityLinkingSkill", "name":
+      "skill5", "inputs": [{"name": "text", "source": "/document/content"}], "outputs":
+      [{"name": "entities", "targetName": "entitiesS5"}], "minimumPrecision": 0.5}]}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       Content-Length:
-      - '1121'
+      - '1211'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96E6933515CD0\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"modelVersion":"3","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS2"}]},{"@odata.type":"#Microsoft.Skills.Text.SentimentSkill","name":null,"description":null,"context":null,"defaultLanguageCode":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"score","targetName":"scoreS3"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.SentimentSkill","name":null,"description":null,"context":null,"defaultLanguageCode":null,"modelVersion":null,"includeOpinionMining":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"confidenceScores","targetName":"scoreS4"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityLinkingSkill","name":null,"description":null,"context":null,"defaultLanguageCode":null,"minimumPrecision":0.5,"modelVersion":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"entities","targetName":"entitiesS5"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D99B0399B12612\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"skill1","description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":"skill2","description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"modelVersion":"3","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS2"}]},{"@odata.type":"#Microsoft.Skills.Text.SentimentSkill","name":"skill3","description":null,"context":null,"defaultLanguageCode":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"score","targetName":"scoreS3"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.SentimentSkill","name":"skill4","description":null,"context":null,"defaultLanguageCode":null,"modelVersion":null,"includeOpinionMining":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"confidenceScores","targetName":"scoreS4"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityLinkingSkill","name":"skill5","description":null,"context":null,"defaultLanguageCode":null,"minimumPrecision":0.5,"modelVersion":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"entities","targetName":"entitiesS5"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
-      content-length: '1894'
+      content-length: '1914'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 02 Sep 2021 23:27:16 GMT
-      elapsed-time: '200'
-      etag: W/"0x8D96E6933515CD0"
+      date: Fri, 29 Oct 2021 17:43:21 GMT
+      elapsed-time: '2316'
+      etag: W/"0x8D99B0399B12612"
       expires: '-1'
       location: https://search75151acc.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 5036e3d3-0c45-11ec-89fe-74c63bed1137
+      request-id: b51a3cc3-38df-11ec-aeae-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -51,28 +52,55 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D96E6933515CD0\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":"#2","description":null,"context":"/document","categories":["Product","Phone
-        Number","Person","Quantity","IP Address","Organization","URL","Email","Event","Skill","Location","PersonType","Address","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"modelVersion":"3","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS2"}]},{"@odata.type":"#Microsoft.Skills.Text.SentimentSkill","name":"#3","description":null,"context":"/document","defaultLanguageCode":"en","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"score","targetName":"scoreS3"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.SentimentSkill","name":"#4","description":null,"context":"/document","defaultLanguageCode":"en","modelVersion":null,"includeOpinionMining":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"confidenceScores","targetName":"scoreS4"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityLinkingSkill","name":"#5","description":null,"context":"/document","defaultLanguageCode":"en","minimumPrecision":0.5,"modelVersion":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"entities","targetName":"entitiesS5"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search75151acc.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D99B0399B12612\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"skill1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS1"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityRecognitionSkill","name":"skill2","description":null,"context":"/document","categories":["Product","PhoneNumber","Person","Quantity","Organization","IPAddress","URL","Email","Event","Skill","Location","PersonType","Address","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"modelVersion":"3","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizationsS2"}]},{"@odata.type":"#Microsoft.Skills.Text.SentimentSkill","name":"skill3","description":null,"context":"/document","defaultLanguageCode":"en","inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"score","targetName":"scoreS3"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.SentimentSkill","name":"skill4","description":null,"context":"/document","defaultLanguageCode":"en","modelVersion":null,"includeOpinionMining":true,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"confidenceScores","targetName":"scoreS4"}]},{"@odata.type":"#Microsoft.Skills.Text.V3.EntityLinkingSkill","name":"skill5","description":null,"context":"/document","defaultLanguageCode":"en","minimumPrecision":0.5,"modelVersion":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"entities","targetName":"entitiesS5"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}]}'
     headers:
       cache-control: no-cache
       content-length: '795'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 02 Sep 2021 23:27:16 GMT
-      elapsed-time: '39'
+      date: Fri, 29 Oct 2021 17:43:21 GMT
+      elapsed-time: '115'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 507bb3fc-0c45-11ec-b9ee-74c63bed1137
+      request-id: b6a87364-38df-11ec-bfe5-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
     url: https://search75151acc.search.windows.net/skillsets?api-version=2021-04-30-Preview
+- request:
+    body: '{"skillNames": ["skill1", "skill2", "skill3", "skill4", "skill5"]}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b5 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://search75151acc.search.windows.net/skillsets('test-ss')/search.resetskills?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      date: Fri, 29 Oct 2021 17:43:21 GMT
+      elapsed-time: '75'
+      expires: '-1'
+      pragma: no-cache
+      request-id: b6c43de3-38df-11ec-93a9-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: https://search75151acc.search.windows.net/skillsets('test-ss')/search.resetskills?api-version=2021-04-30-Preview
 version: 1
