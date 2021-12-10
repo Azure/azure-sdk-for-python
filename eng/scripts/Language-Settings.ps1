@@ -561,7 +561,7 @@ function Import-Dev-Cert-python
 }
 
 function Validate-Python-DocMsPackages
-{ 
+{
   Param(
     [Parameter(Mandatory=$true)]
     [PSCustomObject]$PackageInfo,
@@ -569,7 +569,7 @@ function Validate-Python-DocMsPackages
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
     [string]$DocValidationImageId
-  ) 
+  )
   $packageName = $packageInfo.Name
   $packageVersion = $packageInfo.Version
   ValidatePackage -packageName $packageName -packageVersion $packageVersion `
