@@ -142,7 +142,7 @@
         "storageMgmtApiVersion": "2017-10-01",
         "storageAccountName": "[parameters('blobStorageAccount')]",
         "location": "[resourceGroup().location]",
-        "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('cognitiveServicesEndpointSuffix'))]",
+        "azureDocTranslationUrl": "[if(parameters('useStaticStorageResource'), concat('https://', variables('docTranslationBaseName'), '.ppe', parameters('cognitiveServicesEndpointSuffix')), concat('https://', variables('docTranslationBaseName'), parameters('cognitiveServicesEndpointSuffix')))]",
         "azureStorageEndpoint": "[concat('https://', parameters('blobStorageAccount'), '.blob.core.windows.net/')]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "encryption": {
@@ -282,6 +282,7 @@
             "value": "[parameters('blobStorageAccount')]"
         },
         "TRANSLATION_DOCUMENT_STORAGE_KEY": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
             "value": "[if(parameters('useStaticStorageResource'), '', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value)]"
         },
