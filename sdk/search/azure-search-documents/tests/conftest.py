@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import os
 import sys
 import pytest
 from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer

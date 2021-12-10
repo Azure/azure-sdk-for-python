@@ -3,143 +3,161 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import functools
 from os.path import dirname, realpath
 
-import json
-import requests
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
-from azure_devtools.scenario_tests.exceptions import AzureTestError
+from devtools_testutils import PowerShellPreparer, is_live
 
-TIME_TO_SLEEP = 3
+from azure.core.credentials import AzureKeyCredential
 
-class SearchServicePreparer(AzureMgmtPreparer):
-    def __init__(
-        self,
-        schema=None,
-        index_batch=None,
-        name_prefix="search",
-        resource_group_parameter_name=RESOURCE_GROUP_PARAM,
-        disable_recording=True,
-        playback_fake_resource=None,
-        client_kwargs=None,
-    ):
-        super(SearchServicePreparer, self).__init__(
-            name_prefix,
-            random_name_length=24,
-            disable_recording=disable_recording,
-            playback_fake_resource=playback_fake_resource,
-            client_kwargs=client_kwargs,
-        )
-        self.resource_group_parameter_name = resource_group_parameter_name
-        self.schema = schema
-        self.index_name = None
-        self.index_batch = index_batch
 
-    def _get_resource_group(self, **kwargs):
-        try:
-            return kwargs[self.resource_group_parameter_name]
-        except KeyError:
-            template = (
-                "To create a search service a resource group is required. Please add "
-                "decorator @{} in front of this preparer."
-            )
-            raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+SearchPreparer = functools.partial(
+    PowerShellPreparer,
+    "search",
+    search_service_endpoint="fakesearchendpoint",
+    search_service_api_key="fakesearchapikey",
+    search_query_api_key="fakequeryapikey",
+    search_storage_connection_string="fakestoragecs",
+    search_storage_container_name="fakestoragecontainer"
+)
 
-    def create_resource(self, name, **kwargs):
-        if self.schema:
-            schema = json.loads(self.schema)
-        else:
-            schema = None
-        self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.search.windows.net".format(self.service_name)
+def search_decorator(func, **kwargs):
+    @SearchPreparer()
+    def wrapper(*args, **kwargs):
+        # automatically wrap service API key as an AzureKeyCredential
+        api_key = kwargs.get('search_service_api_key', None)
+        kwargs['search_service_api_key'] = AzureKeyCredential(api_key)
+        func(*args, **kwargs)
+    return wrapper
 
-        if not self.is_live:
-            return {
-                "api_key": "api-key",
-                "index_name": schema["name"] if schema else None,
-                "endpoint": self.endpoint,
-            }
 
-        group_name = self._get_resource_group(**kwargs).name
+# class SearchServicePreparer(AzureMgmtPreparer):
+#     def __init__(
+#         self,
+#         schema=None,
+#         index_batch=None,
+#         name_prefix="search",
+#         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
+#         disable_recording=True,
+#         playback_fake_resource=None,
+#         client_kwargs=None,
+#     ):
+#         super(SearchServicePreparer, self).__init__(
+#             name_prefix,
+#             random_name_length=24,
+#             disable_recording=disable_recording,
+#             playback_fake_resource=playback_fake_resource,
+#             client_kwargs=client_kwargs,
+#         )
+#         self.resource_group_parameter_name = resource_group_parameter_name
+#         self.schema = schema
+#         self.index_name = None
+#         self.index_batch = index_batch
 
-        from azure.mgmt.search import SearchManagementClient
-        from azure.mgmt.search.models import ProvisioningState
+#     def _get_resource_group(self, **kwargs):
+#         try:
+#             return kwargs[self.resource_group_parameter_name]
+#         except KeyError:
+#             template = (
+#                 "To create a search service a resource group is required. Please add "
+#                 "decorator @{} in front of this preparer."
+#             )
+#             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
-        self.mgmt_client = self.create_mgmt_client(SearchManagementClient)
+#     def create_resource(self, name, **kwargs):
+#         if self.schema:
+#             schema = json.loads(self.schema)
+#         else:
+#             schema = None
+#         self.service_name = self.create_random_name()
+#         self.endpoint = "https://{}.search.windows.net".format(self.service_name)
 
-        # create the search service
-        from azure.mgmt.search.models import SearchService, Sku
+#         if not self.is_live:
+#             return {
+#                 "api_key": "api-key",
+#                 "index_name": schema["name"] if schema else None,
+#                 "endpoint": self.endpoint,
+#             }
 
-        service_config = SearchService(location="West US", sku=Sku(name="basic"))
-        resource = self.mgmt_client.services.begin_create_or_update(
-            group_name, self.service_name, service_config
-        )
+#         group_name = self._get_resource_group(**kwargs).name
 
-        retries = 4
-        for i in range(retries):
-            try:
-                result = resource.result()
-                if result.provisioning_state == ProvisioningState.succeeded:
-                    break
-            except Exception as ex:
-                if i == retries - 1:
-                    raise
-                time.sleep(TIME_TO_SLEEP)
-            time.sleep(TIME_TO_SLEEP)
+#         from azure.mgmt.search import SearchManagementClient
+#         from azure.mgmt.search.models import ProvisioningState
 
-        # note the for/else here: will raise an error if we *don't* break
-        # above i.e. if result.provisioning state was never "Succeeded"
-        else:
-            raise AzureTestError("Could not create a search service")
+#         self.mgmt_client = self.create_mgmt_client(SearchManagementClient)
 
-        api_key = self.mgmt_client.admin_keys.get(
-            group_name, self.service_name
-        ).primary_key
+#         # create the search service
+#         from azure.mgmt.search.models import SearchService, Sku
 
-        if self.schema:
-            response = requests.post(
-                headers={"Content-Type": "application/json", "api-key": api_key},
-                data=self.schema,
-            )
-            if response.status_code != 201:
-                raise AzureTestError(
-                    "Could not create a search index {}".format(response.status_code)
-                )
-            self.index_name = schema["name"]
+#         service_config = SearchService(location="West US", sku=Sku(name="basic"))
+#         resource = self.mgmt_client.services.begin_create_or_update(
+#             group_name, self.service_name, service_config
+#         )
 
-        # optionally load data into the index
-        if self.index_batch and self.schema:
-            from azure.core.credentials import AzureKeyCredential
-            from azure.search.documents import SearchClient
-            from azure.search.documents._generated.models import IndexBatch
+#         retries = 4
+#         for i in range(retries):
+#             try:
+#                 result = resource.result()
+#                 if result.provisioning_state == ProvisioningState.succeeded:
+#                     break
+#             except Exception as ex:
+#                 if i == retries - 1:
+#                     raise
+#                 time.sleep(TIME_TO_SLEEP)
+#             time.sleep(TIME_TO_SLEEP)
 
-            batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchClient(
-                self.endpoint, self.index_name, AzureKeyCredential(api_key)
-            )
-            results = index_client.index_documents(batch)
-            if not all(result.succeeded for result in results):
-                raise AzureTestError("Document upload to search index failed")
+#         # note the for/else here: will raise an error if we *don't* break
+#         # above i.e. if result.provisioning state was never "Succeeded"
+#         else:
+#             raise AzureTestError("Could not create a search service")
 
-            # Indexing is asynchronous, so if you get a 200 from the REST API, that only means that the documents are
-            # persisted, not that they're searchable yet. The only way to check for searchability is to run queries,
-            # and even then things are eventually consistent due to replication. In the Track 1 SDK tests, we "solved"
-            # this by using a constant delay between indexing and querying.
-            import time
+#         api_key = self.mgmt_client.admin_keys.get(
+#             group_name, self.service_name
+#         ).primary_key
 
-            time.sleep(TIME_TO_SLEEP)
+#         if self.schema:
+#             response = requests.post(
+#                 headers={"Content-Type": "application/json", "api-key": api_key},
+#                 data=self.schema,
+#             )
+#             if response.status_code != 201:
+#                 raise AzureTestError(
+#                     "Could not create a search index {}".format(response.status_code)
+#                 )
+#             self.index_name = schema["name"]
 
-        return {
-            "api_key": api_key,
-            "index_name": self.index_name,
-            "endpoint": self.endpoint,
-        }
+#         # optionally load data into the index
+#         if self.index_batch and self.schema:
+#             from azure.core.credentials import AzureKeyCredential
+#             from azure.search.documents import SearchClient
+#             from azure.search.documents._generated.models import IndexBatch
 
-    def remove_resource(self, name, **kwargs):
-        if not self.is_live:
-            return
+#             batch = IndexBatch.deserialize(self.index_batch)
+#             index_client = SearchClient(
+#                 self.endpoint, self.index_name, AzureKeyCredential(api_key)
+#             )
+#             results = index_client.index_documents(batch)
+#             if not all(result.succeeded for result in results):
+#                 raise AzureTestError("Document upload to search index failed")
 
-        group_name = self._get_resource_group(**kwargs).name
-        self.mgmt_client.services.delete(group_name, self.service_name)
+#             # Indexing is asynchronous, so if you get a 200 from the REST API, that only means that the documents are
+#             # persisted, not that they're searchable yet. The only way to check for searchability is to run queries,
+#             # and even then things are eventually consistent due to replication. In the Track 1 SDK tests, we "solved"
+#             # this by using a constant delay between indexing and querying.
+#             import time
+
+#             time.sleep(TIME_TO_SLEEP)
+
+#         return {
+#             "api_key": api_key,
+#             "index_name": self.index_name,
+#             "endpoint": self.endpoint,
+#         }
+
+#     def remove_resource(self, name, **kwargs):
+#         if not self.is_live:
+#             return
+
+#         group_name = self._get_resource_group(**kwargs).name
+#         self.mgmt_client.services.delete(group_name, self.service_name)
