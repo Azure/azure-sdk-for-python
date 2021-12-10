@@ -1,1 +1,2 @@
+include _meta.json
 include *.rst *.md
