@@ -922,6 +922,7 @@ class StorageContainerTest(StorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="quote and unquote behave differently on py2 for recordings")
     @BlobPreparer()
     def test_list_encoded_blobs(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)

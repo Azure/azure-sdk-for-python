@@ -8,14 +8,7 @@
 try:
     from urllib.parse import unquote
 except ImportError:
-    from urllib import unquote as stdlib_unquote
-
-    # polyfill. This behaves the same as urllib.parse.unquote on Python 3
-    def unquote(string, encoding='utf-8', errors='replace'):
-        if isinstance(string, bytes):
-            raise TypeError("a bytes-like object is required, not '{}'".format(type(string)))
-
-        return stdlib_unquote(string.encode(encoding)).decode(encoding, errors=errors)
+    from urllib import unquote
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.exceptions import HttpResponseError
 from ._deserialize import get_blob_properties_from_generated_code, parse_tags
