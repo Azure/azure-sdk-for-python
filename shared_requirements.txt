@@ -221,3 +221,5 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mixedreality-remoterendering azure-core<2.0.0,>=1.6.0
 #override azure-mixedreality-remoterendering azure-mixedreality-authentication>=1.0.0b1
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.19.1
+#override azure-mgmt-eventgrid msrest>=0.6.21
+#override azure-mgmt-eventgrid azure-mgmt-core>=1.3.0,<2.0.0
