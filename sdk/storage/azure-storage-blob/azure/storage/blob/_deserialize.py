@@ -11,7 +11,14 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import unquote
 except ImportError:
-    from urllib import unquote
+    from urllib import unquote as stdlib_unquote
+
+    # polyfill. This behaves the same as urllib.parse.unquote on Python 3
+    def unquote(string, encoding='utf-8', errors='replace'):
+        if isinstance(string, bytes):
+            raise TypeError("a bytes-like object is required, not '{}'".format(type(string)))
+
+        return stdlib_unquote(string.encode(encoding)).decode(encoding, errors=errors)
 from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
 from ._shared.models import get_enum_value
 
