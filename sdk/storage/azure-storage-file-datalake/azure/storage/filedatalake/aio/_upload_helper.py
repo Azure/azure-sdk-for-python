@@ -7,11 +7,13 @@
 from azure.core.exceptions import HttpResponseError
 from .._deserialize import (
     process_storage_error)
+from .._shared.base_client_async import AsyncTransportWrapper
+from .._shared.constants import READ_TIMEOUT
 from .._shared.response_handlers import return_response_headers
 from .._shared.uploads_async import (
     upload_data_chunks,
     DataLakeFileChunkUploader, upload_substream_blocks)
-from .._upload_helper import get_transfer_timeout, DEFAULT_CHUNK_SIZE
+from .._upload_helper import DEFAULT_CHUNK_SIZE
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
@@ -21,6 +23,20 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
         modified_access_conditions.if_none_match,
         modified_access_conditions.if_match
     ])
+
+
+def get_transfer_timeout(client, request_data_size, **kwargs):
+    # Get the transport object - it might be wrapped so iterate through wrappers
+    transport = client._client._pipeline._transport # pylint: disable=protected-access
+    while isinstance(transport, AsyncTransportWrapper):
+        transport = transport._transport    # pylint: disable=protected-access
+    # Using the transport object retrieve the current read_timeout configuration
+    current_read_timeout = transport.connection_config.read_timeout
+    # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
+    # We can dynamically set it
+    if not kwargs.get("read_timeout") and current_read_timeout == READ_TIMEOUT:
+        kwargs.update({"read_timeout": max((request_data_size / (50*1024), READ_TIMEOUT))})
+    return kwargs
 
 
 async def upload_datalake_file(  # pylint: disable=unused-argument

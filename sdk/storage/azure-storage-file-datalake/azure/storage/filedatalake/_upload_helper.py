@@ -9,7 +9,6 @@ from azure.core.exceptions import HttpResponseError
 from ._deserialize import (
     process_storage_error)
 from ._shared.base_client import TransportWrapper
-from ._shared.base_client_async import AsyncTransportWrapper
 from ._shared.constants import READ_TIMEOUT
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import (
@@ -31,8 +30,6 @@ def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disab
 def get_transfer_timeout(client, request_data_size, **kwargs):
     # Get the transport object - it might be wrapped so iterate through wrappers
     transport = client._client._pipeline._transport # pylint: disable=protected-access
-    while isinstance(transport, AsyncTransportWrapper):
-        transport = transport._transport    # pylint: disable=protected-access
     while isinstance(transport, TransportWrapper):
         transport = transport._transport    # pylint: disable=protected-access
     # Using the transport object retrieve the current read_timeout configuration

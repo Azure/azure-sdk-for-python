@@ -10,6 +10,7 @@ from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disabl
 
 import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
+from .._shared.base_client_async import AsyncTransportWrapper
 from .._shared.constants import READ_TIMEOUT
 
 from .._shared.response_handlers import (
@@ -27,11 +28,25 @@ from .._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
-from .._upload_helpers import _convert_mod_error, _any_conditions, get_transfer_timeout
+from .._upload_helpers import _convert_mod_error, _any_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import
     BlobLeaseClient = TypeVar("BlobLeaseClient")
+
+
+def get_transfer_timeout(client, request_data_size, **kwargs):
+    # Get the transport object - it might be wrapped so iterate through wrappers
+    transport = client._client._pipeline._transport # pylint: disable=protected-access
+    while isinstance(transport, AsyncTransportWrapper):
+        transport = transport._transport    # pylint: disable=protected-access
+    # Using the transport object retrieve the current read_timeout configuration
+    current_read_timeout = transport.connection_config.read_timeout
+    # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
+    # We can dynamically set it
+    if not kwargs.get("read_timeout") and current_read_timeout == READ_TIMEOUT:
+        kwargs.update({"read_timeout": max((request_data_size / (50*1024), READ_TIMEOUT))})
+    return kwargs
 
 
 async def upload_block_blob(  # pylint: disable=too-many-locals

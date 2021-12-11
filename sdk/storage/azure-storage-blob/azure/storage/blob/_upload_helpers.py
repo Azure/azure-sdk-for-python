@@ -11,7 +11,6 @@ from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disabl
 import six
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from ._shared.base_client import TransportWrapper
-from ._shared.base_client_async import AsyncTransportWrapper
 from ._shared.constants import READ_TIMEOUT
 
 from ._shared.response_handlers import (
@@ -42,8 +41,6 @@ _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.
 def get_transfer_timeout(client, request_data_size, **kwargs):
     # Get the transport object - it might be wrapped so iterate through wrappers
     transport = client._client._pipeline._transport # pylint: disable=protected-access
-    while isinstance(transport, AsyncTransportWrapper):
-        transport = transport._transport    # pylint: disable=protected-access
     while isinstance(transport, TransportWrapper):
         transport = transport._transport    # pylint: disable=protected-access
     # Using the transport object retrieve the current read_timeout configuration

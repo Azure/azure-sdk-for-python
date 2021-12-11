@@ -14,11 +14,26 @@ from typing import AsyncIterator
 
 from aiohttp import ClientPayloadError
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from .._shared.base_client_async import AsyncTransportWrapper
+from .._shared.constants import READ_TIMEOUT
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
 from .._deserialize import get_page_ranges_result
-from .._download import process_range_and_offset, _ChunkDownloader, get_transfer_timeout
+from .._download import process_range_and_offset, _ChunkDownloader
+
+
+def get_transfer_timeout(client, request_data_size):
+    # Get the transport object - it might be wrapped so iterate through wrappers
+    transport = client._config.transport    # pylint: disable=protected-access
+    while isinstance(transport, AsyncTransportWrapper):
+        transport = transport._transport    # pylint: disable=protected-access
+    # If the read_timeout is set to the default value and the user did not pass the parameter as a kwarg then
+    # We can dynamically set it
+    if not client._request_options.get( # pylint: disable=protected-access
+            "read_timeout", None) and transport.connection_config.read_timeout == READ_TIMEOUT:
+        client._request_options["read_timeout"] = max(  # pylint: disable=protected-access
+            (request_data_size / (50 * 1024), READ_TIMEOUT))
 
 
 async def process_content(data, start_offset, end_offset, encryption):
