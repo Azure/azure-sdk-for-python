@@ -9,7 +9,6 @@ import functools
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
-from azure.ai.formrecognizer import _models
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
