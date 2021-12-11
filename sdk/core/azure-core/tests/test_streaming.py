@@ -158,7 +158,7 @@ def test_decompress_compressed_header_offline(port, http_request):
     with RequestsTransport() as sender:
         response = sender.send(request, stream=True)
         response.raise_for_status()
-        data = response.stream_download(sender, decompress=False)
+        data = response.stream_download(sender, decompress=True)
         content = b"".join(list(data))
         decoded = content.decode('utf-8')
         assert decoded == "test"

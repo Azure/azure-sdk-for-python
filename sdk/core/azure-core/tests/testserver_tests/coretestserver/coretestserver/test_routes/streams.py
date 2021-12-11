@@ -31,7 +31,7 @@ def stream_compressed_header_error():
     yield b'test'
 
 def stream_decompress():
-    file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test_with_header.tar.gz"))
+    file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
     with open(file_path, "rb") as fd:
         yield fd.read()
 
@@ -59,4 +59,4 @@ def compressed():
 
 @streams_api.route('/decompress', methods=['GET'])
 def decompress():
-    return Response(stream_decompress(), status=200)
+    return Response(stream_decompress(), status=200, headers={"Content-Encoding": "gzip"})
