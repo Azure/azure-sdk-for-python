@@ -8,7 +8,10 @@ from typing import (  # pylint: disable=unused-import
     Tuple, Dict, List,
     TYPE_CHECKING
 )
-from urllib.parse import unquote
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
 from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
 from ._shared.models import get_enum_value
 
