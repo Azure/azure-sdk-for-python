@@ -232,6 +232,20 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(containers[0].immutable_storage_with_versioning_enabled)
 
     @BlobPreparer()
+    def test_list_system_containers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+
+        # Act
+        containers = list(bsc.list_containers(include_system=True))
+
+        # Assert
+        found = False
+        for container in containers:
+            if container.name == "$logs":
+                found = True
+        self.assertEqual(found, True)
+
+    @BlobPreparer()
     def test_list_containers_with_prefix(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
