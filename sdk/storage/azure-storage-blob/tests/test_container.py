@@ -936,6 +936,22 @@ class StorageContainerTest(StorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="quote and unquote behave differently on py2 for recordings")
+    @BlobPreparer()
+    def test_list_encoded_blobs(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        blob_name = "dir1/dir2/file\uFFFF.blob"
+        container = self._create_container(bsc, prefix="cont1")
+        data = b'hello world'
+        bc = container.get_blob_client(blob_name)
+        bc.upload_blob(data)
+        props = bc.get_blob_properties()
+
+        # Act
+        blobs = list(container.list_blobs())
+        self.assertEqual(blobs[0].name, blob_name)
+        self.assertEqual(props.name, blob_name)
+
     @pytest.mark.playback_test_only
     @BlobPreparer()
     def test_list_blobs_with_object_replication_policy(self, storage_account_name, storage_account_key):
