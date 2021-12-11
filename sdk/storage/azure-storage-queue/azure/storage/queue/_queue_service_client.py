@@ -153,7 +153,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -187,7 +187,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -219,7 +219,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            **kwargs
+            **kwargs  # type: Any
         ):
         # type: (...) -> None
         """Sets the properties of a storage account's Queue service, including
@@ -273,7 +273,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            **kwargs
+            **kwargs  # type: Any
         ):
         # type: (...) -> ItemPaged[QueueProperties]
         """Returns a generator to list the queues under the specified account.
@@ -323,7 +323,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def create_queue(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
+            **kwargs  # type: Any
         ):
         # type: (...) -> QueueClient
         """Creates a new queue under the specified account.
@@ -358,8 +358,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_queue(
-            self, queue,  # type: Union[QueueProperties, str]
-            **kwargs
+            self,
+            queue,  # type: Union[QueueProperties, str]
+            **kwargs  # type: Any
         ):
         # type: (...) -> None
         """Deletes the specified queue and any messages it contains.
@@ -394,8 +395,11 @@ class QueueServiceClient(StorageAccountHostsMixin):
         kwargs.setdefault('merge_span', True)
         queue_client.delete_queue(timeout=timeout, **kwargs)
 
-    def get_queue_client(self, queue, **kwargs):
-        # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient
+    def get_queue_client(self,
+                         queue,  # type: Union[QueueProperties, str]
+                         **kwargs  # type: Any
+                         ):
+        # type: (...) -> QueueClient
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
