@@ -159,7 +159,8 @@ backports.functools-lru-cache >= 1.6.4; python_version == "2.7"
 #override azure-storage-queue msrest>=0.6.18
 #override azure-storage-file-share azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.10.0
-#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.9.0b1
+#override azure-storage-file-datalake msrest>=0.6.21
+#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.10.0b2
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
 #override azure-data-tables msrest>=0.6.19
 #override azure-schemaregistry azure-core<2.0.0,>=1.20.0
