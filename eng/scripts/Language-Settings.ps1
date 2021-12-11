@@ -284,7 +284,6 @@ $PackageExclusions = @{
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
-  'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
 
@@ -562,7 +561,7 @@ function Import-Dev-Cert-python
 }
 
 function Validate-Python-DocMsPackages
-{ 
+{
   Param(
     [Parameter(Mandatory=$true)]
     [PSCustomObject]$PackageInfo,
@@ -570,7 +569,7 @@ function Validate-Python-DocMsPackages
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
     [string]$DocValidationImageId
-  ) 
+  )
   $packageName = $packageInfo.Name
   $packageVersion = $packageInfo.Version
   ValidatePackage -packageName $packageName -packageVersion $packageVersion `
