@@ -5,7 +5,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from urllib.parse import unquote
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from .._deserialize import get_blob_properties_from_generated_code
