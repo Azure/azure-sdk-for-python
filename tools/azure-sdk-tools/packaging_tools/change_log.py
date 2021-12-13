@@ -81,10 +81,7 @@ class ChangeLog:
             return
         model_name, *remaining_path = remaining_path
         if not remaining_path:
-            # A new model or a model deletion is not very interesting by itself
-            # since it usually means that there is a new operation
-            #
-            # We might miss some discrimanator new sub-classes however
+            self.features.append(_MODEL_ADD.format(model_name))
             return
 
         # That's a model signature change
@@ -128,6 +125,7 @@ class ChangeLog:
 _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
 _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
+_MODEL_ADD = "Added model {}"
 
 ## Breaking Changes
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
