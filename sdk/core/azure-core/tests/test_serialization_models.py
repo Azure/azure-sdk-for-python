@@ -806,3 +806,243 @@ def test_inheritance_4_levels():
     assert isinstance(d.d_prop[3].d_prop[1], B)
     assert isinstance(d.d_prop[3].d_prop[2], C)
     assert d.d_prop[3].d_prop[3] is None
+
+def test_multiple_inheritance_basic():
+    class ParentOne(Model):
+        parent_one_prop: str = rest_field(name="parentOneProp")
+
+        def __init__(
+            self,
+            *,
+            parent_one_prop: str,
+            **kwargs
+        ):
+            super().__init__(parent_one_prop=parent_one_prop, **kwargs)
+
+    class ParentTwo(Model):
+        parent_two_prop: int = rest_field(name="parentTwoProp", type=lambda x: str(x))
+
+        def __init__(
+            self,
+            *,
+            parent_two_prop: int,
+            **kwargs
+        ):
+            super().__init__(parent_two_prop=parent_two_prop, **kwargs)
+
+    class Child(ParentOne, ParentTwo):
+
+        def __init__(
+            self,
+            *,
+            parent_one_prop: str,
+            parent_two_prop: int,
+            **kwargs
+        ):
+            super().__init__(parent_one_prop=parent_one_prop, parent_two_prop=parent_two_prop, **kwargs)
+
+    c = Child(parent_one_prop="Hello", parent_two_prop=3)
+    assert c == {"parentOneProp": "Hello", "parentTwoProp": 3}
+    assert c.parent_one_prop == "Hello"
+    assert c.parent_two_prop == "3"
+    assert isinstance(c, Child)
+    assert isinstance(c, ParentOne)
+    assert isinstance(c, ParentTwo)
+
+def test_multiple_inheritance_mro():
+    class A(Model):
+        prop: str = rest_field()
+
+        def __init__(self, *, prop: str) -> None:
+            super().__init__(prop=prop)
+
+    class B(Model):
+        prop: int = rest_field()
+
+        def __init__(self, *, prop: str) -> None:
+            super().__init__(prop=prop)
+
+    class C(A, B):
+        pass
+
+    assert A(prop="1").prop == "1"
+    assert B(prop="1").prop == 1
+    assert C(prop="1").prop == "1"  # A should take precedence over B
+
+class Feline(Model):
+    meows: bool = rest_field()
+    hisses: bool = rest_field()
+    siblings: Optional[List["Feline"]] = rest_field()
+
+    def __init__(
+        self,
+        *,
+        meows: bool,
+        hisses: bool,
+        siblings: Optional[List["Feline"]] = None,
+        **kwargs
+    ):
+        super().__init__(
+            meows=meows,
+            hisses=hisses,
+            siblings=siblings,
+            **kwargs
+        )
+
+class Owner(Model):
+    first_name: str = rest_field(name="firstName", type=lambda x: x.capitalize())
+    last_name: str = rest_field(name="lastName", type=lambda x: x.capitalize())
+
+    def __init__(
+        self,
+        *,
+        first_name: str,
+        last_name: str,
+        **kwargs
+    ):
+        super().__init__(
+            first_name=first_name, last_name=last_name, **kwargs
+        )
+
+class PetModel(Model):
+    name: str = rest_field()
+    owner: Owner = rest_field()
+
+    def __init__(self, *, name: str, owner: Owner, **kwargs):
+        super().__init__(name=name, owner=owner, **kwargs)
+
+class Cat(PetModel, Feline):
+    likes_milk: bool = rest_field(name="likesMilk", type=lambda x: True)
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        owner: Owner,
+        meows: bool,
+        hisses: bool,
+        likes_milk: bool,
+        siblings: Optional[List[Feline]],
+        **kwargs
+    ):
+        super().__init__(
+            name=name,
+            owner=owner,
+            meows=meows,
+            hisses=hisses,
+            likes_milk=likes_milk,
+            siblings=siblings,
+            **kwargs
+        )
+
+class CuteThing(Model):
+    how_cute_am_i: float = rest_field(name="howCuteAmI")
+
+    def __init__(self, *, how_cute_am_i: float, **kwargs):
+        super().__init__(how_cute_am_i=how_cute_am_i, **kwargs)
+
+class Kitten(Cat, CuteThing):
+    eats_mice_yet: bool = rest_field(name="eatsMiceYet")
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        owner: Owner,
+        meows: bool,
+        hisses: bool,
+        likes_milk: bool,
+        siblings: Optional[List[Feline]],
+        how_cute_am_i: float,
+        eats_mice_yet: bool,
+        **kwargs
+    ):
+        super().__init__(
+            name=name,
+            owner=owner,
+            meows=meows,
+            hisses=hisses,
+            likes_milk=likes_milk,
+            siblings=siblings,
+            how_cute_am_i=how_cute_am_i,
+            eats_mice_yet=eats_mice_yet,
+            **kwargs
+        )
+
+
+def test_multiple_inheritance_complex():
+    cat = Cat(
+        name="Stephanie",
+        owner=Owner(first_name="cecil", last_name="cai"),  # gets capitalized in attr
+        meows=True,
+        hisses=True,
+        likes_milk=False,  # likes_milk will change to True on the attribute
+        siblings=[Feline(meows=True, hisses=False)]
+    )
+    assert cat == {
+        "name": "Stephanie",
+        "owner": {
+            "firstName": "cecil",
+            "lastName": "cai",
+        },
+        "meows": True,
+        "hisses": True,
+        "likesMilk": False,
+        "siblings": [{
+            "meows": True,
+            "hisses": False,
+            "siblings": None
+        }]
+    }
+    assert cat.name == "Stephanie"
+    assert isinstance(cat.owner, Owner)
+    assert cat.owner.first_name == "Cecil"
+    assert cat.owner.last_name == "Cai"
+    assert cat.meows
+    assert cat.hisses
+    assert cat.likes_milk
+    assert len(cat.siblings) == 1
+    assert isinstance(cat.siblings[0], Feline)
+
+    kitten = Kitten(
+        name="Stephanie",
+        owner=Owner(first_name="cecil", last_name="cai"),  # gets capitalized in attr
+        meows=True,
+        hisses=True,
+        likes_milk=False,  # likes_milk will change to True on the attribute
+        siblings=[Feline(meows=True, hisses=False)],
+        how_cute_am_i=1.0,
+        eats_mice_yet=True,
+    )
+    assert kitten == {
+        "name": "Stephanie",
+        "owner": {
+            "firstName": "cecil",
+            "lastName": "cai",
+        },
+        "meows": True,
+        "hisses": True,
+        "likesMilk": False,
+        "siblings": [{
+            "meows": True,
+            "hisses": False,
+            "siblings": None
+        }],
+        "howCuteAmI": 1.0,
+        "eatsMiceYet": True,
+    }
+    assert kitten.name == "Stephanie"
+    assert isinstance(kitten.owner, Owner)
+    assert kitten.owner.first_name == "Cecil"
+    assert kitten.owner.last_name == "Cai"
+    assert kitten.meows
+    assert kitten.hisses
+    assert kitten.likes_milk
+    assert len(kitten.siblings) == 1
+    assert isinstance(kitten.siblings[0], Feline)
+    assert kitten.eats_mice_yet
+    assert kitten.how_cute_am_i == 1.0
+    assert isinstance(kitten, PetModel)
+    assert isinstance(kitten, Cat)
+    assert isinstance(kitten, Feline)
+    assert isinstance(kitten, CuteThing)
