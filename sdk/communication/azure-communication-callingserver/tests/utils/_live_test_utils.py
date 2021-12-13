@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 import time, uuid
 import re
 from typing import List
@@ -186,7 +187,13 @@ class CallingServerLiveTestUtils:
     @staticmethod
     # For recording tests, a new delete url should be generated.
     def get_delete_url():
-        return "https://storage.asm.skype.com/v1/objects/0-wus-d10-0172bbc567cf530ac27da36ec99579f3"
+        if is_live():
+            DELETE_END_POINT = os.getenv(
+                "DELETE_END_POINT"
+            )
+            return DELETE_END_POINT
+        else: 
+            return "https://us-storage.asm.skype.com/v1/objects/Sanitized"
 
     @staticmethod
     def get_invalid_delete_url():
