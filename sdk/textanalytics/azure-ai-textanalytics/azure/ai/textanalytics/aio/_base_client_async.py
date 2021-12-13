@@ -53,9 +53,12 @@ class AsyncTextAnalyticsClientBase(object):
                 "opinionMining",
             }
         )
-
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
         self._client = _TextAnalyticsClient(
-            endpoint=endpoint.rstrip("/"),
+            endpoint=endpoint,
             credential=credential,
             api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,

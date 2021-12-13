@@ -9,6 +9,7 @@
 import sys
 import pytest
 from devtools_testutils import (
+    test_proxy,
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
@@ -23,7 +24,7 @@ if sys.version_info < (3, 6):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers():
+def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
     add_general_regex_sanitizer(
         value="fakeendpoint",
