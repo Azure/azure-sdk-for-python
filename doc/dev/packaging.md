@@ -39,6 +39,7 @@ Your MANIFEST.in must include the following line `include azure/__init__.py`.
 Example:
 ```shell
 include *.md
+include LICENSE
 include azure/__init__.py
 recursive-include tests *.py
 recursive-include samples *.py *.md
