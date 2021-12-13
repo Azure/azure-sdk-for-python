@@ -6,18 +6,16 @@
 
 import pytest
 import functools
-from datetime import date
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion, DocumentAnalysisClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestInvoiceFromUrl(FormRecognizerTest):
@@ -25,14 +23,14 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
-        self.assertEqual(client._client._config.polling_interval, 7)
+        assert client._client._config.polling_interval ==  7
 
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, polling_interval=6)
         poller.wait()
-        self.assertEqual(poller._polling_method._timeout, 6)
+        assert poller._polling_method._timeout ==  6
         poller2 = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
         poller2.wait()
-        self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
+        assert poller2._polling_method._timeout ==  7  # goes back to client default
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -64,41 +62,21 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        self.assertEqual(1, len(returned_models))
+        assert 1 ==  len(returned_models)
         returned_model = returned_models[0]
-        self.assertEqual(2, len(returned_model.pages))
-        self.assertEqual(1, returned_model.page_range.first_page_number)
-        self.assertEqual(2, returned_model.page_range.last_page_number)
+        assert 2 ==  len(returned_model.pages)
+        assert 1 ==  returned_model.page_range.first_page_number
+        assert 2 ==  returned_model.page_range.last_page_number
 
-        self.assertEqual(1, len(document_results))
+        assert 1 ==  len(document_results)
         document_result = document_results[0]
-        self.assertEqual(1, document_result.page_range[0])  # checking first page number
-        self.assertEqual(2, document_result.page_range[1])  # checking last page number
+        assert 1 ==  document_result.page_range[0]  # checking first page number
+        assert 2 ==  document_result.page_range[1]  # checking last page number
 
         for invoice, document_result in zip(returned_models, document_results):
             self.assertFormFieldsTransformCorrect(invoice.fields, document_result.fields, read_results)
 
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_invoice_tiff(self, client):
-        poller = client.begin_analyze_document_from_url(model="prebuilt-invoice", document_url=self.invoice_url_tiff)
-
-        result = poller.result()
-        assert len(result.documents) == 1
-        invoice = result.documents[0]
-
-        # check dict values
-        self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
-        self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
-        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale, CA 87659')
-        self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
-        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
-        self.assertEqual(invoice.fields.get("Items").value[0].value["Amount"].value, 56651.49)
-        self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -109,7 +87,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         cont_token = initial_poller.continuation_token()
         poller = client.begin_recognize_invoices_from_url(None, continuation_token=cont_token)
         result = poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()

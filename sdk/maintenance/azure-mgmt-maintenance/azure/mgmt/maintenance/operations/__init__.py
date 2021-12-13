@@ -12,6 +12,7 @@ from ._configuration_assignments_operations import ConfigurationAssignmentsOpera
 from ._maintenance_configurations_operations import MaintenanceConfigurationsOperations
 from ._maintenance_configurations_for_resource_group_operations import MaintenanceConfigurationsForResourceGroupOperations
 from ._apply_update_for_resource_group_operations import ApplyUpdateForResourceGroupOperations
+from ._configuration_assignments_within_subscription_operations import ConfigurationAssignmentsWithinSubscriptionOperations
 from ._operations import Operations
 from ._updates_operations import UpdatesOperations
 
@@ -22,6 +23,7 @@ __all__ = [
     'MaintenanceConfigurationsOperations',
     'MaintenanceConfigurationsForResourceGroupOperations',
     'ApplyUpdateForResourceGroupOperations',
+    'ConfigurationAssignmentsWithinSubscriptionOperations',
     'Operations',
     'UpdatesOperations',
 ]

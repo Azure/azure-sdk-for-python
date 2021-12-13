@@ -278,15 +278,15 @@ class TestHealth(TextAnalyticsTest):
 
         async with client:
             result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
-            doc_errors = []
+            doc_results = []
             async for r in result:
-                doc_errors.append(r)
-        assert doc_errors[0].error.code == "InvalidDocument"
-        assert doc_errors[0].error.message is not None
-        assert doc_errors[1].error.code == "UnsupportedLanguageCode"
-        assert doc_errors[1].error.message is not None
-        assert doc_errors[2].error.code == "InvalidDocument"
-        assert doc_errors[2].error.message is not None
+                doc_results.append(r)
+        assert doc_results[0].error.code == "InvalidDocument"
+        assert doc_results[0].error.message is not None
+        assert doc_results[1].error.code == "UnsupportedLanguageCode"
+        assert doc_results[1].error.message is not None
+        assert not doc_results[2].is_error
+        assert doc_results[2].warnings
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

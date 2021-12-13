@@ -196,22 +196,16 @@ try:
     from ._models_py3 import DatabricksSparkJarActivity
     from ._models_py3 import DatabricksSparkPythonActivity
     from ._models_py3 import Dataset
-    from ._models_py3 import DatasetBZip2Compression
     from ._models_py3 import DatasetCompression
     from ._models_py3 import DatasetDataElement
     from ._models_py3 import DatasetDebugResource
-    from ._models_py3 import DatasetDeflateCompression
     from ._models_py3 import DatasetFolder
-    from ._models_py3 import DatasetGZipCompression
     from ._models_py3 import DatasetListResponse
     from ._models_py3 import DatasetLocation
     from ._models_py3 import DatasetReference
     from ._models_py3 import DatasetResource
     from ._models_py3 import DatasetSchemaDataElement
     from ._models_py3 import DatasetStorageFormat
-    from ._models_py3 import DatasetTarCompression
-    from ._models_py3 import DatasetTarGZipCompression
-    from ._models_py3 import DatasetZipDeflateCompression
     from ._models_py3 import Db2LinkedService
     from ._models_py3 import Db2Source
     from ._models_py3 import Db2TableDataset
@@ -279,6 +273,7 @@ try:
     from ._models_py3 import FileSystemSink
     from ._models_py3 import FileSystemSource
     from ._models_py3 import FilterActivity
+    from ._models_py3 import Flowlet
     from ._models_py3 import ForEachActivity
     from ._models_py3 import FormatReadSettings
     from ._models_py3 import FormatWriteSettings
@@ -891,22 +886,16 @@ except (SyntaxError, ImportError):
     from ._models import DatabricksSparkJarActivity  # type: ignore
     from ._models import DatabricksSparkPythonActivity  # type: ignore
     from ._models import Dataset  # type: ignore
-    from ._models import DatasetBZip2Compression  # type: ignore
     from ._models import DatasetCompression  # type: ignore
     from ._models import DatasetDataElement  # type: ignore
     from ._models import DatasetDebugResource  # type: ignore
-    from ._models import DatasetDeflateCompression  # type: ignore
     from ._models import DatasetFolder  # type: ignore
-    from ._models import DatasetGZipCompression  # type: ignore
     from ._models import DatasetListResponse  # type: ignore
     from ._models import DatasetLocation  # type: ignore
     from ._models import DatasetReference  # type: ignore
     from ._models import DatasetResource  # type: ignore
     from ._models import DatasetSchemaDataElement  # type: ignore
     from ._models import DatasetStorageFormat  # type: ignore
-    from ._models import DatasetTarCompression  # type: ignore
-    from ._models import DatasetTarGZipCompression  # type: ignore
-    from ._models import DatasetZipDeflateCompression  # type: ignore
     from ._models import Db2LinkedService  # type: ignore
     from ._models import Db2Source  # type: ignore
     from ._models import Db2TableDataset  # type: ignore
@@ -974,6 +963,7 @@ except (SyntaxError, ImportError):
     from ._models import FileSystemSink  # type: ignore
     from ._models import FileSystemSource  # type: ignore
     from ._models import FilterActivity  # type: ignore
+    from ._models import Flowlet  # type: ignore
     from ._models import ForEachActivity  # type: ignore
     from ._models import FormatReadSettings  # type: ignore
     from ._models import FormatWriteSettings  # type: ignore
@@ -1685,22 +1675,16 @@ __all__ = [
     'DatabricksSparkJarActivity',
     'DatabricksSparkPythonActivity',
     'Dataset',
-    'DatasetBZip2Compression',
     'DatasetCompression',
     'DatasetDataElement',
     'DatasetDebugResource',
-    'DatasetDeflateCompression',
     'DatasetFolder',
-    'DatasetGZipCompression',
     'DatasetListResponse',
     'DatasetLocation',
     'DatasetReference',
     'DatasetResource',
     'DatasetSchemaDataElement',
     'DatasetStorageFormat',
-    'DatasetTarCompression',
-    'DatasetTarGZipCompression',
-    'DatasetZipDeflateCompression',
     'Db2LinkedService',
     'Db2Source',
     'Db2TableDataset',
@@ -1768,6 +1752,7 @@ __all__ = [
     'FileSystemSink',
     'FileSystemSource',
     'FilterActivity',
+    'Flowlet',
     'ForEachActivity',
     'FormatReadSettings',
     'FormatWriteSettings',

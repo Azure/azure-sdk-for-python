@@ -334,6 +334,8 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
+    :ivar int provisioned_bandwidth:
+        Provisioned bandwidth in megabits/second. Only applicable to premium file accounts.
     :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :ivar list(str) protocols:
@@ -356,6 +358,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
+        self.provisioned_bandwidth = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
         self.lease = LeaseProperties(**kwargs)
         self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
             if kwargs.get('x-ms-enabled-protocols', None) else None
@@ -378,6 +381,7 @@ class ShareProperties(DictMixin):
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_m_bps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_m_bps
         props.provisioned_iops = generated.properties.provisioned_iops
+        props.provisioned_bandwidth = generated.properties.provisioned_bandwidth_mi_bps
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
             if generated.properties.enabled_protocols else None

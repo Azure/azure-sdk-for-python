@@ -1,8 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-redisenterprise"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Redisenterprise Management"
+package_pprint_name = "Redis Enterprise Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true
