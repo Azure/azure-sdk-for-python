@@ -42,7 +42,7 @@ class EASubscriptionMigrateToNewPricingModelOperations:
 
     async def post(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Enterprise Agreement Customer opted to use new pricing model.
 

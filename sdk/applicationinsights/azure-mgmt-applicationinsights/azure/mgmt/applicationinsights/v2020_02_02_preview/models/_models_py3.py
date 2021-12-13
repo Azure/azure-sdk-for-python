@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -158,6 +158,11 @@ class ApplicationInsightsComponent(ComponentsResource):
      value: "LogAnalytics".
     :type ingestion_mode: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
+    :param disable_local_auth: Disable Non-AAD based Auth.
+    :type disable_local_auth: bool
+    :param force_customer_storage_for_profiler: Force users to create their own storage account for
+     profiler and debugger.
+    :type force_customer_storage_for_profiler: bool
     """
 
     _validation = {
@@ -211,6 +216,8 @@ class ApplicationInsightsComponent(ComponentsResource):
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.DisableLocalAuth', 'type': 'bool'},
+        'force_customer_storage_for_profiler': {'key': 'properties.ForceCustomerStorageForProfiler', 'type': 'bool'},
     }
 
     def __init__(
@@ -231,6 +238,8 @@ class ApplicationInsightsComponent(ComponentsResource):
         public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         ingestion_mode: Optional[Union[str, "IngestionMode"]] = "LogAnalytics",
+        disable_local_auth: Optional[bool] = None,
+        force_customer_storage_for_profiler: Optional[bool] = None,
         **kwargs
     ):
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
@@ -259,6 +268,8 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
         self.ingestion_mode = ingestion_mode
+        self.disable_local_auth = disable_local_auth
+        self.force_customer_storage_for_profiler = force_customer_storage_for_profiler
 
 
 class ApplicationInsightsComponentListResult(msrest.serialization.Model):
@@ -341,7 +352,7 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
     :type operator: str
     :param value: the value for the operator to function over. This can be a number (e.g., > 100),
      a string (timestamp >= '2017-09-01') or array of values.
-    :type value: object
+    :type value: any
     :param key: When filtering over custom dimensions, this key will be used as the name of the
      custom dimension.
     :type key: str
@@ -359,7 +370,7 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         *,
         column: Optional[str] = None,
         operator: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         key: Optional[str] = None,
         **kwargs
     ):
@@ -434,7 +445,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {

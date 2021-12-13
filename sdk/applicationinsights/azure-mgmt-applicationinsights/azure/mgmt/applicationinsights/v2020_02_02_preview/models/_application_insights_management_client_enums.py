@@ -54,8 +54,10 @@ class PublicNetworkAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     Enabled
     """
 
-    ENABLED = "Enabled"  #: Enables connectivity to Application Insights through public DNS.
-    DISABLED = "Disabled"  #: Disables public connectivity to Application Insights through public DNS.
+    #: Enables connectivity to Application Insights through public DNS.
+    ENABLED = "Enabled"
+    #: Disables public connectivity to Application Insights through public DNS.
+    DISABLED = "Disabled"
 
 class PurgeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the operation represented by the requested Id.
