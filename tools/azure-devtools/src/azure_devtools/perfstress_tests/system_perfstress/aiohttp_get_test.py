@@ -16,7 +16,7 @@ class AioHttpGetTest(PerfStressTest):
         await type(self).session.close()
 
     async def run_async(self):
-        async with type(self).session.get(self.Arguments.url) as response:
+        async with type(self).session.get(self.args.url) as response:
             await response.text()
 
     @staticmethod

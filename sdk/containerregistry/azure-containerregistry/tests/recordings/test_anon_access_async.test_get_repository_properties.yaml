@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '217'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:57 GMT
+      date: Fri, 12 Nov 2021 21:35:19 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,27 +27,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: repository:library/alpine:metadata_read
-      service: yalinlitestsanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:57 GMT
+      date: Fri, 12 Nov 2021 21:35:19 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -55,29 +57,28 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitestsanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01
   response:
     body:
-      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/alpine",
-        "createdTime": "2021-08-30T10:55:40.5891249Z", "lastUpdateTime": "2021-08-30T10:55:38.4402461Z",
-        "manifestCount": 8, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
-        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
-        false}}'
+      string: '{"registry": "yallacrtestsanon.azurecr.io", "imageName": "library/alpine",
+        "createdTime": "2021-11-11T20:44:04.3156636Z", "lastUpdateTime": "2021-11-12T21:33:14.9110154Z",
+        "manifestCount": 15, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '324'
+      content-length: '301'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:27:57 GMT
+      date: Fri, 12 Nov 2021 21:35:19 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -85,5 +86,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitestsanon.azurecr.io/acr/v1/library%2Falpine
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01
 version: 1
