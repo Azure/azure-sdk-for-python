@@ -68,6 +68,7 @@ try:
     from ._models_py3 import SubnetResourceSettings
     from ._models_py3 import Summary
     from ._models_py3 import SummaryCollection
+    from ._models_py3 import SystemData
     from ._models_py3 import UnresolvedDependenciesFilter
     from ._models_py3 import UnresolvedDependenciesFilterProperties
     from ._models_py3 import UnresolvedDependency
@@ -137,6 +138,7 @@ except (SyntaxError, ImportError):
     from ._models import SubnetResourceSettings  # type: ignore
     from ._models import Summary  # type: ignore
     from ._models import SummaryCollection  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import UnresolvedDependenciesFilter  # type: ignore
     from ._models import UnresolvedDependenciesFilterProperties  # type: ignore
     from ._models import UnresolvedDependency  # type: ignore
@@ -146,6 +148,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetworkResourceSettings  # type: ignore
 
 from ._resource_mover_service_api_enums import (
+    CreatedByType,
     DependencyLevel,
     DependencyType,
     JobName,
@@ -220,6 +223,7 @@ __all__ = [
     'SubnetResourceSettings',
     'Summary',
     'SummaryCollection',
+    'SystemData',
     'UnresolvedDependenciesFilter',
     'UnresolvedDependenciesFilterProperties',
     'UnresolvedDependency',
@@ -227,6 +231,7 @@ __all__ = [
     'UpdateMoveCollectionRequest',
     'VirtualMachineResourceSettings',
     'VirtualNetworkResourceSettings',
+    'CreatedByType',
     'DependencyLevel',
     'DependencyType',
     'JobName',

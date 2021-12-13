@@ -6,52 +6,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DependencyLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class DependencyLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DIRECT = "Direct"
     DESCENDANT = "Descendant"
 
-class DependencyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DependencyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the dependency type.
     """
 
     REQUIRED_FOR_PREPARE = "RequiredForPrepare"
     REQUIRED_FOR_MOVE = "RequiredForMove"
 
-class JobName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the job name.
     """
 
     INITIAL_SYNC = "InitialSync"
 
-class MoveResourceInputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MoveResourceInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the move resource input type.
     """
 
     MOVE_RESOURCE_ID = "MoveResourceId"
     MOVE_RESOURCE_SOURCE_ID = "MoveResourceSourceId"
 
-class MoveState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MoveState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the MoveResource states.
     """
 
@@ -71,7 +65,7 @@ class MoveState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETE_SOURCE_PENDING = "DeleteSourcePending"
     RESOURCE_MOVE_COMPLETED = "ResourceMoveCompleted"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the provisioning states.
     """
 
@@ -80,14 +74,14 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CREATING = "Creating"
     FAILED = "Failed"
 
-class ResolutionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResolutionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the resolution type.
     """
 
     MANUAL = "Manual"
     AUTOMATIC = "Automatic"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the resource mover service.
     """
 
@@ -95,7 +89,7 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
 
-class TargetAvailabilityZone(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TargetAvailabilityZone(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the target availability zone.
     """
 
@@ -104,7 +98,7 @@ class TargetAvailabilityZone(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     THREE = "3"
     NA = "NA"
 
-class ZoneRedundant(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ZoneRedundant(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the zone redundant resource setting.
     """
 
