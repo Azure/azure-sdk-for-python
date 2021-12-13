@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from threading import Lock, Condition, Timer
 from datetime import timedelta
+import threading
 
 from typing import (  # pylint: disable=unused-import
     cast,
@@ -102,6 +103,8 @@ class CommunicationTokenCredential(object):
 
         timespan = self._token.expires_on - \
             get_current_utc_as_int() - self._refresh_time_before_expiry.total_seconds()
+        if(timespan > threading.TIMEOUT_MAX):
+            timespan = threading.TIMEOUT_MAX
         self._timer = Timer(timespan, self._update_token_and_reschedule)
         self._timer.start()
 
