@@ -225,7 +225,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
 
     async def rename_directory(self, new_name,  # type: str
                                **kwargs):
-        # type: (**Any) -> DataLakeDirectoryClient
+        # type: (...) -> DataLakeDirectoryClient
         """
         Rename the source directory.
 

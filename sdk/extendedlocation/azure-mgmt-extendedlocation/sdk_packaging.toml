@@ -1,9 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-extendedlocation"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Extendedlocation Management"
+package_pprint_name = "Extended Location Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = false
-need_azuremgmtcore = true
