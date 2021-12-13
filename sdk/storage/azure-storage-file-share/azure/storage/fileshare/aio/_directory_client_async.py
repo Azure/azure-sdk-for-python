@@ -11,7 +11,7 @@ from typing import ( # pylint: disable=unused-import
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -276,6 +276,25 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         return AsyncItemPaged(
             command, results_per_page=results_per_page,
             page_iterator_class=HandlesPaged)
+
+    @distributed_trace_async
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a directory exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            await self._client.directory.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace_async
     async def close_handle(self, handle, **kwargs):

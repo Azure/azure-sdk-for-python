@@ -258,6 +258,20 @@ class StorageDirectoryTest(AsyncStorageTestCase):
 
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_share_directory_exists_async(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('dir1')
+
+        directory2 = share_client.get_directory_client("dir2")
+
+        exists = await directory.exists()
+        exists2 = await directory2.exists()
+        self.assertTrue(exists)
+        self.assertFalse(exists2)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_directory_exists_async(self, storage_account_name, storage_account_key):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
