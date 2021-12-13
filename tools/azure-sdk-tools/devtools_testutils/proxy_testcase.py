@@ -18,14 +18,17 @@ except:
     # py2
     import urlparse as url_parse
 
+import pytest
 import subprocess
 
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from .helpers import is_live
+from .helpers import is_live, is_live_and_not_recording
 from .config import PROXY_URL
 
 if TYPE_CHECKING:
@@ -90,7 +93,10 @@ def start_record_or_playback(test_id):
             PLAYBACK_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
-        recording_id = result.headers["x-recording-id"]
+        try:
+            recording_id = result.headers["x-recording-id"]
+        except KeyError:
+            raise ValueError("No recording file found for {}".format(test_id))
         if result.text:
             try:
                 variables = result.json()
@@ -150,8 +156,8 @@ def recorded_by_proxy(test_func):
     """
 
     def record_wrap(*args, **kwargs):
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
+        if sys.version_info.major == 2 and not is_live():
+            pytest.skip("Playback testing is incompatible with the azure-sdk-tools test proxy on Python 2")
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
@@ -164,6 +170,11 @@ def recorded_by_proxy(test_func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
         original_transport_func = RequestsTransport.send
 
         def combined_call(*args, **kwargs):
@@ -183,7 +194,12 @@ def recorded_by_proxy(test_func):
                 "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
                 "`variables` parameter to make use of recorded test variables."
             )
+        try:
             test_output = test_func(*args, **trimmed_kwargs)
+        except ResourceNotFoundError as error:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
+            raise error_with_message
         finally:
             RequestsTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)
