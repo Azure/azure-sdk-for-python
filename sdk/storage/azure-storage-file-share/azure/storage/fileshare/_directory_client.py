@@ -18,7 +18,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
@@ -531,6 +531,25 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a directory exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            self._client.directory.get_properties(**kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace
     def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
