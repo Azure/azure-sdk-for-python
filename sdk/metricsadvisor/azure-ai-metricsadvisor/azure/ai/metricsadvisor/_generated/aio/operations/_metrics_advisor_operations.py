@@ -45,7 +45,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_active_series_count_request(
             template_url=self.get_active_series_count.metadata['url'],
         )
@@ -96,7 +96,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_anomaly_alerting_configuration_request(
             configuration_id=configuration_id,
             template_url=self.get_anomaly_alerting_configuration.metadata['url'],
@@ -208,7 +208,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_delete_anomaly_alerting_configuration_request(
             configuration_id=configuration_id,
             template_url=self.delete_anomaly_alerting_configuration.metadata['url'],
@@ -326,7 +326,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'AlertingResultQuery')
-                
+
                 request = build_get_alerts_by_anomaly_alerting_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -343,7 +343,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'AlertingResultQuery')
-                
+
                 request = build_get_alerts_by_anomaly_alerting_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -424,7 +424,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
                     configuration_id=configuration_id,
                     alert_id=alert_id,
@@ -439,7 +439,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
                     configuration_id=configuration_id,
                     alert_id=alert_id,
@@ -519,7 +519,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
                     configuration_id=configuration_id,
                     alert_id=alert_id,
@@ -534,7 +534,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
                     configuration_id=configuration_id,
                     alert_id=alert_id,
@@ -603,7 +603,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_anomaly_detection_configuration_request(
             configuration_id=configuration_id,
             template_url=self.get_anomaly_detection_configuration.metadata['url'],
@@ -715,7 +715,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_delete_anomaly_detection_configuration_request(
             configuration_id=configuration_id,
             template_url=self.delete_anomaly_detection_configuration.metadata['url'],
@@ -828,7 +828,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_anomaly_alerting_configurations_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     skip=skip,
@@ -842,7 +842,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_get_anomaly_alerting_configurations_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     skip=skip,
@@ -918,7 +918,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'DetectionSeriesQuery')
-                
+
                 request = build_get_series_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -933,7 +933,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'DetectionSeriesQuery')
-                
+
                 request = build_get_series_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1015,7 +1015,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'DetectionAnomalyResultQuery')
-                
+
                 request = build_get_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1032,7 +1032,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'DetectionAnomalyResultQuery')
-                
+
                 request = build_get_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1117,7 +1117,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'AnomalyDimensionQuery')
-                
+
                 request = build_get_dimension_of_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1134,7 +1134,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'AnomalyDimensionQuery')
-                
+
                 request = build_get_dimension_of_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1215,7 +1215,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'DetectionIncidentResultQuery')
-                
+
                 request = build_get_incidents_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1231,7 +1231,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'DetectionIncidentResultQuery')
-                
+
                 request = build_get_incidents_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
@@ -1308,7 +1308,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
                     configuration_id=configuration_id,
                     maxpagesize=maxpagesize,
@@ -1322,7 +1322,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
                     configuration_id=configuration_id,
                     maxpagesize=maxpagesize,
@@ -1394,7 +1394,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     incident_id=incident_id,
@@ -1407,7 +1407,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     incident_id=incident_id,
@@ -1536,7 +1536,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_credentials_request(
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1549,7 +1549,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_credentials_request(
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1676,7 +1676,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_delete_credential_request(
             credential_id=credential_id,
             template_url=self.delete_credential.metadata['url'],
@@ -1724,7 +1724,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_credential_request(
             credential_id=credential_id,
             template_url=self.get_credential.metadata['url'],
@@ -1795,7 +1795,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_data_feeds_request(
                     data_feed_name=data_feed_name,
                     data_source_type=data_source_type,
@@ -1813,7 +1813,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_data_feeds_request(
                     data_feed_name=data_feed_name,
                     data_source_type=data_source_type,
@@ -1941,7 +1941,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_data_feed_by_id_request(
             data_feed_id=data_feed_id,
             template_url=self.get_data_feed_by_id.metadata['url'],
@@ -2053,7 +2053,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_delete_data_feed_request(
             data_feed_id=data_feed_id,
             template_url=self.delete_data_feed.metadata['url'],
@@ -2101,7 +2101,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_metric_feedback_request(
             feedback_id=feedback_id,
             template_url=self.get_metric_feedback.metadata['url'],
@@ -2164,7 +2164,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'MetricFeedbackFilter')
-                
+
                 request = build_list_metric_feedbacks_request(
                     content_type=content_type,
                     json=json,
@@ -2180,7 +2180,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'MetricFeedbackFilter')
-                
+
                 request = build_list_metric_feedbacks_request(
                     content_type=content_type,
                     json=json,
@@ -2312,7 +2312,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_hooks_request(
                     hook_name=hook_name,
                     skip=skip,
@@ -2326,7 +2326,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_hooks_request(
                     hook_name=hook_name,
                     skip=skip,
@@ -2450,7 +2450,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_hook_request(
             hook_id=hook_id,
             template_url=self.get_hook.metadata['url'],
@@ -2562,7 +2562,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_delete_hook_request(
             hook_id=hook_id,
             template_url=self.delete_hook.metadata['url'],
@@ -2624,7 +2624,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'IngestionStatusQueryOptions')
-                
+
                 request = build_get_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
                     content_type=content_type,
@@ -2641,7 +2641,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'IngestionStatusQueryOptions')
-                
+
                 request = build_get_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
                     content_type=content_type,
@@ -2767,7 +2767,7 @@ class MetricsAdvisorOperationsMixin:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        
+
         request = build_get_ingestion_progress_request(
             data_feed_id=data_feed_id,
             template_url=self.get_ingestion_progress.metadata['url'],
@@ -2826,7 +2826,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'MetricDataQueryOptions')
-                
+
                 request = build_get_metric_data_request(
                     metric_id=metric_id,
                     content_type=content_type,
@@ -2841,7 +2841,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'MetricDataQueryOptions')
-                
+
                 request = build_get_metric_data_request(
                     metric_id=metric_id,
                     content_type=content_type,
@@ -2923,7 +2923,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'MetricSeriesQueryOptions')
-                
+
                 request = build_get_metric_series_request(
                     metric_id=metric_id,
                     content_type=content_type,
@@ -2940,20 +2940,21 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'MetricSeriesQueryOptions')
-                
+
                 request = build_get_metric_series_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=next_link,
+                    template_url='{nextLink}',
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url('{nextLink}', **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3024,7 +3025,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'MetricDimensionQueryOptions')
-                
+
                 request = build_get_metric_dimension_request(
                     metric_id=metric_id,
                     content_type=content_type,
@@ -3041,7 +3042,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'MetricDimensionQueryOptions')
-                
+
                 request = build_get_metric_dimension_request(
                     metric_id=metric_id,
                     content_type=content_type,
@@ -3120,7 +3121,7 @@ class MetricsAdvisorOperationsMixin:
         error_map.update(kwargs.pop('error_map', {}))
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_anomaly_detection_configurations_by_metric_request(
                     metric_id=metric_id,
                     skip=skip,
@@ -3134,7 +3135,7 @@ class MetricsAdvisorOperationsMixin:
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_get_anomaly_detection_configurations_by_metric_request(
                     metric_id=metric_id,
                     skip=skip,
@@ -3217,7 +3218,7 @@ class MetricsAdvisorOperationsMixin:
         def prepare_request(next_link=None):
             if not next_link:
                 json = self._serialize.body(body, 'EnrichmentStatusQueryOption')
-                
+
                 request = build_get_enrichment_status_by_metric_request(
                     metric_id=metric_id,
                     content_type=content_type,
@@ -3234,7 +3235,7 @@ class MetricsAdvisorOperationsMixin:
 
             else:
                 json = self._serialize.body(body, 'EnrichmentStatusQueryOption')
-                
+
                 request = build_get_enrichment_status_by_metric_request(
                     metric_id=metric_id,
                     content_type=content_type,
