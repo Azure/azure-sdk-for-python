@@ -44,7 +44,7 @@ class ExportConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ApplicationInsightsComponentExportConfiguration"]:
         """Gets a list of Continuous Export configuration of an Application Insights component.
 
@@ -68,7 +68,7 @@ class ExportConfigurationsOperations:
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
@@ -103,7 +103,7 @@ class ExportConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         export_properties: "_models.ApplicationInsightsComponentExportRequest",
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ApplicationInsightsComponentExportConfiguration"]:
         """Create a Continuous Export configuration of an Application Insights component.
 
@@ -131,7 +131,7 @@ class ExportConfigurationsOperations:
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
@@ -170,7 +170,7 @@ class ExportConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         export_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentExportConfiguration":
         """Delete a Continuous Export configuration of an Application Insights component.
 
@@ -197,7 +197,7 @@ class ExportConfigurationsOperations:
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'exportId': self._serialize.url("export_id", export_id, 'str'),
@@ -233,7 +233,7 @@ class ExportConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         export_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentExportConfiguration":
         """Get the Continuous Export configuration for this export id.
 
@@ -260,7 +260,7 @@ class ExportConfigurationsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'exportId': self._serialize.url("export_id", export_id, 'str'),
@@ -297,7 +297,7 @@ class ExportConfigurationsOperations:
         resource_name: str,
         export_id: str,
         export_properties: "_models.ApplicationInsightsComponentExportRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentExportConfiguration":
         """Update the Continuous Export configuration for this export id.
 
@@ -328,7 +328,7 @@ class ExportConfigurationsOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'exportId': self._serialize.url("export_id", export_id, 'str'),
