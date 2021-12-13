@@ -244,7 +244,7 @@ class BlobItemInternal(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required.
-    :type name: str
+    :type name: ~azure.storage.blob.models.BlobName
     :param deleted: Required.
     :type deleted: bool
     :param snapshot: Required.
@@ -273,7 +273,7 @@ class BlobItemInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'BlobName'},
         'deleted': {'key': 'Deleted', 'type': 'bool'},
         'snapshot': {'key': 'Snapshot', 'type': 'str'},
         'version_id': {'key': 'VersionId', 'type': 'str'},
@@ -332,13 +332,36 @@ class BlobMetadata(msrest.serialization.Model):
         self.encrypted = kwargs.get('encrypted', None)
 
 
+class BlobName(msrest.serialization.Model):
+    """BlobName.
+
+    :param encoded: Indicates if the blob name is encoded.
+    :type encoded: bool
+    :param content: The name of the blob.
+    :type content: str
+    """
+
+    _attribute_map = {
+        'encoded': {'key': 'Encoded', 'type': 'bool', 'xml': {'name': 'Encoded', 'attr': True}},
+        'content': {'key': 'content', 'type': 'str', 'xml': {'text': True}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BlobName, self).__init__(**kwargs)
+        self.encoded = kwargs.get('encoded', None)
+        self.content = kwargs.get('content', None)
+
+
 class BlobPrefix(msrest.serialization.Model):
     """BlobPrefix.
 
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required.
-    :type name: str
+    :type name: ~azure.storage.blob.models.BlobName
     """
 
     _validation = {
@@ -346,7 +369,7 @@ class BlobPrefix(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'BlobName'},
     }
 
     def __init__(
