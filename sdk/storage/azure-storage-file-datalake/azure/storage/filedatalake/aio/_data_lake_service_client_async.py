@@ -155,6 +155,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
             account. The default value is `False`.
             .. versionadded:: 12.3.0
+        :keyword bool include_system:
+            Flag specifying that system filesystems should be included.
+            .. versionadded:: 12.6.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 

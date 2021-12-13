@@ -1,6 +1,10 @@
 # Release History
 
-## 12.7.0b1 (Unreleased)
+## 12.7.0b1 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12.
+- Added support for premium file share provisioned_bandwidth property.
 
 ## 12.6.0 (2021-09-15)
 **Stable release of preview features**

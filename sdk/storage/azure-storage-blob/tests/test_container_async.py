@@ -304,6 +304,22 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_list_system_containers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+
+        # Act
+        containers = []
+        async for c in bsc.list_containers(include_system=True):
+            containers.append(c)
+        # Assert
+        found = False
+        for container in containers:
+            if container.name == "$logs":
+                found = True
+        self.assertEqual(found, True)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_list_containers_with_prefix(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)

@@ -682,6 +682,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(shares[0].provisioned_ingress_mbps)
         self.assertIsNotNone(shares[0].provisioned_egress_mbps)
         self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
+        self.assertIsNotNone(shares[0].provisioned_bandwidth)
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
@@ -969,6 +970,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(props.provisioned_iops)
         self.assertIsNotNone(props.provisioned_ingress_mbps)
         self.assertIsNotNone(props.provisioned_egress_mbps)
+        self.assertIsNotNone(props.provisioned_bandwidth)
         self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
 
     @FileSharePreparer()

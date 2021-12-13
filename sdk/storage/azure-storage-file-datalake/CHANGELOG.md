@@ -1,14 +1,10 @@
 # Release History
 
-## 12.6.0b2 (Unreleased)
+## 12.6.0b2 (2021-12-13)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for service version 2021-02-12.
+- Added support for listing system file systems with list_file_systems().
 
 ## 12.6.0b1 (2021-11-08)
 **New features**

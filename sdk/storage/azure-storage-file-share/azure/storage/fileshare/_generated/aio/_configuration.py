@@ -33,7 +33,7 @@ class AzureFileStorageConfiguration(Configuration):
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.version = "2020-10-02"
+        self.version = "2021-02-12"
         self.file_range_write_from_url = "update"
         kwargs.setdefault('sdk_moniker', 'azurefilestorage/{}'.format(VERSION))
         self._configure(**kwargs)
