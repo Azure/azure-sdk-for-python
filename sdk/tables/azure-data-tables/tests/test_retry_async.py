@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureTestCase, ResponseCallback
-
+from devtools_testutils import AzureRecordedTestCase, ResponseCallback
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -38,7 +38,7 @@ class RetryAioHttpTransport(AioHttpTransport):
 
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
+class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
         self.table_name = self.get_resource_name('uttable')
@@ -58,6 +58,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
 
     # --Test Cases --------------------------------------------
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -73,6 +74,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_retry_on_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(
             tables_storage_account_name,
@@ -108,9 +110,10 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
         # 3 retries + 1 original == 4
         assert retry_transport.count == 4
         # This call should succeed on the server side, but fail on the client side due to socket timeout
-        self.assertTrue('Timeout on reading' in str(error.value), 'Expected socket timeout but got different exception.')
+        assert 'Timeout on reading' in str(error.value), 'Expected socket timeout but got different exception.'
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 

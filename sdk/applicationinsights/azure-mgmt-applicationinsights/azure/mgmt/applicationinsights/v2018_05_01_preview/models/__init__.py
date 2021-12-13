@@ -16,8 +16,20 @@ try:
     from ._models_py3 import ComponentPurgeResponse
     from ._models_py3 import ComponentPurgeStatusResponse
     from ._models_py3 import ComponentsResource
+    from ._models_py3 import HeaderField
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationInfo
+    from ._models_py3 import OperationsListResult
     from ._models_py3 import PrivateLinkScopedResource
     from ._models_py3 import TagsResource
+    from ._models_py3 import WebTest
+    from ._models_py3 import WebTestGeolocation
+    from ._models_py3 import WebTestListResult
+    from ._models_py3 import WebTestPropertiesConfiguration
+    from ._models_py3 import WebTestPropertiesRequest
+    from ._models_py3 import WebTestPropertiesValidationRules
+    from ._models_py3 import WebTestPropertiesValidationRulesContentValidation
+    from ._models_py3 import WebtestsResource
 except (SyntaxError, ImportError):
     from ._models import ApplicationInsightsComponent  # type: ignore
     from ._models import ApplicationInsightsComponentListResult  # type: ignore
@@ -28,8 +40,20 @@ except (SyntaxError, ImportError):
     from ._models import ComponentPurgeResponse  # type: ignore
     from ._models import ComponentPurgeStatusResponse  # type: ignore
     from ._models import ComponentsResource  # type: ignore
+    from ._models import HeaderField  # type: ignore
+    from ._models import Operation  # type: ignore
+    from ._models import OperationInfo  # type: ignore
+    from ._models import OperationsListResult  # type: ignore
     from ._models import PrivateLinkScopedResource  # type: ignore
     from ._models import TagsResource  # type: ignore
+    from ._models import WebTest  # type: ignore
+    from ._models import WebTestGeolocation  # type: ignore
+    from ._models import WebTestListResult  # type: ignore
+    from ._models import WebTestPropertiesConfiguration  # type: ignore
+    from ._models import WebTestPropertiesRequest  # type: ignore
+    from ._models import WebTestPropertiesValidationRules  # type: ignore
+    from ._models import WebTestPropertiesValidationRulesContentValidation  # type: ignore
+    from ._models import WebtestsResource  # type: ignore
 
 from ._application_insights_management_client_enums import (
     ApplicationType,
@@ -38,6 +62,8 @@ from ._application_insights_management_client_enums import (
     PublicNetworkAccessType,
     PurgeState,
     RequestSource,
+    WebTestKind,
+    WebTestKindEnum,
 )
 
 __all__ = [
@@ -50,12 +76,26 @@ __all__ = [
     'ComponentPurgeResponse',
     'ComponentPurgeStatusResponse',
     'ComponentsResource',
+    'HeaderField',
+    'Operation',
+    'OperationInfo',
+    'OperationsListResult',
     'PrivateLinkScopedResource',
     'TagsResource',
+    'WebTest',
+    'WebTestGeolocation',
+    'WebTestListResult',
+    'WebTestPropertiesConfiguration',
+    'WebTestPropertiesRequest',
+    'WebTestPropertiesValidationRules',
+    'WebTestPropertiesValidationRulesContentValidation',
+    'WebtestsResource',
     'ApplicationType',
     'FlowType',
     'IngestionMode',
     'PublicNetworkAccessType',
     'PurgeState',
     'RequestSource',
+    'WebTestKind',
+    'WebTestKindEnum',
 ]
