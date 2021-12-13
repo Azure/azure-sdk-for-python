@@ -1,8 +1,10 @@
-## 4.3.0b1 (Unreleased)
+## Release History
+
+### 4.3.0b1 (2021-12-14)
 **New features**
 - Added language native async i/o client
 
-## 4.2.0 (2020-10-08)
+### 4.2.0 (2020-10-08)
 
 **Bug fixes**
 - Fixed bug where continuation token is not honored when query_iterable is used to get results by page. Issue #13265.
@@ -11,7 +13,7 @@
 **New features**
 - Added support for passing partitionKey while querying changefeed. Issue #11689.
 
-## 4.1.0 (2020-08-10)
+### 4.1.0 (2020-08-10)
 
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
 
@@ -26,7 +28,7 @@
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue #11793 - thank you @Rabbit994.
 
 
-## 4.0.0 (2020-05-20)
+### 4.0.0 (2020-05-20)
 
 - Stable release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.
