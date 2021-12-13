@@ -1,8 +1,16 @@
 # Release History
 
-## 0.0.0 (2021-12-11)
+## 10.1.0 (2021-12-13)
 
+**Features**
 
+  - Added model NumberInRangeAdvancedFilter
+  - Added model StringNotContainsAdvancedFilter
+  - Added model NumberNotInRangeAdvancedFilter
+  - Added model IsNullOrUndefinedAdvancedFilter
+  - Added model IsNotNullAdvancedFilter
+  - Added model StringNotBeginsWithAdvancedFilter
+  - Added model StringNotEndsWithAdvancedFilter
 
 ## 10.0.0 (2021-10-21)
 
