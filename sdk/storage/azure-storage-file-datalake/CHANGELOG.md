@@ -6,6 +6,9 @@
 - Added support for service version 2021-02-12.
 - Added support for listing system file systems with list_file_systems().
 
+### Bugs Fixed
+- Connection string SAS now works as expected.
+
 ## 12.6.0b1 (2021-11-08)
 **New features**
 - Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`
