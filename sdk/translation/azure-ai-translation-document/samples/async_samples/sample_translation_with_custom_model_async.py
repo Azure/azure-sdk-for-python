@@ -78,5 +78,4 @@ async def main():
     await sample_translation_with_custom_model_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
