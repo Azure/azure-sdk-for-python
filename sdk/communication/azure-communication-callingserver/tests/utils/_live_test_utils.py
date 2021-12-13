@@ -193,8 +193,11 @@ class CallingServerLiveTestUtils:
             )
             return DELETE_END_POINT
         else: 
-            return "https://us-storage.asm.skype.com/v1/objects/Sanitized"
+            return "https://us-storage.asm.skype.com/v1/objects/sanitized"
 
     @staticmethod
     def get_invalid_delete_url():
-        return "https://us-storage.asm.skype.com/v1/objects/0-wus-d10-00000000000000000000000000000000"
+        if is_live():
+            return "https://us-storage.asm.skype.com/v1/objects/0-wus-d10-00000000000000000000000000000000"
+        else: 
+            return "https://us-storage.asm.skype.com/v1/objects/sanitized"
