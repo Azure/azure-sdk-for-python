@@ -498,7 +498,7 @@ class DirectoryOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response.
         :type include: list[str or ~azure.storage.fileshare.models.ListFilesIncludeType]
-        :param include_extended_info:
+        :param include_extended_info: Include extended information.
         :type include_extended_info: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListFilesAndDirectoriesSegmentResponse, or the result of cls(response)

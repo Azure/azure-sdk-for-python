@@ -87,5 +87,4 @@ async def main():
     await sample_list_document_statuses_with_filters_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

@@ -48,7 +48,7 @@ class FavoritesOperations:
         source_type: Optional[Union[str, "_models.FavoriteSourceType"]] = None,
         can_fetch_content: Optional[bool] = None,
         tags: Optional[List[str]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.ApplicationInsightsComponentFavorite"]:
         """Gets a list of favorites defined within an Application Insights component.
 
@@ -82,7 +82,7 @@ class FavoritesOperations:
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
@@ -125,7 +125,7 @@ class FavoritesOperations:
         resource_group_name: str,
         resource_name: str,
         favorite_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentFavorite":
         """Get a single favorite by its FavoriteId, defined within an Application Insights component.
 
@@ -152,7 +152,7 @@ class FavoritesOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str'),
@@ -189,7 +189,7 @@ class FavoritesOperations:
         resource_name: str,
         favorite_id: str,
         favorite_properties: "_models.ApplicationInsightsComponentFavorite",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentFavorite":
         """Adds a new favorites to an Application Insights component.
 
@@ -220,7 +220,7 @@ class FavoritesOperations:
         # Construct URL
         url = self.add.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str'),
@@ -261,7 +261,7 @@ class FavoritesOperations:
         resource_name: str,
         favorite_id: str,
         favorite_properties: "_models.ApplicationInsightsComponentFavorite",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentFavorite":
         """Updates a favorite that has already been added to an Application Insights component.
 
@@ -292,7 +292,7 @@ class FavoritesOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str'),
@@ -332,7 +332,7 @@ class FavoritesOperations:
         resource_group_name: str,
         resource_name: str,
         favorite_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a favorite that is associated to an Application Insights component.
 
@@ -358,7 +358,7 @@ class FavoritesOperations:
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str'),

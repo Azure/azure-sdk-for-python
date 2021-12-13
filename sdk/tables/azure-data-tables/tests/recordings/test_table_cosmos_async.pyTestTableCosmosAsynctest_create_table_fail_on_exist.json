@@ -1,0 +1,86 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "37",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:57:47 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "063f69e5-588b-11ec-ac3b-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:57:47 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022TableName\u0022: \u0022pytableasync92b32f9d\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Thu, 09 Dec 2021 00:57:46 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A57%3A46.8381191Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027pytableasync92b32f9d\u0027)",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "87fa0f6c-323c-41e5-8acb-42ac590a4ba5"
+      },
+      "ResponseBody": {
+        "TableName": "pytableasync92b32f9d",
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables/@Element"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "37",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:57:48 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "06e2e63d-588b-11ec-88f4-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:57:48 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022TableName\u0022: \u0022pytableasync92b32f9d\u0022}",
+      "StatusCode": 409,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Thu, 09 Dec 2021 00:57:46 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "b2902d6d-c2c3-47e8-a638-591975ad1159"
+      },
+      "ResponseBody": [
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022TableAlreadyExists\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified table already exists.\\nRequestID:b2902d6d-c2c3-47e8-a638-591975ad1159\\n\u0022}}}\r\n"
+      ]
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027pytableasync92b32f9d\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Dec 2021 00:57:48 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "06f1e9ed-588b-11ec-9927-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:57:48 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Thu, 09 Dec 2021 00:57:46 GMT",
+        "x-ms-request-id": "3675197c-e9f3-4bd6-9c34-f38cda9479d8"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
