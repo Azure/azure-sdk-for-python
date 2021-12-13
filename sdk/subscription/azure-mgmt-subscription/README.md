@@ -18,7 +18,7 @@ Additional code samples for different Azure services are available at [Samples R
 
 # Disclaimer
 
-operation group `subcriptions` has been removed from this package to [azure-mgmt-resource](https://pypi.org/project/azure-mgmt-resource/).
+operation group `subscriptions` has been removed from this package to [azure-mgmt-resource](https://pypi.org/project/azure-mgmt-resource/).
 For more info about `azure-mgmt-resource`, see [resouce doc](https://docs.microsoft.com/python/api/overview/azure/resources?view=azure-python)
 
 # Provide Feedback
