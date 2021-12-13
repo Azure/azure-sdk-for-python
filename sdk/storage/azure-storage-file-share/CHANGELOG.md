@@ -5,6 +5,7 @@
 ### Features Added
 - Added support for service version 2021-02-12.
 - Added support for premium file share provisioned_bandwidth property.
+- Added support for checking if a directory exists using `exists()`.
 
 ## 12.6.0 (2021-09-15)
 **Stable release of preview features**
