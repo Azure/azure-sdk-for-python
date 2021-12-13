@@ -235,9 +235,11 @@ class Model(dict):
         return Model(self.__dict__)
 
     def __new__(cls, *args: Any, **kwargs: Any):
+        # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
         attr_to_rest_field = {
             k: v
-            for k, v in cls.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+            for mro_class in cls.__mro__[:-3][::-1] # ignore model, dict, and object parents, and reverse the mro order
+            for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
         }
         for attr, rest_field in attr_to_rest_field.items():
             rest_field._module = cls.__module__
@@ -331,7 +333,7 @@ class _RestField:
         try:
             if annotation._name in ["List", "Set", "Tuple", "Sequence"]:
                 if len(annotation.__args__) > 1:
-                    def _deserialize_sequence(
+                    def _deserialize_multiple_sequence(
                         entry_deserializers: List[Callable],
                         obj
                     ):
@@ -344,7 +346,7 @@ class _RestField:
                         for dt in annotation.__args__
                     ]
                     return functools.partial(
-                        _deserialize_sequence,
+                        _deserialize_multiple_sequence,
                         entry_deserializers
                     )
                 deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[0])

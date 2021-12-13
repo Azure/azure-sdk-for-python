@@ -676,3 +676,133 @@ def test_deserialization_callback_override_parent():
     child_model = ChildWithCallback(prop=[1, 1, 2, 3])
     assert child_model.prop == set(["1", "1", "2", "3"])
     assert child_model['prop'] == [1, 1, 2, 3]
+
+def test_inheritance_basic():
+    def _callback(obj):
+        return [str(e) for e in obj]
+
+    class Parent(Model):
+        parent_prop: List[int] = rest_field(name="parentProp", type=_callback)
+        prop: str = rest_field()
+
+    class Child(Parent):
+        pass
+
+    c = Child(parent_prop=[1, 2, 3], prop="hello")
+    assert c == {"parentProp": [1, 2, 3], "prop": "hello"}
+    assert c.parent_prop == ["1", "2", "3"]
+    assert c.prop == "hello"
+
+
+class A(Model):
+    prop: int = rest_field()
+
+    def __init__(self, *, prop: Any, **kwargs):
+        super().__init__(prop=prop, **kwargs)
+
+class B(A):
+    prop: str = rest_field()
+    bcd_prop: Optional[List["B"]] = rest_field(name="bcdProp")
+
+    def __init__(self, *, prop: Any, bcd_prop: Optional[List["B"]] = None, **kwargs):
+        super().__init__(prop=prop, bcd_prop=bcd_prop, **kwargs)
+
+class C(B):
+    prop: float = rest_field()
+    cd_prop: A = rest_field(name="cdProp")
+
+    def __init__(
+        self,
+        *,
+        prop: Any,
+        bcd_prop: List[B],
+        cd_prop: A,
+        **kwargs
+    ):
+        super().__init__(
+            prop=prop,
+            bcd_prop=bcd_prop,
+            cd_prop=cd_prop,
+            **kwargs
+        )
+
+class D(C):
+    d_prop: Tuple[A, B, C, Optional["D"]] = rest_field(name="dProp")
+
+    def __init__(
+        self,
+        *,
+        prop: Any,
+        bcd_prop: List[B],
+        cd_prop: A,
+        d_prop: Tuple[A, B, C, Optional["D"]],
+        **kwargs
+    ):
+        super().__init__(
+            prop=prop,
+            bcd_prop=bcd_prop,
+            cd_prop=cd_prop,
+            d_prop=d_prop,
+            **kwargs
+        )
+
+def test_inheritance_4_levels():
+    a = A(prop=3.4)
+    assert a.prop == 3
+    assert a['prop'] == 3.4
+    assert a == {"prop": 3.4}
+    assert isinstance(a, Model)
+
+    b = B(prop=3.4, bcd_prop=[B(prop=4.3)])
+    assert b.prop == "3.4"
+    assert b['prop'] == 3.4
+    assert b.bcd_prop == [B(prop=4.3)]
+    assert b.bcd_prop[0].prop == "4.3"
+    assert b.bcd_prop[0].bcd_prop is None
+    assert b == {"prop": 3.4, "bcdProp": [{"prop": 4.3, "bcdProp": None}]}
+    assert isinstance(b, B)
+    assert isinstance(b, A)
+
+    c = C(prop=3.4, bcd_prop=[b], cd_prop=a)
+    assert c.prop == c['prop'] == 3.4
+    assert c.bcd_prop == [b]
+    assert isinstance(c.bcd_prop[0], B)
+    assert c['bcdProp'] == [b] == [{"prop": 3.4, "bcdProp": [{"prop": 4.3, "bcdProp": None}]}]
+    assert c.cd_prop == a
+    assert c['cdProp'] == a == {"prop": 3.4}
+    assert isinstance(c.cd_prop, A)
+
+    d = D(prop=3.4, bcd_prop=[b], cd_prop=a, d_prop=(a, b, c, D(prop=3.4, bcd_prop=[b], cd_prop=a, d_prop=(a, b, c, None))))
+    assert d == {
+        'prop': 3.4,
+        'bcdProp': [b],
+        'cdProp': a,
+        'dProp': (
+            a, b, c,
+            {
+                'prop': 3.4,
+                'bcdProp': [b],
+                'cdProp': a,
+                'dProp': (
+                    a, b, c, None
+                )
+            }
+        )
+    }
+    assert d.prop == d['prop'] == 3.4
+    assert d.bcd_prop == [b]
+    assert isinstance(d.bcd_prop[0], B)
+    assert d.cd_prop == a
+    assert isinstance(d.cd_prop, A)
+    assert d.d_prop[0] == a # at a
+    assert isinstance(d.d_prop[0], A)
+    assert d.d_prop[1] == b
+    assert isinstance(d.d_prop[1], B)
+    assert d.d_prop[2] == c
+    assert isinstance(d.d_prop[2], C)
+    assert isinstance(d.d_prop[3], D)
+
+    assert isinstance(d.d_prop[3].d_prop[0], A)
+    assert isinstance(d.d_prop[3].d_prop[1], B)
+    assert isinstance(d.d_prop[3].d_prop[2], C)
+    assert d.d_prop[3].d_prop[3] is None
