@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
 from ._version import VERSION
 
@@ -39,17 +40,16 @@ class AutomanageClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(AutomanageClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(AutomanageClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-06-30-preview"
-        self.credential_scopes = ['https://management.azure.com/.default']
-        self.credential_scopes.extend(kwargs.pop('credential_scopes', []))
+        self.api_version = "2021-04-30-preview"
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-automanage/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -62,9 +62,10 @@ class AutomanageClientConfiguration(Configuration):
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or ARMHttpLoggingPolicy(**kwargs)
         self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)

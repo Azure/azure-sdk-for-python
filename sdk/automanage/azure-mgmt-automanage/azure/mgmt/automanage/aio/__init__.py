@@ -6,5 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._automanage_client_async import AutomanageClient
+from ._automanage_client import AutomanageClient
 __all__ = ['AutomanageClient']
+
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()

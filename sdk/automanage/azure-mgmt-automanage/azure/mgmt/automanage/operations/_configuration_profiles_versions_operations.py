@@ -32,10 +32,10 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_create_or_update_request(
-    configuration_profile_assignment_name,  # type: str
+    configuration_profile_name,  # type: str
+    version_name,  # type: str
     subscription_id,  # type: str
     resource_group_name,  # type: str
-    vm_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -44,12 +44,12 @@ def build_create_or_update_request(
     api_version = "2021-04-30-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}')
     path_format_arguments = {
-        "configurationProfileAssignmentName": _SERIALIZER.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
+        "configurationProfileName": _SERIALIZER.url("configuration_profile_name", configuration_profile_name, 'str'),
+        "versionName": _SERIALIZER.url("version_name", version_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "vmName": _SERIALIZER.url("vm_name", vm_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -74,22 +74,22 @@ def build_create_or_update_request(
 
 
 def build_get_request(
-    resource_group_name,  # type: str
-    configuration_profile_assignment_name,  # type: str
+    configuration_profile_name,  # type: str
+    version_name,  # type: str
     subscription_id,  # type: str
-    vm_name,  # type: str
+    resource_group_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = "2021-04-30-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}')
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "configurationProfileAssignmentName": _SERIALIZER.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
+        "configurationProfileName": _SERIALIZER.url("configuration_profile_name", configuration_profile_name, 'str'),
+        "versionName": _SERIALIZER.url("version_name", version_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "vmName": _SERIALIZER.url("vm_name", vm_name, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -113,21 +113,21 @@ def build_get_request(
 
 def build_delete_request(
     resource_group_name,  # type: str
-    configuration_profile_assignment_name,  # type: str
+    configuration_profile_name,  # type: str
+    version_name,  # type: str
     subscription_id,  # type: str
-    vm_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = "2021-04-30-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}')
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "configurationProfileAssignmentName": _SERIALIZER.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
+        "configurationProfileName": _SERIALIZER.url("configuration_profile_name", configuration_profile_name, 'str'),
+        "versionName": _SERIALIZER.url("version_name", version_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "vmName": _SERIALIZER.url("vm_name", vm_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -149,19 +149,25 @@ def build_delete_request(
     )
 
 
-def build_list_request(
-    resource_group_name,  # type: str
+def build_update_request(
+    configuration_profile_name,  # type: str
+    version_name,  # type: str
     subscription_id,  # type: str
+    resource_group_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
     api_version = "2021-04-30-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfileAssignments')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}')
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "configurationProfileName": _SERIALIZER.url("configuration_profile_name", configuration_profile_name, 'str'),
+        "versionName": _SERIALIZER.url("version_name", version_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -172,10 +178,12 @@ def build_list_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="GET",
+        method="PATCH",
         url=url,
         params=query_parameters,
         headers=header_parameters,
@@ -183,17 +191,21 @@ def build_list_request(
     )
 
 
-def build_list_by_subscription_request(
+def build_list_child_resources_request(
+    configuration_profile_name,  # type: str
     subscription_id,  # type: str
+    resource_group_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = "2021-04-30-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.Automanage/configurationProfileAssignments')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions')
     path_format_arguments = {
+        "configurationProfileName": _SERIALIZER.url("configuration_profile_name", configuration_profile_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -215,8 +227,8 @@ def build_list_by_subscription_request(
     )
 
 # fmt: on
-class ConfigurationProfileAssignmentsOperations(object):
-    """ConfigurationProfileAssignmentsOperations operations.
+class ConfigurationProfilesVersionsOperations(object):
+    """ConfigurationProfilesVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -240,31 +252,29 @@ class ConfigurationProfileAssignmentsOperations(object):
     @distributed_trace
     def create_or_update(
         self,
-        configuration_profile_assignment_name,  # type: str
+        configuration_profile_name,  # type: str
+        version_name,  # type: str
         resource_group_name,  # type: str
-        vm_name,  # type: str
-        parameters,  # type: "_models.ConfigurationProfileAssignment"
+        parameters,  # type: "_models.ConfigurationProfile"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ConfigurationProfileAssignment"
-        """Creates an association between a VM and Automanage configuration profile.
+        # type: (...) -> "_models.ConfigurationProfile"
+        """Creates a configuration profile version.
 
-        :param configuration_profile_assignment_name: Name of the configuration profile assignment.
-         Only default is supported.
-        :type configuration_profile_assignment_name: str
+        :param configuration_profile_name: Name of the configuration profile.
+        :type configuration_profile_name: str
+        :param version_name: The configuration profile version name.
+        :type version_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
-        :param parameters: Parameters supplied to the create or update configuration profile
-         assignment.
-        :type parameters: ~automanage_client.models.ConfigurationProfileAssignment
+        :param parameters: Parameters supplied to create or update configuration profile.
+        :type parameters: ~automanage_client.models.ConfigurationProfile
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ConfigurationProfileAssignment, or the result of cls(response)
-        :rtype: ~automanage_client.models.ConfigurationProfileAssignment
+        :return: ConfigurationProfile, or the result of cls(response)
+        :rtype: ~automanage_client.models.ConfigurationProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,13 +282,13 @@ class ConfigurationProfileAssignmentsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'ConfigurationProfileAssignment')
+        _json = self._serialize.body(parameters, 'ConfigurationProfile')
 
         request = build_create_or_update_request(
-            configuration_profile_assignment_name=configuration_profile_assignment_name,
+            configuration_profile_name=configuration_profile_name,
+            version_name=version_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            vm_name=vm_name,
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
@@ -295,42 +305,42 @@ class ConfigurationProfileAssignmentsOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ConfigurationProfileAssignment', pipeline_response)
+            deserialized = self._deserialize('ConfigurationProfile', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ConfigurationProfileAssignment', pipeline_response)
+            deserialized = self._deserialize('ConfigurationProfile', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}'}  # type: ignore
 
 
     @distributed_trace
     def get(
         self,
+        configuration_profile_name,  # type: str
+        version_name,  # type: str
         resource_group_name,  # type: str
-        configuration_profile_assignment_name,  # type: str
-        vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ConfigurationProfileAssignment"
-        """Get information about a configuration profile assignment.
+        # type: (...) -> "_models.ConfigurationProfile"
+        """Get information about a configuration profile version.
 
+        :param configuration_profile_name: The configuration profile name.
+        :type configuration_profile_name: str
+        :param version_name: The configuration profile version name.
+        :type version_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param configuration_profile_assignment_name: The configuration profile assignment name.
-        :type configuration_profile_assignment_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ConfigurationProfileAssignment, or the result of cls(response)
-        :rtype: ~automanage_client.models.ConfigurationProfileAssignment
+        :return: ConfigurationProfile, or the result of cls(response)
+        :rtype: ~automanage_client.models.ConfigurationProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -338,10 +348,10 @@ class ConfigurationProfileAssignmentsOperations(object):
 
         
         request = build_get_request(
-            resource_group_name=resource_group_name,
-            configuration_profile_assignment_name=configuration_profile_assignment_name,
+            configuration_profile_name=configuration_profile_name,
+            version_name=version_name,
             subscription_id=self._config.subscription_id,
-            vm_name=vm_name,
+            resource_group_name=resource_group_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -355,33 +365,33 @@ class ConfigurationProfileAssignmentsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ConfigurationProfileAssignment', pipeline_response)
+        deserialized = self._deserialize('ConfigurationProfile', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}'}  # type: ignore
 
 
     @distributed_trace
     def delete(
         self,
         resource_group_name,  # type: str
-        configuration_profile_assignment_name,  # type: str
-        vm_name,  # type: str
+        configuration_profile_name,  # type: str
+        version_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete a configuration profile assignment.
+        """Delete a configuration profile version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param configuration_profile_assignment_name: Name of the configuration profile assignment.
-        :type configuration_profile_assignment_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
+        :param configuration_profile_name: Name of the configuration profile.
+        :type configuration_profile_name: str
+        :param version_name: The configuration profile version name.
+        :type version_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -396,9 +406,9 @@ class ConfigurationProfileAssignmentsOperations(object):
         
         request = build_delete_request(
             resource_group_name=resource_group_name,
-            configuration_profile_assignment_name=configuration_profile_assignment_name,
+            configuration_profile_name=configuration_profile_name,
+            version_name=version_name,
             subscription_id=self._config.subscription_id,
-            vm_name=vm_name,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -415,28 +425,95 @@ class ConfigurationProfileAssignmentsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}'}  # type: ignore
 
 
     @distributed_trace
-    def list(
+    def update(
         self,
+        configuration_profile_name,  # type: str
+        version_name,  # type: str
+        resource_group_name,  # type: str
+        parameters,  # type: "_models.ConfigurationProfileUpdate"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.ConfigurationProfile"
+        """Updates a configuration profile version.
+
+        :param configuration_profile_name: Name of the configuration profile.
+        :type configuration_profile_name: str
+        :param version_name: The configuration profile version name.
+        :type version_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param parameters: Parameters supplied to update configuration profile.
+        :type parameters: ~automanage_client.models.ConfigurationProfileUpdate
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ConfigurationProfile, or the result of cls(response)
+        :rtype: ~automanage_client.models.ConfigurationProfile
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfile"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'ConfigurationProfileUpdate')
+
+        request = build_update_request(
+            configuration_profile_name=configuration_profile_name,
+            version_name=version_name,
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ConfigurationProfile', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions/{versionName}'}  # type: ignore
+
+
+    @distributed_trace
+    def list_child_resources(
+        self,
+        configuration_profile_name,  # type: str
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.ConfigurationProfileAssignmentList"]
-        """Get list of configuration profile assignments.
+        # type: (...) -> Iterable["_models.ConfigurationProfileList"]
+        """Retrieve a list of configuration profile version for a configuration profile.
 
+        :param configuration_profile_name: Name of the configuration profile.
+        :type configuration_profile_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ConfigurationProfileAssignmentList or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
+        :return: An iterator like instance of either ConfigurationProfileList or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~automanage_client.models.ConfigurationProfileList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -444,19 +521,21 @@ class ConfigurationProfileAssignmentsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
-                    resource_group_name=resource_group_name,
+                request = build_list_child_resources_request(
+                    configuration_profile_name=configuration_profile_name,
                     subscription_id=self._config.subscription_id,
-                    template_url=self.list.metadata['url'],
+                    resource_group_name=resource_group_name,
+                    template_url=self.list_child_resources.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
-                    resource_group_name=resource_group_name,
+                request = build_list_child_resources_request(
+                    configuration_profile_name=configuration_profile_name,
                     subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -465,7 +544,7 @@ class ConfigurationProfileAssignmentsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ConfigurationProfileAssignmentList", pipeline_response)
+            deserialized = self._deserialize("ConfigurationProfileList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -488,71 +567,4 @@ class ConfigurationProfileAssignmentsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfileAssignments'}  # type: ignore
-
-    @distributed_trace
-    def list_by_subscription(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ConfigurationProfileAssignmentList"]
-        """Get list of configuration profile assignments under a given subscription.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ConfigurationProfileAssignmentList or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignmentList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    template_url=self.list_by_subscription.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("ConfigurationProfileAssignmentList", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Automanage/configurationProfileAssignments'}  # type: ignore
+    list_child_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfiles/{configurationProfileName}/versions'}  # type: ignore

@@ -19,7 +19,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,14 +31,46 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_list_request(
+def build_get_request(
+    best_practice_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = "2021-04-30-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.Automanage/operations')
+    url = kwargs.pop("template_url", '/providers/Microsoft.Automanage/bestPractices/{bestPracticeName}')
+    path_format_arguments = {
+        "bestPracticeName": _SERIALIZER.url("best_practice_name", best_practice_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_tenant_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = "2021-04-30-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/providers/Microsoft.Automanage/bestPractices')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -57,8 +89,8 @@ def build_list_request(
     )
 
 # fmt: on
-class Operations(object):
-    """Operations operations.
+class BestPracticesOperations(object):
+    """BestPracticesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -80,19 +112,67 @@ class Operations(object):
         self._config = config
 
     @distributed_trace
-    def list(
+    def get(
+        self,
+        best_practice_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.BestPractice"
+        """Get information about a Automanage best practice.
+
+        :param best_practice_name: The Automanage best practice name.
+        :type best_practice_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: BestPractice, or the result of cls(response)
+        :rtype: ~automanage_client.models.BestPractice
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BestPractice"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_get_request(
+            best_practice_name=best_practice_name,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('BestPractice', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': '/providers/Microsoft.Automanage/bestPractices/{bestPracticeName}'}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_tenant(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.OperationListResult"]
-        """Lists all of the available Automanage REST API operations.
+        # type: (...) -> Iterable["_models.BestPracticeList"]
+        """Retrieve a list of Automanage best practices.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~automanage_client.models.OperationListResult]
+        :return: An iterator like instance of either BestPracticeList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~automanage_client.models.BestPracticeList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BestPracticeList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -100,15 +180,15 @@ class Operations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
-                    template_url=self.list.metadata['url'],
+                request = build_list_by_tenant_request(
+                    template_url=self.list_by_tenant.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_tenant_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -117,7 +197,7 @@ class Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("BestPracticeList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -140,4 +220,4 @@ class Operations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.Automanage/operations'}  # type: ignore
+    list_by_tenant.metadata = {'url': '/providers/Microsoft.Automanage/bestPractices'}  # type: ignore

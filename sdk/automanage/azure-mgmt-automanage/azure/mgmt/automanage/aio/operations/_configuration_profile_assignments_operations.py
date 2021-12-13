@@ -6,217 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
-from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from ... import models as _models
+from ..._vendor import _convert_request
+from ...operations._configuration_profile_assignments_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_by_subscription_request, build_list_request
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-# fmt: off
-
-def build_create_or_update_request(
-    configuration_profile_assignment_name,  # type: str
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    vm_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    api_version = "2021-04-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}')
-    path_format_arguments = {
-        "configurationProfileAssignmentName": _SERIALIZER.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "vmName": _SERIALIZER.url("vm_name", vm_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_get_request(
-    resource_group_name,  # type: str
-    configuration_profile_assignment_name,  # type: str
-    subscription_id,  # type: str
-    vm_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-04-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}')
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "configurationProfileAssignmentName": _SERIALIZER.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "vmName": _SERIALIZER.url("vm_name", vm_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_delete_request(
-    resource_group_name,  # type: str
-    configuration_profile_assignment_name,  # type: str
-    subscription_id,  # type: str
-    vm_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-04-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}')
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "configurationProfileAssignmentName": _SERIALIZER.url("configuration_profile_assignment_name", configuration_profile_assignment_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "vmName": _SERIALIZER.url("vm_name", vm_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_list_request(
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-04-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfileAssignments')
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_list_by_subscription_request(
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-04-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.Automanage/configurationProfileAssignments')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-# fmt: on
-class ConfigurationProfileAssignmentsOperations(object):
-    """ConfigurationProfileAssignmentsOperations operations.
+class ConfigurationProfileAssignmentsOperations:
+    """ConfigurationProfileAssignmentsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -231,22 +40,21 @@ class ConfigurationProfileAssignmentsOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    @distributed_trace
-    def create_or_update(
+    @distributed_trace_async
+    async def create_or_update(
         self,
-        configuration_profile_assignment_name,  # type: str
-        resource_group_name,  # type: str
-        vm_name,  # type: str
-        parameters,  # type: "_models.ConfigurationProfileAssignment"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ConfigurationProfileAssignment"
+        configuration_profile_assignment_name: str,
+        resource_group_name: str,
+        vm_name: str,
+        parameters: "_models.ConfigurationProfileAssignment",
+        **kwargs: Any
+    ) -> "_models.ConfigurationProfileAssignment":
         """Creates an association between a VM and Automanage configuration profile.
 
         :param configuration_profile_assignment_name: Name of the configuration profile assignment.
@@ -286,7 +94,7 @@ class ConfigurationProfileAssignmentsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -308,15 +116,14 @@ class ConfigurationProfileAssignmentsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}'}  # type: ignore
 
 
-    @distributed_trace
-    def get(
+    @distributed_trace_async
+    async def get(
         self,
-        resource_group_name,  # type: str
-        configuration_profile_assignment_name,  # type: str
-        vm_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ConfigurationProfileAssignment"
+        resource_group_name: str,
+        configuration_profile_assignment_name: str,
+        vm_name: str,
+        **kwargs: Any
+    ) -> "_models.ConfigurationProfileAssignment":
         """Get information about a configuration profile assignment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -347,7 +154,7 @@ class ConfigurationProfileAssignmentsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -365,15 +172,14 @@ class ConfigurationProfileAssignmentsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.Automanage/configurationProfileAssignments/{configurationProfileAssignmentName}'}  # type: ignore
 
 
-    @distributed_trace
-    def delete(
+    @distributed_trace_async
+    async def delete(
         self,
-        resource_group_name,  # type: str
-        configuration_profile_assignment_name,  # type: str
-        vm_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        configuration_profile_assignment_name: str,
+        vm_name: str,
+        **kwargs: Any
+    ) -> None:
         """Delete a configuration profile assignment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -404,7 +210,7 @@ class ConfigurationProfileAssignmentsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -421,10 +227,9 @@ class ConfigurationProfileAssignmentsOperations(object):
     @distributed_trace
     def list(
         self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ConfigurationProfileAssignmentList"]
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ConfigurationProfileAssignmentList"]:
         """Get list of configuration profile assignments.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -433,7 +238,7 @@ class ConfigurationProfileAssignmentsOperations(object):
         :return: An iterator like instance of either ConfigurationProfileAssignmentList or the result
          of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
+         ~azure.core.async_paging.AsyncItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignmentList"]
@@ -464,17 +269,17 @@ class ConfigurationProfileAssignmentsOperations(object):
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize("ConfigurationProfileAssignmentList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -485,7 +290,7 @@ class ConfigurationProfileAssignmentsOperations(object):
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automanage/configurationProfileAssignments'}  # type: ignore
@@ -493,16 +298,15 @@ class ConfigurationProfileAssignmentsOperations(object):
     @distributed_trace
     def list_by_subscription(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ConfigurationProfileAssignmentList"]
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ConfigurationProfileAssignmentList"]:
         """Get list of configuration profile assignments under a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ConfigurationProfileAssignmentList or the result
          of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
+         ~azure.core.async_paging.AsyncItemPaged[~automanage_client.models.ConfigurationProfileAssignmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationProfileAssignmentList"]
@@ -531,17 +335,17 @@ class ConfigurationProfileAssignmentsOperations(object):
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize("ConfigurationProfileAssignmentList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -552,7 +356,7 @@ class ConfigurationProfileAssignmentsOperations(object):
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Automanage/configurationProfileAssignments'}  # type: ignore
