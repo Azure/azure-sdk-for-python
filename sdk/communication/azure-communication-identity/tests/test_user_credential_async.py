@@ -26,7 +26,7 @@ class TestCommunicationTokenCredential:
             CommunicationTokenCredential(1234)
         assert str(err.value) == "Token must be a string."
 
-    @pytest.mark.asyncio
+    '''@pytest.mark.asyncio
     async def test_raises_error_for_init_with_invalid_token(self):
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential("not a token")
@@ -154,7 +154,7 @@ class TestCommunicationTokenCredential:
         # check that next refresh is always scheduled
         assert credential._timer is not None
 
-    '''@pytest.mark.asyncio
+    @pytest.mark.asyncio
     async def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_seconds = 2
         expired_token = generate_token_with_custom_expiry(-5 * 60)
@@ -179,7 +179,7 @@ class TestCommunicationTokenCredential:
         assert refresher.call_count == 2
         assert access_token.token == last_refreshed_token.token
         # check that next refresh is always scheduled
-        assert credential._timer is not None'''
+        assert credential._timer is not None
 
     @pytest.mark.asyncio
     async def test_exit_cancels_timer(self):
@@ -193,4 +193,4 @@ class TestCommunicationTokenCredential:
                 token_refresher=refresher,
                 refresh_proactively=True) as credential:
             assert credential._timer is not None
-        assert refresher.call_count == 0
+        assert refresher.call_count == 0'''
