@@ -323,7 +323,7 @@ except (SyntaxError, ImportError):
     from ._models import WholeMetricConfiguration  # type: ignore
     from ._models import WholeMetricConfigurationPatch  # type: ignore
 
-from ._metrics_advisor_enums import (
+from ._metrics_advisor_client_enums import (
     AnomalyAlertingConfigurationLogicType,
     AnomalyDetectionConfigurationLogicType,
     AnomalyDetectorDirection,

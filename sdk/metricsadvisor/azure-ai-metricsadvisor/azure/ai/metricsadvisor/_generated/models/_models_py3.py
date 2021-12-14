@@ -7,15 +7,805 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._metrics_advisor_enums import *
+from ._metrics_advisor_client_enums import *
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from ..._patch import AlertResultCustomization, AlertResultListCustomization, AlertSnoozeConditionCustomization, AlertingResultQueryCustomization, AnomalyAlertingConfigurationCustomization, AnomalyAlertingConfigurationListCustomization, AnomalyAlertingConfigurationPatchCustomization, AnomalyDetectionConfigurationCustomization, AnomalyDetectionConfigurationListCustomization, AnomalyDetectionConfigurationPatchCustomization, AnomalyDimensionListCustomization, AnomalyDimensionQueryCustomization, AnomalyFeedbackCustomization, AnomalyFeedbackValueCustomization, AnomalyPropertyCustomization, AnomalyResultCustomization, AnomalyResultListCustomization, AzureApplicationInsightsDataFeedCustomization, AzureApplicationInsightsDataFeedPatchCustomization, AzureApplicationInsightsParameterCustomization, AzureApplicationInsightsParameterPatchCustomization, AzureBlobDataFeedCustomization, AzureBlobDataFeedPatchCustomization, AzureBlobParameterCustomization, AzureBlobParameterPatchCustomization, AzureCosmosDBDataFeedCustomization, AzureCosmosDBDataFeedPatchCustomization, AzureCosmosDBParameterCustomization, AzureCosmosDBParameterPatchCustomization, AzureDataExplorerDataFeedCustomization, AzureDataExplorerDataFeedPatchCustomization, AzureDataLakeStorageGen2DataFeedCustomization, AzureDataLakeStorageGen2DataFeedPatchCustomization, AzureDataLakeStorageGen2ParameterCustomization, AzureDataLakeStorageGen2ParameterPatchCustomization, AzureEventHubsDataFeedCustomization, AzureEventHubsDataFeedPatchCustomization, AzureEventHubsParameterCustomization, AzureEventHubsParameterPatchCustomization, AzureLogAnalyticsDataFeedCustomization, AzureLogAnalyticsDataFeedPatchCustomization, AzureLogAnalyticsParameterCustomization, AzureLogAnalyticsParameterPatchCustomization, AzureSQLConnectionStringCredentialCustomization, AzureSQLConnectionStringCredentialPatchCustomization, AzureSQLConnectionStringParamCustomization, AzureSQLConnectionStringParamPatchCustomization, AzureTableDataFeedCustomization, AzureTableDataFeedPatchCustomization, AzureTableParameterCustomization, AzureTableParameterPatchCustomization, ChangePointFeedbackCustomization, ChangePointFeedbackValueCustomization, ChangeThresholdConditionCustomization, ChangeThresholdConditionPatchCustomization, CommentFeedbackCustomization, CommentFeedbackValueCustomization, DataFeedDetailCustomization, DataFeedDetailPatchCustomization, DataFeedIngestionProgressCustomization, DataFeedListCustomization, DataLakeGen2SharedKeyCredentialCustomization, DataLakeGen2SharedKeyCredentialPatchCustomization, DataLakeGen2SharedKeyParamCustomization, DataLakeGen2SharedKeyParamPatchCustomization, DataSourceCredentialCustomization, DataSourceCredentialListCustomization, DataSourceCredentialPatchCustomization, DetectionAnomalyFilterConditionCustomization, DetectionAnomalyResultQueryCustomization, DetectionIncidentFilterConditionCustomization, DetectionIncidentResultQueryCustomization, DetectionSeriesQueryCustomization, DimensionCustomization, DimensionGroupConfigurationCustomization, DimensionGroupIdentityCustomization, EmailHookInfoCustomization, EmailHookInfoPatchCustomization, EmailHookParameterCustomization, EmailHookParameterPatchCustomization, EnrichmentStatusCustomization, EnrichmentStatusListCustomization, EnrichmentStatusQueryOptionCustomization, ErrorCodeCustomization, FeedbackDimensionFilterCustomization, HardThresholdConditionCustomization, HardThresholdConditionPatchCustomization, HookInfoCustomization, HookInfoPatchCustomization, HookListCustomization, IncidentPropertyCustomization, IncidentResultCustomization, IncidentResultListCustomization, InfluxDBDataFeedCustomization, InfluxDBDataFeedPatchCustomization, InfluxDBParameterCustomization, InfluxDBParameterPatchCustomization, IngestionProgressResetOptionsCustomization, IngestionStatusCustomization, IngestionStatusListCustomization, IngestionStatusQueryOptionsCustomization, MetricAlertingConfigurationCustomization, MetricCustomization, MetricDataItemCustomization, MetricDataListCustomization, MetricDataQueryOptionsCustomization, MetricDimensionListCustomization, MetricDimensionQueryOptionsCustomization, MetricFeedbackCustomization, MetricFeedbackFilterCustomization, MetricFeedbackListCustomization, MetricSeriesItemCustomization, MetricSeriesListCustomization, MetricSeriesQueryOptionsCustomization, MongoDBDataFeedCustomization, MongoDBDataFeedPatchCustomization, MongoDBParameterCustomization, MongoDBParameterPatchCustomization, MySqlDataFeedCustomization, MySqlDataFeedPatchCustomization, PeriodFeedbackCustomization, PeriodFeedbackValueCustomization, PostgreSqlDataFeedCustomization, PostgreSqlDataFeedPatchCustomization, RootCauseCustomization, RootCauseListCustomization, SQLServerDataFeedCustomization, SQLServerDataFeedPatchCustomization, SQLSourceParameterPatchCustomization, SeriesConfigurationCustomization, SeriesIdentityCustomization, SeriesResultCustomization, SeriesResultListCustomization, ServicePrincipalCredentialCustomization, ServicePrincipalCredentialPatchCustomization, ServicePrincipalInKVCredentialCustomization, ServicePrincipalInKVCredentialPatchCustomization, ServicePrincipalInKVParamCustomization, ServicePrincipalInKVParamPatchCustomization, ServicePrincipalParamCustomization, ServicePrincipalParamPatchCustomization, SeverityConditionCustomization, SeverityFilterConditionCustomization, SmartDetectionConditionCustomization, SmartDetectionConditionPatchCustomization, SqlSourceParameterCustomization, SuppressConditionCustomization, SuppressConditionPatchCustomization, TopNGroupScopeCustomization, UsageStatsCustomization, ValueConditionCustomization, WebhookHookInfoCustomization, WebhookHookInfoPatchCustomization, WebhookHookParameterCustomization, WebhookHookParameterPatchCustomization, WholeMetricConfigurationCustomization, WholeMetricConfigurationPatchCustomization
+else:
+    try:
+        from .._patch import AlertingResultQueryCustomization
+    except ImportError:
+        class AlertingResultQueryCustomization(object):
+            pass
+    try:
+        from .._patch import AlertResultCustomization
+    except ImportError:
+        class AlertResultCustomization(object):
+            pass
+    try:
+        from .._patch import AlertResultListCustomization
+    except ImportError:
+        class AlertResultListCustomization(object):
+            pass
+    try:
+        from .._patch import AlertSnoozeConditionCustomization
+    except ImportError:
+        class AlertSnoozeConditionCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyAlertingConfigurationCustomization
+    except ImportError:
+        class AnomalyAlertingConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyAlertingConfigurationListCustomization
+    except ImportError:
+        class AnomalyAlertingConfigurationListCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyAlertingConfigurationPatchCustomization
+    except ImportError:
+        class AnomalyAlertingConfigurationPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDetectionConfigurationCustomization
+    except ImportError:
+        class AnomalyDetectionConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDetectionConfigurationListCustomization
+    except ImportError:
+        class AnomalyDetectionConfigurationListCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDetectionConfigurationPatchCustomization
+    except ImportError:
+        class AnomalyDetectionConfigurationPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDimensionListCustomization
+    except ImportError:
+        class AnomalyDimensionListCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDimensionQueryCustomization
+    except ImportError:
+        class AnomalyDimensionQueryCustomization(object):
+            pass
+    try:
+        from .._patch import MetricFeedbackCustomization
+    except ImportError:
+        class MetricFeedbackCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyFeedbackCustomization
+    except ImportError:
+        class AnomalyFeedbackCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyFeedbackValueCustomization
+    except ImportError:
+        class AnomalyFeedbackValueCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyPropertyCustomization
+    except ImportError:
+        class AnomalyPropertyCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyResultCustomization
+    except ImportError:
+        class AnomalyResultCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyResultListCustomization
+    except ImportError:
+        class AnomalyResultListCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedDetailCustomization
+    except ImportError:
+        class DataFeedDetailCustomization(object):
+            pass
+    try:
+        from .._patch import AzureApplicationInsightsDataFeedCustomization
+    except ImportError:
+        class AzureApplicationInsightsDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedDetailPatchCustomization
+    except ImportError:
+        class DataFeedDetailPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureApplicationInsightsDataFeedPatchCustomization
+    except ImportError:
+        class AzureApplicationInsightsDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureApplicationInsightsParameterCustomization
+    except ImportError:
+        class AzureApplicationInsightsParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureApplicationInsightsParameterPatchCustomization
+    except ImportError:
+        class AzureApplicationInsightsParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureBlobDataFeedCustomization
+    except ImportError:
+        class AzureBlobDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureBlobDataFeedPatchCustomization
+    except ImportError:
+        class AzureBlobDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureBlobParameterCustomization
+    except ImportError:
+        class AzureBlobParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureBlobParameterPatchCustomization
+    except ImportError:
+        class AzureBlobParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureCosmosDBDataFeedCustomization
+    except ImportError:
+        class AzureCosmosDBDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureCosmosDBDataFeedPatchCustomization
+    except ImportError:
+        class AzureCosmosDBDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureCosmosDBParameterCustomization
+    except ImportError:
+        class AzureCosmosDBParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureCosmosDBParameterPatchCustomization
+    except ImportError:
+        class AzureCosmosDBParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureDataExplorerDataFeedCustomization
+    except ImportError:
+        class AzureDataExplorerDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureDataExplorerDataFeedPatchCustomization
+    except ImportError:
+        class AzureDataExplorerDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureDataLakeStorageGen2DataFeedCustomization
+    except ImportError:
+        class AzureDataLakeStorageGen2DataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureDataLakeStorageGen2DataFeedPatchCustomization
+    except ImportError:
+        class AzureDataLakeStorageGen2DataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureDataLakeStorageGen2ParameterCustomization
+    except ImportError:
+        class AzureDataLakeStorageGen2ParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureDataLakeStorageGen2ParameterPatchCustomization
+    except ImportError:
+        class AzureDataLakeStorageGen2ParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureEventHubsDataFeedCustomization
+    except ImportError:
+        class AzureEventHubsDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureEventHubsDataFeedPatchCustomization
+    except ImportError:
+        class AzureEventHubsDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureEventHubsParameterCustomization
+    except ImportError:
+        class AzureEventHubsParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureEventHubsParameterPatchCustomization
+    except ImportError:
+        class AzureEventHubsParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureLogAnalyticsDataFeedCustomization
+    except ImportError:
+        class AzureLogAnalyticsDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureLogAnalyticsDataFeedPatchCustomization
+    except ImportError:
+        class AzureLogAnalyticsDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureLogAnalyticsParameterCustomization
+    except ImportError:
+        class AzureLogAnalyticsParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureLogAnalyticsParameterPatchCustomization
+    except ImportError:
+        class AzureLogAnalyticsParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import DataSourceCredentialCustomization
+    except ImportError:
+        class DataSourceCredentialCustomization(object):
+            pass
+    try:
+        from .._patch import AzureSQLConnectionStringCredentialCustomization
+    except ImportError:
+        class AzureSQLConnectionStringCredentialCustomization(object):
+            pass
+    try:
+        from .._patch import DataSourceCredentialPatchCustomization
+    except ImportError:
+        class DataSourceCredentialPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureSQLConnectionStringCredentialPatchCustomization
+    except ImportError:
+        class AzureSQLConnectionStringCredentialPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureSQLConnectionStringParamCustomization
+    except ImportError:
+        class AzureSQLConnectionStringParamCustomization(object):
+            pass
+    try:
+        from .._patch import AzureSQLConnectionStringParamPatchCustomization
+    except ImportError:
+        class AzureSQLConnectionStringParamPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureTableDataFeedCustomization
+    except ImportError:
+        class AzureTableDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import AzureTableDataFeedPatchCustomization
+    except ImportError:
+        class AzureTableDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AzureTableParameterCustomization
+    except ImportError:
+        class AzureTableParameterCustomization(object):
+            pass
+    try:
+        from .._patch import AzureTableParameterPatchCustomization
+    except ImportError:
+        class AzureTableParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import ChangePointFeedbackCustomization
+    except ImportError:
+        class ChangePointFeedbackCustomization(object):
+            pass
+    try:
+        from .._patch import ChangePointFeedbackValueCustomization
+    except ImportError:
+        class ChangePointFeedbackValueCustomization(object):
+            pass
+    try:
+        from .._patch import ChangeThresholdConditionCustomization
+    except ImportError:
+        class ChangeThresholdConditionCustomization(object):
+            pass
+    try:
+        from .._patch import ChangeThresholdConditionPatchCustomization
+    except ImportError:
+        class ChangeThresholdConditionPatchCustomization(object):
+            pass
+    try:
+        from .._patch import CommentFeedbackCustomization
+    except ImportError:
+        class CommentFeedbackCustomization(object):
+            pass
+    try:
+        from .._patch import CommentFeedbackValueCustomization
+    except ImportError:
+        class CommentFeedbackValueCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedIngestionProgressCustomization
+    except ImportError:
+        class DataFeedIngestionProgressCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedListCustomization
+    except ImportError:
+        class DataFeedListCustomization(object):
+            pass
+    try:
+        from .._patch import DataLakeGen2SharedKeyCredentialCustomization
+    except ImportError:
+        class DataLakeGen2SharedKeyCredentialCustomization(object):
+            pass
+    try:
+        from .._patch import DataLakeGen2SharedKeyCredentialPatchCustomization
+    except ImportError:
+        class DataLakeGen2SharedKeyCredentialPatchCustomization(object):
+            pass
+    try:
+        from .._patch import DataLakeGen2SharedKeyParamCustomization
+    except ImportError:
+        class DataLakeGen2SharedKeyParamCustomization(object):
+            pass
+    try:
+        from .._patch import DataLakeGen2SharedKeyParamPatchCustomization
+    except ImportError:
+        class DataLakeGen2SharedKeyParamPatchCustomization(object):
+            pass
+    try:
+        from .._patch import DataSourceCredentialListCustomization
+    except ImportError:
+        class DataSourceCredentialListCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionAnomalyFilterConditionCustomization
+    except ImportError:
+        class DetectionAnomalyFilterConditionCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionAnomalyResultQueryCustomization
+    except ImportError:
+        class DetectionAnomalyResultQueryCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionIncidentFilterConditionCustomization
+    except ImportError:
+        class DetectionIncidentFilterConditionCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionIncidentResultQueryCustomization
+    except ImportError:
+        class DetectionIncidentResultQueryCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionSeriesQueryCustomization
+    except ImportError:
+        class DetectionSeriesQueryCustomization(object):
+            pass
+    try:
+        from .._patch import DimensionCustomization
+    except ImportError:
+        class DimensionCustomization(object):
+            pass
+    try:
+        from .._patch import DimensionGroupConfigurationCustomization
+    except ImportError:
+        class DimensionGroupConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import DimensionGroupIdentityCustomization
+    except ImportError:
+        class DimensionGroupIdentityCustomization(object):
+            pass
+    try:
+        from .._patch import HookInfoCustomization
+    except ImportError:
+        class HookInfoCustomization(object):
+            pass
+    try:
+        from .._patch import EmailHookInfoCustomization
+    except ImportError:
+        class EmailHookInfoCustomization(object):
+            pass
+    try:
+        from .._patch import HookInfoPatchCustomization
+    except ImportError:
+        class HookInfoPatchCustomization(object):
+            pass
+    try:
+        from .._patch import EmailHookInfoPatchCustomization
+    except ImportError:
+        class EmailHookInfoPatchCustomization(object):
+            pass
+    try:
+        from .._patch import EmailHookParameterCustomization
+    except ImportError:
+        class EmailHookParameterCustomization(object):
+            pass
+    try:
+        from .._patch import EmailHookParameterPatchCustomization
+    except ImportError:
+        class EmailHookParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import EnrichmentStatusCustomization
+    except ImportError:
+        class EnrichmentStatusCustomization(object):
+            pass
+    try:
+        from .._patch import EnrichmentStatusListCustomization
+    except ImportError:
+        class EnrichmentStatusListCustomization(object):
+            pass
+    try:
+        from .._patch import EnrichmentStatusQueryOptionCustomization
+    except ImportError:
+        class EnrichmentStatusQueryOptionCustomization(object):
+            pass
+    try:
+        from .._patch import ErrorCodeCustomization
+    except ImportError:
+        class ErrorCodeCustomization(object):
+            pass
+    try:
+        from .._patch import FeedbackDimensionFilterCustomization
+    except ImportError:
+        class FeedbackDimensionFilterCustomization(object):
+            pass
+    try:
+        from .._patch import HardThresholdConditionCustomization
+    except ImportError:
+        class HardThresholdConditionCustomization(object):
+            pass
+    try:
+        from .._patch import HardThresholdConditionPatchCustomization
+    except ImportError:
+        class HardThresholdConditionPatchCustomization(object):
+            pass
+    try:
+        from .._patch import HookListCustomization
+    except ImportError:
+        class HookListCustomization(object):
+            pass
+    try:
+        from .._patch import IncidentPropertyCustomization
+    except ImportError:
+        class IncidentPropertyCustomization(object):
+            pass
+    try:
+        from .._patch import IncidentResultCustomization
+    except ImportError:
+        class IncidentResultCustomization(object):
+            pass
+    try:
+        from .._patch import IncidentResultListCustomization
+    except ImportError:
+        class IncidentResultListCustomization(object):
+            pass
+    try:
+        from .._patch import InfluxDBDataFeedCustomization
+    except ImportError:
+        class InfluxDBDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import InfluxDBDataFeedPatchCustomization
+    except ImportError:
+        class InfluxDBDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import InfluxDBParameterCustomization
+    except ImportError:
+        class InfluxDBParameterCustomization(object):
+            pass
+    try:
+        from .._patch import InfluxDBParameterPatchCustomization
+    except ImportError:
+        class InfluxDBParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionProgressResetOptionsCustomization
+    except ImportError:
+        class IngestionProgressResetOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionStatusCustomization
+    except ImportError:
+        class IngestionStatusCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionStatusListCustomization
+    except ImportError:
+        class IngestionStatusListCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionStatusQueryOptionsCustomization
+    except ImportError:
+        class IngestionStatusQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MetricCustomization
+    except ImportError:
+        class MetricCustomization(object):
+            pass
+    try:
+        from .._patch import MetricAlertingConfigurationCustomization
+    except ImportError:
+        class MetricAlertingConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDataItemCustomization
+    except ImportError:
+        class MetricDataItemCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDataListCustomization
+    except ImportError:
+        class MetricDataListCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDataQueryOptionsCustomization
+    except ImportError:
+        class MetricDataQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDimensionListCustomization
+    except ImportError:
+        class MetricDimensionListCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDimensionQueryOptionsCustomization
+    except ImportError:
+        class MetricDimensionQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MetricFeedbackFilterCustomization
+    except ImportError:
+        class MetricFeedbackFilterCustomization(object):
+            pass
+    try:
+        from .._patch import MetricFeedbackListCustomization
+    except ImportError:
+        class MetricFeedbackListCustomization(object):
+            pass
+    try:
+        from .._patch import MetricSeriesItemCustomization
+    except ImportError:
+        class MetricSeriesItemCustomization(object):
+            pass
+    try:
+        from .._patch import MetricSeriesListCustomization
+    except ImportError:
+        class MetricSeriesListCustomization(object):
+            pass
+    try:
+        from .._patch import MetricSeriesQueryOptionsCustomization
+    except ImportError:
+        class MetricSeriesQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MongoDBDataFeedCustomization
+    except ImportError:
+        class MongoDBDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import MongoDBDataFeedPatchCustomization
+    except ImportError:
+        class MongoDBDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import MongoDBParameterCustomization
+    except ImportError:
+        class MongoDBParameterCustomization(object):
+            pass
+    try:
+        from .._patch import MongoDBParameterPatchCustomization
+    except ImportError:
+        class MongoDBParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import MySqlDataFeedCustomization
+    except ImportError:
+        class MySqlDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import MySqlDataFeedPatchCustomization
+    except ImportError:
+        class MySqlDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import PeriodFeedbackCustomization
+    except ImportError:
+        class PeriodFeedbackCustomization(object):
+            pass
+    try:
+        from .._patch import PeriodFeedbackValueCustomization
+    except ImportError:
+        class PeriodFeedbackValueCustomization(object):
+            pass
+    try:
+        from .._patch import PostgreSqlDataFeedCustomization
+    except ImportError:
+        class PostgreSqlDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import PostgreSqlDataFeedPatchCustomization
+    except ImportError:
+        class PostgreSqlDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import RootCauseCustomization
+    except ImportError:
+        class RootCauseCustomization(object):
+            pass
+    try:
+        from .._patch import RootCauseListCustomization
+    except ImportError:
+        class RootCauseListCustomization(object):
+            pass
+    try:
+        from .._patch import SeriesConfigurationCustomization
+    except ImportError:
+        class SeriesConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import SeriesIdentityCustomization
+    except ImportError:
+        class SeriesIdentityCustomization(object):
+            pass
+    try:
+        from .._patch import SeriesResultCustomization
+    except ImportError:
+        class SeriesResultCustomization(object):
+            pass
+    try:
+        from .._patch import SeriesResultListCustomization
+    except ImportError:
+        class SeriesResultListCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalCredentialCustomization
+    except ImportError:
+        class ServicePrincipalCredentialCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalCredentialPatchCustomization
+    except ImportError:
+        class ServicePrincipalCredentialPatchCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalInKVCredentialCustomization
+    except ImportError:
+        class ServicePrincipalInKVCredentialCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalInKVCredentialPatchCustomization
+    except ImportError:
+        class ServicePrincipalInKVCredentialPatchCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalInKVParamCustomization
+    except ImportError:
+        class ServicePrincipalInKVParamCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalInKVParamPatchCustomization
+    except ImportError:
+        class ServicePrincipalInKVParamPatchCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalParamCustomization
+    except ImportError:
+        class ServicePrincipalParamCustomization(object):
+            pass
+    try:
+        from .._patch import ServicePrincipalParamPatchCustomization
+    except ImportError:
+        class ServicePrincipalParamPatchCustomization(object):
+            pass
+    try:
+        from .._patch import SeverityConditionCustomization
+    except ImportError:
+        class SeverityConditionCustomization(object):
+            pass
+    try:
+        from .._patch import SeverityFilterConditionCustomization
+    except ImportError:
+        class SeverityFilterConditionCustomization(object):
+            pass
+    try:
+        from .._patch import SmartDetectionConditionCustomization
+    except ImportError:
+        class SmartDetectionConditionCustomization(object):
+            pass
+    try:
+        from .._patch import SmartDetectionConditionPatchCustomization
+    except ImportError:
+        class SmartDetectionConditionPatchCustomization(object):
+            pass
+    try:
+        from .._patch import SQLServerDataFeedCustomization
+    except ImportError:
+        class SQLServerDataFeedCustomization(object):
+            pass
+    try:
+        from .._patch import SQLServerDataFeedPatchCustomization
+    except ImportError:
+        class SQLServerDataFeedPatchCustomization(object):
+            pass
+    try:
+        from .._patch import SqlSourceParameterCustomization
+    except ImportError:
+        class SqlSourceParameterCustomization(object):
+            pass
+    try:
+        from .._patch import SQLSourceParameterPatchCustomization
+    except ImportError:
+        class SQLSourceParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import SuppressConditionCustomization
+    except ImportError:
+        class SuppressConditionCustomization(object):
+            pass
+    try:
+        from .._patch import SuppressConditionPatchCustomization
+    except ImportError:
+        class SuppressConditionPatchCustomization(object):
+            pass
+    try:
+        from .._patch import TopNGroupScopeCustomization
+    except ImportError:
+        class TopNGroupScopeCustomization(object):
+            pass
+    try:
+        from .._patch import UsageStatsCustomization
+    except ImportError:
+        class UsageStatsCustomization(object):
+            pass
+    try:
+        from .._patch import ValueConditionCustomization
+    except ImportError:
+        class ValueConditionCustomization(object):
+            pass
+    try:
+        from .._patch import WebhookHookInfoCustomization
+    except ImportError:
+        class WebhookHookInfoCustomization(object):
+            pass
+    try:
+        from .._patch import WebhookHookInfoPatchCustomization
+    except ImportError:
+        class WebhookHookInfoPatchCustomization(object):
+            pass
+    try:
+        from .._patch import WebhookHookParameterCustomization
+    except ImportError:
+        class WebhookHookParameterCustomization(object):
+            pass
+    try:
+        from .._patch import WebhookHookParameterPatchCustomization
+    except ImportError:
+        class WebhookHookParameterPatchCustomization(object):
+            pass
+    try:
+        from .._patch import WholeMetricConfigurationCustomization
+    except ImportError:
+        class WholeMetricConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import WholeMetricConfigurationPatchCustomization
+    except ImportError:
+        class WholeMetricConfigurationPatchCustomization(object):
+            pass
 
 
-class AlertingResultQuery(msrest.serialization.Model):
+class _AlertingResultQueryGenerated(msrest.serialization.Model):
     """AlertingResultQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -63,8 +853,11 @@ class AlertingResultQuery(msrest.serialization.Model):
         self.end_time = end_time
         self.time_mode = time_mode
 
+class AlertingResultQuery(AlertingResultQueryCustomization, _AlertingResultQueryGenerated):
+    pass
 
-class AlertResult(msrest.serialization.Model):
+
+class _AlertResultGenerated(msrest.serialization.Model):
     """AlertResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -105,8 +898,11 @@ class AlertResult(msrest.serialization.Model):
         self.created_time = None
         self.modified_time = None
 
+class AlertResult(AlertResultCustomization, _AlertResultGenerated):
+    pass
 
-class AlertResultList(msrest.serialization.Model):
+
+class _AlertResultListGenerated(msrest.serialization.Model):
     """AlertResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -143,8 +939,11 @@ class AlertResultList(msrest.serialization.Model):
         self.next_link = None
         self.value = value
 
+class AlertResultList(AlertResultListCustomization, _AlertResultListGenerated):
+    pass
 
-class AlertSnoozeCondition(msrest.serialization.Model):
+
+class _AlertSnoozeConditionGenerated(msrest.serialization.Model):
     """AlertSnoozeCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -190,8 +989,11 @@ class AlertSnoozeCondition(msrest.serialization.Model):
         self.snooze_scope = snooze_scope
         self.only_for_successive = only_for_successive
 
+class AlertSnoozeCondition(AlertSnoozeConditionCustomization, _AlertSnoozeConditionGenerated):
+    pass
 
-class AnomalyAlertingConfiguration(msrest.serialization.Model):
+
+class _AnomalyAlertingConfigurationGenerated(msrest.serialization.Model):
     """AnomalyAlertingConfiguration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -276,8 +1078,11 @@ class AnomalyAlertingConfiguration(msrest.serialization.Model):
         self.hook_ids = hook_ids
         self.metric_alerting_configurations = metric_alerting_configurations
 
+class AnomalyAlertingConfiguration(AnomalyAlertingConfigurationCustomization, _AnomalyAlertingConfigurationGenerated):
+    pass
 
-class AnomalyAlertingConfigurationList(msrest.serialization.Model):
+
+class _AnomalyAlertingConfigurationListGenerated(msrest.serialization.Model):
     """AnomalyAlertingConfigurationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -308,8 +1113,11 @@ class AnomalyAlertingConfigurationList(msrest.serialization.Model):
         self.value = None
         self.next_link = None
 
+class AnomalyAlertingConfigurationList(AnomalyAlertingConfigurationListCustomization, _AnomalyAlertingConfigurationListGenerated):
+    pass
 
-class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
+
+class _AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
     """AnomalyAlertingConfigurationPatch.
 
     :ivar name: Anomaly alerting configuration name.
@@ -380,8 +1188,11 @@ class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
         self.hook_ids = hook_ids
         self.metric_alerting_configurations = metric_alerting_configurations
 
+class AnomalyAlertingConfigurationPatch(AnomalyAlertingConfigurationPatchCustomization, _AnomalyAlertingConfigurationPatchGenerated):
+    pass
 
-class AnomalyDetectionConfiguration(msrest.serialization.Model):
+
+class _AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
     """AnomalyDetectionConfiguration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -461,8 +1272,11 @@ class AnomalyDetectionConfiguration(msrest.serialization.Model):
         self.dimension_group_override_configurations = dimension_group_override_configurations
         self.series_override_configurations = series_override_configurations
 
+class AnomalyDetectionConfiguration(AnomalyDetectionConfigurationCustomization, _AnomalyDetectionConfigurationGenerated):
+    pass
 
-class AnomalyDetectionConfigurationList(msrest.serialization.Model):
+
+class _AnomalyDetectionConfigurationListGenerated(msrest.serialization.Model):
     """AnomalyDetectionConfigurationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -493,8 +1307,11 @@ class AnomalyDetectionConfigurationList(msrest.serialization.Model):
         self.value = None
         self.next_link = None
 
+class AnomalyDetectionConfigurationList(AnomalyDetectionConfigurationListCustomization, _AnomalyDetectionConfigurationListGenerated):
+    pass
 
-class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
+
+class _AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
     """AnomalyDetectionConfigurationPatch.
 
     :ivar name: anomaly detection configuration name.
@@ -557,8 +1374,11 @@ class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
         self.dimension_group_override_configurations = dimension_group_override_configurations
         self.series_override_configurations = series_override_configurations
 
+class AnomalyDetectionConfigurationPatch(AnomalyDetectionConfigurationPatchCustomization, _AnomalyDetectionConfigurationPatchGenerated):
+    pass
 
-class AnomalyDimensionList(msrest.serialization.Model):
+
+class _AnomalyDimensionListGenerated(msrest.serialization.Model):
     """AnomalyDimensionList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -595,8 +1415,11 @@ class AnomalyDimensionList(msrest.serialization.Model):
         self.next_link = None
         self.value = value
 
+class AnomalyDimensionList(AnomalyDimensionListCustomization, _AnomalyDimensionListGenerated):
+    pass
 
-class AnomalyDimensionQuery(msrest.serialization.Model):
+
+class _AnomalyDimensionQueryGenerated(msrest.serialization.Model):
     """AnomalyDimensionQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -649,8 +1472,11 @@ class AnomalyDimensionQuery(msrest.serialization.Model):
         self.dimension_name = dimension_name
         self.dimension_filter = dimension_filter
 
+class AnomalyDimensionQuery(AnomalyDimensionQueryCustomization, _AnomalyDimensionQueryGenerated):
+    pass
 
-class MetricFeedback(msrest.serialization.Model):
+
+class _MetricFeedbackGenerated(msrest.serialization.Model):
     """MetricFeedback.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -718,8 +1544,11 @@ class MetricFeedback(msrest.serialization.Model):
         self.metric_id = metric_id
         self.dimension_filter = dimension_filter
 
+class MetricFeedback(MetricFeedbackCustomization, _MetricFeedbackGenerated):
+    pass
 
-class AnomalyFeedback(MetricFeedback):
+
+class _AnomalyFeedbackGenerated(MetricFeedback):
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -819,8 +1648,11 @@ class AnomalyFeedback(MetricFeedback):
         self.anomaly_detection_configuration_id = anomaly_detection_configuration_id
         self.anomaly_detection_configuration_snapshot = anomaly_detection_configuration_snapshot
 
+class AnomalyFeedback(AnomalyFeedbackCustomization, _AnomalyFeedbackGenerated):
+    pass
 
-class AnomalyFeedbackValue(msrest.serialization.Model):
+
+class _AnomalyFeedbackValueGenerated(msrest.serialization.Model):
     """AnomalyFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -851,8 +1683,11 @@ class AnomalyFeedbackValue(msrest.serialization.Model):
         super(AnomalyFeedbackValue, self).__init__(**kwargs)
         self.anomaly_value = anomaly_value
 
+class AnomalyFeedbackValue(AnomalyFeedbackValueCustomization, _AnomalyFeedbackValueGenerated):
+    pass
 
-class AnomalyProperty(msrest.serialization.Model):
+
+class _AnomalyPropertyGenerated(msrest.serialization.Model):
     """AnomalyProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -903,8 +1738,11 @@ class AnomalyProperty(msrest.serialization.Model):
         self.value = None
         self.expected_value = None
 
+class AnomalyProperty(AnomalyPropertyCustomization, _AnomalyPropertyGenerated):
+    pass
 
-class AnomalyResult(msrest.serialization.Model):
+
+class _AnomalyResultGenerated(msrest.serialization.Model):
     """AnomalyResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -987,8 +1825,11 @@ class AnomalyResult(msrest.serialization.Model):
         self.dimension = dimension
         self.property = property
 
+class AnomalyResult(AnomalyResultCustomization, _AnomalyResultGenerated):
+    pass
 
-class AnomalyResultList(msrest.serialization.Model):
+
+class _AnomalyResultListGenerated(msrest.serialization.Model):
     """AnomalyResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1025,8 +1866,11 @@ class AnomalyResultList(msrest.serialization.Model):
         self.next_link = None
         self.value = value
 
+class AnomalyResultList(AnomalyResultListCustomization, _AnomalyResultListGenerated):
+    pass
 
-class DataFeedDetail(msrest.serialization.Model):
+
+class _DataFeedDetailGenerated(msrest.serialization.Model):
     """DataFeedDetail.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -1289,8 +2133,11 @@ class DataFeedDetail(msrest.serialization.Model):
         self.authentication_type = authentication_type
         self.credential_id = credential_id
 
+class DataFeedDetail(DataFeedDetailCustomization, _DataFeedDetailGenerated):
+    pass
 
-class AzureApplicationInsightsDataFeed(DataFeedDetail):
+
+class _AzureApplicationInsightsDataFeedGenerated(DataFeedDetail):
     """AzureApplicationInsightsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1527,8 +2374,11 @@ class AzureApplicationInsightsDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureApplicationInsightsDataFeed(AzureApplicationInsightsDataFeedCustomization, _AzureApplicationInsightsDataFeedGenerated):
+    pass
 
-class DataFeedDetailPatch(msrest.serialization.Model):
+
+class _DataFeedDetailPatchGenerated(msrest.serialization.Model):
     """DataFeedDetailPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -1736,8 +2586,11 @@ class DataFeedDetailPatch(msrest.serialization.Model):
         self.authentication_type = authentication_type
         self.credential_id = credential_id
 
+class DataFeedDetailPatch(DataFeedDetailPatchCustomization, _DataFeedDetailPatchGenerated):
+    pass
 
-class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureApplicationInsightsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -1926,8 +2779,11 @@ class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureApplicationInsightsDataFeedPatch(AzureApplicationInsightsDataFeedPatchCustomization, _AzureApplicationInsightsDataFeedPatchGenerated):
+    pass
 
-class AzureApplicationInsightsParameter(msrest.serialization.Model):
+
+class _AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
     """AzureApplicationInsightsParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -1978,8 +2834,11 @@ class AzureApplicationInsightsParameter(msrest.serialization.Model):
         self.api_key = api_key
         self.query = query
 
+class AzureApplicationInsightsParameter(AzureApplicationInsightsParameterCustomization, _AzureApplicationInsightsParameterGenerated):
+    pass
 
-class AzureApplicationInsightsParameterPatch(msrest.serialization.Model):
+
+class _AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model):
     """AzureApplicationInsightsParameterPatch.
 
     :ivar azure_cloud: The Azure cloud that this Azure Application Insights in.
@@ -2024,8 +2883,11 @@ class AzureApplicationInsightsParameterPatch(msrest.serialization.Model):
         self.api_key = api_key
         self.query = query
 
+class AzureApplicationInsightsParameterPatch(AzureApplicationInsightsParameterPatchCustomization, _AzureApplicationInsightsParameterPatchGenerated):
+    pass
 
-class AzureBlobDataFeed(DataFeedDetail):
+
+class _AzureBlobDataFeedGenerated(DataFeedDetail):
     """AzureBlobDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2260,8 +3122,11 @@ class AzureBlobDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureBlob'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureBlobDataFeed(AzureBlobDataFeedCustomization, _AzureBlobDataFeedGenerated):
+    pass
 
-class AzureBlobDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureBlobDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureBlobDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -2448,8 +3313,11 @@ class AzureBlobDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureBlob'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureBlobDataFeedPatch(AzureBlobDataFeedPatchCustomization, _AzureBlobDataFeedPatchGenerated):
+    pass
 
-class AzureBlobParameter(msrest.serialization.Model):
+
+class _AzureBlobParameterGenerated(msrest.serialization.Model):
     """AzureBlobParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -2494,8 +3362,11 @@ class AzureBlobParameter(msrest.serialization.Model):
         self.container = container
         self.blob_template = blob_template
 
+class AzureBlobParameter(AzureBlobParameterCustomization, _AzureBlobParameterGenerated):
+    pass
 
-class AzureBlobParameterPatch(msrest.serialization.Model):
+
+class _AzureBlobParameterPatchGenerated(msrest.serialization.Model):
     """AzureBlobParameterPatch.
 
     :ivar connection_string: The connection string of this Azure Blob.
@@ -2533,8 +3404,11 @@ class AzureBlobParameterPatch(msrest.serialization.Model):
         self.container = container
         self.blob_template = blob_template
 
+class AzureBlobParameterPatch(AzureBlobParameterPatchCustomization, _AzureBlobParameterPatchGenerated):
+    pass
 
-class AzureCosmosDBDataFeed(DataFeedDetail):
+
+class _AzureCosmosDBDataFeedGenerated(DataFeedDetail):
     """AzureCosmosDBDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2769,8 +3643,11 @@ class AzureCosmosDBDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureCosmosDBDataFeed(AzureCosmosDBDataFeedCustomization, _AzureCosmosDBDataFeedGenerated):
+    pass
 
-class AzureCosmosDBDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureCosmosDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -2957,8 +3834,11 @@ class AzureCosmosDBDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureCosmosDBDataFeedPatch(AzureCosmosDBDataFeedPatchCustomization, _AzureCosmosDBDataFeedPatchGenerated):
+    pass
 
-class AzureCosmosDBParameter(msrest.serialization.Model):
+
+class _AzureCosmosDBParameterGenerated(msrest.serialization.Model):
     """AzureCosmosDBParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -3011,8 +3891,11 @@ class AzureCosmosDBParameter(msrest.serialization.Model):
         self.database = database
         self.collection_id = collection_id
 
+class AzureCosmosDBParameter(AzureCosmosDBParameterCustomization, _AzureCosmosDBParameterGenerated):
+    pass
 
-class AzureCosmosDBParameterPatch(msrest.serialization.Model):
+
+class _AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
     """AzureCosmosDBParameterPatch.
 
     :ivar connection_string: The connection string of this Azure CosmosDB.
@@ -3057,8 +3940,11 @@ class AzureCosmosDBParameterPatch(msrest.serialization.Model):
         self.database = database
         self.collection_id = collection_id
 
+class AzureCosmosDBParameterPatch(AzureCosmosDBParameterPatchCustomization, _AzureCosmosDBParameterPatchGenerated):
+    pass
 
-class AzureDataExplorerDataFeed(DataFeedDetail):
+
+class _AzureDataExplorerDataFeedGenerated(DataFeedDetail):
     """AzureDataExplorerDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3293,8 +4179,11 @@ class AzureDataExplorerDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureDataExplorerDataFeed(AzureDataExplorerDataFeedCustomization, _AzureDataExplorerDataFeedGenerated):
+    pass
 
-class AzureDataExplorerDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureDataExplorerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -3481,8 +4370,11 @@ class AzureDataExplorerDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureDataExplorerDataFeedPatch(AzureDataExplorerDataFeedPatchCustomization, _AzureDataExplorerDataFeedPatchGenerated):
+    pass
 
-class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
+
+class _AzureDataLakeStorageGen2DataFeedGenerated(DataFeedDetail):
     """AzureDataLakeStorageGen2DataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3719,8 +4611,11 @@ class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureDataLakeStorageGen2DataFeed(AzureDataLakeStorageGen2DataFeedCustomization, _AzureDataLakeStorageGen2DataFeedGenerated):
+    pass
 
-class AzureDataLakeStorageGen2DataFeedPatch(DataFeedDetailPatch):
+
+class _AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureDataLakeStorageGen2DataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -3909,8 +4804,11 @@ class AzureDataLakeStorageGen2DataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureDataLakeStorageGen2DataFeedPatch(AzureDataLakeStorageGen2DataFeedPatchCustomization, _AzureDataLakeStorageGen2DataFeedPatchGenerated):
+    pass
 
-class AzureDataLakeStorageGen2Parameter(msrest.serialization.Model):
+
+class _AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
     """AzureDataLakeStorageGen2Parameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -3970,8 +4868,11 @@ class AzureDataLakeStorageGen2Parameter(msrest.serialization.Model):
         self.directory_template = directory_template
         self.file_template = file_template
 
+class AzureDataLakeStorageGen2Parameter(AzureDataLakeStorageGen2ParameterCustomization, _AzureDataLakeStorageGen2ParameterGenerated):
+    pass
 
-class AzureDataLakeStorageGen2ParameterPatch(msrest.serialization.Model):
+
+class _AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model):
     """AzureDataLakeStorageGen2ParameterPatch.
 
     :ivar account_name: The account name of this Azure Data Lake.
@@ -4023,8 +4924,11 @@ class AzureDataLakeStorageGen2ParameterPatch(msrest.serialization.Model):
         self.directory_template = directory_template
         self.file_template = file_template
 
+class AzureDataLakeStorageGen2ParameterPatch(AzureDataLakeStorageGen2ParameterPatchCustomization, _AzureDataLakeStorageGen2ParameterPatchGenerated):
+    pass
 
-class AzureEventHubsDataFeed(DataFeedDetail):
+
+class _AzureEventHubsDataFeedGenerated(DataFeedDetail):
     """AzureEventHubsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4259,8 +5163,11 @@ class AzureEventHubsDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureEventHubsDataFeed(AzureEventHubsDataFeedCustomization, _AzureEventHubsDataFeedGenerated):
+    pass
 
-class AzureEventHubsDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureEventHubsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4447,8 +5354,11 @@ class AzureEventHubsDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureEventHubsDataFeedPatch(AzureEventHubsDataFeedPatchCustomization, _AzureEventHubsDataFeedPatchGenerated):
+    pass
 
-class AzureEventHubsParameter(msrest.serialization.Model):
+
+class _AzureEventHubsParameterGenerated(msrest.serialization.Model):
     """AzureEventHubsParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -4485,8 +5395,11 @@ class AzureEventHubsParameter(msrest.serialization.Model):
         self.connection_string = connection_string
         self.consumer_group = consumer_group
 
+class AzureEventHubsParameter(AzureEventHubsParameterCustomization, _AzureEventHubsParameterGenerated):
+    pass
 
-class AzureEventHubsParameterPatch(msrest.serialization.Model):
+
+class _AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
     """AzureEventHubsParameterPatch.
 
     :ivar connection_string: The connection string of this Azure Event Hubs.
@@ -4517,8 +5430,11 @@ class AzureEventHubsParameterPatch(msrest.serialization.Model):
         self.connection_string = connection_string
         self.consumer_group = consumer_group
 
+class AzureEventHubsParameterPatch(AzureEventHubsParameterPatchCustomization, _AzureEventHubsParameterPatchGenerated):
+    pass
 
-class AzureLogAnalyticsDataFeed(DataFeedDetail):
+
+class _AzureLogAnalyticsDataFeedGenerated(DataFeedDetail):
     """AzureLogAnalyticsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4753,8 +5669,11 @@ class AzureLogAnalyticsDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureLogAnalytics'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureLogAnalyticsDataFeed(AzureLogAnalyticsDataFeedCustomization, _AzureLogAnalyticsDataFeedGenerated):
+    pass
 
-class AzureLogAnalyticsDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureLogAnalyticsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4942,8 +5861,11 @@ class AzureLogAnalyticsDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureLogAnalytics'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureLogAnalyticsDataFeedPatch(AzureLogAnalyticsDataFeedPatchCustomization, _AzureLogAnalyticsDataFeedPatchGenerated):
+    pass
 
-class AzureLogAnalyticsParameter(msrest.serialization.Model):
+
+class _AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
     """AzureLogAnalyticsParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -5006,8 +5928,11 @@ class AzureLogAnalyticsParameter(msrest.serialization.Model):
         self.workspace_id = workspace_id
         self.query = query
 
+class AzureLogAnalyticsParameter(AzureLogAnalyticsParameterCustomization, _AzureLogAnalyticsParameterGenerated):
+    pass
 
-class AzureLogAnalyticsParameterPatch(msrest.serialization.Model):
+
+class _AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
     """AzureLogAnalyticsParameterPatch.
 
     :ivar tenant_id: The tenant id of service principal that have access to this Log Analytics.
@@ -5061,8 +5986,11 @@ class AzureLogAnalyticsParameterPatch(msrest.serialization.Model):
         self.workspace_id = workspace_id
         self.query = query
 
+class AzureLogAnalyticsParameterPatch(AzureLogAnalyticsParameterPatchCustomization, _AzureLogAnalyticsParameterPatchGenerated):
+    pass
 
-class DataSourceCredential(msrest.serialization.Model):
+
+class _DataSourceCredentialGenerated(msrest.serialization.Model):
     """DataSourceCredential.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -5121,8 +6049,11 @@ class DataSourceCredential(msrest.serialization.Model):
         self.data_source_credential_name = data_source_credential_name
         self.data_source_credential_description = data_source_credential_description
 
+class DataSourceCredential(DataSourceCredentialCustomization, _DataSourceCredentialGenerated):
+    pass
 
-class AzureSQLConnectionStringCredential(DataSourceCredential):
+
+class _AzureSQLConnectionStringCredentialGenerated(DataSourceCredential):
     """AzureSQLConnectionStringCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5179,8 +6110,11 @@ class AzureSQLConnectionStringCredential(DataSourceCredential):
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
         self.parameters = parameters
 
+class AzureSQLConnectionStringCredential(AzureSQLConnectionStringCredentialCustomization, _AzureSQLConnectionStringCredentialGenerated):
+    pass
 
-class DataSourceCredentialPatch(msrest.serialization.Model):
+
+class _DataSourceCredentialPatchGenerated(msrest.serialization.Model):
     """DataSourceCredentialPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -5231,8 +6165,11 @@ class DataSourceCredentialPatch(msrest.serialization.Model):
         self.data_source_credential_name = data_source_credential_name
         self.data_source_credential_description = data_source_credential_description
 
+class DataSourceCredentialPatch(DataSourceCredentialPatchCustomization, _DataSourceCredentialPatchGenerated):
+    pass
 
-class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
+
+class _AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatch):
     """AzureSQLConnectionStringCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -5281,8 +6218,11 @@ class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
         self.parameters = parameters
 
+class AzureSQLConnectionStringCredentialPatch(AzureSQLConnectionStringCredentialPatchCustomization, _AzureSQLConnectionStringCredentialPatchGenerated):
+    pass
 
-class AzureSQLConnectionStringParam(msrest.serialization.Model):
+
+class _AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
     """AzureSQLConnectionStringParam.
 
     :ivar connection_string: The connection string to access the Azure SQL.
@@ -5306,8 +6246,11 @@ class AzureSQLConnectionStringParam(msrest.serialization.Model):
         super(AzureSQLConnectionStringParam, self).__init__(**kwargs)
         self.connection_string = connection_string
 
+class AzureSQLConnectionStringParam(AzureSQLConnectionStringParamCustomization, _AzureSQLConnectionStringParamGenerated):
+    pass
 
-class AzureSQLConnectionStringParamPatch(msrest.serialization.Model):
+
+class _AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
     """AzureSQLConnectionStringParamPatch.
 
     :ivar connection_string: The connection string to access the Azure SQL.
@@ -5331,8 +6274,11 @@ class AzureSQLConnectionStringParamPatch(msrest.serialization.Model):
         super(AzureSQLConnectionStringParamPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
 
+class AzureSQLConnectionStringParamPatch(AzureSQLConnectionStringParamPatchCustomization, _AzureSQLConnectionStringParamPatchGenerated):
+    pass
 
-class AzureTableDataFeed(DataFeedDetail):
+
+class _AzureTableDataFeedGenerated(DataFeedDetail):
     """AzureTableDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5567,8 +6513,11 @@ class AzureTableDataFeed(DataFeedDetail):
         self.data_source_type = 'AzureTable'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureTableDataFeed(AzureTableDataFeedCustomization, _AzureTableDataFeedGenerated):
+    pass
 
-class AzureTableDataFeedPatch(DataFeedDetailPatch):
+
+class _AzureTableDataFeedPatchGenerated(DataFeedDetailPatch):
     """AzureTableDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -5755,8 +6704,11 @@ class AzureTableDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'AzureTable'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class AzureTableDataFeedPatch(AzureTableDataFeedPatchCustomization, _AzureTableDataFeedPatchGenerated):
+    pass
 
-class AzureTableParameter(msrest.serialization.Model):
+
+class _AzureTableParameterGenerated(msrest.serialization.Model):
     """AzureTableParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -5803,8 +6755,11 @@ class AzureTableParameter(msrest.serialization.Model):
         self.table = table
         self.query = query
 
+class AzureTableParameter(AzureTableParameterCustomization, _AzureTableParameterGenerated):
+    pass
 
-class AzureTableParameterPatch(msrest.serialization.Model):
+
+class _AzureTableParameterPatchGenerated(msrest.serialization.Model):
     """AzureTableParameterPatch.
 
     :ivar connection_string: The connection string of this Azure Table.
@@ -5844,8 +6799,11 @@ class AzureTableParameterPatch(msrest.serialization.Model):
         self.table = table
         self.query = query
 
+class AzureTableParameterPatch(AzureTableParameterPatchCustomization, _AzureTableParameterPatchGenerated):
+    pass
 
-class ChangePointFeedback(MetricFeedback):
+
+class _ChangePointFeedbackGenerated(MetricFeedback):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5927,8 +6885,11 @@ class ChangePointFeedback(MetricFeedback):
         self.end_time = end_time
         self.value = value
 
+class ChangePointFeedback(ChangePointFeedbackCustomization, _ChangePointFeedbackGenerated):
+    pass
 
-class ChangePointFeedbackValue(msrest.serialization.Model):
+
+class _ChangePointFeedbackValueGenerated(msrest.serialization.Model):
     """ChangePointFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -5960,8 +6921,11 @@ class ChangePointFeedbackValue(msrest.serialization.Model):
         super(ChangePointFeedbackValue, self).__init__(**kwargs)
         self.change_point_value = change_point_value
 
+class ChangePointFeedbackValue(ChangePointFeedbackValueCustomization, _ChangePointFeedbackValueGenerated):
+    pass
 
-class ChangeThresholdCondition(msrest.serialization.Model):
+
+class _ChangeThresholdConditionGenerated(msrest.serialization.Model):
     """ChangeThresholdCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -6031,8 +6995,11 @@ class ChangeThresholdCondition(msrest.serialization.Model):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+class ChangeThresholdCondition(ChangeThresholdConditionCustomization, _ChangeThresholdConditionGenerated):
+    pass
 
-class ChangeThresholdConditionPatch(msrest.serialization.Model):
+
+class _ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
     """ChangeThresholdConditionPatch.
 
     :ivar change_percentage: change percentage, value range : [0, +∞).
@@ -6092,8 +7059,11 @@ class ChangeThresholdConditionPatch(msrest.serialization.Model):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+class ChangeThresholdConditionPatch(ChangeThresholdConditionPatchCustomization, _ChangeThresholdConditionPatchGenerated):
+    pass
 
-class CommentFeedback(MetricFeedback):
+
+class _CommentFeedbackGenerated(MetricFeedback):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6173,8 +7143,11 @@ class CommentFeedback(MetricFeedback):
         self.end_time = end_time
         self.value = value
 
+class CommentFeedback(CommentFeedbackCustomization, _CommentFeedbackGenerated):
+    pass
 
-class CommentFeedbackValue(msrest.serialization.Model):
+
+class _CommentFeedbackValueGenerated(msrest.serialization.Model):
     """CommentFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -6204,8 +7177,11 @@ class CommentFeedbackValue(msrest.serialization.Model):
         super(CommentFeedbackValue, self).__init__(**kwargs)
         self.comment_value = comment_value
 
+class CommentFeedbackValue(CommentFeedbackValueCustomization, _CommentFeedbackValueGenerated):
+    pass
 
-class DataFeedIngestionProgress(msrest.serialization.Model):
+
+class _DataFeedIngestionProgressGenerated(msrest.serialization.Model):
     """DataFeedIngestionProgress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6238,8 +7214,11 @@ class DataFeedIngestionProgress(msrest.serialization.Model):
         self.latest_success_timestamp = None
         self.latest_active_timestamp = None
 
+class DataFeedIngestionProgress(DataFeedIngestionProgressCustomization, _DataFeedIngestionProgressGenerated):
+    pass
 
-class DataFeedList(msrest.serialization.Model):
+
+class _DataFeedListGenerated(msrest.serialization.Model):
     """DataFeedList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6270,8 +7249,11 @@ class DataFeedList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class DataFeedList(DataFeedListCustomization, _DataFeedListGenerated):
+    pass
 
-class DataLakeGen2SharedKeyCredential(DataSourceCredential):
+
+class _DataLakeGen2SharedKeyCredentialGenerated(DataSourceCredential):
     """DataLakeGen2SharedKeyCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6328,8 +7310,11 @@ class DataLakeGen2SharedKeyCredential(DataSourceCredential):
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
         self.parameters = parameters
 
+class DataLakeGen2SharedKeyCredential(DataLakeGen2SharedKeyCredentialCustomization, _DataLakeGen2SharedKeyCredentialGenerated):
+    pass
 
-class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
+
+class _DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatch):
     """DataLakeGen2SharedKeyCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -6378,8 +7363,11 @@ class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
         self.parameters = parameters
 
+class DataLakeGen2SharedKeyCredentialPatch(DataLakeGen2SharedKeyCredentialPatchCustomization, _DataLakeGen2SharedKeyCredentialPatchGenerated):
+    pass
 
-class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
+
+class _DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
     """DataLakeGen2SharedKeyParam.
 
     :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
@@ -6403,8 +7391,11 @@ class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
         super(DataLakeGen2SharedKeyParam, self).__init__(**kwargs)
         self.account_key = account_key
 
+class DataLakeGen2SharedKeyParam(DataLakeGen2SharedKeyParamCustomization, _DataLakeGen2SharedKeyParamGenerated):
+    pass
 
-class DataLakeGen2SharedKeyParamPatch(msrest.serialization.Model):
+
+class _DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
     """DataLakeGen2SharedKeyParamPatch.
 
     :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
@@ -6428,8 +7419,11 @@ class DataLakeGen2SharedKeyParamPatch(msrest.serialization.Model):
         super(DataLakeGen2SharedKeyParamPatch, self).__init__(**kwargs)
         self.account_key = account_key
 
+class DataLakeGen2SharedKeyParamPatch(DataLakeGen2SharedKeyParamPatchCustomization, _DataLakeGen2SharedKeyParamPatchGenerated):
+    pass
 
-class DataSourceCredentialList(msrest.serialization.Model):
+
+class _DataSourceCredentialListGenerated(msrest.serialization.Model):
     """DataSourceCredentialList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6460,8 +7454,11 @@ class DataSourceCredentialList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class DataSourceCredentialList(DataSourceCredentialListCustomization, _DataSourceCredentialListGenerated):
+    pass
 
-class DetectionAnomalyFilterCondition(msrest.serialization.Model):
+
+class _DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
     """DetectionAnomalyFilterCondition.
 
     :ivar dimension_filter: dimension filter.
@@ -6496,8 +7493,11 @@ class DetectionAnomalyFilterCondition(msrest.serialization.Model):
         self.dimension_filter = dimension_filter
         self.severity_filter = severity_filter
 
+class DetectionAnomalyFilterCondition(DetectionAnomalyFilterConditionCustomization, _DetectionAnomalyFilterConditionGenerated):
+    pass
 
-class DetectionAnomalyResultQuery(msrest.serialization.Model):
+
+class _DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
     """DetectionAnomalyResultQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -6542,8 +7542,11 @@ class DetectionAnomalyResultQuery(msrest.serialization.Model):
         self.end_time = end_time
         self.filter = filter
 
+class DetectionAnomalyResultQuery(DetectionAnomalyResultQueryCustomization, _DetectionAnomalyResultQueryGenerated):
+    pass
 
-class DetectionIncidentFilterCondition(msrest.serialization.Model):
+
+class _DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
     """DetectionIncidentFilterCondition.
 
     :ivar dimension_filter: dimension filter.
@@ -6571,8 +7574,11 @@ class DetectionIncidentFilterCondition(msrest.serialization.Model):
         super(DetectionIncidentFilterCondition, self).__init__(**kwargs)
         self.dimension_filter = dimension_filter
 
+class DetectionIncidentFilterCondition(DetectionIncidentFilterConditionCustomization, _DetectionIncidentFilterConditionGenerated):
+    pass
 
-class DetectionIncidentResultQuery(msrest.serialization.Model):
+
+class _DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
     """DetectionIncidentResultQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -6617,8 +7623,11 @@ class DetectionIncidentResultQuery(msrest.serialization.Model):
         self.end_time = end_time
         self.filter = filter
 
+class DetectionIncidentResultQuery(DetectionIncidentResultQueryCustomization, _DetectionIncidentResultQueryGenerated):
+    pass
 
-class DetectionSeriesQuery(msrest.serialization.Model):
+
+class _DetectionSeriesQueryGenerated(msrest.serialization.Model):
     """DetectionSeriesQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -6670,8 +7679,11 @@ class DetectionSeriesQuery(msrest.serialization.Model):
         self.end_time = end_time
         self.series = series
 
+class DetectionSeriesQuery(DetectionSeriesQueryCustomization, _DetectionSeriesQueryGenerated):
+    pass
 
-class Dimension(msrest.serialization.Model):
+
+class _DimensionGenerated(msrest.serialization.Model):
     """Dimension.
 
     All required parameters must be populated in order to send to Azure.
@@ -6709,8 +7721,11 @@ class Dimension(msrest.serialization.Model):
         self.dimension_name = dimension_name
         self.dimension_display_name = dimension_display_name
 
+class Dimension(DimensionCustomization, _DimensionGenerated):
+    pass
 
-class DimensionGroupConfiguration(msrest.serialization.Model):
+
+class _DimensionGroupConfigurationGenerated(msrest.serialization.Model):
     """DimensionGroupConfiguration.
 
     All required parameters must be populated in order to send to Azure.
@@ -6776,8 +7791,11 @@ class DimensionGroupConfiguration(msrest.serialization.Model):
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
 
+class DimensionGroupConfiguration(DimensionGroupConfigurationCustomization, _DimensionGroupConfigurationGenerated):
+    pass
 
-class DimensionGroupIdentity(msrest.serialization.Model):
+
+class _DimensionGroupIdentityGenerated(msrest.serialization.Model):
     """DimensionGroupIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -6807,8 +7825,11 @@ class DimensionGroupIdentity(msrest.serialization.Model):
         super(DimensionGroupIdentity, self).__init__(**kwargs)
         self.dimension = dimension
 
+class DimensionGroupIdentity(DimensionGroupIdentityCustomization, _DimensionGroupIdentityGenerated):
+    pass
 
-class HookInfo(msrest.serialization.Model):
+
+class _HookInfoGenerated(msrest.serialization.Model):
     """HookInfo.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -6880,8 +7901,11 @@ class HookInfo(msrest.serialization.Model):
         self.external_link = external_link
         self.admins = admins
 
+class HookInfo(HookInfoCustomization, _HookInfoGenerated):
+    pass
 
-class EmailHookInfo(HookInfo):
+
+class _EmailHookInfoGenerated(HookInfo):
     """EmailHookInfo.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6949,8 +7973,11 @@ class EmailHookInfo(HookInfo):
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = hook_parameter
 
+class EmailHookInfo(EmailHookInfoCustomization, _EmailHookInfoGenerated):
+    pass
 
-class HookInfoPatch(msrest.serialization.Model):
+
+class _HookInfoPatchGenerated(msrest.serialization.Model):
     """HookInfoPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -7014,8 +8041,11 @@ class HookInfoPatch(msrest.serialization.Model):
         self.external_link = external_link
         self.admins = admins
 
+class HookInfoPatch(HookInfoPatchCustomization, _HookInfoPatchGenerated):
+    pass
 
-class EmailHookInfoPatch(HookInfoPatch):
+
+class _EmailHookInfoPatchGenerated(HookInfoPatch):
     """EmailHookInfoPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -7075,8 +8105,11 @@ class EmailHookInfoPatch(HookInfoPatch):
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = hook_parameter
 
+class EmailHookInfoPatch(EmailHookInfoPatchCustomization, _EmailHookInfoPatchGenerated):
+    pass
 
-class EmailHookParameter(msrest.serialization.Model):
+
+class _EmailHookParameterGenerated(msrest.serialization.Model):
     """EmailHookParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -7106,8 +8139,11 @@ class EmailHookParameter(msrest.serialization.Model):
         super(EmailHookParameter, self).__init__(**kwargs)
         self.to_list = to_list
 
+class EmailHookParameter(EmailHookParameterCustomization, _EmailHookParameterGenerated):
+    pass
 
-class EmailHookParameterPatch(msrest.serialization.Model):
+
+class _EmailHookParameterPatchGenerated(msrest.serialization.Model):
     """EmailHookParameterPatch.
 
     :ivar to_list: Email TO: list.
@@ -7135,8 +8171,11 @@ class EmailHookParameterPatch(msrest.serialization.Model):
         super(EmailHookParameterPatch, self).__init__(**kwargs)
         self.to_list = to_list
 
+class EmailHookParameterPatch(EmailHookParameterPatchCustomization, _EmailHookParameterPatchGenerated):
+    pass
 
-class EnrichmentStatus(msrest.serialization.Model):
+
+class _EnrichmentStatusGenerated(msrest.serialization.Model):
     """EnrichmentStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7172,8 +8211,11 @@ class EnrichmentStatus(msrest.serialization.Model):
         self.status = None
         self.message = None
 
+class EnrichmentStatus(EnrichmentStatusCustomization, _EnrichmentStatusGenerated):
+    pass
 
-class EnrichmentStatusList(msrest.serialization.Model):
+
+class _EnrichmentStatusListGenerated(msrest.serialization.Model):
     """EnrichmentStatusList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7204,8 +8246,11 @@ class EnrichmentStatusList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class EnrichmentStatusList(EnrichmentStatusListCustomization, _EnrichmentStatusListGenerated):
+    pass
 
-class EnrichmentStatusQueryOption(msrest.serialization.Model):
+
+class _EnrichmentStatusQueryOptionGenerated(msrest.serialization.Model):
     """EnrichmentStatusQueryOption.
 
     All required parameters must be populated in order to send to Azure.
@@ -7243,8 +8288,11 @@ class EnrichmentStatusQueryOption(msrest.serialization.Model):
         self.start_time = start_time
         self.end_time = end_time
 
+class EnrichmentStatusQueryOption(EnrichmentStatusQueryOptionCustomization, _EnrichmentStatusQueryOptionGenerated):
+    pass
 
-class ErrorCode(msrest.serialization.Model):
+
+class _ErrorCodeGenerated(msrest.serialization.Model):
     """ErrorCode.
 
     :ivar message:
@@ -7275,8 +8323,11 @@ class ErrorCode(msrest.serialization.Model):
         self.message = message
         self.code = code
 
+class ErrorCode(ErrorCodeCustomization, _ErrorCodeGenerated):
+    pass
 
-class FeedbackDimensionFilter(msrest.serialization.Model):
+
+class _FeedbackDimensionFilterGenerated(msrest.serialization.Model):
     """FeedbackDimensionFilter.
 
     All required parameters must be populated in order to send to Azure.
@@ -7306,8 +8357,11 @@ class FeedbackDimensionFilter(msrest.serialization.Model):
         super(FeedbackDimensionFilter, self).__init__(**kwargs)
         self.dimension = dimension
 
+class FeedbackDimensionFilter(FeedbackDimensionFilterCustomization, _FeedbackDimensionFilterGenerated):
+    pass
 
-class HardThresholdCondition(msrest.serialization.Model):
+
+class _HardThresholdConditionGenerated(msrest.serialization.Model):
     """HardThresholdCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -7371,8 +8425,11 @@ class HardThresholdCondition(msrest.serialization.Model):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+class HardThresholdCondition(HardThresholdConditionCustomization, _HardThresholdConditionGenerated):
+    pass
 
-class HardThresholdConditionPatch(msrest.serialization.Model):
+
+class _HardThresholdConditionPatchGenerated(msrest.serialization.Model):
     """HardThresholdConditionPatch.
 
     :ivar lower_bound: lower bound
@@ -7429,8 +8486,11 @@ class HardThresholdConditionPatch(msrest.serialization.Model):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+class HardThresholdConditionPatch(HardThresholdConditionPatchCustomization, _HardThresholdConditionPatchGenerated):
+    pass
 
-class HookList(msrest.serialization.Model):
+
+class _HookListGenerated(msrest.serialization.Model):
     """HookList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7461,8 +8521,11 @@ class HookList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class HookList(HookListCustomization, _HookListGenerated):
+    pass
 
-class IncidentProperty(msrest.serialization.Model):
+
+class _IncidentPropertyGenerated(msrest.serialization.Model):
     """IncidentProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7513,8 +8576,11 @@ class IncidentProperty(msrest.serialization.Model):
         self.value_of_root_node = None
         self.expected_value_of_root_node = None
 
+class IncidentProperty(IncidentPropertyCustomization, _IncidentPropertyGenerated):
+    pass
 
-class IncidentResult(msrest.serialization.Model):
+
+class _IncidentResultGenerated(msrest.serialization.Model):
     """IncidentResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7599,8 +8665,11 @@ class IncidentResult(msrest.serialization.Model):
         self.root_node = root_node
         self.property = property
 
+class IncidentResult(IncidentResultCustomization, _IncidentResultGenerated):
+    pass
 
-class IncidentResultList(msrest.serialization.Model):
+
+class _IncidentResultListGenerated(msrest.serialization.Model):
     """IncidentResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7637,8 +8706,11 @@ class IncidentResultList(msrest.serialization.Model):
         self.next_link = None
         self.value = value
 
+class IncidentResultList(IncidentResultListCustomization, _IncidentResultListGenerated):
+    pass
 
-class InfluxDBDataFeed(DataFeedDetail):
+
+class _InfluxDBDataFeedGenerated(DataFeedDetail):
     """InfluxDBDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7873,8 +8945,11 @@ class InfluxDBDataFeed(DataFeedDetail):
         self.data_source_type = 'InfluxDB'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class InfluxDBDataFeed(InfluxDBDataFeedCustomization, _InfluxDBDataFeedGenerated):
+    pass
 
-class InfluxDBDataFeedPatch(DataFeedDetailPatch):
+
+class _InfluxDBDataFeedPatchGenerated(DataFeedDetailPatch):
     """InfluxDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -8061,8 +9136,11 @@ class InfluxDBDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'InfluxDB'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class InfluxDBDataFeedPatch(InfluxDBDataFeedPatchCustomization, _InfluxDBDataFeedPatchGenerated):
+    pass
 
-class InfluxDBParameter(msrest.serialization.Model):
+
+class _InfluxDBParameterGenerated(msrest.serialization.Model):
     """InfluxDBParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -8120,8 +9198,11 @@ class InfluxDBParameter(msrest.serialization.Model):
         self.password = password
         self.query = query
 
+class InfluxDBParameter(InfluxDBParameterCustomization, _InfluxDBParameterGenerated):
+    pass
 
-class InfluxDBParameterPatch(msrest.serialization.Model):
+
+class _InfluxDBParameterPatchGenerated(msrest.serialization.Model):
     """InfluxDBParameterPatch.
 
     :ivar connection_string: The connection string of this InfluxDB.
@@ -8173,8 +9254,11 @@ class InfluxDBParameterPatch(msrest.serialization.Model):
         self.password = password
         self.query = query
 
+class InfluxDBParameterPatch(InfluxDBParameterPatchCustomization, _InfluxDBParameterPatchGenerated):
+    pass
 
-class IngestionProgressResetOptions(msrest.serialization.Model):
+
+class _IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
     """IngestionProgressResetOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8212,8 +9296,11 @@ class IngestionProgressResetOptions(msrest.serialization.Model):
         self.start_time = start_time
         self.end_time = end_time
 
+class IngestionProgressResetOptions(IngestionProgressResetOptionsCustomization, _IngestionProgressResetOptionsGenerated):
+    pass
 
-class IngestionStatus(msrest.serialization.Model):
+
+class _IngestionStatusGenerated(msrest.serialization.Model):
     """IngestionStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8250,8 +9337,11 @@ class IngestionStatus(msrest.serialization.Model):
         self.status = None
         self.message = None
 
+class IngestionStatus(IngestionStatusCustomization, _IngestionStatusGenerated):
+    pass
 
-class IngestionStatusList(msrest.serialization.Model):
+
+class _IngestionStatusListGenerated(msrest.serialization.Model):
     """IngestionStatusList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8282,8 +9372,11 @@ class IngestionStatusList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class IngestionStatusList(IngestionStatusListCustomization, _IngestionStatusListGenerated):
+    pass
 
-class IngestionStatusQueryOptions(msrest.serialization.Model):
+
+class _IngestionStatusQueryOptionsGenerated(msrest.serialization.Model):
     """IngestionStatusQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8321,8 +9414,11 @@ class IngestionStatusQueryOptions(msrest.serialization.Model):
         self.start_time = start_time
         self.end_time = end_time
 
+class IngestionStatusQueryOptions(IngestionStatusQueryOptionsCustomization, _IngestionStatusQueryOptionsGenerated):
+    pass
 
-class Metric(msrest.serialization.Model):
+
+class _MetricGenerated(msrest.serialization.Model):
     """Metric.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8374,8 +9470,11 @@ class Metric(msrest.serialization.Model):
         self.metric_display_name = metric_display_name
         self.metric_description = metric_description
 
+class Metric(MetricCustomization, _MetricGenerated):
+    pass
 
-class MetricAlertingConfiguration(msrest.serialization.Model):
+
+class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
     """MetricAlertingConfiguration.
 
     All required parameters must be populated in order to send to Azure.
@@ -8458,8 +9557,11 @@ class MetricAlertingConfiguration(msrest.serialization.Model):
         self.snooze_filter = snooze_filter
         self.value_filter = value_filter
 
+class MetricAlertingConfiguration(MetricAlertingConfigurationCustomization, _MetricAlertingConfigurationGenerated):
+    pass
 
-class MetricDataItem(msrest.serialization.Model):
+
+class _MetricDataItemGenerated(msrest.serialization.Model):
     """MetricDataItem.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8498,8 +9600,11 @@ class MetricDataItem(msrest.serialization.Model):
         self.timestamp_list = None
         self.value_list = None
 
+class MetricDataItem(MetricDataItemCustomization, _MetricDataItemGenerated):
+    pass
 
-class MetricDataList(msrest.serialization.Model):
+
+class _MetricDataListGenerated(msrest.serialization.Model):
     """MetricDataList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8525,8 +9630,11 @@ class MetricDataList(msrest.serialization.Model):
         super(MetricDataList, self).__init__(**kwargs)
         self.value = None
 
+class MetricDataList(MetricDataListCustomization, _MetricDataListGenerated):
+    pass
 
-class MetricDataQueryOptions(msrest.serialization.Model):
+
+class _MetricDataQueryOptionsGenerated(msrest.serialization.Model):
     """MetricDataQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8576,8 +9684,11 @@ class MetricDataQueryOptions(msrest.serialization.Model):
         self.end_time = end_time
         self.series = series
 
+class MetricDataQueryOptions(MetricDataQueryOptionsCustomization, _MetricDataQueryOptionsGenerated):
+    pass
 
-class MetricDimensionList(msrest.serialization.Model):
+
+class _MetricDimensionListGenerated(msrest.serialization.Model):
     """MetricDimensionList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8608,8 +9719,11 @@ class MetricDimensionList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class MetricDimensionList(MetricDimensionListCustomization, _MetricDimensionListGenerated):
+    pass
 
-class MetricDimensionQueryOptions(msrest.serialization.Model):
+
+class _MetricDimensionQueryOptionsGenerated(msrest.serialization.Model):
     """MetricDimensionQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8646,8 +9760,11 @@ class MetricDimensionQueryOptions(msrest.serialization.Model):
         self.dimension_name = dimension_name
         self.dimension_value_filter = dimension_value_filter
 
+class MetricDimensionQueryOptions(MetricDimensionQueryOptionsCustomization, _MetricDimensionQueryOptionsGenerated):
+    pass
 
-class MetricFeedbackFilter(msrest.serialization.Model):
+
+class _MetricFeedbackFilterGenerated(msrest.serialization.Model):
     """MetricFeedbackFilter.
 
     All required parameters must be populated in order to send to Azure.
@@ -8716,8 +9833,11 @@ class MetricFeedbackFilter(msrest.serialization.Model):
         self.end_time = end_time
         self.time_mode = time_mode
 
+class MetricFeedbackFilter(MetricFeedbackFilterCustomization, _MetricFeedbackFilterGenerated):
+    pass
 
-class MetricFeedbackList(msrest.serialization.Model):
+
+class _MetricFeedbackListGenerated(msrest.serialization.Model):
     """MetricFeedbackList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8748,8 +9868,11 @@ class MetricFeedbackList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class MetricFeedbackList(MetricFeedbackListCustomization, _MetricFeedbackListGenerated):
+    pass
 
-class MetricSeriesItem(msrest.serialization.Model):
+
+class _MetricSeriesItemGenerated(msrest.serialization.Model):
     """MetricSeriesItem.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8780,8 +9903,11 @@ class MetricSeriesItem(msrest.serialization.Model):
         self.metric_id = None
         self.dimension = None
 
+class MetricSeriesItem(MetricSeriesItemCustomization, _MetricSeriesItemGenerated):
+    pass
 
-class MetricSeriesList(msrest.serialization.Model):
+
+class _MetricSeriesListGenerated(msrest.serialization.Model):
     """MetricSeriesList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8812,8 +9938,11 @@ class MetricSeriesList(msrest.serialization.Model):
         self.next_link = None
         self.value = None
 
+class MetricSeriesList(MetricSeriesListCustomization, _MetricSeriesListGenerated):
+    pass
 
-class MetricSeriesQueryOptions(msrest.serialization.Model):
+
+class _MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
     """MetricSeriesQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8852,8 +9981,11 @@ class MetricSeriesQueryOptions(msrest.serialization.Model):
         self.active_since = active_since
         self.dimension_filter = dimension_filter
 
+class MetricSeriesQueryOptions(MetricSeriesQueryOptionsCustomization, _MetricSeriesQueryOptionsGenerated):
+    pass
 
-class MongoDBDataFeed(DataFeedDetail):
+
+class _MongoDBDataFeedGenerated(DataFeedDetail):
     """MongoDBDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9088,8 +10220,11 @@ class MongoDBDataFeed(DataFeedDetail):
         self.data_source_type = 'MongoDB'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class MongoDBDataFeed(MongoDBDataFeedCustomization, _MongoDBDataFeedGenerated):
+    pass
 
-class MongoDBDataFeedPatch(DataFeedDetailPatch):
+
+class _MongoDBDataFeedPatchGenerated(DataFeedDetailPatch):
     """MongoDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -9276,8 +10411,11 @@ class MongoDBDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'MongoDB'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class MongoDBDataFeedPatch(MongoDBDataFeedPatchCustomization, _MongoDBDataFeedPatchGenerated):
+    pass
 
-class MongoDBParameter(msrest.serialization.Model):
+
+class _MongoDBParameterGenerated(msrest.serialization.Model):
     """MongoDBParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -9321,8 +10459,11 @@ class MongoDBParameter(msrest.serialization.Model):
         self.database = database
         self.command = command
 
+class MongoDBParameter(MongoDBParameterCustomization, _MongoDBParameterGenerated):
+    pass
 
-class MongoDBParameterPatch(msrest.serialization.Model):
+
+class _MongoDBParameterPatchGenerated(msrest.serialization.Model):
     """MongoDBParameterPatch.
 
     :ivar connection_string: The connection string of this MongoDB.
@@ -9360,8 +10501,11 @@ class MongoDBParameterPatch(msrest.serialization.Model):
         self.database = database
         self.command = command
 
+class MongoDBParameterPatch(MongoDBParameterPatchCustomization, _MongoDBParameterPatchGenerated):
+    pass
 
-class MySqlDataFeed(DataFeedDetail):
+
+class _MySqlDataFeedGenerated(DataFeedDetail):
     """MySqlDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9596,8 +10740,11 @@ class MySqlDataFeed(DataFeedDetail):
         self.data_source_type = 'MySql'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class MySqlDataFeed(MySqlDataFeedCustomization, _MySqlDataFeedGenerated):
+    pass
 
-class MySqlDataFeedPatch(DataFeedDetailPatch):
+
+class _MySqlDataFeedPatchGenerated(DataFeedDetailPatch):
     """MySqlDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -9784,8 +10931,11 @@ class MySqlDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'MySql'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class MySqlDataFeedPatch(MySqlDataFeedPatchCustomization, _MySqlDataFeedPatchGenerated):
+    pass
 
-class PeriodFeedback(MetricFeedback):
+
+class _PeriodFeedbackGenerated(MetricFeedback):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9849,8 +10999,11 @@ class PeriodFeedback(MetricFeedback):
         self.feedback_type = 'Period'  # type: str
         self.value = value
 
+class PeriodFeedback(PeriodFeedbackCustomization, _PeriodFeedbackGenerated):
+    pass
 
-class PeriodFeedbackValue(msrest.serialization.Model):
+
+class _PeriodFeedbackValueGenerated(msrest.serialization.Model):
     """PeriodFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -9892,8 +11045,11 @@ class PeriodFeedbackValue(msrest.serialization.Model):
         self.period_type = period_type
         self.period_value = period_value
 
+class PeriodFeedbackValue(PeriodFeedbackValueCustomization, _PeriodFeedbackValueGenerated):
+    pass
 
-class PostgreSqlDataFeed(DataFeedDetail):
+
+class _PostgreSqlDataFeedGenerated(DataFeedDetail):
     """PostgreSqlDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10128,8 +11284,11 @@ class PostgreSqlDataFeed(DataFeedDetail):
         self.data_source_type = 'PostgreSql'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class PostgreSqlDataFeed(PostgreSqlDataFeedCustomization, _PostgreSqlDataFeedGenerated):
+    pass
 
-class PostgreSqlDataFeedPatch(DataFeedDetailPatch):
+
+class _PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatch):
     """PostgreSqlDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10316,8 +11475,11 @@ class PostgreSqlDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'PostgreSql'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class PostgreSqlDataFeedPatch(PostgreSqlDataFeedPatchCustomization, _PostgreSqlDataFeedPatchGenerated):
+    pass
 
-class RootCause(msrest.serialization.Model):
+
+class _RootCauseGenerated(msrest.serialization.Model):
     """RootCause.
 
     All required parameters must be populated in order to send to Azure.
@@ -10371,8 +11533,11 @@ class RootCause(msrest.serialization.Model):
         self.score = score
         self.description = description
 
+class RootCause(RootCauseCustomization, _RootCauseGenerated):
+    pass
 
-class RootCauseList(msrest.serialization.Model):
+
+class _RootCauseListGenerated(msrest.serialization.Model):
     """RootCauseList.
 
     All required parameters must be populated in order to send to Azure.
@@ -10402,8 +11567,11 @@ class RootCauseList(msrest.serialization.Model):
         super(RootCauseList, self).__init__(**kwargs)
         self.value = value
 
+class RootCauseList(RootCauseListCustomization, _RootCauseListGenerated):
+    pass
 
-class SeriesConfiguration(msrest.serialization.Model):
+
+class _SeriesConfigurationGenerated(msrest.serialization.Model):
     """SeriesConfiguration.
 
     All required parameters must be populated in order to send to Azure.
@@ -10469,8 +11637,11 @@ class SeriesConfiguration(msrest.serialization.Model):
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
 
+class SeriesConfiguration(SeriesConfigurationCustomization, _SeriesConfigurationGenerated):
+    pass
 
-class SeriesIdentity(msrest.serialization.Model):
+
+class _SeriesIdentityGenerated(msrest.serialization.Model):
     """SeriesIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -10500,8 +11671,11 @@ class SeriesIdentity(msrest.serialization.Model):
         super(SeriesIdentity, self).__init__(**kwargs)
         self.dimension = dimension
 
+class SeriesIdentity(SeriesIdentityCustomization, _SeriesIdentityGenerated):
+    pass
 
-class SeriesResult(msrest.serialization.Model):
+
+class _SeriesResultGenerated(msrest.serialization.Model):
     """SeriesResult.
 
     All required parameters must be populated in order to send to Azure.
@@ -10589,8 +11763,11 @@ class SeriesResult(msrest.serialization.Model):
         self.lower_boundary_list = lower_boundary_list
         self.upper_boundary_list = upper_boundary_list
 
+class SeriesResult(SeriesResultCustomization, _SeriesResultGenerated):
+    pass
 
-class SeriesResultList(msrest.serialization.Model):
+
+class _SeriesResultListGenerated(msrest.serialization.Model):
     """SeriesResultList.
 
     All required parameters must be populated in order to send to Azure.
@@ -10620,8 +11797,11 @@ class SeriesResultList(msrest.serialization.Model):
         super(SeriesResultList, self).__init__(**kwargs)
         self.value = value
 
+class SeriesResultList(SeriesResultListCustomization, _SeriesResultListGenerated):
+    pass
 
-class ServicePrincipalCredential(DataSourceCredential):
+
+class _ServicePrincipalCredentialGenerated(DataSourceCredential):
     """ServicePrincipalCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10678,8 +11858,11 @@ class ServicePrincipalCredential(DataSourceCredential):
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
         self.parameters = parameters
 
+class ServicePrincipalCredential(ServicePrincipalCredentialCustomization, _ServicePrincipalCredentialGenerated):
+    pass
 
-class ServicePrincipalCredentialPatch(DataSourceCredentialPatch):
+
+class _ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatch):
     """ServicePrincipalCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10728,8 +11911,11 @@ class ServicePrincipalCredentialPatch(DataSourceCredentialPatch):
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
         self.parameters = parameters
 
+class ServicePrincipalCredentialPatch(ServicePrincipalCredentialPatchCustomization, _ServicePrincipalCredentialPatchGenerated):
+    pass
 
-class ServicePrincipalInKVCredential(DataSourceCredential):
+
+class _ServicePrincipalInKVCredentialGenerated(DataSourceCredential):
     """ServicePrincipalInKVCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10786,8 +11972,11 @@ class ServicePrincipalInKVCredential(DataSourceCredential):
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
         self.parameters = parameters
 
+class ServicePrincipalInKVCredential(ServicePrincipalInKVCredentialCustomization, _ServicePrincipalInKVCredentialGenerated):
+    pass
 
-class ServicePrincipalInKVCredentialPatch(DataSourceCredentialPatch):
+
+class _ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatch):
     """ServicePrincipalInKVCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10836,8 +12025,11 @@ class ServicePrincipalInKVCredentialPatch(DataSourceCredentialPatch):
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
         self.parameters = parameters
 
+class ServicePrincipalInKVCredentialPatch(ServicePrincipalInKVCredentialPatchCustomization, _ServicePrincipalInKVCredentialPatchGenerated):
+    pass
 
-class ServicePrincipalInKVParam(msrest.serialization.Model):
+
+class _ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
     """ServicePrincipalInKVParam.
 
     All required parameters must be populated in order to send to Azure.
@@ -10911,8 +12103,11 @@ class ServicePrincipalInKVParam(msrest.serialization.Model):
         self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
         self.tenant_id = tenant_id
 
+class ServicePrincipalInKVParam(ServicePrincipalInKVParamCustomization, _ServicePrincipalInKVParamGenerated):
+    pass
 
-class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
+
+class _ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
     """ServicePrincipalInKVParamPatch.
 
     :ivar key_vault_endpoint: The Key Vault endpoint that storing the service principal.
@@ -10975,8 +12170,11 @@ class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
         self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
         self.tenant_id = tenant_id
 
+class ServicePrincipalInKVParamPatch(ServicePrincipalInKVParamPatchCustomization, _ServicePrincipalInKVParamPatchGenerated):
+    pass
 
-class ServicePrincipalParam(msrest.serialization.Model):
+
+class _ServicePrincipalParamGenerated(msrest.serialization.Model):
     """ServicePrincipalParam.
 
     All required parameters must be populated in order to send to Azure.
@@ -11021,8 +12219,11 @@ class ServicePrincipalParam(msrest.serialization.Model):
         self.client_secret = client_secret
         self.tenant_id = tenant_id
 
+class ServicePrincipalParam(ServicePrincipalParamCustomization, _ServicePrincipalParamGenerated):
+    pass
 
-class ServicePrincipalParamPatch(msrest.serialization.Model):
+
+class _ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
     """ServicePrincipalParamPatch.
 
     :ivar client_id: The client id of the service principal.
@@ -11060,8 +12261,11 @@ class ServicePrincipalParamPatch(msrest.serialization.Model):
         self.client_secret = client_secret
         self.tenant_id = tenant_id
 
+class ServicePrincipalParamPatch(ServicePrincipalParamPatchCustomization, _ServicePrincipalParamPatchGenerated):
+    pass
 
-class SeverityCondition(msrest.serialization.Model):
+
+class _SeverityConditionGenerated(msrest.serialization.Model):
     """SeverityCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11103,8 +12307,11 @@ class SeverityCondition(msrest.serialization.Model):
         self.min_alert_severity = min_alert_severity
         self.max_alert_severity = max_alert_severity
 
+class SeverityCondition(SeverityConditionCustomization, _SeverityConditionGenerated):
+    pass
 
-class SeverityFilterCondition(msrest.serialization.Model):
+
+class _SeverityFilterConditionGenerated(msrest.serialization.Model):
     """SeverityFilterCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11142,8 +12349,11 @@ class SeverityFilterCondition(msrest.serialization.Model):
         self.min = min
         self.max = max
 
+class SeverityFilterCondition(SeverityFilterConditionCustomization, _SeverityFilterConditionGenerated):
+    pass
 
-class SmartDetectionCondition(msrest.serialization.Model):
+
+class _SmartDetectionConditionGenerated(msrest.serialization.Model):
     """SmartDetectionCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11193,8 +12403,11 @@ class SmartDetectionCondition(msrest.serialization.Model):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+class SmartDetectionCondition(SmartDetectionConditionCustomization, _SmartDetectionConditionGenerated):
+    pass
 
-class SmartDetectionConditionPatch(msrest.serialization.Model):
+
+class _SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
     """SmartDetectionConditionPatch.
 
     :ivar sensitivity: sensitivity, value range : (0, 100].
@@ -11236,8 +12449,11 @@ class SmartDetectionConditionPatch(msrest.serialization.Model):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+class SmartDetectionConditionPatch(SmartDetectionConditionPatchCustomization, _SmartDetectionConditionPatchGenerated):
+    pass
 
-class SQLServerDataFeed(DataFeedDetail):
+
+class _SQLServerDataFeedGenerated(DataFeedDetail):
     """SQLServerDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11472,8 +12688,11 @@ class SQLServerDataFeed(DataFeedDetail):
         self.data_source_type = 'SqlServer'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class SQLServerDataFeed(SQLServerDataFeedCustomization, _SQLServerDataFeedGenerated):
+    pass
 
-class SQLServerDataFeedPatch(DataFeedDetailPatch):
+
+class _SQLServerDataFeedPatchGenerated(DataFeedDetailPatch):
     """SQLServerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -11660,8 +12879,11 @@ class SQLServerDataFeedPatch(DataFeedDetailPatch):
         self.data_source_type = 'SqlServer'  # type: str
         self.data_source_parameter = data_source_parameter
 
+class SQLServerDataFeedPatch(SQLServerDataFeedPatchCustomization, _SQLServerDataFeedPatchGenerated):
+    pass
 
-class SqlSourceParameter(msrest.serialization.Model):
+
+class _SqlSourceParameterGenerated(msrest.serialization.Model):
     """SqlSourceParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -11698,8 +12920,11 @@ class SqlSourceParameter(msrest.serialization.Model):
         self.connection_string = connection_string
         self.query = query
 
+class SqlSourceParameter(SqlSourceParameterCustomization, _SqlSourceParameterGenerated):
+    pass
 
-class SQLSourceParameterPatch(msrest.serialization.Model):
+
+class _SQLSourceParameterPatchGenerated(msrest.serialization.Model):
     """SQLSourceParameterPatch.
 
     :ivar connection_string: The connection string of this database.
@@ -11730,8 +12955,11 @@ class SQLSourceParameterPatch(msrest.serialization.Model):
         self.connection_string = connection_string
         self.query = query
 
+class SQLSourceParameterPatch(SQLSourceParameterPatchCustomization, _SQLSourceParameterPatchGenerated):
+    pass
 
-class SuppressCondition(msrest.serialization.Model):
+
+class _SuppressConditionGenerated(msrest.serialization.Model):
     """SuppressCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11769,8 +12997,11 @@ class SuppressCondition(msrest.serialization.Model):
         self.min_number = min_number
         self.min_ratio = min_ratio
 
+class SuppressCondition(SuppressConditionCustomization, _SuppressConditionGenerated):
+    pass
 
-class SuppressConditionPatch(msrest.serialization.Model):
+
+class _SuppressConditionPatchGenerated(msrest.serialization.Model):
     """SuppressConditionPatch.
 
     :ivar min_number: min point number, value range : [1, +∞).
@@ -11801,8 +13032,11 @@ class SuppressConditionPatch(msrest.serialization.Model):
         self.min_number = min_number
         self.min_ratio = min_ratio
 
+class SuppressConditionPatch(SuppressConditionPatchCustomization, _SuppressConditionPatchGenerated):
+    pass
 
-class TopNGroupScope(msrest.serialization.Model):
+
+class _TopNGroupScopeGenerated(msrest.serialization.Model):
     """TopNGroupScope.
 
     All required parameters must be populated in order to send to Azure.
@@ -11852,8 +13086,11 @@ class TopNGroupScope(msrest.serialization.Model):
         self.period = period
         self.min_top_count = min_top_count
 
+class TopNGroupScope(TopNGroupScopeCustomization, _TopNGroupScopeGenerated):
+    pass
 
-class UsageStats(msrest.serialization.Model):
+
+class _UsageStatsGenerated(msrest.serialization.Model):
     """UsageStats.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11899,8 +13136,11 @@ class UsageStats(msrest.serialization.Model):
         self.metrics_count = None
         self.data_feed_count = None
 
+class UsageStats(UsageStatsCustomization, _UsageStatsGenerated):
+    pass
 
-class ValueCondition(msrest.serialization.Model):
+
+class _ValueConditionGenerated(msrest.serialization.Model):
     """ValueCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11983,8 +13223,11 @@ class ValueCondition(msrest.serialization.Model):
         self.metric_id = metric_id
         self.trigger_for_missing = trigger_for_missing
 
+class ValueCondition(ValueConditionCustomization, _ValueConditionGenerated):
+    pass
 
-class WebhookHookInfo(HookInfo):
+
+class _WebhookHookInfoGenerated(HookInfo):
     """WebhookHookInfo.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12052,8 +13295,11 @@ class WebhookHookInfo(HookInfo):
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = hook_parameter
 
+class WebhookHookInfo(WebhookHookInfoCustomization, _WebhookHookInfoGenerated):
+    pass
 
-class WebhookHookInfoPatch(HookInfoPatch):
+
+class _WebhookHookInfoPatchGenerated(HookInfoPatch):
     """WebhookHookInfoPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -12113,8 +13359,11 @@ class WebhookHookInfoPatch(HookInfoPatch):
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = hook_parameter
 
+class WebhookHookInfoPatch(WebhookHookInfoPatchCustomization, _WebhookHookInfoPatchGenerated):
+    pass
 
-class WebhookHookParameter(msrest.serialization.Model):
+
+class _WebhookHookParameterGenerated(msrest.serialization.Model):
     """WebhookHookParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -12185,8 +13434,11 @@ class WebhookHookParameter(msrest.serialization.Model):
         self.certificate_key = certificate_key
         self.certificate_password = certificate_password
 
+class WebhookHookParameter(WebhookHookParameterCustomization, _WebhookHookParameterGenerated):
+    pass
 
-class WebhookHookParameterPatch(msrest.serialization.Model):
+
+class _WebhookHookParameterPatchGenerated(msrest.serialization.Model):
     """WebhookHookParameterPatch.
 
     :ivar endpoint: API address, will be called when alert is triggered, only support POST method
@@ -12247,8 +13499,11 @@ class WebhookHookParameterPatch(msrest.serialization.Model):
         self.certificate_key = certificate_key
         self.certificate_password = certificate_password
 
+class WebhookHookParameterPatch(WebhookHookParameterPatchCustomization, _WebhookHookParameterPatchGenerated):
+    pass
 
-class WholeMetricConfiguration(msrest.serialization.Model):
+
+class _WholeMetricConfigurationGenerated(msrest.serialization.Model):
     """WholeMetricConfiguration.
 
     :ivar condition_operator: condition operator
@@ -12301,8 +13556,11 @@ class WholeMetricConfiguration(msrest.serialization.Model):
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
 
+class WholeMetricConfiguration(WholeMetricConfigurationCustomization, _WholeMetricConfigurationGenerated):
+    pass
 
-class WholeMetricConfigurationPatch(msrest.serialization.Model):
+
+class _WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
     """WholeMetricConfigurationPatch.
 
     :ivar condition_operator: condition operator
@@ -12359,3 +13617,6 @@ class WholeMetricConfigurationPatch(msrest.serialization.Model):
         self.smart_detection_condition = smart_detection_condition
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
+
+class WholeMetricConfigurationPatch(WholeMetricConfigurationPatchCustomization, _WholeMetricConfigurationPatchGenerated):
+    pass

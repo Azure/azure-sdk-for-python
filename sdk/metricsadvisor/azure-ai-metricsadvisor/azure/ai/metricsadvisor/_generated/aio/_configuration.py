@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MetricsAdvisorConfiguration(Configuration):
-    """Configuration for MetricsAdvisor.
+class MetricsAdvisorClientConfiguration(Configuration):
+    """Configuration for MetricsAdvisorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -36,7 +36,7 @@ class MetricsAdvisorConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        super(MetricsAdvisorConfiguration, self).__init__(**kwargs)
+        super(MetricsAdvisorClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:

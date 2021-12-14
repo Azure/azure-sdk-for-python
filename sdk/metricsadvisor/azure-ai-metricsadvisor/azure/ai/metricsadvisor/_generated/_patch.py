@@ -558,7 +558,7 @@ class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
         ] = self._credential.subscription_key
         request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
 
-class MetricsAdvisorClient(object):
+class MetricsAdvisorClientCustomization:
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -577,10 +577,9 @@ class MetricsAdvisorClient(object):
                 endpoint = "https://" + endpoint
         except AttributeError:
             raise ValueError("Base URL must be a string.")
-
-        self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
-        self._client = _Client(
+        self._endpoint = endpoint
+        super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             sdk_moniker=SDK_MONIKER,
@@ -594,19 +593,7 @@ class MetricsAdvisorClient(object):
             :1024
         ]
 
-    def __enter__(self):
-        # type: () -> MetricsAdvisorClient
-        self._client.__enter__()  # pylint:disable=no-member
-        return self
-
-    def __exit__(self, *args):
-        # type: (*Any) -> None
-        self._client.__exit__(*args)  # pylint:disable=no-member
-
-    def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.ai.metricsadvisor.MetricsAdvisorClient` session."""
-        return self._client.close()
+class MetricsAdvisorClientOperationsMixinCustomization:
 
     @distributed_trace
     def add_feedback(self, feedback, **kwargs):
@@ -631,7 +618,7 @@ class MetricsAdvisorClient(object):
                 :caption: Add new feedback.
         """
 
-        return self._client.create_metric_feedback(
+        return super().add_feedback(
             body=feedback._to_generated(), **kwargs
         )
 
@@ -661,7 +648,7 @@ class MetricsAdvisorClient(object):
         """
 
         return convert_to_sub_feedback(
-            self._client.get_metric_feedback(feedback_id=feedback_id, **kwargs)
+            super().get_feedback(feedback_id=feedback_id, **kwargs)
         )
 
     @distributed_trace
@@ -717,7 +704,7 @@ class MetricsAdvisorClient(object):
             time_mode=time_mode,
         )
 
-        return self._client.list_metric_feedbacks(  # type: ignore
+        return super().list_feedback(  # type: ignore
             skip=skip,
             body=feedback_filter,
             cls=kwargs.pop(

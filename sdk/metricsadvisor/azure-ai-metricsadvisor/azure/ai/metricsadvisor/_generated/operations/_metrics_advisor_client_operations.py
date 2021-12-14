@@ -6,40 +6,1652 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
+from msrest import Serializer
 
-from ... import models as _models
-from ..._vendor import _convert_request
-from ...operations._metrics_advisor_operations import build_create_anomaly_alerting_configuration_request, build_create_anomaly_detection_configuration_request, build_create_credential_request, build_create_data_feed_request, build_create_hook_request, build_create_metric_feedback_request, build_delete_anomaly_alerting_configuration_request, build_delete_anomaly_detection_configuration_request, build_delete_credential_request, build_delete_data_feed_request, build_delete_hook_request, build_get_active_series_count_request, build_get_alerts_by_anomaly_alerting_configuration_request, build_get_anomalies_by_anomaly_detection_configuration_request, build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request, build_get_anomaly_alerting_configuration_request, build_get_anomaly_alerting_configurations_by_anomaly_detection_configuration_request, build_get_anomaly_detection_configuration_request, build_get_anomaly_detection_configurations_by_metric_request, build_get_credential_request, build_get_data_feed_by_id_request, build_get_data_feed_ingestion_status_request, build_get_dimension_of_anomalies_by_anomaly_detection_configuration_request, build_get_enrichment_status_by_metric_request, build_get_hook_request, build_get_incidents_by_anomaly_detection_configuration_next_pages_request, build_get_incidents_by_anomaly_detection_configuration_request, build_get_incidents_from_alert_by_anomaly_alerting_configuration_request, build_get_ingestion_progress_request, build_get_metric_data_request, build_get_metric_dimension_request, build_get_metric_feedback_request, build_get_metric_series_request, build_get_root_cause_of_incident_by_anomaly_detection_configuration_request, build_get_series_by_anomaly_detection_configuration_request, build_list_credentials_request, build_list_data_feeds_request, build_list_hooks_request, build_list_metric_feedbacks_request, build_reset_data_feed_ingestion_status_request, build_update_anomaly_alerting_configuration_request, build_update_anomaly_detection_configuration_request, build_update_credential_request, build_update_data_feed_request, build_update_hook_request
+from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from .._patch import MetricsAdvisorOperationsMixinCustomization
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+
+    from ..._patch import AlertResultListCustomization, AlertingResultQueryCustomization, AnomalyAlertingConfigurationCustomization, AnomalyAlertingConfigurationListCustomization, AnomalyAlertingConfigurationPatchCustomization, AnomalyDetectionConfigurationCustomization, AnomalyDetectionConfigurationListCustomization, AnomalyDetectionConfigurationPatchCustomization, AnomalyDimensionListCustomization, AnomalyDimensionQueryCustomization, AnomalyResultListCustomization, DataFeedDetailCustomization, DataFeedDetailPatchCustomization, DataFeedIngestionProgressCustomization, DataFeedListCustomization, DataSourceCredentialCustomization, DataSourceCredentialListCustomization, DataSourceCredentialPatchCustomization, DetectionAnomalyResultQueryCustomization, DetectionIncidentResultQueryCustomization, DetectionSeriesQueryCustomization, EnrichmentStatusListCustomization, EnrichmentStatusQueryOptionCustomization, HookInfoCustomization, HookInfoPatchCustomization, HookListCustomization, IncidentResultListCustomization, IngestionProgressResetOptionsCustomization, IngestionStatusListCustomization, IngestionStatusQueryOptionsCustomization, MetricDataListCustomization, MetricDataQueryOptionsCustomization, MetricDimensionListCustomization, MetricDimensionQueryOptionsCustomization, MetricFeedbackCustomization, MetricFeedbackFilterCustomization, MetricFeedbackListCustomization, MetricSeriesListCustomization, MetricSeriesQueryOptionsCustomization, RootCauseListCustomization, SeriesResultListCustomization, UsageStatsCustomization
+    from .._patch import MetricsAdvisorClientOperationsMixinCustomization
 else:
     try:
-        from .._patch import MetricsAdvisorOperationsMixinCustomization
+        from .._patch import MetricsAdvisorClientOperationsMixinCustomization
     except ImportError:
-        class MetricsAdvisorOperationsMixinCustomization:
+        class MetricsAdvisorClientOperationsMixinCustomization(object):
             pass
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+    try:
+        from .._patch import UsageStatsCustomization
+    except ImportError:
+        class UsageStatsCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyAlertingConfigurationCustomization
+    except ImportError:
+        class AnomalyAlertingConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyAlertingConfigurationPatchCustomization
+    except ImportError:
+        class AnomalyAlertingConfigurationPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AlertingResultQueryCustomization
+    except ImportError:
+        class AlertingResultQueryCustomization(object):
+            pass
+    try:
+        from .._patch import AlertResultListCustomization
+    except ImportError:
+        class AlertResultListCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyResultListCustomization
+    except ImportError:
+        class AnomalyResultListCustomization(object):
+            pass
+    try:
+        from .._patch import IncidentResultListCustomization
+    except ImportError:
+        class IncidentResultListCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDetectionConfigurationCustomization
+    except ImportError:
+        class AnomalyDetectionConfigurationCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDetectionConfigurationPatchCustomization
+    except ImportError:
+        class AnomalyDetectionConfigurationPatchCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyAlertingConfigurationListCustomization
+    except ImportError:
+        class AnomalyAlertingConfigurationListCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionSeriesQueryCustomization
+    except ImportError:
+        class DetectionSeriesQueryCustomization(object):
+            pass
+    try:
+        from .._patch import SeriesResultListCustomization
+    except ImportError:
+        class SeriesResultListCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionAnomalyResultQueryCustomization
+    except ImportError:
+        class DetectionAnomalyResultQueryCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDimensionQueryCustomization
+    except ImportError:
+        class AnomalyDimensionQueryCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDimensionListCustomization
+    except ImportError:
+        class AnomalyDimensionListCustomization(object):
+            pass
+    try:
+        from .._patch import DetectionIncidentResultQueryCustomization
+    except ImportError:
+        class DetectionIncidentResultQueryCustomization(object):
+            pass
+    try:
+        from .._patch import RootCauseListCustomization
+    except ImportError:
+        class RootCauseListCustomization(object):
+            pass
+    try:
+        from .._patch import DataSourceCredentialCustomization
+    except ImportError:
+        class DataSourceCredentialCustomization(object):
+            pass
+    try:
+        from .._patch import DataSourceCredentialListCustomization
+    except ImportError:
+        class DataSourceCredentialListCustomization(object):
+            pass
+    try:
+        from .._patch import DataSourceCredentialPatchCustomization
+    except ImportError:
+        class DataSourceCredentialPatchCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedListCustomization
+    except ImportError:
+        class DataFeedListCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedDetailCustomization
+    except ImportError:
+        class DataFeedDetailCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedDetailPatchCustomization
+    except ImportError:
+        class DataFeedDetailPatchCustomization(object):
+            pass
+    try:
+        from .._patch import MetricFeedbackCustomization
+    except ImportError:
+        class MetricFeedbackCustomization(object):
+            pass
+    try:
+        from .._patch import MetricFeedbackFilterCustomization
+    except ImportError:
+        class MetricFeedbackFilterCustomization(object):
+            pass
+    try:
+        from .._patch import MetricFeedbackListCustomization
+    except ImportError:
+        class MetricFeedbackListCustomization(object):
+            pass
+    try:
+        from .._patch import HookListCustomization
+    except ImportError:
+        class HookListCustomization(object):
+            pass
+    try:
+        from .._patch import HookInfoCustomization
+    except ImportError:
+        class HookInfoCustomization(object):
+            pass
+    try:
+        from .._patch import HookInfoPatchCustomization
+    except ImportError:
+        class HookInfoPatchCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionStatusQueryOptionsCustomization
+    except ImportError:
+        class IngestionStatusQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionStatusListCustomization
+    except ImportError:
+        class IngestionStatusListCustomization(object):
+            pass
+    try:
+        from .._patch import IngestionProgressResetOptionsCustomization
+    except ImportError:
+        class IngestionProgressResetOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import DataFeedIngestionProgressCustomization
+    except ImportError:
+        class DataFeedIngestionProgressCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDataQueryOptionsCustomization
+    except ImportError:
+        class MetricDataQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDataListCustomization
+    except ImportError:
+        class MetricDataListCustomization(object):
+            pass
+    try:
+        from .._patch import MetricSeriesQueryOptionsCustomization
+    except ImportError:
+        class MetricSeriesQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MetricSeriesListCustomization
+    except ImportError:
+        class MetricSeriesListCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDimensionQueryOptionsCustomization
+    except ImportError:
+        class MetricDimensionQueryOptionsCustomization(object):
+            pass
+    try:
+        from .._patch import MetricDimensionListCustomization
+    except ImportError:
+        class MetricDimensionListCustomization(object):
+            pass
+    try:
+        from .._patch import AnomalyDetectionConfigurationListCustomization
+    except ImportError:
+        class AnomalyDetectionConfigurationListCustomization(object):
+            pass
+    try:
+        from .._patch import EnrichmentStatusQueryOptionCustomization
+    except ImportError:
+        class EnrichmentStatusQueryOptionCustomization(object):
+            pass
+    try:
+        from .._patch import EnrichmentStatusListCustomization
+    except ImportError:
+        class EnrichmentStatusListCustomization(object):
+            pass
+    T = TypeVar('T')
+    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class _MetricsAdvisorOperationsMixinGenerated:
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
 
-    @distributed_trace_async
-    async def get_active_series_count(
+def build_get_active_series_count_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/stats/latest')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_alert_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_alert_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_alert_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_alerting_configuration_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_alerts_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}/alerts/query')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
+    configuration_id,  # type: str
+    alert_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+        "alertId": _SERIALIZER.url("alert_id", alert_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
+    configuration_id,  # type: str
+    alert_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+        "alertId": _SERIALIZER.url("alert_id", alert_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_anomaly_detection_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_detection_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_detection_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_detection_configuration_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_alert_configurations_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_metric_enriched_series_data_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/series/query')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_anomalies_by_anomaly_detection_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/query')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_anomaly_dimension_values_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_incidents_by_anomaly_detection_configuration_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
+    configuration_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+    token = kwargs.pop('token', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+    if token is not None:
+        query_parameters['$token'] = _SERIALIZER.query("token", token, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_incident_root_causes_request(
+    configuration_id,  # type: str
+    incident_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause')
+    path_format_arguments = {
+        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, 'str'),
+        "incidentId": _SERIALIZER.url("incident_id", incident_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_datasource_credential_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/credentials')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_datasource_credentials_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/credentials')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_datasource_credential_request(
+    credential_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/credentials/{credentialId}')
+    path_format_arguments = {
+        "credentialId": _SERIALIZER.url("credential_id", credential_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_datasource_credential_request(
+    credential_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/credentials/{credentialId}')
+    path_format_arguments = {
+        "credentialId": _SERIALIZER.url("credential_id", credential_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_datasource_credential_request(
+    credential_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/credentials/{credentialId}')
+    path_format_arguments = {
+        "credentialId": _SERIALIZER.url("credential_id", credential_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_data_feeds_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    data_feed_name = kwargs.pop('data_feed_name', None)  # type: Optional[str]
+    data_source_type = kwargs.pop('data_source_type', None)  # type: Optional[Union[str, "_models.DataSourceType"]]
+    granularity_name = kwargs.pop('granularity_name', None)  # type: Optional[Union[str, "_models.Granularity"]]
+    status = kwargs.pop('status', None)  # type: Optional[Union[str, "_models.EntityStatus"]]
+    creator = kwargs.pop('creator', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if data_feed_name is not None:
+        query_parameters['dataFeedName'] = _SERIALIZER.query("data_feed_name", data_feed_name, 'str')
+    if data_source_type is not None:
+        query_parameters['dataSourceType'] = _SERIALIZER.query("data_source_type", data_source_type, 'str')
+    if granularity_name is not None:
+        query_parameters['granularityName'] = _SERIALIZER.query("granularity_name", granularity_name, 'str')
+    if status is not None:
+        query_parameters['status'] = _SERIALIZER.query("status", status, 'str')
+    if creator is not None:
+        query_parameters['creator'] = _SERIALIZER.query("creator", creator, 'str')
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_data_feed_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_data_feed_request(
+    data_feed_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}')
+    path_format_arguments = {
+        "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_data_feed_request(
+    data_feed_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}')
+    path_format_arguments = {
+        "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_data_feed_request(
+    data_feed_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}')
+    path_format_arguments = {
+        "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_feedback_request(
+    feedback_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/feedback/metric/{feedbackId}')
+    path_format_arguments = {
+        "feedbackId": _SERIALIZER.url("feedback_id", feedback_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_feedback_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/feedback/metric/query')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_add_feedback_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/feedback/metric')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_hooks_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    hook_name = kwargs.pop('hook_name', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/hooks')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if hook_name is not None:
+        query_parameters['hookName'] = _SERIALIZER.query("hook_name", hook_name, 'str')
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_hook_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/hooks')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_hook_request(
+    hook_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/hooks/{hookId}')
+    path_format_arguments = {
+        "hookId": _SERIALIZER.url("hook_id", hook_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_hook_request(
+    hook_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/hooks/{hookId}')
+    path_format_arguments = {
+        "hookId": _SERIALIZER.url("hook_id", hook_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_hook_request(
+    hook_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/hooks/{hookId}')
+    path_format_arguments = {
+        "hookId": _SERIALIZER.url("hook_id", hook_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_data_feed_ingestion_status_request(
+    data_feed_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}/ingestionStatus/query')
+    path_format_arguments = {
+        "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_refresh_data_feed_ingestion_request(
+    data_feed_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}/ingestionProgress/reset')
+    path_format_arguments = {
+        "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_data_feed_ingestion_progress_request(
+    data_feed_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}/ingestionProgress')
+    path_format_arguments = {
+        "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_metric_series_data_request(
+    metric_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metrics/{metricId}/data/query')
+    path_format_arguments = {
+        "metricId": _SERIALIZER.url("metric_id", metric_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_metric_series_definitions_request(
+    metric_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metrics/{metricId}/series/query')
+    path_format_arguments = {
+        "metricId": _SERIALIZER.url("metric_id", metric_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_metric_dimension_values_request(
+    metric_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metrics/{metricId}/dimension/query')
+    path_format_arguments = {
+        "metricId": _SERIALIZER.url("metric_id", metric_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_detection_configurations_request(
+    metric_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metrics/{metricId}/enrichment/anomalyDetection/configurations')
+    path_format_arguments = {
+        "metricId": _SERIALIZER.url("metric_id", metric_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_metric_enrichment_status_request(
+    metric_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/metrics/{metricId}/status/enrichment/anomalyDetection/query')
+    path_format_arguments = {
+        "metricId": _SERIALIZER.url("metric_id", metric_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if maxpagesize is not None:
+        query_parameters['$maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+# fmt: on
+class _MetricsAdvisorClientOperationsMixinGenerated(object):
+
+    @distributed_trace
+    def get_active_series_count(
         self,
-        **kwargs: Any
-    ) -> "_models.UsageStats":
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.UsageStats"
         """Get latest usage stats.
 
         Get latest usage stats.
@@ -65,7 +1677,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -83,12 +1695,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     get_active_series_count.metadata = {'url': '/stats/latest'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_anomaly_alerting_configuration(
+    @distributed_trace
+    def get_alert_configuration(
         self,
-        configuration_id: str,
-        **kwargs: Any
-    ) -> "_models.AnomalyAlertingConfiguration":
+        configuration_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnomalyAlertingConfiguration"
         """Query a single anomaly alerting configuration.
 
         Query a single anomaly alerting configuration.
@@ -107,9 +1720,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_anomaly_alerting_configuration_request(
+        request = build_get_alert_configuration_request(
             configuration_id=configuration_id,
-            template_url=self.get_anomaly_alerting_configuration.metadata['url'],
+            template_url=self.get_alert_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -117,7 +1730,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -132,16 +1745,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    get_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
+    get_alert_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def update_anomaly_alerting_configuration(
+    @distributed_trace
+    def update_alert_configuration(
         self,
-        configuration_id: str,
-        body: "_models.AnomalyAlertingConfigurationPatch",
-        **kwargs: Any
-    ) -> "_models.AnomalyAlertingConfiguration":
+        configuration_id,  # type: str
+        body,  # type: "_models.AnomalyAlertingConfigurationPatch"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnomalyAlertingConfiguration"
         """Update anomaly alerting configuration.
 
         Update anomaly alerting configuration.
@@ -165,11 +1779,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _content = self._serialize.body(body, 'AnomalyAlertingConfigurationPatch')
 
-        request = build_update_anomaly_alerting_configuration_request(
+        request = build_update_alert_configuration_request(
             configuration_id=configuration_id,
             content_type=content_type,
             content=_content,
-            template_url=self.update_anomaly_alerting_configuration.metadata['url'],
+            template_url=self.update_alert_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -177,7 +1791,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -192,15 +1806,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    update_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
+    update_alert_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def delete_anomaly_alerting_configuration(
+    @distributed_trace
+    def delete_alert_configuration(
         self,
-        configuration_id: str,
-        **kwargs: Any
-    ) -> None:
+        configuration_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Delete anomaly alerting configuration.
 
         Delete anomaly alerting configuration.
@@ -219,9 +1834,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_delete_anomaly_alerting_configuration_request(
+        request = build_delete_alert_configuration_request(
             configuration_id=configuration_id,
-            template_url=self.delete_anomaly_alerting_configuration.metadata['url'],
+            template_url=self.delete_alert_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -229,7 +1844,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -240,15 +1855,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
+    delete_alert_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def create_anomaly_alerting_configuration(
+    @distributed_trace
+    def create_alerting_configuration(
         self,
-        body: "_models.AnomalyAlertingConfiguration",
-        **kwargs: Any
-    ) -> None:
+        body,  # type: "_models.AnomalyAlertingConfiguration"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Create anomaly alerting configuration.
 
         Create anomaly alerting configuration.
@@ -270,10 +1886,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _json = self._serialize.body(body, 'AnomalyAlertingConfiguration')
 
-        request = build_create_anomaly_alerting_configuration_request(
+        request = build_create_alerting_configuration_request(
             content_type=content_type,
             json=_json,
-            template_url=self.create_anomaly_alerting_configuration.metadata['url'],
+            template_url=self.create_alerting_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -281,7 +1897,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -296,18 +1912,19 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations'}  # type: ignore
+    create_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations'}  # type: ignore
 
 
     @distributed_trace
-    def get_alerts_by_anomaly_alerting_configuration(
+    def list_alerts(
         self,
-        configuration_id: str,
-        body: "_models.AlertingResultQuery",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AlertResultList"]:
+        configuration_id,  # type: str
+        body,  # type: "_models.AlertingResultQuery"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AlertResultList"]
         """Query alerts under anomaly alerting configuration.
 
         Query alerts under anomaly alerting configuration.
@@ -322,8 +1939,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AlertResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AlertResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AlertResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -337,13 +1953,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'AlertingResultQuery')
                 
-                request = build_get_alerts_by_anomaly_alerting_configuration_request(
+                request = build_list_alerts_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_alerts_by_anomaly_alerting_configuration.metadata['url'],
+                    template_url=self.list_alerts.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -354,7 +1970,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'AlertingResultQuery')
                 
-                request = build_get_alerts_by_anomaly_alerting_configuration_request(
+                request = build_list_alerts_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
@@ -374,17 +1990,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("AlertResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -395,20 +2011,21 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_alerts_by_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/query'}  # type: ignore
+    list_alerts.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/query'}  # type: ignore
 
     @distributed_trace
     def get_anomalies_from_alert_by_anomaly_alerting_configuration(
         self,
-        configuration_id: str,
-        alert_id: str,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AnomalyResultList"]:
+        configuration_id,  # type: str
+        alert_id,  # type: str
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AnomalyResultList"]
         """Query anomalies under a specific alert.
 
         Query anomalies under a specific alert.
@@ -423,8 +2040,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyResultList"]
@@ -469,17 +2085,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("AnomalyResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -490,7 +2106,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     get_anomalies_from_alert_by_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies'}  # type: ignore
@@ -498,12 +2114,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     @distributed_trace
     def get_incidents_from_alert_by_anomaly_alerting_configuration(
         self,
-        configuration_id: str,
-        alert_id: str,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.IncidentResultList"]:
+        configuration_id,  # type: str
+        alert_id,  # type: str
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.IncidentResultList"]
         """Query incidents under a specific alert.
 
         Query incidents under a specific alert.
@@ -518,8 +2135,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IncidentResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IncidentResultList"]
@@ -564,17 +2180,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -585,17 +2201,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     get_incidents_from_alert_by_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents'}  # type: ignore
 
-    @distributed_trace_async
-    async def get_anomaly_detection_configuration(
+    @distributed_trace
+    def get_anomaly_detection_configuration(
         self,
-        configuration_id: str,
-        **kwargs: Any
-    ) -> "_models.AnomalyDetectionConfiguration":
+        configuration_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnomalyDetectionConfiguration"
         """Query a single anomaly detection configuration.
 
         Query a single anomaly detection configuration.
@@ -624,7 +2241,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -642,13 +2259,14 @@ class _MetricsAdvisorOperationsMixinGenerated:
     get_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def update_anomaly_detection_configuration(
+    @distributed_trace
+    def update_detection_configuration(
         self,
-        configuration_id: str,
-        body: "_models.AnomalyDetectionConfigurationPatch",
-        **kwargs: Any
-    ) -> "_models.AnomalyDetectionConfiguration":
+        configuration_id,  # type: str
+        body,  # type: "_models.AnomalyDetectionConfigurationPatch"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnomalyDetectionConfiguration"
         """Update anomaly detection configuration.
 
         Update anomaly detection configuration.
@@ -672,11 +2290,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _content = self._serialize.body(body, 'AnomalyDetectionConfigurationPatch')
 
-        request = build_update_anomaly_detection_configuration_request(
+        request = build_update_detection_configuration_request(
             configuration_id=configuration_id,
             content_type=content_type,
             content=_content,
-            template_url=self.update_anomaly_detection_configuration.metadata['url'],
+            template_url=self.update_detection_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -684,7 +2302,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -699,15 +2317,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    update_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
+    update_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def delete_anomaly_detection_configuration(
+    @distributed_trace
+    def delete_detection_configuration(
         self,
-        configuration_id: str,
-        **kwargs: Any
-    ) -> None:
+        configuration_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Delete anomaly detection configuration.
 
         Delete anomaly detection configuration.
@@ -726,9 +2345,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_delete_anomaly_detection_configuration_request(
+        request = build_delete_detection_configuration_request(
             configuration_id=configuration_id,
-            template_url=self.delete_anomaly_detection_configuration.metadata['url'],
+            template_url=self.delete_detection_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -736,7 +2355,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -747,15 +2366,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
+    delete_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def create_anomaly_detection_configuration(
+    @distributed_trace
+    def create_detection_configuration(
         self,
-        body: "_models.AnomalyDetectionConfiguration",
-        **kwargs: Any
-    ) -> None:
+        body,  # type: "_models.AnomalyDetectionConfiguration"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Create anomaly detection configuration.
 
         Create anomaly detection configuration.
@@ -777,10 +2397,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _json = self._serialize.body(body, 'AnomalyDetectionConfiguration')
 
-        request = build_create_anomaly_detection_configuration_request(
+        request = build_create_detection_configuration_request(
             content_type=content_type,
             json=_json,
-            template_url=self.create_anomaly_detection_configuration.metadata['url'],
+            template_url=self.create_detection_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -788,7 +2408,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -803,17 +2423,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations'}  # type: ignore
+    create_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations'}  # type: ignore
 
 
     @distributed_trace
-    def get_anomaly_alerting_configurations_by_anomaly_detection_configuration(
+    def list_alert_configurations(
         self,
-        configuration_id: str,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AnomalyAlertingConfigurationList"]:
+        configuration_id,  # type: str
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AnomalyAlertingConfigurationList"]
         """List all anomaly alerting configurations for specific anomaly detection configuration.
 
         List all anomaly alerting configurations for specific anomaly detection configuration.
@@ -828,7 +2449,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :return: An iterator like instance of either AnomalyAlertingConfigurationList or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationList]
+         ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyAlertingConfigurationList"]
@@ -839,11 +2460,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_get_anomaly_alerting_configurations_by_anomaly_detection_configuration_request(
+                request = build_list_alert_configurations_request(
                     configuration_id=configuration_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_anomaly_alerting_configurations_by_anomaly_detection_configuration.metadata['url'],
+                    template_url=self.list_alert_configurations.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -853,7 +2474,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
             else:
                 
-                request = build_get_anomaly_alerting_configurations_by_anomaly_detection_configuration_request(
+                request = build_list_alert_configurations_request(
                     configuration_id=configuration_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -871,17 +2492,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("AnomalyAlertingConfigurationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -892,18 +2513,19 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_anomaly_alerting_configurations_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations'}  # type: ignore
+    list_alert_configurations.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations'}  # type: ignore
 
     @distributed_trace
-    def get_series_by_anomaly_detection_configuration(
+    def list_metric_enriched_series_data(
         self,
-        configuration_id: str,
-        body: "_models.DetectionSeriesQuery",
-        **kwargs: Any
-    ) -> AsyncIterable["_models.SeriesResultList"]:
+        configuration_id,  # type: str
+        body,  # type: "_models.DetectionSeriesQuery"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.SeriesResultList"]
         """Query series enriched by anomaly detection.
 
         Query series enriched by anomaly detection.
@@ -914,8 +2536,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type body: ~azure.ai.metricsadvisor.models.DetectionSeriesQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SeriesResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.SeriesResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -929,11 +2550,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'DetectionSeriesQuery')
                 
-                request = build_get_series_by_anomaly_detection_configuration_request(
+                request = build_list_metric_enriched_series_data_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
-                    template_url=self.get_series_by_anomaly_detection_configuration.metadata['url'],
+                    template_url=self.list_metric_enriched_series_data.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -944,7 +2565,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'DetectionSeriesQuery')
                 
-                request = build_get_series_by_anomaly_detection_configuration_request(
+                request = build_list_metric_enriched_series_data_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
@@ -962,17 +2583,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("SeriesResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -983,20 +2604,21 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_series_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/series/query'}  # type: ignore
+    list_metric_enriched_series_data.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/series/query'}  # type: ignore
 
     @distributed_trace
     def get_anomalies_by_anomaly_detection_configuration(
         self,
-        configuration_id: str,
-        body: "_models.DetectionAnomalyResultQuery",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AnomalyResultList"]:
+        configuration_id,  # type: str
+        body,  # type: "_models.DetectionAnomalyResultQuery"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AnomalyResultList"]
         """Query anomalies under anomaly detection configuration.
 
         Query anomalies under anomaly detection configuration.
@@ -1011,8 +2633,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -1063,17 +2684,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("AnomalyResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1084,20 +2705,21 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     get_anomalies_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/query'}  # type: ignore
 
     @distributed_trace
-    def get_dimension_of_anomalies_by_anomaly_detection_configuration(
+    def list_anomaly_dimension_values(
         self,
-        configuration_id: str,
-        body: "_models.AnomalyDimensionQuery",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AnomalyDimensionList"]:
+        configuration_id,  # type: str
+        body,  # type: "_models.AnomalyDimensionQuery"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AnomalyDimensionList"]
         """Query dimension values of anomalies.
 
         Query dimension values of anomalies.
@@ -1113,8 +2735,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyDimensionList or the result of
          cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDimensionList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyDimensionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -1128,13 +2749,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'AnomalyDimensionQuery')
                 
-                request = build_get_dimension_of_anomalies_by_anomaly_detection_configuration_request(
+                request = build_list_anomaly_dimension_values_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_dimension_of_anomalies_by_anomaly_detection_configuration.metadata['url'],
+                    template_url=self.list_anomaly_dimension_values.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -1145,7 +2766,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'AnomalyDimensionQuery')
                 
-                request = build_get_dimension_of_anomalies_by_anomaly_detection_configuration_request(
+                request = build_list_anomaly_dimension_values_request(
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
@@ -1165,17 +2786,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("AnomalyDimensionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1186,19 +2807,20 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_dimension_of_anomalies_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query'}  # type: ignore
+    list_anomaly_dimension_values.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query'}  # type: ignore
 
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration(
         self,
-        configuration_id: str,
-        body: "_models.DetectionIncidentResultQuery",
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.IncidentResultList"]:
+        configuration_id,  # type: str
+        body,  # type: "_models.DetectionIncidentResultQuery"
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.IncidentResultList"]
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -1211,8 +2833,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IncidentResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -1261,17 +2882,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1282,7 +2903,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     get_incidents_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query'}  # type: ignore
@@ -1290,11 +2911,12 @@ class _MetricsAdvisorOperationsMixinGenerated:
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration_next_pages(
         self,
-        configuration_id: str,
-        maxpagesize: Optional[int] = None,
-        token: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.IncidentResultList"]:
+        configuration_id,  # type: str
+        maxpagesize=None,  # type: Optional[int]
+        token=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.IncidentResultList"]
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -1307,8 +2929,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IncidentResultList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IncidentResultList"]
@@ -1351,17 +2972,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1372,18 +2993,19 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     get_incidents_by_anomaly_detection_configuration_next_pages.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query'}  # type: ignore
 
     @distributed_trace
-    def get_root_cause_of_incident_by_anomaly_detection_configuration(
+    def list_incident_root_causes(
         self,
-        configuration_id: str,
-        incident_id: str,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.RootCauseList"]:
+        configuration_id,  # type: str
+        incident_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.RootCauseList"]
         """Query root cause for incident.
 
         Query root cause for incident.
@@ -1394,7 +3016,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type incident_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RootCauseList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.RootCauseList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.RootCauseList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RootCauseList"]
@@ -1405,10 +3027,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
+                request = build_list_incident_root_causes_request(
                     configuration_id=configuration_id,
                     incident_id=incident_id,
-                    template_url=self.get_root_cause_of_incident_by_anomaly_detection_configuration.metadata['url'],
+                    template_url=self.list_incident_root_causes.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -1418,7 +3040,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
             else:
                 
-                request = build_get_root_cause_of_incident_by_anomaly_detection_configuration_request(
+                request = build_list_incident_root_causes_request(
                     configuration_id=configuration_id,
                     incident_id=incident_id,
                     template_url=next_link,
@@ -1435,17 +3057,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("RootCauseList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1456,17 +3078,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_root_cause_of_incident_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause'}  # type: ignore
+    list_incident_root_causes.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause'}  # type: ignore
 
-    @distributed_trace_async
-    async def create_credential(
+    @distributed_trace
+    def create_datasource_credential(
         self,
-        body: "_models.DataSourceCredential",
-        **kwargs: Any
-    ) -> None:
+        body,  # type: "_models.DataSourceCredential"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Create a new data source credential.
 
         Create a new data source credential.
@@ -1488,10 +3111,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _json = self._serialize.body(body, 'DataSourceCredential')
 
-        request = build_create_credential_request(
+        request = build_create_datasource_credential_request(
             content_type=content_type,
             json=_json,
-            template_url=self.create_credential.metadata['url'],
+            template_url=self.create_datasource_credential.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1499,7 +3122,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1514,16 +3137,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_credential.metadata = {'url': '/credentials'}  # type: ignore
+    create_datasource_credential.metadata = {'url': '/credentials'}  # type: ignore
 
 
     @distributed_trace
-    def list_credentials(
+    def list_datasource_credentials(
         self,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.DataSourceCredentialList"]:
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.DataSourceCredentialList"]
         """List all credentials.
 
         List all credentials.
@@ -1535,8 +3159,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataSourceCredentialList or the result of
          cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataSourceCredentialList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataSourceCredentialList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataSourceCredentialList"]
@@ -1547,10 +3170,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_credentials_request(
+                request = build_list_datasource_credentials_request(
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_credentials.metadata['url'],
+                    template_url=self.list_datasource_credentials.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -1560,7 +3183,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
             else:
                 
-                request = build_list_credentials_request(
+                request = build_list_datasource_credentials_request(
                     skip=skip,
                     maxpagesize=maxpagesize,
                     template_url=next_link,
@@ -1577,17 +3200,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("DataSourceCredentialList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1598,18 +3221,19 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    list_credentials.metadata = {'url': '/credentials'}  # type: ignore
+    list_datasource_credentials.metadata = {'url': '/credentials'}  # type: ignore
 
-    @distributed_trace_async
-    async def update_credential(
+    @distributed_trace
+    def update_datasource_credential(
         self,
-        credential_id: str,
-        body: "_models.DataSourceCredentialPatch",
-        **kwargs: Any
-    ) -> "_models.DataSourceCredential":
+        credential_id,  # type: str
+        body,  # type: "_models.DataSourceCredentialPatch"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.DataSourceCredential"
         """Update a data source credential.
 
         Update a data source credential.
@@ -1633,11 +3257,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _content = self._serialize.body(body, 'DataSourceCredentialPatch')
 
-        request = build_update_credential_request(
+        request = build_update_datasource_credential_request(
             credential_id=credential_id,
             content_type=content_type,
             content=_content,
-            template_url=self.update_credential.metadata['url'],
+            template_url=self.update_datasource_credential.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1645,7 +3269,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1660,15 +3284,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    update_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
+    update_datasource_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def delete_credential(
+    @distributed_trace
+    def delete_datasource_credential(
         self,
-        credential_id: str,
-        **kwargs: Any
-    ) -> None:
+        credential_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Delete a data source credential.
 
         Delete a data source credential.
@@ -1687,9 +3312,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_delete_credential_request(
+        request = build_delete_datasource_credential_request(
             credential_id=credential_id,
-            template_url=self.delete_credential.metadata['url'],
+            template_url=self.delete_datasource_credential.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1697,7 +3322,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1708,15 +3333,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
+    delete_datasource_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_credential(
+    @distributed_trace
+    def get_datasource_credential(
         self,
-        credential_id: str,
-        **kwargs: Any
-    ) -> "_models.DataSourceCredential":
+        credential_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.DataSourceCredential"
         """Get a data source credential.
 
         Get a data source credential.
@@ -1735,9 +3361,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_credential_request(
+        request = build_get_datasource_credential_request(
             credential_id=credential_id,
-            template_url=self.get_credential.metadata['url'],
+            template_url=self.get_datasource_credential.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1745,7 +3371,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1760,21 +3386,22 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    get_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
+    get_datasource_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
 
 
     @distributed_trace
     def list_data_feeds(
         self,
-        data_feed_name: Optional[str] = None,
-        data_source_type: Optional[Union[str, "_models.DataSourceType"]] = None,
-        granularity_name: Optional[Union[str, "_models.Granularity"]] = None,
-        status: Optional[Union[str, "_models.EntityStatus"]] = None,
-        creator: Optional[str] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.DataFeedList"]:
+        data_feed_name=None,  # type: Optional[str]
+        data_source_type=None,  # type: Optional[Union[str, "_models.DataSourceType"]]
+        granularity_name=None,  # type: Optional[Union[str, "_models.Granularity"]]
+        status=None,  # type: Optional[Union[str, "_models.EntityStatus"]]
+        creator=None,  # type: Optional[str]
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.DataFeedList"]
         """List all data feeds.
 
         List all data feeds.
@@ -1795,7 +3422,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataFeedList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeedList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeedList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedList"]
@@ -1846,17 +3473,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("DataFeedList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1867,17 +3494,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     list_data_feeds.metadata = {'url': '/dataFeeds'}  # type: ignore
 
-    @distributed_trace_async
-    async def create_data_feed(
+    @distributed_trace
+    def create_data_feed(
         self,
-        body: "_models.DataFeedDetail",
-        **kwargs: Any
-    ) -> None:
+        body,  # type: "_models.DataFeedDetail"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Create a new data feed.
 
         Create a new data feed.
@@ -1910,7 +3538,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1928,12 +3556,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     create_data_feed.metadata = {'url': '/dataFeeds'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_data_feed_by_id(
+    @distributed_trace
+    def get_data_feed(
         self,
-        data_feed_id: str,
-        **kwargs: Any
-    ) -> "_models.DataFeedDetail":
+        data_feed_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.DataFeedDetail"
         """Get a data feed by its id.
 
         Get a data feed by its id.
@@ -1952,9 +3581,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_data_feed_by_id_request(
+        request = build_get_data_feed_request(
             data_feed_id=data_feed_id,
-            template_url=self.get_data_feed_by_id.metadata['url'],
+            template_url=self.get_data_feed.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1962,7 +3591,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1977,16 +3606,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    get_data_feed_by_id.metadata = {'url': '/dataFeeds/{dataFeedId}'}  # type: ignore
+    get_data_feed.metadata = {'url': '/dataFeeds/{dataFeedId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def update_data_feed(
+    @distributed_trace
+    def update_data_feed(
         self,
-        data_feed_id: str,
-        body: "_models.DataFeedDetailPatch",
-        **kwargs: Any
-    ) -> "_models.DataFeedDetail":
+        data_feed_id,  # type: str
+        body,  # type: "_models.DataFeedDetailPatch"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.DataFeedDetail"
         """Update a data feed.
 
         Update a data feed.
@@ -2022,7 +3652,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2040,12 +3670,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     update_data_feed.metadata = {'url': '/dataFeeds/{dataFeedId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def delete_data_feed(
+    @distributed_trace
+    def delete_data_feed(
         self,
-        data_feed_id: str,
-        **kwargs: Any
-    ) -> None:
+        data_feed_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Delete a data feed.
 
         Delete a data feed.
@@ -2074,7 +3705,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2088,12 +3719,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     delete_data_feed.metadata = {'url': '/dataFeeds/{dataFeedId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_metric_feedback(
+    @distributed_trace
+    def get_feedback(
         self,
-        feedback_id: str,
-        **kwargs: Any
-    ) -> "_models.MetricFeedback":
+        feedback_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.MetricFeedback"
         """Get a metric feedback by its id.
 
         Get a metric feedback by its id.
@@ -2112,9 +3744,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_metric_feedback_request(
+        request = build_get_feedback_request(
             feedback_id=feedback_id,
-            template_url=self.get_metric_feedback.metadata['url'],
+            template_url=self.get_feedback.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -2122,7 +3754,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2137,17 +3769,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    get_metric_feedback.metadata = {'url': '/feedback/metric/{feedbackId}'}  # type: ignore
+    get_feedback.metadata = {'url': '/feedback/metric/{feedbackId}'}  # type: ignore
 
 
     @distributed_trace
-    def list_metric_feedbacks(
+    def list_feedback(
         self,
-        body: "_models.MetricFeedbackFilter",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.MetricFeedbackList"]:
+        body,  # type: "_models.MetricFeedbackFilter"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.MetricFeedbackList"]
         """List feedback on the given metric.
 
         List feedback on the given metric.
@@ -2160,8 +3793,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricFeedbackList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricFeedbackList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricFeedbackList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -2175,12 +3807,12 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'MetricFeedbackFilter')
                 
-                request = build_list_metric_feedbacks_request(
+                request = build_list_feedback_request(
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_metric_feedbacks.metadata['url'],
+                    template_url=self.list_feedback.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -2191,7 +3823,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'MetricFeedbackFilter')
                 
-                request = build_list_metric_feedbacks_request(
+                request = build_list_feedback_request(
                     content_type=content_type,
                     json=_json,
                     skip=skip,
@@ -2210,17 +3842,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("MetricFeedbackList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2231,17 +3863,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    list_metric_feedbacks.metadata = {'url': '/feedback/metric/query'}  # type: ignore
+    list_feedback.metadata = {'url': '/feedback/metric/query'}  # type: ignore
 
-    @distributed_trace_async
-    async def create_metric_feedback(
+    @distributed_trace
+    def add_feedback(
         self,
-        body: "_models.MetricFeedback",
-        **kwargs: Any
-    ) -> None:
+        body,  # type: "_models.MetricFeedback"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Create a new metric feedback.
 
         Create a new metric feedback.
@@ -2263,10 +3896,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _json = self._serialize.body(body, 'MetricFeedback')
 
-        request = build_create_metric_feedback_request(
+        request = build_add_feedback_request(
             content_type=content_type,
             json=_json,
-            template_url=self.create_metric_feedback.metadata['url'],
+            template_url=self.add_feedback.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -2274,7 +3907,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -2289,17 +3922,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_metric_feedback.metadata = {'url': '/feedback/metric'}  # type: ignore
+    add_feedback.metadata = {'url': '/feedback/metric'}  # type: ignore
 
 
     @distributed_trace
     def list_hooks(
         self,
-        hook_name: Optional[str] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.HookList"]:
+        hook_name=None,  # type: Optional[str]
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.HookList"]
         """List all hooks.
 
         List all hooks.
@@ -2312,7 +3946,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either HookList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.HookList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.HookList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HookList"]
@@ -2355,17 +3989,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("HookList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2376,17 +4010,18 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
     list_hooks.metadata = {'url': '/hooks'}  # type: ignore
 
-    @distributed_trace_async
-    async def create_hook(
+    @distributed_trace
+    def create_hook(
         self,
-        body: "_models.HookInfo",
-        **kwargs: Any
-    ) -> None:
+        body,  # type: "_models.HookInfo"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Create a new hook.
 
         Create a new hook.
@@ -2419,7 +4054,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -2437,12 +4072,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     create_hook.metadata = {'url': '/hooks'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_hook(
+    @distributed_trace
+    def get_hook(
         self,
-        hook_id: str,
-        **kwargs: Any
-    ) -> "_models.HookInfo":
+        hook_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.HookInfo"
         """Get a hook by its id.
 
         Get a hook by its id.
@@ -2471,7 +4107,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2489,13 +4125,14 @@ class _MetricsAdvisorOperationsMixinGenerated:
     get_hook.metadata = {'url': '/hooks/{hookId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def update_hook(
+    @distributed_trace
+    def update_hook(
         self,
-        hook_id: str,
-        body: "_models.HookInfoPatch",
-        **kwargs: Any
-    ) -> "_models.HookInfo":
+        hook_id,  # type: str
+        body,  # type: "_models.HookInfoPatch"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.HookInfo"
         """Update a hook.
 
         Update a hook.
@@ -2531,7 +4168,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2549,12 +4186,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
     update_hook.metadata = {'url': '/hooks/{hookId}'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def delete_hook(
+    @distributed_trace
+    def delete_hook(
         self,
-        hook_id: str,
-        **kwargs: Any
-    ) -> None:
+        hook_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Delete a hook.
 
         Delete a hook.
@@ -2583,7 +4221,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2598,14 +4236,15 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
 
     @distributed_trace
-    def get_data_feed_ingestion_status(
+    def list_data_feed_ingestion_status(
         self,
-        data_feed_id: str,
-        body: "_models.IngestionStatusQueryOptions",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.IngestionStatusList"]:
+        data_feed_id,  # type: str
+        body,  # type: "_models.IngestionStatusQueryOptions"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.IngestionStatusList"]
         """Get data ingestion status by data feed.
 
         Get data ingestion status by data feed.
@@ -2620,8 +4259,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IngestionStatusList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IngestionStatusList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IngestionStatusList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -2635,13 +4273,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'IngestionStatusQueryOptions')
                 
-                request = build_get_data_feed_ingestion_status_request(
+                request = build_list_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_data_feed_ingestion_status.metadata['url'],
+                    template_url=self.list_data_feed_ingestion_status.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -2652,7 +4290,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'IngestionStatusQueryOptions')
                 
-                request = build_get_data_feed_ingestion_status_request(
+                request = build_list_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
                     content_type=content_type,
                     json=_json,
@@ -2672,17 +4310,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("IngestionStatusList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2693,18 +4331,19 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_data_feed_ingestion_status.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionStatus/query'}  # type: ignore
+    list_data_feed_ingestion_status.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionStatus/query'}  # type: ignore
 
-    @distributed_trace_async
-    async def reset_data_feed_ingestion_status(
+    @distributed_trace
+    def refresh_data_feed_ingestion(
         self,
-        data_feed_id: str,
-        body: "_models.IngestionProgressResetOptions",
-        **kwargs: Any
-    ) -> None:
+        data_feed_id,  # type: str
+        body,  # type: "_models.IngestionProgressResetOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Reset data ingestion status by data feed to backfill data.
 
         Reset data ingestion status by data feed to backfill data.
@@ -2728,11 +4367,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         _json = self._serialize.body(body, 'IngestionProgressResetOptions')
 
-        request = build_reset_data_feed_ingestion_status_request(
+        request = build_refresh_data_feed_ingestion_request(
             data_feed_id=data_feed_id,
             content_type=content_type,
             json=_json,
-            template_url=self.reset_data_feed_ingestion_status.metadata['url'],
+            template_url=self.refresh_data_feed_ingestion.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -2740,7 +4379,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2751,15 +4390,16 @@ class _MetricsAdvisorOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, {})
 
-    reset_data_feed_ingestion_status.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionProgress/reset'}  # type: ignore
+    refresh_data_feed_ingestion.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionProgress/reset'}  # type: ignore
 
 
-    @distributed_trace_async
-    async def get_ingestion_progress(
+    @distributed_trace
+    def get_data_feed_ingestion_progress(
         self,
-        data_feed_id: str,
-        **kwargs: Any
-    ) -> "_models.DataFeedIngestionProgress":
+        data_feed_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.DataFeedIngestionProgress"
         """Get data last success ingestion job timestamp by data feed.
 
         Get data last success ingestion job timestamp by data feed.
@@ -2778,9 +4418,9 @@ class _MetricsAdvisorOperationsMixinGenerated:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_ingestion_progress_request(
+        request = build_get_data_feed_ingestion_progress_request(
             data_feed_id=data_feed_id,
-            template_url=self.get_ingestion_progress.metadata['url'],
+            template_url=self.get_data_feed_ingestion_progress.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -2788,7 +4428,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2803,16 +4443,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
         return deserialized
 
-    get_ingestion_progress.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionProgress'}  # type: ignore
+    get_data_feed_ingestion_progress.metadata = {'url': '/dataFeeds/{dataFeedId}/ingestionProgress'}  # type: ignore
 
 
     @distributed_trace
-    def get_metric_data(
+    def list_metric_series_data(
         self,
-        metric_id: str,
-        body: "_models.MetricDataQueryOptions",
-        **kwargs: Any
-    ) -> AsyncIterable["_models.MetricDataList"]:
+        metric_id,  # type: str
+        body,  # type: "_models.MetricDataQueryOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.MetricDataList"]
         """Get time series data from metric.
 
         Get time series data from metric.
@@ -2823,7 +4464,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type body: ~azure.ai.metricsadvisor.models.MetricDataQueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricDataList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricDataList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricDataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -2837,11 +4478,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'MetricDataQueryOptions')
                 
-                request = build_get_metric_data_request(
+                request = build_list_metric_series_data_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
-                    template_url=self.get_metric_data.metadata['url'],
+                    template_url=self.list_metric_series_data.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -2852,7 +4493,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'MetricDataQueryOptions')
                 
-                request = build_get_metric_data_request(
+                request = build_list_metric_series_data_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
@@ -2870,17 +4511,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("MetricDataList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2891,20 +4532,21 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_metric_data.metadata = {'url': '/metrics/{metricId}/data/query'}  # type: ignore
+    list_metric_series_data.metadata = {'url': '/metrics/{metricId}/data/query'}  # type: ignore
 
     @distributed_trace
-    def get_metric_series(
+    def list_metric_series_definitions(
         self,
-        metric_id: str,
-        body: "_models.MetricSeriesQueryOptions",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.MetricSeriesList"]:
+        metric_id,  # type: str
+        body,  # type: "_models.MetricSeriesQueryOptions"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.MetricSeriesList"]
         """List series (dimension combinations) from metric.
 
         List series (dimension combinations) from metric.
@@ -2919,8 +4561,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricSeriesList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -2934,13 +4575,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'MetricSeriesQueryOptions')
                 
-                request = build_get_metric_series_request(
+                request = build_list_metric_series_definitions_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_metric_series.metadata['url'],
+                    template_url=self.list_metric_series_definitions.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -2951,7 +4592,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'MetricSeriesQueryOptions')
                 
-                request = build_get_metric_series_request(
+                request = build_list_metric_series_definitions_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
@@ -2971,17 +4612,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("MetricSeriesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2992,20 +4633,21 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_metric_series.metadata = {'url': '/metrics/{metricId}/series/query'}  # type: ignore
+    list_metric_series_definitions.metadata = {'url': '/metrics/{metricId}/series/query'}  # type: ignore
 
     @distributed_trace
-    def get_metric_dimension(
+    def list_metric_dimension_values(
         self,
-        metric_id: str,
-        body: "_models.MetricDimensionQueryOptions",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.MetricDimensionList"]:
+        metric_id,  # type: str
+        body,  # type: "_models.MetricDimensionQueryOptions"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.MetricDimensionList"]
         """List dimension from certain metric.
 
         List dimension from certain metric.
@@ -3020,8 +4662,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricDimensionList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricDimensionList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricDimensionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -3035,13 +4676,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'MetricDimensionQueryOptions')
                 
-                request = build_get_metric_dimension_request(
+                request = build_list_metric_dimension_values_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_metric_dimension.metadata['url'],
+                    template_url=self.list_metric_dimension_values.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -3052,7 +4693,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'MetricDimensionQueryOptions')
                 
-                request = build_get_metric_dimension_request(
+                request = build_list_metric_dimension_values_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
@@ -3072,17 +4713,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("MetricDimensionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3093,19 +4734,20 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_metric_dimension.metadata = {'url': '/metrics/{metricId}/dimension/query'}  # type: ignore
+    list_metric_dimension_values.metadata = {'url': '/metrics/{metricId}/dimension/query'}  # type: ignore
 
     @distributed_trace
-    def get_anomaly_detection_configurations_by_metric(
+    def list_detection_configurations(
         self,
-        metric_id: str,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AnomalyDetectionConfigurationList"]:
+        metric_id,  # type: str
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.AnomalyDetectionConfigurationList"]
         """List all anomaly detection configurations for specific metric.
 
         List all anomaly detection configurations for specific metric.
@@ -3120,7 +4762,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :return: An iterator like instance of either AnomalyDetectionConfigurationList or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationList]
+         ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyDetectionConfigurationList"]
@@ -3131,11 +4773,11 @@ class _MetricsAdvisorOperationsMixinGenerated:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_get_anomaly_detection_configurations_by_metric_request(
+                request = build_list_detection_configurations_request(
                     metric_id=metric_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_anomaly_detection_configurations_by_metric.metadata['url'],
+                    template_url=self.list_detection_configurations.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -3145,7 +4787,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
 
             else:
                 
-                request = build_get_anomaly_detection_configurations_by_metric_request(
+                request = build_list_detection_configurations_request(
                     metric_id=metric_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -3163,17 +4805,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("AnomalyDetectionConfigurationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3184,20 +4826,21 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_anomaly_detection_configurations_by_metric.metadata = {'url': '/metrics/{metricId}/enrichment/anomalyDetection/configurations'}  # type: ignore
+    list_detection_configurations.metadata = {'url': '/metrics/{metricId}/enrichment/anomalyDetection/configurations'}  # type: ignore
 
     @distributed_trace
-    def get_enrichment_status_by_metric(
+    def list_metric_enrichment_status(
         self,
-        metric_id: str,
-        body: "_models.EnrichmentStatusQueryOption",
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.EnrichmentStatusList"]:
+        metric_id,  # type: str
+        body,  # type: "_models.EnrichmentStatusQueryOption"
+        skip=None,  # type: Optional[int]
+        maxpagesize=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.EnrichmentStatusList"]
         """Query anomaly detection status.
 
         Query anomaly detection status.
@@ -3213,8 +4856,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EnrichmentStatusList or the result of
          cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatusList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatusList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -3228,13 +4870,13 @@ class _MetricsAdvisorOperationsMixinGenerated:
             if not next_link:
                 _json = self._serialize.body(body, 'EnrichmentStatusQueryOption')
                 
-                request = build_get_enrichment_status_by_metric_request(
+                request = build_list_metric_enrichment_status_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_enrichment_status_by_metric.metadata['url'],
+                    template_url=self.list_metric_enrichment_status.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -3245,7 +4887,7 @@ class _MetricsAdvisorOperationsMixinGenerated:
             else:
                 _json = self._serialize.body(body, 'EnrichmentStatusQueryOption')
                 
-                request = build_get_enrichment_status_by_metric_request(
+                request = build_list_metric_enrichment_status_request(
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
@@ -3265,17 +4907,17 @@ class _MetricsAdvisorOperationsMixinGenerated:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._deserialize("EnrichmentStatusList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3286,10 +4928,10 @@ class _MetricsAdvisorOperationsMixinGenerated:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    get_enrichment_status_by_metric.metadata = {'url': '/metrics/{metricId}/status/enrichment/anomalyDetection/query'}  # type: ignore
+    list_metric_enrichment_status.metadata = {'url': '/metrics/{metricId}/status/enrichment/anomalyDetection/query'}  # type: ignore
 
-class MetricsAdvisorOperationsMixin(MetricsAdvisorOperationsMixinCustomization, _MetricsAdvisorOperationsMixinGenerated):
+class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinCustomization, _MetricsAdvisorClientOperationsMixinGenerated):
     pass

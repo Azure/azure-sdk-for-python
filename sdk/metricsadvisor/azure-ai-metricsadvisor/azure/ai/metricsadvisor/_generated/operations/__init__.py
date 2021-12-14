@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._metrics_advisor_operations import MetricsAdvisorOperationsMixin
+from ._metrics_advisor_client_operations import MetricsAdvisorClientOperationsMixin
 
 __all__ = [
-    'MetricsAdvisorOperationsMixin',
+    'MetricsAdvisorClientOperationsMixin',
 ]
