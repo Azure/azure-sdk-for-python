@@ -1,5 +1,15 @@
 # Release History
 
+## 12.6.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.6.0b2 (2021-12-13)
 
 ### Features Added
