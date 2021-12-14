@@ -7,17 +7,15 @@
 import pytest
 import functools
 from io import BytesIO
-from datetime import date, time
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion, DocumentAnalysisClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
@@ -108,50 +106,6 @@ class TestIdDocument(FormRecognizerTest):
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_identity_document_jpg_passport(self, client):
-        with open(self.identity_document_passport_jpg, "rb") as fd:
-            id_document = fd.read()
-
-        poller = client.begin_analyze_document("prebuilt-idDocument", id_document)
-
-        result = poller.result()
-        assert len(result.documents) == 1
-
-        id_document = result.documents[0]
-
-        passport = id_document.fields.get("MachineReadableZone").value
-        assert passport["LastName"].value == "MARTIN"
-        assert passport["FirstName"].value == "SARAH"
-        assert passport["DocumentNumber"].value == "ZE000509"
-        assert passport["DateOfBirth"].value == date(1985,1,1)
-        assert passport["DateOfExpiration"].value == date(2023,1,14)
-        assert passport["Sex"].value == "F"
-        assert passport["CountryRegion"].value == "CAN"
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_identity_document_jpg(self, client):
-        with open(self.identity_document_license_jpg, "rb") as fd:
-            id_document = fd.read()
-
-        poller = client.begin_analyze_document("prebuilt-idDocument", id_document)
-
-        result = poller.result()
-        assert len(result.documents) == 1
-        id_document = result.documents[0]
-        # check dict values
-        assert id_document.fields.get("LastName").value == "TALBOT"
-        assert id_document.fields.get("FirstName").value == "LIAM R."
-        assert id_document.fields.get("DocumentNumber").value == "WDLABCD456DG"
-        assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
-        assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
-        assert id_document.fields.get("Sex").value == "M"
-        assert id_document.fields.get("Address").value == "123 STREET ADDRESS YOUR CITY WA 99999-1234"
-        assert id_document.fields.get("CountryRegion").value == "USA"
-        assert id_document.fields.get("Region").value == "Washington"
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()

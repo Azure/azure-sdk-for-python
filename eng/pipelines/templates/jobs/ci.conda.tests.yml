@@ -198,3 +198,8 @@ jobs:
             $(activate.method) ${{ artifact.name }}
             python -m pytest $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
           displayName: 'Run Tests for ${{ checkout.package }}'
+
+    - ${{if eq(parameters.TestProxy, true) }}:
+      - pwsh: |
+          cat $(Build.SourcesDirectory)/test-proxy.log
+        displayName: Dump Test-Proxy Logs

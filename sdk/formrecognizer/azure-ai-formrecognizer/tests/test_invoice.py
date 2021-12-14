@@ -11,15 +11,13 @@ from datetime import date
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion, DocumentAnalysisClient, AnalyzeResult
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestInvoice(FormRecognizerTest):
@@ -124,45 +122,6 @@ class TestInvoice(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_invoice_stream_transform_tiff(self, client):
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_invoice = AnalyzeResult._from_generated(analyze_result.analyze_result)
-            responses.append(analyze_result)
-            responses.append(extracted_invoice)
-
-        with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_analyze_document(
-            model="prebuilt-invoice",
-            document=myfile,
-            cls=callback
-        )
-
-        result = poller.result()
-        raw_analyze_result = responses[0].analyze_result
-        returned_model = responses[1]
-
-        # Check AnalyzeResult
-        assert returned_model.model_id == raw_analyze_result.model_id
-        assert returned_model.api_version == raw_analyze_result.api_version
-        assert returned_model.content == raw_analyze_result.content
-        
-        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
-        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
-        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
-        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
-
-        # check page range
-        assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-    @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_invoice_stream_multipage_transform_pdf(self, client):
         responses = []
@@ -253,51 +212,6 @@ class TestInvoice(FormRecognizerTest):
         remittance_address = invoice.fields["RemittanceAddress"]
         assert remittance_address.value, '2345 Dogwood Lane Birch ==  Kansas 98123'
         assert remittance_address.value_data.page_number ==  1
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_invoice_jpg(self, client):
-        with open(self.invoice_jpg, "rb") as fd:
-            invoice = fd.read()
-        poller = client.begin_analyze_document("prebuilt-invoice", invoice)
-
-        result = poller.result()
-        assert len(result.documents) == 1
-        invoice = result.documents[0]
-
-        assert result.pages
-
-        # check dict values
-        assert invoice.fields.get("AmountDue").value ==  610.0
-        assert invoice.fields.get("BillingAddress").value, "123 Bill St, Redmond WA ==  98052"
-        assert invoice.fields.get("BillingAddressRecipient").value ==  "Microsoft Finance"
-        assert invoice.fields.get("CustomerAddress").value, "123 Other St, Redmond WA ==  98052"
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft Corp"
-        assert invoice.fields.get("CustomerId").value ==  "CID-12345"
-        assert invoice.fields.get("CustomerName").value ==  "MICROSOFT CORPORATION"
-        assert invoice.fields.get("DueDate").value, date(2019, 12 ==  15)
-        assert invoice.fields.get("InvoiceDate").value, date(2019, 11 ==  15)
-        assert invoice.fields.get("InvoiceId").value ==  "INV-100"
-        assert invoice.fields.get("InvoiceTotal").value ==  110.0
-        assert invoice.fields.get("PreviousUnpaidBalance").value ==  500.0
-        assert invoice.fields.get("PurchaseOrder").value ==  "PO-3333"
-        assert invoice.fields.get("RemittanceAddress").value, "123 Remit St New York, NY ==  10001"
-        assert invoice.fields.get("RemittanceAddressRecipient").value ==  "Contoso Billing"
-        assert invoice.fields.get("ServiceAddress").value, "123 Service St, Redmond WA ==  98052"
-        assert invoice.fields.get("ServiceAddressRecipient").value ==  "Microsoft Services"
-        assert invoice.fields.get("ServiceEndDate").value, date(2019, 11 ==  14)
-        assert invoice.fields.get("ServiceStartDate").value, date(2019, 10 ==  14)
-        assert invoice.fields.get("ShippingAddress").value, "123 Ship St, Redmond WA ==  98052"
-        assert invoice.fields.get("ShippingAddressRecipient").value ==  "Microsoft Delivery"
-        assert invoice.fields.get("SubTotal").value ==  100.0
-        assert invoice.fields.get("TotalTax").value ==  10.0
-        assert invoice.fields.get("VendorName").value ==  "CONTOSO LTD."
-        assert invoice.fields.get("VendorAddress").value, "123 456th St New York, NY ==  10001"
-        assert invoice.fields.get("VendorAddressRecipient").value ==  "Contoso Headquarters"
-        assert invoice.fields.get("Items").value[0].value["Amount"].value ==  100.0
-        assert invoice.fields.get("Items").value[0].value["Description"].value ==  "Consulting service"
-        assert invoice.fields.get("Items").value[0].value["Quantity"].value ==  1.0
-        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value ==  1.0
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()

@@ -1,4 +1,5 @@
+include _meta.json
 recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
-
+include LICENSE

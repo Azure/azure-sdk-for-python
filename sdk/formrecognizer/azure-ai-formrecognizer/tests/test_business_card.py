@@ -8,13 +8,12 @@ import pytest
 import functools
 from io import BytesIO
 from devtools_testutils import recorded_by_proxy
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion, DocumentAnalysisClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
@@ -66,67 +65,6 @@ class TestBusinessCard(FormRecognizerTest):
                 myfile,
                 content_type="application/jpeg"
             )
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client, variables):
-        self.some_func()
-        with open(self.business_card_multipage_pdf, "rb") as fd:
-            business_card = fd.read()
-
-        poller = client.begin_analyze_document("prebuilt-businessCard", business_card)
-        result = poller.result()
-        assert len(result.documents) == 2
-        business_card = result.documents[0]
-        assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'JOHN'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'SINGER'
-
-        assert len(business_card.fields.get("JobTitles").value) == 1
-        assert business_card.fields.get("JobTitles").value[0].value == "Software Engineer"
-
-        assert len(business_card.fields.get("Emails").value) == 1
-        assert business_card.fields.get("Emails").value[0].value == "johnsinger@contoso.com"
-
-        assert len(business_card.fields.get("Websites").value) == 1
-        assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com"
-
-        assert len(business_card.fields.get("OtherPhones").value) == 1
-        assert business_card.fields.get("OtherPhones").value[0].value == "+14257793479"
-
-        business_card = result.documents[1]
-        assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
-
-        assert len(business_card.fields.get("JobTitles").value) == 1
-        assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
-
-        assert len(business_card.fields.get("Departments").value) == 1
-        assert business_card.fields.get("Departments").value[0].value == "Cloud & Al Department"
-
-        assert len(business_card.fields.get("Emails").value) == 1
-        assert business_card.fields.get("Emails").value[0].value == "avery.smith@contoso.com"
-
-        assert len(business_card.fields.get("Websites").value) == 1
-        assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com/"
-
-        # The phone number values are not getting normalized to a phone number type. Just assert on text.
-        assert len(business_card.fields.get("MobilePhones").value) == 1
-        assert business_card.fields.get("MobilePhones").value[0].content == "+44 (0) 7911 123456"
-
-        assert len(business_card.fields.get("WorkPhones").value) == 1
-        assert business_card.fields.get("WorkPhones").value[0].content == "+44 (0) 20 9876 5432"
-
-        assert len(business_card.fields.get("Faxes").value) == 1
-        assert business_card.fields.get("Faxes").value[0].content == "+44 (0) 20 6789 2345"
-
-        assert len(business_card.fields.get("Addresses").value) == 1
-        assert business_card.fields.get("Addresses").value[0].value == "2 Kingdom Street Paddington, London, W2 6BD"
-
-        assert len(business_card.fields.get("CompanyNames").value) == 1
-        assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()

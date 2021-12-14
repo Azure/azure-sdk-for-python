@@ -6,20 +6,18 @@
 
 import pytest
 import functools
-from datetime import date
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
-from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
+from azure.ai.formrecognizer.aio import FormRecognizerClient
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
@@ -84,27 +82,6 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
             self.assertFormFieldsTransformCorrect(invoice.fields, document_result.fields, read_results)
 
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    async def test_invoice_tiff(self, client):
-        async with client:
-            poller = await client.begin_analyze_document_from_url(model="prebuilt-invoice", document_url=self.invoice_url_tiff)
-
-            result = await poller.result()
-        assert len(result.documents) == 1
-        invoice = result.documents[0]
-
-        # check dict values
-        assert invoice.fields.get("VendorName").value ==  "Contoso"
-        assert invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond ==  WA 99243'
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft"
-        assert invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale ==  CA 87659'
-        assert invoice.fields.get("CustomerName").value ==  "Microsoft"
-        assert invoice.fields.get("InvoiceId").value ==  '34278587'
-        assert invoice.fields.get("InvoiceDate").value, date(2017, 6 ==  18)
-        assert invoice.fields.get("Items").value[0].value["Amount"].value ==  56651.49
-        assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()

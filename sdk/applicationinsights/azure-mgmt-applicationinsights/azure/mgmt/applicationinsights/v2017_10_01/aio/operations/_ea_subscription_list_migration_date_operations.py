@@ -42,7 +42,7 @@ class EASubscriptionListMigrationDateOperations:
 
     async def post(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EASubscriptionMigrationDate":
         """list date to migrate to new pricing model.
 
