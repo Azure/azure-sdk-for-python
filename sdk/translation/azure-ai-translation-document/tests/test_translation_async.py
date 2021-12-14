@@ -29,7 +29,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
-        client = DocumentTranslationClient(endpoint, token, credential_scopes=["https://ppe.cognitiveservices.azure.com/.default"])
+        client = DocumentTranslationClient(endpoint, token, credential_scopes=["https://ppe.cognitiveservices.azure.com/.default"], logging_enable=True)
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
