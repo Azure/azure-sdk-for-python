@@ -25,6 +25,8 @@ stages:
         steps:
 
           - template: /eng/pipelines/templates/steps/analyze_dependency.yml
+            parameters:
+              ScanPath: $(Build.SourcesDirectory)
 
           - task: AzureFileCopy@2
             displayName: 'Upload dependency report'
