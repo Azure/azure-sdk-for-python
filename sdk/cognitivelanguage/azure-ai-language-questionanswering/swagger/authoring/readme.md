@@ -28,6 +28,7 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
+python3-only: false
 title: QuestionAnsweringProjectsClient
 version-tolerant: true
 keep-version-file: true
