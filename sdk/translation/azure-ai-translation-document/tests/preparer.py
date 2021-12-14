@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 import os
-import logging
 import functools
 from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer
 from azure.core.credentials import AzureKeyCredential
@@ -22,8 +21,6 @@ DocumentTranslationPreparer = functools.partial(
     translation_document_storage_name="redacted",
     translation_document_storage_key="fakeZmFrZV9hY29jdW50X2tleQ=="
 )
-
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 
 class DocumentTranslationClientPreparer(AzureMgmtPreparer):
@@ -42,14 +39,6 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         # set polling interval to 0 for recorded tests
         if not self.is_live:
             self.client_kwargs["polling_interval"] = 0
-
-        self.logger = logging.getLogger('azure')
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-        self.logger.handlers = [handler]
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.propagate = True
-        self.logger.disabled = False
 
         client = self.client_cls(
             doctranslation_test_endpoint,
