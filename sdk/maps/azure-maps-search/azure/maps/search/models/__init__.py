@@ -3,7 +3,13 @@ from .._generated.models import (
     ReverseSearchCrossStreetAddressResult,
     BatchRequest,
     BatchResultSummary,
-    Polygon
+    Polygon,
+    ElectricVehicleConnector,
+    GeographicEntityType,
+    LocalizedMapView,
+    OperatingHoursRange,
+    RoadUseType,
+    PointOfInterestExtendedPostalCodes
 )
 
 from ._models import (
@@ -14,17 +20,16 @@ from ._models import (
     EntryPoint,
     SearchAddressResultItem,
     ReverseSearchAddressResultItem,
-    SearchSummary,
     Address,
     SearchAddressResult,
     ReverseSearchAddressResult,
-    ReverseSearchAddressBatchProcessResult
+    ReverseSearchAddressBatchProcessResult,
+    BatchResult,
+    SearchAddressBatchItem
 )
 
 
 __all__ = [
-    'SearchClient',
-    'GeoJsonObject',
     'BatchRequest',
     'LatLon',
     'AddressRanges',
@@ -35,10 +40,17 @@ __all__ = [
     'Address',
     'SearchAddressResultItem',
     'ReverseSearchAddressResultItem',
-    'SearchSummary',
     'SearchAddressResult',
     'BatchResultSummary',
     'ReverseSearchAddressBatchProcessResult',
     'ReverseSearchAddressResult',
     'ReverseSearchCrossStreetAddressResult',
+    "ElectricVehicleConnector",
+    "GeographicEntityType",
+    "LocalizedMapView",
+    "OperatingHoursRange",
+    "RoadUseType",
+    "PointOfInterestExtendedPostalCodes",
+    "BatchResult",
+    "SearchAddressBatchItem"
 ]

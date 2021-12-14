@@ -1,5 +1,5 @@
 from typing import List, Optional
-from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, ReverseSearchAddressResultItem, ReverseSearchAddressBatchItem, BatchResultSummary
+from .._generated.models import PointOfInterest, Address, EntryPoint, AddressRanges, DataSource, ReverseSearchAddressResultItem, ReverseSearchAddressBatchItem, BatchResultSummary, SearchAddressBatchItem
 
 class LatLon(object):
 
@@ -431,3 +431,14 @@ class ReverseSearchAddressBatchProcessResult(object):
     ):
         self.summary = summary
         self.items = items
+
+
+class BatchResult(object):
+    def __init__(
+        self,
+        summary: BatchResultSummary = None,
+        batch_items: List[SearchAddressBatchItem] = None
+    ):
+        self.successful_requests = summary.get('successful_requests')
+        self.total_requests = summary.get('total_requests')
+        self.batch_items = batch_items

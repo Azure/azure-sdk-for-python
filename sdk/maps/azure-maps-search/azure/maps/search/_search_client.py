@@ -8,15 +8,15 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
-from ._generated.models import PointOfInterestCategory, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, SearchAddressBatchResult, Polygon
-from .models import LatLon, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
+from ._generated.models import PointOfInterestCategory, ReverseSearchCrossStreetAddressResult, SearchAlongRouteRequest, GeoJsonObject, BatchRequest, Polygon
+from .models import LatLon, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult, BatchResult
 # from .utils import get_authentication_policy, get_headers_policy
 
 if TYPE_CHECKING:
     from typing import Any, List, Union, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
-    from .models import LatLon, StructuredAddress, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult
+    from .models import LatLon, StructuredAddress, SearchAddressResult, ReverseSearchAddressResult, ReverseSearchAddressBatchProcessResult, BatchResult
 
 class SearchClient(object):
     """Azure Maps Search REST APIs.
@@ -67,8 +67,7 @@ class SearchClient(object):
     def fuzzy_search(
         self,
         query,  # type: str
-        coordinates=None, # type: Union[str, "LatLon"]
-        country_filter=None, # type Optional[list[str]]
+        location=None, # type: Union["LatLon", list[str], None]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -90,11 +89,9 @@ class SearchClient(object):
          multiple category identifiers are provided, only POIs that belong to (at least) one of the
          categories from the provided list will be returned. The list of supported categories can be
          discovered using  `POI Categories API <https://aka.ms/AzureMapsPOICategoryTree>`_.
-        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :type country_filter: list[str]
-        :param coordinates: coordinates as LatLon or WKT representation of the point
-        :type coordinates: str or  ~azure.maps.search._models.LatLon
+        :param location: as coordinates which is LatLon() type or as country_filter which is a comma-separated string of country codes,
+         e.g. FR,ES. This will limit the search to the specified countries.
+        :type location: ~azure.maps.search._models.LatLon or list[str]
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
@@ -148,7 +145,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = LatLon() if not coordinates else coordinates
+        coordinates = location if location and isinstance(location, LatLon) else LatLon()
+        country_filter = location if location and isinstance(location, list[str]) else None
             
         return self._search_client.fuzzy_search(
             query,
@@ -405,8 +403,7 @@ class SearchClient(object):
     def search_point_of_interest(
         self,
         query,  # type: str
-        coordinates=None, # type: Union[str, "LatLon"]
-        country_filter=None, # type list[str]
+        location=None, # type: Union["LatLon", list[str], None]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -428,11 +425,10 @@ class SearchClient(object):
         :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories. 
-        :keyword list[int] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :param coordinates: coordinates as LatLon or WKT representation of the point
-        :type coordinates: str or  ~azure.maps.search._models.LatLon
+         restrict the result to specific Points of Interest categories.
+        :param location: as coordinates which is LatLon() type or as country_filter which is a comma-separated string of country codes,
+         e.g. FR,ES. This will limit the search to the specified countries.
+        :type location: ~azure.maps.search._models.LatLon or list[str]
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
@@ -456,7 +452,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """         
-        coordinates = LatLon() if not coordinates else coordinates
+        coordinates = location if location and isinstance(location, LatLon) else LatLon()
+        country_filter = location if location and isinstance(location, list[str]) else None
 
         result = self._search_client.search_point_of_interest(
             query,
@@ -519,8 +516,7 @@ class SearchClient(object):
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates=None, #type: Union[str, "LatLon"]
-        country_filter=None, # type list[str]
+        location=None, # type: Union["LatLon", list[str], None]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -540,13 +536,11 @@ class SearchClient(object):
          maximum: 100.
         :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
-        :param coordinates: coordinates as LatLon or WKT representation of the point
-        :type coordinates: str or  ~azure.maps.search._models.LatLon
+        :param location: as coordinates which is LatLon() type or as country_filter which is a comma-separated string of country codes,
+         e.g. FR,ES. This will limit the search to the specified countries.
+        :type location: ~azure.maps.search._models.LatLon or list[str]
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
          restrict the result to specific Points of Interest categories. 
-        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :type country_filter: list[str]
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :param top_left: Top left position of the bounding box. E.g. 37.553,-122.453.
@@ -573,7 +567,8 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = LatLon() if not coordinates else coordinates
+        coordinates = location if location and isinstance(location, LatLon) else LatLon()
+        country_filter = location if location and isinstance(location, list[str]) else None
 
         result = self._search_client.search_point_of_interest_category(
             query,
@@ -697,7 +692,7 @@ class SearchClient(object):
         batch_request,  # type: "BatchRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "SearchAddressBatchResult"
+        # type: (...) -> "BatchResult"
         """**Search Fuzzy Batch API**
 
         The Search Address Batch API sends batches of queries to `Search Fuzzy API
@@ -709,14 +704,15 @@ class SearchClient(object):
         :param batch_request: The list of search fuzzy queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
         :type batch_request: ~azure.maps.search._generated.models.BatchRequest
-        :return: SearchAddressBatchResult, or the result of cls(response)
+        :return: BatchResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.fuzzy_search_batch_sync(
+        batch_result = self._search_client.fuzzy_search_batch_sync(
             batch_request,
             **kwargs
         )
 
+        return BatchResult(batch_result.batch_summary, batch_result.batch_items)
 
     @distributed_trace
     def search_address_batch_sync(
@@ -724,19 +720,21 @@ class SearchClient(object):
         batch_request,  # type: "BatchRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "SearchAddressBatchResult"
+        # type: (...) -> "BatchResult"
         """**Search Address Batch API**
 
         :param batch_request: The list of address geocoding queries/requests to process. The list can
          contain  a max of 10,000 queries and must contain at least 1 query.
         :type batch_request: ~azure.maps.search._generated.models.BatchRequest
-        :return: SearchAddressBatchResult, or the result of cls(response)
+        :return: BatchResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._search_client.search_address_batch_sync(
+        batch_result = self._search_client.search_address_batch_sync(
             batch_request,
             **kwargs
         )
+
+        return BatchResult(batch_result.batch_summary, batch_result.batch_items)
 
 
     @distributed_trace
