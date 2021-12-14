@@ -49,7 +49,7 @@ class TestCommunicationTokenCredential(TestCase):
         refresher.assert_called_once()
         self.assertEqual(access_token, self.sample_token)
 
-    '''def test_communicationtokencredential_token_expired_refresh_called_as_necessary(self):
+    def test_communicationtokencredential_token_expired_refresh_called_as_necessary(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
         credential = CommunicationTokenCredential(
@@ -178,4 +178,4 @@ class TestCommunicationTokenCredential(TestCase):
                 access_token = credential.get_token()
 
         refresher.assert_not_called()
-        assert generated_token == access_token.token'''
+        assert generated_token == access_token.token
