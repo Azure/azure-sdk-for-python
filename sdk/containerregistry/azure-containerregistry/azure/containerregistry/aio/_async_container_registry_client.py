@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link
+from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -50,6 +50,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
         """
+        api_version = kwargs.get("api_version", None)
+        if api_version and api_version not in SUPPORTED_API_VERSIONS:
+            supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
+            raise ValueError(
+                "Unsupported API version '{}'. Please select from:\n{}".format(
+                    api_version, supported_versions
+                )
+            )
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
