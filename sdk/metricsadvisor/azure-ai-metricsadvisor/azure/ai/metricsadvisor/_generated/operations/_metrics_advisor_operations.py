@@ -1283,6 +1283,9 @@ def build_get_metric_series_request(
     path_format_arguments = {
         "metricId": _SERIALIZER.url("metric_id", metric_id, 'str'),
     }
+    next_link = kwargs.pop('next_link', None)
+    if next_link:
+        path_format_arguments['nextLink'] = _SERIALIZER.url("next_link", next_link, 'str', skip_quote=True)
 
     url = _format_url_section(url, **path_format_arguments)
 
@@ -4380,6 +4383,7 @@ class MetricsAdvisorOperationsMixin(object):
                     skip=skip,
                     maxpagesize=maxpagesize,
                     template_url='{nextLink}',
+                    next_link=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -4391,7 +4395,6 @@ class MetricsAdvisorOperationsMixin(object):
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):

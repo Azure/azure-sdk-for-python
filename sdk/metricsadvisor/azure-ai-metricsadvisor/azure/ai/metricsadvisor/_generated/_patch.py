@@ -16,7 +16,7 @@ import six
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
-from ._generated.models import (
+from .models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,
     AlertingResultQuery,
@@ -31,8 +31,8 @@ from ._generated.models import (
     FeedbackDimensionFilter,
     DimensionGroupIdentity,
 )
-from ._generated import MetricsAdvisor as _Client
-from .models._models import (
+from . import MetricsAdvisor as _Client
+from ..models._models import (
     AnomalyIncident,
     DataPointAnomaly,
     MetricSeriesData,
@@ -44,16 +44,16 @@ from .models._models import (
     CommentFeedback,
     PeriodFeedback,
 )
-from ._version import SDK_MONIKER
+from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     import datetime
-    from ._generated.models import (
+    from .models import (
         EnrichmentStatus,
         MetricSeriesItem as MetricSeriesDefinition,
         TimeMode as AlertQueryTimeMode,
     )
-    from .models._models import MetricFeedback
+    from ..models._models import MetricFeedback
     from azure.core.paging import ItemPaged
 
 FeedbackUnion = Union[
@@ -67,8 +67,8 @@ from typing import Any, List, Union, cast, TYPE_CHECKING
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._generated import MetricsAdvisor as _Client
-from ._generated.models import (
+from . import MetricsAdvisor as _Client
+from .models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
     AzureBlobDataFeed as _AzureBlobDataFeed,
@@ -100,8 +100,8 @@ from ._generated.models import (
     IngestionProgressResetOptions as _IngestionProgressResetOptions,
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
-from ._version import SDK_MONIKER
-from .models._models import (
+from .._version import SDK_MONIKER
+from ..models._models import (
     DataFeed,
     EmailNotificationHook,
     WebNotificationHook,
@@ -189,7 +189,7 @@ import datetime
 import six
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
-from .models import (
+from ..models import (
     DataFeedGranularityType,
     DataFeedGranularity,
     DataFeedSchema,
@@ -207,7 +207,7 @@ from .models import (
 )
 
 if TYPE_CHECKING:
-    from ._generated.models import MetricFeedback
+    from .models import MetricFeedback
 
 
 def construct_alert_config_dict(update_kwargs):

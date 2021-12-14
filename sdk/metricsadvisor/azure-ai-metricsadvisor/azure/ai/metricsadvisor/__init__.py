@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from ._version import VERSION
-from ._patch import MetricsAdvisorClient, MetricsAdvisorAdministrationClient, MetricsAdvisorKeyCredential
+from ._generated._patch import MetricsAdvisorClient, MetricsAdvisorAdministrationClient, MetricsAdvisorKeyCredential
 
 
 __all__ = [

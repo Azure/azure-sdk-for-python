@@ -2947,19 +2947,14 @@ class MetricsAdvisorOperationsMixin:
                     json=json,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url='{nextLink}',
+                    next_link=next_link,
+                    template_url='{nextLink}'
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url('{nextLink}', **path_format_arguments)
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
+                request.url = self._client.format_url(request.url, **path_format_arguments)
             return request
 
         async def extract_data(pipeline_response):

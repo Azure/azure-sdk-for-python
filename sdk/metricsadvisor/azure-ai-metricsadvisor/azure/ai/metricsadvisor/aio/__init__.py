@@ -4,6 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._patch import MetricsAdvisorClient, MetricsAdvisorAdministrationClient
+from .._generated.aio._patch import MetricsAdvisorClient, MetricsAdvisorAdministrationClient
 
 __all__ = ("MetricsAdvisorClient", "MetricsAdvisorAdministrationClient")

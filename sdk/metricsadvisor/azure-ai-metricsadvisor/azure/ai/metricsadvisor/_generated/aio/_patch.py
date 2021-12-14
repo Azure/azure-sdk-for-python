@@ -19,17 +19,17 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import (
+from . import (
     MetricsAdvisor as _ClientAsync,
 )
-from .._generated.models import (
+from ..models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     IngestionStatus as DataFeedIngestionStatus,
     IngestionProgressResetOptions as _IngestionProgressResetOptions,
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
-from .._version import SDK_MONIKER
+from ..._version import SDK_MONIKER
 from .._patch import (
     convert_to_generated_data_feed_type,
     construct_alert_config_dict,
@@ -48,7 +48,7 @@ from .._patch import (
     convert_datetime,
     get_authentication_policy,
 )
-from ..models import (
+from ...models import (
     DataFeed,
     EmailNotificationHook,
     WebNotificationHook,
@@ -72,7 +72,7 @@ import datetime
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.models import (
+from ..models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,
     AlertingResultQuery,
@@ -88,8 +88,8 @@ from .._generated.models import (
     FeedbackDimensionFilter,
     DimensionGroupIdentity,
 )
-from .._generated.aio import MetricsAdvisor as _ClientAsync
-from ..models._models import (
+from . import MetricsAdvisor as _ClientAsync
+from ...models._models import (
     AnomalyIncident,
     DataPointAnomaly,
     MetricSeriesData,
@@ -97,14 +97,14 @@ from ..models._models import (
     IncidentRootCause,
     MetricEnrichedSeriesData,
 )
-from .._version import SDK_MONIKER
+from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from .._generated.models import (
+    from ..models import (
         EnrichmentStatus,
         MetricSeriesItem as MetricSeriesDefinition,
     )
-    from ..models._models import MetricFeedback
+    from ...models._models import MetricFeedback
 
 class MetricsAdvisorAdministrationClient(
     object
