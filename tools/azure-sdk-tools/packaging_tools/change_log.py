@@ -6,26 +6,31 @@ from json_delta import diff
 _LOGGER = logging.getLogger(__name__)
 
 
+def _build_md(content, title, buffer):
+    buffer.append(title)
+    buffer.append("")
+    for item in content:
+        buffer.append("  - " + item)
+    buffer.append("")
+
+
 class ChangeLog:
     def __init__(self, old_report, new_report):
         self.features = []
         self.breaking_changes = []
+        self.optional_features = []
         self._old_report = old_report
         self._new_report = new_report
 
     def build_md(self):
         buffer = []
         if self.features:
-            buffer.append("**Features**")
-            buffer.append("")
-            for feature in self.features:
-                buffer.append("  - " + feature)
-            buffer.append("")
+            _build_md(self.features, "**Features**", buffer)
         if self.breaking_changes:
-            buffer.append("**Breaking changes**")
-            buffer.append("")
-            for breaking_change in self.breaking_changes:
-                buffer.append("  - " + breaking_change)
+            _build_md(self.breaking_changes, "**Breaking changes**", buffer)
+        if len(buffer) == 0 and self.optional_features:
+            _build_md(self.optional_features, "**Features**", buffer)
+
         return "\n".join(buffer).strip()
 
     @staticmethod
@@ -71,7 +76,7 @@ class ChangeLog:
         # So method signaure changed. Be vague for now
         self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
 
-    def models(self, diff_entry):
+    def models(self, diff_entry, old_models_name, new_models_name):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
         # Is this a new model?
@@ -81,7 +86,10 @@ class ChangeLog:
             return
         model_name, *remaining_path = remaining_path
         if not remaining_path:
-            self.features.append(_MODEL_ADD.format(model_name))
+            if model_name in new_models_name and model_name not in old_models_name:
+                self.optional_features.append(_MODEL_ADD.format(model_name))
+            elif model_name not in new_models_name and model_name in old_models_name:
+                self.optional_features.append(_MODEL_REMOVE.format(model_name))
             return
 
         # That's a model signature change
@@ -126,6 +134,7 @@ _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
 _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
 _MODEL_ADD = "Added model {}"
+_MODEL_REMOVE = "Removed model {}"
 
 ## Breaking Changes
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
@@ -142,13 +151,15 @@ def build_change_log(old_report, new_report):
 
     # when diff result is large,  compare_lengths=True may cause wrong result
     result = diff(old_report, new_report, compare_lengths=False)
+    old_models_name = set(old_report.get('models', {}).get('models', {}).keys())
+    new_models_name = set(new_report.get('models', {}).get('models', {}).keys())
 
     for diff_line in result:
         # Operations
         if diff_line[0][0] == "operations":
             change_log.operation(diff_line)
         else:
-            change_log.models(diff_line)
+            change_log.models(diff_line, old_models_name, new_models_name)
 
     return change_log
 
