@@ -51,6 +51,16 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
+    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
     # backward compat names end here.
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
