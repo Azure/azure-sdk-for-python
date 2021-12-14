@@ -1,5 +1,15 @@
 ## Release History
 
+### 4.3.0b2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 4.3.0b1 (2021-12-14)
 **New features**
 - Added language native async i/o client

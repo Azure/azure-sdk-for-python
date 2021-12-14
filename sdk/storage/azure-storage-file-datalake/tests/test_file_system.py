@@ -185,20 +185,20 @@ class FileSystemTest(StorageTestCase):
             bad_file_system._rename_file_system(new_name="filesystem")
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
-    # @DataLakePreparer()
-    # def test_list_system_filesystems(self, datalake_storage_account_name, datalake_storage_account_key):
-    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-    #     # Arrange
-    #     dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
-    #     # Act
-    #     filesystems = list(dsc.list_file_systems(include_system=True))
-    #
-    #     # Assert
-    #     found = False
-    #     for fs in filesystems:
-    #         if fs.name == "$logs":
-    #             found = True
-    #     self.assertEqual(found, True)
+    @DataLakePreparer()
+    def test_list_system_filesystems(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        # Act
+        filesystems = list(dsc.list_file_systems(include_system=True))
+
+        # Assert
+        found = False
+        for fs in filesystems:
+            if fs.name == "$logs":
+                found = True
+        self.assertEqual(found, True)
 
     @DataLakePreparer()
     def test_rename_file_system_with_source_lease(self, datalake_storage_account_name, datalake_storage_account_key):
