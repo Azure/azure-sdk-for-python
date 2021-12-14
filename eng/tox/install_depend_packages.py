@@ -39,7 +39,7 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     "six": "1.12.0",
 }
 
-MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {}
+MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}
 
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
