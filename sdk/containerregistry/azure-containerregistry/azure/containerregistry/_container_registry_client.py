@@ -31,8 +31,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials.TokenCredential`
-        :keyword api_version: Api Version. The default value is "2021-07-01". Note that overriding this default value may
-        result in unsupported behavior.
+        :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+        may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
