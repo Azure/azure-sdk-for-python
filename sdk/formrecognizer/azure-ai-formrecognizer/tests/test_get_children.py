@@ -42,11 +42,11 @@ class TestGetChildren(FormRecognizerTest):
         d = result.to_dict()
         analyze_result = AnalyzeResult.from_dict(d)
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             elements = analyze_result.pages[0].lines[0].get_words()
 
         # check that the error occurs when directly converting a DocumentLine from a dict
         d = result.pages[0].lines[0].to_dict()
         line = DocumentLine.from_dict(d)
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             elements = line.get_words()

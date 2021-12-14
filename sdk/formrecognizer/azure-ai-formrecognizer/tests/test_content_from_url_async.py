@@ -25,7 +25,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
                 result = await poller.result()
@@ -36,7 +36,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_recognize_content_from_url(receipt)
                 result = await poller.result()

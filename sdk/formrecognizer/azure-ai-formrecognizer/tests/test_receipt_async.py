@@ -29,7 +29,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     async def test_receipt_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_analyze_document("prebuilt-receipt", myfile)
@@ -38,7 +38,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_analyze_document("prebuilt-receipt", b"xx")
                 result = await poller.result()
@@ -60,7 +60,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer()
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -72,7 +72,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparerV2()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_receipts(
                     damaged_pdf,
@@ -83,7 +83,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer()
     async def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -95,7 +95,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     async def test_damaged_file_bytes_io_fails_autodetect(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_receipts(
                     damaged_pdf,
@@ -121,7 +121,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_receipts(
                     myfile,
@@ -132,7 +132,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_passing_unsupported_url_content_type(self, client):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             async with client:
                 poller = await client.begin_analyze_document("prebuilt-receipt", "https://badurl.jpg", content_type="application/json")
                 result = await poller.result()
@@ -143,7 +143,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",

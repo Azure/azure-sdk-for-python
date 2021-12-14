@@ -27,7 +27,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_recognize_content(myfile)
@@ -36,7 +36,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_recognize_content(b"xxx", content_type="application/pdf")
                 result = await poller.result()
@@ -58,7 +58,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_recognize_content(
                     damaged_pdf,
@@ -70,7 +70,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_content(
                     myfile,
@@ -84,7 +84,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_content(
                     myfile

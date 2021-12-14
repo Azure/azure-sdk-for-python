@@ -37,7 +37,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_business_cards(
                     damaged_pdf
@@ -47,7 +47,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_business_cards(
                     damaged_pdf
@@ -59,7 +59,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_business_cards(
                     myfile,

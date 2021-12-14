@@ -24,14 +24,14 @@ class TestContentFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_content_url_pass_stream(self, client):
         with open(self.receipt_jpg, "rb") as receipt:
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 poller = client.begin_recognize_content_from_url(receipt)
 
     @FormRecognizerPreparer()

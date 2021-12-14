@@ -61,7 +61,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_receipt_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_analyze_document_from_url(
@@ -73,7 +73,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_analyze_document_from_url(
                     "prebuilt-receipt",
@@ -84,7 +84,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_receipt_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
                 result = await poller.result()
@@ -96,7 +96,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
                 result = await poller.result()

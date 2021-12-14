@@ -37,7 +37,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_invoice_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
     @FormRecognizerPreparer()

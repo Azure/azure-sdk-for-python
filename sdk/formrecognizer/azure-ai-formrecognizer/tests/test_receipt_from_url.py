@@ -53,27 +53,27 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_receipt_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
     @FormRecognizerPreparer()
     def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_receipt_url_pass_stream(self, client):
         with open(self.receipt_png, "rb") as receipt:
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
 
     @FormRecognizerPreparer()

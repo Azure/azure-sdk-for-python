@@ -24,6 +24,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_enum_content_type(self, client, variables):
+        self.some_func()
         with open(self.business_card_png, "rb") as fd:
             myfile = fd.read()
         poller = client.begin_recognize_business_cards(
@@ -38,7 +39,7 @@ class TestBusinessCard(FormRecognizerTest):
     @recorded_by_proxy
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client, variables):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
                 damaged_pdf
             )
@@ -48,7 +49,7 @@ class TestBusinessCard(FormRecognizerTest):
     @recorded_by_proxy
     def test_damaged_file_bytes_io_fails_autodetect(self, client, variables):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
                 damaged_pdf
             )
@@ -57,9 +58,10 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_bad_content_type_param_passed(self, client, variables):
+        self.some_func()
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
                 myfile,
                 content_type="application/jpeg"
@@ -69,6 +71,7 @@ class TestBusinessCard(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client, variables):
+        self.some_func()
         with open(self.business_card_multipage_pdf, "rb") as fd:
             business_card = fd.read()
 

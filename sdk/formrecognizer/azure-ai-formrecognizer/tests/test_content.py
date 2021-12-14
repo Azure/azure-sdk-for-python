@@ -25,14 +25,14 @@ class TestContentFromStream(FormRecognizerTest):
     def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_content(myfile)
 
     @FormRecognizerPreparer()
     def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             poller = client.begin_recognize_content(b"xx", content_type="application/pdf")
 
     @FormRecognizerPreparer()
@@ -51,7 +51,7 @@ class TestContentFromStream(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_content(
                 damaged_pdf,
             )
@@ -61,7 +61,7 @@ class TestContentFromStream(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_content(
                 myfile,
                 content_type="application/jpeg"
@@ -73,7 +73,7 @@ class TestContentFromStream(FormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_content(
                 myfile
             )

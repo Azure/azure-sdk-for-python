@@ -27,14 +27,14 @@ class TestReceiptFromStream(FormRecognizerTest):
     def test_receipt_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document("prebuilt-receipt", myfile)
 
     @FormRecognizerPreparer()
     def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document("prebuilt-receipt", b"xx")
 
     @FormRecognizerPreparer()
@@ -42,7 +42,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     def test_fail_passing_content_type(self, client):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
                 myfile,
@@ -65,7 +65,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     @GlobalClientPreparer()
     def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
                 damaged_pdf
@@ -75,7 +75,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     @GlobalClientPreparerV2()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
                 damaged_pdf
             )
@@ -84,7 +84,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     @GlobalClientPreparer()
     def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
                 damaged_pdf
@@ -95,7 +95,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     # TODO should there be a v3 version of this test?
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
                 damaged_pdf
             )
@@ -118,7 +118,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
                 myfile,
                 content_type="application/jpeg"
@@ -127,7 +127,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
     def test_passing_unsupported_url_content_type(self, client):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             poller = client.begin_recognize_receipts(
                 "https://badurl.jpg",
                 content_type="application/json"
@@ -140,7 +140,7 @@ class TestReceiptFromStream(FormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
                 myfile

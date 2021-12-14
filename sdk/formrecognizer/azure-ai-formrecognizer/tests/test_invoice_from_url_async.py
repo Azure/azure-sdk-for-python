@@ -40,7 +40,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_invoice_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_recognize_invoices_from_url("https://badurl.jpg")
 

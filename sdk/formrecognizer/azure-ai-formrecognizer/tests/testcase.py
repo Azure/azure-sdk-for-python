@@ -16,7 +16,7 @@ from azure.ai.formrecognizer._helpers import (
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase
 from azure_devtools.scenario_tests import (
     RecordingProcessor,
     ReplayableTest

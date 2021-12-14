@@ -25,14 +25,14 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_document_analysis_none_model(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 await client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     async def test_document_analysis_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 await client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
 
