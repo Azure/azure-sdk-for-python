@@ -6,6 +6,23 @@ the Azure SDK test proxy.
 Documentation of the motivations and goals of the test proxy can be found [here][general_docs] in the azure-sdk-tools
 GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
 
+## Table of contents
+- [Update existing tests](#update-existing-tests)
+  - [Using resource preparers](#using-resource-preparers)
+- [Run tests](#run-tests)
+  - [Perform one-time setup](#perform-one-time-setup)
+  - [Start the proxy server](#start-the-proxy-server)
+  - [Record or play back tests](#record-or-play-back-tests)
+  - [Register sanitizers](#register-sanitizers)
+  - [Enable the test proxy in CI](#enable-the-test-proxy-in-ci)
+  - [Fetch environment variables](#fetch-environment-variables)
+  - [Record test variables](#record-test-variables)
+- [Migrate management-plane tests](#migrate-management-plane-tests)
+- [Advanced details](#advanced-details)
+  - [What does the test proxy do?](#what-does-the-test-proxy-do)
+  - [How does the test proxy know when and what to record or play back?](#how-does-the-test-proxy-know-when-and-what-to-record-or-play-back)
+  - [Start the proxy manually](#start-the-proxy-manually)
+
 ## Update existing tests
 
 ### Current test structure
@@ -52,13 +69,28 @@ way as `recorded_by_proxy`.
 > with "Test" in order to be properly collected by pytest by default. For more information, please refer to
 > [pytest's documentation][pytest_collection].
 
-## Run the tests
+### Using resource preparers
+
+Test suites that haven't fully migrated to using a `test-resources.json` file for test resource deployment might use
+resource preparers, such as
+[ResourceGroupPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py).
+Migrating to [PowerShell test resource deployment][test_resources] is recommended (and test proxy migration might be a
+good opportunity to look into this), but the test proxy can work with resource preparers.
+
+Resource preparers need a management client to function, so test classes that use them will need to inherit from
+[AzureMgmtRecordedTestCase][mgmt_recorded_test_case] instead of AzureRecordedTestCase.
+
+## Run tests
 
 ### Perform one-time setup
 
+Docker is a requirement for using the test proxy. You can install Docker from
+[docs.docker.com](https://docs.docker.com/get-docker/). After installing, make sure Docker is running and is using
+Linux containers before running tests.
+
 The test proxy is made available for your tests via a Docker container. Some tests require an SSL connection to work, so
 the Docker image used for the container has a certificate imported that you need to trust on your machine. Instructions
-on how to do so can be found [here][proxy_cert_docs].
+on how to do so can be found [here][proxy_cert_docs] and need to be followed before running tests.
 
 ### Start the proxy server
 
@@ -66,8 +98,8 @@ The test proxy has to be available in order for tests to work in live or playbac
 [section](#manually-start-the-proxy) under [Advanced details](#advanced-details) that describes how to do this manually,
 but it's recommended that tests use a `pytest` fixture to start and stop the proxy automatically when running tests.
 
-In a `conftest.py` file for your package's tests, add a session-level fixture that accepts `devtools_testutils.test_proxy`
-as a parameter (and has `autouse` set to `True`):
+In a `conftest.py` file for your package's tests, add a session-level fixture that accepts
+`devtools_testutils.test_proxy` as a parameter (and has `autouse` set to `True`):
 
 ```python
 from devtools_testutils import test_proxy
@@ -78,18 +110,24 @@ def start_proxy(test_proxy):
     return
 ```
 
+The `test_proxy` fixture will fetch the test proxy Docker image and create a new container called
+`ambitious_azsdk_test_proxy` if one doesn't exist already. If the container already exists, the fixture will start the
+container if it's currently stopped. The container will be stopped after tests finish running, but will stay running if
+test execution is interrupted.
+
 If your tests already use an `autouse`d, session-level fixture for tests, you can accept the `test_proxy` parameter in
 that existing fixture instead of adding a new one. For an example, see the [Register sanitizers](#register-sanitizers)
 section of this document.
 
-In general, if any fixture requires the test proxy to be available by the time it's used, that fixture should accept this
-`test_proxy` parameter.
+In general, if any fixture requires the test proxy to be available by the time it's used, that fixture should accept
+this `test_proxy` parameter.
 
 ### Record or play back tests
 
 Configuring live and playback tests is done with the `AZURE_TEST_RUN_LIVE` environment variable. When this variable is
-set to "true" or "yes", live tests will run and produce recordings. When this variable is set to "false" or "no", or
-not set at all, tests will run in playback mode and attempt to match existing recordings.
+set to "true" or "yes", live tests will run and produce recordings unless the `AZURE_SKIP_LIVE_RECORDING` environment
+variable is set to "true". When `AZURE_TEST_RUN_LIVE` is set to "false" or "no", or not set at all, tests will run in
+playback mode and attempt to match existing recordings.
 
 Recordings for a given package will end up in that package's `/tests/recordings` directory, just like they currently
 do. Recordings that use the test proxy are `.json` files instead of `.yml` files, so migrated test suites no longer
@@ -97,6 +135,10 @@ need old `.yml` recordings.
 
 > **Note:** at this time, support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
+
+> **Note:** the recording storage location is determined when the proxy Docker container is created. If there are
+> multiple local copies of the `azure-sdk-for-python` repo on your machine, you will need to delete any existing
+> `ambitious_azsdk_test_proxy` container before recordings can be stored in a different repo copy.
 
 ### Register sanitizers
 
@@ -145,12 +187,60 @@ made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will a
 
 For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
 
-### Enabling the test proxy in CI
+#### Note regarding body matching
 
-To enable using the test proxy in CI, you need to set the parameter `TestProxy: true` in the `ci.yml` and `tests.yml`
-files in the service level folder. For example, in `sdk/eventgrid/ci.yml`:
+In the old, `vcrpy`-based testing system, request and response bodies weren't compared in playback mode by default in
+most packages. The test proxy system enables body matching by default, which can introduce failures for tests that
+passed in the old system. For example, if a test sends a request that includes the current Unix time in its body, the
+body will contain a new value when run in playback mode at a later time. This request might still match the recording if
+body matching is disabled, but not if it's enabled.
+
+Body matching can be turned off with the test proxy by calling the `set_bodiless_matcher` method from
+[devtools_testutils/sanitizers.py][py_sanitizers] at the very start of a test method. This matcher applies only to the
+test method that `set_bodiless_matcher` is called from, so other tests in the `pytest` session will still have body
+matching enabled by default.
+
+### Enable the test proxy in CI
+
+To enable using the test proxy in CI, you need to set the parameter `TestProxy: true` in the `ci.yml` file in the
+service-level folder. For example, in `sdk/eventgrid/ci.yml`:
 
 ![image](https://user-images.githubusercontent.com/45376673/142270668-5be58bca-87e5-45f5-b593-44f8b1f757bc.png)
+
+The test proxy is only used in playback pipeline testing, so this parameter doesn't need to be set in `tests.yml`. For
+live pipeline testing, requests are made directly to the service instead of going through the proxy first.
+
+### Fetch environment variables
+
+Fetching environment variables, passing them directly to tests, and sanitizing their real values can be done all at once
+by using the `devtools_testutils`
+[PowerShellPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py).
+
+The name "PowerShellPreparer" comes from its intended use with the PowerShell test resource management commands that are
+documented in [/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for
+live test resource management.
+
+For an example of using the PowerShellPreparer with the test proxy, you can refer to the Tables SDK. The CosmosPreparer
+and TablesPreparer defined in this [preparers.py][tables_preparers] file each define an instance of the
+PowerShellPreparer, which are used to fetch environment variables for Cosmos and Tables, respectively. These preparers
+can be used to decorate test methods directly; for example:
+
+```python
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from .preparers import TablesPreparer
+
+class TestExample(AzureRecordedTestCase):
+
+    @TablesPreparer()
+    @recorded_by_proxy
+    def test_example_with_preparer(self, tables_storage_account_name, tables_primary_storage_account_key):
+        ...
+```
+
+Or, they can be used in a custom decorator, as they are in the `cosmos_decorator` and `tables_decorator` defined in
+[preparers.py][tables_preparers]. `@tables_decorator`, for instance, is then used in place of `@TablesPreparer()` for
+the example above (note that the method-style `tables_decorator` is used without parentheses).
+
 ### Record test variables
 
 To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
@@ -187,6 +277,14 @@ class TestExample(AzureRecordedTestCase):
         # return the variables at the end of the test
         return variables
 ```
+
+## Migrate management-plane tests
+
+For management-plane packages, test classes should inherit from [AzureMgmtRecordedTestCase][mgmt_recorded_test_case]
+instead of AzureRecordedTestCase.
+
+The rest of the information in this guide applies to management-plane packages as well, except for possible specifics
+regarding test resource deployment.
 
 ## Advanced details
 
@@ -235,7 +333,7 @@ Running tests in playback follows the same pattern, except that requests will be
 The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of
 each test case.
 
-### Manually start the proxy
+### Start the proxy manually
 
 There are two options for manually starting and stopping the test proxy: one uses a PowerShell command, and one uses
 methods from `devtools_testutils`.
@@ -270,9 +368,12 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
+[tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
+[test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
 [vcrpy]: https://vcrpy.readthedocs.io
