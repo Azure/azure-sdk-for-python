@@ -26,7 +26,7 @@ class TestCommunicationTokenCredential:
             CommunicationTokenCredential(1234)
         assert str(err.value) == "Token must be a string."
 
-    '''@pytest.mark.asyncio
+    @pytest.mark.asyncio
     async def test_raises_error_for_init_with_invalid_token(self):
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential("not a token")
@@ -39,7 +39,7 @@ class TestCommunicationTokenCredential:
             access_token = await credential.get_token()
         assert initial_token == access_token.token
 
-    @pytest.mark.asyncio
+    '''@pytest.mark.asyncio
     async def test_refresher_should_be_called_immediately_with_expired_token(self):
         refreshed_token = generate_token_with_custom_expiry(10 * 60)
         refresher = MagicMock(
