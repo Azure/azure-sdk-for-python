@@ -100,7 +100,7 @@ def create_container():
     image_tag = get_image_tag()
     proc = subprocess.Popen(
         shlex.split(
-            "docker container create -v '{}:{}/etc/testproxy' {} -p 5001:5001 -p 5000:5000 --name {} {}:{}".format(
+            "docker container create -v '{}:{}/srv/testproxy' {} -p 5001:5001 -p 5000:5000 --name {} {}:{}".format(
                 REPO_ROOT, path_prefix, linux_container_args, CONTAINER_NAME, image_prefix, image_tag
             )
         )
