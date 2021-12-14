@@ -27,7 +27,6 @@ def extract(definitions):
         return
     tups = []
     for event in definitions:
-        print(event)
         if event.endswith('Data') and event not in ('ContainerRegistryArtifactEventData', 'ContainerRegistryEventData'):
             try:
                 key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
