@@ -57,15 +57,15 @@ def recorded_by_proxy_async(test_func):
         # we define test_output before invoking the test so the variable is defined in case of an exception
         test_output = None
         try:
-            test_output = await test_func(*args, variables=variables, **trimmed_kwargs)
-        except TypeError:
-            logger = logging.getLogger()
-            logger.info(
-                "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                "`variables` parameter to make use of recorded test variables."
-            )
-        try:
-            test_output = await test_func(*args, **trimmed_kwargs)
+            try:
+                test_output = await test_func(*args, variables=variables, **trimmed_kwargs)
+            except TypeError:
+                logger = logging.getLogger()
+                logger.info(
+                    "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                    "`variables` parameter to make use of recorded test variables."
+                )
+                test_output = await test_func(*args, **trimmed_kwargs)
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
