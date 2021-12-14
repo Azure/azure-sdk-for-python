@@ -14,24 +14,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"redactedText\":\"\uC544\uAC00 SSN: ***********\"\
-        ,\"id\":\"0\",\"entities\":[{\"text\":\"859-98-0987\",\"category\":\"USSocialSecurityNumber\"\
-        ,\"offset\":8,\"length\":11,\"confidenceScore\":0.65}],\"warnings\":[]}],\"\
-        errors\":[],\"modelVersion\":\"2021-01-15\"}"
+      string: "{\"documents\":[{\"redactedText\":\"\uC544\uAC00 SSN: ***********\",\"id\":\"0\",\"entities\":[{\"text\":\"859-98-0987\",\"category\":\"USSocialSecurityNumber\",\"offset\":8,\"length\":11,\"confidenceScore\":0.65}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2021-01-15\"}"
     headers:
       apim-request-id:
-      - e17cc662-62b5-4096-8593-c94d177bf9c1
+      - 26d2e7b2-1f20-42cc-a61a-d9e292046830
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
       date:
-      - Wed, 06 Oct 2021 21:04:25 GMT
+      - Wed, 08 Dec 2021 22:57:59 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '29'
     status:
       code: 200
       message: OK

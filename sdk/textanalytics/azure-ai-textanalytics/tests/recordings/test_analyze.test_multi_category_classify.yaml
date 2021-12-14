@@ -27,7 +27,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
@@ -35,11 +35,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 9e97987a-7066-4590-b132-a948c28014ba
+      - 2eee5602-4b0d-41f7-ad60-11775b74e783
       date:
-      - Thu, 07 Oct 2021 23:41:25 GMT
+      - Wed, 08 Dec 2021 22:45:37 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/15f01764-884e-46a6-805a-617e74dab0f9
+      - https://westus2.api.cognitive.microsoft.com//text/analytics/v3.2-preview.2/analyze/jobs/f9f9daef-abcb-483c-87bd-7ce7e1489fc4
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '226'
+      - '375'
     status:
       code: 202
       message: Accepted
@@ -61,19 +61,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/15f01764-884e-46a6-805a-617e74dab0f9?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/f9f9daef-abcb-483c-87bd-7ce7e1489fc4?showStats=True
   response:
     body:
-      string: '{"jobId":"15f01764-884e-46a6-805a-617e74dab0f9","lastUpdateDateTime":"2021-10-07T23:41:26Z","createdDateTime":"2021-10-07T23:41:25Z","expirationDateTime":"2021-10-08T23:41:25Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-10-07T23:41:26.4004139Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
+      string: '{"jobId":"f9f9daef-abcb-483c-87bd-7ce7e1489fc4","lastUpdateDateTime":"2021-12-08T22:45:38Z","createdDateTime":"2021-12-08T22:45:37Z","expirationDateTime":"2021-12-09T22:45:37Z","status":"succeeded","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customMultiClassificationTasks":[{"lastUpdateDateTime":"2021-12-08T22:45:38.4771919Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classifications":[],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classifications":[],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classifications":[{"category":"BookRestaurant","confidenceScore":0.97}],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"textanalytics_multi_category_classify_project_name","deploymentName":"textanalytics_multi_category_classify_project_name"}}]}}'
     headers:
       apim-request-id:
-      - 3572e3dc-1139-4c6d-aa4b-161f4c3eea43
+      - fa45ffb0-a465-49c2-9ed2-648882255dd1
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Oct 2021 23:41:30 GMT
+      - Wed, 08 Dec 2021 22:45:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -81,7 +81,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '178'
+      - '73'
     status:
       code: 200
       message: OK

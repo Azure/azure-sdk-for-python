@@ -1,17 +1,15 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
-      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "bad",
-      "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}, "taskName": "2"}],
-      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad", "loggingOptOut":
-      false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
-      "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version": "bad", "loggingOptOut":
-      false, "opinionMining": false}, "taskName": "4"}], "extractiveSummarizationTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint", "sentenceCount": 3, "sortBy": "Offset"}, "taskName": "5"}],
-      "customEntityRecognitionTasks": [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      "bad", "stringIndexType": "UnicodeCodePoint"}, "taskName": "0"}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "bad", "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "2"}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
+      "bad"}, "taskName": "1"}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "bad", "stringIndexType": "UnicodeCodePoint"}, "taskName": "3"}], "sentimentAnalysisTasks":
+      [{"parameters": {"model-version": "bad", "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "4"}], "extractiveSummarizationTasks": [{"parameters": {"model-version":
+      "bad", "stringIndexType": "UnicodeCodePoint"}, "taskName": "5"}], "customEntityRecognitionTasks":
+      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
       []}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like the
       hotel we stayed at.", "language": "english"}]}}'
     headers:
@@ -22,11 +20,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1136'
+      - '968'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
@@ -36,11 +34,11 @@ interactions:
         job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01,2021-05-01."}}}'
     headers:
       apim-request-id:
-      - 477a0d83-2bcc-4078-b8ae-c323964379b5
+      - a48052f7-88a4-4b6d-b669-2f316a0fc770
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Oct 2021 23:39:25 GMT
+      - Wed, 08 Dec 2021 22:44:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -48,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '654'
+      - '9'
     status:
       code: 400
       message: Bad Request

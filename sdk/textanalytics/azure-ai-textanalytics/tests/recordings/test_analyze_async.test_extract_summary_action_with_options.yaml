@@ -2,12 +2,11 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      [], "extractiveSummarizationTasks": [{"parameters": {"model-version": "latest",
-      "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint", "sentenceCount":
-      5, "sortBy": "Rank"}, "taskName": "0"}], "customEntityRecognitionTasks": [],
-      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
-      "analysisInput": {"documents": [{"id": "0", "text": "The government of British
-      Prime Minster Theresa May has been plunged into turmoil with the resignation
+      [], "extractiveSummarizationTasks": [{"parameters": {"stringIndexType": "UnicodeCodePoint",
+      "sentenceCount": 5, "sortBy": "Rank"}, "taskName": "0"}], "customEntityRecognitionTasks":
+      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "The government of
+      British Prime Minster Theresa May has been plunged into turmoil with the resignation
       of two senior Cabinet ministers in a deep split over her Brexit strategy. The
       Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation
       late on Sunday night of the minister in charge of Brexit negotiations, David
@@ -32,82 +31,60 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '2174'
+      - '2123'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 72b20d62-cba5-4555-8f51-e742ca326cdd
-      date: Thu, 07 Oct 2021 23:49:09 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc
+      apim-request-id: cf6d884e-cf44-4a49-839d-abe939538e58
+      date: Wed, 08 Dec 2021 22:49:54 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/291a4b0a-7f64-4827-8a35-c06e92a3b24b
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '288'
+      x-envoy-upstream-service-time: '194'
     status:
       code: 202
       message: Accepted
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/291a4b0a-7f64-4827-8a35-c06e92a3b24b?showStats=True
   response:
     body:
-      string: '{"jobId":"fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc","lastUpdateDateTime":"2021-10-07T23:49:09Z","createdDateTime":"2021-10-07T23:49:09Z","expirationDateTime":"2021-10-08T23:49:09Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"291a4b0a-7f64-4827-8a35-c06e92a3b24b","lastUpdateDateTime":"2021-12-08T22:49:55Z","createdDateTime":"2021-12-08T22:49:55Z","expirationDateTime":"2021-12-09T22:49:55Z","status":"running","errors":[],"tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
-      apim-request-id: a27f862f-af80-4b81-8b2f-d2bb750f9178
+      apim-request-id: d9fbfaab-e99f-44d1-9ca8-e9e6f07dcfec
       content-type: application/json; charset=utf-8
-      date: Thu, 07 Oct 2021 23:49:14 GMT
+      date: Wed, 08 Dec 2021 22:49:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '28'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc?showStats=True
+    url: https://python-textanalytics.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/291a4b0a-7f64-4827-8a35-c06e92a3b24b?showStats=True
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/291a4b0a-7f64-4827-8a35-c06e92a3b24b?showStats=True
   response:
     body:
-      string: '{ "error": { "code": "Timeout", "message": "The operation was timeout."
-        } }'
-    headers:
-      apim-request-id: da577ae4-5df1-422a-a9ac-08f1f410ce97
-      content-length: '75'
-      content-type: application/json
-      date: Thu, 07 Oct 2021 23:51:19 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-    status:
-      code: 408
-      message: Timeout
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc?showStats=True
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc?showStats=True
-  response:
-    body:
-      string: '{"jobId":"fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc","lastUpdateDateTime":"2021-10-07T23:49:26Z","createdDateTime":"2021-10-07T23:49:09Z","expirationDateTime":"2021-10-08T23:49:09Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-10-07T23:49:26.5678948Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"0","statistics":{"charactersCount":1625,"transactionsCount":2},"sentences":[{"text":"The
+      string: '{"jobId":"291a4b0a-7f64-4827-8a35-c06e92a3b24b","lastUpdateDateTime":"2021-12-08T22:50:03Z","createdDateTime":"2021-12-08T22:49:55Z","expirationDateTime":"2021-12-09T22:49:55Z","status":"succeeded","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"extractiveSummarizationTasks":[{"lastUpdateDateTime":"2021-12-08T22:50:03.5880919Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"0","statistics":{"charactersCount":1625,"transactionsCount":2},"sentences":[{"text":"The
         Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation
         late on Sunday night of the minister in charge of Brexit negotiations, David
         Davis.","rankScore":1.0,"offset":177,"length":164},{"text":"The government
@@ -121,15 +98,15 @@ interactions:
         Prime Minister''s latest plitical drama began late on Sunday night when Davis
         quit, declaring he could not support May''s Brexit plan.","rankScore":0.26,"offset":918,"length":136}],"warnings":[]}],"errors":[],"modelVersion":"2021-08-01"}}]}}'
     headers:
-      apim-request-id: 4121b7bc-0ecc-4813-992b-f6ad2a000656
+      apim-request-id: 3ef32109-5f21-467a-9ac6-b49259fe1c36
       content-type: application/json; charset=utf-8
-      date: Thu, 07 Oct 2021 23:51:19 GMT
+      date: Wed, 08 Dec 2021 22:50:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '160'
+      x-envoy-upstream-service-time: '63'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/fba4a4ad-0fc8-465d-98e1-8008f6e5e5bc?showStats=True
+    url: https://python-textanalytics.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/291a4b0a-7f64-4827-8a35-c06e92a3b24b?showStats=True
 version: 1

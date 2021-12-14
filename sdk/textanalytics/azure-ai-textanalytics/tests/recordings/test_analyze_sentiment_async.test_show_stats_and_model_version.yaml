@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/sentiment?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
   response:
@@ -21,10 +21,10 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: f173468d-862e-43d8-b69f-90e56eb512d1
+      apim-request-id: f0f228b5-cd7f-49d4-ae5c-a45559cd8f81
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4
-      date: Wed, 06 Oct 2021 21:03:57 GMT
+      date: Wed, 08 Dec 2021 22:57:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -32,5 +32,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/sentiment?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/sentiment?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
 version: 1

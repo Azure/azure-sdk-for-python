@@ -23,44 +23,44 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: f9824da7-7fe4-4af5-8251-8b98331ad1a2
-      date: Thu, 07 Oct 2021 23:59:12 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/885c214e-654c-4e58-b9d5-16ca756d6d11
+      apim-request-id: 42a49a3b-7247-4553-a374-f61dc2e4fa8d
+      date: Wed, 08 Dec 2021 22:52:54 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.2-preview.2/analyze/jobs/2b02550e-27cd-4b03-a955-8d9c20f670b0
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '482'
+      x-envoy-upstream-service-time: '465'
     status:
       code: 202
       message: Accepted
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/885c214e-654c-4e58-b9d5-16ca756d6d11?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2b02550e-27cd-4b03-a955-8d9c20f670b0?showStats=True
   response:
     body:
-      string: '{"jobId":"885c214e-654c-4e58-b9d5-16ca756d6d11","lastUpdateDateTime":"2021-10-07T23:59:13Z","createdDateTime":"2021-10-07T23:59:12Z","expirationDateTime":"2021-10-08T23:59:12Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-10-07T23:59:13.7403633Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classification":{"category":"RateBook","confidenceScore":0.76},"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classification":{"category":"RateBook","confidenceScore":0.57},"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classification":{"category":"BookRestaurant","confidenceScore":1.0},"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}]}}'
+      string: '{"jobId":"2b02550e-27cd-4b03-a955-8d9c20f670b0","lastUpdateDateTime":"2021-12-08T22:52:56Z","createdDateTime":"2021-12-08T22:52:54Z","expirationDateTime":"2021-12-09T22:52:54Z","status":"succeeded","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"customSingleClassificationTasks":[{"lastUpdateDateTime":"2021-12-08T22:52:56.1279146Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","classification":{"category":"RateBook","confidenceScore":0.76},"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","classification":{"category":"RateBook","confidenceScore":0.57},"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"3","classification":{"category":"BookRestaurant","confidenceScore":1.0},"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[],"projectName":"single_category_classify_project_name","deploymentName":"single_category_classify_project_name"}}]}}'
     headers:
-      apim-request-id: 8783048e-2cff-48e2-a819-a44262eb7bec
+      apim-request-id: 33c82d02-ced1-4e8a-a9dc-473525b7785a
       content-type: application/json; charset=utf-8
-      date: Thu, 07 Oct 2021 23:59:17 GMT
+      date: Wed, 08 Dec 2021 22:53:00 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '196'
+      x-envoy-upstream-service-time: '124'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/885c214e-654c-4e58-b9d5-16ca756d6d11?showStats=True
+    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2b02550e-27cd-4b03-a955-8d9c20f670b0?showStats=True
 version: 1

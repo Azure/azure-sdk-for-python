@@ -10,46 +10,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 96d5a808-5c2b-47ae-b3a7-c5c443381dc2
-      date: Wed, 06 Oct 2021 21:02:38 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/613f0af7-0a4e-41be-ba6e-313467b2ff0d
+      apim-request-id: 4a256ad7-181c-4ab1-9ccf-03d27e91b264
+      date: Wed, 08 Dec 2021 22:56:02 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/206d0daf-f171-4b12-b3e3-dcc213cbea66
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '166'
+      x-envoy-upstream-service-time: '159'
     status:
       code: 202
       message: Accepted
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/613f0af7-0a4e-41be-ba6e-313467b2ff0d
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/206d0daf-f171-4b12-b3e3-dcc213cbea66
   response:
     body:
-      string: '{"jobId":"613f0af7-0a4e-41be-ba6e-313467b2ff0d","lastUpdateDateTime":"2021-10-06T21:02:39Z","createdDateTime":"2021-10-06T21:02:38Z","expirationDateTime":"2021-10-07T21:02:38Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"206d0daf-f171-4b12-b3e3-dcc213cbea66","lastUpdateDateTime":"2021-12-08T22:56:02Z","createdDateTime":"2021-12-08T22:56:02Z","expirationDateTime":"2021-12-09T22:56:02Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}}],"modelVersion":"2021-05-15"}}'
     headers:
-      apim-request-id: d7c04443-0024-4394-93b1-bf424aa593e7
+      apim-request-id: 869d6fc7-2560-4d5a-a9f8-13caa5eedff1
       content-type: application/json; charset=utf-8
-      date: Wed, 06 Oct 2021 21:02:43 GMT
+      date: Wed, 08 Dec 2021 22:56:07 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
+      x-envoy-upstream-service-time: '72'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/613f0af7-0a4e-41be-ba6e-313467b2ff0d
+    url: https://python-textanalytics.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/206d0daf-f171-4b12-b3e3-dcc213cbea66
 version: 1

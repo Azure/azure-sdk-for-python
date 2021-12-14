@@ -17,7 +17,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/general?model-version=2020-02-01&showStats=true&stringIndexType=UnicodeCodePoint
   response:
@@ -30,13 +30,13 @@ interactions:
         April 1975","category":"DateTime","subcategory":"Date","offset":19,"length":13,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - cb863621-2722-45ae-b703-3d0580118874
+      - f55546f4-0dfa-4f30-a6ee-d322eebce3c9
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 06 Oct 2021 21:04:48 GMT
+      - Wed, 08 Dec 2021 22:58:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '205'
+      - '113'
     status:
       code: 200
       message: OK

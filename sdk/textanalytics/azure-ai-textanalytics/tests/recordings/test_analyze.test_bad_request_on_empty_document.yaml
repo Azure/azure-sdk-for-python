@@ -1,11 +1,10 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
-      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
-      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
-      "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
+      "keyPhraseExtractionTasks": [{"parameters": {}, "taskName": "0"}], "entityLinkingTasks":
+      [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
+      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -14,11 +13,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '472'
+      - '423'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
@@ -27,11 +26,11 @@ interactions:
         text is empty."}}}'
     headers:
       apim-request-id:
-      - 6eff5795-f82e-4f79-9aaf-19c0aa854ef4
+      - 33173e92-e2b3-4f6a-8454-97ba4e0e2fd7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 07 Oct 2021 23:39:26 GMT
+      - Wed, 08 Dec 2021 22:44:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '666'
+      - '7'
     status:
       code: 400
       message: Bad Request

@@ -1,12 +1,11 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
-      "0"}], "entityRecognitionPiiTasks": [], "keyPhraseExtractionTasks": [], "entityLinkingTasks":
-      [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
-      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
-      []}, "analysisInput": {"documents": [{"id": "56", "text": ":)", "language":
-      "en"}]}}'
+      "latest", "stringIndexType": "UnicodeCodePoint"}, "taskName": "0"}], "entityRecognitionPiiTasks":
+      [], "keyPhraseExtractionTasks": [], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
+      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
+      "analysisInput": {"documents": [{"id": "56", "text": ":)", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -15,11 +14,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '514'
+      - '490'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
@@ -27,11 +26,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - ae80939d-9ac4-4628-8b12-1a401627cefa
+      - 2c759aa3-da4f-4b17-8a33-724a8559d9d7
       date:
-      - Thu, 21 Oct 2021 22:27:15 GMT
+      - Wed, 08 Dec 2021 22:47:34 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/924b16fb-99ac-48ca-ac98-addcbd1be21f
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/b3826c85-3937-422e-b2fb-6b6d6fed4f22
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '219'
+      - '199'
     status:
       code: 202
       message: Accepted
@@ -53,19 +52,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/924b16fb-99ac-48ca-ac98-addcbd1be21f?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/b3826c85-3937-422e-b2fb-6b6d6fed4f22?showStats=True
   response:
     body:
-      string: '{"jobId":"924b16fb-99ac-48ca-ac98-addcbd1be21f","lastUpdateDateTime":"2021-10-21T22:27:15Z","createdDateTime":"2021-10-21T22:27:15Z","expirationDateTime":"2021-10-22T22:27:15Z","status":"running","errors":[],"tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"b3826c85-3937-422e-b2fb-6b6d6fed4f22","lastUpdateDateTime":"2021-12-08T22:47:35Z","createdDateTime":"2021-12-08T22:47:34Z","expirationDateTime":"2021-12-09T22:47:34Z","status":"succeeded","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-12-08T22:47:35.9202074Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}]}}'
     headers:
       apim-request-id:
-      - 315a3846-71e6-4b6d-9556-e22090af80de
+      - e39d691a-7648-4e54-ad2c-34ffeb38266f
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 21 Oct 2021 22:27:20 GMT
+      - Wed, 08 Dec 2021 22:47:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -73,41 +72,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/924b16fb-99ac-48ca-ac98-addcbd1be21f?showStats=True
-  response:
-    body:
-      string: '{"jobId":"924b16fb-99ac-48ca-ac98-addcbd1be21f","lastUpdateDateTime":"2021-10-21T22:27:22Z","createdDateTime":"2021-10-21T22:27:15Z","expirationDateTime":"2021-10-22T22:27:15Z","status":"succeeded","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-21T22:27:22.5613392Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-06-01"}}]}}'
-    headers:
-      apim-request-id:
-      - d8015601-abe7-454f-a101-c3738c564a91
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 21 Oct 2021 22:27:25 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '67'
+      - '50'
     status:
       code: 200
       message: OK
