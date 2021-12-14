@@ -24,11 +24,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 19f8d0af-a534-47b0-b037-07a9b06b0b03
+      - 8d7a2424-1659-4a09-9de8-5ed5b1c6b985
       date:
-      - Tue, 23 Nov 2021 01:09:00 GMT
+      - Wed, 08 Dec 2021 23:07:07 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com//text/analytics/v3.2-preview.2/entities/health/jobs/265d2fec-bbbd-4705-ac19-2d406eac189d
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/f2989282-0da4-49eb-8b37-847bf3391421
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '335'
+      - '290'
     status:
       code: 202
       message: Accepted
@@ -52,23 +52,23 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/265d2fec-bbbd-4705-ac19-2d406eac189d
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/f2989282-0da4-49eb-8b37-847bf3391421
   response:
     body:
-      string: '{"jobId":"265d2fec-bbbd-4705-ac19-2d406eac189d","lastUpdateDateTime":"2021-11-23T01:09:03Z","createdDateTime":"2021-11-23T01:09:00Z","expirationDateTime":"2021-11-24T01:09:00Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"3","entities":[],"relations":[],"warnings":[{"code":"DocumentTruncated","message":"Document
-        is large and must be split to be processed; relations across splits may not
-        be caught by the model"}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"f2989282-0da4-49eb-8b37-847bf3391421","lastUpdateDateTime":"2021-12-08T23:07:11Z","createdDateTime":"2021-12-08T23:07:08Z","expirationDateTime":"2021-12-09T23:07:08Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"3","entities":[],"relations":[],"warnings":[{"code":"DocumentTruncated","message":"Document
+        is greater than 5120 chars; relations across splits of 5120 chars may be skipped
+        by the model"}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}}],"modelVersion":"2021-05-15"}}'
     headers:
       apim-request-id:
-      - de343c73-d70c-4cee-b4dc-bf5bcb783453
+      - 8ec8321c-d53c-4ee4-92d5-3d1e9f21ad07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 23 Nov 2021 01:09:05 GMT
+      - Wed, 08 Dec 2021 23:07:13 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -76,7 +76,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '332'
+      - '84'
     status:
       code: 200
       message: OK

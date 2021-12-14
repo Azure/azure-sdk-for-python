@@ -12,25 +12,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages
   response:
     body:
       string: '{"documents":[{"id":"56","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"0","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"19","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2021-01-05"}'
     headers:
-      apim-request-id: 8443dedd-383a-4d08-a517-34c153c60a12
+      apim-request-id: afec2589-dbc2-4dd3-8216-ec6f3dd576e1
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4
-      date: Wed, 06 Oct 2021 21:04:19 GMT
+      date: Wed, 08 Dec 2021 22:57:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/languages?showStats=false
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/languages
 version: 1
