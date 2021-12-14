@@ -7,50 +7,50 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "737",
+        "Content-Length": "651",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "eec6a9f9-5c81-11ec-8abd-b831b58100e8"
+        "x-ms-client-request-id": "095eba3d-5d0f-11ec-8d49-b831b58100e8"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: true, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00221\u0022}], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022opinionMining\u0022: false}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022tr\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00221\u0022}], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022tr\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "1ea8443e-b54a-44c7-816a-1aba052a8200",
-        "Date": "Tue, 14 Dec 2021 02:02:47 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/94833c36-005d-49d8-9ec3-0ad48eac0865",
+        "apim-request-id": "6d6b4f7d-9120-42a0-a715-4b8514d94cd3",
+        "Date": "Tue, 14 Dec 2021 18:52:50 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/417a0e46-9ce5-4b91-a109-abff179aad66",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "334"
+        "x-envoy-upstream-service-time": "213"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/94833c36-005d-49d8-9ec3-0ad48eac0865",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/417a0e46-9ce5-4b91-a109-abff179aad66",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "eec6a9f9-5c81-11ec-8abd-b831b58100e8"
+        "x-ms-client-request-id": "095eba3d-5d0f-11ec-8d49-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ef71474d-d5a6-45b9-9801-856a5e441399",
+        "apim-request-id": "7bfa19cd-231b-4cba-8f1f-5b7e8bce5562",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:02:52 GMT",
+        "Date": "Tue, 14 Dec 2021 18:52:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7"
+        "x-envoy-upstream-service-time": "9"
       },
       "ResponseBody": {
-        "jobId": "94833c36-005d-49d8-9ec3-0ad48eac0865",
-        "lastUpdateDateTime": "2021-12-14T02:02:47Z",
-        "createdDateTime": "2021-12-14T02:02:46Z",
-        "expirationDateTime": "2021-12-15T02:02:46Z",
+        "jobId": "417a0e46-9ce5-4b91-a109-abff179aad66",
+        "lastUpdateDateTime": "2021-12-14T18:52:51Z",
+        "createdDateTime": "2021-12-14T18:52:50Z",
+        "expirationDateTime": "2021-12-15T18:52:50Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -62,31 +62,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/94833c36-005d-49d8-9ec3-0ad48eac0865",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/417a0e46-9ce5-4b91-a109-abff179aad66",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "eec6a9f9-5c81-11ec-8abd-b831b58100e8"
+        "x-ms-client-request-id": "095eba3d-5d0f-11ec-8d49-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c7078e0a-67fc-463c-8633-5ea641fc5a24",
+        "apim-request-id": "45ff63ff-bb42-480d-95f0-6d35f09fe5bc",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:02:57 GMT",
+        "Date": "Tue, 14 Dec 2021 18:53:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "115"
+        "x-envoy-upstream-service-time": "94"
       },
       "ResponseBody": {
-        "jobId": "94833c36-005d-49d8-9ec3-0ad48eac0865",
-        "lastUpdateDateTime": "2021-12-14T02:02:55Z",
-        "createdDateTime": "2021-12-14T02:02:46Z",
-        "expirationDateTime": "2021-12-15T02:02:46Z",
+        "jobId": "417a0e46-9ce5-4b91-a109-abff179aad66",
+        "lastUpdateDateTime": "2021-12-14T18:52:59Z",
+        "createdDateTime": "2021-12-14T18:52:50Z",
+        "expirationDateTime": "2021-12-15T18:52:50Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -96,7 +96,7 @@
           "total": 2,
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2021-12-14T02:02:54.0753472Z",
+              "lastUpdateDateTime": "2021-12-14T18:52:58.8295303Z",
               "taskName": "1",
               "state": "succeeded",
               "results": {
@@ -127,7 +127,7 @@
           ],
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2021-12-14T02:02:55.4203549Z",
+              "lastUpdateDateTime": "2021-12-14T18:52:59.4916988Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

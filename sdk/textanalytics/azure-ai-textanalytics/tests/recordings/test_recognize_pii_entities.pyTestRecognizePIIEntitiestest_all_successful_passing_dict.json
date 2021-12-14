@@ -10,19 +10,19 @@
         "Content-Length": "315",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ac7ce4f9-5c84-11ec-b60c-b831b58100e8"
+        "x-ms-client-request-id": "effd4bd5-5d11-11ec-9eb3-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022My SSN is 859-98-0987.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Is 998.214.865-68 your Brazilian CPF number?\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "affb08c5-0fa5-47d5-8bd0-a13c7eeb352d",
+        "apim-request-id": "acc49b51-3209-4df5-bd5b-d4a1bd6471b5",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Tue, 14 Dec 2021 02:22:23 GMT",
+        "Date": "Tue, 14 Dec 2021 19:13:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "35"
+        "x-envoy-upstream-service-time": "36"
       },
       "ResponseBody": {
         "statistics": {

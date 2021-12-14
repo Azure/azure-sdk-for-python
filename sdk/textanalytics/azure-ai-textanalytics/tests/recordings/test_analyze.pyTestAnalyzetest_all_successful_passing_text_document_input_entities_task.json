@@ -7,50 +7,50 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "814",
+        "Content-Length": "763",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "aa908357-5c81-11ec-9648-b831b58100e8"
+        "x-ms-client-request-id": "bf5f48ee-5d0e-11ec-8b06-b831b58100e8"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\\u00fcndet.\u0022, \u0022language\u0022: \u0022de\u0022}]}}",
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\\u00fcndet.\u0022, \u0022language\u0022: \u0022de\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8f8d71df-d699-49aa-9460-bf89e6b38870",
-        "Date": "Tue, 14 Dec 2021 02:00:51 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/18e51605-7b03-4736-a9b5-6f3c63144f64",
+        "apim-request-id": "622b09d7-9e77-45e2-871a-c7eeff06988f",
+        "Date": "Tue, 14 Dec 2021 18:50:46 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/38e17bfd-7b55-4ca8-9c97-6c7ba777a888",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "234"
+        "x-envoy-upstream-service-time": "176"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/18e51605-7b03-4736-a9b5-6f3c63144f64?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/38e17bfd-7b55-4ca8-9c97-6c7ba777a888?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "aa908357-5c81-11ec-9648-b831b58100e8"
+        "x-ms-client-request-id": "bf5f48ee-5d0e-11ec-8b06-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a639c47e-04bb-4a48-966a-f13087b0825d",
+        "apim-request-id": "a22b009e-2232-4f97-bbe4-d9ad7d40ee65",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:00:57 GMT",
+        "Date": "Tue, 14 Dec 2021 18:50:50 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "60"
+        "x-envoy-upstream-service-time": "52"
       },
       "ResponseBody": {
-        "jobId": "18e51605-7b03-4736-a9b5-6f3c63144f64",
-        "lastUpdateDateTime": "2021-12-14T02:00:55Z",
-        "createdDateTime": "2021-12-14T02:00:52Z",
-        "expirationDateTime": "2021-12-15T02:00:52Z",
+        "jobId": "38e17bfd-7b55-4ca8-9c97-6c7ba777a888",
+        "lastUpdateDateTime": "2021-12-14T18:50:48Z",
+        "createdDateTime": "2021-12-14T18:50:46Z",
+        "expirationDateTime": "2021-12-15T18:50:46Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -60,7 +60,7 @@
           "total": 1,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-12-14T02:00:55.8221363Z",
+              "lastUpdateDateTime": "2021-12-14T18:50:48.5180045Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

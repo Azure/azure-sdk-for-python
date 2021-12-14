@@ -9,46 +9,46 @@
         "Content-Length": "240",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "a42f0e74-5c83-11ec-ba0a-b831b58100e8"
+        "x-ms-client-request-id": "67c2c494-5d10-11ec-8188-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "154d5a89-8611-488b-899d-d710b17d2da4",
-        "Date": "Tue, 14 Dec 2021 02:14:59 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/e96eba3b-fd22-4b38-bc95-7836209b7c48",
+        "apim-request-id": "8b4df6ba-034e-41f2-991b-d2061c709f34",
+        "Date": "Tue, 14 Dec 2021 19:02:38 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/95fd06e6-cc2f-4091-8a1a-8a3c326ced82",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "208"
+        "x-envoy-upstream-service-time": "257"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/e96eba3b-fd22-4b38-bc95-7836209b7c48",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/95fd06e6-cc2f-4091-8a1a-8a3c326ced82",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "a42f0e74-5c83-11ec-ba0a-b831b58100e8"
+        "x-ms-client-request-id": "67c2c494-5d10-11ec-8188-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "18c4edec-7bac-44f2-bdb8-3662527ca786",
+        "apim-request-id": "29c36125-94ea-4d16-bbb5-2476f2df26cb",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:15:06 GMT",
+        "Date": "Tue, 14 Dec 2021 19:02:42 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "80"
+        "x-envoy-upstream-service-time": "113"
       },
       "ResponseBody": {
-        "jobId": "e96eba3b-fd22-4b38-bc95-7836209b7c48",
-        "lastUpdateDateTime": "2021-12-14T02:15:01Z",
-        "createdDateTime": "2021-12-14T02:15:00Z",
-        "expirationDateTime": "2021-12-15T02:15:00Z",
+        "jobId": "95fd06e6-cc2f-4091-8a1a-8a3c326ced82",
+        "lastUpdateDateTime": "2021-12-14T19:02:39Z",
+        "createdDateTime": "2021-12-14T19:02:38Z",
+        "expirationDateTime": "2021-12-15T19:02:38Z",
         "status": "succeeded",
         "errors": [],
         "results": {

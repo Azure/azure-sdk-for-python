@@ -9,46 +9,46 @@
         "Content-Length": "393",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d5f7492a-5c83-11ec-bf94-b831b58100e8"
+        "x-ms-client-request-id": "9a99659e-5d10-11ec-bfaa-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022patients must have histologically confirmed NHL\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022The patient was diagnosed with Parkinsons Disease (PD)\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "b5b21510-7f2e-4a56-b236-61d2b0fe547e",
-        "Date": "Tue, 14 Dec 2021 02:16:24 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/a4a5efaa-9fe3-4ad6-9d66-41633879d928",
+        "apim-request-id": "8b2eb042-e9bf-4831-8e23-9651845957d8",
+        "Date": "Tue, 14 Dec 2021 19:04:03 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/2d55330a-ced7-427c-b9d4-c86c2072ca81",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "281"
+        "x-envoy-upstream-service-time": "223"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/a4a5efaa-9fe3-4ad6-9d66-41633879d928?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/2d55330a-ced7-427c-b9d4-c86c2072ca81?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d5f7492a-5c83-11ec-bf94-b831b58100e8"
+        "x-ms-client-request-id": "9a99659e-5d10-11ec-bfaa-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "df681e07-0cc0-4f42-af32-e12ccafa250a",
+        "apim-request-id": "a9e17405-9bf6-4c93-aea6-d4c551bded1b",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:16:29 GMT",
+        "Date": "Tue, 14 Dec 2021 19:04:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "69"
+        "x-envoy-upstream-service-time": "242"
       },
       "ResponseBody": {
-        "jobId": "a4a5efaa-9fe3-4ad6-9d66-41633879d928",
-        "lastUpdateDateTime": "2021-12-14T02:16:25Z",
-        "createdDateTime": "2021-12-14T02:16:24Z",
-        "expirationDateTime": "2021-12-15T02:16:24Z",
+        "jobId": "2d55330a-ced7-427c-b9d4-c86c2072ca81",
+        "lastUpdateDateTime": "2021-12-14T19:04:04Z",
+        "createdDateTime": "2021-12-14T19:04:03Z",
+        "expirationDateTime": "2021-12-15T19:04:03Z",
         "status": "succeeded",
         "errors": [],
         "results": {
@@ -1329,30 +1329,30 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/a4a5efaa-9fe3-4ad6-9d66-41633879d928?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/2d55330a-ced7-427c-b9d4-c86c2072ca81?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d5f7492a-5c83-11ec-bf94-b831b58100e8"
+        "x-ms-client-request-id": "9a99659e-5d10-11ec-bfaa-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6eda61cb-b87d-4a70-90fd-7a6de7f4bc2d",
+        "apim-request-id": "4d21afe4-4c0e-48be-9ee9-cbf3479c646d",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:16:34 GMT",
+        "Date": "Tue, 14 Dec 2021 19:04:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "70"
+        "x-envoy-upstream-service-time": "84"
       },
       "ResponseBody": {
-        "jobId": "a4a5efaa-9fe3-4ad6-9d66-41633879d928",
-        "lastUpdateDateTime": "2021-12-14T02:16:25Z",
-        "createdDateTime": "2021-12-14T02:16:24Z",
-        "expirationDateTime": "2021-12-15T02:16:24Z",
+        "jobId": "2d55330a-ced7-427c-b9d4-c86c2072ca81",
+        "lastUpdateDateTime": "2021-12-14T19:04:04Z",
+        "createdDateTime": "2021-12-14T19:04:03Z",
+        "expirationDateTime": "2021-12-15T19:04:03Z",
         "status": "succeeded",
         "errors": [],
         "results": {

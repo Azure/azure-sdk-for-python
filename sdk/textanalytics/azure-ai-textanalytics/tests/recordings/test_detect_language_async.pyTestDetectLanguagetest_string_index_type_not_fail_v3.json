@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.0/languages?showStats=false",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.0/languages",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json, text/json",
@@ -9,15 +9,15 @@
         "Content-Length": "78",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2bb76920-5c84-11ec-88ba-b831b58100e8"
+        "x-ms-client-request-id": "17149623-5d11-11ec-b54f-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022please don\u0027t fail\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "71f7058a-c335-49d6-a0e2-91dcc1437f88",
+        "apim-request-id": "ae980640-15f9-4c9d-9df4-de8845f67c21",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 02:18:47 GMT",
+        "Date": "Tue, 14 Dec 2021 19:07:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

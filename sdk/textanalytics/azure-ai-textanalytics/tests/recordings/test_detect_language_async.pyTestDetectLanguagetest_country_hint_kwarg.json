@@ -9,19 +9,19 @@
         "Content-Length": "87",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2b05f699-5c84-11ec-a493-b831b58100e8"
+        "x-ms-client-request-id": "15c9969a-5d11-11ec-9745-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022this is written in english\u0022, \u0022countryHint\u0022: \u0022ES\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9f238b3a-afa4-4fb1-9466-c67aac389a1e",
+        "apim-request-id": "b1c84ad6-19f8-40b1-8b63-bc087ce82734",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 02:18:46 GMT",
+        "Date": "Tue, 14 Dec 2021 19:07:30 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "9"
+        "x-envoy-upstream-service-time": "12"
       },
       "ResponseBody": {
         "statistics": {

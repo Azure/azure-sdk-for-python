@@ -9,46 +9,46 @@
         "Content-Length": "134",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ab49e37f-5c83-11ec-ad34-b831b58100e8"
+        "x-ms-client-request-id": "6ef8650a-5d10-11ec-b9b8-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022This should fail because we\u0027re passing in an invalid language hint\u0022, \u0022language\u0022: \u0022notalanguage\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "7e10adf6-e03e-4a82-9f1b-35ea29842734",
-        "Date": "Tue, 14 Dec 2021 02:15:12 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/98aa4398-5d70-4538-852a-a09c43a4520e",
+        "apim-request-id": "754b8fd7-411f-4316-8d80-52077d01b089",
+        "Date": "Tue, 14 Dec 2021 19:02:50 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/36e8bd1e-0506-484f-893b-f5efba2109f8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "228"
+        "x-envoy-upstream-service-time": "142"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/98aa4398-5d70-4538-852a-a09c43a4520e",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/36e8bd1e-0506-484f-893b-f5efba2109f8",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ab49e37f-5c83-11ec-ad34-b831b58100e8"
+        "x-ms-client-request-id": "6ef8650a-5d10-11ec-b9b8-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "41f75d72-9c87-40c3-9fd7-cbfbe75ccde0",
+        "apim-request-id": "7ebee353-2ce4-4eb2-a063-ef74bf062a93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:15:17 GMT",
+        "Date": "Tue, 14 Dec 2021 19:02:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "210"
+        "x-envoy-upstream-service-time": "37"
       },
       "ResponseBody": {
-        "jobId": "98aa4398-5d70-4538-852a-a09c43a4520e",
-        "lastUpdateDateTime": "2021-12-14T02:15:13Z",
-        "createdDateTime": "2021-12-14T02:15:12Z",
-        "expirationDateTime": "2021-12-15T02:15:12Z",
+        "jobId": "36e8bd1e-0506-484f-893b-f5efba2109f8",
+        "lastUpdateDateTime": "2021-12-14T19:02:51Z",
+        "createdDateTime": "2021-12-14T19:02:50Z",
+        "expirationDateTime": "2021-12-15T19:02:50Z",
         "status": "succeeded",
         "errors": [],
         "results": {

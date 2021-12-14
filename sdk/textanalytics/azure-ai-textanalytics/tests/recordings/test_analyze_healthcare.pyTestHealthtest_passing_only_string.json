@@ -10,47 +10,47 @@
         "Content-Length": "239",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "48e55df8-5c83-11ec-af64-b831b58100e8"
+        "x-ms-client-request-id": "0ac3a1f7-5d10-11ec-830f-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Patient does not suffer from high blood pressure.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Prescribed 100mg ibuprofen, taken twice daily.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "978c11ee-6249-4e9b-be94-38243ea34466",
-        "Date": "Tue, 14 Dec 2021 02:12:27 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/c9dc0aa9-ae9f-4b98-8d48-9312fa477ab6",
+        "apim-request-id": "b354a72a-c55e-421a-8b59-9c9d587372ef",
+        "Date": "Tue, 14 Dec 2021 19:00:02 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/cdbaa385-4fb3-4aac-8e9e-d0dd050856d0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "209"
+        "x-envoy-upstream-service-time": "242"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/c9dc0aa9-ae9f-4b98-8d48-9312fa477ab6",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/cdbaa385-4fb3-4aac-8e9e-d0dd050856d0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "48e55df8-5c83-11ec-af64-b831b58100e8"
+        "x-ms-client-request-id": "0ac3a1f7-5d10-11ec-830f-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "af8cdbed-7567-4c4c-9366-1651c54fdf32",
+        "apim-request-id": "c9fa9c06-77c3-47e4-8b21-2799eae908b2",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:12:32 GMT",
+        "Date": "Tue, 14 Dec 2021 19:00:07 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "210"
+        "x-envoy-upstream-service-time": "128"
       },
       "ResponseBody": {
-        "jobId": "c9dc0aa9-ae9f-4b98-8d48-9312fa477ab6",
-        "lastUpdateDateTime": "2021-12-14T02:12:28Z",
-        "createdDateTime": "2021-12-14T02:12:27Z",
-        "expirationDateTime": "2021-12-15T02:12:27Z",
+        "jobId": "cdbaa385-4fb3-4aac-8e9e-d0dd050856d0",
+        "lastUpdateDateTime": "2021-12-14T19:00:03Z",
+        "createdDateTime": "2021-12-14T19:00:02Z",
+        "expirationDateTime": "2021-12-15T19:00:02Z",
         "status": "succeeded",
         "errors": [],
         "results": {

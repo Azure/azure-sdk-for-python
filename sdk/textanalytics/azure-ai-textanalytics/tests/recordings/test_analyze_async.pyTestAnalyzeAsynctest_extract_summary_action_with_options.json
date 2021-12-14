@@ -6,49 +6,49 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "2174",
+        "Content-Length": "2123",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1fa0b219-5c83-11ec-b33d-b831b58100e8"
+        "x-ms-client-request-id": "e17f9249-5d0f-11ec-befb-b831b58100e8"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 5, \u0022sortBy\u0022: \u0022Rank\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis. Their decision to leave the government came three days after May appeared to have agreed a deal with herfractured Cabinet on the UK\u0027s post Brexit relationship with the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree about the best way of delivering our shared commitment to honoring the result of the referendum. The Prime Minister\u0027s latest plitical drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan. He said it involved too close a relationship with the EU and gave only an illusion of control being returned to the UK after it left the EU. It seems to me we\u0027re giving too much away, too easily, and that\u0027s a dangerous strategy at this time, Davis said in a BBC radio interview Monday morning. Johnson\u0027s resignation came Monday afternoon local time, just before the Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 5, \u0022sortBy\u0022: \u0022Rank\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis. Their decision to leave the government came three days after May appeared to have agreed a deal with herfractured Cabinet on the UK\u0027s post Brexit relationship with the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree about the best way of delivering our shared commitment to honoring the result of the referendum. The Prime Minister\u0027s latest plitical drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan. He said it involved too close a relationship with the EU and gave only an illusion of control being returned to the UK after it left the EU. It seems to me we\u0027re giving too much away, too easily, and that\u0027s a dangerous strategy at this time, Davis said in a BBC radio interview Monday morning. Johnson\u0027s resignation came Monday afternoon local time, just before the Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "1fa3acfc-81ea-4eb8-8b6e-1690d78ec7b6",
-        "Date": "Tue, 14 Dec 2021 02:11:18 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/e0ba53f8-9ce5-4e76-a356-505a9b48360f",
+        "apim-request-id": "08ee4f67-27c2-44bf-8aa3-d9261aa48f7e",
+        "Date": "Tue, 14 Dec 2021 18:58:52 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/782677ed-1933-4641-acb1-39a8ce4f088f",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "139"
+        "x-envoy-upstream-service-time": "344"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/e0ba53f8-9ce5-4e76-a356-505a9b48360f?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/782677ed-1933-4641-acb1-39a8ce4f088f?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1fa0b219-5c83-11ec-b33d-b831b58100e8"
+        "x-ms-client-request-id": "e17f9249-5d0f-11ec-befb-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e44e9c29-4be1-4ad1-8128-6698ab175ee6",
+        "apim-request-id": "e2074cf2-dabd-4ec0-8e5b-5425a9016581",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:11:23 GMT",
+        "Date": "Tue, 14 Dec 2021 18:58:57 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "36"
+        "x-envoy-upstream-service-time": "41"
       },
       "ResponseBody": {
-        "jobId": "e0ba53f8-9ce5-4e76-a356-505a9b48360f",
-        "lastUpdateDateTime": "2021-12-14T02:11:20Z",
-        "createdDateTime": "2021-12-14T02:11:18Z",
-        "expirationDateTime": "2021-12-15T02:11:18Z",
+        "jobId": "782677ed-1933-4641-acb1-39a8ce4f088f",
+        "lastUpdateDateTime": "2021-12-14T18:58:55Z",
+        "createdDateTime": "2021-12-14T18:58:53Z",
+        "expirationDateTime": "2021-12-15T18:58:53Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -58,7 +58,7 @@
           "total": 1,
           "extractiveSummarizationTasks": [
             {
-              "lastUpdateDateTime": "2021-12-14T02:11:20.4023746Z",
+              "lastUpdateDateTime": "2021-12-14T18:58:55.1037453Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

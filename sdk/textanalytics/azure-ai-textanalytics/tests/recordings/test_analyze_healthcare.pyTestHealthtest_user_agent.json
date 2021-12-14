@@ -10,47 +10,47 @@
         "Content-Length": "80",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "63d97680-5c83-11ec-b93d-b831b58100e8"
+        "x-ms-client-request-id": "259f210a-5d10-11ec-86fe-b831b58100e8"
       },
       "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c70668fa-e84b-4626-8149-d7b338f7caac",
-        "Date": "Tue, 14 Dec 2021 02:13:12 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/0fe4f8f1-0dd3-4fc5-874c-6e0dafec7f17",
+        "apim-request-id": "4a1a1fe2-c2b2-4b6b-87ad-0425d099be7e",
+        "Date": "Tue, 14 Dec 2021 19:00:47 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/fb055c80-636a-4a1d-afb3-40b8a944bdd3",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "141"
+        "x-envoy-upstream-service-time": "333"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/0fe4f8f1-0dd3-4fc5-874c-6e0dafec7f17",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/fb055c80-636a-4a1d-afb3-40b8a944bdd3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "63d97680-5c83-11ec-b93d-b831b58100e8"
+        "x-ms-client-request-id": "259f210a-5d10-11ec-86fe-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e9800524-2239-4ec6-a86d-a17733fb9783",
+        "apim-request-id": "0bbe4941-3caa-4427-8eb3-146576a5aeff",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:13:17 GMT",
+        "Date": "Tue, 14 Dec 2021 19:00:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "39"
+        "x-envoy-upstream-service-time": "35"
       },
       "ResponseBody": {
-        "jobId": "0fe4f8f1-0dd3-4fc5-874c-6e0dafec7f17",
-        "lastUpdateDateTime": "2021-12-14T02:13:13Z",
-        "createdDateTime": "2021-12-14T02:13:12Z",
-        "expirationDateTime": "2021-12-15T02:13:12Z",
+        "jobId": "fb055c80-636a-4a1d-afb3-40b8a944bdd3",
+        "lastUpdateDateTime": "2021-12-14T19:00:47Z",
+        "createdDateTime": "2021-12-14T19:00:47Z",
+        "expirationDateTime": "2021-12-15T19:00:47Z",
         "status": "succeeded",
         "errors": [],
         "results": {
