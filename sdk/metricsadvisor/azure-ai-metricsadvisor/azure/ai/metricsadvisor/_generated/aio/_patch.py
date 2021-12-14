@@ -2233,3 +2233,5 @@ class MetricsAdvisorClient(object):
             **kwargs
         )
 
+def patch_sdk():
+    pass

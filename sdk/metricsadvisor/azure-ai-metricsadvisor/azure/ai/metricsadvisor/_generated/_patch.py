@@ -2694,3 +2694,5 @@ class MetricsAdvisorAdministrationClient(
 
         self._client.delete_credential(credential_id=credential_id[0], **kwargs)
 
+def patch_sdk():
+    pass
