@@ -7,50 +7,50 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1155",
+        "Content-Length": "1196",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1e346cda-5c82-11ec-946f-b831b58100e8"
+        "x-ms-client-request-id": "11f7b771-5d05-11ec-8934-b831b58100e8"
       },
-      "RequestBody": "{\u0022tasks\u0022:{\u0022entityRecognitionTasks\u0022:[],\u0022entityRecognitionPiiTasks\u0022:[],\u0022keyPhraseExtractionTasks\u0022:[],\u0022entityLinkingTasks\u0022:[],\u0022sentimentAnalysisTasks\u0022:[],\u0022extractiveSummarizationTasks\u0022:[],\u0022customEntityRecognitionTasks\u0022:[],\u0022customSingleClassificationTasks\u0022:[],\u0022customMultiClassificationTasks\u0022:[{\u0022parameters\u0022:{\u0022project-name\u0022:\u0022multi_category_classify_project_name\u0022,\u0022deployment-name\u0022:\u0022multi_category_classify_deployment_name\u0022},\u0022taskName\u0022:\u00220\u0022}]},\u0022analysisInput\u0022:{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00222\u0022,\u0022text\u0022:\u0022David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist\u0022,\u0022language\u0022:\u0022en\u0022}]}}",
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: [{\u0022parameters\u0022: {\u0022project-name\u0022: \u0022multi_category_classify_project_name\u0022, \u0022deployment-name\u0022: \u0022multi_category_classify_project_name\u0022}, \u0022taskName\u0022: \u00220\u0022}]}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8be662d9-14fe-4166-adc6-1bda9824955e",
-        "Date": "Tue, 14 Dec 2021 02:04:06 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/8aef3499-8eb8-484a-a31f-78d25622a65f",
+        "apim-request-id": "874336c4-3f1f-4ebb-a900-06757696abb7",
+        "Date": "Tue, 14 Dec 2021 17:41:31 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/dee6554b-b6f1-47c6-8b70-97ec10096641",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "527"
+        "x-envoy-upstream-service-time": "406"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/8aef3499-8eb8-484a-a31f-78d25622a65f?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/dee6554b-b6f1-47c6-8b70-97ec10096641?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1e346cda-5c82-11ec-946f-b831b58100e8"
+        "x-ms-client-request-id": "11f7b771-5d05-11ec-8934-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0dbe2436-64a4-4b40-b503-0b8b9de1b1b8",
+        "apim-request-id": "41bd489c-21f2-4259-b8bb-3458fc766fe6",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 02:04:11 GMT",
+        "Date": "Tue, 14 Dec 2021 17:41:36 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "50"
+        "x-envoy-upstream-service-time": "406"
       },
       "ResponseBody": {
-        "jobId": "8aef3499-8eb8-484a-a31f-78d25622a65f",
-        "lastUpdateDateTime": "2021-12-14T02:04:07Z",
-        "createdDateTime": "2021-12-14T02:04:06Z",
-        "expirationDateTime": "2021-12-15T02:04:06Z",
+        "jobId": "dee6554b-b6f1-47c6-8b70-97ec10096641",
+        "lastUpdateDateTime": "2021-12-14T17:41:31Z",
+        "createdDateTime": "2021-12-14T17:41:30Z",
+        "expirationDateTime": "2021-12-15T17:41:30Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -60,7 +60,7 @@
           "total": 1,
           "customMultiClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-12-14T02:04:07.7607396Z",
+              "lastUpdateDateTime": "2021-12-14T17:41:31.5728313Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

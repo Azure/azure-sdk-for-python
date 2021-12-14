@@ -21,7 +21,7 @@ from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     RecognizeEntitiesAction,
@@ -714,7 +714,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
@@ -1072,6 +1072,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1110,6 +1111,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1149,6 +1151,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
