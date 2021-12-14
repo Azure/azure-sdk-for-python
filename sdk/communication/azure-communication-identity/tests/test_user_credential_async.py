@@ -20,7 +20,7 @@ from _shared.helper import generate_token_with_custom_expiry
 
 class TestCommunicationTokenCredential:
 
-    @pytest.mark.asyncio
+    '''@pytest.mark.asyncio
     async def test_raises_error_for_init_with_nonstring_token(self):
         with pytest.raises(TypeError) as err:
             CommunicationTokenCredential(1234)
@@ -32,7 +32,7 @@ class TestCommunicationTokenCredential:
             CommunicationTokenCredential("not a token")
         assert str(err.value) == "Token is not formatted correctly"
 
-    '''@pytest.mark.asyncio
+    @pytest.mark.asyncio
     async def test_init_with_valid_token(self):
         initial_token = generate_token_with_custom_expiry(5 * 60)
         async with CommunicationTokenCredential(initial_token) as credential:
