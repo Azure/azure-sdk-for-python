@@ -16,9 +16,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages
   response:
     body:
       string: '{"documents":[{"id":"56","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"0","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"19","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
@@ -26,13 +26,13 @@ interactions:
         text is empty."}}}],"modelVersion":"2021-01-05"}'
     headers:
       apim-request-id:
-      - b771ac5c-ab64-4130-b548-766b09e77327
+      - 6a502d23-6ed6-4da9-8f71-d5b075d484f2
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4
       date:
-      - Wed, 06 Oct 2021 21:04:10 GMT
+      - Wed, 08 Dec 2021 22:57:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '10'
     status:
       code: 200
       message: OK

@@ -17,7 +17,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/sentiment?showStats=true&stringIndexType=UnicodeCodePoint
   response:
@@ -30,13 +30,13 @@ interactions:
         recommend you try it."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - d84cde76-6e31-4aad-a2f7-2bd0e5696bdb
+      - 901ca513-8346-4f49-b29c-335d29939367
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Wed, 06 Oct 2021 21:03:30 GMT
+      - Wed, 08 Dec 2021 22:56:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '103'
+      - '117'
     status:
       code: 200
       message: OK
