@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0 (2021-12-06)
+
+**Features**
+
+  - Model ResourceProviderOperation has a new parameter origin
+  - Added operation group LocationExtensionTypesOperations
+  - Added operation group FluxConfigurationsOperations
+  - Added operation group ExtensionsOperations
+  - Added operation group OperationStatusOperations
+  - Added operation group ClusterExtensionTypeOperations
+  - Added operation group FluxConfigOperationStatusOperations
+  - Added operation group ClusterExtensionTypesOperations
+  - Added operation group ExtensionTypeVersionsOperations
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter system_data
+  - Model ProxyResource no longer has parameter system_data
+
 ## 1.0.0b1 (2020-12-09)
 
 This is beta preview version.
