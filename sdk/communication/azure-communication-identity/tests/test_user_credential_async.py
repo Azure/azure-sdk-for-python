@@ -20,26 +20,24 @@ from _shared.helper import generate_token_with_custom_expiry
 
 class TestCommunicationTokenCredential:
 
-    @pytest.mark.asyncio
-    async def test_raises_error_for_init_with_nonstring_token(self):
+    def test_raises_error_for_init_with_nonstring_token(self):
         with pytest.raises(TypeError) as err:
             CommunicationTokenCredential(1234)
         assert str(err.value) == "Token must be a string."
 
-    @pytest.mark.asyncio
-    async def test_raises_error_for_init_with_invalid_token(self):
+    def test_raises_error_for_init_with_invalid_token(self):
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential("not a token")
         assert str(err.value) == "Token is not formatted correctly"
 
-    @pytest.mark.asyncio
+    '''@pytest.mark.asyncio
     async def test_init_with_valid_token(self):
         initial_token = generate_token_with_custom_expiry(5 * 60)
         async with CommunicationTokenCredential(initial_token) as credential:
             access_token = await credential.get_token()
         assert initial_token == access_token.token
 
-    '''@pytest.mark.asyncio
+    @pytest.mark.asyncio
     async def test_refresher_should_be_called_immediately_with_expired_token(self):
         refreshed_token = generate_token_with_custom_expiry(10 * 60)
         refresher = MagicMock(
