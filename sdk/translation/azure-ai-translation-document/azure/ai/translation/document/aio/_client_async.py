@@ -78,7 +78,10 @@ class DocumentTranslationClient(object):
                 :dedent: 4
                 :caption: Creating the DocumentTranslationClient with a token credential.
         """
-        self._endpoint = endpoint.rstrip("/")
+        try:
+            self._endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
 
