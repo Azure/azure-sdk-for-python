@@ -24,7 +24,7 @@ from ._shared.response_handlers import process_storage_error, parse_length_from_
 from ._deserialize import get_page_ranges_result
 
 
-def get_transfer_timeout(client, request_data_size):
+def set_transfer_timeout(client, request_data_size):
     # Get the transport object - it might be wrapped so iterate through wrappers
     transport = client._config.transport    # pylint: disable=protected-access
     while isinstance(transport, TransportWrapper):
@@ -393,7 +393,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             end_range_required=False,
             check_content_md5=self._validate_content
         )
-        get_transfer_timeout(self, self._first_get_size)
+        set_transfer_timeout(self, self._first_get_size)
 
         retry_active = True
         retry_total = 3
@@ -504,7 +504,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             if self._end_range is not None:
                 # Use the end range index unless it is over the end of the file
                 data_end = min(self._file_size, self._end_range + 1)
-            get_transfer_timeout(self, self._config.max_chunk_get_size)
+            set_transfer_timeout(self, self._config.max_chunk_get_size)
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
                 non_empty_ranges=self._non_empty_ranges,
@@ -587,7 +587,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         """
         # The stream must be seekable if parallel download is required
 
-        get_transfer_timeout(self, self._config.max_chunk_get_size)
+        set_transfer_timeout(self, self._config.max_chunk_get_size)
         parallel = self._max_concurrency > 1
         if parallel:
             error_message = "Target stream handle must be seekable."
