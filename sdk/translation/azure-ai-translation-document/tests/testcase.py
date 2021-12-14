@@ -13,6 +13,7 @@ from devtools_testutils import (
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
+STORAGE_API_VERSION = "2020-10-02"
 
 
 class Document(object):
@@ -58,7 +59,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         if self.is_live:
             variables[var_key] = "src" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
-                                               self.storage_key)
+                                               self.storage_key, api_version=STORAGE_API_VERSION)
             container_client.create_container()
 
             self.upload_documents(data, container_client)
@@ -70,7 +71,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         if self.is_live:
             variables[var_key] = "target" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
-                                               self.storage_key)
+                                               self.storage_key, api_version=STORAGE_API_VERSION)
             container_client.create_container()
             if data:
                 self.upload_documents(data, container_client)
