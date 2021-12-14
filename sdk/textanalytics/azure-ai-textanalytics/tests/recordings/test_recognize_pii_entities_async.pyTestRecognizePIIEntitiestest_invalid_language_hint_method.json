@@ -6,17 +6,17 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "128",
+        "Content-Length": "134",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "52a17c5e-4980-11ec-9bd4-b831b58100e8"
+        "x-ms-client-request-id": "cfc78252-5c84-11ec-9bef-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00220\u0022,\u0022text\u0022:\u0022This should fail because we\u0027re passing in an invalid language hint\u0022,\u0022language\u0022:\u0022notalanguage\u0022}]}",
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022This should fail because we\u0027re passing in an invalid language hint\u0022, \u0022language\u0022: \u0022notalanguage\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f367aba4-ea4b-488b-a0a3-107350185358",
+        "apim-request-id": "b3523185-364f-4649-8441-5bb49d8a7e94",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 21:33:22 GMT",
+        "Date": "Tue, 14 Dec 2021 02:23:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

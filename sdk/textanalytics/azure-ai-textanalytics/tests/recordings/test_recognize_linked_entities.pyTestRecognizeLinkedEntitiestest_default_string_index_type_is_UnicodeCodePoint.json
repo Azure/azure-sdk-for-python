@@ -7,26 +7,18 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "63",
+        "Content-Length": "69",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d8fa7281-497f-11ec-b75b-b831b58100e8"
+        "x-ms-client-request-id": "9575be1f-5c84-11ec-a433-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "Hello world",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Hello world\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "39df67d1-0cfb-4e27-b510-59f9c71692d5",
+        "apim-request-id": "3111301b-93ae-4eed-affd-b88aa1189180",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:29:58 GMT",
+        "Date": "Tue, 14 Dec 2021 02:21:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

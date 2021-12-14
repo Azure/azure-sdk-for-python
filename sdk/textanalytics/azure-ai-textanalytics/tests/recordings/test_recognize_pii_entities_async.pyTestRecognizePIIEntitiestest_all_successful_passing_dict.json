@@ -6,40 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "297",
+        "Content-Length": "315",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4f6aeb19-4980-11ec-9184-b831b58100e8"
+        "x-ms-client-request-id": "c485b7ab-5c84-11ec-bcb5-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "My SSN is 859-98-0987.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "Is 998.214.865-68 your Brazilian CPF number?",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022My SSN is 859-98-0987.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Is 998.214.865-68 your Brazilian CPF number?\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c6d3bb14-e723-4ffd-ba8f-0b18703b149d",
+        "apim-request-id": "2bfca150-cccf-489a-9ed2-5589c9f0107c",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:33:17 GMT",
+        "Date": "Tue, 14 Dec 2021 02:23:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "34"
+        "x-envoy-upstream-service-time": "32"
       },
       "ResponseBody": {
         "statistics": {

@@ -6,114 +6,49 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "505",
+        "Content-Length": "539",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "80587b23-4972-11ec-acba-b831b58100e8"
+        "x-ms-client-request-id": "7e386ede-5c82-11ec-aea4-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "0"
-            }
-          ],
-          "entityRecognitionPiiTasks": [],
-          "keyPhraseExtractionTasks": [],
-          "entityLinkingTasks": [],
-          "sentimentAnalysisTasks": [],
-          "extractiveSummarizationTasks": [],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "0",
-              "text": "Test passing cls to endpoint",
-              "language": "en"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Test passing cls to endpoint\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "5a9a534e-587c-41a4-9a80-a638a7d4a08c",
-        "Date": "Fri, 19 Nov 2021 19:54:26 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/10c8f495-9120-4149-9907-84cd5928ac3a",
+        "apim-request-id": "e53fbad1-db50-4ec9-b939-432dbc8689db",
+        "Date": "Tue, 14 Dec 2021 02:06:47 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a0ebf7b1-197f-479f-9063-45c5200d2807",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "196"
+        "x-envoy-upstream-service-time": "132"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/10c8f495-9120-4149-9907-84cd5928ac3a",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a0ebf7b1-197f-479f-9063-45c5200d2807",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "80587b23-4972-11ec-acba-b831b58100e8"
+        "x-ms-client-request-id": "7e386ede-5c82-11ec-aea4-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "87fd2395-43bf-4a17-9a3d-ec901cdedb44",
+        "apim-request-id": "99c7b03a-8cee-4919-a6e0-bb0e58027e33",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:54:31 GMT",
+        "Date": "Tue, 14 Dec 2021 02:06:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "66"
       },
       "ResponseBody": {
-        "jobId": "10c8f495-9120-4149-9907-84cd5928ac3a",
-        "lastUpdateDateTime": "2021-11-19T19:54:27Z",
-        "createdDateTime": "2021-11-19T19:54:27Z",
-        "expirationDateTime": "2021-11-20T19:54:27Z",
-        "status": "notStarted",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/10c8f495-9120-4149-9907-84cd5928ac3a",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "80587b23-4972-11ec-acba-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "cbae4b20-78e3-4670-8925-9a718d8c95a9",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:54:36 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "52"
-      },
-      "ResponseBody": {
-        "jobId": "10c8f495-9120-4149-9907-84cd5928ac3a",
-        "lastUpdateDateTime": "2021-11-19T19:54:35Z",
-        "createdDateTime": "2021-11-19T19:54:27Z",
-        "expirationDateTime": "2021-11-20T19:54:27Z",
+        "jobId": "a0ebf7b1-197f-479f-9063-45c5200d2807",
+        "lastUpdateDateTime": "2021-12-14T02:06:49Z",
+        "createdDateTime": "2021-12-14T02:06:47Z",
+        "expirationDateTime": "2021-12-15T02:06:47Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -123,7 +58,7 @@
           "total": 1,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:54:35.9713932Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:49.635446Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

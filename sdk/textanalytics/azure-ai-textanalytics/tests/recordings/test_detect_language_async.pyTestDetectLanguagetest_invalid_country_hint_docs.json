@@ -6,29 +6,21 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "77",
+        "Content-Length": "83",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6c6f610a-497c-11ec-9995-b831b58100e8"
+        "x-ms-client-request-id": "29f244f1-5c84-11ec-973c-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "hello world",
-            "countryHint": "United States"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022countryHint\u0022: \u0022United States\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0660f0c8-12b6-4f51-a4a2-f8cd1fd6383b",
+        "apim-request-id": "518b098d-0e54-45ac-a403-e95705924580",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 21:05:28 GMT",
+        "Date": "Tue, 14 Dec 2021 02:18:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": {
         "documents": [],

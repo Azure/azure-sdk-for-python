@@ -6,40 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "203",
+        "Content-Length": "221",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "680fc2db-497f-11ec-b885-b831b58100e8"
+        "x-ms-client-request-id": "6deb1e3b-5c84-11ec-a392-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Hola",
-            "language": "Spanish"
-          },
-          {
-            "id": "3",
-            "text": "",
-            "language": "de"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Hola\u0022, \u0022language\u0022: \u0022Spanish\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022de\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "83f58086-92c4-4a12-9e16-df6996521c43",
+        "apim-request-id": "03ae5c91-6637-4ca9-9543-a7b20cad2acc",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:26:49 GMT",
+        "Date": "Tue, 14 Dec 2021 02:20:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "29"
+        "x-envoy-upstream-service-time": "28"
       },
       "ResponseBody": {
         "documents": [

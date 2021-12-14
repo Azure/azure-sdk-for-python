@@ -6,40 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "222",
+        "Content-Length": "240",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4fd97120-4977-11ec-895a-b831b58100e8"
+        "x-ms-client-request-id": "f8a3963e-5c83-11ec-9724-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "I will go to the park.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "I did not like the hotel we stayed at.",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "The restaurant had really good food.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "59e0dd76-df7c-4d5b-98e3-e6e0a4480b47",
+        "apim-request-id": "f2fdbbfc-42db-423e-802a-4b95bd3d5ea2",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 20:28:52 GMT",
+        "Date": "Tue, 14 Dec 2021 02:17:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "101"
+        "x-envoy-upstream-service-time": "89"
       },
       "ResponseBody": {
         "documents": [
@@ -123,36 +105,18 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "222",
+        "Content-Length": "240",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "50111ba0-4977-11ec-a956-b831b58100e8"
+        "x-ms-client-request-id": "f8b6bc83-5c83-11ec-892a-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "I will go to the park.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "I did not like the hotel we stayed at.",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "The restaurant had really good food.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "ff6d21b3-a379-4dba-961f-a2763cb3e285",
+        "apim-request-id": "a74fae53-e965-466c-a1b5-d9b1bc1a22f3",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Fri, 19 Nov 2021 20:28:52 GMT"
+        "Date": "Tue, 14 Dec 2021 02:17:22 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -167,40 +131,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "222",
+        "Content-Length": "240",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5016e818-4977-11ec-9d04-b831b58100e8"
+        "x-ms-client-request-id": "f8bb3aab-5c83-11ec-97a2-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "I will go to the park.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "I did not like the hotel we stayed at.",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "The restaurant had really good food.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e5a869f3-2d1e-49c3-83cf-a10a543a5322",
+        "apim-request-id": "8c4640d3-ef4c-4a20-b439-5edc84c803c2",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 20:28:52 GMT",
+        "Date": "Tue, 14 Dec 2021 02:17:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "74"
+        "x-envoy-upstream-service-time": "91"
       },
       "ResponseBody": {
         "documents": [

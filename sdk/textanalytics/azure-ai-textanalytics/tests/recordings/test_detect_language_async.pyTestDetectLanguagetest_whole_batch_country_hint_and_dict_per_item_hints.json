@@ -6,36 +6,18 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "231",
+        "Content-Length": "249",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "68f614e3-497c-11ec-a005-b831b58100e8"
+        "x-ms-client-request-id": "243a40d5-5c84-11ec-ab19-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "I will go to the park.",
-            "countryHint": "US"
-          },
-          {
-            "id": "2",
-            "text": "I did not like the hotel we stayed at.",
-            "countryHint": "US"
-          },
-          {
-            "id": "3",
-            "text": "The restaurant had really good food.",
-            "countryHint": "CA"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "888e52c4-28e2-4f88-a78f-66e84e5f1606",
+        "apim-request-id": "1f797f0f-b834-44e4-879d-9063df7d2b7a",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:05:22 GMT",
+        "Date": "Tue, 14 Dec 2021 02:18:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

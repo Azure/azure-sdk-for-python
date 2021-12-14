@@ -6,83 +6,84 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "576",
+        "Content-Length": "614",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5067c676-4972-11ec-a532-b831b58100e8"
+        "x-ms-client-request-id": "481c2d60-5c82-11ec-a350-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [],
-          "entityRecognitionPiiTasks": [],
-          "keyPhraseExtractionTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false
-              },
-              "taskName": "0"
-            }
-          ],
-          "entityLinkingTasks": [],
-          "sentimentAnalysisTasks": [],
-          "extractiveSummarizationTasks": [],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "1",
-              "text": "Microsoft was founded by Bill Gates and Paul Allen",
-              "language": "en"
-            },
-            {
-              "id": "2",
-              "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-              "language": "es"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen\u0022, \u0022language\u0022: \u0022es\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "0c2ecaea-1b13-46c3-8909-8f5318b59a15",
-        "Date": "Fri, 19 Nov 2021 19:53:07 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c3f4b4f5-b291-4281-b186-45b490982438",
+        "apim-request-id": "785ba59e-7619-44ef-b42d-8a24de6099d3",
+        "Date": "Tue, 14 Dec 2021 02:05:16 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d9e4cb02-059b-4e57-8db8-b9e236844d6f",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "183"
+        "x-envoy-upstream-service-time": "179"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c3f4b4f5-b291-4281-b186-45b490982438?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d9e4cb02-059b-4e57-8db8-b9e236844d6f?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5067c676-4972-11ec-a532-b831b58100e8"
+        "x-ms-client-request-id": "481c2d60-5c82-11ec-a350-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c3e21367-46c8-4a09-9f0d-009bbdd01dab",
+        "apim-request-id": "70481042-57ec-45d4-ad0a-4e6cab495a15",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:53:12 GMT",
+        "Date": "Tue, 14 Dec 2021 02:05:21 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "80"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
-        "jobId": "c3f4b4f5-b291-4281-b186-45b490982438",
-        "lastUpdateDateTime": "2021-11-19T19:53:09Z",
-        "createdDateTime": "2021-11-19T19:53:07Z",
-        "expirationDateTime": "2021-11-20T19:53:07Z",
+        "jobId": "d9e4cb02-059b-4e57-8db8-b9e236844d6f",
+        "lastUpdateDateTime": "2021-12-14T02:05:17Z",
+        "createdDateTime": "2021-12-14T02:05:16Z",
+        "expirationDateTime": "2021-12-15T02:05:16Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/d9e4cb02-059b-4e57-8db8-b9e236844d6f?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "481c2d60-5c82-11ec-a350-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "58462414-5376-43af-98c3-d765ed5dad82",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Dec 2021 02:05:26 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "214"
+      },
+      "ResponseBody": {
+        "jobId": "d9e4cb02-059b-4e57-8db8-b9e236844d6f",
+        "lastUpdateDateTime": "2021-12-14T02:05:24Z",
+        "createdDateTime": "2021-12-14T02:05:16Z",
+        "expirationDateTime": "2021-12-15T02:05:16Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -92,7 +93,7 @@
           "total": 1,
           "keyPhraseExtractionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:09.7366147Z",
+              "lastUpdateDateTime": "2021-12-14T02:05:24.8496209Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

@@ -7,30 +7,22 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "76",
+        "Content-Length": "82",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "aecc1de3-497e-11ec-96fe-b831b58100e8"
+        "x-ms-client-request-id": "4369c44c-5c84-11ec-bc47-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "Test for logging disable",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Test for logging disable\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1a149368-44b5-4514-ab4a-059eaec03379",
+        "apim-request-id": "cb035de3-7ad1-4322-898e-b2fdd13c3b4f",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:21:38 GMT",
+        "Date": "Tue, 14 Dec 2021 02:19:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "documents": [

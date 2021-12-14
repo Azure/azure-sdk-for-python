@@ -6,30 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "107",
+        "Content-Length": "113",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "553e2476-4980-11ec-abee-b831b58100e8"
+        "x-ms-client-request-id": "d9326526-5c84-11ec-8a55-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "I work at Microsoft and my phone number is 333-333-3333",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022I work at Microsoft and my phone number is 333-333-3333\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ed00cdc5-80a0-42ac-a6f1-7341336523c1",
+        "apim-request-id": "ca0afa08-d736-4bea-927f-7b388e8da479",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:33:26 GMT",
+        "Date": "Tue, 14 Dec 2021 02:23:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "26"
+        "x-envoy-upstream-service-time": "28"
       },
       "ResponseBody": {
         "documents": [

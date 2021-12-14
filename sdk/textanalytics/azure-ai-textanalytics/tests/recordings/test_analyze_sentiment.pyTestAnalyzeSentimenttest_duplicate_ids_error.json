@@ -7,34 +7,21 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "138",
+        "Content-Length": "150",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f54959b0-4976-11ec-825c-b831b58100e8"
+        "x-ms-client-request-id": "e8e0bde2-5c83-11ec-9510-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "hello world",
-            "language": "en"
-          },
-          {
-            "id": "1",
-            "text": "I did not like the hotel we stayed at.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "b75734fb-7a51-4eed-be5b-7ce3890ceeaf",
+        "apim-request-id": "54d04f17-6b14-41c4-88f6-d1db554cb345",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 20:26:20 GMT",
+        "Date": "Tue, 14 Dec 2021 02:16:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "5"
+        "x-envoy-upstream-service-time": "6"
       },
       "ResponseBody": {
         "error": {

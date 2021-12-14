@@ -6,30 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "126",
+        "Content-Length": "132",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "52796466-4977-11ec-8e8f-b831b58100e8"
+        "x-ms-client-request-id": "fd691c6b-5c83-11ec-9334-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "It has a sleek premium aluminum design that makes it beautiful to look at.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022It has a sleek premium aluminum design that makes it beautiful to look at.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "bb4b7633-d947-4fc5-85b2-0d05c51ee12d",
+        "apim-request-id": "0836a7fa-c6a2-4b60-b3fd-f5d9c2af485b",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 20:28:56 GMT",
+        "Date": "Tue, 14 Dec 2021 02:17:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "77"
+        "x-envoy-upstream-service-time": "87"
       },
       "ResponseBody": {
         "documents": [

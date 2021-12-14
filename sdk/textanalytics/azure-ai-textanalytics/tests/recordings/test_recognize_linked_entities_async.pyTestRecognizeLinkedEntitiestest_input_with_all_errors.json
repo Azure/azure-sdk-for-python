@@ -6,34 +6,21 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "143",
+        "Content-Length": "155",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ec3da9a7-497f-11ec-81e6-b831b58100e8"
+        "x-ms-client-request-id": "98da97a2-5c84-11ec-a05b-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-            "language": "Spanish"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen\u0022, \u0022language\u0022: \u0022Spanish\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d0cf72c0-9e28-424c-a81e-8d5e00e52880",
+        "apim-request-id": "440a38be-4c81-4847-86ab-e27bd7f532e9",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 21:30:30 GMT",
+        "Date": "Tue, 14 Dec 2021 02:21:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "4"
+        "x-envoy-upstream-service-time": "2"
       },
       "ResponseBody": {
         "documents": [],

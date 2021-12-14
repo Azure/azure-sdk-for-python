@@ -7,90 +7,50 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "721",
+        "Content-Length": "767",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "c9c30630-4970-11ec-9be1-b831b58100e8"
+        "x-ms-client-request-id": "ae07c60c-5c81-11ec-98b0-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [],
-          "entityRecognitionPiiTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": true,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "0"
-            }
-          ],
-          "keyPhraseExtractionTasks": [],
-          "entityLinkingTasks": [],
-          "sentimentAnalysisTasks": [],
-          "extractiveSummarizationTasks": [],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "0",
-              "text": "My SSN is 859-98-0987.",
-              "language": "en"
-            },
-            {
-              "id": "1",
-              "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
-              "language": "en"
-            },
-            {
-              "id": "2",
-              "text": "Is 998.214.865-68 your Brazilian CPF number?",
-              "language": "en"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: true, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022My SSN is 859-98-0987.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Is 998.214.865-68 your Brazilian CPF number?\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "e540f3d9-ffc5-4d13-b1e7-e7550f99c6c8",
-        "Date": "Fri, 19 Nov 2021 19:42:10 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/4070d63d-20ac-4e00-92d2-fa4a7942b346",
+        "apim-request-id": "a8898b9e-fe72-439f-96a8-cb193c55322d",
+        "Date": "Tue, 14 Dec 2021 02:00:58 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/e488e6a9-c4e0-420e-8402-e38d1ac30165",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "221"
+        "x-envoy-upstream-service-time": "180"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/4070d63d-20ac-4e00-92d2-fa4a7942b346?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/e488e6a9-c4e0-420e-8402-e38d1ac30165?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "c9c30630-4970-11ec-9be1-b831b58100e8"
+        "x-ms-client-request-id": "ae07c60c-5c81-11ec-98b0-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "afbe6353-cf4c-4663-a678-9440def963b4",
+        "apim-request-id": "e9f48467-220b-4626-ad28-bbc8dc9f4740",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:42:15 GMT",
+        "Date": "Tue, 14 Dec 2021 02:01:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "70"
+        "x-envoy-upstream-service-time": "65"
       },
       "ResponseBody": {
-        "jobId": "4070d63d-20ac-4e00-92d2-fa4a7942b346",
-        "lastUpdateDateTime": "2021-11-19T19:42:13Z",
-        "createdDateTime": "2021-11-19T19:42:11Z",
-        "expirationDateTime": "2021-11-20T19:42:11Z",
+        "jobId": "e488e6a9-c4e0-420e-8402-e38d1ac30165",
+        "lastUpdateDateTime": "2021-12-14T02:01:00Z",
+        "createdDateTime": "2021-12-14T02:00:58Z",
+        "expirationDateTime": "2021-12-15T02:00:58Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -100,7 +60,7 @@
           "total": 1,
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:42:13.514199Z",
+              "lastUpdateDateTime": "2021-12-14T02:01:00.625836Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

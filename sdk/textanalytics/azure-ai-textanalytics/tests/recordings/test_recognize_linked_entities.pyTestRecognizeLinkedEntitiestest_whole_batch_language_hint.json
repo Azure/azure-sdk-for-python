@@ -7,39 +7,21 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "261",
+        "Content-Length": "279",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d2cb084b-497f-11ec-bf93-b831b58100e8"
+        "x-ms-client-request-id": "86bdc8b7-5c84-11ec-8489-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "This was the best day of my life.",
-            "language": "fr"
-          },
-          {
-            "id": "1",
-            "text": "I did not like the hotel we stayed at. It was too expensive.",
-            "language": "fr"
-          },
-          {
-            "id": "2",
-            "text": "The restaurant was not as good as I hoped.",
-            "language": "fr"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022This was the best day of my life.\u0022, \u0022language\u0022: \u0022fr\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022fr\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant was not as good as I hoped.\u0022, \u0022language\u0022: \u0022fr\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a4998534-928e-422c-bc18-1749790e3c9a",
+        "apim-request-id": "8044fcd0-3430-486b-a81b-0916edbf9d95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 21:29:48 GMT",
+        "Date": "Tue, 14 Dec 2021 02:21:20 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": {
         "documents": [],

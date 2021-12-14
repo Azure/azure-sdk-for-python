@@ -7,50 +7,21 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "440",
+        "Content-Length": "472",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "cd1d187d-4970-11ec-9ef4-b831b58100e8"
+        "x-ms-client-request-id": "b178d8d7-5c81-11ec-a57b-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [],
-          "entityRecognitionPiiTasks": [],
-          "keyPhraseExtractionTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false
-              },
-              "taskName": "0"
-            }
-          ],
-          "entityLinkingTasks": [],
-          "sentimentAnalysisTasks": [],
-          "extractiveSummarizationTasks": [],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "0",
-              "text": "",
-              "language": "en"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "4bba330b-f736-4448-997c-72d24542098b",
+        "apim-request-id": "39714aaf-2ea5-4bc4-9873-99ee6f5b94df",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:42:16 GMT",
+        "Date": "Tue, 14 Dec 2021 02:01:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "12"
+        "x-envoy-upstream-service-time": "6"
       },
       "ResponseBody": {
         "error": {

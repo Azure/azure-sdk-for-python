@@ -7,90 +7,50 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "707",
+        "Content-Length": "753",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b993e3e6-4970-11ec-b36b-b831b58100e8"
+        "x-ms-client-request-id": "9d55bd2f-5c81-11ec-9e0e-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [],
-          "entityRecognitionPiiTasks": [],
-          "keyPhraseExtractionTasks": [],
-          "entityLinkingTasks": [],
-          "sentimentAnalysisTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false,
-                "opinionMining": false
-              },
-              "taskName": "0"
-            }
-          ],
-          "extractiveSummarizationTasks": [],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "1",
-              "text": "Microsoft was founded by Bill Gates and Paul Allen.",
-              "language": "en"
-            },
-            {
-              "id": "2",
-              "text": "I did not like the hotel we stayed at. It was too expensive.",
-              "language": "en"
-            },
-            {
-              "id": "3",
-              "text": "The restaurant had really good food. I recommend you try it.",
-              "language": "en"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022opinionMining\u0022: false}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food. I recommend you try it.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c9aeecea-a257-4de6-b5c8-59f42595858c",
-        "Date": "Fri, 19 Nov 2021 19:41:44 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c8e7aa31-79ff-4d34-9dda-8b12d0f21b69",
+        "apim-request-id": "286303ab-8334-4647-8de5-f39700d760bf",
+        "Date": "Tue, 14 Dec 2021 02:00:30 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/89180c42-eb08-4cf4-9ac6-766d49193da4",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "171"
+        "x-envoy-upstream-service-time": "223"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c8e7aa31-79ff-4d34-9dda-8b12d0f21b69?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/89180c42-eb08-4cf4-9ac6-766d49193da4?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b993e3e6-4970-11ec-b36b-b831b58100e8"
+        "x-ms-client-request-id": "9d55bd2f-5c81-11ec-9e0e-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f89916cf-dafc-4118-9f5f-41a3fdb181b9",
+        "apim-request-id": "dd29af89-a679-45af-a274-1c61ed061155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:41:49 GMT",
+        "Date": "Tue, 14 Dec 2021 02:00:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7"
+        "x-envoy-upstream-service-time": "14"
       },
       "ResponseBody": {
-        "jobId": "c8e7aa31-79ff-4d34-9dda-8b12d0f21b69",
-        "lastUpdateDateTime": "2021-11-19T19:41:44Z",
-        "createdDateTime": "2021-11-19T19:41:44Z",
-        "expirationDateTime": "2021-11-20T19:41:44Z",
+        "jobId": "89180c42-eb08-4cf4-9ac6-766d49193da4",
+        "lastUpdateDateTime": "2021-12-14T02:00:30Z",
+        "createdDateTime": "2021-12-14T02:00:30Z",
+        "expirationDateTime": "2021-12-15T02:00:30Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -102,31 +62,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c8e7aa31-79ff-4d34-9dda-8b12d0f21b69?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/89180c42-eb08-4cf4-9ac6-766d49193da4?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b993e3e6-4970-11ec-b36b-b831b58100e8"
+        "x-ms-client-request-id": "9d55bd2f-5c81-11ec-9e0e-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "823bb756-72e4-4248-8ec8-d9175b87ca21",
+        "apim-request-id": "9fe360b9-520f-43b1-8be1-cd14b600634d",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:41:54 GMT",
+        "Date": "Tue, 14 Dec 2021 02:00:40 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "180"
+        "x-envoy-upstream-service-time": "159"
       },
       "ResponseBody": {
-        "jobId": "c8e7aa31-79ff-4d34-9dda-8b12d0f21b69",
-        "lastUpdateDateTime": "2021-11-19T19:41:52Z",
-        "createdDateTime": "2021-11-19T19:41:44Z",
-        "expirationDateTime": "2021-11-20T19:41:44Z",
+        "jobId": "89180c42-eb08-4cf4-9ac6-766d49193da4",
+        "lastUpdateDateTime": "2021-12-14T02:00:38Z",
+        "createdDateTime": "2021-12-14T02:00:30Z",
+        "expirationDateTime": "2021-12-15T02:00:30Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -136,7 +96,7 @@
           "total": 1,
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:41:52.1244889Z",
+              "lastUpdateDateTime": "2021-12-14T02:00:38.5291084Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {

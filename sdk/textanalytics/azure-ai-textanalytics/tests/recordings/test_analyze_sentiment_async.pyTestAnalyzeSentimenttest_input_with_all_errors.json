@@ -6,39 +6,21 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "191",
+        "Content-Length": "209",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4c14bfb4-4977-11ec-9eb1-b831b58100e8"
+        "x-ms-client-request-id": "f09eab03-5c83-11ec-98ef-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "I did not like the hotel we stayed at. It was too expensive.",
-            "language": "english"
-          },
-          {
-            "id": "3",
-            "text": "",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022english\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c25f3b8f-6144-407d-b00b-e199b2a53e4a",
+        "apim-request-id": "d43ab129-d0f5-4bd8-9c49-5594a0fcfc52",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 20:28:46 GMT",
+        "Date": "Tue, 14 Dec 2021 02:17:07 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": {
         "documents": [],

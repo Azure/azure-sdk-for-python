@@ -7,40 +7,22 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "225",
+        "Content-Length": "243",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d04b2123-497f-11ec-b278-b831b58100e8"
+        "x-ms-client-request-id": "812d7d58-5c84-11ec-8282-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "Microsoft was founded by Bill Gates and Paul Allen",
-            "language": "en"
-          },
-          {
-            "id": "1",
-            "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3741e3ba-4525-4017-b524-cd964f68d73e",
+        "apim-request-id": "bb366353-254c-43a3-a112-d37beb6bb7ca",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2",
-        "Date": "Fri, 19 Nov 2021 21:29:44 GMT",
+        "Date": "Tue, 14 Dec 2021 02:21:10 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "12"
+        "x-envoy-upstream-service-time": "11"
       },
       "ResponseBody": {
         "documents": [

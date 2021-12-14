@@ -7,54 +7,21 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "259",
+        "Content-Length": "295",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "394e2f33-4980-11ec-8ece-b831b58100e8"
+        "x-ms-client-request-id": "aef08514-5c84-11ec-8b46-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "One",
-            "language": "en"
-          },
-          {
-            "id": "1",
-            "text": "Two",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Three",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "Four",
-            "language": "en"
-          },
-          {
-            "id": "4",
-            "text": "Five",
-            "language": "en"
-          },
-          {
-            "id": "5",
-            "text": "Six",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022One\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Two\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Three\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Four\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022Five\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00225\u0022, \u0022text\u0022: \u0022Six\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "a6feed68-d8d7-425b-bd53-85caf8c8b181",
+        "apim-request-id": "83f772d4-d12c-45c4-a3de-556b2a2fdabf",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 21:32:39 GMT",
+        "Date": "Tue, 14 Dec 2021 02:22:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "5"
+        "x-envoy-upstream-service-time": "6"
       },
       "ResponseBody": {
         "error": {

@@ -7,35 +7,22 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "188",
+        "Content-Length": "200",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d0229016-497f-11ec-8259-b831b58100e8"
+        "x-ms-client-request-id": "80bd3ced-5c84-11ec-9a36-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "Microsoft was founded by Bill Gates and Paul Allen",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a84dac8c-f83d-4caa-bae7-3e754eb63be7",
+        "apim-request-id": "f094b27e-2d94-4835-9cc2-04d420bc72e1",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2",
-        "Date": "Fri, 19 Nov 2021 21:29:44 GMT",
+        "Date": "Tue, 14 Dec 2021 02:21:09 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "33"
       },
       "ResponseBody": {
         "documents": [

@@ -6,50 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "211",
+        "Content-Length": "241",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6a4a6b46-497f-11ec-ab72-b831b58100e8"
+        "x-ms-client-request-id": "7135bbba-5c84-11ec-b724-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "56",
-            "text": ":)",
-            "language": "en"
-          },
-          {
-            "id": "0",
-            "text": ":(",
-            "language": "en"
-          },
-          {
-            "id": "22",
-            "text": "",
-            "language": "en"
-          },
-          {
-            "id": "19",
-            "text": ":P",
-            "language": "en"
-          },
-          {
-            "id": "1",
-            "text": ":D",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u002256\u0022, \u0022text\u0022: \u0022:)\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022:(\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002222\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002219\u0022, \u0022text\u0022: \u0022:P\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022:D\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6d9759ed-44d8-4610-adf8-5c0e96e0ae27",
+        "apim-request-id": "c7823af8-b2e7-4470-a677-700a55a5d085",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
-        "Date": "Fri, 19 Nov 2021 21:26:53 GMT",
+        "Date": "Tue, 14 Dec 2021 02:20:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "26"
+        "x-envoy-upstream-service-time": "21"
       },
       "ResponseBody": {
         "statistics": {

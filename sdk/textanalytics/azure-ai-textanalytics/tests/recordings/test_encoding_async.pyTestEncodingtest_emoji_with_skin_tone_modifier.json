@@ -6,18 +6,18 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "77",
+        "Content-Length": "99",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "c7a84f7b-497d-11ec-af66-b831b58100e8"
+        "x-ms-client-request-id": "30578723-5c84-11ec-91ce-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00220\u0022,\u0022text\u0022:\u0022\uD83D\uDC69\uD83C\uDFFB SSN: 859-98-0987\u0022,\u0022language\u0022:\u0022en\u0022}]}",
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022\\ud83d\\udc69\\ud83c\\udffb SSN: 859-98-0987\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "916193a5-387c-40dc-acc9-7453f7c203f3",
+        "apim-request-id": "2b98cd08-5eb8-47cd-ad01-3530ead88fe7",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:15:11 GMT",
+        "Date": "Tue, 14 Dec 2021 02:18:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

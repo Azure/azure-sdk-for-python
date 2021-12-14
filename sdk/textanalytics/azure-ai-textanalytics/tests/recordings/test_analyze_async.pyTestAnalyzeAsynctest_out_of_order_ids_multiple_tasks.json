@@ -6,150 +6,127 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1156",
+        "Content-Length": "1250",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6b71c066-4972-11ec-921b-b831b58100e8"
+        "x-ms-client-request-id": "642c3f88-5c82-11ec-84bd-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "0"
-            }
-          ],
-          "entityRecognitionPiiTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": true,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "2"
-            }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false
-              },
-              "taskName": "1"
-            }
-          ],
-          "entityLinkingTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "3"
-            }
-          ],
-          "sentimentAnalysisTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false,
-                "opinionMining": false
-              },
-              "taskName": "4"
-            }
-          ],
-          "extractiveSummarizationTasks": [
-            {
-              "parameters": {
-                "model-version": "latest",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint",
-                "sentenceCount": 3,
-                "sortBy": "Offset"
-              },
-              "taskName": "5"
-            }
-          ],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "56",
-              "text": ":)",
-              "language": "en"
-            },
-            {
-              "id": "0",
-              "text": ":(",
-              "language": "en"
-            },
-            {
-              "id": "19",
-              "text": ":P",
-              "language": "en"
-            },
-            {
-              "id": "1",
-              "text": ":D",
-              "language": "en"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: true, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00222\u0022}], \u0022keyPhraseExtractionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false}, \u0022taskName\u0022: \u00221\u0022}], \u0022entityLinkingTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00223\u0022}], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022opinionMining\u0022: false}, \u0022taskName\u0022: \u00224\u0022}], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022latest\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 3, \u0022sortBy\u0022: \u0022Offset\u0022}, \u0022taskName\u0022: \u00225\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u002256\u0022, \u0022text\u0022: \u0022:)\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022:(\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002219\u0022, \u0022text\u0022: \u0022:P\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022:D\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "ae703342-4caf-45be-9738-d548a15fbc1c",
-        "Date": "Fri, 19 Nov 2021 19:53:51 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a25001bf-7e21-4f05-85e3-bdf1fc01f09a",
+        "apim-request-id": "afa28d4b-ca2e-47d5-a3de-534735757d15",
+        "Date": "Tue, 14 Dec 2021 02:06:03 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/1634dd13-254e-4398-9e00-453fd57c58d2",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "449"
+        "x-envoy-upstream-service-time": "597"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a25001bf-7e21-4f05-85e3-bdf1fc01f09a",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/1634dd13-254e-4398-9e00-453fd57c58d2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6b71c066-4972-11ec-921b-b831b58100e8"
+        "x-ms-client-request-id": "642c3f88-5c82-11ec-84bd-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "2785f322-30db-44d7-a261-269fda1aec5c",
+        "apim-request-id": "af858590-f15a-4e7f-8b8f-1908af456d8b",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:53:56 GMT",
+        "Date": "Tue, 14 Dec 2021 02:06:09 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "360"
+        "x-envoy-upstream-service-time": "103"
       },
       "ResponseBody": {
-        "jobId": "a25001bf-7e21-4f05-85e3-bdf1fc01f09a",
-        "lastUpdateDateTime": "2021-11-19T19:53:57Z",
-        "createdDateTime": "2021-11-19T19:53:51Z",
-        "expirationDateTime": "2021-11-20T19:53:51Z",
+        "jobId": "1634dd13-254e-4398-9e00-453fd57c58d2",
+        "lastUpdateDateTime": "2021-12-14T02:06:06Z",
+        "createdDateTime": "2021-12-14T02:06:03Z",
+        "expirationDateTime": "2021-12-15T02:06:03Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 4,
+          "completed": 1,
           "failed": 0,
-          "inProgress": 2,
+          "inProgress": 5,
           "total": 6,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:55.3854205Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:06.5913555Z",
+              "taskName": "0",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/1634dd13-254e-4398-9e00-453fd57c58d2",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "642c3f88-5c82-11ec-84bd-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "040e9220-6b22-4e7a-8d5e-4b52630697b8",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Dec 2021 02:06:14 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "777"
+      },
+      "ResponseBody": {
+        "jobId": "1634dd13-254e-4398-9e00-453fd57c58d2",
+        "lastUpdateDateTime": "2021-12-14T02:06:14Z",
+        "createdDateTime": "2021-12-14T02:06:03Z",
+        "expirationDateTime": "2021-12-15T02:06:03Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 5,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 6,
+          "entityRecognitionTasks": [
+            {
+              "lastUpdateDateTime": "2021-12-14T02:06:06.5913555Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -182,7 +159,7 @@
           ],
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:54.3042234Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:12.049365Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -215,7 +192,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:55.9065786Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:13.0145903Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -252,7 +229,7 @@
           ],
           "extractiveSummarizationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:57.4087911Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:12.9939935Z",
               "taskName": "5",
               "state": "succeeded",
               "results": {
@@ -282,35 +259,140 @@
                 "modelVersion": "2021-08-01"
               }
             }
+          ],
+          "sentimentAnalysisTasks": [
+            {
+              "lastUpdateDateTime": "2021-12-14T02:06:14.7833713Z",
+              "taskName": "4",
+              "state": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "sentiment": "positive",
+                    "confidenceScores": {
+                      "positive": 0.89,
+                      "neutral": 0.1,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.89,
+                          "neutral": 0.1,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":)"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "sentiment": "negative",
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.02,
+                      "negative": 0.98
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.02,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":("
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.3,
+                      "neutral": 0.67,
+                      "negative": 0.03
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.3,
+                          "neutral": 0.67,
+                          "negative": 0.03
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":P"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "sentiment": "positive",
+                    "confidenceScores": {
+                      "positive": 0.89,
+                      "neutral": 0.1,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.89,
+                          "neutral": 0.1,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":D"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            }
           ]
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a25001bf-7e21-4f05-85e3-bdf1fc01f09a",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/1634dd13-254e-4398-9e00-453fd57c58d2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6b71c066-4972-11ec-921b-b831b58100e8"
+        "x-ms-client-request-id": "642c3f88-5c82-11ec-84bd-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1b1e24da-0fd5-41e2-b9c4-ff9aa4760ea2",
+        "apim-request-id": "3adc39c1-e34e-4300-ab9f-a1101eee7d42",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:54:02 GMT",
+        "Date": "Tue, 14 Dec 2021 02:06:20 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "422"
+        "x-envoy-upstream-service-time": "342"
       },
       "ResponseBody": {
-        "jobId": "a25001bf-7e21-4f05-85e3-bdf1fc01f09a",
-        "lastUpdateDateTime": "2021-11-19T19:54:01Z",
-        "createdDateTime": "2021-11-19T19:53:51Z",
-        "expirationDateTime": "2021-11-20T19:53:51Z",
+        "jobId": "1634dd13-254e-4398-9e00-453fd57c58d2",
+        "lastUpdateDateTime": "2021-12-14T02:06:18Z",
+        "createdDateTime": "2021-12-14T02:06:03Z",
+        "expirationDateTime": "2021-12-15T02:06:03Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -320,7 +402,7 @@
           "total": 6,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:55.3854205Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:06.5913555Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -353,7 +435,7 @@
           ],
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:54.3042234Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:12.049365Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -386,7 +468,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:55.9065786Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:13.0145903Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -423,7 +505,7 @@
           ],
           "extractiveSummarizationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:53:57.4087911Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:12.9939935Z",
               "taskName": "5",
               "state": "succeeded",
               "results": {
@@ -456,7 +538,7 @@
           ],
           "keyPhraseExtractionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:54:01.4217359Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:18.8237094Z",
               "taskName": "1",
               "state": "succeeded",
               "results": {
@@ -489,7 +571,7 @@
           ],
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:54:00.3938066Z",
+              "lastUpdateDateTime": "2021-12-14T02:06:14.7833713Z",
               "taskName": "4",
               "state": "succeeded",
               "results": {

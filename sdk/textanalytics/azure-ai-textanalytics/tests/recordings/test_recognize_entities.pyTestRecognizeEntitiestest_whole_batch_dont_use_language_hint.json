@@ -7,36 +7,18 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "255",
+        "Content-Length": "273",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "534a1e9e-497f-11ec-b1e3-b831b58100e8"
+        "x-ms-client-request-id": "5c334e0b-5c84-11ec-b9eb-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "This was the best day of my life.",
-            "language": ""
-          },
-          {
-            "id": "1",
-            "text": "I did not like the hotel we stayed at. It was too expensive.",
-            "language": ""
-          },
-          {
-            "id": "2",
-            "text": "The restaurant was not as good as I hoped.",
-            "language": ""
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022This was the best day of my life.\u0022, \u0022language\u0022: \u0022\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant was not as good as I hoped.\u0022, \u0022language\u0022: \u0022\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3b4784ef-e289-4cb1-81a3-a95059b9bdd3",
+        "apim-request-id": "65e4bec9-9705-46ea-a56b-4242eab2f37f",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:26:14 GMT",
+        "Date": "Tue, 14 Dec 2021 02:20:09 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

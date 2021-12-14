@@ -6,45 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "334",
+        "Content-Length": "358",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4ba50df0-4977-11ec-9cdc-b831b58100e8"
+        "x-ms-client-request-id": "efcefec5-5c83-11ec-9a34-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "Microsoft was founded by Bill Gates and Paul Allen.",
-            "language": "en"
-          },
-          {
-            "id": "1",
-            "text": "I did not like the hotel we stayed at. It was too expensive.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "The restaurant had really good food. I recommend you try it.",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant had really good food. I recommend you try it.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "baa606e3-55a1-4fbc-b45e-066f3756e2e3",
+        "apim-request-id": "135ecce3-c015-4e33-910c-02ccfeefc404",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 20:28:45 GMT",
+        "Date": "Tue, 14 Dec 2021 02:17:06 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "121"
+        "x-envoy-upstream-service-time": "247"
       },
       "ResponseBody": {
         "documents": [

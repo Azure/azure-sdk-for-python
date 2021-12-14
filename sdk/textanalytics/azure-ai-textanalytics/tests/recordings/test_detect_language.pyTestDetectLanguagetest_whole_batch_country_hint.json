@@ -7,36 +7,18 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "270",
+        "Content-Length": "288",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "074a247c-497c-11ec-92c7-b831b58100e8"
+        "x-ms-client-request-id": "114a5873-5c84-11ec-93b5-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "This was the best day of my life.",
-            "countryHint": "CA"
-          },
-          {
-            "id": "1",
-            "text": "I did not like the hotel we stayed at. It was too expensive.",
-            "countryHint": "CA"
-          },
-          {
-            "id": "2",
-            "text": "The restaurant was not as good as I hoped.",
-            "countryHint": "CA"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022This was the best day of my life.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant was not as good as I hoped.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f2d6468c-09fd-4505-a2d4-dff397103cfb",
+        "apim-request-id": "9450e629-657b-49e1-8bb3-215275fde5c2",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:02:38 GMT",
+        "Date": "Tue, 14 Dec 2021 02:18:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

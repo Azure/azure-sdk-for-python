@@ -7,22 +7,22 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "73",
+        "Content-Length": "87",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9b0857f5-497d-11ec-8728-b831b58100e8"
+        "x-ms-client-request-id": "2c6a1738-5c84-11ec-9ab5-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00220\u0022,\u0022text\u0022:\u0022\uD83D\uDC69 SSN: 859-98-0987\u0022,\u0022language\u0022:\u0022en\u0022}]}",
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022\\ud83d\\udc69 SSN: 859-98-0987\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e88e5af5-0ac9-4740-a18e-94ecef872ba8",
+        "apim-request-id": "ca9efa1a-62b0-4b58-abba-56952bf6b8e2",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:13:56 GMT",
+        "Date": "Tue, 14 Dec 2021 02:18:48 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "36"
+        "x-envoy-upstream-service-time": "35"
       },
       "ResponseBody": "{\u0022documents\u0022:[{\u0022redactedText\u0022:\u0022\uD83D\uDC69 SSN: ***********\u0022,\u0022id\u0022:\u00220\u0022,\u0022entities\u0022:[{\u0022text\u0022:\u0022859-98-0987\u0022,\u0022category\u0022:\u0022USSocialSecurityNumber\u0022,\u0022offset\u0022:7,\u0022length\u0022:11,\u0022confidenceScore\u0022:0.65}],\u0022warnings\u0022:[]}],\u0022errors\u0022:[],\u0022modelVersion\u0022:\u00222021-01-15\u0022}"
     }

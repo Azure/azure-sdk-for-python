@@ -10,7 +10,7 @@
         "Content-Length": "1538",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "fd60954a-4970-11ec-834e-b831b58100e8"
+        "x-ms-client-request-id": "140e4972-5c85-11ec-b561-b831b58100e8"
       },
       "RequestBody": {
         "tasks": {
@@ -118,86 +118,75 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "489fb253-f0cd-4c9b-8a32-8fe06ba437e9",
-        "Date": "Fri, 19 Nov 2021 19:43:38 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/eb5faaab-6904-4f27-abc8-31173b36b24b",
+        "apim-request-id": "b01bbfc0-6904-432c-ade3-0e009796ca94",
+        "Date": "Tue, 14 Dec 2021 02:25:19 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/878f008f-60f7-470f-ae7c-d98efbfa3dd6",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1555"
+        "x-envoy-upstream-service-time": "1119"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/eb5faaab-6904-4f27-abc8-31173b36b24b",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/878f008f-60f7-470f-ae7c-d98efbfa3dd6",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "fd60954a-4970-11ec-834e-b831b58100e8"
+        "x-ms-client-request-id": "140e4972-5c85-11ec-b561-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1702bb16-589f-48a5-b71c-a5680e2c6633",
+        "apim-request-id": "1598c7a5-f06b-4c4e-95ea-bb0cf0f4e15a",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:43:44 GMT",
+        "Date": "Tue, 14 Dec 2021 02:25:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "304"
+        "x-envoy-upstream-service-time": "142"
       },
       "ResponseBody": {
-        "jobId": "eb5faaab-6904-4f27-abc8-31173b36b24b",
-        "lastUpdateDateTime": "2021-11-19T19:43:43Z",
-        "createdDateTime": "2021-11-19T19:43:38Z",
-        "expirationDateTime": "2021-11-20T19:43:38Z",
+        "jobId": "878f008f-60f7-470f-ae7c-d98efbfa3dd6",
+        "lastUpdateDateTime": "2021-12-14T02:25:23Z",
+        "createdDateTime": "2021-12-14T02:25:19Z",
+        "expirationDateTime": "2021-12-15T02:25:19Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 6,
+          "completed": 4,
           "failed": 0,
-          "inProgress": 3,
+          "inProgress": 5,
           "total": 9,
-          "extractiveSummarizationTasks": [
+          "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:42.7813579Z",
-              "taskName": "5",
+              "lastUpdateDateTime": "2021-12-14T02:25:23.6208567Z",
+              "taskName": "3",
               "state": "succeeded",
               "results": {
                 "documents": [
                   {
                     "id": "0",
-                    "sentences": [
+                    "entities": [
                       {
-                        "text": "Test for logging disable",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 24
+                        "bingId": "a7b11e27-5b63-19a5-b4dd-37b71149ecac",
+                        "name": "Test (assessment)",
+                        "matches": [
+                          {
+                            "text": "Test",
+                            "offset": 0,
+                            "length": 4,
+                            "confidenceScore": 0.04
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Test (assessment)",
+                        "url": "https://en.wikipedia.org/wiki/Test_(assessment)",
+                        "dataSource": "Wikipedia"
                       }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
-              }
-            }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "lastUpdateDateTime": "2021-11-19T19:43:42.2123402Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "0",
-                    "keyPhrases": [
-                      "Test",
-                      "logging"
                     ],
                     "warnings": []
                   }
@@ -207,45 +196,9 @@
               }
             }
           ],
-          "sentimentAnalysisTasks": [
-            {
-              "lastUpdateDateTime": "2021-11-19T19:43:43.8933398Z",
-              "taskName": "4",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentiment": "negative",
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.12,
-                      "negative": 0.86
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.12,
-                          "negative": 0.86
-                        },
-                        "offset": 0,
-                        "length": 24,
-                        "text": "Test for logging disable"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2020-04-01"
-              }
-            }
-          ],
           "customEntityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.2540407Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:20.7519315Z",
               "taskName": "8",
               "state": "succeeded",
               "results": {
@@ -257,14 +210,14 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "88ee0f78-fbca-444d-98e2-7c4c8631e494",
-                "deploymentName": "88ee0f78-fbca-444d-98e2-7c4c8631e494"
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
               }
             }
           ],
           "customSingleClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.3813933Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:20.60597Z",
               "taskName": "6",
               "state": "succeeded",
               "results": {
@@ -279,14 +232,14 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "659c1851-be0b-4142-b12a-087da9785926",
-                "deploymentName": "659c1851-be0b-4142-b12a-087da9785926"
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
               }
             }
           ],
           "customMultiClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.4523728Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:21.0279138Z",
               "taskName": "7",
               "state": "succeeded",
               "results": {
@@ -298,8 +251,8 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "7cdace98-537b-494a-b69a-c19754718025",
-                "deploymentName": "7cdace98-537b-494a-b69a-c19754718025"
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
               }
             }
           ]
@@ -307,41 +260,41 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/eb5faaab-6904-4f27-abc8-31173b36b24b",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/878f008f-60f7-470f-ae7c-d98efbfa3dd6",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "fd60954a-4970-11ec-834e-b831b58100e8"
+        "x-ms-client-request-id": "140e4972-5c85-11ec-b561-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c2ae9089-44b5-4d9d-a1d6-28178b220b94",
+        "apim-request-id": "f8d874c0-4a17-49c1-9110-46503f3fa995",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:43:49 GMT",
+        "Date": "Tue, 14 Dec 2021 02:25:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "356"
+        "x-envoy-upstream-service-time": "194"
       },
       "ResponseBody": {
-        "jobId": "eb5faaab-6904-4f27-abc8-31173b36b24b",
-        "lastUpdateDateTime": "2021-11-19T19:43:47Z",
-        "createdDateTime": "2021-11-19T19:43:38Z",
-        "expirationDateTime": "2021-11-20T19:43:38Z",
+        "jobId": "878f008f-60f7-470f-ae7c-d98efbfa3dd6",
+        "lastUpdateDateTime": "2021-12-14T02:25:30Z",
+        "createdDateTime": "2021-12-14T02:25:19Z",
+        "expirationDateTime": "2021-12-15T02:25:19Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 8,
+          "completed": 5,
           "failed": 0,
-          "inProgress": 1,
+          "inProgress": 4,
           "total": 9,
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:46.9468345Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:23.6208567Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -376,7 +329,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:47.0918495Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:27.5569564Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -393,91 +346,9 @@
               }
             }
           ],
-          "extractiveSummarizationTasks": [
-            {
-              "lastUpdateDateTime": "2021-11-19T19:43:42.7813579Z",
-              "taskName": "5",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentences": [
-                      {
-                        "text": "Test for logging disable",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 24
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
-              }
-            }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "lastUpdateDateTime": "2021-11-19T19:43:42.2123402Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "0",
-                    "keyPhrases": [
-                      "Test",
-                      "logging"
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ],
-          "sentimentAnalysisTasks": [
-            {
-              "lastUpdateDateTime": "2021-11-19T19:43:43.8933398Z",
-              "taskName": "4",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentiment": "negative",
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.12,
-                      "negative": 0.86
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.12,
-                          "negative": 0.86
-                        },
-                        "offset": 0,
-                        "length": 24,
-                        "text": "Test for logging disable"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2020-04-01"
-              }
-            }
-          ],
           "customEntityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.2540407Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:20.7519315Z",
               "taskName": "8",
               "state": "succeeded",
               "results": {
@@ -489,14 +360,14 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "88ee0f78-fbca-444d-98e2-7c4c8631e494",
-                "deploymentName": "88ee0f78-fbca-444d-98e2-7c4c8631e494"
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
               }
             }
           ],
           "customSingleClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.3813933Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:20.60597Z",
               "taskName": "6",
               "state": "succeeded",
               "results": {
@@ -511,14 +382,14 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "659c1851-be0b-4142-b12a-087da9785926",
-                "deploymentName": "659c1851-be0b-4142-b12a-087da9785926"
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
               }
             }
           ],
           "customMultiClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.4523728Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:21.0279138Z",
               "taskName": "7",
               "state": "succeeded",
               "results": {
@@ -530,8 +401,8 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "7cdace98-537b-494a-b69a-c19754718025",
-                "deploymentName": "7cdace98-537b-494a-b69a-c19754718025"
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
               }
             }
           ]
@@ -539,31 +410,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/eb5faaab-6904-4f27-abc8-31173b36b24b",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/878f008f-60f7-470f-ae7c-d98efbfa3dd6",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "fd60954a-4970-11ec-834e-b831b58100e8"
+        "x-ms-client-request-id": "140e4972-5c85-11ec-b561-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "4a7c2827-17b4-4262-9cce-0ff92a7ed2ea",
+        "apim-request-id": "47dc1c97-e33f-4637-b36a-3cc67153794e",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:43:55 GMT",
+        "Date": "Tue, 14 Dec 2021 02:25:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "372"
+        "x-envoy-upstream-service-time": "353"
       },
       "ResponseBody": {
-        "jobId": "eb5faaab-6904-4f27-abc8-31173b36b24b",
-        "lastUpdateDateTime": "2021-11-19T19:43:53Z",
-        "createdDateTime": "2021-11-19T19:43:38Z",
-        "expirationDateTime": "2021-11-20T19:43:38Z",
+        "jobId": "878f008f-60f7-470f-ae7c-d98efbfa3dd6",
+        "lastUpdateDateTime": "2021-12-14T02:25:33Z",
+        "createdDateTime": "2021-12-14T02:25:19Z",
+        "expirationDateTime": "2021-12-15T02:25:19Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -573,7 +444,7 @@
           "total": 9,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:53.0942751Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:33.5333589Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -606,7 +477,7 @@
           ],
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:46.9468345Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:23.6208567Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -641,7 +512,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:47.0918495Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:27.5569564Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -660,7 +531,7 @@
           ],
           "extractiveSummarizationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:42.7813579Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:30.4657619Z",
               "taskName": "5",
               "state": "succeeded",
               "results": {
@@ -685,7 +556,7 @@
           ],
           "keyPhraseExtractionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:42.2123402Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:33.2831929Z",
               "taskName": "1",
               "state": "succeeded",
               "results": {
@@ -706,7 +577,7 @@
           ],
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:43.8933398Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:33.8274962Z",
               "taskName": "4",
               "state": "succeeded",
               "results": {
@@ -742,7 +613,7 @@
           ],
           "customEntityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.2540407Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:20.7519315Z",
               "taskName": "8",
               "state": "succeeded",
               "results": {
@@ -754,14 +625,14 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "88ee0f78-fbca-444d-98e2-7c4c8631e494",
-                "deploymentName": "88ee0f78-fbca-444d-98e2-7c4c8631e494"
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
               }
             }
           ],
           "customSingleClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.3813933Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:20.60597Z",
               "taskName": "6",
               "state": "succeeded",
               "results": {
@@ -776,14 +647,14 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "659c1851-be0b-4142-b12a-087da9785926",
-                "deploymentName": "659c1851-be0b-4142-b12a-087da9785926"
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
               }
             }
           ],
           "customMultiClassificationTasks": [
             {
-              "lastUpdateDateTime": "2021-11-19T19:43:40.4523728Z",
+              "lastUpdateDateTime": "2021-12-14T02:25:21.0279138Z",
               "taskName": "7",
               "state": "succeeded",
               "results": {
@@ -795,8 +666,8 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "7cdace98-537b-494a-b69a-c19754718025",
-                "deploymentName": "7cdace98-537b-494a-b69a-c19754718025"
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
               }
             }
           ]

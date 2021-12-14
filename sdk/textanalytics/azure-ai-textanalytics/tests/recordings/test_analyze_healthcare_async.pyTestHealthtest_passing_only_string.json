@@ -6,67 +6,49 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "221",
+        "Content-Length": "239",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "52d1827c-4975-11ec-a86f-b831b58100e8"
+        "x-ms-client-request-id": "931b9633-5c83-11ec-b086-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "Patient does not suffer from high blood pressure.",
-            "language": "en"
-          },
-          {
-            "id": "1",
-            "text": "Prescribed 100mg ibuprofen, taken twice daily.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Patient does not suffer from high blood pressure.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Prescribed 100mg ibuprofen, taken twice daily.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "34250cac-ea58-47d7-a04f-545fbff83bf1",
-        "Date": "Fri, 19 Nov 2021 20:14:38 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/b81d659d-40a3-457f-9b57-92bbf87a88dd",
+        "apim-request-id": "c4cd1d6b-65f7-4d26-ba6c-fba6d407bbde",
+        "Date": "Tue, 14 Dec 2021 02:14:32 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/218ea44e-6b7d-4c7a-aef0-3dd60fe099b0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "184"
+        "x-envoy-upstream-service-time": "232"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/b81d659d-40a3-457f-9b57-92bbf87a88dd",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/218ea44e-6b7d-4c7a-aef0-3dd60fe099b0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "52d1827c-4975-11ec-a86f-b831b58100e8"
+        "x-ms-client-request-id": "931b9633-5c83-11ec-b086-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9cf09b7c-f216-46a1-8acb-04f13f276d9a",
+        "apim-request-id": "5001f808-3f06-4a51-a785-ce7af149b9e1",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 20:14:44 GMT",
+        "Date": "Tue, 14 Dec 2021 02:14:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "218"
+        "x-envoy-upstream-service-time": "388"
       },
       "ResponseBody": {
-        "jobId": "b81d659d-40a3-457f-9b57-92bbf87a88dd",
-        "lastUpdateDateTime": "2021-11-19T20:14:39Z",
-        "createdDateTime": "2021-11-19T20:14:39Z",
-        "expirationDateTime": "2021-11-20T20:14:39Z",
+        "jobId": "218ea44e-6b7d-4c7a-aef0-3dd60fe099b0",
+        "lastUpdateDateTime": "2021-12-14T02:14:33Z",
+        "createdDateTime": "2021-12-14T02:14:32Z",
+        "expirationDateTime": "2021-12-15T02:14:32Z",
         "status": "succeeded",
         "errors": [],
         "results": {

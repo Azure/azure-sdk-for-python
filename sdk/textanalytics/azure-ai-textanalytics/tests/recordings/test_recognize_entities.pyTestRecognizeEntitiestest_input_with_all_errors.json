@@ -7,35 +7,17 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "135",
+        "Content-Length": "153",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "510d5961-497f-11ec-bab7-b831b58100e8"
+        "x-ms-client-request-id": "569b6dec-5c84-11ec-8166-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Hola",
-            "language": "Spanish"
-          },
-          {
-            "id": "3",
-            "text": "",
-            "language": "de"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Hola\u0022, \u0022language\u0022: \u0022Spanish\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022de\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "de353e61-85fd-48b6-abb2-fb73026c80b2",
+        "apim-request-id": "7f8aadd0-47d5-4b47-bf59-975edd308dc4",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 21:26:10 GMT",
+        "Date": "Tue, 14 Dec 2021 02:19:59 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

@@ -7,68 +7,50 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "222",
+        "Content-Length": "240",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "e396fdfe-4974-11ec-acde-b831b58100e8"
+        "x-ms-client-request-id": "592f2ee3-5c83-11ec-a795-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "I will go to the park.",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "I did not like the hotel we stayed at.",
-            "language": "en"
-          },
-          {
-            "id": "3",
-            "text": "The restaurant had really good food.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "53ea9053-7afb-4ad3-b0bc-782a0d2b8ca8",
-        "Date": "Fri, 19 Nov 2021 20:11:32 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/a001dae6-7352-4981-95ee-b35834573541",
+        "apim-request-id": "480531e9-fcf1-4d60-9172-f9c25ef7ce99",
+        "Date": "Tue, 14 Dec 2021 02:12:54 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/8db3186a-7cf6-4c69-9491-43dcd77b16bc",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "217"
+        "x-envoy-upstream-service-time": "204"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/a001dae6-7352-4981-95ee-b35834573541",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/8db3186a-7cf6-4c69-9491-43dcd77b16bc",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "e396fdfe-4974-11ec-acde-b831b58100e8"
+        "x-ms-client-request-id": "592f2ee3-5c83-11ec-a795-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d42ed17c-4b47-4793-855c-77c959584b23",
+        "apim-request-id": "355a7ad4-60e8-445e-b167-7bd25759e49d",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 20:11:37 GMT",
+        "Date": "Tue, 14 Dec 2021 02:12:59 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "119"
+        "x-envoy-upstream-service-time": "64"
       },
       "ResponseBody": {
-        "jobId": "a001dae6-7352-4981-95ee-b35834573541",
-        "lastUpdateDateTime": "2021-11-19T20:11:33Z",
-        "createdDateTime": "2021-11-19T20:11:32Z",
-        "expirationDateTime": "2021-11-20T20:11:32Z",
+        "jobId": "8db3186a-7cf6-4c69-9491-43dcd77b16bc",
+        "lastUpdateDateTime": "2021-12-14T02:12:55Z",
+        "createdDateTime": "2021-12-14T02:12:54Z",
+        "expirationDateTime": "2021-12-15T02:12:54Z",
         "status": "succeeded",
         "errors": [],
         "results": {

@@ -7,22 +7,22 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "377",
+        "Content-Length": "405",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "502e22e9-497f-11ec-85bb-b831b58100e8"
+        "x-ms-client-request-id": "55c38f3e-5c84-11ec-b271-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00220\u0022,\u0022text\u0022:\u0022Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00222\u0022,\u0022text\u0022:\u0022Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\u00FCndet.\u0022,\u0022language\u0022:\u0022en\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022\u0022,\u0022language\u0022:\u0022en\u0022}]}",
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\\u00fcndet.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "93232c62-4163-47a0-a839-9ac686f4cd0d",
+        "apim-request-id": "e345a01c-2356-473a-bc51-d36ea62d0be9",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:26:09 GMT",
+        "Date": "Tue, 14 Dec 2021 02:19:57 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "35"
+        "x-envoy-upstream-service-time": "30"
       },
       "ResponseBody": {
         "documents": [

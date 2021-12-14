@@ -7,22 +7,22 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "313",
+        "Content-Length": "353",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "041386ac-497c-11ec-93b2-b831b58100e8"
+        "x-ms-client-request-id": "0bcec3a2-5c84-11ec-9c1d-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022I should take my cat to the veterinarian\u0022,\u0022countryHint\u0022:\u0022US\u0022},{\u0022id\u0022:\u00222\u0022,\u0022text\u0022:\u0022Este es un document escrito en Espa\u00F1ol.\u0022,\u0022countryHint\u0022:\u0022US\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022\u732B\u306F\u5E78\u305B\u0022,\u0022countryHint\u0022:\u0022US\u0022},{\u0022id\u0022:\u00224\u0022,\u0022text\u0022:\u0022Fahrt nach Stuttgart und dann zum Hotel zu Fu.\u0022,\u0022countryHint\u0022:\u0022US\u0022}]}",
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I should take my cat to the veterinarian\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Este es un document escrito en Espa\\u00f1ol.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\\u732b\\u306f\\u5e78\\u305b\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022Fahrt nach Stuttgart und dann zum Hotel zu Fu.\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "692f035b-7675-47c0-b33f-d9e20ab35923",
+        "apim-request-id": "2c81e46b-216e-4b64-88c6-cf3e603501ca",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
-        "Date": "Fri, 19 Nov 2021 21:02:33 GMT",
+        "Date": "Tue, 14 Dec 2021 02:17:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "8"
       },
       "ResponseBody": {
         "documents": [

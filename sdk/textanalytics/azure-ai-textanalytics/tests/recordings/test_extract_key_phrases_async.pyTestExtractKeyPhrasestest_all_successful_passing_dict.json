@@ -6,35 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "188",
+        "Content-Length": "200",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ba8be559-497e-11ec-a44f-b831b58100e8"
+        "x-ms-client-request-id": "440fc919-5c84-11ec-9a62-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "Microsoft was founded by Bill Gates and Paul Allen",
-            "language": "en"
-          },
-          {
-            "id": "2",
-            "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-            "language": "es"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022Microsoft fue fundado por Bill Gates y Paul Allen\u0022, \u0022language\u0022: \u0022es\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a1077d33-b4ec-4136-987a-358ad577ef7a",
+        "apim-request-id": "addaa89f-384f-4122-beb3-6365ec83bf02",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2",
-        "Date": "Fri, 19 Nov 2021 21:21:58 GMT",
+        "Date": "Tue, 14 Dec 2021 02:19:28 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
+        "x-envoy-upstream-service-time": "12"
       },
       "ResponseBody": {
         "statistics": {

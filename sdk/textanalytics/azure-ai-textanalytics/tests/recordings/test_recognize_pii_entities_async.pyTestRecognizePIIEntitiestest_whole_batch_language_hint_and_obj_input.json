@@ -6,22 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "219",
+        "Content-Length": "253",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "52022061-4980-11ec-a49e-b831b58100e8"
+        "x-ms-client-request-id": "cd121d8b-5c84-11ec-bb03-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022:[{\u0022id\u0022:\u00221\u0022,\u0022text\u0022:\u0022I should take my cat to the veterinarian.\u0022,\u0022language\u0022:\u0022de\u0022},{\u0022id\u0022:\u00224\u0022,\u0022text\u0022:\u0022Este es un document escrito en Espa\u00F1ol.\u0022,\u0022language\u0022:\u0022de\u0022},{\u0022id\u0022:\u00223\u0022,\u0022text\u0022:\u0022\u732B\u306F\u5E78\u305B\u0022,\u0022language\u0022:\u0022de\u0022}]}",
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I should take my cat to the veterinarian.\u0022, \u0022language\u0022: \u0022de\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022Este es un document escrito en Espa\\u00f1ol.\u0022, \u0022language\u0022: \u0022de\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\\u732b\\u306f\\u5e78\\u305b\u0022, \u0022language\u0022: \u0022de\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "aa0200e1-600a-4b71-9231-3e7207e02065",
+        "apim-request-id": "8cb6ad7d-0eb5-49b6-bc46-2267fc41b7d3",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:33:21 GMT",
+        "Date": "Tue, 14 Dec 2021 02:23:18 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "29"
+        "x-envoy-upstream-service-time": "30"
       },
       "ResponseBody": {
         "documents": [

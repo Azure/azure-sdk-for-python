@@ -6,40 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "270",
+        "Content-Length": "288",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "679315dd-497c-11ec-8afc-b831b58100e8"
+        "x-ms-client-request-id": "21e9030b-5c84-11ec-b2ca-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "This was the best day of my life.",
-            "countryHint": "CA"
-          },
-          {
-            "id": "1",
-            "text": "I did not like the hotel we stayed at. It was too expensive.",
-            "countryHint": "CA"
-          },
-          {
-            "id": "2",
-            "text": "The restaurant was not as good as I hoped.",
-            "countryHint": "CA"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022This was the best day of my life.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant was not as good as I hoped.\u0022, \u0022countryHint\u0022: \u0022CA\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "39f66b37-1207-42f8-94fd-fe68045c1547",
+        "apim-request-id": "25aba461-5519-4c4c-a89a-5e61dfa9f35f",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Fri, 19 Nov 2021 21:05:19 GMT",
+        "Date": "Tue, 14 Dec 2021 02:18:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "29"
+        "x-envoy-upstream-service-time": "8"
       },
       "ResponseBody": {
         "documents": [

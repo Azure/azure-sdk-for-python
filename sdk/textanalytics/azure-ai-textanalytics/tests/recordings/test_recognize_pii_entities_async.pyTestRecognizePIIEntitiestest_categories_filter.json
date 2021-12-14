@@ -6,30 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "132",
+        "Content-Length": "138",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "556bc3e7-4980-11ec-ba8c-b831b58100e8"
+        "x-ms-client-request-id": "d9a98b81-5c84-11ec-998f-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "07a83041-d6aa-40e9-8278-89bb2e75d615",
+        "apim-request-id": "8944a2ee-ed5d-4a1a-8440-81bc319613e9",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:33:27 GMT",
+        "Date": "Tue, 14 Dec 2021 02:23:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "33"
+        "x-envoy-upstream-service-time": "36"
       },
       "ResponseBody": {
         "documents": [
@@ -79,30 +71,22 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "132",
+        "Content-Length": "138",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5577aac8-4980-11ec-981d-b831b58100e8"
+        "x-ms-client-request-id": "d9b50055-5c84-11ec-9a95-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "0",
-            "text": "My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ee9f2dfe-17f8-4f58-bd4f-d1f4b97e44f6",
+        "apim-request-id": "b7a06a48-c820-448b-abc2-07525090cda1",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Fri, 19 Nov 2021 21:33:27 GMT",
+        "Date": "Tue, 14 Dec 2021 02:23:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "36"
+        "x-envoy-upstream-service-time": "29"
       },
       "ResponseBody": {
         "documents": [

@@ -6,93 +6,17 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1060",
+        "Content-Length": "1136",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "7ff96af9-4972-11ec-9ba2-b831b58100e8"
+        "x-ms-client-request-id": "7d43ed55-5c82-11ec-9e1b-b831b58100e8"
       },
-      "RequestBody": {
-        "tasks": {
-          "entityRecognitionTasks": [
-            {
-              "parameters": {
-                "model-version": "bad",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "0"
-            }
-          ],
-          "entityRecognitionPiiTasks": [
-            {
-              "parameters": {
-                "model-version": "bad",
-                "loggingOptOut": true,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "2"
-            }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "parameters": {
-                "model-version": "bad",
-                "loggingOptOut": false
-              },
-              "taskName": "1"
-            }
-          ],
-          "entityLinkingTasks": [
-            {
-              "parameters": {
-                "model-version": "bad",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint"
-              },
-              "taskName": "3"
-            }
-          ],
-          "sentimentAnalysisTasks": [
-            {
-              "parameters": {
-                "model-version": "bad",
-                "loggingOptOut": false,
-                "opinionMining": false
-              },
-              "taskName": "4"
-            }
-          ],
-          "extractiveSummarizationTasks": [
-            {
-              "parameters": {
-                "model-version": "bad",
-                "loggingOptOut": false,
-                "stringIndexType": "UnicodeCodePoint",
-                "sentenceCount": 3,
-                "sortBy": "Offset"
-              },
-              "taskName": "5"
-            }
-          ],
-          "customEntityRecognitionTasks": [],
-          "customSingleClassificationTasks": [],
-          "customMultiClassificationTasks": []
-        },
-        "analysisInput": {
-          "documents": [
-            {
-              "id": "1",
-              "text": "I did not like the hotel we stayed at.",
-              "language": "english"
-            }
-          ]
-        }
-      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022bad\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022bad\u0022, \u0022loggingOptOut\u0022: true, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00222\u0022}], \u0022keyPhraseExtractionTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022bad\u0022, \u0022loggingOptOut\u0022: false}, \u0022taskName\u0022: \u00221\u0022}], \u0022entityLinkingTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022bad\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00223\u0022}], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022bad\u0022, \u0022loggingOptOut\u0022: false, \u0022opinionMining\u0022: false}, \u0022taskName\u0022: \u00224\u0022}], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022model-version\u0022: \u0022bad\u0022, \u0022loggingOptOut\u0022: false, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 3, \u0022sortBy\u0022: \u0022Offset\u0022}, \u0022taskName\u0022: \u00225\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022english\u0022}]}}",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "808c4de9-2806-429b-aa9a-7febb4aae245",
+        "apim-request-id": "a4f9eb7e-874c-4129-8f20-649f230503e5",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 19:54:25 GMT",
+        "Date": "Tue, 14 Dec 2021 02:06:45 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

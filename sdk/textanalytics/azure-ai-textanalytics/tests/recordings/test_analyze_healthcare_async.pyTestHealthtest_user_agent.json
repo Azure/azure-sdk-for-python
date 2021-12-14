@@ -6,57 +6,49 @@
       "RequestHeaders": {
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "74",
+        "Content-Length": "80",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6ccdb46e-4975-11ec-b1d5-b831b58100e8"
+        "x-ms-client-request-id": "aedb763b-5c83-11ec-a95a-b831b58100e8"
       },
-      "RequestBody": {
-        "documents": [
-          {
-            "id": "1",
-            "text": "I will go to the park.",
-            "language": "en"
-          }
-        ]
-      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "536cd37e-1f41-43f4-bc45-0b2731bf5447",
-        "Date": "Fri, 19 Nov 2021 20:15:22 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/bdb38269-eb7d-4a09-9278-d8652fd6ee12",
+        "apim-request-id": "2639e5fe-3838-44a3-a5e8-9557b6b89a3c",
+        "Date": "Tue, 14 Dec 2021 02:15:17 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/1b878a6a-3cd1-4a8e-b19d-9067fe087275",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "164"
+        "x-envoy-upstream-service-time": "142"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/bdb38269-eb7d-4a09-9278-d8652fd6ee12",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/1b878a6a-3cd1-4a8e-b19d-9067fe087275",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "6ccdb46e-4975-11ec-b1d5-b831b58100e8"
+        "x-ms-client-request-id": "aedb763b-5c83-11ec-a95a-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "07b39a61-59d9-4782-8899-e207f3eab4a7",
+        "apim-request-id": "a27ecec4-7197-4ffe-8f7c-7d38185c5896",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Nov 2021 20:15:27 GMT",
+        "Date": "Tue, 14 Dec 2021 02:15:23 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "60"
+        "x-envoy-upstream-service-time": "41"
       },
       "ResponseBody": {
-        "jobId": "bdb38269-eb7d-4a09-9278-d8652fd6ee12",
-        "lastUpdateDateTime": "2021-11-19T20:15:23Z",
-        "createdDateTime": "2021-11-19T20:15:22Z",
-        "expirationDateTime": "2021-11-20T20:15:22Z",
+        "jobId": "1b878a6a-3cd1-4a8e-b19d-9067fe087275",
+        "lastUpdateDateTime": "2021-12-14T02:15:19Z",
+        "createdDateTime": "2021-12-14T02:15:18Z",
+        "expirationDateTime": "2021-12-15T02:15:18Z",
         "status": "succeeded",
         "errors": [],
         "results": {
