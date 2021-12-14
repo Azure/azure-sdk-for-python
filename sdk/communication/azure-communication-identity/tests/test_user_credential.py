@@ -25,7 +25,7 @@ class TestCommunicationTokenCredential(TestCase):
         cls.expired_token = generate_token_with_custom_expiry_epoch(
             100)  # 1/1/1970
 
-    '''def test_communicationtokencredential_decodes_token(self):
+    def test_communicationtokencredential_decodes_token(self):
         credential = CommunicationTokenCredential(self.sample_token)
         access_token = credential.get_token()
         self.assertEqual(access_token.token, self.sample_token)
@@ -34,7 +34,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertRaises(
             ValueError, lambda: CommunicationTokenCredential("foo.bar.tar"))
 
-    def test_communicationtokencredential_throws_if_nonstring_token(self):
+    '''def test_communicationtokencredential_throws_if_nonstring_token(self):
         self.assertRaises(TypeError, lambda: CommunicationTokenCredential(454))
 
     def test_communicationtokencredential_static_token_returns_expired_token(self):
