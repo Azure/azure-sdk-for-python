@@ -34,7 +34,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertRaises(
             ValueError, lambda: CommunicationTokenCredential("foo.bar.tar"))
 
-    '''def test_communicationtokencredential_throws_if_nonstring_token(self):
+    def test_communicationtokencredential_throws_if_nonstring_token(self):
         self.assertRaises(TypeError, lambda: CommunicationTokenCredential(454))
 
     def test_communicationtokencredential_static_token_returns_expired_token(self):
@@ -49,7 +49,7 @@ class TestCommunicationTokenCredential(TestCase):
         refresher.assert_called_once()
         self.assertEqual(access_token, self.sample_token)
 
-    def test_communicationtokencredential_token_expired_refresh_called_as_necessary(self):
+    '''def test_communicationtokencredential_token_expired_refresh_called_as_necessary(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
         credential = CommunicationTokenCredential(
