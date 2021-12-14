@@ -446,21 +446,21 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths), 6)
 
-    # @DataLakePreparer()
-    # async def test_list_system_filesystems_async(self, datalake_storage_account_name, datalake_storage_account_key):
-    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-    #     # Arrange
-    #     dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
-    #     # Act
-    #     filesystems = []
-    #     async for fs in dsc.list_file_systems(include_system=True):
-    #         filesystems.append(fs)
-    #     # Assert
-    #     found = False
-    #     for fs in filesystems:
-    #         if fs.name == "$logs":
-    #             found = True
-    #     self.assertEqual(found, True)
+    @DataLakePreparer()
+    async def test_list_system_filesystems_async(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        # Act
+        filesystems = []
+        async for fs in dsc.list_file_systems(include_system=True):
+            filesystems.append(fs)
+        # Assert
+        found = False
+        for fs in filesystems:
+            if fs.name == "$logs":
+                found = True
+        self.assertEqual(found, True)
 
     @DataLakePreparer()
     async def test_list_paths_with_max_per_page_async(
