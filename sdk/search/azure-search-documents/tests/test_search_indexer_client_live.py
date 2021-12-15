@@ -6,6 +6,10 @@
 
 from os import environ
 from os.path import dirname, join, realpath
+import pytest
+import random
+import string
+
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, test_proxy
 
@@ -23,7 +27,7 @@ from tests.search_service_preparer import search_decorator
 
 class TestSearchIndexersClient(AzureRecordedTestCase):
 
-    def _prepare_indexer(self, endpoint, api_key, storage_cs, container_name, name="sample-indexer", datasource_name="sample-datasource", index_name="hotels"):
+    def _prepare_indexer(self, endpoint, api_key, storage_cs, container_name, indexer_name, datasource_name, index_name):
         container = SearchIndexerDataContainer(name=container_name)
         data_source_connection = SearchIndexerDataSourceConnection(
             name=datasource_name,
@@ -41,122 +45,129 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         }]
         index = SearchIndex(name=index_name, fields=fields)
         result_index = SearchIndexClient(endpoint, api_key).create_index(index)
-        return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=result_index.name)
+        return SearchIndexer(name=indexer_name, data_source_name=ds.name, target_index_name=result_index.name)
 
-    @search_decorator
-    @recorded_by_proxy
-    def test_create_indexer(self, **kwargs):
+    def _parse_kwargs(self, **kwargs):
         search_endpoint = kwargs.get('search_service_endpoint')
         search_api_key = kwargs.get('search_service_api_key')
         storage_cs = kwargs.get('search_storage_connection_string')
         container_name = kwargs.get('search_storage_container_name')
+        return (search_endpoint, search_api_key, storage_cs, container_name)
 
+    def _random_tag(self, prefix="", length=10):
+        allowed_chars = string.ascii_letters
+        random_tag = "".join(random.choice(allowed_chars) for x in range(length)).lower()
+        return "{}{}".format(prefix, random_tag)
+
+    @search_decorator
+    @recorded_by_proxy
+    def test_indexer_crud(self, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        indexer_name = self._random_tag(prefix="sample-indexer-")
+        datasource_name = self._random_tag(prefix="sample-datasource-")
+        index_name = self._random_tag("hotels-")
         client = SearchIndexerClient(search_endpoint, search_api_key)
-        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name)
+        indexer_count = len(client.get_indexers())
+
+        # Create indexer
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
         result = client.create_indexer(indexer)
-        assert result.name == "sample-indexer"
-        assert result.target_index_name == "hotels"
-        assert result.data_source_name == "sample-datasource"
+        assert result.name == indexer_name
+        assert result.target_index_name == index_name
+        assert result.data_source_name == datasource_name
 
-    # @recorded_by_proxy
-    # def test_delete_indexer(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     result = client.create_indexer(indexer)
-    #     assert len(client.get_indexers()) == 1
-    #     client.delete_indexer("sample-indexer")
-    #     assert len(client.get_indexers()) == 0
+        # Get indexer
+        result = client.get_indexer(indexer_name)
+        assert result.name == indexer_name
 
-    # @recorded_by_proxy
-    # def test_reset_indexer(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     result = client.create_indexer(indexer)
-    #     assert len(client.get_indexers()) == 1
-    #     result = client.reset_indexer("sample-indexer")
-    #     assert client.get_indexer_status("sample-indexer").last_result.status.lower() in ('inprogress', 'reset')
+        # Run indexer
+        client.run_indexer(indexer_name)
+        assert client.get_indexer_status(indexer_name).status == 'running'
 
-    # @recorded_by_proxy
-    # def test_run_indexer(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     result = client.create_indexer(indexer)
-    #     assert len(client.get_indexers()) == 1
-    #     start = time.time()
-    #     client.run_indexer("sample-indexer")
-    #     assert client.get_indexer_status("sample-indexer").status == 'running'
+        # Reset indexer
+        client.reset_indexer(indexer_name)
+        assert client.get_indexer_status(indexer_name).last_result.status.lower() in ('inprogress', 'reset')
 
-    # @recorded_by_proxy
-    # def test_get_indexer(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     created = client.create_indexer(indexer)
-    #     result = client.get_indexer("sample-indexer")
-    #     assert result.name == "sample-indexer"
+        # Get indexer status
+        status = client.get_indexer_status(indexer_name)
+        assert status.status is not None
 
-    # @recorded_by_proxy
-    # def test_list_indexer(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer1 = self._prepare_indexer(endpoint, api_key)
-    #     indexer2 = self._prepare_indexer(endpoint, api_key, name="another-indexer", ds_name="another-datasource", id_name="another-index")
-    #     created1 = client.create_indexer(indexer1)
-    #     created2 = client.create_indexer(indexer2)
-    #     result = client.get_indexers()
-    #     assert isinstance(result, list)
-    #     assert set(x.name for x in result) == {"sample-indexer", "another-indexer"}
+        # List indexers
+        indexer2_name = self._random_tag(prefix="sample-indexer2-")
+        datasource2_name = self._random_tag(prefix="sample-datasource2-")
+        index2_name = self._random_tag("hotels2-")
+        indexer2 = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer2_name, datasource2_name, index2_name)
+        client.create_indexer(indexer2)
+        result = client.get_indexers()
+        assert isinstance(result, list)
+        assert len(result) == indexer_count + 2
+        indexer_count = len(result)
+        assert indexer_name in set(x.name for x in result)
+        assert indexer2_name in set(x.name for x in result)
 
-    # @recorded_by_proxy
-    # def test_create_or_update_indexer(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     created = client.create_indexer(indexer)
-    #     assert len(client.get_indexers()) == 1
-    #     indexer.description = "updated"
-    #     client.create_or_update_indexer(indexer)
-    #     assert len(client.get_indexers()) == 1
-    #     result = client.get_indexer("sample-indexer")
-    #     assert result.name == "sample-indexer"
-    #     assert result.description == "updated"
+        # Delete indexer
+        client.delete_indexer(indexer_name)
+        client.delete_indexer(indexer2_name)
+        assert len(client.get_indexers()) == indexer_count - 2
 
-    # @recorded_by_proxy
-    # def test_get_indexer_status(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     result = client.create_indexer(indexer)
-    #     status = client.get_indexer_status("sample-indexer")
-    #     assert status.status is not None
+    @search_decorator
+    @recorded_by_proxy
+    def test_create_or_update_indexer(self, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        indexer_name = self._random_tag(prefix="sample-indexer-")
+        datasource_name = self._random_tag(prefix="sample-datasource-")
+        index_name = self._random_tag("hotels-")
+        client = SearchIndexerClient(search_endpoint, search_api_key)
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
 
-    # @recorded_by_proxy
-    # def test_create_or_update_indexer_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
-    #     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
-    #     indexer = self._prepare_indexer(endpoint, api_key)
-    #     created = client.create_indexer(indexer)
-    #     etag = created.e_tag
+        start_count = len(client.get_indexers())
+        client.create_indexer(indexer)
+        assert(len(client.get_indexers())) == start_count + 1
+        
+        indexer.description = "updated"
+        client.create_or_update_indexer(indexer)
+        assert len(client.get_indexers()) == start_count + 1
 
+        result = client.get_indexer(indexer_name)
+        assert result.name == indexer_name
+        assert result.description == "updated"
 
-    #     indexer.description = "updated"
-    #     client.create_or_update_indexer(indexer)
+    @search_decorator
+    @recorded_by_proxy
+    def test_create_or_update_indexer_if_unchanged(self, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        indexer_name = self._random_tag(prefix="sample-indexer-")
+        datasource_name = self._random_tag(prefix="sample-datasource-")
+        index_name = self._random_tag("hotels-")
+        client = SearchIndexerClient(search_endpoint, search_api_key)
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
 
-    #     indexer.e_tag = etag
-    #     with pytest.raises(HttpResponseError):
-    #         client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
+        created = client.create_indexer(indexer)
+        etag = created.e_tag
 
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_delete_indexer_if_unchanged(self, **kwargs):
-    #     search_endpoint = kwargs.get('search_service_endpoint')
-    #     search_api_key = kwargs.get('search_service_api_key')
-    #     storage_cs = kwargs.get('search_storage_connection_string')
-    #     container = kwargs.get('search_storage_container_name')
+        indexer.description = "updated"
+        client.create_or_update_indexer(indexer)
 
-    #     client = SearchIndexerClient(search_endpoint, AzureKeyCredential(search_api_key))
-    #     indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container)
-    #     result = client.create_indexer(indexer)
-    #     etag = result.e_tag
+        indexer.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
 
-    #     indexer.description = "updated"
-    #     client.create_or_update_indexer(indexer)
+    @search_decorator
+    @recorded_by_proxy
+    def test_delete_indexer_if_unchanged(self, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        indexer_name = self._random_tag(prefix="sample-indexer-")
+        datasource_name = self._random_tag(prefix="sample-datasource-")
+        index_name = self._random_tag("hotels-")
+        client = SearchIndexerClient(search_endpoint, search_api_key)
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
 
-    #     indexer.e_tag = etag
-    #     with pytest.raises(HttpResponseError):
-    #         client.delete_indexer(indexer, match_condition=MatchConditions.IfNotModified)
+        result = client.create_indexer(indexer)
+        etag = result.e_tag
+
+        indexer.description = "updated"
+        client.create_or_update_indexer(indexer)
+
+        indexer.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.delete_indexer(indexer, match_condition=MatchConditions.IfNotModified)
