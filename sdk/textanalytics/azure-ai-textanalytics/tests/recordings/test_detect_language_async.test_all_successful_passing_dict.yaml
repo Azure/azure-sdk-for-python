@@ -13,23 +13,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/languages?showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":4,"validDocumentsCount":4,"erroneousDocumentsCount":0,"transactionsCount":4},"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":0.97},"statistics":{"charactersCount":41,"transactionsCount":1},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"statistics":{"charactersCount":39,"transactionsCount":1},"warnings":[]},{"id":"3","detectedLanguage":{"name":"Japanese","iso6391Name":"ja","confidenceScore":1.0},"statistics":{"charactersCount":4,"transactionsCount":1},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":0.99},"statistics":{"charactersCount":46,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2021-01-05"}'
     headers:
-      apim-request-id: 9a9ae519-7b2b-4be1-9c3a-38f4570d8f21
+      apim-request-id: dae3c8e9-6b66-4b8e-9cd4-20cf2c9da380
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4
-      date: Wed, 06 Oct 2021 21:04:14 GMT
+      date: Wed, 08 Dec 2021 22:57:46 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/languages?showStats=true
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/languages?showStats=true
 version: 1

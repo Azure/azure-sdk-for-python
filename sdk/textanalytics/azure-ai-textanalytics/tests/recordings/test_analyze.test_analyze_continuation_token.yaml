@@ -1,24 +1,22 @@
 interactions:
 - request:
-    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
-      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest",
-      "loggingOptOut": true, "stringIndexType": "UnicodeCodePoint"}, "taskName": "1"}],
-      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}, "taskName": "3"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "opinionMining":
-      false}, "taskName": "2"}], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
-      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
-      []}, "analysisInput": {"documents": [{"id": "1", "text": "A recent report by
-      the Government Accountability Office (GAO) found that the dramatic increase
-      in oil and natural gas development on federal lands over the past six years
-      has stretched the staff of the BLM to a point that it has been unable to meet
-      its environmental protection responsibilities.", "language": "en"}, {"id": "2",
-      "text": "David Schmidt, senior vice president--Food Safety, International Food
-      Information Council (IFIC), Washington, D.C., discussed the physical activity
-      component.", "language": "en"}, {"id": "3", "text": "", "language": "en"}, {"id":
-      "4", "text": "I need a reservation for an indoor restaurant in China. Please
-      don''t stop the music. Play music and add it to my playlist", "language": "en"}]}}'
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"stringIndexType":
+      "UnicodeCodePoint"}, "taskName": "0"}], "entityRecognitionPiiTasks": [{"parameters":
+      {"stringIndexType": "UnicodeCodePoint"}, "taskName": "1"}], "keyPhraseExtractionTasks":
+      [{"parameters": {}, "taskName": "3"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      [{"parameters": {"stringIndexType": "UnicodeCodePoint"}, "taskName": "2"}],
+      "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [], "customSingleClassificationTasks":
+      [], "customMultiClassificationTasks": []}, "analysisInput": {"documents": [{"id":
+      "1", "text": "A recent report by the Government Accountability Office (GAO)
+      found that the dramatic increase in oil and natural gas development on federal
+      lands over the past six years has stretched the staff of the BLM to a point
+      that it has been unable to meet its environmental protection responsibilities.",
+      "language": "en"}, {"id": "2", "text": "David Schmidt, senior vice president--Food
+      Safety, International Food Information Council (IFIC), Washington, D.C., discussed
+      the physical activity component.", "language": "en"}, {"id": "3", "text": "",
+      "language": "en"}, {"id": "4", "text": "I need a reservation for an indoor restaurant
+      in China. Please don''t stop the music. Play music and add it to my playlist",
+      "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -27,11 +25,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1528'
+      - '1342'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
@@ -39,11 +37,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - ab0cb781-fe7f-4aeb-9902-d21d2354a35e
+      - 21302824-f51b-4dec-bc87-125974cfcfc1
       date:
-      - Mon, 25 Oct 2021 19:24:11 GMT
+      - Wed, 08 Dec 2021 22:44:41 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/7e53892b-5ba3-459a-9cfb-2c939275ca10
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -51,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '393'
+      - '424'
     status:
       code: 202
       message: Accepted
@@ -65,12 +63,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/7e53892b-5ba3-459a-9cfb-2c939275ca10?showStats=True
   response:
     body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:14Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":3,"total":4,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
+      string: '{"jobId":"7e53892b-5ba3-459a-9cfb-2c939275ca10","lastUpdateDateTime":"2021-12-08T22:44:44Z","createdDateTime":"2021-12-08T22:44:41Z","expirationDateTime":"2021-12-09T22:44:41Z","status":"running","errors":[],"tasks":{"completed":3,"failed":0,"inProgress":1,"total":4,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:43.4835561Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
         recent report by the ******************************** (***) found that the
         dramatic increase in oil and natural gas development on federal lands over
         the ************** has stretched the staff of the *** to a point that it has
@@ -85,297 +83,7 @@ interactions:
         need a reservation for an indoor restaurant in China. Please don''t stop the
         music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id:
-      - fca0b61a-41bf-44dc-9e29-dd6288ffebec
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:18 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '1912'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:19Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":2,"failed":0,"inProgress":2,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id:
-      - e91c6d04-d36a-41ee-b3d8-3388b9f61211
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:22 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '143'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:19Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":2,"failed":0,"inProgress":2,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id:
-      - c26a1d46-ea72-4ce9-9bc9-143e71c15330
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:26 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3702'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:19Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":2,"failed":0,"inProgress":2,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id:
-      - d208e6a1-041f-442d-8b6d-fd660ef99a8d
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:27 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '167'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:19Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":2,"failed":0,"inProgress":2,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}]}}'
-    headers:
-      apim-request-id:
-      - c16672fa-e0c2-4788-9fa7-e629b23ae41f
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:31 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '173'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:32Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":3,"failed":0,"inProgress":1,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:32.7619484Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
+        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:44.4608743Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
         Accountability Office","natural gas development","past six years","environmental
         protection responsibilities","recent report","dramatic increase","federal
         lands","GAO","oil","staff","BLM","point"],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["International
@@ -383,205 +91,7 @@ interactions:
         Safety","David Schmidt","D.C.","IFIC","Washington"],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["indoor
         restaurant","reservation","China","music","playlist"],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}]}}'
-    headers:
-      apim-request-id:
-      - e0e5788c-e8bd-4d10-a078-51e123bc7c55
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:32 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '227'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:32Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":3,"failed":0,"inProgress":1,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:32.7619484Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
-        Accountability Office","natural gas development","past six years","environmental
-        protection responsibilities","recent report","dramatic increase","federal
-        lands","GAO","oil","staff","BLM","point"],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["International
-        Food Information Council","senior vice president","physical activity component","Food
-        Safety","David Schmidt","D.C.","IFIC","Washington"],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["indoor
-        restaurant","reservation","China","music","playlist"],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 9b52a9dd-f698-4e42-8866-563c312ce4be
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:37 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '241'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:32Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"running","errors":[],"tasks":{"completed":3,"failed":0,"inProgress":1,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:32.7619484Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
-        Accountability Office","natural gas development","past six years","environmental
-        protection responsibilities","recent report","dramatic increase","federal
-        lands","GAO","oil","staff","BLM","point"],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["International
-        Food Information Council","senior vice president","physical activity component","Food
-        Safety","David Schmidt","D.C.","IFIC","Washington"],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["indoor
-        restaurant","reservation","China","music","playlist"],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 3e951462-3a10-4788-ab89-2619f997e54f
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 25 Oct 2021 19:24:38 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '372'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
-  response:
-    body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:41Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"succeeded","errors":[],"tasks":{"completed":4,"failed":0,"inProgress":0,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
-        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
-        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
-        recent report by the ******************************** (***) found that the
-        dramatic increase in oil and natural gas development on federal lands over
-        the ************** has stretched the staff of the *** to a point that it has
-        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
-        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
-        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
-        *********************--Food Safety, **************************************
-        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
-        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
-        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
-        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
-        need a reservation for an indoor restaurant in China. Please don''t stop the
-        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:32.7619484Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
-        Accountability Office","natural gas development","past six years","environmental
-        protection responsibilities","recent report","dramatic increase","federal
-        lands","GAO","oil","staff","BLM","point"],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["International
-        Food Information Council","senior vice president","physical activity component","Food
-        Safety","David Schmidt","D.C.","IFIC","Washington"],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["indoor
-        restaurant","reservation","China","music","playlist"],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:41.0065874Z","taskName":"2","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":295,"transactionsCount":1},"confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"offset":0,"length":295,"text":"A
+        text is empty."}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:44.5122235Z","taskName":"2","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":295,"transactionsCount":1},"confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"offset":0,"length":295,"text":"A
         recent report by the Government Accountability Office (GAO) found that the
         dramatic increase in oil and natural gas development on federal lands over
         the past six years has stretched the staff of the BLM to a point that it has
@@ -595,11 +105,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2020-04-01"}}]}}'
     headers:
       apim-request-id:
-      - 7d7905a7-275c-4857-b2d0-fbf55fb79cfa
+      - f0ba08c5-6cb4-4ae3-ad92-9f372351a1f3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 Oct 2021 19:24:43 GMT
+      - Wed, 08 Dec 2021 22:44:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -607,7 +117,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '306'
+      - '234'
     status:
       code: 200
       message: OK
@@ -621,12 +131,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/2f741440-6838-4e66-b59d-fe9400de222b?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/7e53892b-5ba3-459a-9cfb-2c939275ca10?showStats=True
   response:
     body:
-      string: '{"jobId":"2f741440-6838-4e66-b59d-fe9400de222b","lastUpdateDateTime":"2021-10-25T19:24:41Z","createdDateTime":"2021-10-25T19:24:11Z","expirationDateTime":"2021-10-26T19:24:11Z","status":"succeeded","errors":[],"tasks":{"completed":4,"failed":0,"inProgress":0,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:19.310668Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
+      string: '{"jobId":"7e53892b-5ba3-459a-9cfb-2c939275ca10","lastUpdateDateTime":"2021-12-08T22:44:50Z","createdDateTime":"2021-12-08T22:44:41Z","expirationDateTime":"2021-12-09T22:44:41Z","status":"succeeded","errors":[],"tasks":{"completed":4,"failed":0,"inProgress":0,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:50.4528527Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
         Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
         six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
         protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
@@ -635,7 +145,7 @@ interactions:
         Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
         D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:14.7282104Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
+        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:43.4835561Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
         recent report by the ******************************** (***) found that the
         dramatic increase in oil and natural gas development on federal lands over
         the ************** has stretched the staff of the *** to a point that it has
@@ -650,7 +160,7 @@ interactions:
         need a reservation for an indoor restaurant in China. Please don''t stop the
         music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:32.7619484Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
+        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:44.4608743Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
         Accountability Office","natural gas development","past six years","environmental
         protection responsibilities","recent report","dramatic increase","federal
         lands","GAO","oil","staff","BLM","point"],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["International
@@ -658,7 +168,7 @@ interactions:
         Safety","David Schmidt","D.C.","IFIC","Washington"],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["indoor
         restaurant","reservation","China","music","playlist"],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-10-25T19:24:41.0065874Z","taskName":"2","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":295,"transactionsCount":1},"confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"offset":0,"length":295,"text":"A
+        text is empty."}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:44.5122235Z","taskName":"2","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":295,"transactionsCount":1},"confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"offset":0,"length":295,"text":"A
         recent report by the Government Accountability Office (GAO) found that the
         dramatic increase in oil and natural gas development on federal lands over
         the past six years has stretched the staff of the BLM to a point that it has
@@ -672,11 +182,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2020-04-01"}}]}}'
     headers:
       apim-request-id:
-      - 05b53899-25ee-44bc-bc86-538fbb3d530b
+      - 2bf489d4-c72b-466f-9d10-e5facea5b252
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 25 Oct 2021 19:24:44 GMT
+      - Wed, 08 Dec 2021 22:44:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -684,7 +194,84 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '311'
+      - '326'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/7e53892b-5ba3-459a-9cfb-2c939275ca10?showStats=True
+  response:
+    body:
+      string: '{"jobId":"7e53892b-5ba3-459a-9cfb-2c939275ca10","lastUpdateDateTime":"2021-12-08T22:44:50Z","createdDateTime":"2021-12-08T22:44:41Z","expirationDateTime":"2021-12-09T22:44:41Z","status":"succeeded","errors":[],"tasks":{"completed":4,"failed":0,"inProgress":0,"total":4,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:50.4528527Z","taskName":"0","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
+        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.99},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.94},{"text":"oil","category":"Product","offset":98,"length":3,"confidenceScore":0.67},{"text":"natural","category":"Product","offset":106,"length":7,"confidenceScore":0.68},{"text":"gas","category":"Skill","offset":114,"length":3,"confidenceScore":0.57},{"text":"development","category":"Skill","offset":118,"length":11,"confidenceScore":0.48},{"text":"past
+        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.96},{"text":"environmental
+        protection","category":"Skill","offset":253,"length":24,"confidenceScore":0.79}],"warnings":[]},{"id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
+        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
+        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.86},{"text":"International
+        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.95},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.82},{"text":"Washington,
+        D.C.","category":"Location","subcategory":"GPE","offset":98,"length":16,"confidenceScore":0.89}],"warnings":[]},{"id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[{"text":"indoor","category":"Location","subcategory":"Structural","offset":28,"length":6,"confidenceScore":0.5},{"text":"restaurant","category":"Location","subcategory":"Structural","offset":35,"length":10,"confidenceScore":0.5},{"text":"China","category":"Location","subcategory":"GPE","offset":49,"length":5,"confidenceScore":1.0}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2021-06-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:43.4835561Z","taskName":"1","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"redactedText":"A
+        recent report by the ******************************** (***) found that the
+        dramatic increase in oil and natural gas development on federal lands over
+        the ************** has stretched the staff of the *** to a point that it has
+        been unable to meet its environmental protection responsibilities.","id":"1","statistics":{"charactersCount":295,"transactionsCount":1},"entities":[{"text":"Government
+        Accountability Office","category":"Organization","offset":23,"length":32,"confidenceScore":0.95},{"text":"GAO","category":"Organization","offset":57,"length":3,"confidenceScore":0.9},{"text":"past
+        six years","category":"DateTime","subcategory":"DateRange","offset":156,"length":14,"confidenceScore":0.8},{"text":"BLM","category":"Organization","offset":202,"length":3,"confidenceScore":0.87}],"warnings":[]},{"redactedText":"*************,
+        *********************--Food Safety, **************************************
+        (****), Washington, D.C., discussed the physical activity component.","id":"2","statistics":{"charactersCount":158,"transactionsCount":1},"entities":[{"text":"David
+        Schmidt","category":"Person","offset":0,"length":13,"confidenceScore":1.0},{"text":"senior
+        vice president","category":"PersonType","offset":15,"length":21,"confidenceScore":0.71},{"text":"International
+        Food Information Council","category":"Organization","offset":51,"length":38,"confidenceScore":0.96},{"text":"IFIC","category":"Organization","offset":91,"length":4,"confidenceScore":0.92}],"warnings":[]},{"redactedText":"I
+        need a reservation for an indoor restaurant in China. Please don''t stop the
+        music. Play music and add it to my playlist","id":"4","statistics":{"charactersCount":121,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:44.4608743Z","taskName":"3","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","keyPhrases":["Government
+        Accountability Office","natural gas development","past six years","environmental
+        protection responsibilities","recent report","dramatic increase","federal
+        lands","GAO","oil","staff","BLM","point"],"statistics":{"charactersCount":295,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["International
+        Food Information Council","senior vice president","physical activity component","Food
+        Safety","David Schmidt","D.C.","IFIC","Washington"],"statistics":{"charactersCount":158,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["indoor
+        restaurant","reservation","China","music","playlist"],"statistics":{"charactersCount":121,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-12-08T22:44:44.5122235Z","taskName":"2","state":"succeeded","results":{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":295,"transactionsCount":1},"confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.23,"neutral":0.61,"negative":0.16},"offset":0,"length":295,"text":"A
+        recent report by the Government Accountability Office (GAO) found that the
+        dramatic increase in oil and natural gas development on federal lands over
+        the past six years has stretched the staff of the BLM to a point that it has
+        been unable to meet its environmental protection responsibilities."}],"warnings":[]},{"id":"2","sentiment":"neutral","statistics":{"charactersCount":158,"transactionsCount":1},"confidenceScores":{"positive":0.0,"neutral":1.0,"negative":0.0},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.0,"neutral":1.0,"negative":0.0},"offset":0,"length":158,"text":"David
+        Schmidt, senior vice president--Food Safety, International Food Information
+        Council (IFIC), Washington, D.C., discussed the physical activity component."}],"warnings":[]},{"id":"4","sentiment":"positive","statistics":{"charactersCount":121,"transactionsCount":1},"confidenceScores":{"positive":0.57,"neutral":0.41,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":55,"text":"I
+        need a reservation for an indoor restaurant in China."},{"sentiment":"neutral","confidenceScores":{"positive":0.12,"neutral":0.78,"negative":0.1},"offset":56,"length":28,"text":"Please
+        don''t stop the music."},{"sentiment":"positive","confidenceScores":{"positive":0.57,"neutral":0.41,"negative":0.02},"offset":85,"length":36,"text":"Play
+        music and add it to my playlist"}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 1b738679-ef39-4b3c-bc9f-ffffaa35692e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 08 Dec 2021 22:44:52 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '384'
     status:
       code: 200
       message: OK

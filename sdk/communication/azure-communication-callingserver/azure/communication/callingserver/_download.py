@@ -154,8 +154,6 @@ class _ChunkIterator(object):
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            # https://stackoverflow.com/questions/27318327/how-to-imitate-python-3s-raise-from-in-python-2
-            # https://stackoverflow.com/questions/34463087/valid-syntax-in-both-python-2-x-and-3-x-for-raising-exception/40877934
             traceback = sys.exc_info()[2]
             raise_(StopIteration, "Download complete", traceback)
 

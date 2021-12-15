@@ -1,20 +1,19 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
-      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
-      [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks": [],
-      "customSingleClassificationTasks": [], "customMultiClassificationTasks": []},
-      "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
+      "keyPhraseExtractionTasks": [{"parameters": {}, "taskName": "0"}], "entityLinkingTasks":
+      [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
+      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '472'
+      - '423'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
@@ -22,15 +21,15 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Document
         text is empty."}}}'
     headers:
-      apim-request-id: 144c4c76-208e-4dfd-aafc-5d29d4a351fa
+      apim-request-id: 4352f4b8-4fd4-4592-b82f-be45f85315b5
       content-type: application/json; charset=utf-8
-      date: Thu, 07 Oct 2021 23:46:54 GMT
+      date: Wed, 08 Dec 2021 22:49:37 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 400
       message: Bad Request
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/analyze
 version: 1
