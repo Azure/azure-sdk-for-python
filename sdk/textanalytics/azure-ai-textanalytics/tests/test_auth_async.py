@@ -8,16 +8,16 @@ import pytest
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
-from asynctestcase import AsyncTextAnalyticsTest
+from testcase import TextAnalyticsTest
 
 
-class TestAuth(AsyncTextAnalyticsTest):
+class TestAuth(TextAnalyticsTest):
+
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
-    async def test_active_directory_auth(self):
-        token = self.generate_oauth_token()
-        endpoint = self.get_oauth_endpoint()
-        text_analytics = TextAnalyticsClient(endpoint, token)
+    async def test_active_directory_auth(self, textanalytics_test_endpoint):
+        token = self.get_credential(TextAnalyticsClient, is_async=True)
+        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token)
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
@@ -28,20 +28,20 @@ class TestAuth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     async def test_empty_credentials(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, "")
 
     @TextAnalyticsPreparer()
     def test_bad_type_for_credentials(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, [])
 
     @TextAnalyticsPreparer()
     def test_none_credentials(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, None)
 
     @TextAnalyticsPreparer()
     def test_none_endpoint(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             text_analytics = TextAnalyticsClient(None, AzureKeyCredential(textanalytics_test_api_key))
