@@ -28,7 +28,7 @@ class CommunicationTokenCredential(object):
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
-    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
+    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 4.5
 
     def __init__(self, token: str, **kwargs: Any):
         if not isinstance(token, six.string_types):
