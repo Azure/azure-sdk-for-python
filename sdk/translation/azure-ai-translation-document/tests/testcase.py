@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import os
-import logging
 import time
 import datetime
 import uuid
@@ -18,8 +17,6 @@ from azure_devtools.scenario_tests import (
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
-
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 
 class Document(object):
@@ -84,14 +81,6 @@ class DocumentTranslationTest(AzureTestCase):
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
         )
 
-        self.logger = logging.getLogger('azure')
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-        self.logger.handlers = [handler]
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.propagate = True
-        self.logger.disabled = False
-
     def get_oauth_endpoint(self):
         return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")
 
@@ -101,8 +90,7 @@ class DocumentTranslationTest(AzureTestCase):
             return ClientSecretCredential(
                 os.getenv("AZURE_TENANT_ID"),
                 os.getenv("AZURE_CLIENT_ID"),
-                os.getenv("AZURE_CLIENT_SECRET"),
-                authority="https://login.windows-ppe.net/"
+                os.getenv("AZURE_CLIENT_SECRET")
             )
 
     def upload_documents(self, data, container_client):

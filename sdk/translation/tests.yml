@@ -5,12 +5,12 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translation
-      MatrixReplace:
-        - TestSamples=.*/true
       Clouds: Public,Int
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          MatrixReplace:
+            - TestSamples=.*/true
         Int:
           SubscriptionConfiguration: $(sub-config-translation-int-test-resources)
       EnvVars:

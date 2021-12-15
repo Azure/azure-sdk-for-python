@@ -19,8 +19,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
             return ClientSecretCredential(
                 os.getenv("AZURE_TENANT_ID"),
                 os.getenv("AZURE_CLIENT_ID"),
-                os.getenv("AZURE_CLIENT_SECRET"),
-                authority="https://login.windows-ppe.net/"
+                os.getenv("AZURE_CLIENT_SECRET")
             )
 
     async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
