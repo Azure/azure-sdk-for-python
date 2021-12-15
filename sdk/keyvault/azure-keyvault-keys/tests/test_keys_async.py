@@ -8,6 +8,7 @@ from dateutil import parser as date_parse
 import functools
 import json
 import logging
+import os
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -23,7 +24,7 @@ import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, is_public_cloud, KeysTestCase
 from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_policies_equal
 
 
@@ -183,7 +184,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         ec_key_name = self.get_resource_name("crud-ec-key")
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
         ec_key = await self._create_ec_key(
-            client, enabled=True, key_name=ec_key_name, hardware_protected=True, tags=tags
+            client, enabled=True, key_name=ec_key_name, hardware_protected=is_hsm, tags=tags
         )
         assert ec_key.properties.enabled
         assert tags == ec_key.properties.tags
@@ -554,6 +555,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         key = await self._create_rsa_key(client, key_name)
         rotated_key = await client.rotate_key(key_name)
@@ -566,6 +570,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 

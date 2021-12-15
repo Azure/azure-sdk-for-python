@@ -8,6 +8,7 @@ import functools
 import json
 import logging
 import time
+import os
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -23,7 +24,7 @@ import pytest
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, is_public_cloud, KeysTestCase
 
 
 all_api_versions = get_decorator()
@@ -188,7 +189,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=True, tags=tags)
+        ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=is_hsm, tags=tags)
         assert ec_key.properties.enabled
         assert tags == ec_key.properties.tags
         # create ec with curve
@@ -557,6 +558,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     def test_key_rotation(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name)
         rotated_key = client.rotate_key(key_name)
@@ -569,6 +573,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     def test_key_rotation_policy(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
