@@ -105,39 +105,6 @@ if TYPE_CHECKING:
     )
     from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
-
-class MetricAnomalyAlertScopeType(str, Enum):
-    """Anomaly scope"""
-
-    WHOLE_SERIES = "WholeSeries"
-    SERIES_GROUP = "SeriesGroup"
-    TOP_N = "TopN"
-
-    @classmethod
-    def _to_generated(cls, alert):
-        try:
-            alert = alert.value
-        except AttributeError:
-            pass
-        if alert == "WholeSeries":
-            return "All"
-        if alert == "SeriesGroup":
-            return "Dimension"
-        return alert
-
-    @classmethod
-    def _from_generated(cls, alert):
-        try:
-            alert = alert.value
-        except AttributeError:
-            pass
-        if alert == "All":
-            return "WholeSeries"
-        if alert == "Dimension":
-            return "SeriesGroup"
-        return alert
-
-
 class DataFeedRollupType(str, Enum):
     """Data feed rollup type"""
 

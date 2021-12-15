@@ -38,14 +38,6 @@ class AnomalyDetectorDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     DOWN = "Down"
     UP = "Up"
 
-class AnomalyScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Anomaly scope
-    """
-
-    ALL = "All"
-    DIMENSION = "Dimension"
-    TOP_N = "TopN"
-
 class AnomalyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """anomaly status
     
@@ -77,6 +69,14 @@ class ChangePointValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_DETECT = "AutoDetect"
     CHANGE_POINT = "ChangePoint"
     NOT_CHANGE_POINT = "NotChangePoint"
+
+class DataFeedRollupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """mark if the data feed need rollup
+    """
+
+    NO_ROLLUP = "NoRollup"
+    AUTO_ROLLUP = "AutoRollup"
+    ALREADY_ROLLUP = "AlreadyRollup"
 
 class DataSourceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of data source credential
@@ -185,6 +185,14 @@ class IngestionStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NO_DATA = "NoData"
     ERROR = "Error"
     PAUSED = "Paused"
+
+class MetricAnomalyAlertScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Anomaly scope
+    """
+
+    WHOLE_SERIES = "WholeSeries"
+    SERIES_GROUP = "SeriesGroup"
+    TOP_N = "TopN"
 
 class NeedRollupEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """mark if the data feed need rollup

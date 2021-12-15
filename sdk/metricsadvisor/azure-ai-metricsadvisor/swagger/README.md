@@ -379,5 +379,16 @@ directive:
   where: $["definitions"]["MetricAlertingConfiguration"]["properties"]["anomalyScopeType"]
   transform: >
     $["x-ms-enum"]["name"] = "metricAnomalyAlertScopeType";
-    $["enum"] = ["WholeSeries", "Dimension", "TopN"];
+    $["enum"] = ["WholeSeries", "SeriesGroup", "TopN"];
+```
+
+### NeedRollupEnum -> DataFeedRollupType, change enum values
+
+```yaml
+directive:
+- from: swagger-document
+  where: $["definitions"]["DataFeedDetail"]["properties"]["needRollup"]
+  transform: >
+    $["x-ms-enum"]["name"] = "DataFeedRollupType";
+    $["enum"] = ["NoRollup", "AutoRollup", "AlreadyRollup"];
 ```

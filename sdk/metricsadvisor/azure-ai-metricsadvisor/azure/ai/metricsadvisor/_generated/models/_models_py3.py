@@ -1917,8 +1917,8 @@ class _DataFeedDetailGenerated(msrest.serialization.Model):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -2025,7 +2025,7 @@ class _DataFeedDetailGenerated(msrest.serialization.Model):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -2070,8 +2070,8 @@ class _DataFeedDetailGenerated(msrest.serialization.Model):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -2181,8 +2181,8 @@ class _AzureApplicationInsightsDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -2291,7 +2291,7 @@ class _AzureApplicationInsightsDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -2336,8 +2336,8 @@ class _AzureApplicationInsightsDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -2931,8 +2931,8 @@ class _AzureBlobDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -3040,7 +3040,7 @@ class _AzureBlobDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -3085,8 +3085,8 @@ class _AzureBlobDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -3452,8 +3452,8 @@ class _AzureCosmosDBDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -3561,7 +3561,7 @@ class _AzureCosmosDBDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -3606,8 +3606,8 @@ class _AzureCosmosDBDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -3988,8 +3988,8 @@ class _AzureDataExplorerDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -4097,7 +4097,7 @@ class _AzureDataExplorerDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -4142,8 +4142,8 @@ class _AzureDataExplorerDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -4418,8 +4418,8 @@ class _AzureDataLakeStorageGen2DataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -4528,7 +4528,7 @@ class _AzureDataLakeStorageGen2DataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -4573,8 +4573,8 @@ class _AzureDataLakeStorageGen2DataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -4972,8 +4972,8 @@ class _AzureEventHubsDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -5081,7 +5081,7 @@ class _AzureEventHubsDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -5126,8 +5126,8 @@ class _AzureEventHubsDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -5478,8 +5478,8 @@ class _AzureLogAnalyticsDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -5587,7 +5587,7 @@ class _AzureLogAnalyticsDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -5632,8 +5632,8 @@ class _AzureLogAnalyticsDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -6322,8 +6322,8 @@ class _AzureTableDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -6431,7 +6431,7 @@ class _AzureTableDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -6476,8 +6476,8 @@ class _AzureTableDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -8754,8 +8754,8 @@ class _InfluxDBDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -8863,7 +8863,7 @@ class _InfluxDBDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -8908,8 +8908,8 @@ class _InfluxDBDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -9481,9 +9481,9 @@ class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
 
     :ivar anomaly_detection_configuration_id: Required. Anomaly detection configuration unique id.
     :vartype anomaly_detection_configuration_id: str
-    :ivar anomaly_scope_type: Required. Anomaly scope. Possible values include: "All", "Dimension",
-     "TopN".
-    :vartype anomaly_scope_type: str or ~azure.ai.metricsadvisor.models.AnomalyScope
+    :ivar anomaly_scope_type: Required. Anomaly scope. Possible values include: "WholeSeries",
+     "SeriesGroup", "TopN".
+    :vartype anomaly_scope_type: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
     :ivar negation_operation: Negation operation.
     :vartype negation_operation: bool
     :ivar dimension_anomaly_scope:
@@ -9518,7 +9518,7 @@ class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
         self,
         *,
         anomaly_detection_configuration_id: str,
-        anomaly_scope_type: Union[str, "AnomalyScope"],
+        anomaly_scope_type: Union[str, "MetricAnomalyAlertScopeType"],
         negation_operation: Optional[bool] = False,
         dimension_anomaly_scope: Optional["DimensionGroupIdentity"] = None,
         top_n_anomaly_scope: Optional["TopNGroupScope"] = None,
@@ -9531,9 +9531,10 @@ class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
         :keyword anomaly_detection_configuration_id: Required. Anomaly detection configuration unique
          id.
         :paramtype anomaly_detection_configuration_id: str
-        :keyword anomaly_scope_type: Required. Anomaly scope. Possible values include: "All",
-         "Dimension", "TopN".
-        :paramtype anomaly_scope_type: str or ~azure.ai.metricsadvisor.models.AnomalyScope
+        :keyword anomaly_scope_type: Required. Anomaly scope. Possible values include: "WholeSeries",
+         "SeriesGroup", "TopN".
+        :paramtype anomaly_scope_type: str or
+         ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
         :keyword negation_operation: Negation operation.
         :paramtype negation_operation: bool
         :keyword dimension_anomaly_scope:
@@ -10029,8 +10030,8 @@ class _MongoDBDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -10138,7 +10139,7 @@ class _MongoDBDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -10183,8 +10184,8 @@ class _MongoDBDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -10549,8 +10550,8 @@ class _MySqlDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -10658,7 +10659,7 @@ class _MySqlDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -10703,8 +10704,8 @@ class _MySqlDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -11093,8 +11094,8 @@ class _PostgreSqlDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -11202,7 +11203,7 @@ class _PostgreSqlDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -11247,8 +11248,8 @@ class _PostgreSqlDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -12497,8 +12498,8 @@ class _SQLServerDataFeedGenerated(_DataFeedDetailGenerated):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
@@ -12606,7 +12607,7 @@ class _SQLServerDataFeedGenerated(_DataFeedDetailGenerated):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "RollUpMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -12651,8 +12652,8 @@ class _SQLServerDataFeedGenerated(_DataFeedDetailGenerated):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "AutoRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.RollUpMethod
