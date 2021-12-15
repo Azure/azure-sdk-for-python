@@ -1,0 +1,224 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "717",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b1f875e3-5d0e-11ec-aa25-b831b58100e8"
+      },
+      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food. I recommend you try it.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "47dc288f-deac-46b2-8d71-9820cd2f88ac",
+        "Date": "Tue, 14 Dec 2021 18:50:23 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c16bf817-faa9-4bbb-a1a0-8117145f8dc9",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "237"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c16bf817-faa9-4bbb-a1a0-8117145f8dc9?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b1f875e3-5d0e-11ec-aa25-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "1aa9b5f7-4721-4d73-a10c-2d70c514a546",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Dec 2021 18:50:29 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "8"
+      },
+      "ResponseBody": {
+        "jobId": "c16bf817-faa9-4bbb-a1a0-8117145f8dc9",
+        "lastUpdateDateTime": "2021-12-14T18:50:24Z",
+        "createdDateTime": "2021-12-14T18:50:23Z",
+        "expirationDateTime": "2021-12-15T18:50:23Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c16bf817-faa9-4bbb-a1a0-8117145f8dc9?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b1f875e3-5d0e-11ec-aa25-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c496abc6-3e89-4628-84f7-adccc7f3d61d",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Dec 2021 18:50:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "82"
+      },
+      "ResponseBody": {
+        "jobId": "c16bf817-faa9-4bbb-a1a0-8117145f8dc9",
+        "lastUpdateDateTime": "2021-12-14T18:50:31Z",
+        "createdDateTime": "2021-12-14T18:50:23Z",
+        "expirationDateTime": "2021-12-15T18:50:23Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "sentimentAnalysisTasks": [
+            {
+              "lastUpdateDateTime": "2021-12-14T18:50:31.9912135Z",
+              "taskName": "0",
+              "state": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 3,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 51,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.01,
+                      "neutral": 0.99,
+                      "negative": 0.0
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.01,
+                          "neutral": 0.99,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 51,
+                        "text": "Microsoft was founded by Bill Gates and Paul Allen."
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "sentiment": "negative",
+                    "statistics": {
+                      "charactersCount": 60,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.01,
+                      "neutral": 0.22,
+                      "negative": 0.77
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.01,
+                          "neutral": 0.45,
+                          "negative": 0.54
+                        },
+                        "offset": 0,
+                        "length": 38,
+                        "text": "I did not like the hotel we stayed at."
+                      },
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.0,
+                          "negative": 1.0
+                        },
+                        "offset": 39,
+                        "length": 21,
+                        "text": "It was too expensive."
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentiment": "positive",
+                    "statistics": {
+                      "charactersCount": 60,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.98,
+                      "neutral": 0.02,
+                      "negative": 0.0
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 1.0,
+                          "neutral": 0.0,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 36,
+                        "text": "The restaurant had really good food."
+                      },
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.96,
+                          "neutral": 0.03,
+                          "negative": 0.01
+                        },
+                        "offset": 37,
+                        "length": 23,
+                        "text": "I recommend you try it."
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
