@@ -19,7 +19,7 @@ class CommunicationTokenCredential(object):
     :param str token: The token used to authenticate to an Azure Communication service
     :keyword callable token_refresher: The async token refresher to provide capacity to fetch fresh token
     :keyword bool refresh_proactively: Whether to refresh the token proactively or not
-    :keyword timedelta refresh_time_before_expiry: The time before the token expires to refresh the token
+    :keyword timedelta refresh_interval_before_expiry: The time interval before token expiry that causes the token_refresher to be called if refresh_proactively is true.
     :raises: TypeError
     """
 
@@ -35,7 +35,7 @@ class CommunicationTokenCredential(object):
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
-        self._refresh_time_before_expiry = kwargs.pop('refresh_time_before_expiry', timedelta(
+        self._refresh_interval_before_expiry = kwargs.pop('refresh_interval_before_expiry', timedelta(
             minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
         self._timer = None
         self._lock = Condition(Lock())
@@ -98,7 +98,7 @@ class CommunicationTokenCredential(object):
             self._timer.cancel()
 
         timespan = self._token.expires_on - \
-            get_current_utc_as_int() - self._refresh_time_before_expiry.total_seconds()
+            get_current_utc_as_int() - self._refresh_interval_before_expiry.total_seconds()
         self._timer = Timer(timespan, self._update_token_and_reschedule)
         self._timer.start()
 
@@ -108,7 +108,7 @@ class CommunicationTokenCredential(object):
 
     def _token_expiring(self):
         if self._refresh_proactively:
-            interval = self._refresh_time_before_expiry
+            interval = self._refresh_interval_before_expiry
         else:
             interval = timedelta(
                 minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)

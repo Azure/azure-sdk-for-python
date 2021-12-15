@@ -30,7 +30,7 @@ class CommunicationTokenCredential(object):
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
-        self._refresh_time_before_expiry = kwargs.pop('refresh_time_before_expiry', timedelta(
+        self._refresh_interval_before_expiry = kwargs.pop('refresh_interval_before_expiry', timedelta(
             minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
         self._timer = None
         self._async_mutex = Lock()
@@ -91,7 +91,7 @@ class CommunicationTokenCredential(object):
             self._timer.cancel()
 
         timespan = self._token.expires_on - \
-            get_current_utc_as_int() - self._refresh_time_before_expiry.total_seconds()
+            get_current_utc_as_int() - self._refresh_interval_before_expiry.total_seconds()
         self._timer = AsyncTimer(timespan, self._update_token_and_reschedule)
         self._timer.start()
 
@@ -100,6 +100,11 @@ class CommunicationTokenCredential(object):
         await self._lock.acquire()
 
     def _token_expiring(self):
+        if self._refresh_proactively:
+            interval = self._refresh_interval_before_expiry
+        else:
+            interval = timedelta(
+                minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
         return self._token.expires_on - get_current_utc_as_int() <\
             timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
 
