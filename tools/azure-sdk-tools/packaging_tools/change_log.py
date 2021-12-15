@@ -22,13 +22,19 @@ class ChangeLog:
         self._old_report = old_report
         self._new_report = new_report
 
+    def sort(self):
+        self.features.sort()
+        self.breaking_changes.sort()
+        self.optional_features.sort()
+
     def build_md(self):
+        self.sort()
         buffer = []
         if self.features:
             _build_md(self.features, "**Features**", buffer)
         if self.breaking_changes:
             _build_md(self.breaking_changes, "**Breaking changes**", buffer)
-        if len(buffer) == 0 and self.optional_features:
+        if not (self.features or self.breaking_changes) and self.optional_features:
             _build_md(self.optional_features, "**Features**", buffer)
 
         return "\n".join(buffer).strip()
@@ -76,7 +82,7 @@ class ChangeLog:
         # So method signaure changed. Be vague for now
         self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
 
-    def models(self, diff_entry, old_models_name, new_models_name):
+    def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
         # Is this a new model?
@@ -86,10 +92,10 @@ class ChangeLog:
             return
         model_name, *remaining_path = remaining_path
         if not remaining_path:
-            if model_name in new_models_name and model_name not in old_models_name:
-                self.optional_features.append(_MODEL_ADD.format(model_name))
-            elif model_name not in new_models_name and model_name in old_models_name:
+            if is_deletion:
                 self.optional_features.append(_MODEL_REMOVE.format(model_name))
+            else:
+                self.optional_features.append(_MODEL_ADD.format(model_name))
             return
 
         # That's a model signature change
@@ -151,15 +157,13 @@ def build_change_log(old_report, new_report):
 
     # when diff result is large,  compare_lengths=True may cause wrong result
     result = diff(old_report, new_report, compare_lengths=False)
-    old_models_name = set(old_report.get('models', {}).get('models', {}).keys())
-    new_models_name = set(new_report.get('models', {}).get('models', {}).keys())
 
     for diff_line in result:
         # Operations
         if diff_line[0][0] == "operations":
             change_log.operation(diff_line)
         else:
-            change_log.models(diff_line, old_models_name, new_models_name)
+            change_log.models(diff_line)
 
     return change_log
 
