@@ -12,9 +12,12 @@ def my_print(cmd):
     print('== ' + cmd + ' ==\n')
 
 
-def print_check(cmd):
+def print_check(cmd, path=''):
     my_print(cmd)
-    sp.check_call(cmd, shell=True)
+    if path:
+        sp.check_call(cmd, shell=True, cwd=path)
+    else:
+        sp.check_call(cmd, shell=True)
 
 
 class PyPIClient:
@@ -290,7 +293,7 @@ def main():
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
     all_sdk_status1 = test_sdk(all_sdk_status)
-    print_check('pwd')
+    print_check('pwd', os.environ['SDK_PATH'])
 
 
     OUT_FILE = 'release_sdk_status.csv'
