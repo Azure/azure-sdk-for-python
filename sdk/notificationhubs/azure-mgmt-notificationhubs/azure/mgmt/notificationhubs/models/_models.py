@@ -13,12 +13,12 @@ import msrest.serialization
 class AdmCredential(msrest.serialization.Model):
     """Description of a NotificationHub AdmCredential.
 
-    :param client_id: The client identifier.
-    :type client_id: str
-    :param client_secret: The credential secret access key.
-    :type client_secret: str
-    :param auth_token_url: The URL of the authorization token.
-    :type auth_token_url: str
+    :ivar client_id: The client identifier.
+    :vartype client_id: str
+    :ivar client_secret: The credential secret access key.
+    :vartype client_secret: str
+    :ivar auth_token_url: The URL of the authorization token.
+    :vartype auth_token_url: str
     """
 
     _attribute_map = {
@@ -31,6 +31,14 @@ class AdmCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword client_id: The client identifier.
+        :paramtype client_id: str
+        :keyword client_secret: The credential secret access key.
+        :paramtype client_secret: str
+        :keyword auth_token_url: The URL of the authorization token.
+        :paramtype auth_token_url: str
+        """
         super(AdmCredential, self).__init__(**kwargs)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
@@ -40,32 +48,31 @@ class AdmCredential(msrest.serialization.Model):
 class ApnsCredential(msrest.serialization.Model):
     """Description of a NotificationHub ApnsCredential.
 
-    :param apns_certificate: The APNS certificate. Specify if using Certificate Authentication
-     Mode.
-    :type apns_certificate: str
-    :param certificate_key: The APNS certificate password if it exists.
-    :type certificate_key: str
-    :param endpoint: The APNS endpoint of this credential. If using Certificate Authentication Mode
+    :ivar apns_certificate: The APNS certificate. Specify if using Certificate Authentication Mode.
+    :vartype apns_certificate: str
+    :ivar certificate_key: The APNS certificate password if it exists.
+    :vartype certificate_key: str
+    :ivar endpoint: The APNS endpoint of this credential. If using Certificate Authentication Mode
      and Sandbox specify 'gateway.sandbox.push.apple.com'. If using Certificate Authentication Mode
      and Production specify 'gateway.push.apple.com'. If using Token Authentication Mode and Sandbox
      specify 'https://api.development.push.apple.com:443/3/device'. If using Token Authentication
      Mode and Production specify 'https://api.push.apple.com:443/3/device'.
-    :type endpoint: str
-    :param thumbprint: The APNS certificate thumbprint. Specify if using Certificate Authentication
+    :vartype endpoint: str
+    :ivar thumbprint: The APNS certificate thumbprint. Specify if using Certificate Authentication
      Mode.
-    :type thumbprint: str
-    :param key_id: A 10-character key identifier (kid) key, obtained from your developer account.
+    :vartype thumbprint: str
+    :ivar key_id: A 10-character key identifier (kid) key, obtained from your developer account.
      Specify if using Token Authentication Mode.
-    :type key_id: str
-    :param app_name: The name of the application or BundleId. Specify if using Token Authentication
+    :vartype key_id: str
+    :ivar app_name: The name of the application or BundleId. Specify if using Token Authentication
      Mode.
-    :type app_name: str
-    :param app_id: The issuer (iss) registered claim key. The value is a 10-character TeamId,
+    :vartype app_name: str
+    :ivar app_id: The issuer (iss) registered claim key. The value is a 10-character TeamId,
      obtained from your developer account. Specify if using Token Authentication Mode.
-    :type app_id: str
-    :param token: Provider Authentication Token, obtained through your developer account. Specify
-     if using Token Authentication Mode.
-    :type token: str
+    :vartype app_id: str
+    :ivar token: Provider Authentication Token, obtained through your developer account. Specify if
+     using Token Authentication Mode.
+    :vartype token: str
     """
 
     _attribute_map = {
@@ -83,6 +90,34 @@ class ApnsCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword apns_certificate: The APNS certificate. Specify if using Certificate Authentication
+         Mode.
+        :paramtype apns_certificate: str
+        :keyword certificate_key: The APNS certificate password if it exists.
+        :paramtype certificate_key: str
+        :keyword endpoint: The APNS endpoint of this credential. If using Certificate Authentication
+         Mode and Sandbox specify 'gateway.sandbox.push.apple.com'. If using Certificate Authentication
+         Mode and Production specify 'gateway.push.apple.com'. If using Token Authentication Mode and
+         Sandbox specify 'https://api.development.push.apple.com:443/3/device'. If using Token
+         Authentication Mode and Production specify 'https://api.push.apple.com:443/3/device'.
+        :paramtype endpoint: str
+        :keyword thumbprint: The APNS certificate thumbprint. Specify if using Certificate
+         Authentication Mode.
+        :paramtype thumbprint: str
+        :keyword key_id: A 10-character key identifier (kid) key, obtained from your developer account.
+         Specify if using Token Authentication Mode.
+        :paramtype key_id: str
+        :keyword app_name: The name of the application or BundleId. Specify if using Token
+         Authentication Mode.
+        :paramtype app_name: str
+        :keyword app_id: The issuer (iss) registered claim key. The value is a 10-character TeamId,
+         obtained from your developer account. Specify if using Token Authentication Mode.
+        :paramtype app_id: str
+        :keyword token: Provider Authentication Token, obtained through your developer account. Specify
+         if using Token Authentication Mode.
+        :paramtype token: str
+        """
         super(ApnsCredential, self).__init__(**kwargs)
         self.apns_certificate = kwargs.get('apns_certificate', None)
         self.certificate_key = kwargs.get('certificate_key', None)
@@ -97,12 +132,12 @@ class ApnsCredential(msrest.serialization.Model):
 class BaiduCredential(msrest.serialization.Model):
     """Description of a NotificationHub BaiduCredential.
 
-    :param baidu_api_key: Baidu Api Key.
-    :type baidu_api_key: str
-    :param baidu_end_point: Baidu Endpoint.
-    :type baidu_end_point: str
-    :param baidu_secret_key: Baidu Secret Key.
-    :type baidu_secret_key: str
+    :ivar baidu_api_key: Baidu Api Key.
+    :vartype baidu_api_key: str
+    :ivar baidu_end_point: Baidu Endpoint.
+    :vartype baidu_end_point: str
+    :ivar baidu_secret_key: Baidu Secret Key.
+    :vartype baidu_secret_key: str
     """
 
     _attribute_map = {
@@ -115,6 +150,14 @@ class BaiduCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword baidu_api_key: Baidu Api Key.
+        :paramtype baidu_api_key: str
+        :keyword baidu_end_point: Baidu Endpoint.
+        :paramtype baidu_end_point: str
+        :keyword baidu_secret_key: Baidu Secret Key.
+        :paramtype baidu_secret_key: str
+        """
         super(BaiduCredential, self).__init__(**kwargs)
         self.baidu_api_key = kwargs.get('baidu_api_key', None)
         self.baidu_end_point = kwargs.get('baidu_end_point', None)
@@ -130,19 +173,19 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param is_availiable: True if the name is available and can be used to create new
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar is_availiable: True if the name is available and can be used to create new
      Namespace/NotificationHub. Otherwise false.
-    :type is_availiable: bool
+    :vartype is_availiable: bool
     """
 
     _validation = {
@@ -165,6 +208,19 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword is_availiable: True if the name is available and can be used to create new
+         Namespace/NotificationHub. Otherwise false.
+        :paramtype is_availiable: bool
+        """
         super(CheckAvailabilityParameters, self).__init__(**kwargs)
         self.id = None
         self.name = kwargs['name']
@@ -186,12 +242,12 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _validation = {
@@ -213,6 +269,14 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -233,15 +297,15 @@ class CheckAvailabilityResult(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param is_availiable: True if the name is available and can be used to create new
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar is_availiable: True if the name is available and can be used to create new
      Namespace/NotificationHub. Otherwise false.
-    :type is_availiable: bool
+    :vartype is_availiable: bool
     """
 
     _validation = {
@@ -264,6 +328,17 @@ class CheckAvailabilityResult(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword is_availiable: True if the name is available and can be used to create new
+         Namespace/NotificationHub. Otherwise false.
+        :paramtype is_availiable: bool
+        """
         super(CheckAvailabilityResult, self).__init__(**kwargs)
         self.is_availiable = kwargs.get('is_availiable', None)
 
@@ -279,18 +354,18 @@ class DebugSendResponse(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param success: successful send.
-    :type success: float
-    :param failure: send failure.
-    :type failure: float
-    :param results: actual failure description.
-    :type results: object
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar success: successful send.
+    :vartype success: float
+    :ivar failure: send failure.
+    :vartype failure: float
+    :ivar results: actual failure description.
+    :vartype results: any
     """
 
     _validation = {
@@ -315,6 +390,20 @@ class DebugSendResponse(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword success: successful send.
+        :paramtype success: float
+        :keyword failure: send failure.
+        :paramtype failure: float
+        :keyword results: actual failure description.
+        :paramtype results: any
+        """
         super(DebugSendResponse, self).__init__(**kwargs)
         self.success = kwargs.get('success', None)
         self.failure = kwargs.get('failure', None)
@@ -324,10 +413,10 @@ class DebugSendResponse(Resource):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates NotificationHubs service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -339,6 +428,12 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
@@ -347,11 +442,11 @@ class ErrorResponse(msrest.serialization.Model):
 class GcmCredential(msrest.serialization.Model):
     """Description of a NotificationHub GcmCredential.
 
-    :param gcm_endpoint: The FCM legacy endpoint. Default value is
+    :ivar gcm_endpoint: The FCM legacy endpoint. Default value is
      'https://fcm.googleapis.com/fcm/send'.
-    :type gcm_endpoint: str
-    :param google_api_key: The Google API key.
-    :type google_api_key: str
+    :vartype gcm_endpoint: str
+    :ivar google_api_key: The Google API key.
+    :vartype google_api_key: str
     """
 
     _attribute_map = {
@@ -363,6 +458,13 @@ class GcmCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword gcm_endpoint: The FCM legacy endpoint. Default value is
+         'https://fcm.googleapis.com/fcm/send'.
+        :paramtype gcm_endpoint: str
+        :keyword google_api_key: The Google API key.
+        :paramtype google_api_key: str
+        """
         super(GcmCredential, self).__init__(**kwargs)
         self.gcm_endpoint = kwargs.get('gcm_endpoint', None)
         self.google_api_key = kwargs.get('google_api_key', None)
@@ -371,12 +473,12 @@ class GcmCredential(msrest.serialization.Model):
 class MpnsCredential(msrest.serialization.Model):
     """Description of a NotificationHub MpnsCredential.
 
-    :param mpns_certificate: The MPNS certificate.
-    :type mpns_certificate: str
-    :param certificate_key: The certificate key for this credential.
-    :type certificate_key: str
-    :param thumbprint: The MPNS certificate Thumbprint.
-    :type thumbprint: str
+    :ivar mpns_certificate: The MPNS certificate.
+    :vartype mpns_certificate: str
+    :ivar certificate_key: The certificate key for this credential.
+    :vartype certificate_key: str
+    :ivar thumbprint: The MPNS certificate Thumbprint.
+    :vartype thumbprint: str
     """
 
     _attribute_map = {
@@ -389,6 +491,14 @@ class MpnsCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword mpns_certificate: The MPNS certificate.
+        :paramtype mpns_certificate: str
+        :keyword certificate_key: The certificate key for this credential.
+        :paramtype certificate_key: str
+        :keyword thumbprint: The MPNS certificate Thumbprint.
+        :paramtype thumbprint: str
+        """
         super(MpnsCredential, self).__init__(**kwargs)
         self.mpns_certificate = kwargs.get('mpns_certificate', None)
         self.certificate_key = kwargs.get('certificate_key', None)
@@ -406,45 +516,45 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param name_properties_name: The name of the namespace.
-    :type name_properties_name: str
-    :param provisioning_state: Provisioning state of the Namespace.
-    :type provisioning_state: str
-    :param region: Specifies the targeted region in which the namespace should be created. It can
-     be any of the following values: Australia East, Australia Southeast, Central US, East US, East
-     US 2, West US, North Central US, South Central US, East Asia, Southeast Asia, Brazil South,
-     Japan East, Japan West, North Europe, West Europe.
-    :type region: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar name_properties_name: The name of the namespace.
+    :vartype name_properties_name: str
+    :ivar provisioning_state: Provisioning state of the Namespace.
+    :vartype provisioning_state: str
+    :ivar region: Specifies the targeted region in which the namespace should be created. It can be
+     any of the following values: Australia East, Australia Southeast, Central US, East US, East US
+     2, West US, North Central US, South Central US, East Asia, Southeast Asia, Brazil South, Japan
+     East, Japan West, North Europe, West Europe.
+    :vartype region: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
-    :param status: Status of the namespace. It can be any of these values:1 = Created/Active2 =
+    :ivar status: Status of the namespace. It can be any of these values:1 = Created/Active2 =
      Creating3 = Suspended4 = Deleting.
-    :type status: str
-    :param created_at: The time the namespace was created.
-    :type created_at: ~datetime.datetime
-    :param updated_at: The time the namespace was updated.
-    :type updated_at: ~datetime.datetime
-    :param service_bus_endpoint: Endpoint you can use to perform NotificationHub operations.
-    :type service_bus_endpoint: str
-    :param subscription_id: The Id of the Azure subscription associated with the namespace.
-    :type subscription_id: str
-    :param scale_unit: ScaleUnit where the namespace gets created.
-    :type scale_unit: str
-    :param enabled: Whether or not the namespace is currently enabled.
-    :type enabled: bool
-    :param critical: Whether or not the namespace is set as Critical.
-    :type critical: bool
-    :param data_center: Data center for the namespace.
-    :type data_center: str
-    :param namespace_type: The namespace type. Possible values include: "Messaging",
+    :vartype status: str
+    :ivar created_at: The time the namespace was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time the namespace was updated.
+    :vartype updated_at: ~datetime.datetime
+    :ivar service_bus_endpoint: Endpoint you can use to perform NotificationHub operations.
+    :vartype service_bus_endpoint: str
+    :ivar subscription_id: The Id of the Azure subscription associated with the namespace.
+    :vartype subscription_id: str
+    :ivar scale_unit: ScaleUnit where the namespace gets created.
+    :vartype scale_unit: str
+    :ivar enabled: Whether or not the namespace is currently enabled.
+    :vartype enabled: bool
+    :ivar critical: Whether or not the namespace is set as Critical.
+    :vartype critical: bool
+    :ivar data_center: Data center for the namespace.
+    :vartype data_center: str
+    :ivar namespace_type: The namespace type. Possible values include: "Messaging",
      "NotificationHub".
-    :type namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
+    :vartype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
@@ -481,6 +591,45 @@ class NamespaceCreateOrUpdateParameters(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword name_properties_name: The name of the namespace.
+        :paramtype name_properties_name: str
+        :keyword provisioning_state: Provisioning state of the Namespace.
+        :paramtype provisioning_state: str
+        :keyword region: Specifies the targeted region in which the namespace should be created. It can
+         be any of the following values: Australia East, Australia Southeast, Central US, East US, East
+         US 2, West US, North Central US, South Central US, East Asia, Southeast Asia, Brazil South,
+         Japan East, Japan West, North Europe, West Europe.
+        :paramtype region: str
+        :keyword status: Status of the namespace. It can be any of these values:1 = Created/Active2 =
+         Creating3 = Suspended4 = Deleting.
+        :paramtype status: str
+        :keyword created_at: The time the namespace was created.
+        :paramtype created_at: ~datetime.datetime
+        :keyword updated_at: The time the namespace was updated.
+        :paramtype updated_at: ~datetime.datetime
+        :keyword service_bus_endpoint: Endpoint you can use to perform NotificationHub operations.
+        :paramtype service_bus_endpoint: str
+        :keyword subscription_id: The Id of the Azure subscription associated with the namespace.
+        :paramtype subscription_id: str
+        :keyword scale_unit: ScaleUnit where the namespace gets created.
+        :paramtype scale_unit: str
+        :keyword enabled: Whether or not the namespace is currently enabled.
+        :paramtype enabled: bool
+        :keyword critical: Whether or not the namespace is set as Critical.
+        :paramtype critical: bool
+        :keyword data_center: Data center for the namespace.
+        :paramtype data_center: str
+        :keyword namespace_type: The namespace type. Possible values include: "Messaging",
+         "NotificationHub".
+        :paramtype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
+        """
         super(NamespaceCreateOrUpdateParameters, self).__init__(**kwargs)
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
@@ -501,11 +650,11 @@ class NamespaceCreateOrUpdateParameters(Resource):
 class NamespaceListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
-    :param value: Result of the List Namespace operation.
-    :type value: list[~azure.mgmt.notificationhubs.models.NamespaceResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Namespace operation.
+    :vartype value: list[~azure.mgmt.notificationhubs.models.NamespaceResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Namespaces.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -517,6 +666,13 @@ class NamespaceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Namespace operation.
+        :paramtype value: list[~azure.mgmt.notificationhubs.models.NamespaceResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of Namespaces.
+        :paramtype next_link: str
+        """
         super(NamespaceListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -525,10 +681,10 @@ class NamespaceListResult(msrest.serialization.Model):
 class NamespacePatchParameters(msrest.serialization.Model):
     """Parameters supplied to the Patch Namespace operation.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _attribute_map = {
@@ -540,6 +696,12 @@ class NamespacePatchParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        """
         super(NamespacePatchParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
@@ -556,45 +718,45 @@ class NamespaceResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param name_properties_name: The name of the namespace.
-    :type name_properties_name: str
-    :param provisioning_state: Provisioning state of the Namespace.
-    :type provisioning_state: str
-    :param region: Specifies the targeted region in which the namespace should be created. It can
-     be any of the following values: Australia East, Australia Southeast, Central US, East US, East
-     US 2, West US, North Central US, South Central US, East Asia, Southeast Asia, Brazil South,
-     Japan East, Japan West, North Europe, West Europe.
-    :type region: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar name_properties_name: The name of the namespace.
+    :vartype name_properties_name: str
+    :ivar provisioning_state: Provisioning state of the Namespace.
+    :vartype provisioning_state: str
+    :ivar region: Specifies the targeted region in which the namespace should be created. It can be
+     any of the following values: Australia East, Australia Southeast, Central US, East US, East US
+     2, West US, North Central US, South Central US, East Asia, Southeast Asia, Brazil South, Japan
+     East, Japan West, North Europe, West Europe.
+    :vartype region: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
-    :param status: Status of the namespace. It can be any of these values:1 = Created/Active2 =
+    :ivar status: Status of the namespace. It can be any of these values:1 = Created/Active2 =
      Creating3 = Suspended4 = Deleting.
-    :type status: str
-    :param created_at: The time the namespace was created.
-    :type created_at: ~datetime.datetime
-    :param updated_at: The time the namespace was updated.
-    :type updated_at: ~datetime.datetime
-    :param service_bus_endpoint: Endpoint you can use to perform NotificationHub operations.
-    :type service_bus_endpoint: str
-    :param subscription_id: The Id of the Azure subscription associated with the namespace.
-    :type subscription_id: str
-    :param scale_unit: ScaleUnit where the namespace gets created.
-    :type scale_unit: str
-    :param enabled: Whether or not the namespace is currently enabled.
-    :type enabled: bool
-    :param critical: Whether or not the namespace is set as Critical.
-    :type critical: bool
-    :param data_center: Data center for the namespace.
-    :type data_center: str
-    :param namespace_type: The namespace type. Possible values include: "Messaging",
+    :vartype status: str
+    :ivar created_at: The time the namespace was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time the namespace was updated.
+    :vartype updated_at: ~datetime.datetime
+    :ivar service_bus_endpoint: Endpoint you can use to perform NotificationHub operations.
+    :vartype service_bus_endpoint: str
+    :ivar subscription_id: The Id of the Azure subscription associated with the namespace.
+    :vartype subscription_id: str
+    :ivar scale_unit: ScaleUnit where the namespace gets created.
+    :vartype scale_unit: str
+    :ivar enabled: Whether or not the namespace is currently enabled.
+    :vartype enabled: bool
+    :ivar critical: Whether or not the namespace is set as Critical.
+    :vartype critical: bool
+    :ivar data_center: Data center for the namespace.
+    :vartype data_center: str
+    :ivar namespace_type: The namespace type. Possible values include: "Messaging",
      "NotificationHub".
-    :type namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
+    :vartype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
@@ -631,6 +793,45 @@ class NamespaceResource(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword name_properties_name: The name of the namespace.
+        :paramtype name_properties_name: str
+        :keyword provisioning_state: Provisioning state of the Namespace.
+        :paramtype provisioning_state: str
+        :keyword region: Specifies the targeted region in which the namespace should be created. It can
+         be any of the following values: Australia East, Australia Southeast, Central US, East US, East
+         US 2, West US, North Central US, South Central US, East Asia, Southeast Asia, Brazil South,
+         Japan East, Japan West, North Europe, West Europe.
+        :paramtype region: str
+        :keyword status: Status of the namespace. It can be any of these values:1 = Created/Active2 =
+         Creating3 = Suspended4 = Deleting.
+        :paramtype status: str
+        :keyword created_at: The time the namespace was created.
+        :paramtype created_at: ~datetime.datetime
+        :keyword updated_at: The time the namespace was updated.
+        :paramtype updated_at: ~datetime.datetime
+        :keyword service_bus_endpoint: Endpoint you can use to perform NotificationHub operations.
+        :paramtype service_bus_endpoint: str
+        :keyword subscription_id: The Id of the Azure subscription associated with the namespace.
+        :paramtype subscription_id: str
+        :keyword scale_unit: ScaleUnit where the namespace gets created.
+        :paramtype scale_unit: str
+        :keyword enabled: Whether or not the namespace is currently enabled.
+        :paramtype enabled: bool
+        :keyword critical: Whether or not the namespace is set as Critical.
+        :paramtype critical: bool
+        :keyword data_center: Data center for the namespace.
+        :paramtype data_center: str
+        :keyword namespace_type: The namespace type. Possible values include: "Messaging",
+         "NotificationHub".
+        :paramtype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
+        """
         super(NamespaceResource, self).__init__(**kwargs)
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
@@ -659,31 +860,31 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param name_properties_name: The NotificationHub name.
-    :type name_properties_name: str
-    :param registration_ttl: The RegistrationTtl of the created NotificationHub.
-    :type registration_ttl: str
-    :param authorization_rules: The AuthorizationRules of the created NotificationHub.
-    :type authorization_rules:
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar name_properties_name: The NotificationHub name.
+    :vartype name_properties_name: str
+    :ivar registration_ttl: The RegistrationTtl of the created NotificationHub.
+    :vartype registration_ttl: str
+    :ivar authorization_rules: The AuthorizationRules of the created NotificationHub.
+    :vartype authorization_rules:
      list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
-    :param apns_credential: The ApnsCredential of the created NotificationHub.
-    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
-    :param wns_credential: The WnsCredential of the created NotificationHub.
-    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
-    :param gcm_credential: The GcmCredential of the created NotificationHub.
-    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
-    :param mpns_credential: The MpnsCredential of the created NotificationHub.
-    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
-    :param adm_credential: The AdmCredential of the created NotificationHub.
-    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
-    :param baidu_credential: The BaiduCredential of the created NotificationHub.
-    :type baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+    :ivar apns_credential: The ApnsCredential of the created NotificationHub.
+    :vartype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+    :ivar wns_credential: The WnsCredential of the created NotificationHub.
+    :vartype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+    :ivar gcm_credential: The GcmCredential of the created NotificationHub.
+    :vartype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+    :ivar mpns_credential: The MpnsCredential of the created NotificationHub.
+    :vartype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+    :ivar adm_credential: The AdmCredential of the created NotificationHub.
+    :vartype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+    :ivar baidu_credential: The BaiduCredential of the created NotificationHub.
+    :vartype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -714,6 +915,33 @@ class NotificationHubCreateOrUpdateParameters(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword name_properties_name: The NotificationHub name.
+        :paramtype name_properties_name: str
+        :keyword registration_ttl: The RegistrationTtl of the created NotificationHub.
+        :paramtype registration_ttl: str
+        :keyword authorization_rules: The AuthorizationRules of the created NotificationHub.
+        :paramtype authorization_rules:
+         list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
+        :keyword apns_credential: The ApnsCredential of the created NotificationHub.
+        :paramtype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+        :keyword wns_credential: The WnsCredential of the created NotificationHub.
+        :paramtype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+        :keyword gcm_credential: The GcmCredential of the created NotificationHub.
+        :paramtype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+        :keyword mpns_credential: The MpnsCredential of the created NotificationHub.
+        :paramtype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+        :keyword adm_credential: The AdmCredential of the created NotificationHub.
+        :paramtype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+        :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
+        :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+        """
         super(NotificationHubCreateOrUpdateParameters, self).__init__(**kwargs)
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.registration_ttl = kwargs.get('registration_ttl', None)
@@ -729,11 +957,11 @@ class NotificationHubCreateOrUpdateParameters(Resource):
 class NotificationHubListResult(msrest.serialization.Model):
     """The response of the List NotificationHub operation.
 
-    :param value: Result of the List NotificationHub operation.
-    :type value: list[~azure.mgmt.notificationhubs.models.NotificationHubResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List NotificationHub operation.
+    :vartype value: list[~azure.mgmt.notificationhubs.models.NotificationHubResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of NotificationHub.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -745,6 +973,13 @@ class NotificationHubListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List NotificationHub operation.
+        :paramtype value: list[~azure.mgmt.notificationhubs.models.NotificationHubResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of NotificationHub.
+        :paramtype next_link: str
+        """
         super(NotificationHubListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -761,31 +996,31 @@ class NotificationHubPatchParameters(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param name_properties_name: The NotificationHub name.
-    :type name_properties_name: str
-    :param registration_ttl: The RegistrationTtl of the created NotificationHub.
-    :type registration_ttl: str
-    :param authorization_rules: The AuthorizationRules of the created NotificationHub.
-    :type authorization_rules:
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar name_properties_name: The NotificationHub name.
+    :vartype name_properties_name: str
+    :ivar registration_ttl: The RegistrationTtl of the created NotificationHub.
+    :vartype registration_ttl: str
+    :ivar authorization_rules: The AuthorizationRules of the created NotificationHub.
+    :vartype authorization_rules:
      list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
-    :param apns_credential: The ApnsCredential of the created NotificationHub.
-    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
-    :param wns_credential: The WnsCredential of the created NotificationHub.
-    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
-    :param gcm_credential: The GcmCredential of the created NotificationHub.
-    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
-    :param mpns_credential: The MpnsCredential of the created NotificationHub.
-    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
-    :param adm_credential: The AdmCredential of the created NotificationHub.
-    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
-    :param baidu_credential: The BaiduCredential of the created NotificationHub.
-    :type baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+    :ivar apns_credential: The ApnsCredential of the created NotificationHub.
+    :vartype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+    :ivar wns_credential: The WnsCredential of the created NotificationHub.
+    :vartype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+    :ivar gcm_credential: The GcmCredential of the created NotificationHub.
+    :vartype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+    :ivar mpns_credential: The MpnsCredential of the created NotificationHub.
+    :vartype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+    :ivar adm_credential: The AdmCredential of the created NotificationHub.
+    :vartype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+    :ivar baidu_credential: The BaiduCredential of the created NotificationHub.
+    :vartype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -816,6 +1051,33 @@ class NotificationHubPatchParameters(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword name_properties_name: The NotificationHub name.
+        :paramtype name_properties_name: str
+        :keyword registration_ttl: The RegistrationTtl of the created NotificationHub.
+        :paramtype registration_ttl: str
+        :keyword authorization_rules: The AuthorizationRules of the created NotificationHub.
+        :paramtype authorization_rules:
+         list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
+        :keyword apns_credential: The ApnsCredential of the created NotificationHub.
+        :paramtype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+        :keyword wns_credential: The WnsCredential of the created NotificationHub.
+        :paramtype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+        :keyword gcm_credential: The GcmCredential of the created NotificationHub.
+        :paramtype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+        :keyword mpns_credential: The MpnsCredential of the created NotificationHub.
+        :paramtype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+        :keyword adm_credential: The AdmCredential of the created NotificationHub.
+        :paramtype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+        :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
+        :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+        """
         super(NotificationHubPatchParameters, self).__init__(**kwargs)
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.registration_ttl = kwargs.get('registration_ttl', None)
@@ -839,31 +1101,31 @@ class NotificationHubResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param name_properties_name: The NotificationHub name.
-    :type name_properties_name: str
-    :param registration_ttl: The RegistrationTtl of the created NotificationHub.
-    :type registration_ttl: str
-    :param authorization_rules: The AuthorizationRules of the created NotificationHub.
-    :type authorization_rules:
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar name_properties_name: The NotificationHub name.
+    :vartype name_properties_name: str
+    :ivar registration_ttl: The RegistrationTtl of the created NotificationHub.
+    :vartype registration_ttl: str
+    :ivar authorization_rules: The AuthorizationRules of the created NotificationHub.
+    :vartype authorization_rules:
      list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
-    :param apns_credential: The ApnsCredential of the created NotificationHub.
-    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
-    :param wns_credential: The WnsCredential of the created NotificationHub.
-    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
-    :param gcm_credential: The GcmCredential of the created NotificationHub.
-    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
-    :param mpns_credential: The MpnsCredential of the created NotificationHub.
-    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
-    :param adm_credential: The AdmCredential of the created NotificationHub.
-    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
-    :param baidu_credential: The BaiduCredential of the created NotificationHub.
-    :type baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+    :ivar apns_credential: The ApnsCredential of the created NotificationHub.
+    :vartype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+    :ivar wns_credential: The WnsCredential of the created NotificationHub.
+    :vartype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+    :ivar gcm_credential: The GcmCredential of the created NotificationHub.
+    :vartype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+    :ivar mpns_credential: The MpnsCredential of the created NotificationHub.
+    :vartype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+    :ivar adm_credential: The AdmCredential of the created NotificationHub.
+    :vartype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+    :ivar baidu_credential: The BaiduCredential of the created NotificationHub.
+    :vartype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -894,6 +1156,33 @@ class NotificationHubResource(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword name_properties_name: The NotificationHub name.
+        :paramtype name_properties_name: str
+        :keyword registration_ttl: The RegistrationTtl of the created NotificationHub.
+        :paramtype registration_ttl: str
+        :keyword authorization_rules: The AuthorizationRules of the created NotificationHub.
+        :paramtype authorization_rules:
+         list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
+        :keyword apns_credential: The ApnsCredential of the created NotificationHub.
+        :paramtype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+        :keyword wns_credential: The WnsCredential of the created NotificationHub.
+        :paramtype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+        :keyword gcm_credential: The GcmCredential of the created NotificationHub.
+        :paramtype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+        :keyword mpns_credential: The MpnsCredential of the created NotificationHub.
+        :paramtype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+        :keyword adm_credential: The AdmCredential of the created NotificationHub.
+        :paramtype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+        :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
+        :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+        """
         super(NotificationHubResource, self).__init__(**kwargs)
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.registration_ttl = kwargs.get('registration_ttl', None)
@@ -913,8 +1202,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.notificationhubs.models.OperationDisplay
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.notificationhubs.models.OperationDisplay
     """
 
     _validation = {
@@ -930,6 +1219,10 @@ class Operation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.notificationhubs.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = kwargs.get('display', None)
@@ -964,6 +1257,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -996,6 +1291,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1012,24 +1309,24 @@ class PnsCredentialsResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param apns_credential: The ApnsCredential of the created NotificationHub.
-    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
-    :param wns_credential: The WnsCredential of the created NotificationHub.
-    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
-    :param gcm_credential: The GcmCredential of the created NotificationHub.
-    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
-    :param mpns_credential: The MpnsCredential of the created NotificationHub.
-    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
-    :param adm_credential: The AdmCredential of the created NotificationHub.
-    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
-    :param baidu_credential: The BaiduCredential of the created NotificationHub.
-    :type baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar apns_credential: The ApnsCredential of the created NotificationHub.
+    :vartype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+    :ivar wns_credential: The WnsCredential of the created NotificationHub.
+    :vartype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+    :ivar gcm_credential: The GcmCredential of the created NotificationHub.
+    :vartype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+    :ivar mpns_credential: The MpnsCredential of the created NotificationHub.
+    :vartype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+    :ivar adm_credential: The AdmCredential of the created NotificationHub.
+    :vartype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+    :ivar baidu_credential: The BaiduCredential of the created NotificationHub.
+    :vartype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -1057,6 +1354,26 @@ class PnsCredentialsResource(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword apns_credential: The ApnsCredential of the created NotificationHub.
+        :paramtype apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
+        :keyword wns_credential: The WnsCredential of the created NotificationHub.
+        :paramtype wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
+        :keyword gcm_credential: The GcmCredential of the created NotificationHub.
+        :paramtype gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
+        :keyword mpns_credential: The MpnsCredential of the created NotificationHub.
+        :paramtype mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
+        :keyword adm_credential: The AdmCredential of the created NotificationHub.
+        :paramtype adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
+        :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
+        :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
+        """
         super(PnsCredentialsResource, self).__init__(**kwargs)
         self.apns_credential = kwargs.get('apns_credential', None)
         self.wns_credential = kwargs.get('wns_credential', None)
@@ -1069,9 +1386,9 @@ class PnsCredentialsResource(Resource):
 class PolicykeyResource(msrest.serialization.Model):
     """Namespace/NotificationHub Regenerate Keys.
 
-    :param policy_key: Name of the key that has to be regenerated for the Namespace/Notification
-     Hub Authorization Rule. The value can be Primary Key/Secondary Key.
-    :type policy_key: str
+    :ivar policy_key: Name of the key that has to be regenerated for the Namespace/Notification Hub
+     Authorization Rule. The value can be Primary Key/Secondary Key.
+    :vartype policy_key: str
     """
 
     _attribute_map = {
@@ -1082,6 +1399,11 @@ class PolicykeyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword policy_key: Name of the key that has to be regenerated for the Namespace/Notification
+         Hub Authorization Rule. The value can be Primary Key/Secondary Key.
+        :paramtype policy_key: str
+        """
         super(PolicykeyResource, self).__init__(**kwargs)
         self.policy_key = kwargs.get('policy_key', None)
 
@@ -1089,16 +1411,16 @@ class PolicykeyResource(msrest.serialization.Model):
 class ResourceListKeys(msrest.serialization.Model):
     """Namespace/NotificationHub Connection String.
 
-    :param primary_connection_string: PrimaryConnectionString of the AuthorizationRule.
-    :type primary_connection_string: str
-    :param secondary_connection_string: SecondaryConnectionString of the created AuthorizationRule.
-    :type secondary_connection_string: str
-    :param primary_key: PrimaryKey of the created AuthorizationRule.
-    :type primary_key: str
-    :param secondary_key: SecondaryKey of the created AuthorizationRule.
-    :type secondary_key: str
-    :param key_name: KeyName of the created AuthorizationRule.
-    :type key_name: str
+    :ivar primary_connection_string: PrimaryConnectionString of the AuthorizationRule.
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: SecondaryConnectionString of the created AuthorizationRule.
+    :vartype secondary_connection_string: str
+    :ivar primary_key: PrimaryKey of the created AuthorizationRule.
+    :vartype primary_key: str
+    :ivar secondary_key: SecondaryKey of the created AuthorizationRule.
+    :vartype secondary_key: str
+    :ivar key_name: KeyName of the created AuthorizationRule.
+    :vartype key_name: str
     """
 
     _attribute_map = {
@@ -1113,6 +1435,19 @@ class ResourceListKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword primary_connection_string: PrimaryConnectionString of the AuthorizationRule.
+        :paramtype primary_connection_string: str
+        :keyword secondary_connection_string: SecondaryConnectionString of the created
+         AuthorizationRule.
+        :paramtype secondary_connection_string: str
+        :keyword primary_key: PrimaryKey of the created AuthorizationRule.
+        :paramtype primary_key: str
+        :keyword secondary_key: SecondaryKey of the created AuthorizationRule.
+        :paramtype secondary_key: str
+        :keyword key_name: KeyName of the created AuthorizationRule.
+        :paramtype key_name: str
+        """
         super(ResourceListKeys, self).__init__(**kwargs)
         self.primary_connection_string = kwargs.get('primary_connection_string', None)
         self.secondary_connection_string = kwargs.get('secondary_connection_string', None)
@@ -1126,8 +1461,9 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
 
     All required parameters must be populated in order to send to Azure.
 
-    :param properties: Required. Properties of the Namespace AuthorizationRules.
-    :type properties: ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
+    :ivar properties: Required. Properties of the Namespace AuthorizationRules.
+    :vartype properties:
+     ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
     """
 
     _validation = {
@@ -1142,6 +1478,11 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Required. Properties of the Namespace AuthorizationRules.
+        :paramtype properties:
+         ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
+        """
         super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(**kwargs)
         self.properties = kwargs['properties']
 
@@ -1149,11 +1490,11 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
 class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
-    :param value: Result of the List AuthorizationRules operation.
-    :type value: list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List AuthorizationRules operation.
+    :vartype value: list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of AuthorizationRules.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1165,6 +1506,14 @@ class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List AuthorizationRules operation.
+        :paramtype value:
+         list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of AuthorizationRules.
+        :paramtype next_link: str
+        """
         super(SharedAccessAuthorizationRuleListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -1175,8 +1524,8 @@ class SharedAccessAuthorizationRuleProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
     :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
      token.
     :vartype primary_key: str
@@ -1224,6 +1573,10 @@ class SharedAccessAuthorizationRuleProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
+        """
         super(SharedAccessAuthorizationRuleProperties, self).__init__(**kwargs)
         self.rights = kwargs.get('rights', None)
         self.primary_key = None
@@ -1247,14 +1600,14 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.notificationhubs.models.Sku
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
     :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
      token.
     :vartype primary_key: str
@@ -1311,6 +1664,16 @@ class SharedAccessAuthorizationRuleResource(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
+        """
         super(SharedAccessAuthorizationRuleResource, self).__init__(**kwargs)
         self.rights = kwargs.get('rights', None)
         self.primary_key = None
@@ -1328,17 +1691,17 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the notification hub sku. Possible values include: "Free",
+    :ivar name: Required. Name of the notification hub sku. Possible values include: "Free",
      "Basic", "Standard".
-    :type name: str or ~azure.mgmt.notificationhubs.models.SkuName
-    :param tier: The tier of particular sku.
-    :type tier: str
-    :param size: The Sku size.
-    :type size: str
-    :param family: The Sku Family.
-    :type family: str
-    :param capacity: The capacity of the resource.
-    :type capacity: int
+    :vartype name: str or ~azure.mgmt.notificationhubs.models.SkuName
+    :ivar tier: The tier of particular sku.
+    :vartype tier: str
+    :ivar size: The Sku size.
+    :vartype size: str
+    :ivar family: The Sku Family.
+    :vartype family: str
+    :ivar capacity: The capacity of the resource.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -1357,6 +1720,19 @@ class Sku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the notification hub sku. Possible values include: "Free",
+         "Basic", "Standard".
+        :paramtype name: str or ~azure.mgmt.notificationhubs.models.SkuName
+        :keyword tier: The tier of particular sku.
+        :paramtype tier: str
+        :keyword size: The Sku size.
+        :paramtype size: str
+        :keyword family: The Sku Family.
+        :paramtype family: str
+        :keyword capacity: The capacity of the resource.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.tier = kwargs.get('tier', None)
@@ -1368,8 +1744,8 @@ class Sku(msrest.serialization.Model):
 class SubResource(msrest.serialization.Model):
     """SubResource.
 
-    :param id: Resource Id.
-    :type id: str
+    :ivar id: Resource Id.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -1380,6 +1756,10 @@ class SubResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Resource Id.
+        :paramtype id: str
+        """
         super(SubResource, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
 
@@ -1387,12 +1767,12 @@ class SubResource(msrest.serialization.Model):
 class WnsCredential(msrest.serialization.Model):
     """Description of a NotificationHub WnsCredential.
 
-    :param package_sid: The package ID for this credential.
-    :type package_sid: str
-    :param secret_key: The secret key.
-    :type secret_key: str
-    :param windows_live_endpoint: The Windows Live endpoint.
-    :type windows_live_endpoint: str
+    :ivar package_sid: The package ID for this credential.
+    :vartype package_sid: str
+    :ivar secret_key: The secret key.
+    :vartype secret_key: str
+    :ivar windows_live_endpoint: The Windows Live endpoint.
+    :vartype windows_live_endpoint: str
     """
 
     _attribute_map = {
@@ -1405,6 +1785,14 @@ class WnsCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword package_sid: The package ID for this credential.
+        :paramtype package_sid: str
+        :keyword secret_key: The secret key.
+        :paramtype secret_key: str
+        :keyword windows_live_endpoint: The Windows Live endpoint.
+        :paramtype windows_live_endpoint: str
+        """
         super(WnsCredential, self).__init__(**kwargs)
         self.package_sid = kwargs.get('package_sid', None)
         self.secret_key = kwargs.get('secret_key', None)
