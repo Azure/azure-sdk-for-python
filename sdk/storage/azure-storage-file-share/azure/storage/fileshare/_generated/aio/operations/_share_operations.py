@@ -209,6 +209,7 @@ class ShareOperations:
         response_headers['x-ms-share-provisioned-ingress-mbps']=self._deserialize('int', response.headers.get('x-ms-share-provisioned-ingress-mbps'))
         response_headers['x-ms-share-provisioned-egress-mbps']=self._deserialize('int', response.headers.get('x-ms-share-provisioned-egress-mbps'))
         response_headers['x-ms-share-next-allowed-quota-downgrade-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-share-next-allowed-quota-downgrade-time'))
+        response_headers['x-ms-share-provisioned-bandwidth-mibps']=self._deserialize('int', response.headers.get('x-ms-share-provisioned-bandwidth-mibps'))
         response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
         response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
         response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
@@ -1419,9 +1420,9 @@ class ShareOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :param deleted_share_name: Specifies the name of the preivously-deleted share.
+        :param deleted_share_name: Specifies the name of the previously-deleted share.
         :type deleted_share_name: str
-        :param deleted_share_version: Specifies the version of the preivously-deleted share.
+        :param deleted_share_version: Specifies the version of the previously-deleted share.
         :type deleted_share_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

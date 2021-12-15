@@ -10,27 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"redactedText\":\"\U0001F469\u200D\U0001F469\u200D\
-        \U0001F467\u200D\U0001F467 SSN: ***********\",\"id\":\"0\",\"entities\":[{\"\
-        text\":\"859-98-0987\",\"category\":\"USSocialSecurityNumber\",\"offset\"\
-        :13,\"length\":11,\"confidenceScore\":0.65}],\"warnings\":[]}],\"errors\"\
-        :[],\"modelVersion\":\"2021-01-15\"}"
+      string: "{\"documents\":[{\"redactedText\":\"\U0001F469\u200D\U0001F469\u200D\U0001F467\u200D\U0001F467
+        SSN: ***********\",\"id\":\"0\",\"entities\":[{\"text\":\"859-98-0987\",\"category\":\"USSocialSecurityNumber\",\"offset\":13,\"length\":11,\"confidenceScore\":0.65}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2021-01-15\"}"
     headers:
-      apim-request-id: 34f4052a-8f96-4b8a-8d08-6bd8b3c87945
+      apim-request-id: 0e80def6-8ca4-4b91-81ba-a8db3ee8475d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Wed, 06 Oct 2021 21:04:26 GMT
+      date: Wed, 08 Dec 2021 22:58:00 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '28'
+      x-envoy-upstream-service-time: '31'
     status:
       code: 200
       message: OK
-    url: https://javatextanalyticstestresources.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint
 version: 1

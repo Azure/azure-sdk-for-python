@@ -405,7 +405,7 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
     :type operator: str
     :param value: the value for the operator to function over. This can be a number (e.g., > 100),
      a string (timestamp >= '2017-09-01') or array of values.
-    :type value: object
+    :type value: any
     :param key: When filtering over custom dimensions, this key will be used as the name of the
      custom dimension.
     :type key: str
@@ -481,6 +481,114 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
         self.status = kwargs['status']
 
 
+class HeaderField(msrest.serialization.Model):
+    """A header to add to the WebTest.
+
+    :param header_field_name: The name of the header.
+    :type header_field_name: str
+    :param header_field_value: The value of the header.
+    :type header_field_value: str
+    """
+
+    _attribute_map = {
+        'header_field_name': {'key': 'key', 'type': 'str'},
+        'header_field_value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HeaderField, self).__init__(**kwargs)
+        self.header_field_name = kwargs.get('header_field_name', None)
+        self.header_field_value = kwargs.get('header_field_value', None)
+
+
+class Operation(msrest.serialization.Model):
+    """Represents an operation returned by the GetOperations request.
+
+    :param name: Name of the operation.
+    :type name: str
+    :param display: Display name of the operation.
+    :type display: ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.OperationInfo
+    :param origin: Origin of the operation.
+    :type origin: str
+    :param properties: Properties of the operation.
+    :type properties: any
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationInfo'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class OperationInfo(msrest.serialization.Model):
+    """Information about an operation.
+
+    :param provider: Name of the provider.
+    :type provider: str
+    :param resource: Name of the resource type.
+    :type resource: str
+    :param operation: Name of the operation.
+    :type operation: str
+    :param description: Description of the operation.
+    :type description: str
+    """
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationInfo, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)
+
+
+class OperationsListResult(msrest.serialization.Model):
+    """Result of the List Operations operation.
+
+    :param value: A collection of operations.
+    :type value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.Operation]
+    :param next_link: URL to get the next set of operation list results if there are any.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationsListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class PrivateLinkScopedResource(msrest.serialization.Model):
     """The private link scope resource reference.
 
@@ -521,3 +629,333 @@ class TagsResource(msrest.serialization.Model):
     ):
         super(TagsResource, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+
+
+class WebtestsResource(msrest.serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebtestsResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs['location']
+        self.tags = kwargs.get('tags', None)
+
+
+class WebTest(WebtestsResource):
+    """An Application Insights WebTest definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param kind: The kind of WebTest that this web test watches. Choices are ping and multistep.
+     Possible values include: "ping", "multistep". Default value: "ping".
+    :type kind: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKind
+    :param synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as the
+     Name field.
+    :type synthetic_monitor_id: str
+    :param web_test_name: User defined name if this WebTest.
+    :type web_test_name: str
+    :param description: User defined description for this WebTest.
+    :type description: str
+    :param enabled: Is the test actively being monitored.
+    :type enabled: bool
+    :param frequency: Interval in seconds between test runs for this WebTest. Default value is 300.
+    :type frequency: int
+    :param timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
+    :type timeout: int
+    :param web_test_kind: The kind of web test this is, valid choices are ping, multistep, basic,
+     and standard. Possible values include: "ping", "multistep", "basic", "standard". Default value:
+     "ping".
+    :type web_test_kind: str or
+     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKindEnum
+    :param retry_enabled: Allow for retries should this WebTest fail.
+    :type retry_enabled: bool
+    :param locations: A list of where to physically run the tests from to give global coverage for
+     accessibility of your application.
+    :type locations:
+     list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestGeolocation]
+    :param configuration: An XML configuration specification for a WebTest.
+    :type configuration:
+     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesConfiguration
+    :ivar provisioning_state: Current state of this component, whether or not is has been
+     provisioned within the resource group it is defined. Users cannot change this value but are
+     able to read from it. Values will include Succeeded, Deploying, Canceled, and Failed.
+    :vartype provisioning_state: str
+    :param request: The collection of request properties.
+    :type request:
+     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesRequest
+    :param validation_rules: The collection of validation rule properties.
+    :type validation_rules:
+     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRules
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'synthetic_monitor_id': {'key': 'properties.SyntheticMonitorId', 'type': 'str'},
+        'web_test_name': {'key': 'properties.Name', 'type': 'str'},
+        'description': {'key': 'properties.Description', 'type': 'str'},
+        'enabled': {'key': 'properties.Enabled', 'type': 'bool'},
+        'frequency': {'key': 'properties.Frequency', 'type': 'int'},
+        'timeout': {'key': 'properties.Timeout', 'type': 'int'},
+        'web_test_kind': {'key': 'properties.Kind', 'type': 'str'},
+        'retry_enabled': {'key': 'properties.RetryEnabled', 'type': 'bool'},
+        'locations': {'key': 'properties.Locations', 'type': '[WebTestGeolocation]'},
+        'configuration': {'key': 'properties.Configuration', 'type': 'WebTestPropertiesConfiguration'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'request': {'key': 'properties.Request', 'type': 'WebTestPropertiesRequest'},
+        'validation_rules': {'key': 'properties.ValidationRules', 'type': 'WebTestPropertiesValidationRules'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTest, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "ping")
+        self.synthetic_monitor_id = kwargs.get('synthetic_monitor_id', None)
+        self.web_test_name = kwargs.get('web_test_name', None)
+        self.description = kwargs.get('description', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.frequency = kwargs.get('frequency', 300)
+        self.timeout = kwargs.get('timeout', 30)
+        self.web_test_kind = kwargs.get('web_test_kind', "ping")
+        self.retry_enabled = kwargs.get('retry_enabled', None)
+        self.locations = kwargs.get('locations', None)
+        self.configuration = kwargs.get('configuration', None)
+        self.provisioning_state = None
+        self.request = kwargs.get('request', None)
+        self.validation_rules = kwargs.get('validation_rules', None)
+
+
+class WebTestGeolocation(msrest.serialization.Model):
+    """Geo-physical location to run a WebTest from. You must specify one or more locations for the test to run from.
+
+    :param location: Location ID for the WebTest to run from.
+    :type location: str
+    """
+
+    _attribute_map = {
+        'location': {'key': 'Id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTestGeolocation, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+
+
+class WebTestListResult(msrest.serialization.Model):
+    """A list of 0 or more Application Insights WebTest definitions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. Set of Application Insights WebTest definitions.
+    :type value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
+    :param next_link: The link to get the next part of the returned list of WebTest, should the
+     return set be too large for a single request. May be null.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[WebTest]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTestListResult, self).__init__(**kwargs)
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
+
+
+class WebTestPropertiesConfiguration(msrest.serialization.Model):
+    """An XML configuration specification for a WebTest.
+
+    :param web_test: The XML specification of a WebTest to run against an application.
+    :type web_test: str
+    """
+
+    _attribute_map = {
+        'web_test': {'key': 'WebTest', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTestPropertiesConfiguration, self).__init__(**kwargs)
+        self.web_test = kwargs.get('web_test', None)
+
+
+class WebTestPropertiesRequest(msrest.serialization.Model):
+    """The collection of request properties.
+
+    :param request_url: Url location to test.
+    :type request_url: str
+    :param headers: List of headers and their values to add to the WebTest call.
+    :type headers: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.HeaderField]
+    :param http_verb: Http verb to use for this web test.
+    :type http_verb: str
+    :param request_body: Base64 encoded string body to send with this web test.
+    :type request_body: str
+    :param parse_dependent_requests: Parse Dependent request for this WebTest.
+    :type parse_dependent_requests: bool
+    :param follow_redirects: Follow redirects for this web test.
+    :type follow_redirects: bool
+    """
+
+    _attribute_map = {
+        'request_url': {'key': 'RequestUrl', 'type': 'str'},
+        'headers': {'key': 'Headers', 'type': '[HeaderField]'},
+        'http_verb': {'key': 'HttpVerb', 'type': 'str'},
+        'request_body': {'key': 'RequestBody', 'type': 'str'},
+        'parse_dependent_requests': {'key': 'ParseDependentRequests', 'type': 'bool'},
+        'follow_redirects': {'key': 'FollowRedirects', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTestPropertiesRequest, self).__init__(**kwargs)
+        self.request_url = kwargs.get('request_url', None)
+        self.headers = kwargs.get('headers', None)
+        self.http_verb = kwargs.get('http_verb', None)
+        self.request_body = kwargs.get('request_body', None)
+        self.parse_dependent_requests = kwargs.get('parse_dependent_requests', None)
+        self.follow_redirects = kwargs.get('follow_redirects', None)
+
+
+class WebTestPropertiesValidationRules(msrest.serialization.Model):
+    """The collection of validation rule properties.
+
+    :param content_validation: The collection of content validation properties.
+    :type content_validation:
+     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRulesContentValidation
+    :param ssl_check: Checks to see if the SSL cert is still valid.
+    :type ssl_check: bool
+    :param ssl_cert_remaining_lifetime_check: A number of days to check still remain before the the
+     existing SSL cert expires.  Value must be positive and the SSLCheck must be set to true.
+    :type ssl_cert_remaining_lifetime_check: int
+    :param expected_http_status_code: Validate that the WebTest returns the http status code
+     provided.
+    :type expected_http_status_code: int
+    :param ignore_https_status_code: When set, validation will ignore the status code.
+    :type ignore_https_status_code: bool
+    """
+
+    _attribute_map = {
+        'content_validation': {'key': 'ContentValidation', 'type': 'WebTestPropertiesValidationRulesContentValidation'},
+        'ssl_check': {'key': 'SSLCheck', 'type': 'bool'},
+        'ssl_cert_remaining_lifetime_check': {'key': 'SSLCertRemainingLifetimeCheck', 'type': 'int'},
+        'expected_http_status_code': {'key': 'ExpectedHttpStatusCode', 'type': 'int'},
+        'ignore_https_status_code': {'key': 'IgnoreHttpsStatusCode', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTestPropertiesValidationRules, self).__init__(**kwargs)
+        self.content_validation = kwargs.get('content_validation', None)
+        self.ssl_check = kwargs.get('ssl_check', None)
+        self.ssl_cert_remaining_lifetime_check = kwargs.get('ssl_cert_remaining_lifetime_check', None)
+        self.expected_http_status_code = kwargs.get('expected_http_status_code', None)
+        self.ignore_https_status_code = kwargs.get('ignore_https_status_code', None)
+
+
+class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Model):
+    """The collection of content validation properties.
+
+    :param content_match: Content to look for in the return of the WebTest.  Must not be null or
+     empty.
+    :type content_match: str
+    :param ignore_case: When set, this value makes the ContentMatch validation case insensitive.
+    :type ignore_case: bool
+    :param pass_if_text_found: When true, validation will pass if there is a match for the
+     ContentMatch string.  If false, validation will fail if there is a match.
+    :type pass_if_text_found: bool
+    """
+
+    _attribute_map = {
+        'content_match': {'key': 'ContentMatch', 'type': 'str'},
+        'ignore_case': {'key': 'IgnoreCase', 'type': 'bool'},
+        'pass_if_text_found': {'key': 'PassIfTextFound', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebTestPropertiesValidationRulesContentValidation, self).__init__(**kwargs)
+        self.content_match = kwargs.get('content_match', None)
+        self.ignore_case = kwargs.get('ignore_case', None)
+        self.pass_if_text_found = kwargs.get('pass_if_text_found', None)

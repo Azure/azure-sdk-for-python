@@ -21,7 +21,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
@@ -30,11 +30,11 @@ interactions:
         request contains too many records. Max 10 records are permitted."}}}'
     headers:
       apim-request-id:
-      - cf9ab841-f039-4001-a556-833deb99a3d3
+      - 5c5dc0dd-e826-464d-ad9d-e7899f9b62a6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 06 Oct 2021 21:01:35 GMT
+      - Wed, 08 Dec 2021 22:54:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '5'
     status:
       code: 400
       message: Bad Request
