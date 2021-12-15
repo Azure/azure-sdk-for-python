@@ -57,7 +57,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         container_suffix = kwargs.get("container_suffix", "")
         var_key = "source_container_name" + container_suffix
         if self.is_live:
-            variables[var_key] = "src" + str(uuid.uuid4())
+            self.source_container_name = variables[var_key] = "src" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
                                                self.storage_key)
             container_client.create_container()
@@ -69,7 +69,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         container_suffix = kwargs.get("container_suffix", "")
         var_key = "target_container_name" + container_suffix
         if self.is_live:
-            variables[var_key] = "target" + str(uuid.uuid4())
+            self.target_container_name = variables[var_key] = "target" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
                                                self.storage_key)
             container_client.create_container()

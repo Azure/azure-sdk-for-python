@@ -6,14 +6,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 import sys
 import pytest
 from devtools_testutils import (
     test_proxy,
+    is_live,
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
     add_oauth_response_sanitizer
 )
+from azure.storage.blob import BlobServiceClient
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -34,3 +37,15 @@ def add_sanitizers(test_proxy):
         value="fakeendpoint",
     )
     add_oauth_response_sanitizer()
+
+    # run tests
+    yield
+
+    # delete containers
+    if is_live():
+        client = BlobServiceClient(
+            "https://" + os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME") + ".blob.core.windows.net/",
+            os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
+        )
+        for container in client.list_containers():
+            client.delete_container(container)
