@@ -15,7 +15,7 @@ def my_print(cmd):
 def print_check(cmd, path=''):
     my_print(cmd)
     if path:
-        output = sp.check_output(cmd, shell=False, cwd=path)
+        output = sp.check_output(cmd, shell=True, cwd=path)
         print(output)
     else:
         sp.check_call(cmd, shell=True)
