@@ -35,6 +35,7 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -57,6 +58,7 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -97,6 +99,7 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -135,6 +138,7 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url):
 
         poller_1 = client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -166,6 +170,7 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     def test_copy_continuation_token(self, client, formrecognizer_storage_container_sas_url):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -183,6 +188,7 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
