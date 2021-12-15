@@ -295,6 +295,9 @@ def main():
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
     all_sdk_status1 = test_sdk(all_sdk_status)
+    print('**')
+    print(os.getenv('SDK_PATH'))
+
     print_check('pwd', path=os.getenv('SDK_PATH'))
     print_check('ls', path=os.getenv('SDK_PATH'))
 
