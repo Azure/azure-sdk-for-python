@@ -1,0 +1,116 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "138",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1639715b-5d12-11ec-aa83-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "8d393c9a-3c77-4ac4-a627-d085abb7a34f",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Tue, 14 Dec 2021 19:14:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "28"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "redactedText": "My name is *************, my SSN in *********** and my phone number is *********",
+            "id": "0",
+            "entities": [
+              {
+                "text": "Inigo Montoya",
+                "category": "Person",
+                "offset": 11,
+                "length": 13,
+                "confidenceScore": 0.99
+              },
+              {
+                "text": "243-56-0987",
+                "category": "USSocialSecurityNumber",
+                "offset": 36,
+                "length": 11,
+                "confidenceScore": 0.85
+              },
+              {
+                "text": "333-3333",
+                "category": "PhoneNumber",
+                "offset": 71,
+                "length": 8,
+                "confidenceScore": 0.8
+              },
+              {
+                "text": "333-3333.",
+                "category": "PhoneNumber",
+                "offset": 71,
+                "length": 9,
+                "confidenceScore": 0.98
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-01-15"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint\u0026piiCategories=USSocialSecurityNumber",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "138",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1649afd0-5d12-11ec-9451-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3d396c8c-b608-45b8-9aff-23396cfb2be1",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Tue, 14 Dec 2021 19:14:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "32"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "redactedText": "My name is Inigo Montoya, my SSN in *********** and my phone number is 333-3333.",
+            "id": "0",
+            "entities": [
+              {
+                "text": "243-56-0987",
+                "category": "USSocialSecurityNumber",
+                "offset": 36,
+                "length": 11,
+                "confidenceScore": 0.85
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-01-15"
+      }
+    }
+  ],
+  "Variables": {}
+}
