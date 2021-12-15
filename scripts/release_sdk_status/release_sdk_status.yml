@@ -39,7 +39,7 @@ jobs:
         export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
         export SWAGGER_REPO=$(pwd)/azure-rest-api-specs
-        export SDK_PATH = $(pwd)
+        export SDK_REPO = $(pwd)/azure-sdk-for-python
 
         # create virtual env
         python -m venv venv-sdk
