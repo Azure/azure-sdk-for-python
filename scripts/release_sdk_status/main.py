@@ -280,6 +280,11 @@ def upload_to_azure(out_file):
 def main():
     cli_dependency = get_cli_dependency()
     sdk_info = sdk_info_from_swagger()
+    print('**************************')
+    print(cli_dependency)
+    print('**************************')
+    print(sdk_info)
+    
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
 
     OUT_FILE = 'release_sdk_status.csv'
