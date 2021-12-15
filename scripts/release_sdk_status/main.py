@@ -293,7 +293,7 @@ def main():
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
     all_sdk_status1 = test_sdk(all_sdk_status)
-    print_check('pwd', os.environ['SDK_PATH'])
+    print_check('pwd', path=os.getenv('SDK_PATH'))
 
 
     OUT_FILE = 'release_sdk_status.csv'
