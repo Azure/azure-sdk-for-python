@@ -37,7 +37,7 @@
         },
         "hsmLocation": {
             "type": "string",
-            "defaultValue": "westus",
+            "defaultValue": "canadacentral",
             "allowedValues": [
                 "australiacentral",
                 "canadacentral",
