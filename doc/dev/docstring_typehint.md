@@ -4,7 +4,7 @@ All public methods should have docstrings to document the parameters, keywords, 
 
 * [Docstrings](#docstrings)
     * [Method Docstrings](#method_docstrings)
-    * [Model and Client Docstrings](#Model_and_Client_Docstrings)
+    * [Model and Client Docstrings](#model_and_client_docstrings)
 * [Type Hints](#type_hints)
     * [Type Hints for Python 2.7 and 3.5+](#type_hints_for_python_2.7_and_3.5+)
     * [Type Hints for Python 3.5+](#type_hints_for_python_3.5+)

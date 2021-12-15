@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2021-09-15)
+- Updated `azure-communication-chat` version.
+
 ## 1.1.0b1 (2021-08-16)
 
 ### Added

@@ -181,35 +181,16 @@ class AddressResponse(ProxyOnlyResource):
         self.vip_mappings = kwargs.get('vip_mappings', None)
 
 
-class AllowedAudiencesValidation(ProxyOnlyResource):
-    """AllowedAudiencesValidation.
+class AllowedAudiencesValidation(msrest.serialization.Model):
+    """The configuration settings of the Allowed Audiences validation flow.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param allowed_audiences:
+    :param allowed_audiences: The configuration settings of the allowed list of audiences from
+     which to validate the JWT token.
     :type allowed_audiences: list[str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
+        'allowed_audiences': {'key': 'allowedAudiences', 'type': '[str]'},
     }
 
     def __init__(
@@ -471,19 +452,9 @@ class AppInsightsWebAppStackSettings(msrest.serialization.Model):
         self.is_default_off = None
 
 
-class Apple(ProxyOnlyResource):
+class Apple(msrest.serialization.Model):
     """The configuration settings of the Apple provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the Apple provider should not be enabled despite
      the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -493,20 +464,10 @@ class Apple(ProxyOnlyResource):
     :type login: ~azure.mgmt.web.v2021_01_15.models.LoginScopes
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'AppleRegistration'},
-        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'AppleRegistration'},
+        'login': {'key': 'login', 'type': 'LoginScopes'},
     }
 
     def __init__(
@@ -519,38 +480,18 @@ class Apple(ProxyOnlyResource):
         self.login = kwargs.get('login', None)
 
 
-class AppleRegistration(ProxyOnlyResource):
+class AppleRegistration(msrest.serialization.Model):
     """The configuration settings of the registration for the Apple provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param client_id: The Client ID of the app used for login.
     :type client_id: str
     :param client_secret_setting_name: The app setting name that contains the client secret.
     :type client_secret_setting_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
     }
 
     def __init__(
@@ -746,38 +687,18 @@ class AppLogsConfiguration(msrest.serialization.Model):
         self.log_analytics_configuration = kwargs.get('log_analytics_configuration', None)
 
 
-class AppRegistration(ProxyOnlyResource):
+class AppRegistration(msrest.serialization.Model):
     """The configuration settings of the app registration for providers that have app ids and app secrets.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param app_id: The App ID of the app used for login.
     :type app_id: str
     :param app_secret_setting_name: The app setting name that contains the app secret.
     :type app_secret_setting_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'app_id': {'key': 'properties.appId', 'type': 'str'},
-        'app_secret_setting_name': {'key': 'properties.appSecretSettingName', 'type': 'str'},
+        'app_id': {'key': 'appId', 'type': 'str'},
+        'app_secret_setting_name': {'key': 'appSecretSettingName', 'type': 'str'},
     }
 
     def __init__(
@@ -2241,19 +2162,9 @@ class AseV3NetworkingConfiguration(ProxyOnlyResource):
         self.allow_new_private_endpoint_connections = kwargs.get('allow_new_private_endpoint_connections', None)
 
 
-class AuthPlatform(ProxyOnlyResource):
+class AuthPlatform(msrest.serialization.Model):
     """The configuration settings of the platform of App Service Authentication/Authorization.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>true</code>` if the Authentication / Authorization feature is
      enabled for the current app; otherwise, :code:`<code>false</code>`.
     :type enabled: bool
@@ -2268,20 +2179,10 @@ class AuthPlatform(ProxyOnlyResource):
     :type config_file_path: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
-        'config_file_path': {'key': 'properties.configFilePath', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+        'config_file_path': {'key': 'configFilePath', 'type': 'str'},
     }
 
     def __init__(
@@ -2410,19 +2311,9 @@ class AutoHealTriggers(msrest.serialization.Model):
         self.status_codes_range = kwargs.get('status_codes_range', None)
 
 
-class AzureActiveDirectory(ProxyOnlyResource):
+class AzureActiveDirectory(msrest.serialization.Model):
     """The configuration settings of the Azure Active directory provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the Azure Active Directory provider should not be
      enabled despite the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -2441,22 +2332,12 @@ class AzureActiveDirectory(ProxyOnlyResource):
     :type is_auto_provisioned: bool
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'AzureActiveDirectoryRegistration'},
-        'login': {'key': 'properties.login', 'type': 'AzureActiveDirectoryLogin'},
-        'validation': {'key': 'properties.validation', 'type': 'AzureActiveDirectoryValidation'},
-        'is_auto_provisioned': {'key': 'properties.isAutoProvisioned', 'type': 'bool'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'AzureActiveDirectoryRegistration'},
+        'login': {'key': 'login', 'type': 'AzureActiveDirectoryLogin'},
+        'validation': {'key': 'validation', 'type': 'AzureActiveDirectoryValidation'},
+        'is_auto_provisioned': {'key': 'isAutoProvisioned', 'type': 'bool'},
     }
 
     def __init__(
@@ -2471,40 +2352,21 @@ class AzureActiveDirectory(ProxyOnlyResource):
         self.is_auto_provisioned = kwargs.get('is_auto_provisioned', None)
 
 
-class AzureActiveDirectoryLogin(ProxyOnlyResource):
+class AzureActiveDirectoryLogin(msrest.serialization.Model):
     """The configuration settings of the Azure Active Directory login flow.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param disable_www_authenticate:
-    :type disable_www_authenticate: bool
     :param login_parameters: Login parameters to send to the OpenID Connect authorization endpoint
      when
      a user logs in. Each parameter must be in the form "key=value".
     :type login_parameters: list[str]
+    :param disable_www_authenticate: :code:`<code>true</code>` if the www-authenticate provider
+     should be omitted from the request; otherwise, :code:`<code>false</code>`.
+    :type disable_www_authenticate: bool
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'disable_www_authenticate': {'key': 'properties.disableWWWAuthenticate', 'type': 'bool'},
-        'login_parameters': {'key': 'properties.loginParameters', 'type': '[str]'},
+        'login_parameters': {'key': 'loginParameters', 'type': '[str]'},
+        'disable_www_authenticate': {'key': 'disableWWWAuthenticate', 'type': 'bool'},
     }
 
     def __init__(
@@ -2512,23 +2374,13 @@ class AzureActiveDirectoryLogin(ProxyOnlyResource):
         **kwargs
     ):
         super(AzureActiveDirectoryLogin, self).__init__(**kwargs)
-        self.disable_www_authenticate = kwargs.get('disable_www_authenticate', None)
         self.login_parameters = kwargs.get('login_parameters', None)
+        self.disable_www_authenticate = kwargs.get('disable_www_authenticate', None)
 
 
-class AzureActiveDirectoryRegistration(ProxyOnlyResource):
+class AzureActiveDirectoryRegistration(msrest.serialization.Model):
     """The configuration settings of the Azure Active Directory app registration.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
      access tokens for this application.
      When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
@@ -2550,23 +2402,24 @@ class AzureActiveDirectoryRegistration(ProxyOnlyResource):
      thumbprint of a certificate used for signing purposes. This property acts as
      a replacement for the Client Secret. It is also optional.
     :type client_secret_certificate_thumbprint: str
+    :param client_secret_certificate_subject_alternative_name: An alternative to the client secret
+     thumbprint, that is the subject alternative name of a certificate used for signing purposes.
+     This property acts as
+     a replacement for the Client Secret Certificate Thumbprint. It is also optional.
+    :type client_secret_certificate_subject_alternative_name: str
+    :param client_secret_certificate_issuer: An alternative to the client secret thumbprint, that
+     is the issuer of a certificate used for signing purposes. This property acts as
+     a replacement for the Client Secret Certificate Thumbprint. It is also optional.
+    :type client_secret_certificate_issuer: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'open_id_issuer': {'key': 'properties.openIdIssuer', 'type': 'str'},
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
-        'client_secret_certificate_thumbprint': {'key': 'properties.clientSecretCertificateThumbprint', 'type': 'str'},
+        'open_id_issuer': {'key': 'openIdIssuer', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
+        'client_secret_certificate_thumbprint': {'key': 'clientSecretCertificateThumbprint', 'type': 'str'},
+        'client_secret_certificate_subject_alternative_name': {'key': 'clientSecretCertificateSubjectAlternativeName', 'type': 'str'},
+        'client_secret_certificate_issuer': {'key': 'clientSecretCertificateIssuer', 'type': 'str'},
     }
 
     def __init__(
@@ -2578,21 +2431,13 @@ class AzureActiveDirectoryRegistration(ProxyOnlyResource):
         self.client_id = kwargs.get('client_id', None)
         self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
         self.client_secret_certificate_thumbprint = kwargs.get('client_secret_certificate_thumbprint', None)
+        self.client_secret_certificate_subject_alternative_name = kwargs.get('client_secret_certificate_subject_alternative_name', None)
+        self.client_secret_certificate_issuer = kwargs.get('client_secret_certificate_issuer', None)
 
 
-class AzureActiveDirectoryValidation(ProxyOnlyResource):
+class AzureActiveDirectoryValidation(msrest.serialization.Model):
     """The configuration settings of the Azure Active Directory token validation flow.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param jwt_claim_checks: The configuration settings of the checks that should be made while
      validating the JWT Claims.
     :type jwt_claim_checks: ~azure.mgmt.web.v2021_01_15.models.JwtClaimChecks
@@ -2601,19 +2446,9 @@ class AzureActiveDirectoryValidation(ProxyOnlyResource):
     :type allowed_audiences: list[str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'jwt_claim_checks': {'key': 'properties.jwtClaimChecks', 'type': 'JwtClaimChecks'},
-        'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
+        'jwt_claim_checks': {'key': 'jwtClaimChecks', 'type': 'JwtClaimChecks'},
+        'allowed_audiences': {'key': 'allowedAudiences', 'type': '[str]'},
     }
 
     def __init__(
@@ -2685,19 +2520,9 @@ class AzureBlobStorageHttpLogsConfig(msrest.serialization.Model):
         self.enabled = kwargs.get('enabled', None)
 
 
-class AzureStaticWebApps(ProxyOnlyResource):
+class AzureStaticWebApps(msrest.serialization.Model):
     """The configuration settings of the Azure Static Web Apps provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the Azure Static Web Apps provider should not be
      enabled despite the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -2705,19 +2530,9 @@ class AzureStaticWebApps(ProxyOnlyResource):
     :type registration: ~azure.mgmt.web.v2021_01_15.models.AzureStaticWebAppsRegistration
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'AzureStaticWebAppsRegistration'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'AzureStaticWebAppsRegistration'},
     }
 
     def __init__(
@@ -2729,35 +2544,15 @@ class AzureStaticWebApps(ProxyOnlyResource):
         self.registration = kwargs.get('registration', None)
 
 
-class AzureStaticWebAppsRegistration(ProxyOnlyResource):
+class AzureStaticWebAppsRegistration(msrest.serialization.Model):
     """The configuration settings of the registration for the Azure Static Web Apps provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param client_id: The Client ID of the app used for login.
     :type client_id: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
     def __init__(
@@ -3230,36 +3025,16 @@ class BillingMeterCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class BlobStorageTokenStore(ProxyOnlyResource):
+class BlobStorageTokenStore(msrest.serialization.Model):
     """The configuration settings of the storage of the tokens if blob storage is used.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param sas_url_setting_name: The name of the app setting containing the SAS URL of the blob
      storage containing the tokens.
     :type sas_url_setting_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sas_url_setting_name': {'key': 'properties.sasUrlSettingName', 'type': 'str'},
+        'sas_url_setting_name': {'key': 'sasUrlSettingName', 'type': 'str'},
     }
 
     def __init__(
@@ -3806,38 +3581,18 @@ class CertificatePatchResource(ProxyOnlyResource):
         self.domain_validation_method = kwargs.get('domain_validation_method', None)
 
 
-class ClientRegistration(ProxyOnlyResource):
+class ClientRegistration(msrest.serialization.Model):
     """The configuration settings of the app registration for providers that have client ids and client secrets.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param client_id: The Client ID of the app used for login.
     :type client_id: str
     :param client_secret_setting_name: The app setting name that contains the client secret.
     :type client_secret_setting_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
     }
 
     def __init__(
@@ -4409,19 +4164,9 @@ class ContinuousWebJobCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class CookieExpiration(ProxyOnlyResource):
+class CookieExpiration(msrest.serialization.Model):
     """The configuration settings of the session cookie's expiration.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param convention: The convention used when determining the session cookie's expiration.
      Possible values include: "FixedTime", "IdentityProviderDerived".
     :type convention: str or ~azure.mgmt.web.v2021_01_15.models.CookieExpirationConvention
@@ -4430,19 +4175,9 @@ class CookieExpiration(ProxyOnlyResource):
     :type time_to_expiration: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'convention': {'key': 'properties.convention', 'type': 'str'},
-        'time_to_expiration': {'key': 'properties.timeToExpiration', 'type': 'str'},
+        'convention': {'key': 'convention', 'type': 'str'},
+        'time_to_expiration': {'key': 'timeToExpiration', 'type': 'str'},
     }
 
     def __init__(
@@ -4884,19 +4619,9 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         self.alternate_txt_records = kwargs.get('alternate_txt_records', None)
 
 
-class CustomOpenIdConnectProvider(ProxyOnlyResource):
+class CustomOpenIdConnectProvider(msrest.serialization.Model):
     """The configuration settings of the custom Open ID Connect provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the custom Open ID provider provider should not
      be enabled; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -4908,20 +4633,10 @@ class CustomOpenIdConnectProvider(ProxyOnlyResource):
     :type login: ~azure.mgmt.web.v2021_01_15.models.OpenIdConnectLogin
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'OpenIdConnectRegistration'},
-        'login': {'key': 'properties.login', 'type': 'OpenIdConnectLogin'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'OpenIdConnectRegistration'},
+        'login': {'key': 'login', 'type': 'OpenIdConnectLogin'},
     }
 
     def __init__(
@@ -6804,19 +6519,9 @@ class ExtendedLocation(msrest.serialization.Model):
         self.type = None
 
 
-class Facebook(ProxyOnlyResource):
+class Facebook(msrest.serialization.Model):
     """The configuration settings of the Facebook provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the Facebook provider should not be enabled
      despite the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -6829,21 +6534,11 @@ class Facebook(ProxyOnlyResource):
     :type login: ~azure.mgmt.web.v2021_01_15.models.LoginScopes
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'AppRegistration'},
-        'graph_api_version': {'key': 'properties.graphApiVersion', 'type': 'str'},
-        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'AppRegistration'},
+        'graph_api_version': {'key': 'graphApiVersion', 'type': 'str'},
+        'login': {'key': 'login', 'type': 'LoginScopes'},
     }
 
     def __init__(
@@ -6913,35 +6608,15 @@ class FileSystemHttpLogsConfig(msrest.serialization.Model):
         self.enabled = kwargs.get('enabled', None)
 
 
-class FileSystemTokenStore(ProxyOnlyResource):
+class FileSystemTokenStore(msrest.serialization.Model):
     """The configuration settings of the storage of the tokens if a file system is used.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param directory: The directory in which the tokens will be stored.
     :type directory: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'directory': {'key': 'properties.directory', 'type': 'str'},
+        'directory': {'key': 'directory', 'type': 'str'},
     }
 
     def __init__(
@@ -6952,19 +6627,9 @@ class FileSystemTokenStore(ProxyOnlyResource):
         self.directory = kwargs.get('directory', None)
 
 
-class ForwardProxy(ProxyOnlyResource):
+class ForwardProxy(msrest.serialization.Model):
     """The configuration settings of a forward proxy used to make the requests.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param convention: The convention used to determine the url of the request made. Possible
      values include: "NoProxy", "Standard", "Custom".
     :type convention: str or ~azure.mgmt.web.v2021_01_15.models.ForwardProxyConvention
@@ -6974,20 +6639,10 @@ class ForwardProxy(ProxyOnlyResource):
     :type custom_proto_header_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'convention': {'key': 'properties.convention', 'type': 'str'},
-        'custom_host_header_name': {'key': 'properties.customHostHeaderName', 'type': 'str'},
-        'custom_proto_header_name': {'key': 'properties.customProtoHeaderName', 'type': 'str'},
+        'convention': {'key': 'convention', 'type': 'str'},
+        'custom_host_header_name': {'key': 'customHostHeaderName', 'type': 'str'},
+        'custom_proto_header_name': {'key': 'customProtoHeaderName', 'type': 'str'},
     }
 
     def __init__(
@@ -7538,19 +7193,9 @@ class GeoRegionCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class GitHub(ProxyOnlyResource):
+class GitHub(msrest.serialization.Model):
     """The configuration settings of the GitHub provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the GitHub provider should not be enabled despite
      the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -7561,20 +7206,10 @@ class GitHub(ProxyOnlyResource):
     :type login: ~azure.mgmt.web.v2021_01_15.models.LoginScopes
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'ClientRegistration'},
-        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'ClientRegistration'},
+        'login': {'key': 'login', 'type': 'LoginScopes'},
     }
 
     def __init__(
@@ -7750,19 +7385,9 @@ class GlobalCsmSkuDescription(msrest.serialization.Model):
         self.capabilities = kwargs.get('capabilities', None)
 
 
-class GlobalValidation(ProxyOnlyResource):
+class GlobalValidation(msrest.serialization.Model):
     """The configuration settings that determines the validation flow of users using App Service Authentication/Authorization.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param require_authentication: :code:`<code>true</code>` if the authentication flow is required
      any request is made; otherwise, :code:`<code>false</code>`.
     :type require_authentication: bool
@@ -7782,21 +7407,11 @@ class GlobalValidation(ProxyOnlyResource):
     :type excluded_paths: list[str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'require_authentication': {'key': 'properties.requireAuthentication', 'type': 'bool'},
-        'unauthenticated_client_action': {'key': 'properties.unauthenticatedClientAction', 'type': 'str'},
-        'redirect_to_provider': {'key': 'properties.redirectToProvider', 'type': 'str'},
-        'excluded_paths': {'key': 'properties.excludedPaths', 'type': '[str]'},
+        'require_authentication': {'key': 'requireAuthentication', 'type': 'bool'},
+        'unauthenticated_client_action': {'key': 'unauthenticatedClientAction', 'type': 'str'},
+        'redirect_to_provider': {'key': 'redirectToProvider', 'type': 'str'},
+        'excluded_paths': {'key': 'excludedPaths', 'type': '[str]'},
     }
 
     def __init__(
@@ -7810,19 +7425,9 @@ class GlobalValidation(ProxyOnlyResource):
         self.excluded_paths = kwargs.get('excluded_paths', None)
 
 
-class Google(ProxyOnlyResource):
+class Google(msrest.serialization.Model):
     """The configuration settings of the Google provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the Google provider should not be enabled despite
      the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -7836,21 +7441,11 @@ class Google(ProxyOnlyResource):
     :type validation: ~azure.mgmt.web.v2021_01_15.models.AllowedAudiencesValidation
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'ClientRegistration'},
-        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
-        'validation': {'key': 'properties.validation', 'type': 'AllowedAudiencesValidation'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'ClientRegistration'},
+        'login': {'key': 'login', 'type': 'LoginScopes'},
+        'validation': {'key': 'validation', 'type': 'AllowedAudiencesValidation'},
     }
 
     def __init__(
@@ -8217,19 +7812,9 @@ class HttpLogsConfig(msrest.serialization.Model):
         self.azure_blob_storage = kwargs.get('azure_blob_storage', None)
 
 
-class HttpSettings(ProxyOnlyResource):
+class HttpSettings(msrest.serialization.Model):
     """The configuration settings of the HTTP requests for authentication and authorization requests made against App Service Authentication/Authorization.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param require_https: :code:`<code>false</code>` if the authentication/authorization responses
      not having the HTTPS scheme are permissible; otherwise, :code:`<code>true</code>`.
     :type require_https: bool
@@ -8239,20 +7824,10 @@ class HttpSettings(ProxyOnlyResource):
     :type forward_proxy: ~azure.mgmt.web.v2021_01_15.models.ForwardProxy
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'require_https': {'key': 'properties.requireHttps', 'type': 'bool'},
-        'routes': {'key': 'properties.routes', 'type': 'HttpSettingsRoutes'},
-        'forward_proxy': {'key': 'properties.forwardProxy', 'type': 'ForwardProxy'},
+        'require_https': {'key': 'requireHttps', 'type': 'bool'},
+        'routes': {'key': 'routes', 'type': 'HttpSettingsRoutes'},
+        'forward_proxy': {'key': 'forwardProxy', 'type': 'ForwardProxy'},
     }
 
     def __init__(
@@ -8265,35 +7840,15 @@ class HttpSettings(ProxyOnlyResource):
         self.forward_proxy = kwargs.get('forward_proxy', None)
 
 
-class HttpSettingsRoutes(ProxyOnlyResource):
+class HttpSettingsRoutes(msrest.serialization.Model):
     """The configuration settings of the paths HTTP requests.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param api_prefix: The prefix that should precede all the authentication/authorization paths.
     :type api_prefix: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'api_prefix': {'key': 'properties.apiPrefix', 'type': 'str'},
+        'api_prefix': {'key': 'apiPrefix', 'type': 'str'},
     }
 
     def __init__(
@@ -8568,19 +8123,9 @@ class IdentifierCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class IdentityProviders(ProxyOnlyResource):
+class IdentityProviders(msrest.serialization.Model):
     """The configuration settings of each of the identity providers used to configure App Service Authentication/Authorization.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param azure_active_directory: The configuration settings of the Azure Active directory
      provider.
     :type azure_active_directory: ~azure.mgmt.web.v2021_01_15.models.AzureActiveDirectory
@@ -8590,42 +8135,32 @@ class IdentityProviders(ProxyOnlyResource):
     :type git_hub: ~azure.mgmt.web.v2021_01_15.models.GitHub
     :param google: The configuration settings of the Google provider.
     :type google: ~azure.mgmt.web.v2021_01_15.models.Google
+    :param legacy_microsoft_account: The configuration settings of the legacy Microsoft Account
+     provider.
+    :type legacy_microsoft_account: ~azure.mgmt.web.v2021_01_15.models.LegacyMicrosoftAccount
     :param twitter: The configuration settings of the Twitter provider.
     :type twitter: ~azure.mgmt.web.v2021_01_15.models.Twitter
+    :param apple: The configuration settings of the Apple provider.
+    :type apple: ~azure.mgmt.web.v2021_01_15.models.Apple
+    :param azure_static_web_apps: The configuration settings of the Azure Static Web Apps provider.
+    :type azure_static_web_apps: ~azure.mgmt.web.v2021_01_15.models.AzureStaticWebApps
     :param custom_open_id_connect_providers: The map of the name of the alias of each custom Open
      ID Connect provider to the
      configuration settings of the custom Open ID Connect provider.
     :type custom_open_id_connect_providers: dict[str,
      ~azure.mgmt.web.v2021_01_15.models.CustomOpenIdConnectProvider]
-    :param legacy_microsoft_account: The configuration settings of the legacy Microsoft Account
-     provider.
-    :type legacy_microsoft_account: ~azure.mgmt.web.v2021_01_15.models.LegacyMicrosoftAccount
-    :param apple: The configuration settings of the Apple provider.
-    :type apple: ~azure.mgmt.web.v2021_01_15.models.Apple
-    :param azure_static_web_apps: The configuration settings of the Azure Static Web Apps provider.
-    :type azure_static_web_apps: ~azure.mgmt.web.v2021_01_15.models.AzureStaticWebApps
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
-        'facebook': {'key': 'properties.facebook', 'type': 'Facebook'},
-        'git_hub': {'key': 'properties.gitHub', 'type': 'GitHub'},
-        'google': {'key': 'properties.google', 'type': 'Google'},
-        'twitter': {'key': 'properties.twitter', 'type': 'Twitter'},
-        'custom_open_id_connect_providers': {'key': 'properties.customOpenIdConnectProviders', 'type': '{CustomOpenIdConnectProvider}'},
-        'legacy_microsoft_account': {'key': 'properties.legacyMicrosoftAccount', 'type': 'LegacyMicrosoftAccount'},
-        'apple': {'key': 'properties.apple', 'type': 'Apple'},
-        'azure_static_web_apps': {'key': 'properties.azureStaticWebApps', 'type': 'AzureStaticWebApps'},
+        'azure_active_directory': {'key': 'azureActiveDirectory', 'type': 'AzureActiveDirectory'},
+        'facebook': {'key': 'facebook', 'type': 'Facebook'},
+        'git_hub': {'key': 'gitHub', 'type': 'GitHub'},
+        'google': {'key': 'google', 'type': 'Google'},
+        'legacy_microsoft_account': {'key': 'legacyMicrosoftAccount', 'type': 'LegacyMicrosoftAccount'},
+        'twitter': {'key': 'twitter', 'type': 'Twitter'},
+        'apple': {'key': 'apple', 'type': 'Apple'},
+        'azure_static_web_apps': {'key': 'azureStaticWebApps', 'type': 'AzureStaticWebApps'},
+        'custom_open_id_connect_providers': {'key': 'customOpenIdConnectProviders', 'type': '{CustomOpenIdConnectProvider}'},
     }
 
     def __init__(
@@ -8637,11 +8172,11 @@ class IdentityProviders(ProxyOnlyResource):
         self.facebook = kwargs.get('facebook', None)
         self.git_hub = kwargs.get('git_hub', None)
         self.google = kwargs.get('google', None)
-        self.twitter = kwargs.get('twitter', None)
-        self.custom_open_id_connect_providers = kwargs.get('custom_open_id_connect_providers', None)
         self.legacy_microsoft_account = kwargs.get('legacy_microsoft_account', None)
+        self.twitter = kwargs.get('twitter', None)
         self.apple = kwargs.get('apple', None)
         self.azure_static_web_apps = kwargs.get('azure_static_web_apps', None)
+        self.custom_open_id_connect_providers = kwargs.get('custom_open_id_connect_providers', None)
 
 
 class InboundEnvironmentEndpoint(msrest.serialization.Model):
@@ -8790,38 +8325,18 @@ class IpSecurityRestriction(msrest.serialization.Model):
         self.headers = kwargs.get('headers', None)
 
 
-class JwtClaimChecks(ProxyOnlyResource):
+class JwtClaimChecks(msrest.serialization.Model):
     """The configuration settings of the checks that should be made while validating the JWT Claims.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param allowed_groups: The list of the allowed groups.
     :type allowed_groups: list[str]
     :param allowed_client_applications: The list of the allowed client applications.
     :type allowed_client_applications: list[str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'allowed_groups': {'key': 'properties.allowedGroups', 'type': '[str]'},
-        'allowed_client_applications': {'key': 'properties.allowedClientApplications', 'type': '[str]'},
+        'allowed_groups': {'key': 'allowedGroups', 'type': '[str]'},
+        'allowed_client_applications': {'key': 'allowedClientApplications', 'type': '[str]'},
     }
 
     def __init__(
@@ -9121,19 +8636,9 @@ class KubeEnvironmentProfile(msrest.serialization.Model):
         self.type = None
 
 
-class LegacyMicrosoftAccount(ProxyOnlyResource):
+class LegacyMicrosoftAccount(msrest.serialization.Model):
     """The configuration settings of the legacy Microsoft Account provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the legacy Microsoft Account provider should not
      be enabled despite the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -9147,21 +8652,11 @@ class LegacyMicrosoftAccount(ProxyOnlyResource):
     :type validation: ~azure.mgmt.web.v2021_01_15.models.AllowedAudiencesValidation
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'ClientRegistration'},
-        'login': {'key': 'properties.login', 'type': 'LoginScopes'},
-        'validation': {'key': 'properties.validation', 'type': 'AllowedAudiencesValidation'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'ClientRegistration'},
+        'login': {'key': 'login', 'type': 'LoginScopes'},
+        'validation': {'key': 'validation', 'type': 'AllowedAudiencesValidation'},
     }
 
     def __init__(
@@ -9286,19 +8781,9 @@ class LogAnalyticsConfiguration(msrest.serialization.Model):
         self.shared_key = kwargs.get('shared_key', None)
 
 
-class Login(ProxyOnlyResource):
+class Login(msrest.serialization.Model):
     """The configuration settings of the login flow of users using App Service Authentication/Authorization.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param routes: The routes that specify the endpoints used for login and logout requests.
     :type routes: ~azure.mgmt.web.v2021_01_15.models.LoginRoutes
     :param token_store: The configuration settings of the token store.
@@ -9317,23 +8802,13 @@ class Login(ProxyOnlyResource):
     :type nonce: ~azure.mgmt.web.v2021_01_15.models.Nonce
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': 'LoginRoutes'},
-        'token_store': {'key': 'properties.tokenStore', 'type': 'TokenStore'},
-        'preserve_url_fragments_for_logins': {'key': 'properties.preserveUrlFragmentsForLogins', 'type': 'bool'},
-        'allowed_external_redirect_urls': {'key': 'properties.allowedExternalRedirectUrls', 'type': '[str]'},
-        'cookie_expiration': {'key': 'properties.cookieExpiration', 'type': 'CookieExpiration'},
-        'nonce': {'key': 'properties.nonce', 'type': 'Nonce'},
+        'routes': {'key': 'routes', 'type': 'LoginRoutes'},
+        'token_store': {'key': 'tokenStore', 'type': 'TokenStore'},
+        'preserve_url_fragments_for_logins': {'key': 'preserveUrlFragmentsForLogins', 'type': 'bool'},
+        'allowed_external_redirect_urls': {'key': 'allowedExternalRedirectUrls', 'type': '[str]'},
+        'cookie_expiration': {'key': 'cookieExpiration', 'type': 'CookieExpiration'},
+        'nonce': {'key': 'nonce', 'type': 'Nonce'},
     }
 
     def __init__(
@@ -9349,35 +8824,15 @@ class Login(ProxyOnlyResource):
         self.nonce = kwargs.get('nonce', None)
 
 
-class LoginRoutes(ProxyOnlyResource):
+class LoginRoutes(msrest.serialization.Model):
     """The routes that specify the endpoints used for login and logout requests.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param logout_endpoint: The endpoint at which a logout request should be made.
     :type logout_endpoint: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'logout_endpoint': {'key': 'properties.logoutEndpoint', 'type': 'str'},
+        'logout_endpoint': {'key': 'logoutEndpoint', 'type': 'str'},
     }
 
     def __init__(
@@ -9388,35 +8843,15 @@ class LoginRoutes(ProxyOnlyResource):
         self.logout_endpoint = kwargs.get('logout_endpoint', None)
 
 
-class LoginScopes(ProxyOnlyResource):
+class LoginScopes(msrest.serialization.Model):
     """The configuration settings of the login flow, including the scopes that should be requested.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param scopes: A list of the scopes that should be requested while authenticating.
     :type scopes: list[str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
+        'scopes': {'key': 'scopes', 'type': '[str]'},
     }
 
     def __init__(
@@ -10065,19 +9500,9 @@ class NetworkTrace(msrest.serialization.Model):
         self.message = kwargs.get('message', None)
 
 
-class Nonce(ProxyOnlyResource):
+class Nonce(msrest.serialization.Model):
     """The configuration settings of the nonce used in the login flow.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param validate_nonce: :code:`<code>false</code>` if the nonce should not be validated while
      completing the login flow; otherwise, :code:`<code>true</code>`.
     :type validate_nonce: bool
@@ -10086,19 +9511,9 @@ class Nonce(ProxyOnlyResource):
     :type nonce_expiration_interval: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'validate_nonce': {'key': 'properties.validateNonce', 'type': 'bool'},
-        'nonce_expiration_interval': {'key': 'properties.nonceExpirationInterval', 'type': 'str'},
+        'validate_nonce': {'key': 'validateNonce', 'type': 'bool'},
+        'nonce_expiration_interval': {'key': 'nonceExpirationInterval', 'type': 'str'},
     }
 
     def __init__(
@@ -10110,19 +9525,9 @@ class Nonce(ProxyOnlyResource):
         self.nonce_expiration_interval = kwargs.get('nonce_expiration_interval', None)
 
 
-class OpenIdConnectClientCredential(ProxyOnlyResource):
+class OpenIdConnectClientCredential(msrest.serialization.Model):
     """The authentication client credentials of the custom Open ID Connect provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param method: The method that should be used to authenticate the user. The only acceptable
      values to pass in are None and "ClientSecretPost". The default value is None.
     :type method: str
@@ -10131,19 +9536,9 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
     :type client_secret_setting_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'method': {'key': 'properties.method', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
+        'method': {'key': 'method', 'type': 'str'},
+        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
     }
 
     def __init__(
@@ -10155,19 +9550,9 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
         self.client_secret_setting_name = kwargs.get('client_secret_setting_name', None)
 
 
-class OpenIdConnectConfig(ProxyOnlyResource):
+class OpenIdConnectConfig(msrest.serialization.Model):
     """The configuration settings of the endpoints used for the custom Open ID Connect provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param authorization_endpoint: The endpoint to be used to make an authorization request.
     :type authorization_endpoint: str
     :param token_endpoint: The endpoint to be used to request a token.
@@ -10181,22 +9566,12 @@ class OpenIdConnectConfig(ProxyOnlyResource):
     :type well_known_open_id_configuration: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'authorization_endpoint': {'key': 'properties.authorizationEndpoint', 'type': 'str'},
-        'token_endpoint': {'key': 'properties.tokenEndpoint', 'type': 'str'},
-        'issuer': {'key': 'properties.issuer', 'type': 'str'},
-        'certification_uri': {'key': 'properties.certificationUri', 'type': 'str'},
-        'well_known_open_id_configuration': {'key': 'properties.wellKnownOpenIdConfiguration', 'type': 'str'},
+        'authorization_endpoint': {'key': 'authorizationEndpoint', 'type': 'str'},
+        'token_endpoint': {'key': 'tokenEndpoint', 'type': 'str'},
+        'issuer': {'key': 'issuer', 'type': 'str'},
+        'certification_uri': {'key': 'certificationUri', 'type': 'str'},
+        'well_known_open_id_configuration': {'key': 'wellKnownOpenIdConfiguration', 'type': 'str'},
     }
 
     def __init__(
@@ -10211,38 +9586,18 @@ class OpenIdConnectConfig(ProxyOnlyResource):
         self.well_known_open_id_configuration = kwargs.get('well_known_open_id_configuration', None)
 
 
-class OpenIdConnectLogin(ProxyOnlyResource):
+class OpenIdConnectLogin(msrest.serialization.Model):
     """The configuration settings of the login flow of the custom Open ID Connect provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param name_claim_type: The name of the claim that contains the users name.
     :type name_claim_type: str
     :param scopes: A list of the scopes that should be requested while authenticating.
     :type scopes: list[str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name_claim_type': {'key': 'properties.nameClaimType', 'type': 'str'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
+        'name_claim_type': {'key': 'nameClaimType', 'type': 'str'},
+        'scopes': {'key': 'scopes', 'type': '[str]'},
     }
 
     def __init__(
@@ -10254,19 +9609,9 @@ class OpenIdConnectLogin(ProxyOnlyResource):
         self.scopes = kwargs.get('scopes', None)
 
 
-class OpenIdConnectRegistration(ProxyOnlyResource):
+class OpenIdConnectRegistration(msrest.serialization.Model):
     """The configuration settings of the app registration for the custom Open ID Connect provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param client_id: The client id of the custom Open ID Connect provider.
     :type client_id: str
     :param client_credential: The authentication credentials of the custom Open ID Connect
@@ -10277,20 +9622,10 @@ class OpenIdConnectRegistration(ProxyOnlyResource):
     :type open_id_connect_configuration: ~azure.mgmt.web.v2021_01_15.models.OpenIdConnectConfig
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
-        'client_credential': {'key': 'properties.clientCredential', 'type': 'OpenIdConnectClientCredential'},
-        'open_id_connect_configuration': {'key': 'properties.openIdConnectConfiguration', 'type': 'OpenIdConnectConfig'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_credential': {'key': 'clientCredential', 'type': 'OpenIdConnectClientCredential'},
+        'open_id_connect_configuration': {'key': 'openIdConnectConfiguration', 'type': 'OpenIdConnectConfig'},
     }
 
     def __init__(
@@ -17515,19 +16850,9 @@ class TldLegalAgreementCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class TokenStore(ProxyOnlyResource):
+class TokenStore(msrest.serialization.Model):
     """The configuration settings of the token store.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>true</code>` to durably store platform-specific security tokens
      that are obtained during login flows; otherwise, :code:`<code>false</code>`.
       The default is :code:`<code>false</code>`.
@@ -17544,21 +16869,11 @@ class TokenStore(ProxyOnlyResource):
     :type azure_blob_storage: ~azure.mgmt.web.v2021_01_15.models.BlobStorageTokenStore
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'token_refresh_extension_hours': {'key': 'properties.tokenRefreshExtensionHours', 'type': 'float'},
-        'file_system': {'key': 'properties.fileSystem', 'type': 'FileSystemTokenStore'},
-        'azure_blob_storage': {'key': 'properties.azureBlobStorage', 'type': 'BlobStorageTokenStore'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'token_refresh_extension_hours': {'key': 'tokenRefreshExtensionHours', 'type': 'float'},
+        'file_system': {'key': 'fileSystem', 'type': 'FileSystemTokenStore'},
+        'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'BlobStorageTokenStore'},
     }
 
     def __init__(
@@ -17926,19 +17241,9 @@ class TriggeredWebJobCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class Twitter(ProxyOnlyResource):
+class Twitter(msrest.serialization.Model):
     """The configuration settings of the Twitter provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param enabled: :code:`<code>false</code>` if the Twitter provider should not be enabled
      despite the set registration; otherwise, :code:`<code>true</code>`.
     :type enabled: bool
@@ -17947,19 +17252,9 @@ class Twitter(ProxyOnlyResource):
     :type registration: ~azure.mgmt.web.v2021_01_15.models.TwitterRegistration
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'registration': {'key': 'properties.registration', 'type': 'TwitterRegistration'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'registration': {'key': 'registration', 'type': 'TwitterRegistration'},
     }
 
     def __init__(
@@ -17971,19 +17266,9 @@ class Twitter(ProxyOnlyResource):
         self.registration = kwargs.get('registration', None)
 
 
-class TwitterRegistration(ProxyOnlyResource):
+class TwitterRegistration(msrest.serialization.Model):
     """The configuration settings of the app registration for the Twitter provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
      This setting is required for enabling Twitter Sign-In.
      Twitter Sign-In documentation: https://dev.twitter.com/web/sign-in.
@@ -17994,19 +17279,9 @@ class TwitterRegistration(ProxyOnlyResource):
     :type consumer_secret_setting_name: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'consumer_key': {'key': 'properties.consumerKey', 'type': 'str'},
-        'consumer_secret_setting_name': {'key': 'properties.consumerSecretSettingName', 'type': 'str'},
+        'consumer_key': {'key': 'consumerKey', 'type': 'str'},
+        'consumer_secret_setting_name': {'key': 'consumerSecretSettingName', 'type': 'str'},
     }
 
     def __init__(

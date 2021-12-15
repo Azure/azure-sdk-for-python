@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import (
-    MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync,
+    MetricsAdvisor as _ClientAsync,
 )
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,

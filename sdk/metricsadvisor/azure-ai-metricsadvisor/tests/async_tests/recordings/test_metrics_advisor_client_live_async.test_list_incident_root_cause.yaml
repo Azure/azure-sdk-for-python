@@ -5,25 +5,25 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[{"rootCause":{"dimension":{"category":"Electronics (Consumer)","dimension_name":"Karachi"}},"path":["dimension_name"],"score":0.34265262137636504,"description":"Increase
-        on category = Electronics (Consumer) | dimension_name = Karachi contributes
-        the most to current incident."}]}'
+      string: '{"value":[{"rootCause":{"dimension":{"dimension_name":"Beijing","category":"Handmade"}},"path":["category"],"score":0.05937581364487382,"description":"Increase
+        on dimension_name = Beijing | category = Handmade contributes the most to
+        current incident."}]}'
     headers:
-      apim-request-id: 6fdced2e-c6f2-4ccf-9cb1-df881b160812
-      content-length: '259'
+      apim-request-id: a686e66f-5f00-44e2-8837-bdbce7ac157b
+      content-length: '239'
       content-type: application/json; charset=utf-8
-      date: Sat, 12 Jun 2021 00:43:04 GMT
+      date: Wed, 29 Sep 2021 19:43:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '269'
-      x-request-id: 6fdced2e-c6f2-4ccf-9cb1-df881b160812
+      x-envoy-upstream-service-time: '252'
+      x-request-id: a686e66f-5f00-44e2-8837-bdbce7ac157b
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/incidents/2583ff47fef9174e6d6bfe73415ad914-174d2024c00/rootCause
+    url: https://ga-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/efaee305-f049-43ec-9f9b-76026d55c14a/incidents/aee0225fd93cfe42ec4acd365613c857-17bb8679000/rootCause
 version: 1

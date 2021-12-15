@@ -16,6 +16,10 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 [Package (PyPI)][pypi_package_administration] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 ### Install packages
 Install [azure-keyvault-administration][pypi_package_administration] and
@@ -392,7 +396,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/
 [pip]: https://pypi.org/project/pip/
-[pypi_package_administration]: https://aka.ms/azsdk/python/keyvault-administration/pypi
+[pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 
 

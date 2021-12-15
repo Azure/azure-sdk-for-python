@@ -90,7 +90,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         # create the search service
         from azure.mgmt.search.models import SearchService, Sku
 
-        service_config = SearchService(location="West US", sku=Sku(name="free"))
+        service_config = SearchService(location="West US", sku=Sku(name="basic"))
         resource = self.mgmt_client.services.begin_create_or_update(
             group_name, self.service_name, service_config
         )

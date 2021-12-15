@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Dict, Any, List
 
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
-    RepositoryProperties as GeneratedRepositoryProperties,
+    ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
     ManifestWriteableProperties,
@@ -156,7 +156,6 @@ class RepositoryProperties(object):
     :ivar bool can_write: Delete Permissions for an artifact
     :ivar bool can_read: Delete Permissions for an artifact
     :ivar bool can_list: Delete Permissions for an artifact
-    :ivar bool teleport_enabled: Teleport enabled for the repository
     :ivar created_on: Time the repository was created
     :vartype created_on: datetime.datetime
     :ivar last_updated_on: Time the repository was last updated
@@ -176,7 +175,6 @@ class RepositoryProperties(object):
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
         self.can_write = kwargs.get("can_write")
-        self.teleport_enabled = kwargs.get("teleport_enabled")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -191,13 +189,11 @@ class RepositoryProperties(object):
             can_read=generated.can_read,
             can_write=generated.can_write,
             can_list=generated.can_list,
-            teleport_enabled=generated.teleport_enabled,
         )
 
     def _to_generated(self):
         # type: () -> RepositoryWriteableProperties
         return RepositoryWriteableProperties(
-            teleport_enabled=self.teleport_enabled,
             can_delete=self.can_delete,
             can_read=self.can_read,
             can_write=self.can_write,

@@ -25,8 +25,8 @@ try:
     from ._models_py3 import ContainerGroupDiagnostics
     from ._models_py3 import ContainerGroupIdentity
     from ._models_py3 import ContainerGroupListResult
-    from ._models_py3 import ContainerGroupNetworkProfile
     from ._models_py3 import ContainerGroupPropertiesInstanceView
+    from ._models_py3 import ContainerGroupSubnetId
     from ._models_py3 import ContainerHttpGet
     from ._models_py3 import ContainerPort
     from ._models_py3 import ContainerProbe
@@ -38,7 +38,7 @@ try:
     from ._models_py3 import Event
     from ._models_py3 import GitRepoVolume
     from ._models_py3 import GpuResource
-    from ._models_py3 import HttpHeaders
+    from ._models_py3 import HttpHeader
     from ._models_py3 import ImageRegistryCredential
     from ._models_py3 import InitContainerDefinition
     from ._models_py3 import InitContainerPropertiesDefinitionInstanceView
@@ -77,8 +77,8 @@ except (SyntaxError, ImportError):
     from ._models import ContainerGroupDiagnostics  # type: ignore
     from ._models import ContainerGroupIdentity  # type: ignore
     from ._models import ContainerGroupListResult  # type: ignore
-    from ._models import ContainerGroupNetworkProfile  # type: ignore
     from ._models import ContainerGroupPropertiesInstanceView  # type: ignore
+    from ._models import ContainerGroupSubnetId  # type: ignore
     from ._models import ContainerHttpGet  # type: ignore
     from ._models import ContainerPort  # type: ignore
     from ._models import ContainerProbe  # type: ignore
@@ -90,7 +90,7 @@ except (SyntaxError, ImportError):
     from ._models import Event  # type: ignore
     from ._models import GitRepoVolume  # type: ignore
     from ._models import GpuResource  # type: ignore
-    from ._models import HttpHeaders  # type: ignore
+    from ._models import HttpHeader  # type: ignore
     from ._models import ImageRegistryCredential  # type: ignore
     from ._models import InitContainerDefinition  # type: ignore
     from ._models import InitContainerPropertiesDefinitionInstanceView  # type: ignore
@@ -144,8 +144,8 @@ __all__ = [
     'ContainerGroupDiagnostics',
     'ContainerGroupIdentity',
     'ContainerGroupListResult',
-    'ContainerGroupNetworkProfile',
     'ContainerGroupPropertiesInstanceView',
+    'ContainerGroupSubnetId',
     'ContainerHttpGet',
     'ContainerPort',
     'ContainerProbe',
@@ -157,7 +157,7 @@ __all__ = [
     'Event',
     'GitRepoVolume',
     'GpuResource',
-    'HttpHeaders',
+    'HttpHeader',
     'ImageRegistryCredential',
     'InitContainerDefinition',
     'InitContainerPropertiesDefinitionInstanceView',

@@ -47,7 +47,7 @@ class EncryptionScopesOperations:
         account_name: str,
         encryption_scope_name: str,
         encryption_scope: "_models.EncryptionScope",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EncryptionScope":
         """Synchronously creates or updates an encryption scope under the specified storage account. If an
         encryption scope is already created and a subsequent request is issued with different
@@ -130,7 +130,7 @@ class EncryptionScopesOperations:
         account_name: str,
         encryption_scope_name: str,
         encryption_scope: "_models.EncryptionScope",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EncryptionScope":
         """Update encryption scope properties as specified in the request body. Update fails if the
         specified encryption scope does not already exist.
@@ -207,7 +207,7 @@ class EncryptionScopesOperations:
         resource_group_name: str,
         account_name: str,
         encryption_scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EncryptionScope":
         """Returns the properties for the specified encryption scope.
 
@@ -275,7 +275,7 @@ class EncryptionScopesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EncryptionScopeListResult"]:
         """Lists all the encryption scopes available under the specified storage account.
 

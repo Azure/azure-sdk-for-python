@@ -142,7 +142,8 @@ _MODEL_PARAM_CHANGE_REQUIRED = "Parameter {} of model {} is now required"
 def build_change_log(old_report, new_report):
     change_log = ChangeLog(old_report, new_report)
 
-    result = diff(old_report, new_report)
+    # when diff result is large,  compare_lengths=True may cause wrong result
+    result = diff(old_report, new_report, compare_lengths=False)
 
     for diff_line in result:
         # Operations

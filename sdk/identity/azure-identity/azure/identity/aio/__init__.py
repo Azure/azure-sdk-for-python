@@ -6,7 +6,6 @@
 
 from ._credentials import (
     AuthorizationCodeCredential,
-    AzureApplicationCredential,
     AzureCliCredential,
     AzurePowerShellCredential,
     CertificateCredential,
@@ -15,6 +14,7 @@ from ._credentials import (
     DefaultAzureCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
+    OnBehalfOfCredential,
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
 )
@@ -22,7 +22,6 @@ from ._credentials import (
 
 __all__ = [
     "AuthorizationCodeCredential",
-    "AzureApplicationCredential",
     "AzureCliCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
@@ -30,6 +29,7 @@ __all__ = [
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
+    "OnBehalfOfCredential",
     "ChainedTokenCredential",
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",

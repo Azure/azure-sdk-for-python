@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchd56a1820.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
@@ -62,13 +62,13 @@ interactions:
       cache-control: no-cache
       content-length: '2378'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:24:38 GMT
-      elapsed-time: '104'
+      date: Tue, 31 Aug 2021 17:30:45 GMT
+      elapsed-time: '145'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 5765416f-d9fa-11eb-8bc4-a0481ca055a9
+      request-id: 2d499c69-0a81-11ec-9c7b-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -85,7 +85,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchd56a1820.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
@@ -114,13 +114,13 @@ interactions:
       cache-control: no-cache
       content-length: '1269'
       content-type: application/json; odata.metadata=none
-      date: Wed, 30 Jun 2021 23:24:39 GMT
+      date: Tue, 31 Aug 2021 17:30:45 GMT
       elapsed-time: '9'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 5795de01-d9fa-11eb-9703-a0481ca055a9
+      request-id: 2d8777e9-0a81-11ec-8d65-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

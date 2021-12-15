@@ -8,20 +8,20 @@ interactions:
       Content-Type:
       - image/png
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 4ff21cfd-3b50-4a71-a014-3ba0005ef700
+      apim-request-id: 588b7b1e-9c72-475d-8604-9b00ab0eaad8
       content-length: '0'
-      date: Mon, 10 May 2021 23:57:56 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/4ff21cfd-3b50-4a71-a014-3ba0005ef700
+      date: Wed, 15 Sep 2021 21:39:48 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/588b7b1e-9c72-475d-8604-9b00ab0eaad8
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1221'
+      x-envoy-upstream-service-time: '1251'
     status:
       code: 202
       message: Accepted
@@ -30,13 +30,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/4ff21cfd-3b50-4a71-a014-3ba0005ef700
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/588b7b1e-9c72-475d-8604-9b00ab0eaad8
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-10T23:57:57Z",
-        "lastUpdatedDateTime": "2021-05-10T23:58:00Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-15T21:39:48Z",
+        "lastUpdatedDateTime": "2021-09-15T21:39:51Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": -16.693, "width": 4032, "height":
         3024, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:businesscard",
         "pageRange": [1, 1], "fields": {"Addresses": {"type": "array", "valueArray":
@@ -74,15 +74,15 @@ interactions:
         "+44 (0) 20 9876 5432", "boundingBox": [2468.3, 1118.6, 3128.3, 914.9, 3151,
         988.1, 2490.9, 1191.9], "page": 1, "confidence": 0.989}]}}}]}}'
     headers:
-      apim-request-id: ed4a177e-5fab-484b-9631-1d13042d875a
+      apim-request-id: eae11c04-e5ca-4578-a205-0f3224225373
       content-length: '2673'
       content-type: application/json; charset=utf-8
-      date: Mon, 10 May 2021 23:58:02 GMT
+      date: Wed, 15 Sep 2021 21:39:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '18'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/4ff21cfd-3b50-4a71-a014-3ba0005ef700
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/588b7b1e-9c72-475d-8604-9b00ab0eaad8
 version: 1

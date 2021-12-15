@@ -46,7 +46,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Table":
         """Creates a new table with the specified table name, under the specified account.
 
@@ -113,7 +113,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Table":
         """Creates a new table with the specified table name, under the specified account.
 
@@ -180,7 +180,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Table":
         """Gets the table with the specified table name, under the specified account if it exists.
 
@@ -247,7 +247,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the table with the specified table name, under the specified account if it exists.
 
@@ -310,7 +310,7 @@ class TableOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListTableResource"]:
         """Gets a list of all the tables under the specified storage account.
 

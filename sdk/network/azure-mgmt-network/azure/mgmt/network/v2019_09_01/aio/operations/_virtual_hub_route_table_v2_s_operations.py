@@ -48,7 +48,7 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualHubRouteTableV2":
         """Retrieves the details of a VirtualHubRouteTableV2.
 
@@ -112,7 +112,7 @@ class VirtualHubRouteTableV2SOperations:
         virtual_hub_name: str,
         route_table_name: str,
         virtual_hub_route_table_v2_parameters: "_models.VirtualHubRouteTableV2",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualHubRouteTableV2":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHubRouteTableV2"]
         error_map = {
@@ -172,7 +172,7 @@ class VirtualHubRouteTableV2SOperations:
         virtual_hub_name: str,
         route_table_name: str,
         virtual_hub_route_table_v2_parameters: "_models.VirtualHubRouteTableV2",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualHubRouteTableV2"]:
         """Creates a VirtualHubRouteTableV2 resource if it doesn't exist else updates the existing
         VirtualHubRouteTableV2.
@@ -188,8 +188,8 @@ class VirtualHubRouteTableV2SOperations:
         :type virtual_hub_route_table_v2_parameters: ~azure.mgmt.network.v2019_09_01.models.VirtualHubRouteTableV2
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualHubRouteTableV2 or the result of cls(response)
@@ -249,7 +249,7 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -296,7 +296,7 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a VirtualHubRouteTableV2.
 
@@ -308,8 +308,8 @@ class VirtualHubRouteTableV2SOperations:
         :type route_table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -364,7 +364,7 @@ class VirtualHubRouteTableV2SOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualHubRouteTableV2SResult"]:
         """Retrieves the details of all VirtualHubRouteTableV2s.
 

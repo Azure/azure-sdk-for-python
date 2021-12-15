@@ -200,7 +200,7 @@ interactions:
     uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/listKeys?api-version=2021-06-01
   response:
     body:
-      string: '{"accountName":"batch3e1b0fe5","primary":"3UQ9ry1mRmgftC37/IOylMEnaC713zLTXoMqp/zBQZ1ANY8eLsv1j5lkvN3PnaSevqoKjtfjKFyJ5Vsc6SGA0w==","secondary":"6dM/Myi6VRmOwbqgMjcIv4lSS7SQvlSTCmQX3RiwLvbivKU9oFi5zgdx7oNtOATEbB9rYO8oDkYVwn8PJLaTcg=="}'
+      string: '{"accountName":"batch3e1b0fe5","primary":"redacted6f7d7a","secondary":"redacted59d978"}'
     headers:
       cache-control:
       - no-cache
@@ -248,7 +248,7 @@ interactions:
     uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/regenerateKeys?api-version=2021-06-01
   response:
     body:
-      string: '{"accountName":"batch3e1b0fe5","primary":"3UQ9ry1mRmgftC37/IOylMEnaC713zLTXoMqp/zBQZ1ANY8eLsv1j5lkvN3PnaSevqoKjtfjKFyJ5Vsc6SGA0w==","secondary":"Q3pqv2ncSAxxnhTR14lumWnq9GRUVvy8exfqF2q5x6SZYGpregob+HI5eehGuFusbCaHLdzdzr3ZqBKXY3Qtyw=="}'
+      string: '{"accountName":"batch3e1b0fe5","primary":"redacted6f7d7a","secondary":"redactedebdb55"}'
     headers:
       cache-control:
       - no-cache

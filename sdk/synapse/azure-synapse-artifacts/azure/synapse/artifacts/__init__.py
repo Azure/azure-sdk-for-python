@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._artifacts_client import ArtifactsClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ArtifactsClient']
 
 try:

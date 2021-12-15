@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(Configuration):
-    """Configuration for MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2.
+class MetricsAdvisorConfiguration(Configuration):
+    """Configuration for MetricsAdvisor.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -39,7 +39,7 @@ class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2Configuration, self).__init__(**kwargs)
+        super(MetricsAdvisorConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint

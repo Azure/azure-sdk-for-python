@@ -47,9 +47,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     This default behavior is configurable with keyword arguments.
 
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only from
-        its configured tenant. This argument doesn't apply to managed identity authentication.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
@@ -70,6 +67,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
+    :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
+        specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -102,6 +101,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
+        interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -133,11 +133,18 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(**kwargs))
+            credentials.append(AzureCliCredential())
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(**kwargs))
+            credentials.append(AzurePowerShellCredential())
         if not exclude_interactive_browser_credential:
-            credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+            if interactive_browser_client_id:
+                credentials.append(
+                    InteractiveBrowserCredential(
+                        tenant_id=interactive_browser_tenant_id, client_id=interactive_browser_client_id, **kwargs
+                    )
+                )
+            else:
+                credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -148,8 +155,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

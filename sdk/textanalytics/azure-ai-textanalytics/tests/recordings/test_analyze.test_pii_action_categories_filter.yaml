@@ -1,9 +1,10 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [{"parameters":
-      {"model-version": "latest", "loggingOptOut": true, "piiCategories": ["USSocialSecurityNumber",
-      "ABARoutingNumber"], "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
-      [], "entityLinkingTasks": [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks":
+      {"piiCategories": ["USSocialSecurityNumber", "ABARoutingNumber"], "stringIndexType":
+      "UnicodeCodePoint"}, "taskName": "0"}], "keyPhraseExtractionTasks": [], "entityLinkingTasks":
+      [], "sentimentAnalysisTasks": [], "extractiveSummarizationTasks": [], "customEntityRecognitionTasks":
+      [], "customSingleClassificationTasks": [], "customMultiClassificationTasks":
       []}, "analysisInput": {"documents": [{"id": "1", "text": "My SSN is 859-98-0987.",
       "language": "en"}, {"id": "2", "text": "Your ABA number - 111000025 - is the
       first 9 digits in the lower left hand corner of your personal check.", "language":
@@ -17,23 +18,23 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '702'
+      - '782'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - d1ef1468-d38e-4136-9d81-788d6f9f005a
+      - 63618e04-0337-41a1-9bc1-a950ae0f3ed5
       date:
-      - Mon, 02 Aug 2021 21:32:44 GMT
+      - Wed, 08 Dec 2021 22:47:27 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/e4464f16-0a8a-453c-89bf-2e391e1dc4ff
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/de9b3f44-f4ff-4e47-a29b-82451fd3e5a5
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '119'
+      - '197'
     status:
       code: 202
       message: Accepted
@@ -55,57 +56,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/e4464f16-0a8a-453c-89bf-2e391e1dc4ff
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/analyze/jobs/de9b3f44-f4ff-4e47-a29b-82451fd3e5a5
   response:
     body:
-      string: '{"jobId":"e4464f16-0a8a-453c-89bf-2e391e1dc4ff","lastUpdateDateTime":"2021-08-02T21:32:46Z","createdDateTime":"2021-08-02T21:32:44Z","expirationDateTime":"2021-08-03T21:32:44Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id:
-      - b25ae19a-2f54-456d-8467-21ccb43ca382
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 02 Aug 2021 21:32:50 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '8'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/analyze/jobs/e4464f16-0a8a-453c-89bf-2e391e1dc4ff
-  response:
-    body:
-      string: '{"jobId":"e4464f16-0a8a-453c-89bf-2e391e1dc4ff","lastUpdateDateTime":"2021-08-02T21:32:52Z","createdDateTime":"2021-08-02T21:32:44Z","expirationDateTime":"2021-08-03T21:32:44Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-08-02T21:32:52.2346395Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[{"redactedText":"My
+      string: '{"jobId":"de9b3f44-f4ff-4e47-a29b-82451fd3e5a5","lastUpdateDateTime":"2021-12-08T22:47:30Z","createdDateTime":"2021-12-08T22:47:28Z","expirationDateTime":"2021-12-09T22:47:28Z","status":"succeeded","errors":[],"tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-12-08T22:47:30.6160294Z","taskName":"0","state":"succeeded","results":{"documents":[{"redactedText":"My
         SSN is ***********.","id":"1","entities":[{"text":"859-98-0987","category":"USSocialSecurityNumber","offset":10,"length":11,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Your
         ABA number - ********* - is the first 9 digits in the lower left hand corner
         of your personal check.","id":"2","entities":[{"text":"111000025","category":"ABARoutingNumber","offset":18,"length":9,"confidenceScore":0.75}],"warnings":[]},{"redactedText":"Is
         998.214.865-68 your Brazilian CPF number?","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}]}}'
     headers:
       apim-request-id:
-      - 60bc8d48-2d62-47de-981d-4414a10ee903
+      - 6272b037-5f64-49dd-bdb7-6e49fd9640ab
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 02 Aug 2021 21:32:55 GMT
+      - Wed, 08 Dec 2021 22:47:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -113,7 +80,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '46'
+      - '134'
     status:
       code: 200
       message: OK

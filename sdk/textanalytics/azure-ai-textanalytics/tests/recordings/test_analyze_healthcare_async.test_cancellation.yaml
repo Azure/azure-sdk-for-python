@@ -15,90 +15,90 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 9f8090b1-c415-4e32-b1b9-96fd200150a4
-      date: Tue, 03 Aug 2021 17:33:11 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+      apim-request-id: e8a6a5c6-03a0-4f39-9c4a-81728bdfecd3
+      date: Wed, 08 Dec 2021 22:55:04 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '318'
+      x-envoy-upstream-service-time: '364'
     status:
       code: 202
       message: Accepted
-    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
   response:
     body:
-      string: '{"jobId":"4098ef0e-6f9c-4f74-a697-a3a9aeab6d64","lastUpdateDateTime":"2021-08-03T17:33:11Z","createdDateTime":"2021-08-03T17:33:10Z","expirationDateTime":"2021-08-04T17:33:10Z","status":"notStarted","errors":[]}'
+      string: '{"jobId":"e626a341-3593-401f-9fb6-bed095a94666","lastUpdateDateTime":"2021-12-08T22:55:05Z","createdDateTime":"2021-12-08T22:55:04Z","expirationDateTime":"2021-12-09T22:55:04Z","status":"notStarted","errors":[]}'
     headers:
-      apim-request-id: 9411e7b6-2aa3-42f0-8ee7-d19a972320d7
+      apim-request-id: 50b2ade6-f2e0-47dd-8149-183c102795ef
       content-type: application/json; charset=utf-8
-      date: Tue, 03 Aug 2021 17:33:11 GMT
+      date: Wed, 08 Dec 2021 22:55:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '13'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK
-    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+    url: https://python-textanalytics.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
 - request:
     body: null
     headers:
       Accept:
       - application/json, text/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 364eb0ed-fd00-4e1e-a72b-24a0348f5e9c
-      date: Tue, 03 Aug 2021 17:33:11 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+      apim-request-id: ea77cc9d-a4c1-476e-a80f-b49aa1b7b618
+      date: Wed, 08 Dec 2021 22:55:04 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '35'
+      x-envoy-upstream-service-time: '29'
     status:
       code: 202
       message: Accepted
-    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
   response:
     body:
-      string: '{"jobId":"4098ef0e-6f9c-4f74-a697-a3a9aeab6d64","lastUpdateDateTime":"2021-08-03T17:33:11Z","createdDateTime":"2021-08-03T17:33:10Z","expirationDateTime":"2021-08-04T17:33:10Z","status":"cancelled","errors":[]}'
+      string: '{"jobId":"e626a341-3593-401f-9fb6-bed095a94666","lastUpdateDateTime":"2021-12-08T22:55:06Z","createdDateTime":"2021-12-08T22:55:04Z","expirationDateTime":"2021-12-09T22:55:04Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]},{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]},{"id":"4","entities":[],"relations":[],"warnings":[]},{"id":"5","entities":[],"relations":[],"warnings":[]},{"id":"6","entities":[],"relations":[],"warnings":[]},{"id":"7","entities":[],"relations":[],"warnings":[]},{"id":"8","entities":[],"relations":[],"warnings":[]},{"id":"9","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-05-15"}}'
     headers:
-      apim-request-id: 8529f28e-3b4c-4b35-93b4-eacc5e27ad2d
+      apim-request-id: 93a2aa8c-e535-4fc9-86d7-af4604877b82
       content-type: application/json; charset=utf-8
-      date: Tue, 03 Aug 2021 17:33:16 GMT
+      date: Wed, 08 Dec 2021 22:55:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '175'
     status:
       code: 200
       message: OK
-    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/4098ef0e-6f9c-4f74-a697-a3a9aeab6d64
+    url: https://python-textanalytics.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/e626a341-3593-401f-9fb6-bed095a94666
 version: 1

@@ -41,57 +41,48 @@ async def run_sample():
     vault_url = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = CertificateClient(vault_url=vault_url, credential=credential)
-    try:
 
-        print("\n.. Create Certificate")
-        cert_name = "BackupRestoreCertificate"
+    print("\n.. Create Certificate")
+    cert_name = "BackupRestoreCertificate"
 
-        # Let's create a certificate for your key vault.
-        # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
-        # Awaiting the call returns a KeyVaultCertificate if creation is successful, and a CertificateOperation if not.
-        certificate = await client.create_certificate(
-            certificate_name=cert_name, policy=CertificatePolicy.get_default()
-        )
+    # Let's create a certificate for your key vault.
+    # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
+    # Awaiting the call returns a KeyVaultCertificate if creation is successful, and a CertificateOperation if not.
+    certificate = await client.create_certificate(
+        certificate_name=cert_name, policy=CertificatePolicy.get_default()
+    )
 
-        print("Certificate with name '{0}' created.".format(certificate.name))
+    print("Certificate with name '{0}' created.".format(certificate.name))
 
-        # Backups are good to have, if in case certificates gets deleted accidentally.
-        # For long term storage, it is ideal to write the backup to a file.
-        print("\n.. Create a backup for an existing certificate")
-        certificate_backup = await client.backup_certificate(cert_name)
-        print("Backup created for certificate with name '{0}'.".format(cert_name))
+    # Backups are good to have, if in case certificates gets deleted accidentally.
+    # For long term storage, it is ideal to write the backup to a file.
+    print("\n.. Create a backup for an existing certificate")
+    certificate_backup = await client.backup_certificate(cert_name)
+    print("Backup created for certificate with name '{0}'.".format(cert_name))
 
-        # The storage account certificate is no longer in use, so you can delete it.
-        print("\n.. Delete the certificate")
-        await client.delete_certificate(cert_name)
-        print("Deleted certificate with name '{0}'".format(cert_name))
+    # The storage account certificate is no longer in use, so you can delete it.
+    print("\n.. Delete the certificate")
+    await client.delete_certificate(cert_name)
+    print("Deleted certificate with name '{0}'".format(cert_name))
 
-        # Purge the deleted certificate.
-        # The purge will take some time, so wait before restoring the backup to avoid a conflict.
-        print("\n.. Purge the certificate")
-        await client.purge_deleted_certificate(cert_name)
-        await asyncio.sleep(60)
-        print("Purged certificate with name '{0}'".format(cert_name))
+    # Purge the deleted certificate.
+    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+    print("\n.. Purge the certificate")
+    await client.purge_deleted_certificate(cert_name)
+    await asyncio.sleep(60)
+    print("Purged certificate with name '{0}'".format(cert_name))
 
-        # In the future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
-        print("\n.. Restore the certificate using the backed up certificate bytes")
-        certificate = await client.restore_certificate_backup(certificate_backup)
-        print("Restored certificate with name '{0}'".format(certificate.name))
+    # In the future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
+    print("\n.. Restore the certificate using the backed up certificate bytes")
+    certificate = await client.restore_certificate_backup(certificate_backup)
+    print("Restored certificate with name '{0}'".format(certificate.name))
 
-    except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
-
-    finally:
-        print("\nrun_sample done")
-        await credential.close()
-        await client.close()
+    print("\nrun_sample done")
+    await credential.close()
+    await client.close()
 
 
 if __name__ == "__main__":
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_sample())
-        loop.close()
-
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_sample())
+    loop.close()

@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-authentication/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      X-MRC-CV:
+      - xslZIVxpomqC7bNGAz9GrY
+    method: GET
+    uri: https://sts.eastus.mixedreality.azure.com/Accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/token?api-version=2019-02-28-preview
+  response:
+    body:
+      string: '{"AccessToken":"faketoken.eyJleHAiOjIxNDc0ODM2NDd9.faketoken"}'
+    headers:
+      cache-control: no-store,no-cache
+      content-length: '1240'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:22:53 GMT
+      ms-cv: 0cEKxiG5uk66Z8n/fVe7cg.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://sts.eastus2.mixedreality.azure.com/Accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/token?api-version=2019-02-28-preview
+- request:
+    body: '{"settings": {"inputLocation": {"storageContainerUri": "https://arrstorageaccount.blob.core.windows.net/test",
+      "blobPrefix": "Input", "relativeInputAssetPath": "testBox.fbx"}, "outputLocation":
+      {"storageContainerUri": "https://arrstorageaccount.blob.core.windows.net/test",
+      "blobPrefix": "b994f753-8835-426f-9b04-af990407acca"}}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '325'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/b994f753-8835-426f-9b04-af990407acca?api-version=2021-01-01
+  response:
+    body:
+      string: '{"error":{"code":"DelegatedResourceAccessError","message":"Error accessing
+        connected storage account due to insufficient permissions. Check if the Mixed
+        Reality resource has correct permissions assigned. Documentation on how to
+        link Remote Rendering Accounts to storage can be found here: https://docs.microsoft.com/azure/remote-rendering/how-tos/create-an-account#link-storage-accounts."}}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      content-length: '390'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:22:54 GMT
+      ms-cv: goePbmbsSUK8Y3cAJpL4GQ.0
+      x-content-type-options: nosniff
+    status:
+      code: 403
+      message: Forbidden
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/b994f753-8835-426f-9b04-af990407acca?api-version=2021-01-01
+version: 1

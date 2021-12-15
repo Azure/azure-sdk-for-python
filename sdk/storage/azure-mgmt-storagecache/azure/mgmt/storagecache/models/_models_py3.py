@@ -1546,6 +1546,9 @@ class StorageTarget(StorageTargetResource):
      "Updating".
     :vartype provisioning_state: str or
      ~storage_cache_management_client.models.ProvisioningStateType
+    :param state: Storage target operational state. Possible values include: "Ready", "Busy",
+     "Suspended", "Flushing".
+    :type state: str or ~storage_cache_management_client.models.OperationalStateType
     :param nfs3: Properties when targetType is nfs3.
     :type nfs3: ~storage_cache_management_client.models.Nfs3Target
     :param clfs: Properties when targetType is clfs.
@@ -1574,6 +1577,7 @@ class StorageTarget(StorageTargetResource):
         'junctions': {'key': 'properties.junctions', 'type': '[NamespaceJunction]'},
         'target_type': {'key': 'properties.targetType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'nfs3': {'key': 'properties.nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'properties.clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'properties.unknown', 'type': 'UnknownTarget'},
@@ -1585,6 +1589,7 @@ class StorageTarget(StorageTargetResource):
         *,
         junctions: Optional[List["NamespaceJunction"]] = None,
         target_type: Optional[Union[str, "StorageTargetType"]] = None,
+        state: Optional[Union[str, "OperationalStateType"]] = None,
         nfs3: Optional["Nfs3Target"] = None,
         clfs: Optional["ClfsTarget"] = None,
         unknown: Optional["UnknownTarget"] = None,
@@ -1595,6 +1600,7 @@ class StorageTarget(StorageTargetResource):
         self.junctions = junctions
         self.target_type = target_type
         self.provisioning_state = None
+        self.state = state
         self.nfs3 = nfs3
         self.clfs = clfs
         self.unknown = unknown

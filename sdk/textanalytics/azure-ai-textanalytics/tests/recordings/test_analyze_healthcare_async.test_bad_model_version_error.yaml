@@ -10,46 +10,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs?model-version=bad&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs?model-version=bad&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 84299dfd-f6a6-4f5b-956c-e70d3fcc6d46
-      date: Tue, 03 Aug 2021 17:33:05 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/a247cfed-df90-48e4-b3f1-aeac03d2c49a
+      apim-request-id: f8b1d493-d67f-466a-9273-e3b7c14b961f
+      date: Wed, 08 Dec 2021 22:54:59 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e09a22a4-8347-470c-aaac-03a114389cb8
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '100'
+      x-envoy-upstream-service-time: '164'
     status:
       code: 202
       message: Accepted
-    url: https://tacanaryjava.cognitiveservices.azure.com//text/analytics/v3.2-preview.1/entities/health/jobs?model-version=bad&stringIndexType=UnicodeCodePoint
+    url: https://python-textanalytics.cognitiveservices.azure.com//text/analytics/v3.2-preview.2/entities/health/jobs?model-version=bad&stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.2.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.1/entities/health/jobs/a247cfed-df90-48e4-b3f1-aeac03d2c49a
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.2-preview.2/entities/health/jobs/e09a22a4-8347-470c-aaac-03a114389cb8
   response:
     body:
-      string: '{"jobId":"a247cfed-df90-48e4-b3f1-aeac03d2c49a","lastUpdateDateTime":"2021-08-03T17:33:07Z","createdDateTime":"2021-08-03T17:33:04Z","expirationDateTime":"2021-08-04T17:33:04Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"e09a22a4-8347-470c-aaac-03a114389cb8","lastUpdateDateTime":"2021-12-08T22:54:59Z","createdDateTime":"2021-12-08T22:54:59Z","expirationDateTime":"2021-12-09T22:54:59Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"}}}],"modelVersion":"2021-05-15"}}'
     headers:
-      apim-request-id: 63c9bb94-785a-49ad-8705-9a60e6d5bc1f
+      apim-request-id: cd777a89-58e7-46a7-a78d-7fb590c79b60
       content-type: application/json; charset=utf-8
-      date: Tue, 03 Aug 2021 17:33:10 GMT
+      date: Wed, 08 Dec 2021 22:55:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '44'
+      x-envoy-upstream-service-time: '62'
     status:
       code: 200
       message: OK
-    url: https://tacanaryjava.cognitiveservices.azure.com/text/analytics/v3.2-preview.1/entities/health/jobs/a247cfed-df90-48e4-b3f1-aeac03d2c49a
+    url: https://python-textanalytics.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/e09a22a4-8347-470c-aaac-03a114389cb8
 version: 1

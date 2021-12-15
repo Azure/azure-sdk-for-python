@@ -24,7 +24,7 @@ from ._generated.models import (
     FeedbackDimensionFilter,
     DimensionGroupIdentity,
 )
-from ._generated import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated import MetricsAdvisor as _Client
 from ._helpers import (
     convert_to_sub_feedback,
     convert_datetime,
@@ -537,7 +537,7 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop("skip", None)
         dimension = kwargs.pop("dimension_filter", None)
-        dimension_filter = DimensionGroupIdentity(dimension=dimension)
+        dimension_filter = DimensionGroupIdentity(dimension=dimension) if dimension else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(

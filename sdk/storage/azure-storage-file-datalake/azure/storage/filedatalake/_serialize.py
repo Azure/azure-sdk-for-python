@@ -9,6 +9,28 @@ from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
     SourceModifiedAccessConditions, LeaseAccessConditions
 
 
+_SUPPORTED_API_VERSIONS = [
+    '2019-02-02',
+    '2019-07-07',
+    '2019-10-10',
+    '2019-12-12',
+    '2020-02-10',
+    '2020-04-08',
+    '2020-06-12',
+    '2020-08-04',
+    '2020-10-02'
+]
+
+
+def get_api_version(kwargs):
+    # type: (Dict[str, Any]) -> str
+    api_version = kwargs.get('api_version', None)
+    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
+        versions = '\n'.join(_SUPPORTED_API_VERSIONS)
+        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+    return api_version or _SUPPORTED_API_VERSIONS[-1]
+
+
 def convert_dfs_url_to_blob_url(dfs_account_url):
     return dfs_account_url.replace('.dfs.', '.blob.', 1)
 

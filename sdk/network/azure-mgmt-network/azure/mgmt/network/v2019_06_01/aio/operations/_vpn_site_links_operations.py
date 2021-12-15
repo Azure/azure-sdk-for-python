@@ -46,7 +46,7 @@ class VpnSiteLinksOperations:
         resource_group_name: str,
         vpn_site_name: str,
         vpn_site_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnSiteLink":
         """Retrieves the details of a VPN site link.
 
@@ -108,7 +108,7 @@ class VpnSiteLinksOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnSiteLinksResult"]:
         """Lists all the vpnSiteLinks in a resource group for a vpn site.
 

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2021-09-30)
+
+**Features**
+
+  - Model StorageTarget has a new parameter state
+
 ## 1.0.0 (2021-07-29)
 
 **Features**

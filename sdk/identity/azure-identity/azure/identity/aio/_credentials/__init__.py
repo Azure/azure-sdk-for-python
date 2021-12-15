@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .application import AzureApplicationCredential
 from .authorization_code import AuthorizationCodeCredential
 from .azure_powershell import AzurePowerShellCredential
 from .chained import ChainedTokenCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
+from .on_behalf_of import OnBehalfOfCredential
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .shared_cache import SharedTokenCacheCredential
@@ -18,7 +18,6 @@ from .vscode import VisualStudioCodeCredential
 
 __all__ = [
     "AuthorizationCodeCredential",
-    "AzureApplicationCredential",
     "AzureCliCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
@@ -27,6 +26,7 @@ __all__ = [
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
+    "OnBehalfOfCredential",
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
 ]

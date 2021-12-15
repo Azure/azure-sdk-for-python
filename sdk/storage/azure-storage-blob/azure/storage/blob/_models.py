@@ -120,6 +120,17 @@ class PublicAccess(str, Enum):
     """
 
 
+class BlobImmutabilityPolicyMode(str, Enum):
+    """
+    Specifies the immutability policy mode to set on the blob.
+    "Mutable" can only be returned by service, don't set to "Mutable".
+    """
+
+    Unlocked = "Unlocked"
+    Locked = "Locked"
+    Mutable = "Mutable"
+
+
 class BlobAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
@@ -308,6 +319,8 @@ class ContainerProperties(DictMixin):
     dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``.
 
+    :ivar str name:
+        Name of the container.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :ivar str etag:
@@ -441,17 +454,17 @@ class ImmutabilityPolicy(DictMixin):
     .. versionadded:: 12.10.0
         This was introduced in API version '2020-10-02'.
 
-    :param ~datetime.datetime expiry_time:
+    :keyword ~datetime.datetime expiry_time:
         Specifies the date time when the blobs immutability policy is set to expire.
-    :param str or ~azure.storage.blob.BlobImmutabilityPolicyMode policy_mode:
+    :keyword str or ~azure.storage.blob.BlobImmutabilityPolicyMode policy_mode:
         Specifies the immutability policy mode to set on the blob.
         Possible values to set include: "Locked", "Unlocked".
         "Mutable" can only be returned by service, don't set to "Mutable".
     """
 
-    def __init__(self, expiry_time=None, policy_mode=None):
-        self.expiry_time = expiry_time
-        self.policy_mode = policy_mode
+    def __init__(self, **kwargs):
+        self.expiry_time = kwargs.pop('expiry_time', None)
+        self.policy_mode = kwargs.pop('policy_mode', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -907,6 +920,8 @@ class ContainerSasPermissions(object):
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
@@ -915,12 +930,14 @@ class ContainerSasPermissions(object):
         self.delete = delete
         self.list = list
         self.delete_previous_version = delete_previous_version
+        self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.tag = tag
         self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
+                     ('y' if self.permanent_delete else '') +
                      ('l' if self.list else '') +
                      ('t' if self.tag else '') +
                      ('i' if self.set_immutability_policy else ''))
@@ -946,11 +963,12 @@ class ContainerSasPermissions(object):
         p_delete = 'd' in permission
         p_list = 'l' in permission
         p_delete_previous_version = 'x' in permission
+        p_permanent_delete = 'y' in permission
         p_tag = 't' in permission
         p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
                      delete_previous_version=p_delete_previous_version, tag=p_tag,
-                     set_immutability_policy=p_set_immutability_policy)
+                     set_immutability_policy=p_set_immutability_policy, permanent_delete=p_permanent_delete)
 
         return parsed
 
@@ -979,6 +997,8 @@ class BlobSasPermissions(object):
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
                  delete=False, delete_previous_version=False, tag=True, **kwargs):
@@ -988,6 +1008,7 @@ class BlobSasPermissions(object):
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
+        self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.tag = tag
         self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
@@ -996,6 +1017,7 @@ class BlobSasPermissions(object):
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
+                     ('y' if self.permanent_delete else '') +
                      ('t' if self.tag else '') +
                      ('i' if self.set_immutability_policy else ''))
 
@@ -1021,12 +1043,13 @@ class BlobSasPermissions(object):
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
+        p_permanent_delete = 'y' in permission
         p_tag = 't' in permission
         p_set_immutability_policy = 'i' in permission
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
                      delete_previous_version=p_delete_previous_version, tag=p_tag,
-                     set_immutability_policy=p_set_immutability_policy)
+                     set_immutability_policy=p_set_immutability_policy, permanent_delete=p_permanent_delete)
 
         return parsed
 

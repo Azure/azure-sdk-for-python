@@ -31,6 +31,14 @@ TextAnalyticsPreparer = functools.partial(
     'textanalytics',
     textanalytics_test_endpoint="https://westus2.api.cognitive.microsoft.com/",
     textanalytics_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    textanalytics_custom_text_endpoint="https://westus2.api.cognitive.microsoft.com/",
+    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    textanalytics_single_category_classify_project_name="single_category_classify_project_name",
+    textanalytics_single_category_classify_deployment_name="textanalytics_single_category_classify_deployment_name",
+    textanalytics_multi_category_classify_project_name="textanalytics_multi_category_classify_project_name",
+    textanalytics_multi_category_classify_deployment_name="textanalytics_multi_category_classify_deployment_name",
+    textanalytics_custom_entities_project_name="textanalytics_custom_entities_project_name",
+    textanalytics_custom_entities_deployment_name="textanalytics_custom_entities_deployment_name",
 )
 
 

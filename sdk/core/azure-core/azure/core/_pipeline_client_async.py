@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from collections.abc import Iterable
+import collections.abc
 from typing import Any, Awaitable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
@@ -37,8 +37,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-from ._pipeline_client import _prepare_request
-from .pipeline._tools_async import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING, TypeVar
@@ -62,6 +60,26 @@ if TYPE_CHECKING:
     )  # pylint: disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
+
+class _AsyncContextManager(collections.abc.Awaitable):
+
+    def __init__(self, wrapped: collections.abc.Awaitable):
+        super().__init__()
+        self.wrapped = wrapped
+        self.response = None
+
+    def __await__(self):
+        return self.wrapped.__await__()
+
+    async def __aenter__(self):
+        self.response = await self
+        return self.response
+
+    async def __aexit__(self, *args):
+        await self.response.__aexit__(*args)
+
+    async def close(self):
+        await self.response.close()
 
 
 class AsyncPipelineClient(PipelineClientBase):
@@ -126,7 +144,7 @@ class AsyncPipelineClient(PipelineClientBase):
                 config.proxy_policy,
                 ContentDecodePolicy(**kwargs)
             ]
-            if isinstance(per_call_policies, Iterable):
+            if isinstance(per_call_policies, collections.abc.Iterable):
                 policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
@@ -135,7 +153,7 @@ class AsyncPipelineClient(PipelineClientBase):
                              config.retry_policy,
                              config.authentication_policy,
                              config.custom_hook_policy])
-            if isinstance(per_retry_policies, Iterable):
+            if isinstance(per_retry_policies, collections.abc.Iterable):
                 policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
@@ -144,13 +162,13 @@ class AsyncPipelineClient(PipelineClientBase):
                              DistributedTracingPolicy(**kwargs),
                              config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
         else:
-            if isinstance(per_call_policies, Iterable):
+            if isinstance(per_call_policies, collections.abc.Iterable):
                 per_call_policies_list = list(per_call_policies)
             else:
                 per_call_policies_list = [per_call_policies]
             per_call_policies_list.extend(policies)
             policies = per_call_policies_list
-            if isinstance(per_retry_policies, Iterable):
+            if isinstance(per_retry_policies, collections.abc.Iterable):
                 per_retry_policies_list = list(per_retry_policies)
             else:
                 per_retry_policies_list = [per_retry_policies]
@@ -175,30 +193,13 @@ class AsyncPipelineClient(PipelineClientBase):
         return AsyncPipeline(transport, policies)
 
     async def _make_pipeline_call(self, request, **kwargs):
-        rest_request, request_to_run = _prepare_request(request)
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(
-            request_to_run, **kwargs  # pylint: disable=protected-access
+            request, **kwargs  # pylint: disable=protected-access
         )
-        response = pipeline_response.http_response
-        if rest_request:
-            rest_response = _to_rest_response(response)
-            if not kwargs.get("stream"):
-                try:
-                    # in this case, the pipeline transport response already called .load_body(), so
-                    # the body is loaded. instead of doing response.read(), going to set the body
-                    # to the internal content
-                    rest_response._content = response.body()  # pylint: disable=protected-access
-                    await rest_response.close()
-                except Exception as exc:
-                    await rest_response.close()
-                    raise exc
-            response = rest_response
         if return_pipeline_response:
-            pipeline_response.http_response = response
-            pipeline_response.http_request = request
             return pipeline_response
-        return response
+        return pipeline_response.http_response
 
     def send_request(
         self,
@@ -207,9 +208,7 @@ class AsyncPipelineClient(PipelineClientBase):
         stream: bool = False,
         **kwargs: Any
     ) -> Awaitable[AsyncHTTPResponseType]:
-        """**Provisional** method that runs the network request through the client's chained policies.
-
-        This method is marked as **provisional**, meaning it may be changed in a future release.
+        """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest('GET', 'http://www.example.com')
@@ -223,6 +222,5 @@ class AsyncPipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        from .rest._rest_py3 import _AsyncContextManager
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
         return _AsyncContextManager(wrapped=wrapped)

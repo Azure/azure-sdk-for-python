@@ -20,7 +20,7 @@ _PRIVATE_KEY_OPERATIONS = frozenset((KeyOperation.decrypt, KeyOperation.sign, Ke
 class EllipticCurveCryptographyProvider(LocalCryptographyProvider):
     def _get_internal_key(self, key):
         # type: (JsonWebKey) -> Key
-        if key.kty not in (KeyType.ec, KeyType.ec_hsm):
+        if key.kty not in (KeyType.ec, KeyType.ec_hsm):  # type: ignore[attr-defined]
             raise ValueError('"key" must be an EC or EC-HSM key')
         return EllipticCurveKey.from_jwk(key)
 

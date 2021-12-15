@@ -308,13 +308,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
         self.secret_id = secret_id
-        self._value = json.dumps({"secret_uri": secret_id})
+        self._value = json.dumps({"uri": secret_id})
 
     @property
     def value(self):
         try:
             temp = json.loads(self._value)
-            temp["secret_uri"] = self.secret_id
+            temp["uri"] = self.secret_id
             self._value = json.dumps(temp)
             return self._value
         except (JSONDecodeError, ValueError):
@@ -325,7 +325,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         try:
             temp = json.loads(new_value)
             self._value = new_value
-            self.secret_id = temp.get("secret_uri")
+            self.secret_id = temp.get("uri")
         except(JSONDecodeError, ValueError):
             self._value = new_value
             self.secret_id = None
@@ -338,7 +338,9 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         secret_uri = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
-            secret_uri = temp.get("secret_uri")
+            secret_uri = temp.get("uri")
+            if not secret_uri:
+                secret_uri = temp.get("secret_uri")
         except (ValueError, JSONDecodeError):
             pass
 

@@ -1,0 +1,34 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - main
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/remoterendering/
+
+pr:
+  branches:
+    include:
+    - master
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/remoterendering/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: remoterendering
+    Artifacts:
+    - name: azure-mixedreality-remoterendering
+      safeName: azuremixedrealityremoterendering

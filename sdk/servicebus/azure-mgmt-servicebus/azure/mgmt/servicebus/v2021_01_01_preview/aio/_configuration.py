@@ -12,11 +12,12 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy
 
+from .._version import VERSION
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-VERSION = "unknown"
 
 class ServiceBusManagementClientConfiguration(Configuration):
     """Configuration for ServiceBusManagementClient.
@@ -44,6 +45,7 @@ class ServiceBusManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.api_version = "2021-01-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-servicebus/{}'.format(VERSION))
         self._configure(**kwargs)

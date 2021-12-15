@@ -10,6 +10,9 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-eventhub",
   "azure-identity",
   "azure-keyvault-administration",
+  "azure-keyvault-certificates",
+  "azure-keyvault-keys",
+  "azure-keyvault-secrets",
   "azure-servicebus",
   "azure-ai-textanalytics",
   "azure-ai-formrecognizer",
@@ -18,4 +21,5 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-eventgrid",
   "azure-appconfiguration",
   "azure-data-tables",
+  "azure-mixedreality-remoterendering",
 ]

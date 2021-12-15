@@ -47,7 +47,7 @@ class PrivateLinkServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -92,7 +92,7 @@ class PrivateLinkServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified private link service.
 
@@ -102,8 +102,8 @@ class PrivateLinkServicesOperations:
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -157,7 +157,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkService":
         """Gets the specified private link service by resource group.
 
@@ -221,7 +221,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.PrivateLinkService",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkService":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkService"]
         error_map = {
@@ -279,7 +279,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.PrivateLinkService",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateLinkService"]:
         """Creates or updates an private link service in the specified resource group.
 
@@ -291,8 +291,8 @@ class PrivateLinkServicesOperations:
         :type parameters: ~azure.mgmt.network.v2019_11_01.models.PrivateLinkService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateLinkService or the result of cls(response)
@@ -348,7 +348,7 @@ class PrivateLinkServicesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkServiceListResult"]:
         """Gets all private link services in a resource group.
 
@@ -418,7 +418,7 @@ class PrivateLinkServicesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkServiceListResult"]:
         """Gets all private link service in a subscription.
 
@@ -489,7 +489,7 @@ class PrivateLinkServicesOperations:
         service_name: str,
         pe_connection_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Get the specific private end point connection by specific private link service in the resource
         group.
@@ -558,7 +558,7 @@ class PrivateLinkServicesOperations:
         service_name: str,
         pe_connection_name: str,
         parameters: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Approve or reject private end point connection for a private link service in a subscription.
 
@@ -628,7 +628,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         pe_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -675,7 +675,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         pe_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete private end point connection for a private link service in a subscription.
 
@@ -687,8 +687,8 @@ class PrivateLinkServicesOperations:
         :type pe_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -743,7 +743,7 @@ class PrivateLinkServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Gets all private end point connections for a specific private link service.
 
@@ -818,7 +818,7 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         parameters: "_models.CheckPrivateLinkServiceVisibilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PrivateLinkServiceVisibility"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateLinkServiceVisibility"]]
         error_map = {
@@ -871,7 +871,7 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         parameters: "_models.CheckPrivateLinkServiceVisibilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateLinkServiceVisibility"]:
         """Checks whether the subscription is visible to private link service.
 
@@ -881,8 +881,8 @@ class PrivateLinkServicesOperations:
         :type parameters: ~azure.mgmt.network.v2019_11_01.models.CheckPrivateLinkServiceVisibilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateLinkServiceVisibility or the result of cls(response)
@@ -938,7 +938,7 @@ class PrivateLinkServicesOperations:
         location: str,
         resource_group_name: str,
         parameters: "_models.CheckPrivateLinkServiceVisibilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PrivateLinkServiceVisibility"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateLinkServiceVisibility"]]
         error_map = {
@@ -993,7 +993,7 @@ class PrivateLinkServicesOperations:
         location: str,
         resource_group_name: str,
         parameters: "_models.CheckPrivateLinkServiceVisibilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateLinkServiceVisibility"]:
         """Checks whether the subscription is visible to private link service in the specified resource
         group.
@@ -1006,8 +1006,8 @@ class PrivateLinkServicesOperations:
         :type parameters: ~azure.mgmt.network.v2019_11_01.models.CheckPrivateLinkServiceVisibilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateLinkServiceVisibility or the result of cls(response)
@@ -1063,7 +1063,7 @@ class PrivateLinkServicesOperations:
     def list_auto_approved_private_link_services(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutoApprovedPrivateLinkServicesResult"]:
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
@@ -1135,7 +1135,7 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutoApprovedPrivateLinkServicesResult"]:
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.

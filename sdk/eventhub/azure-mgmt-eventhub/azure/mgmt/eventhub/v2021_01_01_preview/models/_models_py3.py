@@ -77,15 +77,17 @@ class AccessKeys(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """The resource definition.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -116,11 +118,13 @@ class ArmDisasterRecovery(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
@@ -216,11 +220,13 @@ class AuthorizationRule(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
@@ -467,11 +473,13 @@ class ConsumerGroup(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
@@ -588,11 +596,13 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -631,11 +641,13 @@ class EHNamespace(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param location: Resource location.
     :type location: str
@@ -649,6 +661,8 @@ class EHNamespace(TrackedResource):
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the Namespace.
     :vartype provisioning_state: str
+    :ivar status: Status of the Namespace.
+    :vartype status: str
     :ivar created_at: The time the Namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the Namespace was updated.
@@ -683,6 +697,7 @@ class EHNamespace(TrackedResource):
         'type': {'readonly': True},
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
@@ -700,6 +715,7 @@ class EHNamespace(TrackedResource):
         'identity': {'key': 'identity', 'type': 'Identity'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
@@ -734,6 +750,7 @@ class EHNamespace(TrackedResource):
         self.identity = identity
         self.system_data = None
         self.provisioning_state = None
+        self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
@@ -777,21 +794,16 @@ class EHNamespaceListResult(msrest.serialization.Model):
 class Encryption(msrest.serialization.Model):
     """Properties to configure Encryption.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param key_vault_properties: Properties of KeyVault.
     :type key_vault_properties:
      list[~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyVaultProperties]
-    :ivar key_source: Enumerates the possible value of keySource for Encryption. Default value:
+    :param key_source: Enumerates the possible value of keySource for Encryption. The only
+     acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
      "Microsoft.KeyVault".
-    :vartype key_source: str
+    :type key_source: str
     :param require_infrastructure_encryption: Enable Infrastructure Encryption (Double Encryption).
     :type require_infrastructure_encryption: bool
     """
-
-    _validation = {
-        'key_source': {'constant': True},
-    }
 
     _attribute_map = {
         'key_vault_properties': {'key': 'keyVaultProperties', 'type': '[KeyVaultProperties]'},
@@ -799,17 +811,17 @@ class Encryption(msrest.serialization.Model):
         'require_infrastructure_encryption': {'key': 'requireInfrastructureEncryption', 'type': 'bool'},
     }
 
-    key_source = "Microsoft.KeyVault"
-
     def __init__(
         self,
         *,
         key_vault_properties: Optional[List["KeyVaultProperties"]] = None,
+        key_source: Optional[str] = "Microsoft.KeyVault",
         require_infrastructure_encryption: Optional[bool] = None,
         **kwargs
     ):
         super(Encryption, self).__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
+        self.key_source = key_source
         self.require_infrastructure_encryption = require_infrastructure_encryption
 
 
@@ -844,11 +856,13 @@ class Eventhub(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
@@ -1029,11 +1043,13 @@ class NetworkRuleSet(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
@@ -1261,11 +1277,13 @@ class PrivateEndpointConnection(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
@@ -1463,7 +1481,7 @@ class Sku(msrest.serialization.Model):
 
     _validation = {
         'name': {'required': True},
-        'capacity': {'maximum': 20, 'minimum': 0},
+        'capacity': {'minimum': 0},
     }
 
     _attribute_map = {

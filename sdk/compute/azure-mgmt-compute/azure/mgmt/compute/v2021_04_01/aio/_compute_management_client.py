@@ -43,6 +43,11 @@ from .operations import VirtualMachineScaleSetVMsOperations
 from .operations import LogAnalyticsOperations
 from .operations import VirtualMachineRunCommandsOperations
 from .operations import VirtualMachineScaleSetVMRunCommandsOperations
+from .operations import DisksOperations
+from .operations import SnapshotsOperations
+from .operations import DiskEncryptionSetsOperations
+from .operations import DiskAccessesOperations
+from .operations import DiskRestorePointOperations
 from .. import models
 
 
@@ -101,6 +106,16 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_run_commands: azure.mgmt.compute.v2021_04_01.aio.operations.VirtualMachineRunCommandsOperations
     :ivar virtual_machine_scale_set_vm_run_commands: VirtualMachineScaleSetVMRunCommandsOperations operations
     :vartype virtual_machine_scale_set_vm_run_commands: azure.mgmt.compute.v2021_04_01.aio.operations.VirtualMachineScaleSetVMRunCommandsOperations
+    :ivar disks: DisksOperations operations
+    :vartype disks: azure.mgmt.compute.v2021_04_01.aio.operations.DisksOperations
+    :ivar snapshots: SnapshotsOperations operations
+    :vartype snapshots: azure.mgmt.compute.v2021_04_01.aio.operations.SnapshotsOperations
+    :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
+    :vartype disk_encryption_sets: azure.mgmt.compute.v2021_04_01.aio.operations.DiskEncryptionSetsOperations
+    :ivar disk_accesses: DiskAccessesOperations operations
+    :vartype disk_accesses: azure.mgmt.compute.v2021_04_01.aio.operations.DiskAccessesOperations
+    :ivar disk_restore_point: DiskRestorePointOperations operations
+    :vartype disk_restore_point: azure.mgmt.compute.v2021_04_01.aio.operations.DiskRestorePointOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -177,6 +192,16 @@ class ComputeManagementClient(object):
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disks = DisksOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_encryption_sets = DiskEncryptionSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_accesses = DiskAccessesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_restore_point = DiskRestorePointOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

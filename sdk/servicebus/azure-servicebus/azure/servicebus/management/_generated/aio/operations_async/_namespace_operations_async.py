@@ -41,7 +41,7 @@ class NamespaceOperations:
 
     async def get(
         self,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> "models.NamespacePropertiesEntry":
         """Get the details about the Service Bus namespace.

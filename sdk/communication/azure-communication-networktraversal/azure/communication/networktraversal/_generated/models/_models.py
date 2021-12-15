@@ -17,10 +17,10 @@ class CommunicationError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error code.
-    :type code: str
-    :param message: Required. The error message.
-    :type message: str
+    :ivar code: Required. The error code.
+    :vartype code: str
+    :ivar message: Required. The error message.
+    :vartype message: str
     :ivar target: The error target.
     :vartype target: str
     :ivar details: Further details about specific errors that led to this error.
@@ -49,6 +49,12 @@ class CommunicationError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: Required. The error code.
+        :paramtype code: str
+        :keyword message: Required. The error message.
+        :paramtype message: str
+        """
         super(CommunicationError, self).__init__(**kwargs)
         self.code = kwargs['code']
         self.message = kwargs['message']
@@ -62,8 +68,8 @@ class CommunicationErrorResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param error: Required. The Communication Services error.
-    :type error: ~azure.communication.networktraversal.models.CommunicationError
+    :ivar error: Required. The Communication Services error.
+    :vartype error: ~azure.communication.networktraversal.models.CommunicationError
     """
 
     _validation = {
@@ -78,6 +84,10 @@ class CommunicationErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword error: Required. The Communication Services error.
+        :paramtype error: ~azure.communication.networktraversal.models.CommunicationError
+        """
         super(CommunicationErrorResponse, self).__init__(**kwargs)
         self.error = kwargs['error']
 
@@ -87,34 +97,51 @@ class CommunicationIceServer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param urls: Required. List of STUN/TURN server URLs.
-    :type urls: list[str]
-    :param username: Required. User account name which uniquely identifies the credentials.
-    :type username: str
-    :param credential: Required. Credential for the server.
-    :type credential: str
+    :ivar urls: Required. List of STUN/TURN server URLs.
+    :vartype urls: list[str]
+    :ivar username: Required. User account name which uniquely identifies the credentials.
+    :vartype username: str
+    :ivar credential: Required. Credential for the server.
+    :vartype credential: str
+    :ivar route_type: Required. The routing methodology to where the ICE server will be located
+     from the client. Possible values include: "any", "nearest".
+    :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
     """
 
     _validation = {
         'urls': {'required': True},
         'username': {'required': True},
         'credential': {'required': True},
+        'route_type': {'required': True},
     }
 
     _attribute_map = {
         'urls': {'key': 'urls', 'type': '[str]'},
         'username': {'key': 'username', 'type': 'str'},
         'credential': {'key': 'credential', 'type': 'str'},
+        'route_type': {'key': 'routeType', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword urls: Required. List of STUN/TURN server URLs.
+        :paramtype urls: list[str]
+        :keyword username: Required. User account name which uniquely identifies the credentials.
+        :paramtype username: str
+        :keyword credential: Required. Credential for the server.
+        :paramtype credential: str
+        :keyword route_type: Required. The routing methodology to where the ICE server will be located
+         from the client. Possible values include: "any", "nearest".
+        :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
+        """
         super(CommunicationIceServer, self).__init__(**kwargs)
         self.urls = kwargs['urls']
         self.username = kwargs['username']
         self.credential = kwargs['credential']
+        self.route_type = kwargs['route_type']
 
 
 class CommunicationRelayConfiguration(msrest.serialization.Model):
@@ -122,12 +149,12 @@ class CommunicationRelayConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expires_on: Required. The date for which the username and credentials are not longer
+    :ivar expires_on: Required. The date for which the username and credentials are not longer
      valid.
-    :type expires_on: ~datetime.datetime
-    :param ice_servers: Required. An array representing the credentials and the STUN/TURN server
+    :vartype expires_on: ~datetime.datetime
+    :ivar ice_servers: Required. An array representing the credentials and the STUN/TURN server
      URLs for use in ICE negotiations.
-    :type ice_servers: list[~azure.communication.networktraversal.models.CommunicationIceServer]
+    :vartype ice_servers: list[~azure.communication.networktraversal.models.CommunicationIceServer]
     """
 
     _validation = {
@@ -144,6 +171,15 @@ class CommunicationRelayConfiguration(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword expires_on: Required. The date for which the username and credentials are not longer
+         valid.
+        :paramtype expires_on: ~datetime.datetime
+        :keyword ice_servers: Required. An array representing the credentials and the STUN/TURN server
+         URLs for use in ICE negotiations.
+        :paramtype ice_servers:
+         list[~azure.communication.networktraversal.models.CommunicationIceServer]
+        """
         super(CommunicationRelayConfiguration, self).__init__(**kwargs)
         self.expires_on = kwargs['expires_on']
         self.ice_servers = kwargs['ice_servers']
@@ -152,23 +188,29 @@ class CommunicationRelayConfiguration(msrest.serialization.Model):
 class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
     """Request for a CommunicationRelayConfiguration.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. An existing ACS identity.
-    :type id: str
+    :ivar id: An existing ACS identity.
+    :vartype id: str
+    :ivar route_type: The routing methodology to where the ICE server will be located from the
+     client. Possible values include: "any", "nearest".
+    :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
     """
-
-    _validation = {
-        'id': {'required': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'route_type': {'key': 'routeType', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword id: An existing ACS identity.
+        :paramtype id: str
+        :keyword route_type: The routing methodology to where the ICE server will be located from the
+         client. Possible values include: "any", "nearest".
+        :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
+        """
         super(CommunicationRelayConfigurationRequest, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        self.id = kwargs.get('id', None)
+        self.route_type = kwargs.get('route_type', None)

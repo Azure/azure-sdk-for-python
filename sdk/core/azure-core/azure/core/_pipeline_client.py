@@ -39,7 +39,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     RetryPolicy,
 )
-from .pipeline._tools import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING
@@ -64,17 +63,6 @@ if TYPE_CHECKING:
     HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
-
-def _prepare_request(request):
-    # returns the request ready to run through pipelines
-    # and a bool telling whether we ended up converting it
-    rest_request = False
-    try:
-        request_to_run = request._to_pipeline_transport_request()  # pylint: disable=protected-access
-        rest_request = True
-    except AttributeError:
-        request_to_run = request
-    return rest_request, request_to_run
 
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
@@ -188,9 +176,7 @@ class PipelineClient(PipelineClientBase):
 
     def send_request(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> HTTPResponseType
-        """**Provisional** method that runs the network request through the client's chained policies.
-
-        This method is marked as **provisional**, meaning it may be changed in a future release.
+        """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest('GET', 'http://www.example.com')
@@ -203,22 +189,10 @@ class PipelineClient(PipelineClientBase):
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
-        # """
-        rest_request, request_to_run = _prepare_request(request)
+        """
+        stream = kwargs.pop("stream", False) # want to add default value
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
-        response = pipeline_response.http_response
-        if rest_request:
-            response = _to_rest_response(response)
-            try:
-                if not kwargs.get("stream", False):
-                    response.read()
-                    response.close()
-            except Exception as exc:
-                response.close()
-                raise exc
+        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs) # pylint: disable=protected-access
         if return_pipeline_response:
-            pipeline_response.http_response = response
-            pipeline_response.http_request = request
             return pipeline_response
-        return response
+        return pipeline_response.http_response

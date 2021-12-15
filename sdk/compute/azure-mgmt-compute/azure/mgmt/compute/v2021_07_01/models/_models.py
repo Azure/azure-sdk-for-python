@@ -1085,6 +1085,205 @@ class CapacityReservationUtilization(msrest.serialization.Model):
         self.virtual_machines_allocated = None
 
 
+class PirCommunityGalleryResource(msrest.serialization.Model):
+    """Base information about the community gallery resource in pir.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param unique_id: The unique id of this community gallery.
+    :type unique_id: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'location': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PirCommunityGalleryResource, self).__init__(**kwargs)
+        self.name = None
+        self.location = None
+        self.type = None
+        self.unique_id = kwargs.get('unique_id', None)
+
+
+class CommunityGallery(PirCommunityGalleryResource):
+    """Specifies information about the Community Gallery that you want to create or update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param unique_id: The unique id of this community gallery.
+    :type unique_id: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'location': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommunityGallery, self).__init__(**kwargs)
+
+
+class CommunityGalleryImage(PirCommunityGalleryResource):
+    """Specifies information about the gallery image definition that you want to create or update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param unique_id: The unique id of this community gallery.
+    :type unique_id: str
+    :param os_type: This property allows you to specify the type of the OS that is included in the
+     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
+     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible values
+     include: "Windows", "Linux".
+    :type os_type: str or ~azure.mgmt.compute.v2021_07_01.models.OperatingSystemTypes
+    :param os_state: This property allows the user to specify whether the virtual machines created
+     under this image are 'Generalized' or 'Specialized'. Possible values include: "Generalized",
+     "Specialized".
+    :type os_state: str or ~azure.mgmt.compute.v2021_07_01.models.OperatingSystemStateTypes
+    :param end_of_life_date: The end of life date of the gallery image definition. This property
+     can be used for decommissioning purposes. This property is updatable.
+    :type end_of_life_date: ~datetime.datetime
+    :param identifier: This is the gallery image definition identifier.
+    :type identifier: ~azure.mgmt.compute.v2021_07_01.models.GalleryImageIdentifier
+    :param recommended: The properties describe the recommended machine configuration for this
+     Image Definition. These properties are updatable.
+    :type recommended: ~azure.mgmt.compute.v2021_07_01.models.RecommendedMachineConfiguration
+    :param disallowed: Describes the disallowed disk types.
+    :type disallowed: ~azure.mgmt.compute.v2021_07_01.models.Disallowed
+    :param hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
+     disks only. Possible values include: "V1", "V2".
+    :type hyper_v_generation: str or ~azure.mgmt.compute.v2021_07_01.models.HyperVGeneration
+    :param features: A list of gallery image features.
+    :type features: list[~azure.mgmt.compute.v2021_07_01.models.GalleryImageFeature]
+    :param purchase_plan: Describes the gallery image definition purchase plan. This is used by
+     marketplace images.
+    :type purchase_plan: ~azure.mgmt.compute.v2021_07_01.models.ImagePurchasePlan
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'location': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        'os_type': {'key': 'properties.osType', 'type': 'str'},
+        'os_state': {'key': 'properties.osState', 'type': 'str'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
+        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
+        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
+        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
+        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
+        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommunityGalleryImage, self).__init__(**kwargs)
+        self.os_type = kwargs.get('os_type', None)
+        self.os_state = kwargs.get('os_state', None)
+        self.end_of_life_date = kwargs.get('end_of_life_date', None)
+        self.identifier = kwargs.get('identifier', None)
+        self.recommended = kwargs.get('recommended', None)
+        self.disallowed = kwargs.get('disallowed', None)
+        self.hyper_v_generation = kwargs.get('hyper_v_generation', None)
+        self.features = kwargs.get('features', None)
+        self.purchase_plan = kwargs.get('purchase_plan', None)
+
+
+class CommunityGalleryImageVersion(PirCommunityGalleryResource):
+    """Specifies information about the gallery image version that you want to create or update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param unique_id: The unique id of this community gallery.
+    :type unique_id: str
+    :param published_date: The published date of the gallery image version Definition. This
+     property can be used for decommissioning purposes. This property is updatable.
+    :type published_date: ~datetime.datetime
+    :param end_of_life_date: The end of life date of the gallery image version Definition. This
+     property can be used for decommissioning purposes. This property is updatable.
+    :type end_of_life_date: ~datetime.datetime
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'location': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        'published_date': {'key': 'properties.publishedDate', 'type': 'iso-8601'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommunityGalleryImageVersion, self).__init__(**kwargs)
+        self.published_date = kwargs.get('published_date', None)
+        self.end_of_life_date = kwargs.get('end_of_life_date', None)
+
+
 class ComputeOperationListResult(msrest.serialization.Model):
     """The List Compute Operation operation response.
 

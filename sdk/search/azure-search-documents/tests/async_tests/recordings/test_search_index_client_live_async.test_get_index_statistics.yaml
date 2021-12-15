@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search9691925.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2021-04-30-Preview
   response:
@@ -15,13 +15,13 @@ interactions:
       cache-control: no-cache
       content-length: '263'
       content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:29:13 GMT
-      elapsed-time: '875'
+      date: Tue, 31 Aug 2021 17:34:50 GMT
+      elapsed-time: '28'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f9ec3b98-d9fa-11eb-8ff2-a0481ca055a9
+      request-id: bf8ac439-0a81-11ec-95e0-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

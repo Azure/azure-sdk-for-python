@@ -1,5 +1,20 @@
 # Release History
 
+## 7.1.0 (2021-09-23)
+
+**Features**
+
+  - Model NetworkRuleSet has a new parameter public_network_access
+  - Model NetworkRuleSet has a new parameter trusted_service_access_enabled
+  - Model SBQueue has a new parameter max_message_size_in_kilobytes
+  - Model SBTopic has a new parameter max_message_size_in_kilobytes
+  - Model SBNamespace has a new parameter status
+  - Model SBNamespace has a new parameter disable_local_auth
+  - Model SBSubscription has a new parameter is_client_affine
+  - Model SBSubscription has a new parameter client_affine_properties
+  - Model SBNamespaceUpdateParameters has a new parameter status
+  - Model SBNamespaceUpdateParameters has a new parameter disable_local_auth
+
 ## 7.0.0 (2021-08-19)
 
 **Features**

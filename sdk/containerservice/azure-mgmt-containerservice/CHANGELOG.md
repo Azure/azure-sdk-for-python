@@ -1,5 +1,41 @@
 # Release History
 
+## 16.4.0 (2021-11-25)
+
+**Features**
+
+  - Model ContainerServiceNetworkProfile has a new parameter service_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter pod_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter ip_families
+  - Model ManagedClusterLoadBalancerProfileManagedOutboundIPs has a new parameter count_ipv6
+
+## 16.3.0 (2021-10-18)
+
+**Features**
+
+  - Model ManagedClusterWindowsProfile has a new parameter gmsa_profile
+  - Model Snapshot has a new parameter vm_size
+  - Model Snapshot has a new parameter os_type
+  - Model Snapshot has a new parameter os_sku
+  - Model Snapshot has a new parameter kubernetes_version
+  - Model Snapshot has a new parameter node_image_version
+  - Model Snapshot has a new parameter enable_fips
+
+## 16.2.0 (2021-09-09)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter workload_runtime
+  - Model ManagedClusterLoadBalancerProfile has a new parameter enable_multiple_standard_load_balancers
+  - Model ManagedClusterAgentPoolProfile has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfile has a new parameter workload_runtime
+  - Model ManagedCluster has a new parameter public_network_access
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter disable_run_command
+  - Model AgentPool has a new parameter creation_data
+  - Model AgentPool has a new parameter workload_runtime
+  - Added operation group SnapshotsOperations
+
 ## 16.1.0 (2021-08-06)
 
 **Features**

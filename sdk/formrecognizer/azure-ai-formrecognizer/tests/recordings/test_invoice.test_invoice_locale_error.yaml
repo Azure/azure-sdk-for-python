@@ -14,29 +14,29 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false&locale=not%20a%20locale
   response:
     body:
       string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "543694d4-eaff-462f-a587-ae5f2b778e1b"}, "message": "Locale unsupported. Supported
+        "48d187bd-7a8a-4e86-b512-848602c56f91"}, "message": "Locale unsupported. Supported
         locale includes en-US."}}'
     headers:
       apim-request-id:
-      - 543694d4-eaff-462f-a587-ae5f2b778e1b
+      - 48d187bd-7a8a-4e86-b512-848602c56f91
       content-length:
       - '169'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 02:38:09 GMT
+      - Wed, 22 Sep 2021 05:41:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '145'
+      - '159'
     status:
       code: 400
       message: Bad Request

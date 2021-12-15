@@ -842,7 +842,7 @@ class BlockBlobOperations(object):
         or from the uncommitted block list, or to commit the most recently uploaded version of the
         block, whichever list it may belong to.
 
-        :param blocks:
+        :param blocks: Blob Blocks.
         :type blocks: ~azure.storage.blob.models.BlockLookupList
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a

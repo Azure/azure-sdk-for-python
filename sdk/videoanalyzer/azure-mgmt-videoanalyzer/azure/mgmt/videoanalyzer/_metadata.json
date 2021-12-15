@@ -1,14 +1,14 @@
 {
-    "chosen_version": "2021-05-01-preview",
-    "total_api_version_list": ["2021-05-01-preview"],
+    "chosen_version": "2021-11-01-preview",
+    "total_api_version_list": ["2021-11-01-preview"],
     "client": {
         "name": "VideoAnalyzer",
         "filename": "_video_analyzer",
-        "description": "Azure Video Analyzer ARM Client.",
+        "description": "Azure Video Analyzer provides a platform for you to build intelligent video applications that span the edge and the cloud.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
-        "has_lro_operations": false,
+        "has_lro_operations": true,
         "client_side_validation": false,
         "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"VideoAnalyzerConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
         "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"VideoAnalyzerConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
@@ -98,10 +98,21 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
+        "edge_modules": "EdgeModulesOperations",
+        "pipeline_topologies": "PipelineTopologiesOperations",
+        "live_pipelines": "LivePipelinesOperations",
+        "pipeline_jobs": "PipelineJobsOperations",
+        "live_pipeline_operation_statuses": "LivePipelineOperationStatusesOperations",
+        "pipeline_job_operation_statuses": "PipelineJobOperationStatusesOperations",
         "operations": "Operations",
         "video_analyzers": "VideoAnalyzersOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "operation_statuses": "OperationStatusesOperations",
+        "operation_results": "OperationResultsOperations",
+        "video_analyzer_operation_statuses": "VideoAnalyzerOperationStatusesOperations",
+        "video_analyzer_operation_results": "VideoAnalyzerOperationResultsOperations",
         "locations": "LocationsOperations",
-        "edge_modules": "EdgeModulesOperations",
         "videos": "VideosOperations",
         "access_policies": "AccessPoliciesOperations"
     }

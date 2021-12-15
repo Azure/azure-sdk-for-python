@@ -16,8 +16,8 @@ autorest ./SWAGGER.md
 
 ### Settings
 ``` yaml
-tag: package-2021-06-21-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/86408a8777e623f5f41e260472ed831309b85086/specification/communication/data-plane/Turn/readme.md
+tag: package-2021-10-08-preview
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/f2e08ab373eb0e96b54920e89f9fc96d683355ca/specification/communication/data-plane/NetworkTraversal/readme.md
 output-folder: ../azure/communication/networktraversal/_generated/
 namespace: azure.communication.networktraversal
 license-header: MICROSOFT_MIT_NO_VERSION

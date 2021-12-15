@@ -13,7 +13,7 @@ from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import ResourceGroupPreparer
 from _shared.helper import URIIdentityReplacer
-from _shared.asynctestcase  import AsyncCommunicationTestCase
+from asynctestcase  import AsyncCommunicationIdentityTestCase
 from _shared.testcase import BodyReplacerProcessor
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
@@ -25,7 +25,7 @@ class FakeTokenCredential(object):
 
     async def get_token(self, *args):
         return self.token
-class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
+class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
     def setUp(self):
         super(CommunicationIdentityClientTestAsync, self).setUp()
         self.recording_processors.extend([
@@ -227,3 +227,84 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             with pytest.raises(Exception) as ex:
                 user = await identity_client.create_user()
                 token_response = await identity_client.get_token(user, scopes=None)
+
+    @CommunicationPreparer()
+    async def test_get_token_for_teams_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
+        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
+        from devtools_testutils import is_live
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = DefaultAzureCredential()
+        identity_client = CommunicationIdentityClient(
+            endpoint, 
+            credential,
+            http_logging_policy=get_http_logging_policy()
+        ) 
+        async with identity_client:
+            add_token = self.generate_teams_user_aad_token() 
+            token_response = await identity_client.get_token_for_teams_user(add_token)
+
+        assert token_response.token is not None
+
+    @CommunicationPreparer()
+    async def test_get_token_for_teams_user_with_valid_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        async with identity_client:
+            add_token = self.generate_teams_user_aad_token() 
+            token_response = await identity_client.get_token_for_teams_user(add_token)
+
+        assert token_response.token is not None
+
+    @CommunicationPreparer()
+    async def test_get_token_for_teams_user_with_empty_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        async with identity_client:
+            with pytest.raises(Exception) as ex:
+                token_response = await identity_client.get_token_for_teams_user("")
+
+        assert str(ex.value.status_code) == "401"
+        assert ex.value.message is not None
+
+
+    @CommunicationPreparer()
+    async def test_get_token_for_teams_user_with_invalid_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        async with identity_client:
+            with pytest.raises(Exception) as ex:
+                token_response = await identity_client.get_token_for_teams_user("invalid")
+
+        assert str(ex.value.status_code) == "401"
+        assert ex.value.message is not None
+
+    @CommunicationPreparer()
+    async def test_get_token_for_teams_user_with_expired_token(self, communication_livetest_dynamic_connection_string):
+        if(self.skip_get_token_for_teams_user_test()):
+            return
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        async with identity_client:
+            with pytest.raises(Exception) as ex:
+                token_response = await identity_client.get_token_for_teams_user(self.expired_teams_token)
+
+        assert str(ex.value.status_code) == "401"
+        assert ex.value.message is not None

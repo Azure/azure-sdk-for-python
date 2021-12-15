@@ -243,7 +243,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
-        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
@@ -257,6 +257,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.data.base_data.result_code, "200")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
+
+        # Name empty
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.url": "https://www.example.com",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.name, "GET /")
 
         # Target
         span._attributes = {
@@ -339,7 +348,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             attributes={
                 "db.system": "postgresql",
                 "peer.service": "service",
-                "db.statement": "SELECT",
+                "db.statement": "SELECT * from test",
             },
             kind=SpanKind.CLIENT,
         )
@@ -358,10 +367,19 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.success)
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "SQL")
+        self.assertEqual(envelope.data.base_data.type, "postgresql")
         self.assertEqual(envelope.data.base_data.target, "service")
+        self.assertEqual(envelope.data.base_data.data, "SELECT * from test")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        # data
+        span._attributes = {
+            "db.system": "postgresql",
+            "peer.service": "service",
+            "db.operation": "SELECT",
+        }
+        envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
 
         # Target
         span._attributes = {
@@ -371,7 +389,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "peer.service": "service",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.target, "service/testDb")
+        self.assertEqual(envelope.data.base_data.target, "service|testDb")
 
         span._attributes = {
             "db.system": "postgresql",
@@ -387,6 +405,16 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "postgresql")
 
+        # Type
+        span._attributes = {
+            "db.system": "mssql",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "SQL")
+
     def test_span_to_envelope_client_rpc(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -401,6 +429,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 is_remote=False,
             ),
             attributes={
+                "peer.service": "service",
                 "rpc.system": "rpc",
                 "rpc.service": "Test service",
             },
@@ -422,10 +451,19 @@ class TestAzureTraceExporter(unittest.TestCase):
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "rpc.system")
+        self.assertEqual(envelope.data.base_data.target, "service")
+        
+        # target
+        span._attributes = {
+            "rpc.system": "rpc",
+            "rpc.service": "Test service",
+        }
+        envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "rpc")
+
         # TODO: data.data
         # self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
     def test_span_to_envelope_producer_messaging(self):
         exporter = self._exporter
@@ -467,7 +505,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         # self.assertEqual(envelope.data.base_data.target, "rpc")
         # TODO: data.data
         # self.assertEqual(envelope.data.base_data.data, "SELECT")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
 
     def test_span_to_envelope_internal(self):
         exporter = self._exporter
@@ -475,13 +513,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         end_time = start_time + 1001000000
 
         # SpanKind.INTERNAL
-        span = trace._Span(
-            name="test",
-            context=SpanContext(
+        context = SpanContext(
                 trace_id=36873507687745823477771305566750195431,
                 span_id=12030755672171557337,
                 is_remote=False,
-            ),
+            )
+        span = trace._Span(
+            name="test",
+            context=context,
+            parent=context,
             attributes={},
             kind=SpanKind.INTERNAL,
         )
@@ -501,7 +541,12 @@ class TestAzureTraceExporter(unittest.TestCase):
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
         self.assertEqual(envelope.data.base_data.type, "InProc")
-        self.assertEqual(envelope.data.base_data.result_code, "1")
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        # type
+        span._parent = None
+        envelope = exporter._span_to_envelope(span)
+        self.assertIsNone(envelope.data.base_data.type)
 
     def test_span_envelope_server_http(self):
         exporter = self._exporter
@@ -535,18 +580,16 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
         self.assertEqual(envelope.data.base_type, "RequestData")
-        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
 
-        self.assertEqual(envelope.tags["ai.operation.name"], "GET test")
+        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
-        self.assertEqual(envelope.data.base_data.properties["request.name"], "test")
-        self.assertEqual(envelope.data.base_data.properties["request.url"], "https://www.wikipedia.org/wiki/Rabbit")
         
         # location
         span._attributes = {
@@ -585,6 +628,22 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
+
+        # ai.operation.name
+        span._attributes = {
+            "http.method": "GET",
+            "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+
+        span._attributes = {
+            "http.method": "GET",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.data.base_data.name, "test")
 
     def test_span_envelope_server_messaging(self):
         exporter = self._exporter

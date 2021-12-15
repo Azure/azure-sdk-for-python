@@ -24,28 +24,25 @@
 #
 # --------------------------------------------------------------------------
 from ._schema import SchemaProperties, Schema
+from ._constants import SchemaFormat
 
 
 def _parse_schema_properties_dict(response):
-    return {
-        'location': response.headers.get('location'),
-        'location_by_id': response.headers.get('schema-id-location'),
-        'schema_id': response.headers.get('schema-id'),
-        'serialization_type': response.headers.get('serialization-type'),
-        'version': int(response.headers.get('schema-version'))
-    }
+    return {"id": response.headers.get("schema-id")}
 
 
-def _parse_response_schema_properties(response):
+def _parse_response_schema_properties(response, format):
+    # pylint:disable=redefined-builtin
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict['schema_id'] = response.json()["id"]
-    return SchemaProperties(
-        **properties_dict
-    )
+    properties_dict["format"] = SchemaFormat(format)
+    return SchemaProperties(**properties_dict)
 
 
 def _parse_response_schema(response):
+    # pylint:disable=redefined-builtin
+    schema_props_dict = _parse_schema_properties_dict(response)
+    format = response.headers.get("content-type").split("serialization=")[1]
+    schema_props_dict["format"] = SchemaFormat(format)
     return Schema(
-        schema_content=response.text(),
-        schema_properties=SchemaProperties(**_parse_schema_properties_dict(response))
+        definition=response.text(), properties=SchemaProperties(**schema_props_dict)
     )

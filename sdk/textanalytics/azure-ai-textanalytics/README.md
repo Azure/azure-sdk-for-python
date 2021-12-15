@@ -3,16 +3,20 @@
 Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
 
 - Sentiment Analysis
-- Named Entity Recognition
-- Linked Entity Recognition
-- Personally Identifiable Information (PII) Entity Recognition
+- Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
 - Language Detection
 - Key Phrase Extraction
 - Multiple Analysis
 - Healthcare Entities Analysis
 - Extractive Text Summarization
+- Custom Entity Recognition
+- Custom Single and Multi Category Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][ta_product_documentation] | [Samples][ta_samples]
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -20,19 +24,19 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 
 - Python 2.7, or 3.6 or later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
-  [Cognitive Services or Text Analytics resource][ta_or_cs_resource] to use this package.
+  [Cognitive Services or Language resource][ta_or_cs_resource] to use this package.
 
-#### Create a Cognitive Services or Text Analytics resource
+#### Create a Cognitive Services or Language resource
 
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
-Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
+Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Language resource.
 
 You can create the resource using
 
 **Option 1:** [Azure Portal][azure_portal_create_ta_resource]
 
 **Option 2:** [Azure CLI][azure_cli_create_ta_resource].
-Below is an example of how you can create a Text Analytics resource using the CLI:
+Below is an example of how you can create a Language resource using the CLI:
 
 ```bash
 # Create a new resource group to hold the text analytics resource -
@@ -52,7 +56,7 @@ az cognitiveservices account create \
 ```
 
 Interaction with this service begins with an instance of a [client](#textanalyticsclient "TextAnalyticsClient").
-To create a client object, you will need the cognitive services or text analytics `endpoint` to
+To create a client object, you will need the cognitive services or language `endpoint` to
 your resource and a `credential` that allows you access:
 
 ```python
@@ -60,12 +64,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
 
-Note that if you create a [custom subdomain][cognitive_custom_subdomain]
-name for your resource the endpoint may look different than in the above code snippet.
-For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
+Note that for some Cognitive Services resources the endpoint might look different from the above code snippet.
+For example, `https://<region>.api.cognitive.microsoft.com/`.
 
 ### Install the package
 
@@ -75,16 +78,18 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note: This version of the client library defaults to the v3.2-preview.1 version of the service
+> Note: This version of the client library defaults to the v3.2-preview.2 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b1 - Latest beta release | 3.0, 3.1, 3.2-preview.1 (default) |
+| 5.2.0b2 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
 | 5.1.0 - Latest GA release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
+API version can be selected by passing the [api_version][text_analytics_client] keyword argument into the client.
+For the latest Text Analytics features, consider selecting the most recent preview API version. For production scenarios, the latest GA version is recommended. Setting to an older version may result in reduced feature compatibility.
 
 ### Authenticate the client
 
@@ -101,7 +106,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 
 #### Get the API Key
 
-You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Text Analytics resource in the [Azure Portal][azure_portal_get_endpoint].
+You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Language resource in the [Azure Portal][azure_portal_get_endpoint].
 Alternatively, you can use [Azure CLI][azure_cli_endpoint_lookup] snippet below to get the API key of your resource.
 
 `az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"`
@@ -116,7 +121,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
 
 #### Create a TextAnalyticsClient with an Azure Active Directory Credential
@@ -147,7 +152,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-text_analytics_client = TextAnalyticsClient(endpoint="https://<my-custom-subdomain>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
 
 ## Key concepts
@@ -229,6 +234,10 @@ The following section provides several code snippets covering some of the most c
 - [Detect Language](#detect-language "Detect language")
 - [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
 - [Multiple Analysis](#multiple-analysis "Multiple analysis")
+- [Extractive Summarization][extract_summary_sample]
+- [Custom Entity Recognition][recognize_custom_entities_sample]
+- [Custom Single Category Classification][single_category_classify_sample]
+- [Custom Multi Category Classification][multi_category_classify_sample]
 
 ### Analyze sentiment
 
@@ -239,7 +248,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -274,7 +283,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -313,7 +322,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -352,7 +361,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -389,7 +398,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -421,7 +430,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -457,7 +466,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -494,7 +503,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is available in API version v3.1 and up.
+Note: The Healthcare Entities Analysis service is only available in the Standard pricing tier with API versions v3.1 and up.
 
 ### Multiple Analysis
 
@@ -506,6 +515,9 @@ Note: The Healthcare Entities Analysis service is available in API version v3.1 
 - Key Phrase Extraction
 - Sentiment Analysis
 - Extractive Summarization (see sample [here][extract_summary_sample])
+- Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
+- Custom Single Category Classification (see sample [here][single_category_classify_sample])
+- Custom Multi Category Classification (see sample [here][multi_category_classify_sample])
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -516,7 +528,7 @@ from azure.ai.textanalytics import (
 )
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -603,7 +615,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -626,7 +638,7 @@ These code samples show common scenario operations with the Azure Text Analytics
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
 with Text Analytics and require Python 3.6 or later.
 
-Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
+Authenticate the client with a Cognitive Services/Language API key or a token credential from [azure-identity][azure_identity]:
 
 - [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
@@ -641,6 +653,9 @@ Common scenarios
 - Healthcare Entities Analysis: [sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] ([async version][analyze_healthcare_entities_sample_async])
 - Multiple Analysis: [sample_analyze_actions.py][analyze_sample] ([async version][analyze_sample_async])
 - Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
+- Custom Entity Recognition: [sample_recognize_custom_entities.py][recognize_custom_entities_sample] ([async_version][recognize_custom_entities_sample_async])
+- Custom Single Classification: [sample_single_category_classify.py][single_category_classify_sample] ([async_version][single_category_classify_sample_async])
+- Custom Multi Classification: [sample_multi_category_classify.py][multi_category_classify_sample] ([async_version][multi_category_classify_sample_async])
 
 Advanced scenarios
 
@@ -738,6 +753,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
 [extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
+[recognize_custom_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_custom_entities.py
+[recognize_custom_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_custom_entities_async.py
+[single_category_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_category_classify.py
+[single_category_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_category_classify_async.py
+[multi_category_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_category_classify.py
+[multi_category_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_category_classify_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

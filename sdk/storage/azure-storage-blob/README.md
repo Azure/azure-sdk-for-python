@@ -123,6 +123,14 @@ The `credential` parameter may be provided in a number of different forms, depen
     from azure.storage.blob import BlobServiceClient
     service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential="<account_access_key>")
     ```
+    
+    If you are using **customized url** (which means the url is not in this format `<my_account_name>.blob.core.windows.net`),
+    please instantiate the client using the credential below:
+    ```python
+    from azure.storage.blob import BlobServiceClient
+    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", 
+       credential={"account_name": "<your_account_name>", "account_key":"<account_access_key>"})
+    ```
 
 4. To use [anonymous public read access](https://docs.microsoft.com/azure/storage/blobs/storage-manage-access-to-resources),
    simply omit the credential parameter.
@@ -336,6 +344,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __client_request_id__ (str): Optional user specified identification of the request.
 * __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
 * __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
+* __logging_body__ (bool): Enables logging the request and response body. Defaults to False. Can also be passed in at
 the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 

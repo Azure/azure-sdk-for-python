@@ -51,9 +51,6 @@ class InteractiveBrowserCredential(InteractiveCredential):
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant or the tenant specified by **tenant_id**.
     :raises ValueError: invalid **redirect_uri**
     """
 

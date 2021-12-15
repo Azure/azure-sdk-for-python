@@ -12,6 +12,7 @@ from ._generated.models import (
     MessagingSku,
     NamespaceType,
 )
+from ._api_version import ApiVersion
 
 from ._models import (
     QueueRuntimeProperties,
@@ -52,4 +53,5 @@ __all__ = [
     "NamespaceProperties",
     "MessagingSku",
     "NamespaceType",
+    "ApiVersion"
 ]

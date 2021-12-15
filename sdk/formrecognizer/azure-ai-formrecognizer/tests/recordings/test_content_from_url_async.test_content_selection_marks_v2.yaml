@@ -5,24 +5,24 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '224'
+      - '236'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 90cc6e6a-5b91-482c-acec-7aeed6f5ce6e
+      apim-request-id: 4e22645d-ef56-407f-b7f1-bcfa949e955f
       content-length: '0'
-      date: Tue, 11 May 2021 00:41:45 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/90cc6e6a-5b91-482c-acec-7aeed6f5ce6e
+      date: Thu, 23 Sep 2021 22:39:29 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/4e22645d-ef56-407f-b7f1-bcfa949e955f
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '801'
+      x-envoy-upstream-service-time: '496'
     status:
       code: 202
       message: Accepted
@@ -31,36 +31,36 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/90cc6e6a-5b91-482c-acec-7aeed6f5ce6e
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/4e22645d-ef56-407f-b7f1-bcfa949e955f
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-05-11T00:41:45Z", "lastUpdatedDateTime":
-        "2021-05-11T00:41:45Z"}'
+      string: '{"status": "running", "createdDateTime": "2021-09-23T22:39:30Z", "lastUpdatedDateTime":
+        "2021-09-23T22:39:30Z"}'
     headers:
-      apim-request-id: bff1ba24-889b-4e23-bae1-c5fb2491e220
+      apim-request-id: f62016e9-0c5d-41ce-b1d3-7947e3534806
       content-length: '106'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 00:41:49 GMT
+      date: Thu, 23 Sep 2021 22:39:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '13'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/90cc6e6a-5b91-482c-acec-7aeed6f5ce6e
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/4e22645d-ef56-407f-b7f1-bcfa949e955f
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/90cc6e6a-5b91-482c-acec-7aeed6f5ce6e
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/4e22645d-ef56-407f-b7f1-bcfa949e955f
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T00:41:45Z",
-        "lastUpdatedDateTime": "2021-05-11T00:41:50Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-09-23T22:39:30Z",
+        "lastUpdatedDateTime": "2021-09-23T22:39:36Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "language": "en", "lines": [{"boundingBox": [3.2791, 0.7167,
         5.0584, 0.7167, 5.0584, 0.8109, 3.2791, 0.8109], "text": "STATE OF CALIFORNIA:
@@ -546,15 +546,15 @@ interactions:
         6.7146, 6.4104, 6.7146], "elements": ["#/readResults/0/lines/34/words/0",
         "#/readResults/0/lines/34/words/1", "#/readResults/0/lines/35/words/0"]}]}]}]}}'
     headers:
-      apim-request-id: d3cdc5cc-84dd-4e6d-aca1-4d2d4961202a
+      apim-request-id: c6187eb6-d235-469c-9343-e6abf43fa7c1
       content-length: '34566'
       content-type: application/json; charset=utf-8
-      date: Tue, 11 May 2021 00:41:54 GMT
+      date: Thu, 23 Sep 2021 22:39:40 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/90cc6e6a-5b91-482c-acec-7aeed6f5ce6e
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/4e22645d-ef56-407f-b7f1-bcfa949e955f
 version: 1

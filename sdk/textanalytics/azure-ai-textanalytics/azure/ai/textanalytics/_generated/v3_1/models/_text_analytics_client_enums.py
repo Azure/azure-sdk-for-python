@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Association(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Association(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the entity is the subject of the text or if it describes someone else.
     """
 
     SUBJECT = "subject"
     OTHER = "other"
 
-class Certainty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Certainty(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the entities certainty and polarity.
     """
 
@@ -43,14 +28,14 @@ class Certainty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEGATIVE_POSSIBLE = "negativePossible"
     NEGATIVE = "negative"
 
-class Conditionality(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Conditionality(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes any conditionality on the entity.
     """
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
 
-class DocumentSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentSentimentValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
     """
 
@@ -59,7 +44,7 @@ class DocumentSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     NEGATIVE = "negative"
     MIXED = "mixed"
 
-class ErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorCodeValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Error code.
     """
 
@@ -69,7 +54,7 @@ class ErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     NOT_FOUND = "NotFound"
 
-class HealthcareEntityCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HealthcareEntityCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Healthcare Entity Category.
     """
 
@@ -100,7 +85,7 @@ class HealthcareEntityCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     FAMILY_RELATION = "FAMILY_RELATION"
     TREATMENT_NAME = "TREATMENT_NAME"
 
-class InnerErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InnerErrorCodeValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Error code.
     """
 
@@ -114,7 +99,7 @@ class InnerErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
-class PiiCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PiiCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -290,12 +275,12 @@ class PiiCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALL = "All"
     DEFAULT = "Default"
 
-class PiiTaskParametersDomain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PiiTaskParametersDomain(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     PHI = "phi"
     NONE = "none"
 
-class RelationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RelationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
     """
 
@@ -321,7 +306,7 @@ class RelationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VALUE_OF_CONDITION = "ValueOfCondition"
     VALUE_OF_EXAMINATION = "ValueOfExamination"
 
-class SentenceSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SentenceSentimentValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The predicted Sentiment for the sentence.
     """
 
@@ -329,7 +314,7 @@ class SentenceSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
 
-class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class State(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -339,7 +324,7 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
 
-class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StringIndexType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme
     #: clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
@@ -352,14 +337,14 @@ class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: application is written in a language that support Unicode, for example Java, JavaScript.
     UTF16_CODE_UNIT = "Utf16CodeUnit"
 
-class TargetRelationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TargetRelationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type related to the target.
     """
 
     ASSESSMENT = "assessment"
     TARGET = "target"
 
-class TokenSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TokenSentimentValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Targeted sentiment in the sentence.
     """
 
@@ -367,7 +352,7 @@ class TokenSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIXED = "mixed"
     NEGATIVE = "negative"
 
-class WarningCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WarningCodeValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Error code.
     """
 

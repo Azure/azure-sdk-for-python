@@ -25,7 +25,7 @@ from azure.storage.blob import (
     ExponentialRetry,
 )
 
-from _shared.testcase import GlobalStorageAccountPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 class RetryRequestTransport(RequestsTransport):
@@ -50,11 +50,11 @@ class StorageRetryTest(StorageTestCase):
         return service
 
     # --Test Cases --------------------------------------------
-    @GlobalStorageAccountPreparer()
-    def test_retry_on_server_error(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_on_server_error(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
-        service = self._create_storage_service(BlobServiceClient, storage_account, storage_account_key)
+        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=500).override_status
@@ -70,13 +70,13 @@ class StorageRetryTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
-    def test_retry_on_timeout(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_on_timeout(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         callback = ResponseCallback(status=201, new_status=408).override_status
 
@@ -91,13 +91,13 @@ class StorageRetryTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
-    def test_retry_callback_and_retry_context(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_callback_and_retry_context(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -119,15 +119,15 @@ class StorageRetryTest(StorageTestCase):
             service.delete_container(container_name)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_retry_on_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_on_socket_timeout(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
         retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=retry_transport)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=retry_transport)
 
         assert service._client._client._pipeline._transport.connection_config.timeout == 11
         assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
@@ -146,12 +146,12 @@ class StorageRetryTest(StorageTestCase):
             # we must make the timeout normal again to let the delete operation succeed
             service.delete_container(container_name, connection_timeout=(11, 11))
 
-    @GlobalStorageAccountPreparer()
-    def test_no_retry(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_no_retry(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_total=0)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_total=0)
 
 
         # Force the create call to 'timeout' with a 408
@@ -167,13 +167,13 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_linear_retry(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_linear_retry(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -189,13 +189,13 @@ class StorageRetryTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
-    def test_exponential_retry(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_exponential_retry(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         try:
             container = service.create_container(container_name)
@@ -213,8 +213,8 @@ class StorageRetryTest(StorageTestCase):
             # Clean up
             service.delete_container(container_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_exponential_retry_interval(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_exponential_retry_interval(self, storage_account_name, storage_account_key):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
         context_stub = {}
@@ -248,8 +248,8 @@ class StorageRetryTest(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
             self.assertTrue(25 <= backoff <= 31)
 
-    @GlobalStorageAccountPreparer()
-    def test_linear_retry_interval(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_linear_retry_interval(self, storage_account_name, storage_account_key):
         # Arrange
         context_stub = {}
 
@@ -275,13 +275,13 @@ class StorageRetryTest(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 15
             self.assertTrue(12 <= backoff <= 18)
 
-    @GlobalStorageAccountPreparer()
-    def test_invalid_retry(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_invalid_retry(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         # Force the create call to fail by pretending it's a teapot
         callback = ResponseCallback(status=201, new_status=418).override_status
@@ -295,13 +295,13 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_retry_with_deserialization(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_with_deserialization(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('retry')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         try:
             created = service.create_container(container_name)
@@ -316,8 +316,8 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_retry_secondary(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_retry_secondary(self, storage_account_name, storage_account_key):
         """Secondary location test.
 
         This test is special, since in practical term, we don't have time to wait
@@ -362,7 +362,7 @@ class StorageRetryTest(StorageTestCase):
 
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry,
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry,
             transport=MockTransport()
         )
 
@@ -412,13 +412,13 @@ class StorageRetryTest(StorageTestCase):
         container.get_container_properties(retry_hook=retry_callback)
         assert retry_callback.called
 
-    @GlobalStorageAccountPreparer()
-    def test_invalid_account_key(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_invalid_account_key(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
         service.credential.account_name = "dummy_account_name"
         service.credential.account_key = "dummy_account_key"
 

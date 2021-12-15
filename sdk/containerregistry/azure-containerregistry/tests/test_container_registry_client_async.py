@@ -564,10 +564,23 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    async def test_incorrect_credential_scopes(self, containerregistry_endpoint):
+    async def test_construct_container_registry_client(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
-        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, credential_scopes="https://microsoft.com")
-
+        
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com")
         with pytest.raises(ClientAuthenticationError):
-            properties = await client.get_repository_properties(HELLO_WORLD)
+            properties = await client.get_repository_properties(HELLO_WORLD)       
+        with pytest.raises(TypeError):
+            client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
+
+    @acr_preparer()
+    def test_set_api_version(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        assert client._client._config.api_version == "2021-07-01"
+        
+        client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15-preview")
+        assert client._client._config.api_version == "2019-08-15-preview"
+        
+        with pytest.raises(ValueError):
+            client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15")

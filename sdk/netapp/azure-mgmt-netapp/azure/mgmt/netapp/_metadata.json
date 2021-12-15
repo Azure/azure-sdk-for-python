@@ -100,6 +100,7 @@
     "operation_groups": {
         "operations": "Operations",
         "net_app_resource": "NetAppResourceOperations",
+        "net_app_resource_quota_limits": "NetAppResourceQuotaLimitsOperations",
         "accounts": "AccountsOperations",
         "pools": "PoolsOperations",
         "volumes": "VolumesOperations",

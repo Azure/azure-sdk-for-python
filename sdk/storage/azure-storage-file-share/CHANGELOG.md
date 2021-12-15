@@ -1,5 +1,17 @@
 # Release History
 
+## 12.7.0b1 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12.
+- Added support for premium file share provisioned_bandwidth property.
+- Added support for checking if a directory exists using `exists()`.
+
+## 12.6.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added OAuth support for file copy source.
+
 ## 12.6.0b1 (2021-07-27)
 **New features**
 - Added OAuth support for file copy source.

@@ -5,8 +5,6 @@ stages:
     parameters:
       BuildTargetingString: azure-data-tables
       ServiceDirectory: tables
-      AllocateResourceGroup: false
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

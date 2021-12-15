@@ -596,14 +596,20 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    if body["provider"] == "Test":
-                        return
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
+                    try:
+                        # the body of the request should be JSON
+                        body = json.loads(section)
+                        if body["provider"] == "Test":
+                            mock_handler.close()
+                            return
+                    except (ValueError, KeyError):
+                        # this means the request section is not JSON
+                        pass
 
+        mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
     @logging_disabled()
@@ -620,12 +626,20 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                try:
-                    body = json.loads(message.message)
-                    assert body["provider"] != "Test", "Client request body was logged"
-                except (ValueError, KeyError):
-                    # this means the message is not JSON or has no kty property
-                    pass
+                # parts of the request are logged on new lines in a single message
+                request_sections = message.message.split("/n")
+                for section in request_sections:
+                    try:
+                        # the body of the request should be JSON
+                        body = json.loads(section)
+                        if body["provider"] == "Test":
+                            mock_handler.close()
+                            assert False, "Client request body was logged"
+                    except (ValueError, KeyError):
+                        # this means the request section is not JSON
+                        pass
+
+        mock_handler.close()
 
     @only_2016_10_01()
     @client_setup

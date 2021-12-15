@@ -266,15 +266,15 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         async with client:
             result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
-            doc_errors = []
+            doc_results = []
             async for r in result:
-                doc_errors.append(r)
-        self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
-        self.assertIsNotNone(doc_errors[0].error.message)
-        self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
-        self.assertIsNotNone(doc_errors[1].error.message)
-        self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
-        self.assertIsNotNone(doc_errors[2].error.message)
+                doc_results.append(r)
+        self.assertEqual(doc_results[0].error.code, "InvalidDocument")
+        self.assertIsNotNone(doc_results[0].error.message)
+        self.assertEqual(doc_results[1].error.code, "UnsupportedLanguageCode")
+        self.assertIsNotNone(doc_results[1].error.message)
+        assert not doc_results[2].is_error
+        assert doc_results[2].warnings
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -475,3 +475,42 @@ class TestHealth(AsyncTextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )).result()
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_healthcare_continuation_token(self, client):
+        async with client:
+            initial_poller = await client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1", "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+
+            cont_token = initial_poller.continuation_token()
+            poller = await client.begin_analyze_healthcare_entities(
+                None,
+                continuation_token=cont_token,
+                polling_interval=self._interval(),
+            )
+            response = await poller.result()
+
+            results = []
+            async for result in response:
+                results.append(result)
+
+            document_order = ["1", "2", "3", "4"]
+            for doc_idx, result in enumerate(results):
+                if doc_idx == 2:
+                    assert result.id == document_order[doc_idx]
+                    assert result.is_error
+                else:
+                    assert result.id == document_order[doc_idx]
+                    assert result.statistics
+                    assert result.entities
+
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

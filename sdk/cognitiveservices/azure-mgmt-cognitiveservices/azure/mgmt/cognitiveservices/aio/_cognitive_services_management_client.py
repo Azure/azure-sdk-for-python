@@ -22,8 +22,11 @@ from .operations import DeletedAccountsOperations
 from .operations import ResourceSkusOperations
 from .operations import Operations
 from .operations import CognitiveServicesManagementClientOperationsMixin
+from .operations import CommitmentTiersOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import DeploymentsOperations
+from .operations import CommitmentPlansOperations
 from .. import models
 
 
@@ -38,10 +41,16 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
     :vartype resource_skus: azure.mgmt.cognitiveservices.aio.operations.ResourceSkusOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cognitiveservices.aio.operations.Operations
+    :ivar commitment_tiers: CommitmentTiersOperations operations
+    :vartype commitment_tiers: azure.mgmt.cognitiveservices.aio.operations.CommitmentTiersOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.cognitiveservices.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.cognitiveservices.aio.operations.PrivateLinkResourcesOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments: azure.mgmt.cognitiveservices.aio.operations.DeploymentsOperations
+    :ivar commitment_plans: CommitmentPlansOperations operations
+    :vartype commitment_plans: azure.mgmt.cognitiveservices.aio.operations.CommitmentPlansOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -75,9 +84,15 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.commitment_tiers = CommitmentTiersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.commitment_plans = CommitmentPlansOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

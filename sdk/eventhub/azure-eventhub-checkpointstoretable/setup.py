@@ -50,6 +50,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        'Programming Language :: Python :: 3.10',
         "License :: OSI Approved :: MIT License",
     ],
     packages=find_packages(
@@ -68,7 +69,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
         'azure-eventhub<6.0.0,>=5.0.0',
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         'azure-eventhub<6.0.0,>=5.0.0',
     ],
     extras_require={

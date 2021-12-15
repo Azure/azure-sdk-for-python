@@ -8,3 +8,9 @@
 
 from ._azure_schema_registry import AzureSchemaRegistry
 __all__ = ['AzureSchemaRegistry']
+
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass

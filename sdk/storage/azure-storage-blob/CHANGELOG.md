@@ -1,5 +1,33 @@
 # Release History
 
+## 12.10.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12
+- Added support for blob names container invalid XML characters. Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
+
+### Bugs Fixed
+- BlobPrefix for aio operations is now exposed to be imported, previously it was private.
+
+## 12.10.0b1 (2021-11-08)
+**New Features**
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+- Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`)
+- Encryption Scope is now supported as a SAS permission
+
+**Fixes**
+- Blob Client Typing annotation issues have been resolved, specifically `invalid type inference` issues (#19906)
+- Duplicate type signature issue has been resolved (#19739) 
+
+## 12.9.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for object level immutability policy with versioning (Version Level WORM).
+- Added support for listing deleted root blobs that have versions.
+- Added OAuth support for sync copy blob source.
+
 ## 12.9.0b1 (2021-07-27)
 **New Features**
 - Added support for object level immutability policy with versioning (Version Level WORM).

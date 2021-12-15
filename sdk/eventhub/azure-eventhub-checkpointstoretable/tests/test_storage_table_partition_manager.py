@@ -13,14 +13,15 @@ from azure.eventhub.extensions.checkpointstoretable._vendor.data.tables import T
 from azure.eventhub.extensions.checkpointstoretable import TableCheckpointStore
 from azure.eventhub.exceptions import OwnershipLostError
 
-STORAGE_CONN_STR = [
-    #os.environ.get("AZURE_STORAGE_CONN_STR", "Azure Storage Connection String"),
-    os.environ.get("AZURE_COSMOS_CONN_STR", "Azure Storage Connection String"),
+STORAGE_ENV_KEYS = [
+    "AZURE_TABLES_CONN_STR",
+    "AZURE_COSMOS_CONN_STR"
 ]
 
 
-def get_live_storage_table_client(storage_connection_str):
+def get_live_storage_table_client(conn_str_env_key):
     try:
+        storage_connection_str = os.environ[conn_str_env_key]
         table_name = "table{}".format(uuid.uuid4().hex)
         table_service_client = TableServiceClient.from_connection_string(
             storage_connection_str
@@ -176,11 +177,11 @@ def _update_and_list_checkpoint(storage_connection_str, table_name):
     assert checkpoint_list[0]["offset"] == "30"
 
 
-@pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.skip("update after adding conn str env var")
-def test_claim_ownership_exception(storage_connection_str):
+@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
+@pytest.mark.liveTest
+def test_claim_ownership_exception(conn_str_env_key):
     storage_connection_str, table_name = get_live_storage_table_client(
-        storage_connection_str
+        conn_str_env_key
     )
     try:
         _claim_ownership_exception_test(storage_connection_str, table_name)
@@ -188,11 +189,11 @@ def test_claim_ownership_exception(storage_connection_str):
         remove_live_storage_table_client(storage_connection_str, table_name)
 
 
-@pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.skip("update after adding conn str env var")
-def test_claim_and_list_ownership(storage_connection_str):
+@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
+@pytest.mark.liveTest
+def test_claim_and_list_ownership(conn_str_env_key):
     storage_connection_str, table_name = get_live_storage_table_client(
-        storage_connection_str
+        conn_str_env_key
     )
     try:
         _claim_and_list_ownership(storage_connection_str, table_name)
@@ -200,11 +201,11 @@ def test_claim_and_list_ownership(storage_connection_str):
         remove_live_storage_table_client(storage_connection_str, table_name)
 
 
-@pytest.mark.parametrize("storage_connection_str", STORAGE_CONN_STR)
-@pytest.mark.skip("update after adding conn str env var")
-def test_update_checkpoint(storage_connection_str):
+@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
+@pytest.mark.liveTest
+def test_update_checkpoint(conn_str_env_key):
     storage_connection_str, table_name = get_live_storage_table_client(
-        storage_connection_str
+        conn_str_env_key
     )
     try:
         _update_and_list_checkpoint(storage_connection_str, table_name)

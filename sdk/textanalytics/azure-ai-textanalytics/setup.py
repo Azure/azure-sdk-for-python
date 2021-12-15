@@ -69,6 +69,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -79,7 +80,7 @@ setup(
         'azure.ai',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.14.0",
+        "azure-core<2.0.0,>=1.19.1",
         "msrest>=0.6.21",
         'azure-common~=1.1',
         'six>=1.11.0',

@@ -45,7 +45,7 @@ class AvailableResourceGroupDelegationsOperations:
         self,
         location: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableDelegationsResult"]:
         """Gets all of the available subnet delegations for this resource group in this region.
 

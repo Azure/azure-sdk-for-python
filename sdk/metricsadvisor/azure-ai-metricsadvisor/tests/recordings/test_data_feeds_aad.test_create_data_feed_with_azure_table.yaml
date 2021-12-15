@@ -12,7 +12,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -20,29 +20,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - a4fe9fd6-d709-443e-88c0-28807fca69da
+      - d793ed10-ffef-402e-bae5-3e406d90e386
       content-length:
       - '0'
       date:
-      - Fri, 11 Jun 2021 23:31:58 GMT
+      - Wed, 29 Sep 2021 19:35:23 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/75ec11d5-1e43-4a6d-b4d1-2c1e3472b537
+      - https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/613bcf8a-e1cc-4d2e-a59a-b8ba9711b996
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '471'
+      - '404'
       x-request-id:
-      - a4fe9fd6-d709-443e-88c0-28807fca69da
+      - d793ed10-ffef-402e-bae5-3e406d90e386
     status:
       code: 201
       message: Created
@@ -52,34 +52,34 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/75ec11d5-1e43-4a6d-b4d1-2c1e3472b537
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/613bcf8a-e1cc-4d2e-a59a-b8ba9711b996
   response:
     body:
-      string: '{"dataFeedId":"75ec11d5-1e43-4a6d-b4d1-2c1e3472b537","dataFeedName":"tablefeedae44175a","metrics":[{"metricId":"f92192e3-da02-4527-ba4a-6b40cb9ca753","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"5e8b5759-c3aa-493b-a986-a0936678fa3b","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-10-01T00:00:00Z","dataSourceType":"AzureTable","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"viewers":[],"creator":"f850650c-1fcf-4489-b46f-71af2e30d360","status":"Active","createdTime":"2021-06-11T23:31:58Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"query":"PartitionKey
+      string: '{"dataFeedId":"613bcf8a-e1cc-4d2e-a59a-b8ba9711b996","dataFeedName":"tablefeedae44175a","metrics":[{"metricId":"5750411b-f02f-40e6-8cf7-045205d80999","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"0e1bd636-9a5e-4fbf-9705-3e7f57463ead","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-10-01T00:00:00Z","dataSourceType":"AzureTable","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"viewers":[],"creator":"f850650c-1fcf-4489-b46f-71af2e30d360","status":"Active","createdTime":"2021-09-29T19:35:23Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"query":"PartitionKey
         ge ''@StartTime'' and PartitionKey lt ''@EndTime''","table":"adsample"},"authenticationType":"Basic"}'
     headers:
       apim-request-id:
-      - 213e5506-48da-4380-82a3-c00dd82a46fe
+      - 537719f8-1b02-43c0-ba05-abf0cd588f2e
       content-length:
       - '1235'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Jun 2021 23:31:58 GMT
+      - Wed, 29 Sep 2021 19:35:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '81'
+      - '111'
       x-request-id:
-      - 213e5506-48da-4380-82a3-c00dd82a46fe
+      - 537719f8-1b02-43c0-ba05-abf0cd588f2e
     status:
       code: 200
       message: OK
@@ -89,33 +89,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/75ec11d5-1e43-4a6d-b4d1-2c1e3472b537
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/613bcf8a-e1cc-4d2e-a59a-b8ba9711b996
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - e263ce01-e886-416a-a200-9f7e00035488
+      - c40ded85-700f-4e04-9e48-b8d7098efdce
       content-length:
       - '0'
       date:
-      - Fri, 11 Jun 2021 23:31:58 GMT
+      - Wed, 29 Sep 2021 19:35:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '277'
+      - '251'
       x-request-id:
-      - e263ce01-e886-416a-a200-9f7e00035488
+      - c40ded85-700f-4e04-9e48-b8d7098efdce
     status:
       code: 204
       message: No Content

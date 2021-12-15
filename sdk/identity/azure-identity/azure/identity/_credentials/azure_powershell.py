@@ -51,15 +51,7 @@ class AzurePowerShellCredential(object):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
-
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the identity logged in to Azure PowerShell is registered in. When False, which is the default, the credential
-        will acquire tokens only from the tenant of Azure PowerShell's active subscription.
     """
-
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
     def __enter__(self):
         return self
@@ -72,7 +64,7 @@ class AzurePowerShellCredential(object):
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -80,8 +72,7 @@ class AzurePowerShellCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 
@@ -90,7 +81,7 @@ class AzurePowerShellCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-        tenant_id = resolve_tenant("", self._allow_multitenant, **kwargs)
+        tenant_id = resolve_tenant("", **kwargs)
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line)
         token = parse_token(output)
@@ -119,7 +110,10 @@ def run_command_line(command_line):
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
         if proc and not proc.returncode:
             proc.kill()
-        error = CredentialUnavailableError(message="Failed to invoke PowerShell")
+        error = CredentialUnavailableError(
+            message="Failed to invoke PowerShell.\n"
+                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
         six.raise_from(error, ex)
 
     raise_for_error(proc.returncode, stdout, stderr)

@@ -28,7 +28,6 @@ try:
     from ._models_py3 import AvailableOperationDisplay
     from ._models_py3 import AzureActiveDirectory
     from ._models_py3 import CertificateDescription
-    from ._models_py3 import ClientCertificate
     from ._models_py3 import ClientCertificateCommonName
     from ._models_py3 import ClientCertificateThumbprint
     from ._models_py3 import Cluster
@@ -44,19 +43,11 @@ try:
     from ._models_py3 import EndpointRangeDescription
     from ._models_py3 import ErrorModel
     from ._models_py3 import ErrorModelError
-    from ._models_py3 import LoadBalancingRule
-    from ._models_py3 import ManagedCluster
-    from ._models_py3 import ManagedClusterListResult
-    from ._models_py3 import ManagedClusterUpdateParameters
-    from ._models_py3 import ManagedClusterVersionDetails
     from ._models_py3 import ManagedIdentity
-    from ._models_py3 import ManagedProxyResource
     from ._models_py3 import NamedPartitionSchemeDescription
-    from ._models_py3 import NodeType
-    from ._models_py3 import NodeTypeActionParameters
     from ._models_py3 import NodeTypeDescription
-    from ._models_py3 import NodeTypeListResult
-    from ._models_py3 import NodeTypeUpdateParameters
+    from ._models_py3 import Notification
+    from ._models_py3 import NotificationTarget
     from ._models_py3 import OperationListResult
     from ._models_py3 import OperationResult
     from ._models_py3 import PartitionSchemeDescription
@@ -78,17 +69,15 @@ try:
     from ._models_py3 import SettingsParameterDescription
     from ._models_py3 import SettingsSectionDescription
     from ._models_py3 import SingletonPartitionSchemeDescription
-    from ._models_py3 import Sku
     from ._models_py3 import StatefulServiceProperties
     from ._models_py3 import StatefulServiceUpdateProperties
     from ._models_py3 import StatelessServiceProperties
     from ._models_py3 import StatelessServiceUpdateProperties
-    from ._models_py3 import SubResource
+    from ._models_py3 import SystemData
     from ._models_py3 import UniformInt64RangePartitionSchemeDescription
+    from ._models_py3 import UpgradableVersionPathResult
+    from ._models_py3 import UpgradableVersionsDescription
     from ._models_py3 import UserAssignedIdentity
-    from ._models_py3 import VMSSExtension
-    from ._models_py3 import VaultCertificate
-    from ._models_py3 import VaultSecretGroup
 except (SyntaxError, ImportError):
     from ._models import ApplicationDeltaHealthPolicy  # type: ignore
     from ._models import ApplicationHealthPolicy  # type: ignore
@@ -111,7 +100,6 @@ except (SyntaxError, ImportError):
     from ._models import AvailableOperationDisplay  # type: ignore
     from ._models import AzureActiveDirectory  # type: ignore
     from ._models import CertificateDescription  # type: ignore
-    from ._models import ClientCertificate  # type: ignore
     from ._models import ClientCertificateCommonName  # type: ignore
     from ._models import ClientCertificateThumbprint  # type: ignore
     from ._models import Cluster  # type: ignore
@@ -127,19 +115,11 @@ except (SyntaxError, ImportError):
     from ._models import EndpointRangeDescription  # type: ignore
     from ._models import ErrorModel  # type: ignore
     from ._models import ErrorModelError  # type: ignore
-    from ._models import LoadBalancingRule  # type: ignore
-    from ._models import ManagedCluster  # type: ignore
-    from ._models import ManagedClusterListResult  # type: ignore
-    from ._models import ManagedClusterUpdateParameters  # type: ignore
-    from ._models import ManagedClusterVersionDetails  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
-    from ._models import ManagedProxyResource  # type: ignore
     from ._models import NamedPartitionSchemeDescription  # type: ignore
-    from ._models import NodeType  # type: ignore
-    from ._models import NodeTypeActionParameters  # type: ignore
     from ._models import NodeTypeDescription  # type: ignore
-    from ._models import NodeTypeListResult  # type: ignore
-    from ._models import NodeTypeUpdateParameters  # type: ignore
+    from ._models import Notification  # type: ignore
+    from ._models import NotificationTarget  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import OperationResult  # type: ignore
     from ._models import PartitionSchemeDescription  # type: ignore
@@ -161,35 +141,31 @@ except (SyntaxError, ImportError):
     from ._models import SettingsParameterDescription  # type: ignore
     from ._models import SettingsSectionDescription  # type: ignore
     from ._models import SingletonPartitionSchemeDescription  # type: ignore
-    from ._models import Sku  # type: ignore
     from ._models import StatefulServiceProperties  # type: ignore
     from ._models import StatefulServiceUpdateProperties  # type: ignore
     from ._models import StatelessServiceProperties  # type: ignore
     from ._models import StatelessServiceUpdateProperties  # type: ignore
-    from ._models import SubResource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import UniformInt64RangePartitionSchemeDescription  # type: ignore
+    from ._models import UpgradableVersionPathResult  # type: ignore
+    from ._models import UpgradableVersionsDescription  # type: ignore
     from ._models import UserAssignedIdentity  # type: ignore
-    from ._models import VMSSExtension  # type: ignore
-    from ._models import VaultCertificate  # type: ignore
-    from ._models import VaultSecretGroup  # type: ignore
 
 from ._service_fabric_management_client_enums import (
     AddOnFeatures,
     ArmServicePackageActivationMode,
     ArmUpgradeFailureAction,
     ClusterEnvironment,
-    ClusterOsType,
     ClusterState,
+    ClusterUpgradeCadence,
     DurabilityLevel,
-    Enum23,
-    Enum8,
-    ManagedClusterAddOnFeature,
+    Enum14,
     ManagedIdentityType,
-    ManagedResourceProvisioningState,
     MoveCost,
+    NotificationCategory,
+    NotificationChannel,
+    NotificationLevel,
     PartitionScheme,
-    ProbeProtocol,
-    Protocol,
     ProvisioningState,
     ReliabilityLevel,
     RollingUpgradeMode,
@@ -197,9 +173,10 @@ from ._service_fabric_management_client_enums import (
     ServiceKind,
     ServiceLoadMetricWeight,
     ServicePlacementPolicyType,
-    SkuName,
+    SfZonalUpgradeMode,
     StoreName,
     UpgradeMode,
+    VmssZonalUpgradeMode,
 )
 
 __all__ = [
@@ -224,7 +201,6 @@ __all__ = [
     'AvailableOperationDisplay',
     'AzureActiveDirectory',
     'CertificateDescription',
-    'ClientCertificate',
     'ClientCertificateCommonName',
     'ClientCertificateThumbprint',
     'Cluster',
@@ -240,19 +216,11 @@ __all__ = [
     'EndpointRangeDescription',
     'ErrorModel',
     'ErrorModelError',
-    'LoadBalancingRule',
-    'ManagedCluster',
-    'ManagedClusterListResult',
-    'ManagedClusterUpdateParameters',
-    'ManagedClusterVersionDetails',
     'ManagedIdentity',
-    'ManagedProxyResource',
     'NamedPartitionSchemeDescription',
-    'NodeType',
-    'NodeTypeActionParameters',
     'NodeTypeDescription',
-    'NodeTypeListResult',
-    'NodeTypeUpdateParameters',
+    'Notification',
+    'NotificationTarget',
     'OperationListResult',
     'OperationResult',
     'PartitionSchemeDescription',
@@ -274,33 +242,29 @@ __all__ = [
     'SettingsParameterDescription',
     'SettingsSectionDescription',
     'SingletonPartitionSchemeDescription',
-    'Sku',
     'StatefulServiceProperties',
     'StatefulServiceUpdateProperties',
     'StatelessServiceProperties',
     'StatelessServiceUpdateProperties',
-    'SubResource',
+    'SystemData',
     'UniformInt64RangePartitionSchemeDescription',
+    'UpgradableVersionPathResult',
+    'UpgradableVersionsDescription',
     'UserAssignedIdentity',
-    'VMSSExtension',
-    'VaultCertificate',
-    'VaultSecretGroup',
     'AddOnFeatures',
     'ArmServicePackageActivationMode',
     'ArmUpgradeFailureAction',
     'ClusterEnvironment',
-    'ClusterOsType',
     'ClusterState',
+    'ClusterUpgradeCadence',
     'DurabilityLevel',
-    'Enum23',
-    'Enum8',
-    'ManagedClusterAddOnFeature',
+    'Enum14',
     'ManagedIdentityType',
-    'ManagedResourceProvisioningState',
     'MoveCost',
+    'NotificationCategory',
+    'NotificationChannel',
+    'NotificationLevel',
     'PartitionScheme',
-    'ProbeProtocol',
-    'Protocol',
     'ProvisioningState',
     'ReliabilityLevel',
     'RollingUpgradeMode',
@@ -308,7 +272,8 @@ __all__ = [
     'ServiceKind',
     'ServiceLoadMetricWeight',
     'ServicePlacementPolicyType',
-    'SkuName',
+    'SfZonalUpgradeMode',
     'StoreName',
     'UpgradeMode',
+    'VmssZonalUpgradeMode',
 ]

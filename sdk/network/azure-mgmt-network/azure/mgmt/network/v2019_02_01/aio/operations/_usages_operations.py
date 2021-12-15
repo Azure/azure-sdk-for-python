@@ -44,7 +44,7 @@ class UsagesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsagesListResult"]:
         """List network usages for a subscription.
 

@@ -23,11 +23,14 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport
+from utils import HTTP_REQUESTS
+import pytest
 """This file does a simple call to the testserver to make sure we can use the testserver"""
 
-def test_smoke(port):
-    request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_smoke(port, http_request):
+    request = http_request(method="GET", url="http://localhost:{}/basic/string".format(port))
     with RequestsTransport() as sender:
         response = sender.send(request)
         response.raise_for_status()

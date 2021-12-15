@@ -48,10 +48,6 @@ class AzureApplicationCredential(ChainedTokenCredential):
     <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview of
     managed identities.
 
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application or user is registered in. When False, which is the default, the credential will acquire tokens
-        only from the tenant specified by **AZURE_TENANT_ID**. This argument doesn't apply to managed identity
-        authentication.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud, which is the default when no value is given for this keyword argument or
         environment variable AZURE_AUTHORITY_HOST. :class:`~azure.identity.AzureAuthorityHosts` defines authorities for

@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, List
 from msrest.serialization import Serializer
 from azure.core.tracing.decorator import distributed_trace
 
@@ -15,7 +15,7 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._models import MetricsResult, MetricDefinition, MetricNamespace
+from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
@@ -25,11 +25,15 @@ if TYPE_CHECKING:
 
 
 class MetricsQueryClient(object):
-    """MetricsQueryClient
+    """MetricsQueryClient should be used to collect numeric data from monitored resources into a
+    time series database. Metrics are numerical values that are collected at regular intervals and
+    describe some aspect of a system at a particular time. Metrics are lightweight and capable of
+    supporting near real-time scenarios, making them particularly useful for alerting and
+    fast detection of issues.
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/sample_metrics_query_client.py
+    .. literalinclude:: ../samples/sample_metrics_query.py
         :start-after: [START metrics_client_auth_with_token_cred]
         :end-before: [END metrics_client_auth_with_token_cred]
         :language: python
@@ -44,11 +48,15 @@ class MetricsQueryClient(object):
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
-        endpoint = kwargs.pop('endpoint', 'https://management.azure.com')
+        audience = kwargs.pop("audience", None)
+        endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url=endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential),
+            base_url=self._endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
@@ -56,8 +64,8 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace
-    def query(self, resource_uri, metric_names, **kwargs):
-        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
+    def query_resource(self, resource_uri, metric_names, **kwargs):
+        # type: (str, List[str], Any) -> MetricsQueryResult
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -90,11 +98,12 @@ class MetricsQueryClient(object):
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
+         To use the split feature, set the value to * - for example, like "City eq '*'"
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: Response, or the result of cls(response)
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -116,8 +125,12 @@ class MetricsQueryClient(object):
         kwargs.setdefault("top", kwargs.pop("max_results", None))
         kwargs.setdefault("interval", kwargs.pop("granularity", None))
         kwargs.setdefault("orderby", kwargs.pop("order_by", None))
-        generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
-        return MetricsResult._from_generated(generated) # pylint: disable=protected-access
+        generated = self._metrics_op.list(
+            resource_uri, connection_verify=False, **kwargs
+        )
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
+            generated
+        )
 
     @distributed_trace
     def list_metric_namespaces(self, resource_uri, **kwargs):
@@ -133,7 +146,7 @@ class MetricsQueryClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        start_time = kwargs.pop('start_time', None)
+        start_time = kwargs.pop("start_time", None)
         if start_time:
             start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
@@ -142,35 +155,39 @@ class MetricsQueryClient(object):
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
-    def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[MetricDefinition]
+    def list_metric_definitions(self, resource_uri, **kwargs):
+        # type: (str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :keyword namespace: Metric namespace to query metric definitions for.
         :paramtype namespace: str
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        metric_namespace = kwargs.pop('namespace', None)
+        metric_namespace = kwargs.pop("namespace", None)
         return self._definitions_op.list(
             resource_uri,
             metric_namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     def close(self):
         # type: () -> None

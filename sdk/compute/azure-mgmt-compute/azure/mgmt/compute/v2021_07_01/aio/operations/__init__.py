@@ -42,6 +42,9 @@ from ._gallery_sharing_profile_operations import GallerySharingProfileOperations
 from ._shared_galleries_operations import SharedGalleriesOperations
 from ._shared_gallery_images_operations import SharedGalleryImagesOperations
 from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations
+from ._community_galleries_operations import CommunityGalleriesOperations
+from ._community_gallery_images_operations import CommunityGalleryImagesOperations
+from ._community_gallery_image_versions_operations import CommunityGalleryImageVersionsOperations
 
 __all__ = [
     'Operations',
@@ -80,4 +83,7 @@ __all__ = [
     'SharedGalleriesOperations',
     'SharedGalleryImagesOperations',
     'SharedGalleryImageVersionsOperations',
+    'CommunityGalleriesOperations',
+    'CommunityGalleryImagesOperations',
+    'CommunityGalleryImageVersionsOperations',
 ]

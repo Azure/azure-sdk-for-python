@@ -42,7 +42,7 @@ async def sample_list_metric_enriched_series_data_async():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    series_identity = {"city": "Los Angeles"}
+    series_identity = {"region": "Los Angeles"}
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -69,7 +69,7 @@ async def sample_list_anomaly_dimension_values_async():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    dimension_name = "city"
+    dimension_name = "region"
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -95,7 +95,7 @@ async def sample_list_metric_dimension_values_async():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
-    dimension_name = "city"
+    dimension_name = "region"
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -130,7 +130,7 @@ async def sample_list_metric_series_data_async():
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
                 series_keys=[
-                    {"city": "Los Angeles", "category": "Homemade"}
+                    {"region": "Los Angeles", "category": "Homemade"}
                 ]
             )
         async for result in results:

@@ -8,6 +8,7 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.scanning import PurviewScanningClient
 
+
 class PurviewScanningTest(AzureTestCase):
 
     def create_client(self, endpoint):
@@ -17,6 +18,7 @@ class PurviewScanningTest(AzureTestCase):
             credential=credential,
             endpoint=endpoint,
         )
+
 
 PurviewScanningPowerShellPreparer = functools.partial(
     PowerShellPreparer,

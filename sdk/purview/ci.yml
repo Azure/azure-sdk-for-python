@@ -35,5 +35,5 @@ extends:
       safeName: azurepurviewscanning
     - name: azure-purview-catalog
       safeName: azurepurviewcatalog
-    - name: azure-purview-account
-      safeName: azurepurviewaccount
+    - name: azure-purview-administration
+      safeName: azurepurviewadministration

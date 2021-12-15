@@ -39,18 +39,12 @@ class CertificateCredential(ClientCredentialBase):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
         requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the application is registered in. When False, which is the default, the credential will acquire tokens only from
-        the tenant specified by **tenant_id**.
     :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
         header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to
         False.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword ~azure.identity.RegionalAuthority regional_authority: a :class:`~azure.identity.RegionalAuthority` to
-        which the credential will authenticate. This argument should be used only by applications deployed to Azure
-        VMs.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
@@ -92,13 +86,16 @@ def load_pkcs12_certificate(certificate_data, password):
     # type: (bytes, Optional[bytes]) -> _Cert
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
-    private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
-        certificate_data, password, backend=default_backend()
-    )
+    try:
+        private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
+            certificate_data, password, backend=default_backend()
+        )
+    except ValueError as ex:
+        # mentioning PEM here because we raise this error when certificate_data is garbage
+        six.raise_from(ValueError("Failed to deserialize certificate in PEM or PKCS12 format"), ex)
     if not private_key:
         raise ValueError("The certificate must include its private key")
     if not cert:
-        # mentioning PEM here because we raise this error when certificate_data is garbage
         raise ValueError("Failed to deserialize certificate in PEM or PKCS12 format")
 
     # This serializes the private key without any encryption it may have had. Doing so doesn't violate security
@@ -137,7 +134,7 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
         password = None  # load_pkcs12_certificate returns cert.pem_bytes decrypted
 
     if not isinstance(cert.private_key, RSAPrivateKey):
-        raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
+        raise ValueError("The certificate must have an RSA private key because RS256 is used for signing")
 
     client_credential = {"private_key": cert.pem_bytes, "thumbprint": hexlify(cert.fingerprint).decode("utf-8")}
     if password:

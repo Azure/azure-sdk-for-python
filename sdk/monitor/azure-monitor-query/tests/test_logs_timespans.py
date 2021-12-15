@@ -30,7 +30,7 @@ def test_query_no_duration():
         dic = json.loads(request.http_request.body)
         assert dic.get('timespan') is None
     # returns LogsQueryResult 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
+    client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None)
 
 @pytest.mark.live_test_only
 def test_query_start_and_end_time():
@@ -45,7 +45,7 @@ def test_query_start_and_end_time():
         dic = json.loads(request.http_request.body)
         assert dic.get('timespan') is not None
 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=(start_time, end_time), raw_request_hook=callback)
+    client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=(start_time, end_time), raw_request_hook=callback)
 
 @pytest.mark.live_test_only
 def test_query_duration_and_start_time():
@@ -61,7 +61,7 @@ def test_query_duration_and_start_time():
         dic = json.loads(request.http_request.body)
         assert '/PT259200.0S' in dic.get('timespan')
 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=(start_time,duration), raw_request_hook=callback)
+    client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=(start_time,duration), raw_request_hook=callback)
 
 
 @pytest.mark.live_test_only
@@ -76,7 +76,7 @@ def test_query_duration_only():
         dic = json.loads(request.http_request.body)
         assert 'PT259200.0S' in dic.get('timespan')
 
-    client.query(os.environ['LOG_WORKSPACE_ID'], query, timespan=duration, raw_request_hook=callback)
+    client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=duration, raw_request_hook=callback)
 
 def test_duration_to_iso8601():
     d1 = timedelta(days=1)

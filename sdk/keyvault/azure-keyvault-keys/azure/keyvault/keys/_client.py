@@ -5,10 +5,11 @@
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 
+from .crypto import CryptographyClient
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, RandomBytes, ReleaseKeyResult
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, ReleaseKeyResult
 
 try:
     from typing import TYPE_CHECKING
@@ -17,9 +18,16 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Optional, Union
+    from typing import Any, Iterable, Optional, Union
     from azure.core.paging import ItemPaged
+    from azure.core.polling import LROPoller
     from ._models import JsonWebKey
+    from ._enums import KeyType
+
+
+def _get_key_id(vault_url, key_name, version=None):
+    without_version = "{}/keys/{}".format(vault_url, key_name)
+    return without_version + "/" + version if version else without_version
 
 
 class KeyClient(KeyVaultClientBase):
@@ -43,7 +51,7 @@ class KeyClient(KeyVaultClientBase):
             :dedent: 4
     """
 
-    # pylint:disable=protected-access
+    # pylint:disable=protected-access, too-many-public-methods
 
     def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
         """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
@@ -53,9 +61,28 @@ class KeyClient(KeyVaultClientBase):
             )
         return None
 
+    def get_cryptography_client(self, key_name, **kwargs):
+        # type: (str, **Any) -> CryptographyClient
+        """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
+
+        :param str key_name: The name of the key used to perform cryptographic operations.
+
+        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
+
+        :returns: A :class:`~azure.keyvault.keys.crypto.CryptographyClient` using the same options, credentials, and
+            HTTP client as this :class:`~azure.keyvault.keys.KeyClient`.
+        :rtype: ~azure.keyvault.keys.crypto.CryptographyClient
+        """
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
+
+        # We provide a fake credential because the generated client already has the KeyClient's real credential
+        return CryptographyClient(
+            key_id, object(), generated_client=self._client, generated_models=self._models  # type: ignore
+        )
+
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):
-        # type: (str, Union[str, azure.keyvault.keys.KeyType], **Any) -> KeyVaultKey
+        # type: (str, Union[str, KeyType], **Any) -> KeyVaultKey
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
@@ -103,7 +130,7 @@ class KeyClient(KeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(data=policy.data, content_type=policy.content_type)
+            policy = self._models.KeyReleasePolicy(data=policy.encoded_policy, content_type=policy.content_type)
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
@@ -242,7 +269,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_key(self, name, **kwargs):
-        # type: (str, **Any) -> DeletedKey
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -450,7 +477,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_key(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultKey
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted key to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires keys/recover permission.
@@ -532,7 +559,7 @@ class KeyClient(KeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
@@ -649,7 +676,7 @@ class KeyClient(KeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
@@ -668,7 +695,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def release_key(self, name, target, version=None, **kwargs):
+    def release_key(self, name, target_attestation_token, version=None, **kwargs):
         # type: (str, str, Optional[str], **Any) -> ReleaseKeyResult
         """Releases a key.
 
@@ -676,7 +703,7 @@ class KeyClient(KeyVaultClientBase):
         exportable. This operation requires the keys/release permission.
 
         :param str name: The name of the key to get.
-        :param str target: The attestation assertion for the target of the key release.
+        :param str target_attestation_token: The attestation assertion for the target of the key release.
         :param str version: (optional) A specific version of the key to release. If unspecified, the latest version is
             released.
 
@@ -693,7 +720,7 @@ class KeyClient(KeyVaultClientBase):
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
-                target=target, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+                target=target_attestation_token, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
             ),
             **kwargs
         )
@@ -701,13 +728,13 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_random_bytes(self, count, **kwargs):
-        # type: (int, **Any) -> RandomBytes
+        # type: (int, **Any) -> bytes
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
 
         :return: The random bytes.
-        :rtype: ~azure.keyvault.keys.RandomBytes
+        :rtype: bytes
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -724,4 +751,72 @@ class KeyClient(KeyVaultClientBase):
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return RandomBytes(value=result.value)
+        return result.value
+
+    @distributed_trace
+    def get_key_rotation_policy(self, name, **kwargs):
+        # type: (str, **Any) -> KeyRotationPolicy
+        """Get the rotation policy of a Key Vault key.
+
+        :param str name: The name of the key.
+
+        :return: The key rotation policy.
+        :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+        :raises: :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        return KeyRotationPolicy._from_generated(policy)
+
+    @distributed_trace
+    def rotate_key(self, name, **kwargs):
+        # type: (str, **Any) -> KeyVaultKey
+        """Rotate the key based on the key policy by generating a new version of the key.
+
+        This operation requires the keys/rotate permission.
+
+        :param str name: The name of the key to rotate.
+
+        :return: The new version of the rotated key.
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        bundle = self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def update_key_rotation_policy(self, name, **kwargs):
+        # type: (str, **Any) -> KeyRotationPolicy
+        """Updates the rotation policy of a Key Vault key.
+
+        This operation requires the keys/update permission.
+
+        :param str name: The name of the key in the given vault.
+
+        :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
+        :paramtype lifetime_actions: Iterable[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
+            ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
+            `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
+
+        :return: The updated rotation policy.
+        :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        lifetime_actions = kwargs.pop("lifetime_actions", None)
+        if lifetime_actions:
+            lifetime_actions = [
+                self._models.LifetimeActions(
+                    action=self._models.LifetimeActionsType(type=action.action),
+                    trigger=self._models.LifetimeActionsTrigger(
+                        time_after_create=action.time_after_create, time_before_expiry=action.time_before_expiry
+                    ),
+                )
+                for action in lifetime_actions
+            ]
+
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", None))
+        policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
+        result = self._client.update_key_rotation_policy(
+            vault_base_url=self._vault_url, key_name=name, key_rotation_policy=policy
+        )
+        return KeyRotationPolicy._from_generated(result)

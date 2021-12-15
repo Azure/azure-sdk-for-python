@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.1 (Unreleased)
+## 4.7.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,24 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.7.1 (2021-11-18)
+
+### Bugs Fixed
+
+- The `send` API will raise on exceptions.
+
+## 4.7.0 (2021-11-09)
+
+### Features Added
+
+- Added support for publishing native CNCF cloudevents (https://pypi.org/project/cloudevents/).
+
+## 4.6.0 (2021-10-05)
+
+### Features Added
+
+- Added new enum values to `SystemEvents`.
 
 ## 4.5.0 (2021-08-10)
 

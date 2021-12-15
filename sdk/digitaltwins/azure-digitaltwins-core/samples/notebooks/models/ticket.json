@@ -1,0 +1,63 @@
+{
+    "@id": "dtmi:mymodels:ticket;1",
+    "@type": "Interface",
+    "displayName": "ticket",
+    "contents": [
+        {
+            "@type": "Property",
+            "name": "purchaselocation_lat",
+            "displayName": "puchased location (latitude)",
+            "schema": "double",
+            "comment": "latitude of the place where the ticket was purchased"
+        },
+        {
+            "@type": "Property",
+            "name": "purchaselocation_long",
+            "displayName": "puchased location",
+            "schema": "double",
+            "comment": "longitude of the place where the ticket was purchased"
+        },
+        {
+            "@type": "Property",
+            "name": "sold_to",
+            "displayName": "sold to",
+            "schema": "string",
+            "comment": "UID of the purchaser from customer data"
+        },
+        {
+            "@type": "Property",
+            "name": "event_title",
+            "displayName": "event name",
+            "schema": "string",
+            "comment": "name or id of the event"
+        },
+        {
+            "@type": "Property",
+            "name": "ticket_location",
+            "displayName": "ticket location",
+            "schema": "string",
+            "comment": "location of the seat, for demonstration this is just a number"
+        },
+        {
+            "@type": "Property",
+            "name": "state",
+            "displayName": "state",
+            "schema": "string",
+            "comment": "current state of the ticket"
+        },
+        {
+            "@type": "Relationship",
+            "name": "ownedBy",
+            "properties": [
+                {
+                    "@type": "Property",
+                    "name": "bought_online",
+                    "schema": "boolean"
+                }
+            ]
+        }
+    ],
+    "@context": "dtmi:dtdl:context;2",
+    "comment": "A number of tickets are placed into ADT before purchase with the initial state: open",
+    "description": "an abstract ticket"
+}

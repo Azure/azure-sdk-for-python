@@ -7,11 +7,16 @@
 from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
+from ._exceptions import LogsQueryError
+
 from ._models import (
     MetricAggregationType,
     LogsQueryResult,
     LogsTable,
-    MetricsResult,
+    LogsQueryPartialResult,
+    LogsQueryStatus,
+    LogsTableRow,
+    MetricsQueryResult,
     LogsBatchQuery,
     MetricNamespace,
     MetricNamespaceClassification,
@@ -21,7 +26,7 @@ from ._models import (
     Metric,
     MetricValue,
     MetricClass,
-    MetricAvailability
+    MetricAvailability,
 )
 
 from ._version import VERSION
@@ -30,19 +35,23 @@ __all__ = [
     "MetricAggregationType",
     "LogsQueryClient",
     "LogsQueryResult",
+    "LogsQueryPartialResult",
+    "LogsQueryStatus",
+    "LogsQueryError",
     "LogsTable",
+    "LogsTableRow",
     "LogsBatchQuery",
     "MetricsQueryClient",
     "MetricNamespace",
     "MetricNamespaceClassification",
     "MetricDefinition",
     "MetricUnit",
-    "MetricsResult",
+    "MetricsQueryResult",
     "TimeSeriesElement",
     "Metric",
     "MetricValue",
     "MetricClass",
-    "MetricAvailability"
+    "MetricAvailability",
 ]
 
 __version__ = VERSION

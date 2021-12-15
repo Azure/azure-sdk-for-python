@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://pytagstoragestorname.blob.core.windows.net/utqqcontainerb38317df?restype=container
+    uri: https://storagename.blob.core.windows.net/utqqcontainerb38317df?restype=container
   response:
     body:
       string: ''
@@ -1465,7 +1465,7 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://pytagstoragestorname.blob.core.windows.net/utqqcontainerb38317df/csvfileb38317df
+    uri: https://storagename.blob.core.windows.net/utqqcontainerb38317df/csvfileb38317df
   response:
     body:
       string: ''
@@ -1515,7 +1515,7 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: POST
-    uri: https://pytagstoragestorname.blob.core.windows.net/utqqcontainerb38317df/csvfileb38317df?comp=query
+    uri: https://storagename.blob.core.windows.net/utqqcontainerb38317df/csvfileb38317df?comp=query
   response:
     body:
       string: !!binary |

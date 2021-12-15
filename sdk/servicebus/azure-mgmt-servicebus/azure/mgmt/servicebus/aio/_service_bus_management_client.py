@@ -93,6 +93,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :mod:`v2017_04_01.models<azure.mgmt.servicebus.v2017_04_01.models>`
            * 2018-01-01-preview: :mod:`v2018_01_01_preview.models<azure.mgmt.servicebus.v2018_01_01_preview.models>`
            * 2021-01-01-preview: :mod:`v2021_01_01_preview.models<azure.mgmt.servicebus.v2021_01_01_preview.models>`
+           * 2021-06-01-preview: :mod:`v2021_06_01_preview.models<azure.mgmt.servicebus.v2021_06_01_preview.models>`
         """
         if api_version == '2015-08-01':
             from ..v2015_08_01 import models
@@ -106,6 +107,9 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview import models
             return models
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -115,6 +119,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.DisasterRecoveryConfigsOperations>`
            * 2018-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.DisasterRecoveryConfigsOperations>`
            * 2021-01-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.DisasterRecoveryConfigsOperations>`
+           * 2021-06-01-preview: :class:`DisasterRecoveryConfigsOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.DisasterRecoveryConfigsOperations>`
         """
         api_version = self._get_api_version('disaster_recovery_configs')
         if api_version == '2017-04-01':
@@ -123,6 +128,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import DisasterRecoveryConfigsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import DisasterRecoveryConfigsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import DisasterRecoveryConfigsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disaster_recovery_configs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -150,6 +157,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`MigrationConfigsOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.MigrationConfigsOperations>`
            * 2018-01-01-preview: :class:`MigrationConfigsOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.MigrationConfigsOperations>`
            * 2021-01-01-preview: :class:`MigrationConfigsOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.MigrationConfigsOperations>`
+           * 2021-06-01-preview: :class:`MigrationConfigsOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.MigrationConfigsOperations>`
         """
         api_version = self._get_api_version('migration_configs')
         if api_version == '2017-04-01':
@@ -158,6 +166,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import MigrationConfigsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import MigrationConfigsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import MigrationConfigsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'migration_configs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -170,6 +180,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`NamespacesOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.NamespacesOperations>`
            * 2018-01-01-preview: :class:`NamespacesOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.NamespacesOperations>`
            * 2021-01-01-preview: :class:`NamespacesOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.NamespacesOperations>`
+           * 2021-06-01-preview: :class:`NamespacesOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.NamespacesOperations>`
         """
         api_version = self._get_api_version('namespaces')
         if api_version == '2015-08-01':
@@ -180,6 +191,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import NamespacesOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import NamespacesOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import NamespacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'namespaces'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -192,6 +205,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`Operations<azure.mgmt.servicebus.v2017_04_01.aio.operations.Operations>`
            * 2018-01-01-preview: :class:`Operations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.Operations>`
            * 2021-01-01-preview: :class:`Operations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.Operations>`
+           * 2021-06-01-preview: :class:`Operations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-08-01':
@@ -202,6 +216,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import Operations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -228,12 +244,15 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-01-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2021-01-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-06-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2018-01-01-preview':
             from ..v2018_01_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -244,12 +263,15 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-01-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.PrivateLinkResourcesOperations>`
            * 2021-01-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.PrivateLinkResourcesOperations>`
+           * 2021-06-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2018-01-01-preview':
             from ..v2018_01_01_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -262,6 +284,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`QueuesOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.QueuesOperations>`
            * 2018-01-01-preview: :class:`QueuesOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.QueuesOperations>`
            * 2021-01-01-preview: :class:`QueuesOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.QueuesOperations>`
+           * 2021-06-01-preview: :class:`QueuesOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.QueuesOperations>`
         """
         api_version = self._get_api_version('queues')
         if api_version == '2015-08-01':
@@ -272,6 +295,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import QueuesOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import QueuesOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import QueuesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'queues'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -299,6 +324,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`RulesOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.RulesOperations>`
            * 2018-01-01-preview: :class:`RulesOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.RulesOperations>`
            * 2021-01-01-preview: :class:`RulesOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.RulesOperations>`
+           * 2021-06-01-preview: :class:`RulesOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.RulesOperations>`
         """
         api_version = self._get_api_version('rules')
         if api_version == '2017-04-01':
@@ -307,6 +333,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import RulesOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import RulesOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import RulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'rules'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -319,6 +347,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`SubscriptionsOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.SubscriptionsOperations>`
            * 2018-01-01-preview: :class:`SubscriptionsOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.SubscriptionsOperations>`
            * 2021-01-01-preview: :class:`SubscriptionsOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.SubscriptionsOperations>`
+           * 2021-06-01-preview: :class:`SubscriptionsOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.SubscriptionsOperations>`
         """
         api_version = self._get_api_version('subscriptions')
         if api_version == '2015-08-01':
@@ -329,6 +358,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import SubscriptionsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import SubscriptionsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import SubscriptionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscriptions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -341,6 +372,7 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-04-01: :class:`TopicsOperations<azure.mgmt.servicebus.v2017_04_01.aio.operations.TopicsOperations>`
            * 2018-01-01-preview: :class:`TopicsOperations<azure.mgmt.servicebus.v2018_01_01_preview.aio.operations.TopicsOperations>`
            * 2021-01-01-preview: :class:`TopicsOperations<azure.mgmt.servicebus.v2021_01_01_preview.aio.operations.TopicsOperations>`
+           * 2021-06-01-preview: :class:`TopicsOperations<azure.mgmt.servicebus.v2021_06_01_preview.aio.operations.TopicsOperations>`
         """
         api_version = self._get_api_version('topics')
         if api_version == '2015-08-01':
@@ -351,6 +383,8 @@ class ServiceBusManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_01_01_preview.aio.operations import TopicsOperations as OperationClass
         elif api_version == '2021-01-01-preview':
             from ..v2021_01_01_preview.aio.operations import TopicsOperations as OperationClass
+        elif api_version == '2021-06-01-preview':
+            from ..v2021_06_01_preview.aio.operations import TopicsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'topics'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

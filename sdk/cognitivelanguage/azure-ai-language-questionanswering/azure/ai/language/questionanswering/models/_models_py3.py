@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -14,26 +14,195 @@ import msrest.serialization
 from ._question_answering_client_enums import *
 
 
-class AnswerSpan(msrest.serialization.Model):
-    """Answer span object of QnA.
+class AnswersFromTextOptions(msrest.serialization.Model):
+    """The question and text record parameters to answer.
 
-    :param text: Predicted text of answer span.
-    :type text: str
-    :param confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param offset: The answer span offset from the start of answer.
-    :type offset: int
-    :param length: The length of the answer span.
-    :type length: int
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar question: Required. User question to query against the given text records.
+    :vartype question: str
+    :ivar text_documents: Required. Text records to be searched for given question.
+    :vartype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+    :ivar language: Language of the text records. This is BCP-47 representation of a language. For
+     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
+     default.
+    :vartype language: str
     """
 
     _validation = {
-        "confidence_score": {"maximum": 1, "minimum": 0},
+        "question": {"required": True},
+        "text_documents": {"required": True},
+    }
+
+    _attribute_map = {
+        "question": {"key": "question", "type": "str"},
+        "text_documents": {"key": "records", "type": "[TextDocument]"},
+        "language": {"key": "language", "type": "str"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        question: str,
+        text_documents: List[Union[str, "TextDocument"]],
+        language: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword question: Required. User question to query against the given text records.
+        :paramtype question: str
+        :keyword text_documents: Required. Text records to be searched for given question.
+        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+        :keyword language: Language of the text records. This is BCP-47 representation of a language.
+         For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
+         default.
+        :paramtype language: str
+        """
+        super(AnswersFromTextOptions, self).__init__(**kwargs)
+        self.question = question
+        self.text_documents = text_documents
+        self.language = language
+        self.string_index_type = "UnicodeCodePoint"
+
+
+class AnswersFromTextResult(msrest.serialization.Model):
+    """Represents the answer results.
+
+    :ivar answers: Represents the answer results.
+    :vartype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
+    """
+
+    _attribute_map = {
+        "answers": {"key": "answers", "type": "[TextAnswer]"},
+    }
+
+    def __init__(self, *, answers: Optional[List["TextAnswer"]] = None, **kwargs):
+        """
+        :keyword answers: Represents the answer results.
+        :paramtype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
+        """
+        super(AnswersFromTextResult, self).__init__(**kwargs)
+        self.answers = answers
+
+
+class AnswersOptions(msrest.serialization.Model):
+    """Parameters to query a knowledge base.
+
+    :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+     question.
+    :vartype qna_id: int
+    :ivar question: User question to query against the knowledge base.
+    :vartype question: str
+    :ivar top: Max number of answers to be returned for the question.
+    :vartype top: int
+    :ivar user_id: Unique identifier for the user.
+    :vartype user_id: str
+    :ivar confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
+    :vartype confidence_threshold: float
+    :ivar answer_context: Context object with previous QnA's information.
+    :vartype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+    :ivar ranker_kind: Type of ranker to be used. Possible
+     values include: "Default", "QuestionOnly".
+    :vartype ranker_kind: str
+    :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
+    :vartype filters: ~azure.ai.language.questionanswering.models.QueryFilters
+    :ivar short_answer_options: To configure Answer span prediction feature.
+    :vartype short_answer_options: ~azure.ai.language.questionanswering.models.ShortAnswerOptions
+    :ivar include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
+    :vartype include_unstructured_sources: bool
+    """
+
+    _validation = {
+        "confidence_threshold": {"maximum": 1, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "qna_id": {"key": "qnaId", "type": "int"},
+        "question": {"key": "question", "type": "str"},
+        "top": {"key": "top", "type": "int"},
+        "user_id": {"key": "userId", "type": "str"},
+        "confidence_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
+        "answer_context": {"key": "context", "type": "KnowledgeBaseAnswerContext"},
+        "ranker_kind": {"key": "rankerType", "type": "str"},
+        "filters": {"key": "filters", "type": "QueryFilters"},
+        "short_answer_options": {"key": "answerSpanRequest", "type": "ShortAnswerOptions"},
+        "include_unstructured_sources": {"key": "includeUnstructuredSources", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        qna_id: Optional[int] = None,
+        question: Optional[str] = None,
+        top: Optional[int] = None,
+        user_id: Optional[str] = None,
+        confidence_threshold: Optional[float] = None,
+        answer_context: Optional["KnowledgeBaseAnswerContext"] = None,
+        ranker_kind: Optional[str] = None,
+        filters: Optional["QueryFilters"] = None,
+        short_answer_options: Optional["ShortAnswerOptions"] = None,
+        include_unstructured_sources: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+         question.
+        :paramtype qna_id: int
+        :keyword question: User question to query against the knowledge base.
+        :paramtype question: str
+        :keyword top: Max number of answers to be returned for the question.
+        :paramtype top: int
+        :keyword user_id: Unique identifier for the user.
+        :paramtype user_id: str
+        :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
+        :paramtype confidence_threshold: float
+        :keyword answer_context: Context object with previous QnA's information.
+        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword ranker_kind: Type of ranker to be used. Possible
+         values include: "Default", "QuestionOnly".
+        :paramtype ranker_kind: str
+        :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
+        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
+        :keyword short_answer_options: To configure Answer span prediction feature.
+        :paramtype short_answer_options: ~azure.ai.language.questionanswering.models.ShortAnswerOptions
+        :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
+         Sources.
+        :paramtype include_unstructured_sources: bool
+        """
+        super(AnswersOptions, self).__init__(**kwargs)
+        self.qna_id = qna_id
+        self.question = question
+        self.top = top
+        self.user_id = user_id
+        self.confidence_threshold = confidence_threshold
+        self.answer_context = answer_context
+        self.ranker_kind = ranker_kind
+        self.filters = filters
+        self.short_answer_options = short_answer_options
+        self.include_unstructured_sources = include_unstructured_sources
+
+
+class AnswerSpan(msrest.serialization.Model):
+    """Answer span object of QnA.
+
+    :ivar text: Predicted text of answer span.
+    :vartype text: str
+    :ivar confidence: Predicted score of answer span, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar offset: The answer span offset from the start of answer.
+    :vartype offset: int
+    :ivar length: The length of the answer span.
+    :vartype length: int
+    """
+
+    _validation = {
+        "confidence": {"maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
         "text": {"key": "text", "type": "str"},
-        "confidence_score": {"key": "confidenceScore", "type": "float"},
+        "confidence": {"key": "confidenceScore", "type": "float"},
         "offset": {"key": "offset", "type": "int"},
         "length": {"key": "length", "type": "int"},
     }
@@ -42,54 +211,46 @@ class AnswerSpan(msrest.serialization.Model):
         self,
         *,
         text: Optional[str] = None,
-        confidence_score: Optional[float] = None,
+        confidence: Optional[float] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword text: Predicted text of answer span.
+        :paramtype text: str
+        :keyword confidence: Predicted score of answer span, value ranges from 0 to 1.
+        :paramtype confidence: float
+        :keyword offset: The answer span offset from the start of answer.
+        :paramtype offset: int
+        :keyword length: The length of the answer span.
+        :paramtype length: int
+        """
         super(AnswerSpan, self).__init__(**kwargs)
         self.text = text
-        self.confidence_score = confidence_score
+        self.confidence = confidence
         self.offset = offset
         self.length = length
 
 
-class AnswerSpanRequest(msrest.serialization.Model):
-    """To configure Answer span prediction feature.
+class AnswersResult(msrest.serialization.Model):
+    """Represents List of Question Answers.
 
-    :param enable: Enable or disable Answer Span prediction.
-    :type enable: bool
-    :param confidence_score_threshold: Minimum threshold score required to include an answer span,
-     value ranges from 0 to 1.
-    :type confidence_score_threshold: float
-    :param top_answers_with_span: Number of Top answers to be considered for span prediction from 1
-     to 10.
-    :type top_answers_with_span: int
+    :ivar answers: Represents Answer Result list.
+    :vartype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
     """
 
-    _validation = {
-        "confidence_score_threshold": {"maximum": 1, "minimum": 0},
-        "top_answers_with_span": {"maximum": 10, "minimum": 1},
-    }
-
     _attribute_map = {
-        "enable": {"key": "enable", "type": "bool"},
-        "confidence_score_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
-        "top_answers_with_span": {"key": "topAnswersWithSpan", "type": "int"},
+        "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
     }
 
-    def __init__(
-        self,
-        *,
-        enable: Optional[bool] = None,
-        confidence_score_threshold: Optional[float] = None,
-        top_answers_with_span: Optional[int] = None,
-        **kwargs
-    ):
-        super(AnswerSpanRequest, self).__init__(**kwargs)
-        self.enable = enable
-        self.confidence_score_threshold = confidence_score_threshold
-        self.top_answers_with_span = top_answers_with_span
+    def __init__(self, *, answers: Optional[List["KnowledgeBaseAnswer"]] = None, **kwargs):
+        """
+        :keyword answers: Represents Answer Result list.
+        :paramtype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
+        """
+        super(AnswersResult, self).__init__(**kwargs)
+        self.answers = answers
 
 
 class Error(msrest.serialization.Model):
@@ -97,19 +258,21 @@ class Error(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
-     "TooManyRequests", "InternalServerError", "ServiceUnavailable".
-    :type code: str or ~azure.ai.language.questionanswering.models.ErrorCode
-    :param message: Required. A human-readable representation of the error.
-    :type message: str
-    :param target: The target of the error.
-    :type target: str
-    :param details: An array of details about specific errors that led to this reported error.
-    :type details: list[~azure.ai.language.questionanswering.models.Error]
-    :param innererror: An object containing more specific information than the current object about
+     "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
+     "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
+     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
+    :vartype code: str or ~azure.ai.language.questionanswering.models.ErrorCode
+    :ivar message: Required. A human-readable representation of the error.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.ai.language.questionanswering.models.Error]
+    :ivar innererror: An object containing more specific information than the current object about
      the error.
-    :type innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+    :vartype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
     """
 
     _validation = {
@@ -135,6 +298,23 @@ class Error(msrest.serialization.Model):
         innererror: Optional["InnerErrorModel"] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+         "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
+         "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
+         "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
+         "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
+        :paramtype code: str or ~azure.ai.language.questionanswering.models.ErrorCode
+        :keyword message: Required. A human-readable representation of the error.
+        :paramtype message: str
+        :keyword target: The target of the error.
+        :paramtype target: str
+        :keyword details: An array of details about specific errors that led to this reported error.
+        :paramtype details: list[~azure.ai.language.questionanswering.models.Error]
+        :keyword innererror: An object containing more specific information than the current object
+         about the error.
+        :paramtype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+        """
         super(Error, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -146,8 +326,8 @@ class Error(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :param error: The error object.
-    :type error: ~azure.ai.language.questionanswering.models.Error
+    :ivar error: The error object.
+    :vartype error: ~azure.ai.language.questionanswering.models.Error
     """
 
     _attribute_map = {
@@ -155,6 +335,10 @@ class ErrorResponse(msrest.serialization.Model):
     }
 
     def __init__(self, *, error: Optional["Error"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.ai.language.questionanswering.models.Error
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -164,19 +348,19 @@ class InnerErrorModel(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
      "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
-    :type code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
-    :param message: Required. Error message.
-    :type message: str
-    :param details: Error details.
-    :type details: dict[str, str]
-    :param target: Error target.
-    :type target: str
-    :param innererror: An object containing more specific information than the current object about
+    :vartype code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
+    :ivar message: Required. Error message.
+    :vartype message: str
+    :ivar details: Error details.
+    :vartype details: dict[str, str]
+    :ivar target: Error target.
+    :vartype target: str
+    :ivar innererror: An object containing more specific information than the current object about
      the error.
-    :type innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+    :vartype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
     """
 
     _validation = {
@@ -202,6 +386,21 @@ class InnerErrorModel(msrest.serialization.Model):
         innererror: Optional["InnerErrorModel"] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+         "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
+         "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
+        :paramtype code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
+        :keyword message: Required. Error message.
+        :paramtype message: str
+        :keyword details: Error details.
+        :paramtype details: dict[str, str]
+        :keyword target: Error target.
+        :paramtype target: str
+        :keyword innererror: An object containing more specific information than the current object
+         about the error.
+        :paramtype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
+        """
         super(InnerErrorModel, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -213,38 +412,38 @@ class InnerErrorModel(msrest.serialization.Model):
 class KnowledgeBaseAnswer(msrest.serialization.Model):
     """Represents knowledge base answer.
 
-    :param questions: List of questions.
-    :type questions: list[str]
-    :param answer: The Answer.
-    :type answer: str
-    :param confidence_score: Answer confidence score, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param id: ID of the QnA result.
-    :type id: int
-    :param source: Source of QnA result.
-    :type source: str
-    :param metadata: Metadata associated with the answer, useful to categorize or filter question
+    :ivar questions: List of questions associated with the answer.
+    :vartype questions: list[str]
+    :ivar answer: Answer text.
+    :vartype answer: str
+    :ivar confidence: Answer confidence score, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar qna_id: ID of the QnA result.
+    :vartype qna_id: int
+    :ivar source: Source of QnA result.
+    :vartype source: str
+    :ivar metadata: Metadata associated with the answer, useful to categorize or filter question
      answers.
-    :type metadata: dict[str, str]
-    :param dialog: Dialog associated with Answer.
-    :type dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
-    :param answer_span: Answer span object of QnA with respect to user's question.
-    :type answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
+    :vartype metadata: dict[str, str]
+    :ivar dialog: Dialog associated with Answer.
+    :vartype dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
+    :ivar short_answer: Answer span object of QnA with respect to user's question.
+    :vartype short_answer: ~azure.ai.language.questionanswering.models.AnswerSpan
     """
 
     _validation = {
-        "confidence_score": {"maximum": 1, "minimum": 0},
+        "confidence": {"maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
         "questions": {"key": "questions", "type": "[str]"},
         "answer": {"key": "answer", "type": "str"},
-        "confidence_score": {"key": "confidenceScore", "type": "float"},
-        "id": {"key": "id", "type": "int"},
+        "confidence": {"key": "confidenceScore", "type": "float"},
+        "qna_id": {"key": "id", "type": "int"},
         "source": {"key": "source", "type": "str"},
         "metadata": {"key": "metadata", "type": "{str}"},
         "dialog": {"key": "dialog", "type": "KnowledgeBaseAnswerDialog"},
-        "answer_span": {"key": "answerSpan", "type": "AnswerSpan"},
+        "short_answer": {"key": "answerSpan", "type": "AnswerSpan"},
     }
 
     def __init__(
@@ -252,34 +451,85 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         *,
         questions: Optional[List[str]] = None,
         answer: Optional[str] = None,
-        confidence_score: Optional[float] = None,
-        id: Optional[int] = None,
+        confidence: Optional[float] = None,
+        qna_id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         dialog: Optional["KnowledgeBaseAnswerDialog"] = None,
-        answer_span: Optional["AnswerSpan"] = None,
+        short_answer: Optional["AnswerSpan"] = None,
         **kwargs
     ):
+        """
+        :keyword questions: List of questions associated with the answer.
+        :paramtype questions: list[str]
+        :keyword answer: Answer text.
+        :paramtype answer: str
+        :keyword confidence: Answer confidence score, value ranges from 0 to 1.
+        :paramtype confidence: float
+        :keyword qna_id: ID of the QnA result.
+        :paramtype qna_id: int
+        :keyword source: Source of QnA result.
+        :paramtype source: str
+        :keyword metadata: Metadata associated with the answer, useful to categorize or filter question
+         answers.
+        :paramtype metadata: dict[str, str]
+        :keyword dialog: Dialog associated with Answer.
+        :paramtype dialog: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
+        :keyword short_answer: Answer span object of QnA with respect to user's question.
+        :paramtype short_answer: ~azure.ai.language.questionanswering.models.AnswerSpan
+        """
         super(KnowledgeBaseAnswer, self).__init__(**kwargs)
         self.questions = questions
         self.answer = answer
-        self.confidence_score = confidence_score
-        self.id = id
+        self.confidence = confidence
+        self.qna_id = qna_id
         self.source = source
         self.metadata = metadata
         self.dialog = dialog
-        self.answer_span = answer_span
+        self.short_answer = short_answer
+
+
+class KnowledgeBaseAnswerContext(msrest.serialization.Model):
+    """Context object with previous QnA's information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar previous_qna_id: Required. Previous turn top answer result QnA ID.
+    :vartype previous_qna_id: int
+    :ivar previous_question: Previous user query.
+    :vartype previous_question: str
+    """
+
+    _validation = {
+        "previous_qna_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "previous_qna_id": {"key": "previousQnaId", "type": "int"},
+        "previous_question": {"key": "previousUserQuery", "type": "str"},
+    }
+
+    def __init__(self, *, previous_qna_id: int, previous_question: Optional[str] = None, **kwargs):
+        """
+        :keyword previous_qna_id: Required. Previous turn top answer result QnA ID.
+        :paramtype previous_qna_id: int
+        :keyword previous_question: Previous user query.
+        :paramtype previous_question: str
+        """
+        super(KnowledgeBaseAnswerContext, self).__init__(**kwargs)
+        self.previous_qna_id = previous_qna_id
+        self.previous_question = previous_question
 
 
 class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
     """Dialog associated with Answer.
 
-    :param is_context_only: To mark if a prompt is relevant only with a previous question or not.
-     If true, do not include this QnA as search result for queries without context; otherwise, if
+    :ivar is_context_only: To mark if a prompt is relevant only with a previous question or not. If
+     true, do not include this QnA as search result for queries without context; otherwise, if
      false, ignores context and includes this QnA in search result.
-    :type is_context_only: bool
-    :param prompts: List of 0 to 20 prompts associated with the answer.
-    :type prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
+    :vartype is_context_only: bool
+    :ivar prompts: List of prompts associated with the answer.
+    :vartype prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
     """
 
     _validation = {
@@ -298,6 +548,14 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         prompts: Optional[List["KnowledgeBaseAnswerPrompt"]] = None,
         **kwargs
     ):
+        """
+        :keyword is_context_only: To mark if a prompt is relevant only with a previous question or not.
+         If true, do not include this QnA as search result for queries without context; otherwise, if
+         false, ignores context and includes this QnA in search result.
+        :paramtype is_context_only: bool
+        :keyword prompts: List of prompts associated with the answer.
+        :paramtype prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
+        """
         super(KnowledgeBaseAnswerDialog, self).__init__(**kwargs)
         self.is_context_only = is_context_only
         self.prompts = prompts
@@ -306,12 +564,12 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
 class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
     """Prompt for an answer.
 
-    :param display_order: Index of the prompt - used in ordering of the prompts.
-    :type display_order: int
-    :param qna_id: QnA ID corresponding to the prompt.
-    :type qna_id: int
-    :param display_text: Text displayed to represent a follow up question prompt.
-    :type display_text: str
+    :ivar display_order: Index of the prompt - used in ordering of the prompts.
+    :vartype display_order: int
+    :ivar qna_id: QnA ID corresponding to the prompt.
+    :vartype qna_id: int
+    :ivar display_text: Text displayed to represent a follow up question prompt.
+    :vartype display_text: str
     """
 
     _validation = {
@@ -332,173 +590,67 @@ class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
         display_text: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword display_order: Index of the prompt - used in ordering of the prompts.
+        :paramtype display_order: int
+        :keyword qna_id: QnA ID corresponding to the prompt.
+        :paramtype qna_id: int
+        :keyword display_text: Text displayed to represent a follow up question prompt.
+        :paramtype display_text: str
+        """
         super(KnowledgeBaseAnswerPrompt, self).__init__(**kwargs)
         self.display_order = display_order
         self.qna_id = qna_id
         self.display_text = display_text
 
 
-class KnowledgeBaseAnswerRequestContext(msrest.serialization.Model):
-    """Context object with previous QnA's information.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param previous_qna_id: Required. Previous turn top answer result QnA ID.
-    :type previous_qna_id: int
-    :param previous_user_query: Previous user query.
-    :type previous_user_query: str
-    """
-
-    _validation = {
-        "previous_qna_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "previous_qna_id": {"key": "previousQnaId", "type": "int"},
-        "previous_user_query": {"key": "previousUserQuery", "type": "str"},
-    }
-
-    def __init__(self, *, previous_qna_id: int, previous_user_query: Optional[str] = None, **kwargs):
-        super(KnowledgeBaseAnswerRequestContext, self).__init__(**kwargs)
-        self.previous_qna_id = previous_qna_id
-        self.previous_user_query = previous_user_query
-
-
-class KnowledgeBaseAnswers(msrest.serialization.Model):
-    """Represents List of Question Answers.
-
-    :param answers: Represents Answer Result list.
-    :type answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
-    """
-
-    _attribute_map = {
-        "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
-    }
-
-    def __init__(self, *, answers: Optional[List["KnowledgeBaseAnswer"]] = None, **kwargs):
-        super(KnowledgeBaseAnswers, self).__init__(**kwargs)
-        self.answers = answers
-
-
-class KnowledgeBaseQueryOptions(msrest.serialization.Model):
-    """The question parameters to answer using a knowledge base.
-
-    :param qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
-     question.
-    :type qna_id: int
-    :param question: User question to query against the knowledge base.
-    :type question: str
-    :param top: Max number of answers to be returned for the question.
-    :type top: int
-    :param user_id: Unique identifier for the user.
-    :type user_id: str
-    :param confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to
-     1.
-    :type confidence_score_threshold: float
-    :param context: Context object with previous QnA's information.
-    :type context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerRequestContext
-    :param ranker_type: (Optional) Set to 'QuestionOnly' for using a question only Ranker. Possible
-     values include: "Default", "QuestionOnly".
-    :type ranker_type: str or ~azure.ai.language.questionanswering.models.RankerType
-    :param strict_filters: Filter QnAs based on give metadata list and knowledge base source names.
-    :type strict_filters: ~azure.ai.language.questionanswering.models.StrictFilters
-    :param answer_span_request: To configure Answer span prediction feature.
-    :type answer_span_request: ~azure.ai.language.questionanswering.models.AnswerSpanRequest
-    :param include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
-    :type include_unstructured_sources: bool
-    """
-
-    _validation = {
-        "confidence_score_threshold": {"maximum": 1, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "qna_id": {"key": "qnaId", "type": "int"},
-        "question": {"key": "question", "type": "str"},
-        "top": {"key": "top", "type": "int"},
-        "user_id": {"key": "userId", "type": "str"},
-        "confidence_score_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
-        "context": {"key": "context", "type": "KnowledgeBaseAnswerRequestContext"},
-        "ranker_type": {"key": "rankerType", "type": "str"},
-        "strict_filters": {"key": "strictFilters", "type": "StrictFilters"},
-        "answer_span_request": {"key": "answerSpanRequest", "type": "AnswerSpanRequest"},
-        "include_unstructured_sources": {"key": "includeUnstructuredSources", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        qna_id: Optional[int] = None,
-        question: Optional[str] = None,
-        top: Optional[int] = None,
-        user_id: Optional[str] = None,
-        confidence_score_threshold: Optional[float] = None,
-        context: Optional["KnowledgeBaseAnswerRequestContext"] = None,
-        ranker_type: Optional[Union[str, "RankerType"]] = None,
-        strict_filters: Optional["StrictFilters"] = None,
-        answer_span_request: Optional["AnswerSpanRequest"] = None,
-        include_unstructured_sources: Optional[bool] = None,
-        **kwargs
-    ):
-        super(KnowledgeBaseQueryOptions, self).__init__(**kwargs)
-        self.qna_id = qna_id
-        self.question = question
-        self.top = top
-        self.user_id = user_id
-        self.confidence_score_threshold = confidence_score_threshold
-        self.context = context
-        self.ranker_type = ranker_type
-        self.strict_filters = strict_filters
-        self.answer_span_request = answer_span_request
-        self.include_unstructured_sources = include_unstructured_sources
-
-
 class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
-    :param metadata: Dictionary of :code:`<string>`.
-    :type metadata: dict[str, str]
-    :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
-     Possible values include: "AND", "OR".
-    :type compound_operation: str or
-     ~azure.ai.language.questionanswering.models.CompoundOperationKind
+    :ivar metadata:
+    :vartype metadata: list[tuple[str, str]]
+    :ivar logical_operation: Operation used to join metadata filters. Possible values include:
+     "AND", "OR".
+    :vartype logical_operation: str
     """
 
     _attribute_map = {
-        "metadata": {"key": "metadata", "type": "{str}"},
-        "compound_operation": {"key": "compoundOperation", "type": "str"},
+        "metadata": {"key": "metadata", "type": "[object]"},
+        "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        metadata: Optional[Dict[str, str]] = None,
-        compound_operation: Optional[Union[str, "CompoundOperationKind"]] = None,
-        **kwargs
+        self, *, metadata: Optional[List[Tuple[str, str]]] = None, logical_operation: Optional[str] = None, **kwargs
     ):
+        """
+        :keyword metadata:
+        :paramtype metadata: list[tuple[str, str]]
+        :keyword logical_operation: Operation used to join metadata filters. Possible values include:
+         "AND", "OR".
+        :paramtype logical_operation: str
+        """
         super(MetadataFilter, self).__init__(**kwargs)
         self.metadata = metadata
-        self.compound_operation = compound_operation
+        self.logical_operation = logical_operation
 
 
-class StrictFilters(msrest.serialization.Model):
+class QueryFilters(msrest.serialization.Model):
     """filters over knowledge base.
 
-    :param metadata_filter: Find QnAs that are associated with the given list of metadata.
-    :type metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
-    :param source_filter: Find QnAs that are associated with the given list of sources in knowledge
-     base.
-    :type source_filter: list[str]
-    :param compound_operation: (Optional) Set to 'OR' for joining metadata using 'OR' operation.
+    :ivar metadata_filter: Find QnAs that are associated with the given list of metadata.
+    :vartype metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
+    :ivar source_filter: Find QnAs that are associated with any of the given list of sources in
+     knowledge base.
+    :vartype source_filter: list[str]
+    :ivar logical_operation: Logical operation used to join metadata filter with source filter.
      Possible values include: "AND", "OR".
-    :type compound_operation: str or
-     ~azure.ai.language.questionanswering.models.CompoundOperationKind
+    :vartype logical_operation: str
     """
 
     _attribute_map = {
         "metadata_filter": {"key": "metadataFilter", "type": "MetadataFilter"},
         "source_filter": {"key": "sourceFilter", "type": "[str]"},
-        "compound_operation": {"key": "compoundOperation", "type": "str"},
+        "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
     def __init__(
@@ -506,41 +658,94 @@ class StrictFilters(msrest.serialization.Model):
         *,
         metadata_filter: Optional["MetadataFilter"] = None,
         source_filter: Optional[List[str]] = None,
-        compound_operation: Optional[Union[str, "CompoundOperationKind"]] = None,
+        logical_operation: Optional[str] = None,
         **kwargs
     ):
-        super(StrictFilters, self).__init__(**kwargs)
+        """
+        :keyword metadata_filter: Find QnAs that are associated with the given list of metadata.
+        :paramtype metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
+        :keyword source_filter: Find QnAs that are associated with any of the given list of sources in
+         knowledge base.
+        :paramtype source_filter: list[str]
+        :keyword logical_operation: Logical operation used to join metadata filter with source filter.
+         Possible values include: "AND", "OR".
+        :paramtype logical_operation: str
+        """
+        super(QueryFilters, self).__init__(**kwargs)
         self.metadata_filter = metadata_filter
         self.source_filter = source_filter
-        self.compound_operation = compound_operation
+        self.logical_operation = logical_operation
+
+
+class ShortAnswerOptions(msrest.serialization.Model):
+    """To configure Answer span prediction feature.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar enable: Enable or disable Answer Span prediction. Has constant value: True.
+    :vartype enable: bool
+    :ivar confidence_threshold: Minimum threshold score required to include an answer span, value
+     ranges from 0 to 1.
+    :vartype confidence_threshold: float
+    :ivar top: Number of Top answers to be considered for span prediction from 1 to 10.
+    :vartype top: int
+    """
+
+    _validation = {
+        "enable": {"required": True, "constant": True},
+        "confidence_threshold": {"maximum": 1, "minimum": 0},
+        "top": {"maximum": 10, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "enable": {"key": "enable", "type": "bool"},
+        "confidence_threshold": {"key": "confidenceScoreThreshold", "type": "float"},
+        "top": {"key": "topAnswersWithSpan", "type": "int"},
+    }
+
+    enable = True
+
+    def __init__(self, *, confidence_threshold: Optional[float] = None, top: Optional[int] = None, **kwargs):
+        """
+        :keyword confidence_threshold: Minimum threshold score required to include an answer span,
+         value ranges from 0 to 1.
+        :paramtype confidence_threshold: float
+        :keyword top: Number of Top answers to be considered for span prediction from 1 to 10.
+        :paramtype top: int
+        """
+        super(ShortAnswerOptions, self).__init__(**kwargs)
+        self.confidence_threshold = confidence_threshold
+        self.top = top
 
 
 class TextAnswer(msrest.serialization.Model):
     """Represents answer result.
 
-    :param answer: Answer.
-    :type answer: str
-    :param confidence_score: answer confidence score, value ranges from 0 to 1.
-    :type confidence_score: float
-    :param id: record ID.
-    :type id: str
-    :param answer_span: Answer span object with respect to user's question.
-    :type answer_span: ~azure.ai.language.questionanswering.models.AnswerSpan
-    :param offset: The sentence offset from the start of the document.
-    :type offset: int
-    :param length: The length of the sentence.
-    :type length: int
+    :ivar answer: Answer.
+    :vartype answer: str
+    :ivar confidence: answer confidence score, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar id: record ID.
+    :vartype id: str
+    :ivar short_answer: Answer span object with respect to user's question.
+    :vartype short_answer: ~azure.ai.language.questionanswering.models.AnswerSpan
+    :ivar offset: The sentence offset from the start of the document.
+    :vartype offset: int
+    :ivar length: The length of the sentence.
+    :vartype length: int
     """
 
     _validation = {
-        "confidence_score": {"maximum": 1, "minimum": 0},
+        "confidence": {"maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
         "answer": {"key": "answer", "type": "str"},
-        "confidence_score": {"key": "confidenceScore", "type": "float"},
+        "confidence": {"key": "confidenceScore", "type": "float"},
         "id": {"key": "id", "type": "str"},
-        "answer_span": {"key": "answerSpan", "type": "AnswerSpan"},
+        "short_answer": {"key": "answerSpan", "type": "AnswerSpan"},
         "offset": {"key": "offset", "type": "int"},
         "length": {"key": "length", "type": "int"},
     }
@@ -549,95 +754,45 @@ class TextAnswer(msrest.serialization.Model):
         self,
         *,
         answer: Optional[str] = None,
-        confidence_score: Optional[float] = None,
+        confidence: Optional[float] = None,
         id: Optional[str] = None,
-        answer_span: Optional["AnswerSpan"] = None,
+        short_answer: Optional["AnswerSpan"] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword answer: Answer.
+        :paramtype answer: str
+        :keyword confidence: answer confidence score, value ranges from 0 to 1.
+        :paramtype confidence: float
+        :keyword id: record ID.
+        :paramtype id: str
+        :keyword short_answer: Answer span object with respect to user's question.
+        :paramtype short_answer: ~azure.ai.language.questionanswering.models.AnswerSpan
+        :keyword offset: The sentence offset from the start of the document.
+        :paramtype offset: int
+        :keyword length: The length of the sentence.
+        :paramtype length: int
+        """
         super(TextAnswer, self).__init__(**kwargs)
         self.answer = answer
-        self.confidence_score = confidence_score
+        self.confidence = confidence
         self.id = id
-        self.answer_span = answer_span
+        self.short_answer = short_answer
         self.offset = offset
         self.length = length
 
 
-class TextAnswers(msrest.serialization.Model):
-    """Represents the answer results.
-
-    :param answers: Represents the answer results.
-    :type answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
-    """
-
-    _attribute_map = {
-        "answers": {"key": "answers", "type": "[TextAnswer]"},
-    }
-
-    def __init__(self, *, answers: Optional[List["TextAnswer"]] = None, **kwargs):
-        super(TextAnswers, self).__init__(**kwargs)
-        self.answers = answers
-
-
-class TextQueryOptions(msrest.serialization.Model):
-    """The question and text record parameters to answer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param question: Required. User question to query against the given text records.
-    :type question: str
-    :param records: Required. Text records to be searched for given question.
-    :type records: list[~azure.ai.language.questionanswering.models.TextRecord]
-    :param language: Language of the text records. This is BCP-47 representation of a language. For
-     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-     default.
-    :type language: str
-    :param string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or ~azure.ai.language.questionanswering.models.StringIndexType
-    """
-
-    _validation = {
-        "question": {"required": True},
-        "records": {"required": True},
-    }
-
-    _attribute_map = {
-        "question": {"key": "question", "type": "str"},
-        "records": {"key": "records", "type": "[TextRecord]"},
-        "language": {"key": "language", "type": "str"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        question: str,
-        records: List["TextRecord"],
-        language: Optional[str] = None,
-        string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
-        **kwargs
-    ):
-        super(TextQueryOptions, self).__init__(**kwargs)
-        self.question = question
-        self.records = records
-        self.language = language
-        self.string_index_type = string_index_type
-
-
-class TextRecord(msrest.serialization.Model):
+class TextDocument(msrest.serialization.Model):
     """Represent input text record to be queried.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Unique identifier for the text record.
-    :type id: str
-    :param text: Required. Text contents of the record.
-    :type text: str
+    :ivar id: Required. Unique identifier for the text record.
+    :vartype id: str
+    :ivar text: Required. Text contents of the record.
+    :vartype text: str
     """
 
     _validation = {
@@ -651,6 +806,12 @@ class TextRecord(msrest.serialization.Model):
     }
 
     def __init__(self, *, id: str, text: str, **kwargs):
-        super(TextRecord, self).__init__(**kwargs)
+        """
+        :keyword id: Required. Unique identifier for the text record.
+        :paramtype id: str
+        :keyword text: Required. Text contents of the record.
+        :paramtype text: str
+        """
+        super(TextDocument, self).__init__(**kwargs)
         self.id = id
         self.text = text

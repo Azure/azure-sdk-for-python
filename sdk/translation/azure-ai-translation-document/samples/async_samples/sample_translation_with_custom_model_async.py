@@ -8,7 +8,7 @@
 FILE: sample_translation_with_custom_model_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation operation and apply custom azure translation model when doing the translation.
+    This sample demonstrates how to create a translation operation and apply a custom translation model.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -78,5 +78,4 @@ async def main():
     await sample_translation_with_custom_model_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

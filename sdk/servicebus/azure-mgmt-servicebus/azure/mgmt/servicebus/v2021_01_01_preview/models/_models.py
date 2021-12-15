@@ -1416,6 +1416,8 @@ class SBNamespace(TrackedResource):
     :vartype system_data: ~azure.mgmt.servicebus.v2021_01_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
+    :ivar status: Status of the namespace.
+    :vartype status: str
     :ivar created_at: The time the namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the namespace was updated.
@@ -1441,6 +1443,7 @@ class SBNamespace(TrackedResource):
         'location': {'required': True},
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
@@ -1457,6 +1460,7 @@ class SBNamespace(TrackedResource):
         'identity': {'key': 'identity', 'type': 'Identity'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
@@ -1475,6 +1479,7 @@ class SBNamespace(TrackedResource):
         self.identity = kwargs.get('identity', None)
         self.system_data = None
         self.provisioning_state = None
+        self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
@@ -1529,6 +1534,8 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     :type identity: ~azure.mgmt.servicebus.v2021_01_01_preview.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
+    :ivar status: Status of the namespace.
+    :vartype status: str
     :ivar created_at: The time the namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the namespace was updated.
@@ -1552,6 +1559,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
@@ -1567,6 +1575,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         'sku': {'key': 'sku', 'type': 'SBSku'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
@@ -1584,6 +1593,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         self.sku = kwargs.get('sku', None)
         self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
+        self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None

@@ -44,7 +44,7 @@ class AvailableEndpointServicesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EndpointServicesListResult"]:
         """List what values of endpoint services are available for use.
 

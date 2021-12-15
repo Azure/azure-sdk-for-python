@@ -519,7 +519,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
@@ -540,7 +540,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
             self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
+            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'region': 'Shenzhen'})
             self.assertIsNotNone(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
             self.assertEqual(
@@ -573,7 +573,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
@@ -593,7 +593,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
             self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
+            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'region': 'Shenzhen'})
             self.assertIsNotNone(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
             self.assertEqual(
@@ -626,7 +626,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
@@ -646,7 +646,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
             self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
+            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'region': 'Shenzhen'})
             self.assertIsNotNone(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
             self.assertEqual(
@@ -679,7 +679,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -698,7 +698,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
             self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
+            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'region': 'Shenzhen'})
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
             self.assertEqual(
@@ -745,7 +745,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -890,7 +890,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -978,7 +978,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         detection_configuration_id=detection_config.id,
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(

@@ -1,33 +1,33 @@
 interactions:
 - request:
     body: '{"feedbackType": "Period", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Los Angeles"}}, "value": {"periodType": "AssignValue",
-      "periodValue": 2}}'
+      {"dimension": {"category": "Shoes Handbags & Sunglasses"}}, "value": {"periodType":
+      "AssignValue", "periodValue": 2}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '195'
+      - '215'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+    uri: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 0eb33a52-1d5d-48df-b044-1cc27d0ed632
+      apim-request-id: 315a071a-f650-486c-8466-8c24a0b4dfee
       content-length: '0'
-      date: Sat, 12 Jun 2021 00:28:19 GMT
-      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/a45e4e6c-4a26-4b12-8811-591ee05d12cc
+      date: Wed, 29 Sep 2021 19:43:28 GMT
+      location: https://ga-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/cbef6b75-091d-4a46-b96e-faf60821c574
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '305'
-      x-request-id: 0eb33a52-1d5d-48df-b044-1cc27d0ed632
+      x-envoy-upstream-service-time: '465'
+      x-request-id: 315a071a-f650-486c-8466-8c24a0b4dfee
     status:
       code: 201
       message: Created
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric
+    url: https://ga-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric
 version: 1

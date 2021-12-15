@@ -44,11 +44,12 @@ from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
-from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
+from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from azure.core.pipeline._tools import is_rest
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
@@ -82,8 +83,10 @@ ERROR = 'http://dummyurl_ReturnError'
 POLLING_STATUS = 200
 
 CLIENT = PipelineClient("http://example.org")
+CLIENT.http_request_type = None
+CLIENT.http_response_type = None
 def mock_run(client_self, request, **kwargs):
-    return TestBasePolling.mock_update(request.url, request.headers)
+    return TestBasePolling.mock_update(client_self.http_request_type, client_self.http_response_type, request.url, request.headers)
 CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 
@@ -126,27 +129,30 @@ def deserialization_cb():
 
 @pytest.fixture
 def polling_response():
-    polling = LROBasePolling()
-    headers = {}
+    def _callback(http_response, headers={}):
+        polling = LROBasePolling()
 
-    response = Response()
-    response.headers = headers
-    response.status_code = 200
+        response = Response()
+        response.headers = headers
+        response.status_code = 200
 
-    polling._pipeline_response = PipelineResponse(
-        None,
-        RequestsTransportResponse(
+        response = create_transport_response(
+            http_response,
             None,
             response,
-        ),
-        PipelineContext(None)
-    )
-    polling._initial_response = polling._pipeline_response
-    return polling, headers
+        )
+        polling._pipeline_response = PipelineResponse(
+            None,
+            response,
+            PipelineContext(None)
+        )
+        polling._initial_response = polling._pipeline_response
+        return polling
+    return _callback
 
-
-def test_base_polling_continuation_token(client, polling_response):
-    polling, _ = polling_response
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_base_polling_continuation_token(client, polling_response, http_response):
+    polling = polling_response(http_response)
 
     continuation_token = polling.get_continuation_token()
     assert isinstance(continuation_token, six.string_types)
@@ -159,20 +165,17 @@ def test_base_polling_continuation_token(client, polling_response):
     new_polling = LROBasePolling()
     new_polling.initialize(*polling_args)
 
-
-def test_delay_extraction_int(polling_response):
-    polling, headers = polling_response
-
-    headers['Retry-After'] = "10"
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_delay_extraction_int(polling_response, http_response):
+    polling = polling_response(http_response, {"Retry-After": "10"})
     assert polling._extract_delay() == 10
 
 
 @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="https://stackoverflow.com/questions/11146725/isinstance-and-mocking")
-def test_delay_extraction_httpdate(polling_response):
-    polling, headers = polling_response
+@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
+def test_delay_extraction_httpdate(polling_response, http_response):
+    polling = polling_response(http_response, {"Retry-After": "Mon, 20 Nov 1995 19:12:08 -0500"})
 
-    # Test that I need to retry exactly one hour after, by mocking "now"
-    headers['Retry-After'] = "Mon, 20 Nov 1995 19:12:08 -0500"
 
     from datetime import datetime as basedatetime
     now_mock_datetime = datetime.datetime(1995, 11, 20, 18, 12, 8, tzinfo=_FixedOffset(-5*60))
@@ -183,13 +186,15 @@ def test_delay_extraction_httpdate(polling_response):
         assert polling._extract_delay() == 60*60  # one hour in seconds
         assert str(mock_datetime.now.call_args[0][0]) == "<FixedOffset -5.0>"
 
-
-def test_post(pipeline_client_builder, deserialization_cb):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_post(pipeline_client_builder, deserialization_cb, http_request, http_response):
 
         # Test POST LRO with both Location and Operation-Location
 
         # The initial response contains both Location and Operation-Location, a 202 and no Body
         initial_response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST',
             202,
             {
@@ -204,12 +209,16 @@ def test_post(pipeline_client_builder, deserialization_cb):
 
             if request.url == 'http://example.org/location':
                 return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
                     'GET',
                     200,
                     body={'location_result': True}
                 ).http_response
             elif request.url == 'http://example.org/async_monitor':
                 return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
                     'GET',
                     200,
                     body={'status': 'Succeeded'}
@@ -234,13 +243,18 @@ def test_post(pipeline_client_builder, deserialization_cb):
             assert request.method == 'GET'
 
             if request.url == 'http://example.org/location':
-                return TestBasePolling.mock_send(
+                response = TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
                     'GET',
                     200,
                     body=None
                 ).http_response
+                return response
             elif request.url == 'http://example.org/async_monitor':
                 return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
                     'GET',
                     200,
                     body={'status': 'Succeeded'}
@@ -258,13 +272,15 @@ def test_post(pipeline_client_builder, deserialization_cb):
         result = poll.result()
         assert result is None
 
-
-def test_post_resource_location(pipeline_client_builder, deserialization_cb):
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_post_resource_location(pipeline_client_builder, deserialization_cb, http_request, http_response):
 
         # ResourceLocation
 
         # The initial response contains both Location and Operation-Location, a 202 and no Body
         initial_response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST',
             202,
             {
@@ -278,12 +294,16 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb):
 
             if request.url == 'http://example.org/resource_location':
                 return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
                     'GET',
                     200,
                     body={'location_result': True}
                 ).http_response
             elif request.url == 'http://example.org/async_monitor':
                 return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
                     'GET',
                     200,
                     body={'status': 'Succeeded', 'resourceLocation': 'http://example.org/resource_location'}
@@ -307,7 +327,7 @@ class TestBasePolling(object):
     convert = re.compile('([a-z0-9])([A-Z])')
 
     @staticmethod
-    def mock_send(method, status, headers=None, body=RESPONSE_BODY):
+    def mock_send(http_request, http_response, method, status, headers=None, body=RESPONSE_BODY):
         if headers is None:
             headers = {}
         response = Response()
@@ -324,27 +344,36 @@ class TestBasePolling(object):
         response.headers.update({"content-type": "application/json; charset=utf8"})
         response.reason = "OK"
 
-        request = CLIENT._request(
-            response.request.method,
-            response.request.url,
-            None,  # params
-            response.request.headers,
-            body,
-            None,  # form_content
-            None  # stream_content
+        if is_rest(http_request):
+            request = http_request(
+                response.request.method,
+                response.request.url,
+                headers=response.request.headers,
+                content=body,
+            )
+        else:
+            request = CLIENT._request(
+                response.request.method,
+                response.request.url,
+                None,  # params
+                response.request.headers,
+                body,
+                None,  # form_content
+                None  # stream_content
+            )
+        response = create_transport_response(
+            http_response,
+            request,
+            response,
         )
-
         return PipelineResponse(
             request,
-            RequestsTransportResponse(
-                request,
-                response,
-            ),
+            response,
             None  # context
         )
 
     @staticmethod
-    def mock_update(url, headers=None):
+    def mock_update(http_request, http_response, url, headers=None):
         response = Response()
         response._content_consumed = True
         response.request = mock.create_autospec(Request)
@@ -375,23 +404,18 @@ class TestBasePolling(object):
 
         else:
             raise Exception('URL does not match')
-
-        request = CLIENT._request(
+        request = http_request(
             response.request.method,
             response.request.url,
-            None,  # params
-            {}, # request has no headers
-            None, # Request has no body
-            None,  # form_content
-            None  # stream_content
         )
-
+        response = create_transport_response(
+            http_response,
+            request,
+            response,
+        )
         return PipelineResponse(
             request,
-            RequestsTransportResponse(
-                request,
-                response,
-            ),
+            response,
             None  # context
         )
 
@@ -425,11 +449,16 @@ class TestBasePolling(object):
         """
         return None
 
-    def test_long_running_put(self):
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_long_running_put(self, http_request, http_response):
         #TODO: Test custom header field
 
         # Test throw on non LRO related status code
-        response = TestBasePolling.mock_send('PUT', 1000, {})
+        response = TestBasePolling.mock_send(
+            http_request,
+            http_response, 'PUT', 1000, {})
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
         with pytest.raises(HttpResponseError):
             LROPoller(CLIENT, response,
                 TestBasePolling.mock_outputs,
@@ -441,6 +470,8 @@ class TestBasePolling(object):
             'name': TEST_NAME
         }
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PUT', 201,
             {}, response_body
         )
@@ -455,6 +486,8 @@ class TestBasePolling(object):
 
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PUT', 201,
             {'operation-location': ASYNC_URL})
         poll = LROPoller(CLIENT, response,
@@ -465,6 +498,8 @@ class TestBasePolling(object):
 
         # Test polling location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PUT', 201,
             {'location': LOCATION_URL})
         poll = LROPoller(CLIENT, response,
@@ -476,6 +511,8 @@ class TestBasePolling(object):
         # Test polling initial payload invalid (SQLDb)
         response_body = {}  # Empty will raise
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PUT', 201,
             {'location': LOCATION_URL}, response_body)
         poll = LROPoller(CLIENT, response,
@@ -486,6 +523,8 @@ class TestBasePolling(object):
 
         # Test fail to poll from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PUT', 201,
             {'operation-location': ERROR})
         with pytest.raises(BadEndpointError):
@@ -495,6 +534,8 @@ class TestBasePolling(object):
 
         # Test fail to poll from location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PUT', 201,
             {'location': ERROR})
         with pytest.raises(BadEndpointError):
@@ -502,10 +543,14 @@ class TestBasePolling(object):
                 TestBasePolling.mock_outputs,
                 LROBasePolling(0)).result()
 
-    def test_long_running_patch(self):
-
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_long_running_patch(self, http_request, http_response):
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
         # Test polling from location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PATCH', 202,
             {'location': LOCATION_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
@@ -517,6 +562,8 @@ class TestBasePolling(object):
 
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PATCH', 202,
             {'operation-location': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
@@ -528,6 +575,8 @@ class TestBasePolling(object):
 
         # Test polling from location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PATCH', 200,
             {'location': LOCATION_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
@@ -539,6 +588,8 @@ class TestBasePolling(object):
 
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PATCH', 200,
             {'operation-location': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
@@ -550,6 +601,8 @@ class TestBasePolling(object):
 
         # Test fail to poll from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PATCH', 202,
             {'operation-location': ERROR})
         with pytest.raises(BadEndpointError):
@@ -559,6 +612,8 @@ class TestBasePolling(object):
 
         # Test fail to poll from location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'PATCH', 202,
             {'location': ERROR})
         with pytest.raises(BadEndpointError):
@@ -566,27 +621,37 @@ class TestBasePolling(object):
                 TestBasePolling.mock_outputs,
                 LROBasePolling(0)).result()
 
-    def test_long_running_delete(self):
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_long_running_delete(self, http_request, http_response):
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'DELETE', 202,
             {'operation-location': ASYNC_URL},
             body=""
         )
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
         poll = LROPoller(CLIENT, response,
             TestBasePolling.mock_deserialization_no_body,
             LROBasePolling(0))
         poll.wait()
         assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
-    def test_long_running_post_legacy(self):
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_long_running_post_legacy(self, http_request, http_response):
         # Former oooooold tests to refactor one day to something more readble
 
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 201,
             {'operation-location': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
         poll = LROPoller(CLIENT, response,
             TestBasePolling.mock_deserialization_no_body,
             LROBasePolling(0))
@@ -595,6 +660,8 @@ class TestBasePolling(object):
 
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'operation-location': ASYNC_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
@@ -606,6 +673,8 @@ class TestBasePolling(object):
 
         # Test polling from location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'location': LOCATION_URL},
             body={'properties':{'provisioningState': 'Succeeded'}})
@@ -617,6 +686,8 @@ class TestBasePolling(object):
 
         # Test fail to poll from operation-location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'operation-location': ERROR})
         with pytest.raises(BadEndpointError):
@@ -626,6 +697,8 @@ class TestBasePolling(object):
 
         # Test fail to poll from location header
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'location': ERROR})
         with pytest.raises(BadEndpointError):
@@ -633,13 +706,17 @@ class TestBasePolling(object):
                 TestBasePolling.mock_outputs,
                 LROBasePolling(0)).result()
 
-    def test_long_running_negative(self):
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_long_running_negative(self, http_request, http_response):
         global LOCATION_BODY
         global POLLING_STATUS
-
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
         # Test LRO PUT throws for invalid json
         LOCATION_BODY = '{'
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'location': LOCATION_URL})
         poll = LROPoller(
@@ -653,6 +730,8 @@ class TestBasePolling(object):
 
         LOCATION_BODY = '{\'"}'
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'location': LOCATION_URL})
         poll = LROPoller(CLIENT, response,
@@ -664,6 +743,8 @@ class TestBasePolling(object):
         LOCATION_BODY = '{'
         POLLING_STATUS = 203
         response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
             'POST', 202,
             {'location': LOCATION_URL})
         poll = LROPoller(CLIENT, response,
@@ -675,4 +756,3 @@ class TestBasePolling(object):
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
-

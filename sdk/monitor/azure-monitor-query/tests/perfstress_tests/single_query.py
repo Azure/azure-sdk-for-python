@@ -48,7 +48,7 @@ class LogsPerfTest(PerfStressTest):
         """
         start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc)
         end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc)
-        self.logs_client.query(
+        self.logs_client.query_workspace(
             self.workspace_id,
             self.query,
             timespan=(start_time, end_time)
@@ -63,7 +63,7 @@ class LogsPerfTest(PerfStressTest):
         """
         start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc)
         end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc)
-        await self.async_logs_client.query(
+        await self.async_logs_client.query_workspace(
             self.workspace_id,
             self.query,
             timespan=(start_time, end_time)

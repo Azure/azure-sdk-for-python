@@ -45,7 +45,7 @@ class WebCategoriesOperations:
         self,
         name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureWebCategory":
         """Gets the specified Azure Web Category.
 
@@ -102,7 +102,7 @@ class WebCategoriesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AzureWebCategoryListResult"]:
         """Gets all the Azure Web Categories in a subscription.
 

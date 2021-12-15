@@ -514,6 +514,8 @@ class Resource(msrest.serialization.Model):
     :type location: str
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
+    :param zones: The zones for the container group.
+    :type zones: list[str]
     """
 
     _validation = {
@@ -528,6 +530,7 @@ class Resource(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(
@@ -535,6 +538,7 @@ class Resource(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         **kwargs
     ):
         super(Resource, self).__init__(**kwargs)
@@ -543,6 +547,7 @@ class Resource(msrest.serialization.Model):
         self.type = None
         self.location = location
         self.tags = tags
+        self.zones = zones
 
 
 class ContainerGroup(Resource):
@@ -562,6 +567,8 @@ class ContainerGroup(Resource):
     :type location: str
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
+    :param zones: The zones for the container group.
+    :type zones: list[str]
     :param identity: The identity of the container group, if configured.
     :type identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
@@ -592,8 +599,8 @@ class ContainerGroup(Resource):
      ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView
     :param diagnostics: The diagnostic information for a container group.
     :type diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
-    :param network_profile: The network profile information for a container group.
-    :type network_profile: ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProfile
+    :param subnet_ids: The subnet resource IDs for a container group.
+    :type subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
     :param dns_config: The DNS config information for a container group.
     :type dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
     :param sku: The SKU for a container group. Possible values include: "Standard", "Dedicated".
@@ -620,6 +627,7 @@ class ContainerGroup(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'containers': {'key': 'properties.containers', 'type': '[Container]'},
@@ -630,7 +638,7 @@ class ContainerGroup(Resource):
         'volumes': {'key': 'properties.volumes', 'type': '[Volume]'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerGroupNetworkProfile'},
+        'subnet_ids': {'key': 'properties.subnetIds', 'type': '[ContainerGroupSubnetId]'},
         'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfiguration'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'encryption_properties': {'key': 'properties.encryptionProperties', 'type': 'EncryptionProperties'},
@@ -644,20 +652,21 @@ class ContainerGroup(Resource):
         os_type: Union[str, "OperatingSystemTypes"],
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
         identity: Optional["ContainerGroupIdentity"] = None,
         image_registry_credentials: Optional[List["ImageRegistryCredential"]] = None,
         restart_policy: Optional[Union[str, "ContainerGroupRestartPolicy"]] = None,
         ip_address: Optional["IpAddress"] = None,
         volumes: Optional[List["Volume"]] = None,
         diagnostics: Optional["ContainerGroupDiagnostics"] = None,
-        network_profile: Optional["ContainerGroupNetworkProfile"] = None,
+        subnet_ids: Optional[List["ContainerGroupSubnetId"]] = None,
         dns_config: Optional["DnsConfiguration"] = None,
         sku: Optional[Union[str, "ContainerGroupSku"]] = None,
         encryption_properties: Optional["EncryptionProperties"] = None,
         init_containers: Optional[List["InitContainerDefinition"]] = None,
         **kwargs
     ):
-        super(ContainerGroup, self).__init__(location=location, tags=tags, **kwargs)
+        super(ContainerGroup, self).__init__(location=location, tags=tags, zones=zones, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.containers = containers
@@ -668,7 +677,7 @@ class ContainerGroup(Resource):
         self.volumes = volumes
         self.instance_view = None
         self.diagnostics = diagnostics
-        self.network_profile = network_profile
+        self.subnet_ids = subnet_ids
         self.dns_config = dns_config
         self.sku = sku
         self.encryption_properties = encryption_properties
@@ -771,33 +780,6 @@ class ContainerGroupListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class ContainerGroupNetworkProfile(msrest.serialization.Model):
-    """Container group network profile information.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The identifier for a network profile.
-    :type id: str
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
-        super(ContainerGroupNetworkProfile, self).__init__(**kwargs)
-        self.id = id
-
-
 class ContainerGroupPropertiesInstanceView(msrest.serialization.Model):
     """The instance view of the container group. Only valid in response.
 
@@ -828,6 +810,38 @@ class ContainerGroupPropertiesInstanceView(msrest.serialization.Model):
         self.state = None
 
 
+class ContainerGroupSubnetId(msrest.serialization.Model):
+    """Container group subnet information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource ID of virtual network and subnet.
+    :type id: str
+    :param name: Friendly name for the subnet.
+    :type name: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        name: Optional[str] = None,
+        **kwargs
+    ):
+        super(ContainerGroupSubnetId, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+
+
 class ContainerHttpGet(msrest.serialization.Model):
     """The container Http Get settings, for liveness or readiness probe.
 
@@ -840,7 +854,7 @@ class ContainerHttpGet(msrest.serialization.Model):
     :param scheme: The scheme. Possible values include: "http", "https".
     :type scheme: str or ~azure.mgmt.containerinstance.models.Scheme
     :param http_headers: The HTTP headers.
-    :type http_headers: ~azure.mgmt.containerinstance.models.HttpHeaders
+    :type http_headers: list[~azure.mgmt.containerinstance.models.HttpHeader]
     """
 
     _validation = {
@@ -851,7 +865,7 @@ class ContainerHttpGet(msrest.serialization.Model):
         'path': {'key': 'path', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
         'scheme': {'key': 'scheme', 'type': 'str'},
-        'http_headers': {'key': 'httpHeaders', 'type': 'HttpHeaders'},
+        'http_headers': {'key': 'httpHeaders', 'type': '[HttpHeader]'},
     }
 
     def __init__(
@@ -860,7 +874,7 @@ class ContainerHttpGet(msrest.serialization.Model):
         port: int,
         path: Optional[str] = None,
         scheme: Optional[Union[str, "Scheme"]] = None,
-        http_headers: Optional["HttpHeaders"] = None,
+        http_headers: Optional[List["HttpHeader"]] = None,
         **kwargs
     ):
         super(ContainerHttpGet, self).__init__(**kwargs)
@@ -1275,8 +1289,8 @@ class GpuResource(msrest.serialization.Model):
         self.sku = sku
 
 
-class HttpHeaders(msrest.serialization.Model):
-    """The HTTP headers.
+class HttpHeader(msrest.serialization.Model):
+    """The HTTP header.
 
     :param name: The header name.
     :type name: str
@@ -1296,7 +1310,7 @@ class HttpHeaders(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
-        super(HttpHeaders, self).__init__(**kwargs)
+        super(HttpHeader, self).__init__(**kwargs)
         self.name = name
         self.value = value
 
@@ -1313,6 +1327,10 @@ class ImageRegistryCredential(msrest.serialization.Model):
     :type username: str
     :param password: The password for the private registry.
     :type password: str
+    :param identity: The identity for the private registry.
+    :type identity: str
+    :param identity_url: The identity URL for the private registry.
+    :type identity_url: str
     """
 
     _validation = {
@@ -1324,6 +1342,8 @@ class ImageRegistryCredential(msrest.serialization.Model):
         'server': {'key': 'server', 'type': 'str'},
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
+        'identity_url': {'key': 'identityUrl', 'type': 'str'},
     }
 
     def __init__(
@@ -1332,12 +1352,16 @@ class ImageRegistryCredential(msrest.serialization.Model):
         server: str,
         username: str,
         password: Optional[str] = None,
+        identity: Optional[str] = None,
+        identity_url: Optional[str] = None,
         **kwargs
     ):
         super(ImageRegistryCredential, self).__init__(**kwargs)
         self.server = server
         self.username = username
         self.password = password
+        self.identity = identity
+        self.identity_url = identity_url
 
 
 class InitContainerDefinition(msrest.serialization.Model):
@@ -1501,7 +1525,7 @@ class LogAnalytics(msrest.serialization.Model):
     :param metadata: Metadata for log analytics.
     :type metadata: dict[str, str]
     :param workspace_resource_id: The workspace resource id for log analytics.
-    :type workspace_resource_id: dict[str, str]
+    :type workspace_resource_id: str
     """
 
     _validation = {
@@ -1514,7 +1538,7 @@ class LogAnalytics(msrest.serialization.Model):
         'workspace_key': {'key': 'workspaceKey', 'type': 'str'},
         'log_type': {'key': 'logType', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
-        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': '{str}'},
+        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -1524,7 +1548,7 @@ class LogAnalytics(msrest.serialization.Model):
         workspace_key: str,
         log_type: Optional[Union[str, "LogAnalyticsLogType"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        workspace_resource_id: Optional[Dict[str, str]] = None,
+        workspace_resource_id: Optional[str] = None,
         **kwargs
     ):
         super(LogAnalytics, self).__init__(**kwargs)

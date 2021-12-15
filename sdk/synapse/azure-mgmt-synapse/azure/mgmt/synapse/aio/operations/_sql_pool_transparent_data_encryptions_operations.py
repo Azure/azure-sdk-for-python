@@ -47,7 +47,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
         workspace_name: str,
         sql_pool_name: str,
         transparent_data_encryption_name: Union[str, "_models.TransparentDataEncryptionName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TransparentDataEncryption":
         """Get a SQL pool's transparent data encryption configuration.
 
@@ -72,14 +72,14 @@ class SqlPoolTransparentDataEncryptionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'transparentDataEncryptionName': self._serialize.url("transparent_data_encryption_name", transparent_data_encryption_name, 'str'),
@@ -118,7 +118,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
         sql_pool_name: str,
         transparent_data_encryption_name: Union[str, "_models.TransparentDataEncryptionName"],
         parameters: "_models.TransparentDataEncryption",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TransparentDataEncryption":
         """Creates or updates a Sql pool's transparent data encryption configuration.
 
@@ -146,7 +146,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -154,7 +154,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'transparentDataEncryptionName': self._serialize.url("transparent_data_encryption_name", transparent_data_encryption_name, 'str'),
@@ -199,7 +199,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TransparentDataEncryptionListResult"]:
         """SQL pool's transparent data encryption configurations.
 
@@ -221,7 +221,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -234,7 +234,7 @@ class SqlPoolTransparentDataEncryptionsOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                 }

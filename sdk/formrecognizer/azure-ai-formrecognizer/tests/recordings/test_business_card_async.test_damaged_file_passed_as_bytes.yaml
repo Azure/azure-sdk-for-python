@@ -1,29 +1,33 @@
 interactions:
 - request:
-    body: '%PDFUUU'
+    body: 'b''{"base64Source": "JVBERlVVVQ=="}'''
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '32'
       Content-Type:
-      - application/pdf
+      - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.2.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "9f801696-55a0-41db-998a-878e7c253813"},
-        "message": "Bad or unrecognizable request JSON or binary file."}}'
+      string: '{"error": {"code": "InvalidRequest", "message": "Invalid request.",
+        "innererror": {"code": "InvalidContent", "message": "The file is corrupted
+        or format is unsupported. Refer to documentation for the list of supported
+        formats."}}}'
     headers:
-      apim-request-id: 9f801696-55a0-41db-998a-878e7c253813
-      content-length: '161'
+      apim-request-id: 79fc48de-9b63-4147-9e0a-4fda5e705367
       content-type: application/json; charset=utf-8
-      date: Mon, 10 May 2021 23:57:38 GMT
+      date: Tue, 14 Sep 2021 08:22:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '18'
     status:
       code: 400
       message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels/prebuilt-businessCard:analyze?stringIndexType=unicodeCodePoint&api-version=2021-07-30-preview
 version: 1

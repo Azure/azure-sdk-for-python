@@ -101,6 +101,15 @@ class NfsAccessRuleScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NETWORK = "network"
     HOST = "host"
 
+class OperationalStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Storage target operational state.
+    """
+
+    READY = "Ready"
+    BUSY = "Busy"
+    SUSPENDED = "Suspended"
+    FLUSHING = "Flushing"
+
 class ProvisioningStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """ARM provisioning state, see
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property

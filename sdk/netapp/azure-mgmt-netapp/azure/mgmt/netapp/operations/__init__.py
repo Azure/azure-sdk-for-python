@@ -8,6 +8,7 @@
 
 from ._operations import Operations
 from ._net_app_resource_operations import NetAppResourceOperations
+from ._net_app_resource_quota_limits_operations import NetAppResourceQuotaLimitsOperations
 from ._accounts_operations import AccountsOperations
 from ._pools_operations import PoolsOperations
 from ._volumes_operations import VolumesOperations
@@ -21,6 +22,7 @@ from ._vaults_operations import VaultsOperations
 __all__ = [
     'Operations',
     'NetAppResourceOperations',
+    'NetAppResourceQuotaLimitsOperations',
     'AccountsOperations',
     'PoolsOperations',
     'VolumesOperations',

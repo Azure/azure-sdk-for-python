@@ -161,23 +161,106 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
-  $packageExpression = "$packageName$packageVersion"
-  Write-Host "Validating $packageExpression"
-
-  $installTargetFolder = Join-Path $workingDirectory $packageName
-  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
-
+function ValidatePackage
+{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$false)]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [string]$DocValidationImageId
+  ) 
+  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
+  if (!(Test-Path $installValidationFolder)) {
+    New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
+  }
   # Add more validation by replicating as much of the docs CI process as
   # possible
   # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  if (!$DocValidationImageId) {
+    Write-Host "Validating using pip command directly on $packageName."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+  } 
+  else {
+    Write-Host "Validating using $DocValidationImageId on $packageName."
+    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
+  }
+}
+function DockerValidation{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$false)]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [string]$DocValidationImageId,
+    [Parameter(Mandatory=$false)]
+    [string]$workingDirectory
+  ) 
+  if ($PackageSourceOverride) {
+    docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 | Out-Null
+  }
+  else {
+    docker run -v "${workingDirectory}:/workdir/out" `
+      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1 | Out-Null
+  }
+  # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
+  # If the docker failed because of docker itself instead of the application, 
+  # we should skip the validation and keep the packages. 
+  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
+    Write-Host $commandLine
+    LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
+  }
+  elseif ($LASTEXITCODE -ne 0) { 
+    Write-Host $commandLine
+    LogWarning "Package $($Package.name) ref docs validation failed."
+    return $false
+  }
+  return $true
+}
+
+function FallbackValidation
+{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$true)]
+    [string]$workingDirectory,
+    [Parameter(Mandatory=$false)]
+    [string]$PackageSourceOverride
+  ) 
+  $installTargetFolder = Join-Path $workingDirectory $packageName
+  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
+  $packageExpression = "$packageName$packageVersion"
   try {
-    Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-    $pipInstallOutput = pip `
-      install `
-      $packageExpression `
-      --no-cache-dir `
-      --target $installTargetFolder 2>&1
+    $pipInstallOutput = ""
+    if ($PackageSourceOverride) {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder `
+        --extra-index-url=$PackageSourceOverride 2>&1 | Out-Null
+    }
+    else {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder 2>&1 | Out-Null
+    }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
       Write-Host $pipInstallOutput
@@ -193,15 +276,18 @@ function ValidatePackage($packageName, $packageVersion, $workingDirectory) {
   return $true
 }
 
-$PackageExclusions = @{ 
+$PackageExclusions = @{
+  'azure-mgmt-videoanalyzer' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21563';
+  'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
+  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
   'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
-  'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
-function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
+
+function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
   Write-Host "Excluded packages:"
   foreach ($excludedPackage in $PackageExclusions.Keys) {
     Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
@@ -212,26 +298,25 @@ function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata) {
   UpdateDocsMsPackages `
     (Join-Path $DocsRepoLocation 'ci-configs/packages-preview.json') `
     'preview' `
-    $FilteredMetadata
+    $FilteredMetadata `
+    $PackageSourceOverride `
+    $DocValidationImageId
 
   UpdateDocsMsPackages `
     (Join-Path $DocsRepoLocation 'ci-configs/packages-latest.json') `
     'latest' `
-    $FilteredMetadata
+    $FilteredMetadata `
+    $PackageSourceOverride `
+    $DocValidationImageId
 }
 
-function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
+function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
   Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
   $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
-
-  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-  New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
-
 
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
     $packageName = $package.package_info.name
-
     if (!$packageName) { 
       Write-Host "Keeping package with no name: $($package.package_info)"
       $outputPackages += $package
@@ -288,7 +373,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     # If upgrading the package, run basic sanity checks against the package
     if ($package.package_info.version -ne $packageVersion) {
       Write-Host "New version detected for $packageName ($packageVersion)"
-      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
         LogWarning "Package is not valid: $packageName. Keeping old version."
         $outputPackages += $package
         continue
@@ -301,6 +386,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
         -Value $packageVersion `
         -PassThru `
         -Force 
+      if ($PackageSourceOverride) {
+        $package.package_info = Add-Member `
+          -InputObject $package.package_info `
+          -MemberType NoteProperty `
+          -Name 'extra_index_url' `
+          -Value $PackageSourceOverride `
+          -PassThru `
+          -Force 
+      }
     }
 
     Write-Host "Keeping tracked package: $packageName."
@@ -334,23 +428,35 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata) {
     if ($Mode -eq 'preview') {
       $packageVersion = "==$($package.VersionPreview)"
     }
-
-    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -workingDirectory $installValidationFolder)) {
+    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
       LogWarning "Package is not valid: $packageName. Cannot onboard."
       continue
     }
 
     Write-Host "Add new package from metadata: $packageName"
-    $package = [ordered]@{
+    if ($PackageSourceOverride) {
+      $package = [ordered]@{
         package_info = [ordered]@{
           name = $packageName;
           install_type = 'pypi';
           prefer_source_distribution = 'true';
           version = $packageVersion;
+          extra_index_url = $PackageSourceOverride
         };
         exclude_path = @("test*","example*","sample*","doc*");
+      }
     }
-
+    else {
+      $package = [ordered]@{
+          package_info = [ordered]@{
+            name = $packageName;
+            install_type = 'pypi';
+            prefer_source_distribution = 'true';
+            version = $packageVersion;
+          };
+          exclude_path = @("test*","example*","sample*","doc*");
+      }
+    }
     $outputPackages += $package
   }
 
@@ -393,14 +499,15 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $ReplaceLatestEntryTitle=$True)
 {
   if($null -eq $ReleaseDate)
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 
 function GetExistingPackageVersions ($PackageName, $GroupId=$null)
@@ -412,7 +519,51 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
   catch
   {
-    LogError "Failed to retrieve package versions. `n$_"
+    if ($_.Exception.Response.StatusCode -ne 404) 
+    {
+      LogError "Failed to retrieve package versions for ${PackageName}. $($_.Exception.Message)"
+    }
     return $null
   }
+}
+
+function Get-python-DocsMsMetadataForPackage($PackageInfo) { 
+  $readmeName = $PackageInfo.Name.ToLower()
+  Write-Host "Docs.ms Readme name: $($readmeName)"
+
+  # Readme names (which are used in the URL) should not include redundant terms
+  # when viewed in URL form. For example: 
+  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage-blobs-readme
+  # Note how the end of the URL doesn't look like:
+  # ".../azure/azure-storage-blobs-readme" 
+
+  # This logic eliminates a preceeding "azure." in the readme filename.
+  # "azure-storage-blobs" -> "storage-blobs"
+  if ($readmeName.StartsWith('azure-')) {
+    $readmeName = $readmeName.Substring(6)
+  }
+
+  New-Object PSObject -Property @{
+    DocsMsReadMeName = $readmeName
+    LatestReadMeLocation  = 'docs-ref-services/latest'
+    PreviewReadMeLocation = 'docs-ref-services/preview'
+    Suffix = ''
+  }
+}
+
+function Import-Dev-Cert-python
+{
+  Write-Host "Python Trust Methodology"
+
+  $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
+
+  python $pathToScript
+}
+
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageSourceOverride, $DocValidationImageId)
+{
+  $packageName = $packageInfo.Name
+  $packageVersion = $packageInfo.Version
+  ValidatePackage -packageName $packageName -packageVersion $packageVersion `
+      -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
 }

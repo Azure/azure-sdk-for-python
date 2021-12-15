@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
   response:
@@ -13,11 +13,11 @@ interactions:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 30 Jun 2021 23:28:17 GMT
-      elapsed-time: '177'
+      date: Tue, 31 Aug 2021 17:34:03 GMT
+      elapsed-time: '390'
       expires: '-1'
       pragma: no-cache
-      request-id: d8cbd716-d9fa-11eb-be4b-a0481ca055a9
+      request-id: a38a2925-0a81-11ec-a3b6-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 204
@@ -29,7 +29,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search785e1686.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
@@ -39,13 +39,13 @@ interactions:
       cache-control: no-cache
       content-length: '200'
       content-type: application/json; odata.metadata=minimal
-      date: Wed, 30 Jun 2021 23:28:22 GMT
-      elapsed-time: '50'
+      date: Tue, 31 Aug 2021 17:34:09 GMT
+      elapsed-time: '145'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: dbff3e43-d9fa-11eb-be56-a0481ca055a9
+      request-id: a6ea4fe6-0a81-11ec-86da-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

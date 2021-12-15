@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError
-from azure.identity.aio import AzureApplicationCredential
+from azure.identity.aio._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 from six.moves.urllib_parse import urlparse

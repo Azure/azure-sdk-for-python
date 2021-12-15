@@ -44,6 +44,15 @@ class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL = "Sql"
     GREMLIN_V2 = "GremlinV2"
 
+class AuthenticationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Which authentication method Cassandra should use to authenticate clients. 'None' turns off
+    authentication, so should not be used except in emergencies. 'Cassandra' is the default
+    password based authentication. The default is 'Cassandra'.
+    """
+
+    NONE = "None"
+    CASSANDRA = "Cassandra"
+
 class BackupPolicyMigrationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the status of migration between backup policy types.
     """
@@ -60,6 +69,14 @@ class BackupPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PERIODIC = "Periodic"
     CONTINUOUS = "Continuous"
 
+class BackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to indicate type of backup storage redundancy.
+    """
+
+    GEO = "Geo"
+    LOCAL = "Local"
+    ZONE = "Zone"
+
 class CompositePathSortOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sort order for composite paths.
     """
@@ -73,6 +90,17 @@ class ConflictResolutionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 
     LAST_WRITER_WINS = "LastWriterWins"
     CUSTOM = "Custom"
+
+class ConnectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of connection error that occurred.
+    """
+
+    UNKNOWN = "Unknown"
+    OK = "OK"
+    OPERATOR_TO_DATA_CENTER_NETWORK_ERROR = "OperatorToDataCenterNetworkError"
+    DATACENTER_TO_DATACENTER_NETWORK_ERROR = "DatacenterToDatacenterNetworkError"
+    INTERNAL_OPERATOR_TO_DATA_CENTER_CERTIFICATE_ERROR = "InternalOperatorToDataCenterCertificateError"
+    INTERNAL_ERROR = "InternalError"
 
 class ConnectorOffer(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The cassandra connector offer type for the Cosmos DB C* database account.
@@ -150,12 +178,47 @@ class KeyKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PRIMARY_READONLY = "primaryReadonly"
     SECONDARY_READONLY = "secondaryReadonly"
 
+class ManagedCassandraProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of the resource at the time the operation was called.
+    """
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+
+class ManagedCassandraResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the resource.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
+
 class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates what services are allowed to bypass firewall checks.
     """
 
     NONE = "None"
     AZURE_SERVICES = "AzureServices"
+
+class NodeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of the node in Cassandra ring.
+    """
+
+    NORMAL = "Normal"
+    LEAVING = "Leaving"
+    JOINING = "Joining"
+    MOVING = "Moving"
+    STOPPED = "Stopped"
+
+class NodeStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether the node is functioning or not.
+    """
+
+    UP = "Up"
+    DOWN = "Down"
 
 class NotebookWorkspaceName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

@@ -1,5 +1,14 @@
 # Release History
 
+## 9.0.0 (2021-11-11)
+
+**Features**
+
+  - Model App has a new parameter state
+  - Model App has a new parameter identity
+  - Model AppPatch has a new parameter state
+  - Model AppPatch has a new parameter identity
+
 ## 9.0.0b1 (2021-05-13)
 
 This is beta preview version.

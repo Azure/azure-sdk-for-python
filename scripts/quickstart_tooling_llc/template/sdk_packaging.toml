@@ -1,0 +1,7 @@
+[packaging]
+package_name = "{{ package_name }}"
+package_nspkg = "{{ folder_first }}-{{ folder_second }}-nspkg"
+package_pprint_name = "{{ package_pprint_name }}"
+package_doc_id = ""
+is_stable = false
+is_arm = false

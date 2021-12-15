@@ -45,7 +45,7 @@ class ObjectReplicationPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ObjectReplicationPolicies"]:
         """List the object replication policies associated with the storage account.
 
@@ -124,7 +124,7 @@ class ObjectReplicationPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         object_replication_policy_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectReplicationPolicy":
         """Get the object replication policy of the storage account by policy ID.
 
@@ -192,7 +192,7 @@ class ObjectReplicationPoliciesOperations:
         account_name: str,
         object_replication_policy_id: str,
         properties: "_models.ObjectReplicationPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ObjectReplicationPolicy":
         """Create or update the object replication policy of the storage account.
 
@@ -267,7 +267,7 @@ class ObjectReplicationPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         object_replication_policy_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the object replication policy associated with the specified storage account.
 
