@@ -54,7 +54,6 @@ def main():
     for language in languages:
         language_issues = select_language_issues(issues, language)
         languages[language](language_issues)
-    Common.push_md_to_storage()
 
 
 if __name__ == '__main__':
