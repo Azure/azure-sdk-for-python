@@ -9,11 +9,11 @@ import time
 import datetime
 import uuid
 from devtools_testutils import (
-    AzureRecordedTestCase
+    AzureRecordedTestCase,
+    set_bodiless_matcher
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
-STORAGE_API_VERSION = "2020-10-02"
 
 
 class Document(object):
@@ -59,7 +59,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         if self.is_live:
             variables[var_key] = "src" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
-                                               self.storage_key, api_version=STORAGE_API_VERSION)
+                                               self.storage_key)
             container_client.create_container()
 
             self.upload_documents(data, container_client)
@@ -71,7 +71,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         if self.is_live:
             variables[var_key] = "target" + str(uuid.uuid4())
             container_client = ContainerClient(self.storage_endpoint, variables[var_key],
-                                               self.storage_key, api_version=STORAGE_API_VERSION)
+                                               self.storage_key)
             container_client.create_container()
             if data:
                 self.upload_documents(data, container_client)
@@ -79,7 +79,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         return self.generate_sas_url(variables[var_key], "wl")
 
     def generate_sas_url(self, container_name, permission):
-
+        set_bodiless_matcher()
         sas_token = self.generate_sas(
             generate_container_sas,
             account_name=self.storage_name,
