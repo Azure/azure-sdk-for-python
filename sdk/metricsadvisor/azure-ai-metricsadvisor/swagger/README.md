@@ -392,3 +392,13 @@ directive:
     $["x-ms-enum"]["name"] = "DataFeedRollupType";
     $["enum"] = ["NoRollup", "AutoRollup", "AlreadyRollup"];
 ```
+
+### MetricAlertingConfiguration -> MetricAlertConfiguration
+
+```yaml
+directive:
+- from: swagger-document
+  where: $["definitions"]["MetricAlertingConfiguration"]
+  transform: >
+    $["x-ms-client-name"] = "MetricAlertConfiguration";
+```
