@@ -4,8 +4,8 @@
 # ------------------------------------
 
 import datetime
+import functools
 from os.path import dirname, realpath
-import time
 
 try:
     from unittest.mock import Mock
@@ -15,13 +15,38 @@ except ImportError:  # python < 3.3
 import json
 import requests
 
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
+from devtools_testutils import PowerShellPreparer, is_live, AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
+
+from azure.core.credentials import AzureKeyCredential
+
 
 SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2021-04-30-Preview"
 TIME_TO_SLEEP = 3
 
+
+SearchPreparer = functools.partial(
+    PowerShellPreparer,
+    "search",
+    search_service_endpoint="fakesearchendpoint",
+    search_service_api_key="fakesearchapikey",
+    search_query_api_key="fakequeryapikey",
+    search_storage_connection_string="fakestoragecs",
+    search_storage_container_name="fakestoragecontainer"
+)
+
+def search_decorator(func, **kwargs):
+    @SearchPreparer()
+    def wrapper(*args, **kwargs):
+        # automatically wrap service API key as an AzureKeyCredential
+        api_key = kwargs.get('search_service_api_key', None)
+        kwargs['search_service_api_key'] = AzureKeyCredential(api_key)
+        func(*args, **kwargs)
+    return wrapper
+
+
+# TODO: Remove this
 class SearchResourceGroupPreparer(ResourceGroupPreparer):
     def create_resource(self, name, **kwargs):
         result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
@@ -31,6 +56,7 @@ class SearchResourceGroupPreparer(ResourceGroupPreparer):
             self.client.resource_groups.create_or_update(name, resource_group_params)
         return result
 
+#TODO: Remove this
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
         self,
