@@ -19,7 +19,7 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live
 from azure_devtools.scenario_tests import (
     OAuthRequestResponsesFilter,
     RecordingProcessor,
@@ -135,7 +135,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class ContainerRegistryTestClass(AzureTestCase):
+class ContainerRegistryTestClass(AzureRecordedTestCase):
     def __init__(self, method_name):
         super(ContainerRegistryTestClass, self).__init__(method_name)
         self.repository = "library/busybox"
