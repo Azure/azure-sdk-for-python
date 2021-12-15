@@ -11,7 +11,7 @@ import random
 import string
 
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, test_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
