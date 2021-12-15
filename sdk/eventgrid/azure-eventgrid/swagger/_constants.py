@@ -51,5 +51,8 @@ backward_compat = {
     'KeyVaultAccessPolicyChangedEventName': 'Microsoft.KeyVault.VaultAccessPolicyChanged',
     'ContainerRegistryEventName': 'Microsoft.ContainerRegistry.ChartPushed',
     'SubscriptionDeletedEventName': 'Microsoft.EventGrid.SubscriptionDeletedEvent',
-    'SubscriptionValidationEventName': 'Microsoft.EventGrid.SubscriptionValidationEvent'
+    'SubscriptionValidationEventName': 'Microsoft.EventGrid.SubscriptionValidationEvent',
+    'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName': 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
 }
+
+EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData']

@@ -4,30 +4,14 @@ import warnings
 import sys
 from urllib.request import urlopen
 from azure.eventgrid._generated import models
-from _constants import files, backward_compat
-
-#===============================================deprecated===========================================
-# def event_tuples(system_events):
-#     tup_list = []
-#     for event in system_events:
-#         class_name = "Name".join(event[0].rsplit('Data', 1))
-#         try:
-#             event_name = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", event[1].__doc__)[0]
-#         except:
-#             # these two are just superclasses and are known exceptions.
-#             if event[0] not in ('ContainerRegistryArtifactEventData', 'ContainerRegistryEventData'):
-#                 warnings.warn("Unable to generate the event mapping for {}".format(event[0]))
-#                 sys.exit(1)
-#         tup_list.append((class_name, event_name))
-#     return tup_list
-#===============================================deprecated===========================================
+from _constants import files, backward_compat, EXCEPTIONS
 
 def extract(definitions):
     if not definitions:
         return
     tups = []
     for event in definitions:
-        if event.endswith('Data') and event not in ('ContainerRegistryArtifactEventData', 'ContainerRegistryEventData'):
+        if event.endswith('Data') and event not in EXCEPTIONS:
             try:
                 key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
                 val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", txt)
@@ -44,8 +28,6 @@ def generate_enum_content(tuples):
     print("# backward compat names end here.")
     for tup in tup_list:
         print(tup[0] + " = '" + tup[1].replace('API', 'Api') + "'\n")
-    print("# servicebus alias")
-    print("ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'")
 
 definitions = {}
 for fp in files:
