@@ -31,7 +31,6 @@ from .models import (
     FeedbackDimensionFilter,
     DimensionGroupIdentity,
 )
-from . import MetricsAdvisor as _Client
 from ..models._models import (
     AnomalyIncident,
     DataPointAnomaly,
@@ -67,7 +66,6 @@ from typing import Any, List, Union, cast, TYPE_CHECKING
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from . import MetricsAdvisor as _Client
 from .models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
@@ -739,7 +737,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
                 :caption: Query incident root causes.
         """
 
-        return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
+        return super().list_incident_root_causes(  # type: ignore
             configuration_id=detection_configuration_id,
             incident_id=incident_id,
             cls=kwargs.pop(
@@ -795,7 +793,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             series=series_list,
         )
 
-        return self._client.get_series_by_anomaly_detection_configuration(  # type: ignore
+        return super().list_metric_enriched_series_data(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
             cls=kwargs.pop(
@@ -852,7 +850,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             time_mode=time_mode,
         )
 
-        return self._client.get_alerts_by_anomaly_alerting_configuration(  # type: ignore
+        return super().list_alerts(  # type: ignore
             configuration_id=alert_configuration_id,
             skip=skip,
             body=alerting_result_query,
@@ -1029,7 +1027,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             dimension_filter=dimension_filter,
         )
 
-        return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(  # type: ignore
+        return super().list_anomaly_dimension_values(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=anomaly_dimension_query,
@@ -1202,7 +1200,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             dimension_value_filter=dimension_value_filter,
         )
 
-        return self._client.get_metric_dimension(  # type: ignore
+        return super().list_metric_dimension_values(  # type: ignore
             metric_id=metric_id,
             body=metric_dimension_query_options,
             skip=skip,
@@ -1251,7 +1249,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             series=series_keys,
         )
 
-        return self._client.get_metric_data(  # type: ignore
+        return super().list_metric_series_data(  # type: ignore
             metric_id=metric_id,
             body=metric_data_query_options,
             cls=kwargs.pop(
@@ -1299,7 +1297,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             dimension_filter=dimension_filter,
         )
 
-        return self._client.get_metric_series(  # type: ignore
+        return super().list_metric_series_definitions(  # type: ignore
             metric_id=metric_id, body=metric_series_query_options, skip=skip, **kwargs
         )
 
@@ -1336,7 +1334,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             end_time=converted_end_time,
         )
 
-        return self._client.get_enrichment_status_by_metric(  # type: ignore
+        return super().list_metric_enrichment_status(  # type: ignore
             metric_id=metric_id,
             skip=skip,
             body=enrichment_status_query_option,
@@ -1376,6 +1374,7 @@ class MetricsAdvisorAdministrationClient(
 
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
+        from ._metrics_advisor_client import MetricsAdvisorClient as _Client
         self._client = _Client(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -1438,7 +1437,7 @@ class MetricsAdvisorAdministrationClient(
         """
 
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
-        response_headers = self._client.create_anomaly_alerting_configuration(  # type: ignore
+        response_headers = super().create_alert_configuration(  # type: ignore
             _AnomalyAlertingConfiguration(
                 name=name,
                 metric_alerting_configurations=[
@@ -1535,7 +1534,7 @@ class MetricsAdvisorAdministrationClient(
             action_link_template=action_link_template,
         )
 
-        response_headers = self._client.create_data_feed(  # type: ignore
+        response_headers = super().create_data_feed(  # type: ignore
             data_feed_detail,
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -1577,13 +1576,13 @@ class MetricsAdvisorAdministrationClient(
         if hook.hook_type == "Webhook":
             hook_request = hook._to_generated()
 
-        response_headers = self._client.create_hook(  # type: ignore
+        response_headers = super().create_hook(  # type: ignore
             hook_request,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
         hook_id = response_headers["Location"].split("hooks/")[1]
-        return self.get_hook(hook_id)
+        return super().get_hook(hook_id)
 
     @distributed_trace
     def create_detection_configuration(
@@ -1643,7 +1642,7 @@ class MetricsAdvisorAdministrationClient(
             else None,
         )
 
-        response_headers = self._client.create_anomaly_detection_configuration(  # type: ignore
+        response_headers = super().create_detection_configuration(  # type: ignore
             config,
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -1672,7 +1671,7 @@ class MetricsAdvisorAdministrationClient(
                 :caption: Get a single data feed by its ID
         """
 
-        data_feed = self._client.get_data_feed_by_id(data_feed_id, **kwargs)
+        data_feed = super().get_data_feed(data_feed_id, **kwargs)
         return DataFeed._from_generated(data_feed)
 
     @distributed_trace
@@ -1696,7 +1695,7 @@ class MetricsAdvisorAdministrationClient(
                 :caption: Get a single anomaly alert configuration by its ID
         """
 
-        config = self._client.get_anomaly_alerting_configuration(
+        config = super().get_alert_configuration(
             alert_configuration_id, **kwargs
         )
         return AnomalyAlertConfiguration._from_generated(config)
@@ -1722,7 +1721,7 @@ class MetricsAdvisorAdministrationClient(
                 :caption: Get a single anomaly detection configuration by its ID
         """
 
-        config = self._client.get_anomaly_detection_configuration(
+        config = super().get_detection_configuration(
             detection_configuration_id, **kwargs
         )
         return AnomalyDetectionConfiguration._from_generated(config)
@@ -1754,7 +1753,7 @@ class MetricsAdvisorAdministrationClient(
                 :caption: Get a notification hook by its ID
         """
 
-        hook = self._client.get_hook(hook_id, **kwargs)
+        hook = super().get_hook(hook_id, **kwargs)
         if hook.hook_type == "Email":
             return EmailNotificationHook._from_generated(hook)
         return WebNotificationHook._from_generated(hook)
@@ -1784,7 +1783,7 @@ class MetricsAdvisorAdministrationClient(
                 :dedent: 4
                 :caption: Get the progress of data feed ingestion
         """
-        ingestion_process = self._client.get_ingestion_progress(data_feed_id, **kwargs)
+        ingestion_process = super().get_data_feed_ingestion_progress(data_feed_id, **kwargs)
         return DataFeedIngestionProgress._from_generated(ingestion_process)
 
     @distributed_trace
@@ -1819,7 +1818,7 @@ class MetricsAdvisorAdministrationClient(
         """
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-        self._client.reset_data_feed_ingestion_status(
+        super().refresh_data_feed_ingestion(
             data_feed_id,
             body=_IngestionProgressResetOptions(
                 start_time=converted_start_time, end_time=converted_end_time
@@ -1849,7 +1848,7 @@ class MetricsAdvisorAdministrationClient(
         if len(alert_configuration_id) != 1:
             raise TypeError("Alert configuration requires exactly one id.")
 
-        self._client.delete_anomaly_alerting_configuration(
+        super().delete_alert_configuration(
             alert_configuration_id[0], **kwargs
         )
 
@@ -1875,7 +1874,7 @@ class MetricsAdvisorAdministrationClient(
         if len(detection_configuration_id) != 1:
             raise TypeError("Detection configuration requires exactly one id.")
 
-        self._client.delete_anomaly_detection_configuration(
+        super().delete_detection_configuration(
             detection_configuration_id[0], **kwargs
         )
 
@@ -1901,7 +1900,7 @@ class MetricsAdvisorAdministrationClient(
         if len(data_feed_id) != 1:
             raise TypeError("Data feed requires exactly one id.")
 
-        self._client.delete_data_feed(data_feed_id[0], **kwargs)
+        super().delete_data_feed(data_feed_id[0], **kwargs)
 
     @distributed_trace
     def delete_hook(self, *hook_id, **kwargs):
@@ -1925,7 +1924,7 @@ class MetricsAdvisorAdministrationClient(
         if len(hook_id) != 1:
             raise TypeError("Hook requires exactly one id.")
 
-        self._client.delete_hook(hook_id[0], **kwargs)
+        super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace
     def update_data_feed(
@@ -2040,7 +2039,7 @@ class MetricsAdvisorAdministrationClient(
             )
 
         return DataFeed._from_generated(
-            self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+            super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
         )
 
     @distributed_trace
@@ -2109,7 +2108,7 @@ class MetricsAdvisorAdministrationClient(
             )
 
         return AnomalyAlertConfiguration._from_generated(
-            self._client.update_anomaly_alerting_configuration(
+            super().update_alert_configuration(
                 alert_configuration_id, alert_configuration_patch, **kwargs
             )
         )
@@ -2190,7 +2189,7 @@ class MetricsAdvisorAdministrationClient(
             )
 
         return AnomalyDetectionConfiguration._from_generated(
-            self._client.update_anomaly_detection_configuration(
+            super().update_detection_configuration(
                 detection_configuration_id, detection_config_patch, **kwargs
             )
         )
@@ -2283,7 +2282,7 @@ class MetricsAdvisorAdministrationClient(
                     certificate_password=update.pop("certificatePassword", None),
                 )
 
-        updated_hook = self._client.update_hook(hook_id, hook_patch, **kwargs)
+        updated_hook = super().update_hook(hook_id, hook_patch, **kwargs)
 
         if updated_hook.hook_type == "Email":
             return EmailNotificationHook._from_generated(updated_hook)
@@ -2320,7 +2319,7 @@ class MetricsAdvisorAdministrationClient(
                 return EmailNotificationHook._from_generated(hook)
             return WebNotificationHook._from_generated(hook)
 
-        return self._client.list_hooks(  # type: ignore
+        return super().list_hooks(  # type: ignore
             hook_name=hook_name,
             skip=skip,
             cls=kwargs.pop(
@@ -2366,7 +2365,7 @@ class MetricsAdvisorAdministrationClient(
         creator = kwargs.pop("creator", None)
         skip = kwargs.pop("skip", None)
 
-        return self._client.list_data_feeds(  # type: ignore
+        return super().list_data_feeds(  # type: ignore
             data_feed_name=data_feed_name,
             data_source_type=data_source_type,
             granularity_name=granularity_type,
@@ -2403,7 +2402,7 @@ class MetricsAdvisorAdministrationClient(
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
         """
-        return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(  # type: ignore
+        return super().list_alert_configurations(  # type: ignore
             detection_configuration_id,
             cls=kwargs.pop(
                 "cls",
@@ -2438,7 +2437,7 @@ class MetricsAdvisorAdministrationClient(
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric
         """
-        return self._client.get_anomaly_detection_configurations_by_metric(  # type: ignore
+        return super().list_detection_configurations(  # type: ignore
             metric_id,
             cls=kwargs.pop(
                 "cls",
@@ -2485,7 +2484,7 @@ class MetricsAdvisorAdministrationClient(
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
 
-        return self._client.get_data_feed_ingestion_status(  # type: ignore
+        return super().list_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
             body=_IngestionStatusQueryOptions(
                 start_time=converted_start_time, end_time=converted_end_time
@@ -2522,7 +2521,7 @@ class MetricsAdvisorAdministrationClient(
                 :caption: Get a datasource credential by its ID
         """
 
-        datasource_credential = self._client.get_credential(credential_id, **kwargs)
+        datasource_credential = super().get_datasource_credential(credential_id, **kwargs)
         return convert_to_datasource_credential(datasource_credential)
 
     @distributed_trace
@@ -2565,7 +2564,7 @@ class MetricsAdvisorAdministrationClient(
         ]:
             datasource_credential_request = datasource_credential._to_generated()
 
-        response_headers = self._client.create_credential(  # type: ignore
+        response_headers = super().create_datasource_credential(  # type: ignore
             datasource_credential_request,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -2599,7 +2598,7 @@ class MetricsAdvisorAdministrationClient(
                 :dedent: 4
                 :caption: List all of the datasource credentials under the account
         """
-        return self._client.list_credentials(  # type: ignore
+        return super().list_datasource_credentials(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda credentials: [
@@ -2649,7 +2648,7 @@ class MetricsAdvisorAdministrationClient(
         ]:
             datasource_credential_request = datasource_credential._to_generated_patch()
 
-        updated_datasource_credential = self._client.update_credential(  # type: ignore
+        updated_datasource_credential = super().update_datasource_credential(  # type: ignore
             datasource_credential.id,
             datasource_credential_request,  # type: ignore
             **kwargs
@@ -2679,7 +2678,129 @@ class MetricsAdvisorAdministrationClient(
         if len(credential_id) != 1:
             raise TypeError("Credential requires exactly one id.")
 
-        self._client.delete_credential(credential_id=credential_id[0], **kwargs)
+        super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
+
+class MetricAnomalyAlertScopeType(str, Enum):
+    """Anomaly scope"""
+
+    WHOLE_SERIES = "WholeSeries"
+    SERIES_GROUP = "SeriesGroup"
+    TOP_N = "TopN"
+
+    @classmethod
+    def _to_generated(cls, alert):
+        try:
+            alert = alert.value
+        except AttributeError:
+            pass
+        if alert == "WholeSeries":
+            return "All"
+        if alert == "SeriesGroup":
+            return "Dimension"
+        return alert
+
+    @classmethod
+    def _from_generated(cls, alert):
+        try:
+            alert = alert.value
+        except AttributeError:
+            pass
+        if alert == "All":
+            return "WholeSeries"
+        if alert == "Dimension":
+            return "SeriesGroup"
+        return alert
+
+
+    "MetricFeedback",
+    "AnomalyFeedback",
+    "ChangePointFeedback",
+    "CommentFeedback",
+    "PeriodFeedback",
+    "FeedbackQueryTimeMode",
+    "RootCause",
+    "AnomalyAlertConfiguration",
+    "DetectionAnomalyFilterCondition",
+    "DimensionGroupIdentity",
+    "AnomalyIncident",
+    "DetectionIncidentFilterCondition",
+    "AnomalyDetectionConfiguration",
+    "MetricAnomalyAlertConfigurationsOperator",
+    "DataFeedStatus",
+    "DataFeedGranularity",
+    "DataFeedIngestionSettings",
+    "DataFeedMissingDataPointFillSettings",
+    "DataFeedRollupSettings",
+    "DataFeedSchema",
+    "DataFeedDimension",
+    "DataFeedMetric",
+    "DataFeed",
+    "TopNGroupScope",
+    "MetricAnomalyAlertScope",
+    "MetricAlertConfiguration",
+    "SnoozeScope",
+    "AnomalySeverity",
+    "MetricAnomalyAlertSnoozeCondition",
+    "MetricBoundaryCondition",
+    "AzureApplicationInsightsDataFeedSource",
+    "AzureBlobDataFeedSource",
+    "AzureCosmosDbDataFeedSource",
+    "AzureTableDataFeedSource",
+    "AzureLogAnalyticsDataFeedSource",
+    "InfluxDbDataFeedSource",
+    "SqlServerDataFeedSource",
+    "MongoDbDataFeedSource",
+    "MySqlDataFeedSource",
+    "PostgreSqlDataFeedSource",
+    "AzureDataExplorerDataFeedSource",
+    "MetricDetectionCondition",
+    "MetricSeriesGroupDetectionCondition",
+    "MetricSingleSeriesDetectionCondition",
+    "SeverityCondition",
+    "DatasourceType",
+    "MetricAnomalyAlertScopeType",
+    "AnomalyDetectorDirection",
+    "NotificationHook",
+    "EmailNotificationHook",
+    "WebNotificationHook",
+    "DataFeedIngestionProgress",
+    "DetectionConditionOperator",
+    "MetricAnomalyAlertConditions",
+    "EnrichmentStatus",
+    "DataFeedGranularityType",
+    "DataPointAnomaly",
+    "AnomalyIncidentStatus",
+    "MetricSeriesData",
+    "MetricSeriesDefinition",
+    "AnomalyAlert",
+    "DataFeedAccessMode",
+    "DataFeedRollupType",
+    "DataFeedAutoRollupMethod",
+    "DatasourceMissingDataPointFillType",
+    "DataFeedIngestionStatus",
+    "SmartDetectionCondition",
+    "SuppressCondition",
+    "ChangeThresholdCondition",
+    "HardThresholdCondition",
+    "SeriesIdentity",
+    "AzureDataLakeStorageGen2DataFeedSource",
+    "AzureEventHubsDataFeedSource",
+    "AnomalyValue",
+    "ChangePointValue",
+    "PeriodType",
+    "FeedbackType",
+    "AlertQueryTimeMode",
+    "IncidentRootCause",
+    "SeverityFilterCondition",
+    "MetricEnrichedSeriesData",
+    "DatasourceSqlConnectionString",
+    "DatasourceDataLakeGen2SharedKey",
+    "DatasourceServicePrincipal",
+    "DatasourceServicePrincipalInKeyVault",
+    "DatasourceCredentialType",
+    "DatasourceAuthenticationType",
+    "DatasourceCredential",
+    "DataFeedSource",
 
 def patch_sdk():
     pass

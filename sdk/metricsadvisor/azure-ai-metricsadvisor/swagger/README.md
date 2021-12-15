@@ -370,3 +370,14 @@ directive:
   transform: >
     $["operationId"] = "deleteDatasourceCredential";
 ```
+
+### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
+
+```yaml
+directive:
+- from: swagger-document
+  where: $["definitions"]["MetricAlertingConfiguration"]["properties"]["anomalyScopeType"]
+  transform: >
+    $["x-ms-enum"]["name"] = "metricAnomalyAlertScopeType";
+    $["enum"] = ["WholeSeries", "Dimension", "TopN"];
+```

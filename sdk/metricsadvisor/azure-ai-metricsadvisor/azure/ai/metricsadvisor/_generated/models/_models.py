@@ -1498,7 +1498,7 @@ class MetricFeedback(MetricFeedbackCustomization, _MetricFeedbackGenerated):
     pass
 
 
-class _AnomalyFeedbackGenerated(MetricFeedback):
+class _AnomalyFeedbackGenerated(_MetricFeedbackGenerated):
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1590,7 +1590,7 @@ class _AnomalyFeedbackGenerated(MetricFeedback):
         self.anomaly_detection_configuration_id = kwargs.get('anomaly_detection_configuration_id', None)
         self.anomaly_detection_configuration_snapshot = kwargs.get('anomaly_detection_configuration_snapshot', None)
 
-class AnomalyFeedback(AnomalyFeedbackCustomization, _AnomalyFeedbackGenerated):
+class AnomalyFeedback(AnomalyFeedbackCustomization, MetricFeedback, _AnomalyFeedbackGenerated):
     pass
 
 
@@ -2044,7 +2044,7 @@ class DataFeedDetail(DataFeedDetailCustomization, _DataFeedDetailGenerated):
     pass
 
 
-class _AzureApplicationInsightsDataFeedGenerated(DataFeedDetail):
+class _AzureApplicationInsightsDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureApplicationInsightsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2255,7 +2255,7 @@ class _AzureApplicationInsightsDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureApplicationInsightsDataFeed(AzureApplicationInsightsDataFeedCustomization, _AzureApplicationInsightsDataFeedGenerated):
+class AzureApplicationInsightsDataFeed(AzureApplicationInsightsDataFeedCustomization, DataFeedDetail, _AzureApplicationInsightsDataFeedGenerated):
     pass
 
 
@@ -2449,7 +2449,7 @@ class DataFeedDetailPatch(DataFeedDetailPatchCustomization, _DataFeedDetailPatch
     pass
 
 
-class _AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureApplicationInsightsDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureApplicationInsightsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -2615,7 +2615,7 @@ class _AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureApplicationInsightsDataFeedPatch(AzureApplicationInsightsDataFeedPatchCustomization, _AzureApplicationInsightsDataFeedPatchGenerated):
+class AzureApplicationInsightsDataFeedPatch(AzureApplicationInsightsDataFeedPatchCustomization, DataFeedDetailPatch, _AzureApplicationInsightsDataFeedPatchGenerated):
     pass
 
 
@@ -2713,7 +2713,7 @@ class AzureApplicationInsightsParameterPatch(AzureApplicationInsightsParameterPa
     pass
 
 
-class _AzureBlobDataFeedGenerated(DataFeedDetail):
+class _AzureBlobDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureBlobDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2922,11 +2922,11 @@ class _AzureBlobDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureBlob'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureBlobDataFeed(AzureBlobDataFeedCustomization, _AzureBlobDataFeedGenerated):
+class AzureBlobDataFeed(AzureBlobDataFeedCustomization, DataFeedDetail, _AzureBlobDataFeedGenerated):
     pass
 
 
-class _AzureBlobDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureBlobDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureBlobDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -3090,7 +3090,7 @@ class _AzureBlobDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureBlob'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureBlobDataFeedPatch(AzureBlobDataFeedPatchCustomization, _AzureBlobDataFeedPatchGenerated):
+class AzureBlobDataFeedPatch(AzureBlobDataFeedPatchCustomization, DataFeedDetailPatch, _AzureBlobDataFeedPatchGenerated):
     pass
 
 
@@ -3177,7 +3177,7 @@ class AzureBlobParameterPatch(AzureBlobParameterPatchCustomization, _AzureBlobPa
     pass
 
 
-class _AzureCosmosDBDataFeedGenerated(DataFeedDetail):
+class _AzureCosmosDBDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureCosmosDBDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3386,11 +3386,11 @@ class _AzureCosmosDBDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureCosmosDBDataFeed(AzureCosmosDBDataFeedCustomization, _AzureCosmosDBDataFeedGenerated):
+class AzureCosmosDBDataFeed(AzureCosmosDBDataFeedCustomization, DataFeedDetail, _AzureCosmosDBDataFeedGenerated):
     pass
 
 
-class _AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureCosmosDBDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureCosmosDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -3554,7 +3554,7 @@ class _AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureCosmosDBDataFeedPatch(AzureCosmosDBDataFeedPatchCustomization, _AzureCosmosDBDataFeedPatchGenerated):
+class AzureCosmosDBDataFeedPatch(AzureCosmosDBDataFeedPatchCustomization, DataFeedDetailPatch, _AzureCosmosDBDataFeedPatchGenerated):
     pass
 
 
@@ -3654,7 +3654,7 @@ class AzureCosmosDBParameterPatch(AzureCosmosDBParameterPatchCustomization, _Azu
     pass
 
 
-class _AzureDataExplorerDataFeedGenerated(DataFeedDetail):
+class _AzureDataExplorerDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureDataExplorerDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3863,11 +3863,11 @@ class _AzureDataExplorerDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureDataExplorerDataFeed(AzureDataExplorerDataFeedCustomization, _AzureDataExplorerDataFeedGenerated):
+class AzureDataExplorerDataFeed(AzureDataExplorerDataFeedCustomization, DataFeedDetail, _AzureDataExplorerDataFeedGenerated):
     pass
 
 
-class _AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureDataExplorerDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureDataExplorerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4031,11 +4031,11 @@ class _AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureDataExplorerDataFeedPatch(AzureDataExplorerDataFeedPatchCustomization, _AzureDataExplorerDataFeedPatchGenerated):
+class AzureDataExplorerDataFeedPatch(AzureDataExplorerDataFeedPatchCustomization, DataFeedDetailPatch, _AzureDataExplorerDataFeedPatchGenerated):
     pass
 
 
-class _AzureDataLakeStorageGen2DataFeedGenerated(DataFeedDetail):
+class _AzureDataLakeStorageGen2DataFeedGenerated(_DataFeedDetailGenerated):
     """AzureDataLakeStorageGen2DataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4246,11 +4246,11 @@ class _AzureDataLakeStorageGen2DataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureDataLakeStorageGen2DataFeed(AzureDataLakeStorageGen2DataFeedCustomization, _AzureDataLakeStorageGen2DataFeedGenerated):
+class AzureDataLakeStorageGen2DataFeed(AzureDataLakeStorageGen2DataFeedCustomization, DataFeedDetail, _AzureDataLakeStorageGen2DataFeedGenerated):
     pass
 
 
-class _AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureDataLakeStorageGen2DataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureDataLakeStorageGen2DataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4416,7 +4416,7 @@ class _AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureDataLakeStorageGen2DataFeedPatch(AzureDataLakeStorageGen2DataFeedPatchCustomization, _AzureDataLakeStorageGen2DataFeedPatchGenerated):
+class AzureDataLakeStorageGen2DataFeedPatch(AzureDataLakeStorageGen2DataFeedPatchCustomization, DataFeedDetailPatch, _AzureDataLakeStorageGen2DataFeedPatchGenerated):
     pass
 
 
@@ -4528,7 +4528,7 @@ class AzureDataLakeStorageGen2ParameterPatch(AzureDataLakeStorageGen2ParameterPa
     pass
 
 
-class _AzureEventHubsDataFeedGenerated(DataFeedDetail):
+class _AzureEventHubsDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureEventHubsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4737,11 +4737,11 @@ class _AzureEventHubsDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureEventHubsDataFeed(AzureEventHubsDataFeedCustomization, _AzureEventHubsDataFeedGenerated):
+class AzureEventHubsDataFeed(AzureEventHubsDataFeedCustomization, DataFeedDetail, _AzureEventHubsDataFeedGenerated):
     pass
 
 
-class _AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureEventHubsDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureEventHubsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4905,7 +4905,7 @@ class _AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureEventHubsDataFeedPatch(AzureEventHubsDataFeedPatchCustomization, _AzureEventHubsDataFeedPatchGenerated):
+class AzureEventHubsDataFeedPatch(AzureEventHubsDataFeedPatchCustomization, DataFeedDetailPatch, _AzureEventHubsDataFeedPatchGenerated):
     pass
 
 
@@ -4979,7 +4979,7 @@ class AzureEventHubsParameterPatch(AzureEventHubsParameterPatchCustomization, _A
     pass
 
 
-class _AzureLogAnalyticsDataFeedGenerated(DataFeedDetail):
+class _AzureLogAnalyticsDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureLogAnalyticsDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5188,11 +5188,11 @@ class _AzureLogAnalyticsDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureLogAnalytics'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureLogAnalyticsDataFeed(AzureLogAnalyticsDataFeedCustomization, _AzureLogAnalyticsDataFeedGenerated):
+class AzureLogAnalyticsDataFeed(AzureLogAnalyticsDataFeedCustomization, DataFeedDetail, _AzureLogAnalyticsDataFeedGenerated):
     pass
 
 
-class _AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureLogAnalyticsDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureLogAnalyticsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -5357,7 +5357,7 @@ class _AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureLogAnalytics'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureLogAnalyticsDataFeedPatch(AzureLogAnalyticsDataFeedPatchCustomization, _AzureLogAnalyticsDataFeedPatchGenerated):
+class AzureLogAnalyticsDataFeedPatch(AzureLogAnalyticsDataFeedPatchCustomization, DataFeedDetailPatch, _AzureLogAnalyticsDataFeedPatchGenerated):
     pass
 
 
@@ -5534,7 +5534,7 @@ class DataSourceCredential(DataSourceCredentialCustomization, _DataSourceCredent
     pass
 
 
-class _AzureSQLConnectionStringCredentialGenerated(DataSourceCredential):
+class _AzureSQLConnectionStringCredentialGenerated(_DataSourceCredentialGenerated):
     """AzureSQLConnectionStringCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5587,7 +5587,7 @@ class _AzureSQLConnectionStringCredentialGenerated(DataSourceCredential):
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
         self.parameters = kwargs['parameters']
 
-class AzureSQLConnectionStringCredential(AzureSQLConnectionStringCredentialCustomization, _AzureSQLConnectionStringCredentialGenerated):
+class AzureSQLConnectionStringCredential(AzureSQLConnectionStringCredentialCustomization, DataSourceCredential, _AzureSQLConnectionStringCredentialGenerated):
     pass
 
 
@@ -5643,7 +5643,7 @@ class DataSourceCredentialPatch(DataSourceCredentialPatchCustomization, _DataSou
     pass
 
 
-class _AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatch):
+class _AzureSQLConnectionStringCredentialPatchGenerated(_DataSourceCredentialPatchGenerated):
     """AzureSQLConnectionStringCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -5688,7 +5688,7 @@ class _AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatc
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
-class AzureSQLConnectionStringCredentialPatch(AzureSQLConnectionStringCredentialPatchCustomization, _AzureSQLConnectionStringCredentialPatchGenerated):
+class AzureSQLConnectionStringCredentialPatch(AzureSQLConnectionStringCredentialPatchCustomization, DataSourceCredentialPatch, _AzureSQLConnectionStringCredentialPatchGenerated):
     pass
 
 
@@ -5744,7 +5744,7 @@ class AzureSQLConnectionStringParamPatch(AzureSQLConnectionStringParamPatchCusto
     pass
 
 
-class _AzureTableDataFeedGenerated(DataFeedDetail):
+class _AzureTableDataFeedGenerated(_DataFeedDetailGenerated):
     """AzureTableDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5953,11 +5953,11 @@ class _AzureTableDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'AzureTable'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class AzureTableDataFeed(AzureTableDataFeedCustomization, _AzureTableDataFeedGenerated):
+class AzureTableDataFeed(AzureTableDataFeedCustomization, DataFeedDetail, _AzureTableDataFeedGenerated):
     pass
 
 
-class _AzureTableDataFeedPatchGenerated(DataFeedDetailPatch):
+class _AzureTableDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """AzureTableDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -6121,7 +6121,7 @@ class _AzureTableDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'AzureTable'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class AzureTableDataFeedPatch(AzureTableDataFeedPatchCustomization, _AzureTableDataFeedPatchGenerated):
+class AzureTableDataFeedPatch(AzureTableDataFeedPatchCustomization, DataFeedDetailPatch, _AzureTableDataFeedPatchGenerated):
     pass
 
 
@@ -6212,7 +6212,7 @@ class AzureTableParameterPatch(AzureTableParameterPatchCustomization, _AzureTabl
     pass
 
 
-class _ChangePointFeedbackGenerated(MetricFeedback):
+class _ChangePointFeedbackGenerated(_MetricFeedbackGenerated):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6288,7 +6288,7 @@ class _ChangePointFeedbackGenerated(MetricFeedback):
         self.end_time = kwargs['end_time']
         self.value = kwargs['value']
 
-class ChangePointFeedback(ChangePointFeedbackCustomization, _ChangePointFeedbackGenerated):
+class ChangePointFeedback(ChangePointFeedbackCustomization, MetricFeedback, _ChangePointFeedbackGenerated):
     pass
 
 
@@ -6452,7 +6452,7 @@ class ChangeThresholdConditionPatch(ChangeThresholdConditionPatchCustomization, 
     pass
 
 
-class _CommentFeedbackGenerated(MetricFeedback):
+class _CommentFeedbackGenerated(_MetricFeedbackGenerated):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6526,7 +6526,7 @@ class _CommentFeedbackGenerated(MetricFeedback):
         self.end_time = kwargs.get('end_time', None)
         self.value = kwargs['value']
 
-class CommentFeedback(CommentFeedbackCustomization, _CommentFeedbackGenerated):
+class CommentFeedback(CommentFeedbackCustomization, MetricFeedback, _CommentFeedbackGenerated):
     pass
 
 
@@ -6634,7 +6634,7 @@ class DataFeedList(DataFeedListCustomization, _DataFeedListGenerated):
     pass
 
 
-class _DataLakeGen2SharedKeyCredentialGenerated(DataSourceCredential):
+class _DataLakeGen2SharedKeyCredentialGenerated(_DataSourceCredentialGenerated):
     """DataLakeGen2SharedKeyCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6687,11 +6687,11 @@ class _DataLakeGen2SharedKeyCredentialGenerated(DataSourceCredential):
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
         self.parameters = kwargs['parameters']
 
-class DataLakeGen2SharedKeyCredential(DataLakeGen2SharedKeyCredentialCustomization, _DataLakeGen2SharedKeyCredentialGenerated):
+class DataLakeGen2SharedKeyCredential(DataLakeGen2SharedKeyCredentialCustomization, DataSourceCredential, _DataLakeGen2SharedKeyCredentialGenerated):
     pass
 
 
-class _DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatch):
+class _DataLakeGen2SharedKeyCredentialPatchGenerated(_DataSourceCredentialPatchGenerated):
     """DataLakeGen2SharedKeyCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -6736,7 +6736,7 @@ class _DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatch):
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
-class DataLakeGen2SharedKeyCredentialPatch(DataLakeGen2SharedKeyCredentialPatchCustomization, _DataLakeGen2SharedKeyCredentialPatchGenerated):
+class DataLakeGen2SharedKeyCredentialPatch(DataLakeGen2SharedKeyCredentialPatchCustomization, DataSourceCredentialPatch, _DataLakeGen2SharedKeyCredentialPatchGenerated):
     pass
 
 
@@ -7241,7 +7241,7 @@ class HookInfo(HookInfoCustomization, _HookInfoGenerated):
     pass
 
 
-class _EmailHookInfoGenerated(HookInfo):
+class _EmailHookInfoGenerated(_HookInfoGenerated):
     """EmailHookInfo.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7303,7 +7303,7 @@ class _EmailHookInfoGenerated(HookInfo):
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = kwargs['hook_parameter']
 
-class EmailHookInfo(EmailHookInfoCustomization, _EmailHookInfoGenerated):
+class EmailHookInfo(EmailHookInfoCustomization, HookInfo, _EmailHookInfoGenerated):
     pass
 
 
@@ -7370,7 +7370,7 @@ class HookInfoPatch(HookInfoPatchCustomization, _HookInfoPatchGenerated):
     pass
 
 
-class _EmailHookInfoPatchGenerated(HookInfoPatch):
+class _EmailHookInfoPatchGenerated(_HookInfoPatchGenerated):
     """EmailHookInfoPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -7424,7 +7424,7 @@ class _EmailHookInfoPatchGenerated(HookInfoPatch):
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = kwargs.get('hook_parameter', None)
 
-class EmailHookInfoPatch(EmailHookInfoPatchCustomization, _EmailHookInfoPatchGenerated):
+class EmailHookInfoPatch(EmailHookInfoPatchCustomization, HookInfoPatch, _EmailHookInfoPatchGenerated):
     pass
 
 
@@ -7997,7 +7997,7 @@ class IncidentResultList(IncidentResultListCustomization, _IncidentResultListGen
     pass
 
 
-class _InfluxDBDataFeedGenerated(DataFeedDetail):
+class _InfluxDBDataFeedGenerated(_DataFeedDetailGenerated):
     """InfluxDBDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8206,11 +8206,11 @@ class _InfluxDBDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'InfluxDB'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class InfluxDBDataFeed(InfluxDBDataFeedCustomization, _InfluxDBDataFeedGenerated):
+class InfluxDBDataFeed(InfluxDBDataFeedCustomization, DataFeedDetail, _InfluxDBDataFeedGenerated):
     pass
 
 
-class _InfluxDBDataFeedPatchGenerated(DataFeedDetailPatch):
+class _InfluxDBDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """InfluxDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -8374,7 +8374,7 @@ class _InfluxDBDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'InfluxDB'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class InfluxDBDataFeedPatch(InfluxDBDataFeedPatchCustomization, _InfluxDBDataFeedPatchGenerated):
+class InfluxDBDataFeedPatch(InfluxDBDataFeedPatchCustomization, DataFeedDetailPatch, _InfluxDBDataFeedPatchGenerated):
     pass
 
 
@@ -9173,7 +9173,7 @@ class MetricSeriesQueryOptions(MetricSeriesQueryOptionsCustomization, _MetricSer
     pass
 
 
-class _MongoDBDataFeedGenerated(DataFeedDetail):
+class _MongoDBDataFeedGenerated(_DataFeedDetailGenerated):
     """MongoDBDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9382,11 +9382,11 @@ class _MongoDBDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'MongoDB'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class MongoDBDataFeed(MongoDBDataFeedCustomization, _MongoDBDataFeedGenerated):
+class MongoDBDataFeed(MongoDBDataFeedCustomization, DataFeedDetail, _MongoDBDataFeedGenerated):
     pass
 
 
-class _MongoDBDataFeedPatchGenerated(DataFeedDetailPatch):
+class _MongoDBDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """MongoDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -9550,7 +9550,7 @@ class _MongoDBDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'MongoDB'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class MongoDBDataFeedPatch(MongoDBDataFeedPatchCustomization, _MongoDBDataFeedPatchGenerated):
+class MongoDBDataFeedPatch(MongoDBDataFeedPatchCustomization, DataFeedDetailPatch, _MongoDBDataFeedPatchGenerated):
     pass
 
 
@@ -9636,7 +9636,7 @@ class MongoDBParameterPatch(MongoDBParameterPatchCustomization, _MongoDBParamete
     pass
 
 
-class _MySqlDataFeedGenerated(DataFeedDetail):
+class _MySqlDataFeedGenerated(_DataFeedDetailGenerated):
     """MySqlDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9845,11 +9845,11 @@ class _MySqlDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'MySql'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class MySqlDataFeed(MySqlDataFeedCustomization, _MySqlDataFeedGenerated):
+class MySqlDataFeed(MySqlDataFeedCustomization, DataFeedDetail, _MySqlDataFeedGenerated):
     pass
 
 
-class _MySqlDataFeedPatchGenerated(DataFeedDetailPatch):
+class _MySqlDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """MySqlDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10013,11 +10013,11 @@ class _MySqlDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'MySql'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class MySqlDataFeedPatch(MySqlDataFeedPatchCustomization, _MySqlDataFeedPatchGenerated):
+class MySqlDataFeedPatch(MySqlDataFeedPatchCustomization, DataFeedDetailPatch, _MySqlDataFeedPatchGenerated):
     pass
 
 
-class _PeriodFeedbackGenerated(MetricFeedback):
+class _PeriodFeedbackGenerated(_MetricFeedbackGenerated):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10077,7 +10077,7 @@ class _PeriodFeedbackGenerated(MetricFeedback):
         self.feedback_type = 'Period'  # type: str
         self.value = kwargs['value']
 
-class PeriodFeedback(PeriodFeedbackCustomization, _PeriodFeedbackGenerated):
+class PeriodFeedback(PeriodFeedbackCustomization, MetricFeedback, _PeriodFeedbackGenerated):
     pass
 
 
@@ -10124,7 +10124,7 @@ class PeriodFeedbackValue(PeriodFeedbackValueCustomization, _PeriodFeedbackValue
     pass
 
 
-class _PostgreSqlDataFeedGenerated(DataFeedDetail):
+class _PostgreSqlDataFeedGenerated(_DataFeedDetailGenerated):
     """PostgreSqlDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10333,11 +10333,11 @@ class _PostgreSqlDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'PostgreSql'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class PostgreSqlDataFeed(PostgreSqlDataFeedCustomization, _PostgreSqlDataFeedGenerated):
+class PostgreSqlDataFeed(PostgreSqlDataFeedCustomization, DataFeedDetail, _PostgreSqlDataFeedGenerated):
     pass
 
 
-class _PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatch):
+class _PostgreSqlDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """PostgreSqlDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10501,7 +10501,7 @@ class _PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'PostgreSql'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class PostgreSqlDataFeedPatch(PostgreSqlDataFeedPatchCustomization, _PostgreSqlDataFeedPatchGenerated):
+class PostgreSqlDataFeedPatch(PostgreSqlDataFeedPatchCustomization, DataFeedDetailPatch, _PostgreSqlDataFeedPatchGenerated):
     pass
 
 
@@ -10801,7 +10801,7 @@ class SeriesResultList(SeriesResultListCustomization, _SeriesResultListGenerated
     pass
 
 
-class _ServicePrincipalCredentialGenerated(DataSourceCredential):
+class _ServicePrincipalCredentialGenerated(_DataSourceCredentialGenerated):
     """ServicePrincipalCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10854,11 +10854,11 @@ class _ServicePrincipalCredentialGenerated(DataSourceCredential):
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
         self.parameters = kwargs['parameters']
 
-class ServicePrincipalCredential(ServicePrincipalCredentialCustomization, _ServicePrincipalCredentialGenerated):
+class ServicePrincipalCredential(ServicePrincipalCredentialCustomization, DataSourceCredential, _ServicePrincipalCredentialGenerated):
     pass
 
 
-class _ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatch):
+class _ServicePrincipalCredentialPatchGenerated(_DataSourceCredentialPatchGenerated):
     """ServicePrincipalCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10903,11 +10903,11 @@ class _ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatch):
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
-class ServicePrincipalCredentialPatch(ServicePrincipalCredentialPatchCustomization, _ServicePrincipalCredentialPatchGenerated):
+class ServicePrincipalCredentialPatch(ServicePrincipalCredentialPatchCustomization, DataSourceCredentialPatch, _ServicePrincipalCredentialPatchGenerated):
     pass
 
 
-class _ServicePrincipalInKVCredentialGenerated(DataSourceCredential):
+class _ServicePrincipalInKVCredentialGenerated(_DataSourceCredentialGenerated):
     """ServicePrincipalInKVCredential.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10960,11 +10960,11 @@ class _ServicePrincipalInKVCredentialGenerated(DataSourceCredential):
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
         self.parameters = kwargs['parameters']
 
-class ServicePrincipalInKVCredential(ServicePrincipalInKVCredentialCustomization, _ServicePrincipalInKVCredentialGenerated):
+class ServicePrincipalInKVCredential(ServicePrincipalInKVCredentialCustomization, DataSourceCredential, _ServicePrincipalInKVCredentialGenerated):
     pass
 
 
-class _ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatch):
+class _ServicePrincipalInKVCredentialPatchGenerated(_DataSourceCredentialPatchGenerated):
     """ServicePrincipalInKVCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -11009,7 +11009,7 @@ class _ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatch):
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
-class ServicePrincipalInKVCredentialPatch(ServicePrincipalInKVCredentialPatchCustomization, _ServicePrincipalInKVCredentialPatchGenerated):
+class ServicePrincipalInKVCredentialPatch(ServicePrincipalInKVCredentialPatchCustomization, DataSourceCredentialPatch, _ServicePrincipalInKVCredentialPatchGenerated):
     pass
 
 
@@ -11401,7 +11401,7 @@ class SmartDetectionConditionPatch(SmartDetectionConditionPatchCustomization, _S
     pass
 
 
-class _SQLServerDataFeedGenerated(DataFeedDetail):
+class _SQLServerDataFeedGenerated(_DataFeedDetailGenerated):
     """SQLServerDataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11610,11 +11610,11 @@ class _SQLServerDataFeedGenerated(DataFeedDetail):
         self.data_source_type = 'SqlServer'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
-class SQLServerDataFeed(SQLServerDataFeedCustomization, _SQLServerDataFeedGenerated):
+class SQLServerDataFeed(SQLServerDataFeedCustomization, DataFeedDetail, _SQLServerDataFeedGenerated):
     pass
 
 
-class _SQLServerDataFeedPatchGenerated(DataFeedDetailPatch):
+class _SQLServerDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
     """SQLServerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -11778,7 +11778,7 @@ class _SQLServerDataFeedPatchGenerated(DataFeedDetailPatch):
         self.data_source_type = 'SqlServer'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
-class SQLServerDataFeedPatch(SQLServerDataFeedPatchCustomization, _SQLServerDataFeedPatchGenerated):
+class SQLServerDataFeedPatch(SQLServerDataFeedPatchCustomization, DataFeedDetailPatch, _SQLServerDataFeedPatchGenerated):
     pass
 
 
@@ -12103,7 +12103,7 @@ class ValueCondition(ValueConditionCustomization, _ValueConditionGenerated):
     pass
 
 
-class _WebhookHookInfoGenerated(HookInfo):
+class _WebhookHookInfoGenerated(_HookInfoGenerated):
     """WebhookHookInfo.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12165,11 +12165,11 @@ class _WebhookHookInfoGenerated(HookInfo):
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = kwargs['hook_parameter']
 
-class WebhookHookInfo(WebhookHookInfoCustomization, _WebhookHookInfoGenerated):
+class WebhookHookInfo(WebhookHookInfoCustomization, HookInfo, _WebhookHookInfoGenerated):
     pass
 
 
-class _WebhookHookInfoPatchGenerated(HookInfoPatch):
+class _WebhookHookInfoPatchGenerated(_HookInfoPatchGenerated):
     """WebhookHookInfoPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -12223,7 +12223,7 @@ class _WebhookHookInfoPatchGenerated(HookInfoPatch):
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = kwargs.get('hook_parameter', None)
 
-class WebhookHookInfoPatch(WebhookHookInfoPatchCustomization, _WebhookHookInfoPatchGenerated):
+class WebhookHookInfoPatch(WebhookHookInfoPatchCustomization, HookInfoPatch, _WebhookHookInfoPatchGenerated):
     pass
 
 
