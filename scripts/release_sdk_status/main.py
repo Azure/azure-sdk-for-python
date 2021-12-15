@@ -174,6 +174,13 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
     return all_sdk_status
 
 
+def test_sdk(all_sdk_status):
+    for sdk in all_sdk_status:
+        package = sdk.split(',')[0].replace('azure-mgmt-', '')
+
+    return ''
+
+
 def write_to_csv(sdk_status_list, csv_name):
     with open(csv_name, 'w') as file_out:
         file_out.write('package name,'
@@ -282,8 +289,9 @@ def main():
     sdk_info = sdk_info_from_swagger()
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-    print('**************************')
-    print(all_sdk_status)
+    all_sdk_status1 = test_sdk(all_sdk_status)
+    print_check('pwd')
+
 
     OUT_FILE = 'release_sdk_status.csv'
     write_to_csv(all_sdk_status, OUT_FILE)
