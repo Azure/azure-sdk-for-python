@@ -91,7 +91,7 @@ class TestCommunicationTokenCredential(TestCase):
                 initial_token,
                 token_refresher=refresher,
                 refresh_proactively=True,
-                refresh_time_before_expiry=timedelta(minutes=refresh_minutes))
+                refresh_interval_before_expiry=timedelta(minutes=refresh_minutes))
             with credential:
                 access_token = credential.get_token()
 
@@ -118,7 +118,7 @@ class TestCommunicationTokenCredential(TestCase):
                 initial_token,
                 token_refresher=refresher,
                 refresh_proactively=True,
-                refresh_time_before_expiry=timedelta(minutes=refresh_minutes))
+                refresh_interval_before_expiry=timedelta(minutes=refresh_minutes))
             with credential:
                 access_token = credential.get_token()
 
@@ -142,7 +142,7 @@ class TestCommunicationTokenCredential(TestCase):
             expired_token,
             token_refresher=refresher,
             refresh_proactively=True,
-            refresh_time_before_expiry=timedelta(seconds=refresh_seconds))
+            refresh_interval_before_expiry=timedelta(seconds=refresh_seconds))
         with credential:
             access_token = credential.get_token()
             with patch(user_credential.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
