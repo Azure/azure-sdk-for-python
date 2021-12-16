@@ -5,7 +5,6 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-metricsadvisor
       ServiceDirectory: metricsadvisor
-      MaxParallel: 1
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
