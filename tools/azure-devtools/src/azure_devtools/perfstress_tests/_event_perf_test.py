@@ -6,7 +6,6 @@
 import asyncio
 import threading
 import time
-from collections import defaultdict
 
 from ._repeated_timer import AtomicCounter
 from ._perf_stress_base import _PerfTestBase
