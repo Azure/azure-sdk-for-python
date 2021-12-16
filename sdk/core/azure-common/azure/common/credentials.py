@@ -16,6 +16,8 @@ except ImportError:
 def get_cli_profile():
     """Return a CLI profile class.
 
+    *Disclaimer*: This method is not working properly for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+
     .. versionadded:: 1.1.6
 
     .. deprecated:: 1.1.28
@@ -34,7 +36,6 @@ def get_cli_profile():
             "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
             "You should consider using azure-identity and AzureCliCredential instead, as this method is not supported anymore."
         )
-
 
     azure_folder = get_config_dir()
     ACCOUNT.load(os.path.join(azure_folder, 'azureProfile.json'))
@@ -107,6 +108,8 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     .. versionadded:: 1.1.6
 
     .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
 
     :param str resource: The alternative resource for credentials if not ARM (GraphRBac, etc.)
     :param bool with_tenant: If True, return a three-tuple with last as tenant ID

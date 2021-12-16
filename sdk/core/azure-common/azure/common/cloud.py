@@ -7,7 +7,11 @@
 def get_cli_active_cloud():
     """Return a CLI active cloud.
 
+    *Disclaimer*: This method is not working properly for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+
     .. versionadded:: 1.1.6
+
+    .. deprecated:: 1.1.28
 
     :return: A CLI Cloud
     :rtype: azure.cli.core.cloud.Cloud

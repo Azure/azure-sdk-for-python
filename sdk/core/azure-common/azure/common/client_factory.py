@@ -51,8 +51,8 @@ def _client_resource(client_class, cloud):
 def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
-    *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
-    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCliCredential. See example code below:
+    *Disclaimer*: This is NOT the recommended approach to authenticate with CLI login, this method is deprecated.
+    use https://pypi.org/project/azure-identity/ and AzureCliCredential instead. See example code below:
 
     .. code:: python
 
@@ -60,6 +60,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
         from azure.mgmt.compute import ComputeManagementClient
         client = ComputeManagementClient(AzureCliCredential(), subscription_id)
 
+    This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
 
     For compatible azure-cli-core version (< 2.20.0), This method will fill automatically the following client parameters:
     - credentials/credential
@@ -79,6 +80,8 @@ def get_client_from_cli_profile(client_class, **kwargs):
     .. versionadded:: 1.1.6
 
     .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
 
     :param client_class: A SDK client class
     :return: An instantiated client
@@ -138,11 +141,7 @@ def _is_autorest_v3(client_class):
 def get_client_from_json_dict(client_class, config_dict, **kwargs):
     """Return a SDK client initialized with a JSON auth dict.
 
-    The easiest way to obtain this content is to call the following CLI commands:
-
-    .. code:: bash
-
-        az ad sp create-for-rbac --sdk-auth
+    *Disclaimer*: This is NOT recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
 
     This method will fill automatically the following client parameters:
     - credentials
@@ -173,6 +172,10 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         client = get_client_from_json_dict(ComputeManagementClient, config_dict)
 
     .. versionadded:: 1.1.7
+
+    .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
 
     :param client_class: A SDK client class
     :param dict config_dict: A config dict.
@@ -233,11 +236,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
 def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
     """Return a SDK client initialized with auth file.
 
-    The easiest way to obtain this file is to call the following CLI commands:
-
-    .. code:: bash
-
-        az ad sp create-for-rbac --sdk-auth
+    *Disclaimer*: This is NOT recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
 
     You can specific the file path directly, or fill the environment variable AZURE_AUTH_LOCATION.
     File must be UTF-8.
@@ -275,6 +274,10 @@ def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
         }
 
     .. versionadded:: 1.1.7
+
+    .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
 
     :param client_class: A SDK client class
     :param str auth_path: Path to the file.
