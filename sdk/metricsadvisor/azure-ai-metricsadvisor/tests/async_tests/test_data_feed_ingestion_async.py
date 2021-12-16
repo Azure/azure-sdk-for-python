@@ -12,14 +12,14 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase
 from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
 
-from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, test_id
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, ids
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_get_data_feed_ingestion_progress(self, client):
@@ -31,7 +31,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
             assert ingestion.latest_active_timestamp is not None
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_list_data_feed_ingestion_status(self, client):
@@ -47,7 +47,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
             assert len(list(ingestions_list)) > 0
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_list_data_feed_ingestion_status_with_skip(self, client):
@@ -75,7 +75,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
             assert len(ingestions_list) == len(ingestions_with_skips_list) + 5
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_refresh_data_feed_ingestion(self, client):

@@ -16,14 +16,14 @@ from azure.ai.metricsadvisor.models import (
     EmailNotificationHook,
     WebNotificationHook,
 )
-from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, test_id
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, ids
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_create_email_hook(self, client, variables):
@@ -51,14 +51,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert email_hook.hook_type == "Email"
 
             finally:
-                await client.delete_hook(variables["email_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="email_hook_id")
 
                 with pytest.raises(ResourceNotFoundError):
                     await client.get_hook(variables["email_hook_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_create_web_hook(self, client, variables):
@@ -86,14 +86,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert web_hook.hook_type == "Webhook"
 
             finally:
-                await client.delete_hook(variables["web_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="web_hook_id")
 
                 with pytest.raises(ResourceNotFoundError):
                     await client.get_hook(variables["web_hook_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_list_hooks(self, client):
@@ -104,7 +104,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         assert len(list(hooks_list)) > 0
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy_async
     async def test_update_email_hook_with_model(self, client, variables):
@@ -125,11 +125,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.emails_to_alert == ["myemail@m.com"]
 
             finally:
-                await client.delete_hook(variables["email_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="email_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy_async
     async def test_update_email_hook_with_kwargs(self, client, variables):
@@ -150,11 +150,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.emails_to_alert == ["myemail@m.com"]
 
             finally:
-                await client.delete_hook(variables["email_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="email_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy_async
     async def test_update_email_hook_with_model_and_kwargs(self, client, variables):
@@ -179,11 +179,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.emails_to_alert == ["myemail@m.com"]
 
             finally:
-                await client.delete_hook(variables["email_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="email_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(email_hook=True)
     @recorded_by_proxy_async
     async def test_update_email_hook_by_resetting_properties(self, client, variables):
@@ -204,11 +204,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 # assert updated.external_link == ""
 
             finally:
-                await client.delete_hook(variables["email_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="email_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy_async
     async def test_update_web_hook_with_model(self, client, variables):
@@ -229,11 +229,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.username == "myusername"
 
             finally:
-                await client.delete_hook(variables["web_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="web_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy_async
     async def test_update_web_hook_with_kwargs(self, client, variables):
@@ -256,11 +256,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.username == "myusername"
 
             finally:
-                await client.delete_hook(variables["web_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="web_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy_async
     async def test_update_web_hook_with_model_and_kwargs(self, client, variables):
@@ -288,11 +288,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 assert updated.username == "myusername"
 
             finally:
-                await client.delete_hook(variables["web_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="web_hook_id")
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(web_hook=True)
     @recorded_by_proxy_async
     async def test_update_web_hook_by_resetting_properties(self, client, variables):
@@ -317,5 +317,5 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 # assert updated.external_link == ""
 
             finally:
-                await client.delete_hook(variables["web_hook_id"])
+                await self.clean_up(client.delete_hook, variables, key="web_hook_id")
             return variables

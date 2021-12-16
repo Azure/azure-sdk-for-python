@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import uuid
 import datetime
 from devtools_testutils import AzureRecordedTestCase, is_live
 from azure_devtools.scenario_tests import create_random_name
@@ -44,7 +45,7 @@ AAD = ["AAD"]
 CREDENTIALS = [*API_KEY, *AAD]
 
 
-def test_id(val):
+def ids(val):
     if isinstance(val, MetricsAdvisorKeyCredential):
         return "APIKey"
     else:
@@ -361,8 +362,12 @@ class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
     def alert_id(self):
         return os.getenv("METRICS_ADVISOR_ALERT_ID", "metrics_advisor_alert_id")
 
-    def clean_up(self, client, variables):
+    def clean_up(self, delete_func, variables, key=None):
         try:
-            client.delete_data_feed(variables["data_feed_id"])
+            id_to_delete = variables[key] if key else variables["data_feed_id"]
+            delete_func(id_to_delete)
         except KeyError:
             pass
+
+    def create_random_name(self, name):
+        return name + str(uuid.uuid4())

@@ -19,13 +19,13 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, test_id
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_alert_direction_both(self, client, variables):
@@ -77,17 +77,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
-            client.delete_alert_configuration(variables["alert_config_id"])
+            self.clean_up(client.delete_alert_configuration, variables, key="alert_config_id")
 
             with pytest.raises(ResourceNotFoundError):
                 client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            client.delete_detection_configuration(variables["detection_config_id"])
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_detection_configuration, variables, key="detection_config_id")
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_alert_direction_down(self, client, variables):
@@ -137,10 +137,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_alert_direction_up(self, client, variables):
@@ -190,10 +190,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_top_n_severity_condition(self, client, variables):
@@ -239,10 +239,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_snooze_condition(self, client, variables):
@@ -288,10 +288,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_alert_direction_both(self, client, variables):
@@ -334,10 +334,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_alert_direction_down(self, client, variables):
@@ -379,10 +379,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_alert_direction_up(self, client, variables):
@@ -424,10 +424,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_whole_series_severity_condition(self, client, variables):
@@ -465,10 +465,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_alert_direction_both(self, client, variables):
@@ -513,10 +513,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_alert_direction_down(self, client, variables):
@@ -560,10 +560,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_alert_direction_up(self, client, variables):
@@ -607,10 +607,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_series_group_severity_condition(self, client, variables):
@@ -650,10 +650,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_create_alert_config_multiple_configurations(self, client, variables):
@@ -736,10 +736,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_alert_configs(self, client):
@@ -749,7 +749,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         )
         assert len(list(configs)) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_alert_config_with_model(self, client, variables):
@@ -790,10 +790,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_alert_config_with_kwargs(self, client, variables):
@@ -876,10 +876,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_alert_config_with_model_and_kwargs(self, client, variables):
@@ -968,10 +968,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy
     def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
@@ -1005,5 +1005,5 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition is None
 
         finally:
-            self.clean_up(client, variables)
+            self.clean_up(client.delete_data_feed, variables)
         return variables

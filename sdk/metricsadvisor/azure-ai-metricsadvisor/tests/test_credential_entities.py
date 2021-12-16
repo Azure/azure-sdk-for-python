@@ -15,13 +15,13 @@ from azure.ai.metricsadvisor.models import (
     DatasourceServicePrincipal,
     DatasourceServicePrincipalInKeyVault
 )
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, test_id
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient, aad=False)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_create_datasource_sql_connection_string(self, client, variables):
@@ -43,10 +43,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert credential.credential_type == 'AzureSQLConnectionString'
 
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_datasource_datalake_gen2_shared_key(self, client, variables):
@@ -68,10 +68,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert credential.credential_type == 'DataLakeGen2SharedKey'
 
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_datasource_service_principal(self, client, variables):
@@ -94,10 +94,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert credential.name == variables["credential_name"]
             assert credential.credential_type == 'ServicePrincipal'
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_datasource_service_principal_in_kv(self, client, variables):
@@ -123,10 +123,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert credential.name == variables["credential_name"]
             assert credential.credential_type == 'ServicePrincipalInKV'
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_datasource_credentials(self, client, variables):
@@ -146,10 +146,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             credentials = client.list_datasource_credentials()
             assert len(list(credentials)) > 0
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_update_datasource_sql_connection_string(self, client, variables):
@@ -171,10 +171,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             credential_updated = client.update_datasource_credential(credential)
             assert credential_updated.description == "update"
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_update_datasource_datalake_gen2_shared_key(self, client, variables):
@@ -196,10 +196,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             credential_updated = client.update_datasource_credential(credential)
             assert credential_updated.description == "update"
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_update_datasource_service_principal(self, client, variables):
@@ -225,10 +225,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             credential_updated = client.update_datasource_credential(credential)
             assert credential_updated.description == "update"
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_update_datasource_service_principal_in_kv(self, client, variables):
@@ -260,5 +260,5 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             credential_updated = client.update_datasource_credential(credential)
             assert credential_updated.description == "update"
         finally:
-            client.delete_datasource_credential(variables["credential_id"])
+            self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
         return variables
