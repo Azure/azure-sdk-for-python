@@ -19,20 +19,23 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             client.begin_analyze_document(model=None, document=b"xx")
 
     @FormRecognizerPreparer()
-    def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             client.begin_analyze_document(model="", document=b"xx")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -76,7 +79,8 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
@@ -120,7 +124,8 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
@@ -164,7 +169,8 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
@@ -181,7 +187,8 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:

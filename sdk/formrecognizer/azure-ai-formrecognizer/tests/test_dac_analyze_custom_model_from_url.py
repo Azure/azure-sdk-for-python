@@ -6,6 +6,7 @@
 
 import pytest
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
@@ -19,20 +20,23 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    def test_document_analysis_none_model(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_document_analysis_none_model(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
-    def test_document_analysis_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_document_analysis_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             client.begin_analyze_document_from_url(model="", document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
@@ -73,7 +77,8 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
+    @recorded_by_proxy
+    def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url)
@@ -113,7 +118,8 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
+    @recorded_by_proxy
+    def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url, **kwargs):
         da_client = client.get_document_analysis_client()
 
         build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url)
