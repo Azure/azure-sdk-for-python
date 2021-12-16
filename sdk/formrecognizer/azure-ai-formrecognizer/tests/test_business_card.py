@@ -22,8 +22,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_enum_content_type(self, client, variables):
-        self.some_func()
+    def test_passing_enum_content_type(self, client):
         with open(self.business_card_png, "rb") as fd:
             myfile = fd.read()
         poller = client.begin_recognize_business_cards(
@@ -36,7 +35,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_damaged_file_bytes_fails_autodetect_content_type(self, client, variables):
+    def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
@@ -46,7 +45,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_damaged_file_bytes_io_fails_autodetect(self, client, variables):
+    def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
@@ -56,8 +55,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_bad_content_type_param_passed(self, client, variables):
-        self.some_func()
+    def test_passing_bad_content_type_param_passed(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
         with pytest.raises(ValueError):
@@ -69,8 +67,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client, variables):
-        self.some_func()
+    def test_business_card_multipage_pdf(self, client):
         with open(self.business_card_multipage_pdf, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_recognize_business_cards(receipt, include_field_elements=True)
@@ -132,8 +129,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_business_card_jpg_include_field_elements(self, client, variables):
-        self.some_func()
+    def test_business_card_jpg_include_field_elements(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         poller = client.begin_recognize_business_cards(business_card, include_field_elements=True)
@@ -185,8 +181,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
-    def test_business_card_v2(self, client, variables):
-        self.some_func()
+    def test_business_card_v2(self, client):
         
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
