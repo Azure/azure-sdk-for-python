@@ -34,6 +34,11 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
     )
     add_body_key_sanitizer(
+        json_path="azureBlobSource.containerUrl",
+        value="blob_sas_url",
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
+    )
+    add_body_key_sanitizer(
         json_path="source",
         value="blob_sas_url",
         regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
