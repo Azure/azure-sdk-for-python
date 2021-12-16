@@ -297,11 +297,11 @@ def main():
     all_sdk_status1 = test_sdk(all_sdk_status)
     print('**')
     print(os.getenv('SWAGGER_REPO'))
-    print(os.getenv('SDK_PATH'))
-    print(os.getenv('SDK_PATH1'))
+    print(os.getenv('SDK_REPO'))
+    print(os.getenv('SDK_REPO1'))
 
-    print_check('pwd', path=os.getenv('SDK_PATH'))
-    print_check('ls', path=os.getenv('SDK_PATH'))
+    print_check('pwd', path=os.getenv('SDK_REPO'))
+    print_check('ls', path=os.getenv('SDK_REPO'))
 
 
     OUT_FILE = 'release_sdk_status.csv'
