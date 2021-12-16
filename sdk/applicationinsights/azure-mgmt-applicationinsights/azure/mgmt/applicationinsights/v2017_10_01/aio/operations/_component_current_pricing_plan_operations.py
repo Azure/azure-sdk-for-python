@@ -44,7 +44,7 @@ class ComponentCurrentPricingPlanOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentPricingPlan":
         """Returns the current pricing plan setting for an Application Insights component.
 
@@ -68,7 +68,7 @@ class ComponentCurrentPricingPlanOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
@@ -103,7 +103,7 @@ class ComponentCurrentPricingPlanOperations:
         resource_group_name: str,
         resource_name: str,
         pricing_plan_properties: "_models.ApplicationInsightsComponentPricingPlan",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentPricingPlan":
         """Replace current pricing plan for an Application Insights component.
 
@@ -131,7 +131,7 @@ class ComponentCurrentPricingPlanOperations:
         # Construct URL
         url = self.create_and_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }
@@ -170,7 +170,7 @@ class ComponentCurrentPricingPlanOperations:
         resource_group_name: str,
         resource_name: str,
         pricing_plan_properties: "_models.ApplicationInsightsComponentPricingPlan",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationInsightsComponentPricingPlan":
         """Update current pricing plan for an Application Insights component.
 
@@ -198,7 +198,7 @@ class ComponentCurrentPricingPlanOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
         }

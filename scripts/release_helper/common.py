@@ -324,6 +324,7 @@ class Common:
         )
 
     def run(self):
+        items = []
         for item in self.issues_package:
             issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
             try:

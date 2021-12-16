@@ -950,6 +950,8 @@ class SharePropertiesInternal(msrest.serialization.Model):
     :type provisioned_ingress_m_bps: int
     :param provisioned_egress_m_bps:
     :type provisioned_egress_m_bps: int
+    :param provisioned_bandwidth_mi_bps:
+    :type provisioned_bandwidth_mi_bps: int
     :param next_allowed_quota_downgrade_time:
     :type next_allowed_quota_downgrade_time: ~datetime.datetime
     :param deleted_time:
@@ -990,6 +992,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         'provisioned_iops': {'key': 'ProvisionedIops', 'type': 'int'},
         'provisioned_ingress_m_bps': {'key': 'ProvisionedIngressMBps', 'type': 'int'},
         'provisioned_egress_m_bps': {'key': 'ProvisionedEgressMBps', 'type': 'int'},
+        'provisioned_bandwidth_mi_bps': {'key': 'ProvisionedBandwidthMiBps', 'type': 'int'},
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
@@ -1012,6 +1015,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         provisioned_iops: Optional[int] = None,
         provisioned_ingress_m_bps: Optional[int] = None,
         provisioned_egress_m_bps: Optional[int] = None,
+        provisioned_bandwidth_mi_bps: Optional[int] = None,
         next_allowed_quota_downgrade_time: Optional[datetime.datetime] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
@@ -1032,6 +1036,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         self.provisioned_iops = provisioned_iops
         self.provisioned_ingress_m_bps = provisioned_ingress_m_bps
         self.provisioned_egress_m_bps = provisioned_egress_m_bps
+        self.provisioned_bandwidth_mi_bps = provisioned_bandwidth_mi_bps
         self.next_allowed_quota_downgrade_time = next_allowed_quota_downgrade_time
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
