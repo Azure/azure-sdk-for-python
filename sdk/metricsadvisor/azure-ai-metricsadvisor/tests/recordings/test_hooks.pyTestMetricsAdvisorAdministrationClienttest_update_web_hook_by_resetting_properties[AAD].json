@@ -1,0 +1,113 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4f9d7b1-f1b9-491a-8a24-b8aecb2c4012",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "190",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b7a84b06-5e0c-11ec-8d16-6245b51668de"
+      },
+      "RequestBody": "{\u0022hookName\u0022: \u0022reset\u0022, \u0022description\u0022: null, \u0022externalLink\u0022: null, \u0022hookType\u0022: \u0022Webhook\u0022, \u0022hookParameter\u0022: {\u0022endpoint\u0022: \u0022https://httpbin.org/post\u0022, \u0022username\u0022: \u0022myusername\u0022, \u0022password\u0022: null}}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d6c2c021-460c-4dcc-8e1b-96c4ad0bc321",
+        "Content-Length": "268",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:45 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "488",
+        "X-Request-ID": "d6c2c021-460c-4dcc-8e1b-96c4ad0bc321"
+      },
+      "ResponseBody": {
+        "hookId": "b4f9d7b1-f1b9-491a-8a24-b8aecb2c4012",
+        "hookName": "reset",
+        "hookType": "Webhook",
+        "externalLink": "",
+        "description": "",
+        "admins": [
+          "f850650c-1fcf-4489-b46f-71af2e30d360"
+        ],
+        "hookParameter": {
+          "endpoint": "https://httpbin.org/post",
+          "username": "myusername",
+          "password": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4f9d7b1-f1b9-491a-8a24-b8aecb2c4012",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b7f9c374-5e0c-11ec-95aa-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4e543886-dcc9-45df-994a-e4436d86978c",
+        "Content-Length": "268",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:45 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "133",
+        "X-Request-ID": "4e543886-dcc9-45df-994a-e4436d86978c"
+      },
+      "ResponseBody": {
+        "hookId": "b4f9d7b1-f1b9-491a-8a24-b8aecb2c4012",
+        "hookName": "reset",
+        "hookType": "Webhook",
+        "externalLink": "",
+        "description": "",
+        "admins": [
+          "f850650c-1fcf-4489-b46f-71af2e30d360"
+        ],
+        "hookParameter": {
+          "endpoint": "https://httpbin.org/post",
+          "username": "myusername",
+          "password": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4f9d7b1-f1b9-491a-8a24-b8aecb2c4012",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b8141bc7-5e0c-11ec-89d9-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "1f2dd386-26e9-486a-bbe7-cb6bfa8bec23",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:08:46 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "152",
+        "X-Request-ID": "1f2dd386-26e9-486a-bbe7-cb6bfa8bec23"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "web_hook_id": "b4f9d7b1-f1b9-491a-8a24-b8aecb2c4012",
+    "web_hook_name": "web_hook4s7muqehsaltgoqs"
+  }
+}

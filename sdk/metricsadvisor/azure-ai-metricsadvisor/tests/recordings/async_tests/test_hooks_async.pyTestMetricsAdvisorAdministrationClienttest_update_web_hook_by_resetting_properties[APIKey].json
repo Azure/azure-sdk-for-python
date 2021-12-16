@@ -1,0 +1,107 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/f2887fc5-ad10-4f4e-8199-f0f438b80323",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "190",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "609462b2-5e0d-11ec-9db7-6245b51668de"
+      },
+      "RequestBody": "{\u0022hookName\u0022: \u0022reset\u0022, \u0022description\u0022: null, \u0022externalLink\u0022: null, \u0022hookType\u0022: \u0022Webhook\u0022, \u0022hookParameter\u0022: {\u0022endpoint\u0022: \u0022https://httpbin.org/post\u0022, \u0022username\u0022: \u0022myusername\u0022, \u0022password\u0022: null}}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a895d9c1-73ce-499b-8cf3-ff4a2f9c747c",
+        "Content-Length": "254",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:28 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "607",
+        "X-Request-ID": "a895d9c1-73ce-499b-8cf3-ff4a2f9c747c"
+      },
+      "ResponseBody": {
+        "hookId": "f2887fc5-ad10-4f4e-8199-f0f438b80323",
+        "hookName": "reset",
+        "hookType": "Webhook",
+        "externalLink": "",
+        "description": "",
+        "admins": [
+          "krpratic@microsoft.com"
+        ],
+        "hookParameter": {
+          "endpoint": "https://httpbin.org/post",
+          "username": "myusername",
+          "password": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/f2887fc5-ad10-4f4e-8199-f0f438b80323",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "60f661f4-5e0d-11ec-a0bd-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "7d32fe54-2b19-4dd7-a1cd-00ce855c76fd",
+        "Content-Length": "254",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:28 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "168",
+        "X-Request-ID": "7d32fe54-2b19-4dd7-a1cd-00ce855c76fd"
+      },
+      "ResponseBody": {
+        "hookId": "f2887fc5-ad10-4f4e-8199-f0f438b80323",
+        "hookName": "reset",
+        "hookType": "Webhook",
+        "externalLink": "",
+        "description": "",
+        "admins": [
+          "krpratic@microsoft.com"
+        ],
+        "hookParameter": {
+          "endpoint": "https://httpbin.org/post",
+          "username": "myusername",
+          "password": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/f2887fc5-ad10-4f4e-8199-f0f438b80323",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "61155d4b-5e0d-11ec-9d4f-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "4a5fdcd4-2958-4e7f-86c3-276b802a1593",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:13:29 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "188",
+        "X-Request-ID": "4a5fdcd4-2958-4e7f-86c3-276b802a1593"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "web_hook_id": "f2887fc5-ad10-4f4e-8199-f0f438b80323",
+    "web_hook_name": "web_hookpzddwe3h4szkmhum"
+  }
+}

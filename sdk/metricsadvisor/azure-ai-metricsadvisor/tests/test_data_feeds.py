@@ -270,7 +270,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=AzureTableDataFeedSource(
                     connection_string="azure_table_connection_string",
                     query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
@@ -316,7 +316,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=AzureBlobDataFeedSource(
                     connection_string="azure_blob_connection_string",
                     container="adsample",
@@ -362,7 +362,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=AzureCosmosDbDataFeedSource(
                     connection_string="azure_cosmosdb_connection_string",
                     sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
@@ -414,7 +414,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
                 "duration_max_ms = max(duration) by resultCode"
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=AzureApplicationInsightsDataFeedSource(
                     azure_cloud="Azure",
                     application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
@@ -463,7 +463,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
                     "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=AzureDataExplorerDataFeedSource(
                     connection_string="azure_data_explorer_connection_string",
                     query=query
@@ -507,7 +507,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=InfluxDbDataFeedSource(
                     connection_string="influxdb_connection_string",
                     database="adsample",
@@ -556,7 +556,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=AzureDataLakeStorageGen2DataFeedSource(
                     account_name="adsampledatalakegen2",
                     account_key="azure_datalake_account_key",
@@ -606,7 +606,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=MongoDbDataFeedSource(
                     connection_string="mongodb_connection_string",
                     database="adsample",
@@ -652,7 +652,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=MySqlDataFeedSource(
                     connection_string="mysql_connection_string",
                     query="'select * from adsample2 where Timestamp = @StartTime'"
@@ -696,7 +696,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             variables["data_feed_name"] = name
         try:
             data_feed = client.create_data_feed(
-                name=name,
+                name=variables["data_feed_name"],
                 source=PostgreSqlDataFeedSource(
                     connection_string="postgresql_connection_string",
                     query="'select * from adsample2 where Timestamp = @StartTime'"

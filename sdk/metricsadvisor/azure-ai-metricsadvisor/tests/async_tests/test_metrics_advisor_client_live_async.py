@@ -56,6 +56,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             async for result in results:
                 tolist.append(result)
             assert len(tolist) > 0
+
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
@@ -72,6 +73,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                 tolist.append(result)
             assert len(tolist) > 0
 
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
