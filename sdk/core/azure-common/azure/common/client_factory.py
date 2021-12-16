@@ -60,7 +60,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
         from azure.mgmt.compute import ComputeManagementClient
         client = ComputeManagementClient(AzureCliCredential(), subscription_id)
 
-    This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+    This method is not working for azure-cli-core>=2.21.0 (released in March 2021).
 
     For compatible azure-cli-core (< 2.20.0), This method will fill automatically the following client parameters:
     - credentials/credential

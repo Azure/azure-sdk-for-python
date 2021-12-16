@@ -16,7 +16,7 @@ except ImportError:
 def get_cli_profile():
     """Return a CLI profile class.
 
-    *Disclaimer*: This method is not working properly for CLI installation after 3/2021 (azure-cli-core 2.21.0).
+    *Disclaimer*: This method is not working for azure-cli-core>=2.21.0 (released in March 2021).
 
     .. versionadded:: 1.1.6
 
@@ -91,7 +91,7 @@ class _CliCredentials(object):
 def get_azure_cli_credentials(resource=None, with_tenant=False):
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
 
-    *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+    *Disclaimer*: This method is not working for azure-cli-core>=2.21.0 (released in March 2021).
     Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCliCredential.
     See example code below:
 
