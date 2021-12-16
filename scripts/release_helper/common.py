@@ -6,6 +6,7 @@ from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABE
 import re
 import logging
 import time
+from random import randint
 from github import Github
 from github.Repository import Repository
 
@@ -198,7 +199,7 @@ class IssueProcess:
             return
         # assign averagely
         assignees = list(self.assignee_candidates)
-        random_idx = int(str(time.time())[-1]) % len(assignees) if len(assignees) > 1 else 0
+        random_idx = randint(0, len(assignees) - 1) if len(assignees) > 1 else 0
         assignee = assignees[random_idx]
 
         # update assignee
