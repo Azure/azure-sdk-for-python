@@ -97,6 +97,12 @@ def is_retry(response, mode):
         if status in [501, 505]:
             return False
         return True
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        computed_md5 = response.http_request.headers['content-md5'] or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
     return False
 
 
