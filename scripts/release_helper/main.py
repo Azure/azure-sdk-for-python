@@ -52,8 +52,11 @@ def main():
     language = os.getenv('LANGUAGE')
     languages = {_CONVERT[language]: _LANGUAGES[_CONVERT[language]]} if language in _CONVERT else _LANGUAGES
     for language in languages:
-        language_issues = select_language_issues(issues, language)
-        languages[language](language_issues)
+        try:
+            language_issues = select_language_issues(issues, language)
+            languages[language](language_issues)
+        except Exception as e:
+            _LOG.error(f'Error happened during handling {language} issue: {e}')
 
 
 if __name__ == '__main__':
