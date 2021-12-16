@@ -136,15 +136,6 @@ class FakeTokenCredential(object):
 
 
 class ContainerRegistryTestClass(AzureRecordedTestCase):
-    def __init__(self, method_name):
-        super(ContainerRegistryTestClass, self).__init__(method_name)
-        self.repository = "library/busybox"
-        self.recording_processors.append(AcrBodyReplacer())
-        self.recording_processors.append(ManagementRequestReplacer())
-        for idx, p in enumerate(self.recording_processors):
-            if isinstance(p, OAuthRequestResponsesFilter):
-                self.recording_processors[idx] = OAuthRequestResponsesFilterACR()
-
     def sleep(self, t):
         if self.is_live:
             time.sleep(t)
