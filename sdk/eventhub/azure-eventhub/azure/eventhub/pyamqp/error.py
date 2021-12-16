@@ -6,10 +6,132 @@
 
 from enum import Enum
 from collections import namedtuple
-import six
 
-from .constants import PORT, FIELD
+from .constants import SECURE_PORT, FIELD
 from .types import AMQPTypes, FieldDefinition
+
+
+class ErrorCodes(Enum):
+    InternalError = b"amqp:internal-error"
+    IllegalState = b"amqp:illegal-state"
+    DecodeError = b"amqp:decode-error"
+    NotFound = b"amqp:not-found"
+    NotImplemented = b"amqp:not-implemented"
+    NotAllowed = b"amqp:not-allowed"
+    InvalidField = b"amqp:invalid-field"
+    ResourceLocked = b"amqp:resource-locked"
+    ResourceDeleted = b"amqp:resource-deleted"
+    UnauthorizedAccess = b"amqp:unauthorized-access"
+    FrameSizeTooSmall = b"amqp:frame-size-too-small"
+    ResourceLimitExceeded = b"amqp:resource-limit-exceeded"
+    PreconditionFailed = b"amqp:precondition-failed"
+    ConnectionRedirect = b"amqp:connection:redirect"
+    ConnectionCloseForced = b"amqp:connection:forced"
+    ConnectionFramingError = b"amqp:connection:framing-error"
+    SessionWindowViolation = b"amqp:session:window-violation"
+    SessionErrantLink = b"amqp:session:errant-link"
+    SessionHandleInUse = b"amqp:session:handle-in-use"
+    SessionUnattachedHandle = b"amqp:session:unattached-handle"
+    LinkRedirect = b"amqp:link:redirect"
+    LinkStolen = b"amqp:link:stolen"
+    LinkDetachForced = b"amqp:link:detach-forced"
+    LinkTransferLimitExceeded = b"amqp:link:transfer-limit-exceeded"
+    LinkMessageSizeExceeded = b"amqp:link:message-size-exceeded"
+    ClientError = b"amqp:client-error"
+    UnknownError = b"amqp:unknown-error"
+    VendorError = b"amqp:vendor-error"
+
+
+class RetryMode(str, Enum):
+    Exponential = 'exponential'
+    Fixed = 'fixed'
+
+
+class ErrorPolicy:
+
+    no_retry = (
+        ErrorCodes.DecodeError,
+        ErrorCodes.LinkMessageSizeExceeded,
+        ErrorCodes.NotFound,
+        ErrorCodes.NotImplemented,
+        ErrorCodes.LinkRedirect,
+        ErrorCodes.NotAllowed,
+        ErrorCodes.UnauthorizedAccess,
+        ErrorCodes.LinkStolen,
+        ErrorCodes.ResourceLimitExceeded,
+        ErrorCodes.ConnectionRedirect,
+        ErrorCodes.PreconditionFailed,
+        ErrorCodes.InvalidField,
+        ErrorCodes.ResourceDeleted,
+        ErrorCodes.IllegalState,
+        ErrorCodes.FrameSizeTooSmall,
+        ErrorCodes.ConnectionFramingError,
+        ErrorCodes.SessionUnattachedHandle,
+        ErrorCodes.SessionHandleInUse,
+        ErrorCodes.SessionErrantLink,
+        ErrorCodes.SessionWindowViolation
+    )
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+
+        keyword int retry_total:
+        keyword float retry_backoff_factor:
+        keyword float retry_backoff_max:
+        keyword RetryMode retry_mode:
+        keyword list no_retry_condition:
+        keyword dict custom_retry_policy:
+        """
+        self.total_retries = kwargs.pop('retry_total', 3)
+        self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
+        self.backoff_max = kwargs.pop('retry_backoff_max', 120)
+        self.retry_mode = kwargs.pop('retry_mode', RetryMode.Exponential)
+        self.custom_no_retry = list(self.no_retry) + kwargs.pop("no_retry_condition", [])
+        self.custom_retry_policy = kwargs.pop("custom_retry_policy", None)
+
+    def configure_retries(self, **kwargs):
+        return {
+            'total': kwargs.pop("retry_total", self.total_retries),
+            'backoff': kwargs.pop("retry_backoff_factor", self.backoff_factor),
+            'max_backoff': kwargs.pop("retry_backoff_max", self.backoff_max),
+            'retry_mode': kwargs.pop("retry_mode", self.retry_mode),
+            'history': []
+        }
+
+    def increment(self, settings, error):
+        settings['total'] -= 1
+        settings['history'].append(error)
+        if settings['total'] < 0:
+            return False
+        return True
+
+    def is_retryable(self, error):
+        try:
+            if error.condition in self.custom_no_retry:
+                return False
+        except TypeError:
+            pass
+        return True
+
+    def get_backoff_time(self, settings, error):
+        try:
+            if error.condition in self.custom_retry_policy:
+                return self.custom_retry_policy[error.condition]
+        except TypeError:
+            pass
+
+        consecutive_errors_len = len(settings['history'])
+        if consecutive_errors_len <= 1:
+            return 0
+
+        if self.retry_mode == RetryMode.Fixed:
+            backoff_value = settings['backoff']
+        else:
+            backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
+        return min(settings['max_backoff'], backoff_value)
 
 
 class ErrorCondition(Enum):
@@ -34,7 +156,7 @@ class ErrorCondition(Enum):
     #: An internal error occurred. Operator intervention may be required to resume normaloperation.
     InternalError = b"amqp:internal-error"
     #: A peer attempted to work with a remote entity that does not exist.
-    NotFDound = b"amqp:not-found"
+    NotFound = b"amqp:not-found"
     #: A peer attempted to work with a remote entity to which it has no access due tosecurity settings.
     UnauthorizedAccess = b"amqp:unauthorized-access"
     #: Data could not be decoded.
@@ -138,7 +260,13 @@ class AMQPException(Exception):
         self.condition = condition
         self.description = description
         self.info = info
-        super(AMQPException, self).__init__(message)  # TODO: Pass a message
+        message = message or (str(condition) if isinstance(condition, ErrorCodes) else condition.decode())
+        if self.description:
+            if isinstance(self.description, str):
+                message += ": {}".format(self.description)
+            else:
+                message += ": {}".format(self.description.decode())
+        super(AMQPException, self).__init__(message)
 
 
 class AMQPDecodeError(AMQPException):
@@ -157,6 +285,14 @@ class AMQPConnectionError(AMQPException):
     :param str description: A description of the error.
     :param info: A dictionary of additional data associated with the error.
     """
+
+
+class ConnectionClose(AMQPConnectionError):
+    pass
+
+
+class VendorConnectionClose(ConnectionClose):
+    pass
 
 
 class AMQPConnectionRedirect(AMQPConnectionError):
@@ -182,7 +318,7 @@ class AMQPConnectionRedirect(AMQPConnectionError):
         super(AMQPConnectionRedirect, self).__init__(condition, description=description, info=info)
 
 
-class AMQPSessionError(AMQPException):
+class AMQPSessionError(AMQPConnectionError):
     """Details of a Session-level error.
 
     :param ~uamqp.SessionErrorCondition condition: The error code.
@@ -191,16 +327,21 @@ class AMQPSessionError(AMQPException):
     """
 
 
-class AMQPLinkError(AMQPException):
+class LinkDetach(AMQPConnectionError):
     """Details of a Link-level error.
 
-    :param ~uamqp.LinkErrorCondition condition: The error code.
+    :param str condition: The error code.
     :param str description: A description of the error.
-    :param info: A dictionary of additional data associated with the error.
+    :param dict info: A dictionary of additional data associated with the error.
     """
 
 
-class AMQPLinkRedirect(AMQPLinkError):
+class VendorLinkDetach(LinkDetach):
+    """Vendor error codes
+    """
+
+
+class LinkRedirect(LinkDetach):
     """Details of a Link-level redirect response.
 
     The address provided cannot be resolved to a terminus at the current container.
@@ -220,9 +361,9 @@ class AMQPLinkRedirect(AMQPLinkError):
     def __init__(self, condition, description=None, info=None):
         self.hostname = info.get(b'hostname', b'').decode('utf-8')
         self.network_host = info.get(b'network-host', b'').decode('utf-8')
-        self.port = int(info.get(b'port', PORT))
+        self.port = int(info.get(b'port', SECURE_PORT))
         self.address = info.get(b'address', b'').decode('utf-8')
-        super(AMQPLinkRedirect, self).__init__(condition, description=description, info=info)
+        super(LinkRedirect, self).__init__(condition, description=description, info=info)
 
 
 class AuthenticationException(AMQPException):
@@ -248,6 +389,18 @@ class TokenAuthFailure(AuthenticationException):
         if self.description:
             message += u"\nDescription: {}".format(self.status_description.decode('utf-8'))
         super(TokenAuthFailure, self).__init__(message)
+
+
+class MessageException(AMQPException):
+    """
+
+    """
+
+
+class MessageSendFailed(MessageException):
+    """
+
+    """
 
 
 class ErrorResponse(object):

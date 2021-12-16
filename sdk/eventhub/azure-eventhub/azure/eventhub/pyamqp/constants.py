@@ -177,9 +177,10 @@ class ManagementLinkState(Enum):
 
 class ManagementOpenResult(Enum):
 
-    OK = 0
-    ERROR = 1
-    CANCELLED = 2
+    OPENING = 0
+    OK = 1
+    ERROR = 2
+    CANCELLED = 3
 
 
 class ManagementExecuteOperationResult(Enum):
@@ -187,7 +188,7 @@ class ManagementExecuteOperationResult(Enum):
     OK = 0
     ERROR = 1
     FAILED_BAD_STATUS = 2
-    INSTANCE_CLOSED = 3
+    LINK_CLOSED = 3
 
 
 class CbsState(Enum):

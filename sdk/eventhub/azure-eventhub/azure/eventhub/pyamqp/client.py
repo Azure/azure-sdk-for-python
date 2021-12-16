@@ -24,7 +24,14 @@ from .sasl import SASLTransport
 from .endpoints import Source, Target
 from .error import (
     AMQPConnectionError,
+    AMQPException,
     ErrorResponse,
+    ErrorCodes,
+    MessageException,
+    MessageSendFailed,
+    LinkDetach,
+    ConnectionClose,
+    ErrorPolicy
 )
 
 from .constants import (
@@ -32,7 +39,6 @@ from .constants import (
     SenderSettleMode,
     ReceiverSettleMode,
     LinkDeliverySettleReason,
-    ManagementOpenResult,
     SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
     AUTH_TYPE_CBS,
@@ -43,7 +49,7 @@ from .constants import (
     MESSAGE_DELIVERY_DONE_STATES,
 )
 
-from .mgmt_operation import MgmtOperation
+from .management_operation import ManagementOperation
 from .cbs import CBSAuthenticator
 from .authentication import _CBSAuth
 
@@ -132,6 +138,7 @@ class AMQPClient(object):
         self._cbs_authenticator = None
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
+        self._error_policy = kwargs.pop("error_policy", ErrorPolicy())
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
@@ -172,6 +179,39 @@ class AMQPClient(object):
         """Perform a single Connection iteration."""
         self._connection.listen(wait=self._socket_timeout)
 
+    def _close_link(self, **kwargs):
+        if self._link and not self._link._is_closed:
+            self._link.detach(close=kwargs.get("close", False))
+            self._link = None
+
+    def _do_retryable_operation(self, operation, *args, **kwargs):
+        retry_settings = self._error_policy.configure_retries()
+        retry_active = True
+        absolute_timeout = kwargs.pop("timeout", 0)
+        while retry_active:
+            try:
+                start_time = time.time()
+                if absolute_timeout < 0:
+                    raise TimeoutError("Operation timed out.")
+                return operation(*args, timeout=absolute_timeout, **kwargs)
+            except AMQPException as exc:
+                if absolute_timeout >= 0:
+                    retry_active = self._error_policy.increment(retry_settings, exc)
+                    if not retry_active:
+                        break
+                    time.sleep(self._error_policy.get_backoff_time(retry_settings, exc))
+                    if isinstance(exc, LinkDetach):
+                        self._close_link()  # if link level error, close and open a new link
+                    elif isinstance(exc, (ConnectionClose, AMQPConnectionError)):
+                        self.close()
+            except Exception:
+                raise
+            finally:
+                end_time = time.time()
+                if absolute_timeout > 0:
+                    absolute_timeout -= (end_time - start_time)
+        raise retry_settings['history'][-1]
+
     def open(self):
         """Open the client. The client can create a new Connection
         or an existing Connection can be passed in. This existing Connection
@@ -187,23 +227,25 @@ class AMQPClient(object):
         if self._session:
             return  # already open.
         _logger.debug("Opening client connection.")
-        self._connection = Connection(
-            "amqps://" + self._hostname,
-            sasl_credential=self._auth.sasl,
-            ssl={'ca_certs':certifi.where()},
-            container_id=self._name,
-            max_frame_size=self._max_frame_size,
-            channel_max=self._channel_max,
-            idle_timeout=self._idle_timeout,
-            properties=self._properties,
-            network_trace=self._network_trace
-        )
-        self._connection.open()
-        self._session = self._connection.create_session(
-            incoming_window=self._incoming_window,
-            outgoing_window=self._outgoing_window
-        )
-        self._session.begin()
+        if not self._connection:
+            self._connection = Connection(
+                "amqps://" + self._hostname,
+                sasl_credential=self._auth.sasl,
+                ssl={'ca_certs':certifi.where()},
+                container_id=self._name,
+                max_frame_size=self._max_frame_size,
+                channel_max=self._channel_max,
+                idle_timeout=self._idle_timeout,
+                properties=self._properties,
+                network_trace=self._network_trace
+            )
+            self._connection.open()
+        if not self._session:
+            self._session = self._connection.create_session(
+                incoming_window=self._incoming_window,
+                outgoing_window=self._outgoing_window
+            )
+            self._session.begin()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session,
@@ -211,6 +253,7 @@ class AMQPClient(object):
                 auth_timeout=self._auth_timeout
             )
             self._cbs_authenticator.open()
+        self._shutdown = False
 
     def close(self):
         """Close the client. This includes closing the Session
@@ -227,9 +270,7 @@ class AMQPClient(object):
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        if self._link:
-            self._link.detach(close=True)
-            self._link = None
+        self._close_link(close=True)
         if self._cbs_authenticator:
             self._cbs_authenticator.close()
             self._cbs_authenticator = None
@@ -237,6 +278,7 @@ class AMQPClient(object):
         self._session = None
         if not self._external_connection:
             self._connection.close()
+            self._connection = None
 
     def auth_complete(self):
         """Whether the authentication handshake is complete during
@@ -282,31 +324,47 @@ class AMQPClient(object):
             return True
         return self._client_run(**kwargs)
 
-    def mgmt_request(self, message, operation=None, operation_type=None, node='$management', **kwargs):
+    def mgmt_request(self, message, **kwargs):
         """
-        TODO: Move optional params to kwargs and document.
+        :param message: The message to send in the management request.
+        :type message: ~uamqp.message.Message
+        :keyword str operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :keyword str operation_type: The type on which to carry out the operation. This will
+         be specific to the entities of the service. This value will be added as
+         an application property on the message.
+        :keyword str node: The target node. Default node is `$management`.
+        :keyword float timeout: Provide an optional timeout in seconds within which a response
+         to the management request must be received.
+        :keyword callback: The function to process the returned parameters of the management
+         request including status code and a description if available. This can be used
+         to reformat the response or raise an error based on content. The function must
+         take 3 arguments - status code, response message and description.
+        :paramtype callback: ~callable[int, str, ~uamqp.message.Message]
         """
-        timeout = kwargs.pop('timeout', None) or 0
+
+        # The method also takes "status_code_field" and "status_description_field"
+        # keyword arguments as alternate names for the status code and description
+        # in the response body. Those two keyword arguments are used in Azure services only.
+        operation = kwargs.pop("operation", None)
+        operation_type = kwargs.pop("operation_type", None)
+        node = kwargs.pop("node", "$management")
+        timeout = kwargs.pop('timeout', 0)
         parse_response = kwargs.pop('callback', None)
         try:
             mgmt_link = self._mgmt_links[node]
         except KeyError:
-            mgmt_link = MgmtOperation(self._session, endpoint=node, **kwargs)
+
+            mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
             self._mgmt_links[node] = mgmt_link
             mgmt_link.open()
-            while not mgmt_link.mgmt_link_open_status and not mgmt_link.mgmt_error:
+
+            while not mgmt_link.ready():
                 self._connection.listen(wait=False)
-            if mgmt_link.mgmt_error:
-                raise mgmt_link.mgmt_error
-            if mgmt_link.mgmt_link_open_status != ManagementOpenResult.OK:
-                # TODO: update below with correct status code + info
-                raise AMQPConnectionError(
-                    400,
-                    "Failed to open mgmt link: {}".format(mgmt_link.mgmt_link_open_status),
-                    {}
-                )
+
         operation_type = operation_type or b'empty'
-        status, response, description = mgmt_link.execute(
+        status, description, response = mgmt_link.execute(
             message,
             operation=operation,
             operation_type=operation_type,
@@ -347,7 +405,7 @@ class SendClient(AMQPClient):
                 properties=self._link_properties)
             self._link.attach()
             return False
-        if self._link.state.value != 3:  # ATTACHED
+        if self._link.get_state().value != 3:  # ATTACHED
             return False
         return True
 
@@ -378,42 +436,67 @@ class SendClient(AMQPClient):
         if not delivery.sent:
             raise RuntimeError("Message is not sent.")
 
-    def _on_send_complete(self, message_delivery, message, reason, state):
+    @staticmethod
+    def _process_send_error(message_delivery, condition, description=None, info=None):
+        try:
+            amqp_condition = ErrorCodes(condition)
+        except ValueError:
+            error = MessageException(condition, description, info)
+        else:
+            error = MessageSendFailed(amqp_condition, description, info)
+        message_delivery.state = MessageDeliveryState.Error
+        message_delivery.error = error
+
+    def _on_send_complete(self, message_delivery, reason, state):
         # TODO: check whether the callback would be called in case of message expiry or link going down
         #  and if so handle the state in the callback
-        if state and SEND_DISPOSITION_ACCEPT in state:
-            message_delivery.state = MessageDeliveryState.Ok
-        else:
-            # TODO:
-            #  - sending disposition state could only be rejected/accepted?
-            #  - error action
-            #  - whether the state should be None in the case of sending failure/we could give a better default value
-            #   (message is not delivered)
-            if not state and reason == LinkDeliverySettleReason.NotDelivered:
-                message_delivery.state = MessageDeliveryState.Error
-                message_delivery.reason = reason
-                return
-
-            error_response = ErrorResponse(error_info=state[SEND_DISPOSITION_REJECT])
-            # TODO: check error_info structure
-            if error_response.condition == b'com.microsoft:server-busy':
-                # TODO: customized/configurable error handling logic
-                time.sleep(4)  # 4 is what we're doing nowadays in EH/SB, service tells client to backoff for 4 seconds
-
-                timeout = (message_delivery.expiry - time.time()) if message_delivery.expiry else 0
-                self._transfer_message(message_delivery, timeout)
-                message_delivery.state = MessageDeliveryState.WaitingToBeSent
+        message_delivery.reason = reason
+        if reason == LinkDeliverySettleReason.DispositionReceived:
+            if state and SEND_DISPOSITION_ACCEPT in state:
+                message_delivery.state = MessageDeliveryState.Ok
             else:
-                message_delivery.state = MessageDeliveryState.Error
-                message_delivery.reason = reason
+                try:
+                    error_info = state[SEND_DISPOSITION_REJECT]
+                    self._process_send_error(
+                        message_delivery,
+                        condition=error_info[0][0],
+                        description=error_info[0][1],
+                        info=error_info[0][2]
+                    )
+                except TypeError:
+                    self._process_send_error(
+                        message_delivery,
+                        condition=ErrorCodes.UnknownError
+                    )
+        elif reason == LinkDeliverySettleReason.Settled:
+            message_delivery.state = MessageDeliveryState.Ok
+        elif reason == LinkDeliverySettleReason.Timeout:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("Sending message timed out.")
+        else:
+            # NotDelivered and other unknown errors
+            self._process_send_error(
+                message_delivery,
+                condition=ErrorCodes.UnknownError
+            )
 
-    def send_message(self, message, **kwargs):
-        """
-        :param ~uamqp.message.Message message:
-        :param int timeout: timeout in seconds
-        """
+        # TODO: put the following into error structures
+        # error_response = ErrorResponse(error_info=state[SEND_DISPOSITION_REJECT])
+        # # TODO: check error_info structure
+        # if error_response.condition == b'com.microsoft:server-busy':
+        #     # TODO: customized/configurable error handling logic
+        #     time.sleep(4)  # 4 is what we're doing nowadays in EH/SB, service tells client to backoff for 4 seconds
+        #
+        #     timeout = (message_delivery.expiry - time.time()) if message_delivery.expiry else 0
+        #     self._transfer_message(message_delivery, timeout)
+        #     message_delivery.state = MessageDeliveryState.WaitingToBeSent
+        # else:
+        #     message_delivery.state = MessageDeliveryState.Error
+        #     message_delivery.reason = reason
+
+    def _send_message_impl(self, message, **kwargs):
         timeout = kwargs.pop("timeout", 0)
-        expire_time = (time.time() + timeout) if timeout else None
+        expire_time = (time.time() + timeout / 1000) if timeout else None
         self.open()
         message_delivery = _MessageDelivery(
             message,
@@ -426,10 +509,22 @@ class SendClient(AMQPClient):
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = self.do_work()
             if message_delivery.expiry and time.time() > message_delivery.expiry:
-                message_delivery.state = MessageDeliveryState.Timeout
-        if message_delivery.state in \
-                (MessageDeliveryState.Error, MessageDeliveryState.Timeout, MessageDeliveryState.Cancelled):
-            raise Exception()  # TODO: Raise proper error
+                self._on_send_complete(message_delivery, LinkDeliverySettleReason.Timeout, None)
+
+        if message_delivery.state in (MessageDeliveryState.Error, MessageDeliveryState.Cancelled, MessageDeliveryState.Timeout):
+            try:
+                raise message_delivery.error
+            except TypeError:
+                raise MessageException(condition=ErrorCodes.UnknownError, description=None, info=None)
+
+    def send_message(self, message, **kwargs):
+        """
+        :param ~uamqp.message.Message message:
+        :keyword float timeout: timeout in seconds. If set to
+         0, the client will continue to wait until the message is sent or error happens. The
+         default is 0.
+        """
+        self._do_retryable_operation(self._send_message_impl, message=message, **kwargs)
 
 
 class ReceiveClient(AMQPClient):
@@ -529,7 +624,11 @@ class ReceiveClient(AMQPClient):
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
-        self._link_credit = kwargs.pop('link_credit', None)
+        # TODO:  when encoding properties as fields, the value needs to be like the following otherwise the
+        #  implementation needs to be updated to enable specifying type information
+        #  self._link_properties = {b"com.microsoft:epoch": {"TYPE": "LONG", "VALUE": 10}}
+        #  self._link_properties = {b"com.microsoft:epoch": 10}
+        self._link_credit = kwargs.pop('link_credit', None) or 300
         super(ReceiveClient, self).__init__(hostname, auth=auth, **kwargs)
 
     def _client_ready(self):
@@ -551,10 +650,12 @@ class ReceiveClient(AMQPClient):
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
                 on_message_received=self._message_received,
-                properties=self._link_properties)
+                properties=self._link_properties,
+                desired_capabilities=self._desired_capabilities
+            )
             self._link.attach()
             return False
-        if self._link.state.value != 3:  # ATTACHED
+        if self._link.get_state().value != 3:  # ATTACHED
             return False
         return True
 
@@ -591,7 +692,51 @@ class ReceiveClient(AMQPClient):
         #    # Message was received with callback processing and wasn't settled.
         #    _logger.info("Message was not settled.")
 
-    def receive_message_batch(self, max_batch_size=None, on_message_received=None, timeout=0):
+    def _receive_message_batch_impl(self, max_batch_size=None, on_message_received=None, timeout=0):
+        self._message_received_callback = on_message_received
+        max_batch_size = max_batch_size or self._link_credit
+        timeout = (time.time() + timeout / 1000) if timeout else 0
+        expired = False
+        receiving = True
+        batch = []
+        self.open()
+        while len(batch) < max_batch_size:
+            try:
+                batch.append(self._received_messages.get_nowait())
+                self._received_messages.task_done()
+            except queue.Empty:
+                break
+        else:
+            return batch
+        # TODO: we should return as soon as there are some messages in the queue instead of waiting for timeout
+        while receiving and not expired and len(batch) < max_batch_size:
+
+            while receiving and self._received_messages.qsize() < max_batch_size:
+                if timeout and time.time() > timeout:
+                    expired = True
+                    break
+
+                before = self._received_messages.qsize()
+                receiving = self.do_work(batch=max_batch_size)
+                received = self._received_messages.qsize() - before
+
+                if self._received_messages.qsize() > 0 and received == 0:
+                    expired = True
+                    break
+
+            while len(batch) < max_batch_size:
+                try:
+                    batch.append(self._received_messages.get_nowait())
+                    self._received_messages.task_done()
+                except queue.Empty:
+                    break
+        return batch
+
+    def close(self):
+        self._received_messages = queue.Queue()
+        super(ReceiveClient, self).close()
+
+    def receive_message_batch(self, **kwargs):
         """Receive a batch of messages. Messages returned in the batch have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback. This method will return as soon as some messages are
@@ -616,29 +761,7 @@ class ReceiveClient(AMQPClient):
          default is 0.
         :type timeout: float
         """
-        self._message_received_callback = on_message_received
-        max_batch_size = max_batch_size or self._link_credit
-        timeout = time.time() + timeout if timeout else 0
-        expired = False
-        receiving = True
-        batch = []
-        while len(batch) < max_batch_size:
-            try:
-                batch.append(self._received_messages.get_nowait())
-                self._received_messages.task_done()
-            except queue.Empty:
-                break
-        else:
-            return batch
-
-        while receiving and not expired and len(batch) < max_batch_size:
-            receiving = self.do_work(batch=max_batch_size)
-            while len(batch) < max_batch_size:
-                try:
-                    batch.append(self._received_messages.get_nowait())
-                    self._received_messages.task_done()
-                except queue.Empty:
-                    break
-            if timeout and time.time() > timeout:
-                expired = True
-        return batch
+        return self._do_retryable_operation(
+            self._receive_message_batch_impl,
+            **kwargs
+        )

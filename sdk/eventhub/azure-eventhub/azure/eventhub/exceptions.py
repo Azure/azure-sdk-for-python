@@ -5,9 +5,8 @@
 import logging
 import six
 
-from uamqp import errors, compat
-
 from ._constants import NO_RETRY_ERRORS
+from .pyamqp import error as errors
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -136,8 +135,8 @@ def _create_eventhub_exception(exception):
         error = ConnectionLostError(str(exception), exception)
     elif isinstance(exception, errors.ConnectionClose):
         error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.MessageHandlerError):
-        error = ConnectionLostError(str(exception), exception)
+    # elif isinstance(exception, errors.MessageHandlerError):
+    #     error = ConnectionLostError(str(exception), exception)
     elif isinstance(exception, errors.AMQPConnectionError):
         error_type = (
             AuthenticationError
@@ -145,7 +144,7 @@ def _create_eventhub_exception(exception):
             else ConnectError
         )
         error = error_type(str(exception), exception)
-    elif isinstance(exception, compat.TimeoutException):
+    elif isinstance(exception, TimeoutError):
         error = ConnectionLostError(str(exception), exception)
     else:
         error = EventHubError(str(exception), exception)
@@ -169,12 +168,7 @@ def _handle_exception(
     elif isinstance(
         exception,
         (
-            errors.MessageAccepted,
-            errors.MessageAlreadySettled,
-            errors.MessageModified,
-            errors.MessageRejected,
-            errors.MessageReleased,
-            errors.MessageContentTooLarge,
+            errors.MessageException
         ),
     ):
         _LOGGER.info("%r Event data error (%r)", name, exception)
@@ -194,9 +188,9 @@ def _handle_exception(
         elif isinstance(exception, errors.ConnectionClose):
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.MessageHandlerError):
-            if hasattr(closable, "_close_handler"):
-                closable._close_handler()  # pylint:disable=protected-access
+        # elif isinstance(exception, errors.MessageHandlerError):
+        #     if hasattr(closable, "_close_handler"):
+        #         closable._close_handler()  # pylint:disable=protected-access
         else:  # errors.AMQPConnectionError, compat.TimeoutException
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access

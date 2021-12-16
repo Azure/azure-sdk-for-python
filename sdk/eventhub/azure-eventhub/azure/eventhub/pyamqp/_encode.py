@@ -526,16 +526,16 @@ def encode_node_properties(value):
     """Properties of a node.
 
     <type name="node-properties" class="restricted" source="fields"/>
-    
+
     A symbol-keyed map containing properties of a node used when requesting creation or reporting
     the creation of a dynamic node. The following common properties are defined::
-    
+
         - `lifetime-policy`: The lifetime of a dynamically generated node. Definitionally, the lifetime will
           never be less than the lifetime of the link which caused its creation, however it is possible to extend
           the lifetime of dynamically created node using a lifetime policy. The value of this entry MUST be of a type
           which provides the lifetime-policy archetype. The following standard lifetime-policies are defined below:
           delete-on-close, delete-on-no-links, delete-on-no-messages or delete-on-no-links-or-messages.
-        
+
         - `supported-dist-modes`: The distribution modes that the node supports. The value of this entry MUST be one or
           more symbols which are valid distribution-modes. That is, the value MUST be of the same type as would be valid
           in a field defined with the following attributes:
@@ -584,7 +584,7 @@ def encode_filter_set(value):
             described_filter = {
                 TYPE: AMQPTypes.described,
                 VALUE: (
-                    {TYPE: AMQPTypes.symbol, VALUE: descriptor},
+                    descriptor,
                     filter_value
                 )
             }

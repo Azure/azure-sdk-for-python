@@ -7,10 +7,7 @@
 import uuid
 import logging
 import time
-try:
-    from urllib.parse import urlparse
-except:
-    from urlparse import urlparse
+from urllib.parse import urlparse
 
 from ._transport import Transport
 from .sasl import SASLTransport
@@ -25,6 +22,12 @@ from .constants import (
     ConnectionState
 )
 
+from .error import (
+    ErrorCodes,
+    AMQPConnectionError,
+    ConnectionClose,
+    VendorConnectionClose
+)
 
 _LOGGER = logging.getLogger(__name__)
 _CLOSING_STATES = (
@@ -108,6 +111,7 @@ class Connection(object):
             'session': None,
             'link': None
         }
+        self._error = None
         self._outgoing_endpoints = {}  # type: Dict[int, Session]
         self._incoming_endpoints = {}  # type: Dict[int, Session]
 
@@ -117,6 +121,15 @@ class Connection(object):
 
     def __exit__(self, *args):
         self.close()
+
+    def _process_connection_error(self, condition, description, info):
+        try:
+            amqp_condition = ErrorCodes(condition)
+        except ValueError:
+            error = VendorConnectionClose(condition, description, info)
+        else:
+            error = ConnectionClose(amqp_condition, description, info)
+        self._error = error
 
     def _set_state(self, new_state):
         # type: (ConnectionState) -> None
@@ -204,11 +217,18 @@ class Connection(object):
         :rtype: None
         """
         if self._can_write():
-            self._last_frame_sent_time = time.time()
-            if timeout:
-                with self._transport.block_with_timeout(timeout):
-                    self._transport.send_frame(channel, frame, **kwargs)
-            self._transport.send_frame(channel, frame, **kwargs)
+            try:
+                self._last_frame_sent_time = time.time()
+                if timeout:
+                    with self._transport.block_with_timeout(timeout):
+                        self._transport.send_frame(channel, frame, **kwargs)
+                self._transport.send_frame(channel, frame, **kwargs)
+            except Exception as exc:
+                self._error = AMQPConnectionError(
+                    ErrorCodes.InternalError,
+                    description="Transport error occurred.",
+                    info=exc
+                )
         else:
             _LOGGER.warning("Cannot write frame in current state: %r", self.state)
 
@@ -352,7 +372,9 @@ class Connection(object):
         if channel > self._channel_max:
             _LOGGER.error("Invalid channel")
         if frame[0]:
+            self._process_connection_error(condition=frame[0][0], description=frame[0][1], info=frame[0][2])
             _LOGGER.error("Connection error: {}".format(frame[0]))
+
         self._set_state(ConnectionState.CLOSE_RCVD)
         self._outgoing_close()
         self._disconnect()
@@ -543,22 +565,34 @@ class Connection(object):
          timeout (by default 0.1 seconds).
         :type wait: int or float or bool
         :param int batch: The number of frames to attempt to read and process before returning. The default value
-         is 1, i.e. process frames one-at-a-time. A higer value should only be used when a receiver is established
+         is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established
          and is processing incoming Transfer frames.
         :rtype: None
         """
-        if self.state == ConnectionState.END:
-            raise ValueError("Connection closed.")
-        for _ in range(batch):
-            new_frame = self._read_frame(wait=wait, **kwargs)
-            if not new_frame:
+        try:
+            raise self._error
+        except TypeError:
+            pass
+        try:
+
+            if self.state == ConnectionState.END:
                 raise ValueError("Connection closed.")
-            if self._process_incoming_frame(*new_frame):
-                break
-        if self.state not in _CLOSING_STATES:
-            now = time.time()
-            if self._get_local_timeout(now) or self._get_remote_timeout(now):
-                self.close(error=None, wait=False)
+            for _ in range(batch):
+                new_frame = self._read_frame(wait=wait, **kwargs)
+                if not new_frame:
+                    raise ValueError("Connection closed.")
+                if self._process_incoming_frame(*new_frame):
+                    break
+            if self.state not in _CLOSING_STATES:
+                now = time.time()
+                if self._get_local_timeout(now) or self._get_remote_timeout(now):
+                    self.close(error=None, wait=False)
+        except Exception as exc:
+            self._error = AMQPConnectionError(
+                ErrorCodes.InternalError,
+                description="Transport error occurred",
+                info=exc
+            )
 
     def create_session(self, **kwargs):
         # type: (Any) -> Session

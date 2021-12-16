@@ -19,6 +19,7 @@ import time
 
 from ._encode import encode_payload
 from .message import BatchMessage
+from .types import TYPE, VALUE, AMQPTypes
 
 
 class UTC(datetime.tzinfo):
@@ -93,7 +94,40 @@ def add_batch(batch, message):
     batch.data.append(output)
 
 
+def encode_str(data, encoding='utf-8'):
+    try:
+        return data.encode(encoding)
+    except AttributeError:
+        return data
+
+
+def normalized_data_body(data, **kwargs):
+    encoding = kwargs.get("encoding", "utf-8")
+    if isinstance(data, list):
+        return [encode_str(item, encoding) for item in data]
+    else:
+        return [encode_str(data, encoding)]
+
+
+def normalized_sequence_body(sequence):
+    if isinstance(sequence, list) and all([isinstance(b, list) for b in sequence]):
+        return sequence
+    elif isinstance(sequence, list):
+        return [sequence]
+
+
 def get_message_encoded_size(message):
     output = bytearray()
     encode_payload(output, message)
     return len(output)
+
+
+def amqp_long_value(value):
+    return {TYPE: AMQPTypes.long, VALUE: value}
+
+
+def amqp_source_filters_value(descriptor, value):
+    return (
+        {TYPE: AMQPTypes.symbol, VALUE: descriptor},
+        {TYPE: AMQPTypes.string, VALUE: value}
+    )
