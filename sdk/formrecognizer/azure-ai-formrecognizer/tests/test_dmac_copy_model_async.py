@@ -37,6 +37,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url):
         async with client:
             training_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -59,6 +60,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -99,6 +101,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     async def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url):
         raw_response = []
 
@@ -136,6 +139,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url):
         async with client:
             poller_1 = await client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -167,6 +171,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     async def test_copy_continuation_token(self, client, formrecognizer_storage_container_sas_url):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
@@ -184,6 +189,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @pytest.mark.skip()
     async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)

@@ -1,0 +1,57 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4927462c-5d11-11ec-bee0-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3678cf98-5371-487b-8fdc-0297c1e66e0d",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:08:55 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "17"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "park"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "hotel"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "good food",
+              "restaurant"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}
