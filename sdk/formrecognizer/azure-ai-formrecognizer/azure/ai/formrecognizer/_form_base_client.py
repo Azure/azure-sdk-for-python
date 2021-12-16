@@ -64,6 +64,11 @@ class FormRecognizerClientBase(object):
             }
         )
 
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
