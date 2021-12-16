@@ -7,7 +7,6 @@
 
 import os
 import datetime
-import functools
 from devtools_testutils import AzureRecordedTestCase, is_live
 from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
@@ -37,9 +36,19 @@ from azure.ai.metricsadvisor.models import (
     WebNotificationHook,
 )
 
+# for pytest.parametrize
 subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
 api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
-CREDENTIALS = [MetricsAdvisorKeyCredential(subscription_key, api_key), "AAD"]
+API_KEY = [MetricsAdvisorKeyCredential(subscription_key, api_key)]
+AAD = ["AAD"]
+CREDENTIALS = [*API_KEY, *AAD]
+
+
+def test_id(val):
+    if isinstance(val, MetricsAdvisorKeyCredential):
+        return "APIKey"
+    else:
+        return "AAD"
 
 
 class MetricsAdvisorClientPreparer(object):
@@ -62,7 +71,6 @@ class MetricsAdvisorClientPreparer(object):
                 fn(test_class, self.client, self.variables)
             else:
                 fn(test_class, self.client)
-        functools.wraps(_preparer_wrapper, fn)
         return _preparer_wrapper
 
     def create_test_client(self, credential):
@@ -352,3 +360,9 @@ class TestMetricsAdvisorClientBase(AzureRecordedTestCase):
     @property
     def alert_id(self):
         return os.getenv("METRICS_ADVISOR_ALERT_ID", "metrics_advisor_alert_id")
+
+    def clean_up(self, client, variables):
+        try:
+            client.delete_data_feed(variables["data_feed_id"])
+        except KeyError:
+            pass

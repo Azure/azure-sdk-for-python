@@ -17,13 +17,13 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, API_KEY, test_id
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorClient)
 
 
 class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_anomalies_for_detection_configuration(self, client):
@@ -34,7 +34,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_anomaly_dimension_values(self, client):
@@ -46,7 +46,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_incidents_for_detection_configuration(self, client):
@@ -57,7 +57,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_dimension_values(self, client):
@@ -67,7 +67,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_incident_root_cause(self, client):
@@ -77,7 +77,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_enriched_series_data(self, client):
@@ -90,7 +90,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_enrichment_status(self, client):
@@ -101,7 +101,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_alerts(self, client):
@@ -113,7 +113,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(list(results)) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metrics_series_data(self, client):
@@ -127,7 +127,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_series_definitions(self, client):
@@ -137,7 +137,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", API_KEY, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_add_anomaly_feedback(self, client):
@@ -148,7 +148,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                            value="NotAnomaly")
         client.add_feedback(anomaly_feedback)
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", API_KEY, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_add_change_point_feedback(self, client):
@@ -159,7 +159,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                                     value="NotChangePoint")
         client.add_feedback(change_point_feedback)
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", API_KEY, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_add_comment_feedback(self, client):
@@ -170,7 +170,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                            value="comment")
         client.add_feedback(comment_feedback)
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", API_KEY, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_add_period_feedback(self, client):
@@ -182,7 +182,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                          value=2)
         client.add_feedback(period_feedback)
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_feedback(self, client):
@@ -194,14 +194,14 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_get_feedback(self, client):
         result = client.get_feedback(feedback_id=self.feedback_id)
         assert result
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_anomalies_for_alert(self, client):
@@ -211,7 +211,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(result) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_incidents_for_alert(self, client):

@@ -20,13 +20,13 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, test_id
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_create_ad_config_whole_series_detection(self, client, variables):
@@ -69,6 +69,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                     )
                 )
             )
+            if self.is_live:
+                variables["detection_config_id"] = config.id
             assert config.id is not None
             assert config.metric_id == variables["data_feed_metric_id"]
             assert config.description == "My test metric anomaly detection configuration"
@@ -91,17 +93,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert config.whole_series_detection_condition.smart_detection_condition.sensitivity == 50
             assert config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number == 5
             assert config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 5
-            if self.is_live:
-                variables["detection_config_id"] = config.id
+
             client.delete_detection_configuration(variables["detection_config_id"])
 
             with pytest.raises(ResourceNotFoundError):
                 client.get_detection_configuration(variables["detection_config_id"])
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_create_ad_config_with_series_and_group_conds(self, client, variables):
@@ -198,10 +199,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert detection_config.series_group_detection_conditions[0].smart_detection_condition.anomaly_detector_direction == "Both"
             assert detection_config.series_group_detection_conditions[0].series_group_key == {'region': 'Sao Paulo'}
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy
     def test_create_ad_config_multiple_series_and_group_conds(self, client, variables):
@@ -407,17 +408,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert detection_config.series_group_detection_conditions[1].smart_detection_condition.anomaly_detector_direction == "Both"
 
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_detection_configs(self, client):
         configs = client.list_detection_configurations(metric_id=self.metric_id)
         assert len(list(configs)) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_update_detection_config_with_model(self, client, variables):
@@ -518,10 +519,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 2
             assert updated.whole_series_detection_condition.condition_operator == "OR"
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_update_detection_config_with_kwargs(self, client, variables):
@@ -630,10 +631,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 2
             assert updated.whole_series_detection_condition.condition_operator == "OR"
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_update_detection_config_with_model_and_kwargs(self, client, variables):
@@ -744,10 +745,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio == 2
             assert updated.whole_series_detection_condition.condition_operator == "OR"
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy
     def test_update_detection_config_by_resetting_properties(self, client, variables):
@@ -768,5 +769,5 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             # assert updated.series_group_detection_conditions == None
 
         finally:
-            client.delete_data_feed(variables["data_feed_id"])
+            self.clean_up(client, variables)
         return variables

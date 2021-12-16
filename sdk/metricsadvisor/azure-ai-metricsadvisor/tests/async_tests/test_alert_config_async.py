@@ -19,14 +19,14 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, test_id
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_top_n_alert_direction_both(self, client, variables):
@@ -60,6 +60,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                     ],
                     hook_ids=[]
                 )
+                if self.is_live:
+                    variables["alert_config_id"] = alert_config.id
                 assert alert_config.cross_metrics_operator is None
                 assert alert_config.id is not None
                 assert alert_config.name is not None
@@ -75,19 +77,18 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
-                if self.is_live:
-                    variables["alert_config_id"] = alert_config.id
+
                 await client.delete_alert_configuration(variables["alert_config_id"])
 
                 with pytest.raises(ResourceNotFoundError):
                     await client.get_alert_configuration(variables["alert_config_id"])
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_top_n_alert_direction_down(self, client, variables):
@@ -137,11 +138,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_top_n_alert_direction_up(self, client, variables):
@@ -191,11 +192,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_top_n_severity_condition(self, client, variables):
@@ -241,11 +242,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_snooze_condition(self, client, variables):
@@ -290,11 +291,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope == "Metric"
                 assert alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_whole_series_alert_direction_both(self, client, variables):
@@ -336,11 +337,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_whole_series_alert_direction_down(self, client, variables):
@@ -381,11 +382,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_whole_series_alert_direction_up(self, client, variables):
@@ -426,11 +427,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_whole_series_severity_condition(self, client, variables):
@@ -467,11 +468,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_series_group_alert_direction_both(self, client, variables):
@@ -515,11 +516,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_series_group_alert_direction_down(self, client, variables):
@@ -562,11 +563,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_series_group_alert_direction_up(self, client, variables):
@@ -609,11 +610,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
                 assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_series_group_severity_condition(self, client, variables):
@@ -652,11 +653,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
     async def test_create_alert_config_multiple_configurations(self, client, variables):
@@ -738,11 +739,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity == "Low"
                 assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity == "High"
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_list_alert_configs(self, client):
@@ -756,7 +757,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
             assert len(list(config_list)) > 0
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy_async
     async def test_update_alert_config_with_model(self, client, variables):
@@ -796,11 +797,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy_async
     async def test_update_alert_config_with_kwargs(self, client, variables):
@@ -883,11 +884,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy_async
     async def test_update_alert_config_with_model_and_kwargs(self, client, variables):
@@ -976,11 +977,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=("APIKey", "AAD"))
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
     @recorded_by_proxy_async
     async def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
@@ -1014,5 +1015,5 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                 assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition is None
 
             finally:
-                await client.delete_data_feed(variables["data_feed_id"])
+                await self.clean_up(client, variables)
             return variables

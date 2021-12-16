@@ -16,13 +16,14 @@ from azure.ai.metricsadvisor.models import (
     DatasourceServicePrincipal,
     DatasourceServicePrincipalInKeyVault
 )
-from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, test_id
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_create_datasource_sql_connection_string(self, client, variables):
@@ -38,16 +39,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 assert credential.id is not None
                 assert credential.name == variables["credential_name"]
                 assert credential.credential_type == 'AzureSQLConnectionString'
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_datasource_datalake_gen2_shared_key(self, client, variables):
@@ -63,16 +65,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 assert credential.id is not None
                 assert credential.name == variables["credential_name"]
                 assert credential.credential_type == 'DataLakeGen2SharedKey'
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_datasource_service_principal(self, client, variables):
@@ -90,16 +93,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 assert credential.id is not None
                 assert credential.name == variables["credential_name"]
                 assert credential.credential_type == 'ServicePrincipal'
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_datasource_service_principal_in_kv(self, client, variables):
@@ -120,16 +124,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 assert credential.id is not None
                 assert credential.name == variables["credential_name"]
                 assert credential.credential_type == 'ServicePrincipalInKV'
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_list_datasource_credentials(self, client, variables):
@@ -145,15 +150,20 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
-                credentials = await client.list_datasource_credentials()
-                assert len(list(credentials)) > 0
                 if self.is_live:
                     variables["credential_id"] = credential.id
+                credentials = client.list_datasource_credentials()
+                creds_list = []
+                async for cred in credentials:
+                    creds_list.append(cred)
+                assert len(creds_list) > 0
+
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_update_datasource_sql_connection_string(self, client, variables):
@@ -169,17 +179,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.connection_string = "update"
                 credential.description = "update"
                 credential_updated = await client.update_datasource_credential(credential)
                 assert credential_updated.description == "update"
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_update_datasource_datalake_gen2_shared_key(self, client, variables):
@@ -195,17 +206,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.account_key = "update"
                 credential.description = "update"
                 credential_updated = await client.update_datasource_credential(credential)
                 assert credential_updated.description == "update"
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_update_datasource_service_principal(self, client, variables):
@@ -223,19 +235,20 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.client_id = "update"
                 credential.client_secret = "update"
                 credential.tenant_id = "update"
                 credential.description = "update"
                 credential_updated = await client.update_datasource_credential(credential)
                 assert credential_updated.description == "update"
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=test_id)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_update_datasource_service_principal_in_kv(self, client, variables):
@@ -256,6 +269,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.key_vault_endpoint = "update"
                 credential.key_vault_client_id = "update"
                 credential.key_vault_client_secret = "update"
@@ -265,8 +280,6 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 credential.description = "update"
                 credential_updated = await client.update_datasource_credential(credential)
                 assert credential_updated.description == "update"
-                if self.is_live:
-                    variables["credential_id"] = credential.id
             finally:
                 await client.delete_datasource_credential(variables["credential_id"])
             return variables
