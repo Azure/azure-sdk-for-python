@@ -25,9 +25,9 @@ class Association(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The association type.
     :vartype type: str
-    :param target_resource_id: The REST resource instance of the target resource for this
+    :ivar target_resource_id: The REST resource instance of the target resource for this
      association.
-    :type target_resource_id: str
+    :vartype target_resource_id: str
     :ivar provisioning_state: The provisioning state of the association. Possible values include:
      "Accepted", "Deleting", "Running", "Succeeded", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.customproviders.models.ProvisioningState
@@ -54,6 +54,11 @@ class Association(msrest.serialization.Model):
         target_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target_resource_id: The REST resource instance of the target resource for this
+         association.
+        :paramtype target_resource_id: str
+        """
         super(Association, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -65,10 +70,10 @@ class Association(msrest.serialization.Model):
 class AssociationsList(msrest.serialization.Model):
     """List of associations.
 
-    :param value: The array of associations.
-    :type value: list[~azure.mgmt.customproviders.models.Association]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The array of associations.
+    :vartype value: list[~azure.mgmt.customproviders.models.Association]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -83,6 +88,12 @@ class AssociationsList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The array of associations.
+        :paramtype value: list[~azure.mgmt.customproviders.models.Association]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(AssociationsList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -93,14 +104,14 @@ class CustomRPRouteDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the route definition. This becomes the name for the ARM
+    :ivar name: Required. The name of the route definition. This becomes the name for the ARM
      extension (e.g.
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
-    :type name: str
-    :param endpoint: Required. The route definition endpoint URI that the custom resource provider
+    :vartype name: str
+    :ivar endpoint: Required. The route definition endpoint URI that the custom resource provider
      will proxy requests to. This can be in the form of a flat URI (e.g. 'https://testendpoint/') or
      can specify to route via a path (e.g. 'https://testendpoint/{requestPath}').
-    :type endpoint: str
+    :vartype endpoint: str
     """
 
     _validation = {
@@ -120,6 +131,17 @@ class CustomRPRouteDefinition(msrest.serialization.Model):
         endpoint: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the route definition. This becomes the name for the ARM
+         extension (e.g.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
+        :paramtype name: str
+        :keyword endpoint: Required. The route definition endpoint URI that the custom resource
+         provider will proxy requests to. This can be in the form of a flat URI (e.g.
+         'https://testendpoint/') or can specify to route via a path (e.g.
+         'https://testendpoint/{requestPath}').
+        :paramtype endpoint: str
+        """
         super(CustomRPRouteDefinition, self).__init__(**kwargs)
         self.name = name
         self.endpoint = endpoint
@@ -130,17 +152,17 @@ class CustomRPActionRouteDefinition(CustomRPRouteDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the route definition. This becomes the name for the ARM
+    :ivar name: Required. The name of the route definition. This becomes the name for the ARM
      extension (e.g.
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
-    :type name: str
-    :param endpoint: Required. The route definition endpoint URI that the custom resource provider
+    :vartype name: str
+    :ivar endpoint: Required. The route definition endpoint URI that the custom resource provider
      will proxy requests to. This can be in the form of a flat URI (e.g. 'https://testendpoint/') or
      can specify to route via a path (e.g. 'https://testendpoint/{requestPath}').
-    :type endpoint: str
-    :param routing_type: The routing types that are supported for action requests. Possible values
+    :vartype endpoint: str
+    :ivar routing_type: The routing types that are supported for action requests. Possible values
      include: "Proxy".
-    :type routing_type: str or ~azure.mgmt.customproviders.models.ActionRouting
+    :vartype routing_type: str or ~azure.mgmt.customproviders.models.ActionRouting
     """
 
     _validation = {
@@ -162,6 +184,20 @@ class CustomRPActionRouteDefinition(CustomRPRouteDefinition):
         routing_type: Optional[Union[str, "ActionRouting"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the route definition. This becomes the name for the ARM
+         extension (e.g.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
+        :paramtype name: str
+        :keyword endpoint: Required. The route definition endpoint URI that the custom resource
+         provider will proxy requests to. This can be in the form of a flat URI (e.g.
+         'https://testendpoint/') or can specify to route via a path (e.g.
+         'https://testendpoint/{requestPath}').
+        :paramtype endpoint: str
+        :keyword routing_type: The routing types that are supported for action requests. Possible
+         values include: "Proxy".
+        :paramtype routing_type: str or ~azure.mgmt.customproviders.models.ActionRouting
+        """
         super(CustomRPActionRouteDefinition, self).__init__(name=name, endpoint=endpoint, **kwargs)
         self.routing_type = routing_type
 
@@ -179,10 +215,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -207,6 +243,12 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -228,17 +270,17 @@ class CustomRPManifest(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param actions: A list of actions that the custom resource provider implements.
-    :type actions: list[~azure.mgmt.customproviders.models.CustomRPActionRouteDefinition]
-    :param resource_types: A list of resource types that the custom resource provider implements.
-    :type resource_types:
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar actions: A list of actions that the custom resource provider implements.
+    :vartype actions: list[~azure.mgmt.customproviders.models.CustomRPActionRouteDefinition]
+    :ivar resource_types: A list of resource types that the custom resource provider implements.
+    :vartype resource_types:
      list[~azure.mgmt.customproviders.models.CustomRPResourceTypeRouteDefinition]
-    :param validations: A list of validations to run on the custom resource provider's requests.
-    :type validations: list[~azure.mgmt.customproviders.models.CustomRPValidations]
+    :ivar validations: A list of validations to run on the custom resource provider's requests.
+    :vartype validations: list[~azure.mgmt.customproviders.models.CustomRPValidations]
     :ivar provisioning_state: The provisioning state of the resource provider. Possible values
      include: "Accepted", "Deleting", "Running", "Succeeded", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.customproviders.models.ProvisioningState
@@ -274,6 +316,19 @@ class CustomRPManifest(Resource):
         validations: Optional[List["CustomRPValidations"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword actions: A list of actions that the custom resource provider implements.
+        :paramtype actions: list[~azure.mgmt.customproviders.models.CustomRPActionRouteDefinition]
+        :keyword resource_types: A list of resource types that the custom resource provider implements.
+        :paramtype resource_types:
+         list[~azure.mgmt.customproviders.models.CustomRPResourceTypeRouteDefinition]
+        :keyword validations: A list of validations to run on the custom resource provider's requests.
+        :paramtype validations: list[~azure.mgmt.customproviders.models.CustomRPValidations]
+        """
         super(CustomRPManifest, self).__init__(location=location, tags=tags, **kwargs)
         self.actions = actions
         self.resource_types = resource_types
@@ -286,17 +341,17 @@ class CustomRPResourceTypeRouteDefinition(CustomRPRouteDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the route definition. This becomes the name for the ARM
+    :ivar name: Required. The name of the route definition. This becomes the name for the ARM
      extension (e.g.
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
-    :type name: str
-    :param endpoint: Required. The route definition endpoint URI that the custom resource provider
+    :vartype name: str
+    :ivar endpoint: Required. The route definition endpoint URI that the custom resource provider
      will proxy requests to. This can be in the form of a flat URI (e.g. 'https://testendpoint/') or
      can specify to route via a path (e.g. 'https://testendpoint/{requestPath}').
-    :type endpoint: str
-    :param routing_type: The routing types that are supported for resource requests. Possible
-     values include: "Proxy", "Proxy,Cache".
-    :type routing_type: str or ~azure.mgmt.customproviders.models.ResourceTypeRouting
+    :vartype endpoint: str
+    :ivar routing_type: The routing types that are supported for resource requests. Possible values
+     include: "Proxy", "Proxy,Cache".
+    :vartype routing_type: str or ~azure.mgmt.customproviders.models.ResourceTypeRouting
     """
 
     _validation = {
@@ -318,6 +373,20 @@ class CustomRPResourceTypeRouteDefinition(CustomRPRouteDefinition):
         routing_type: Optional[Union[str, "ResourceTypeRouting"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the route definition. This becomes the name for the ARM
+         extension (e.g.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
+        :paramtype name: str
+        :keyword endpoint: Required. The route definition endpoint URI that the custom resource
+         provider will proxy requests to. This can be in the form of a flat URI (e.g.
+         'https://testendpoint/') or can specify to route via a path (e.g.
+         'https://testendpoint/{requestPath}').
+        :paramtype endpoint: str
+        :keyword routing_type: The routing types that are supported for resource requests. Possible
+         values include: "Proxy", "Proxy,Cache".
+        :paramtype routing_type: str or ~azure.mgmt.customproviders.models.ResourceTypeRouting
+        """
         super(CustomRPResourceTypeRouteDefinition, self).__init__(name=name, endpoint=endpoint, **kwargs)
         self.routing_type = routing_type
 
@@ -327,12 +396,12 @@ class CustomRPValidations(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param validation_type: The type of validation to run against a matching request. Possible
+    :ivar validation_type: The type of validation to run against a matching request. Possible
      values include: "Swagger".
-    :type validation_type: str or ~azure.mgmt.customproviders.models.ValidationType
-    :param specification: Required. A link to the validation specification. The specification must
+    :vartype validation_type: str or ~azure.mgmt.customproviders.models.ValidationType
+    :ivar specification: Required. A link to the validation specification. The specification must
      be hosted on raw.githubusercontent.com.
-    :type specification: str
+    :vartype specification: str
     """
 
     _validation = {
@@ -351,6 +420,14 @@ class CustomRPValidations(msrest.serialization.Model):
         validation_type: Optional[Union[str, "ValidationType"]] = None,
         **kwargs
     ):
+        """
+        :keyword validation_type: The type of validation to run against a matching request. Possible
+         values include: "Swagger".
+        :paramtype validation_type: str or ~azure.mgmt.customproviders.models.ValidationType
+        :keyword specification: Required. A link to the validation specification. The specification
+         must be hosted on raw.githubusercontent.com.
+        :paramtype specification: str
+        """
         super(CustomRPValidations, self).__init__(**kwargs)
         self.validation_type = validation_type
         self.specification = specification
@@ -385,6 +462,8 @@ class ErrorDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -394,8 +473,8 @@ class ErrorDefinition(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :param error: The error details.
-    :type error: ~azure.mgmt.customproviders.models.ErrorDefinition
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.customproviders.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -408,6 +487,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.customproviders.models.ErrorDefinition
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -415,10 +498,10 @@ class ErrorResponse(msrest.serialization.Model):
 class ListByCustomRPManifest(msrest.serialization.Model):
     """List of custom resource providers.
 
-    :param value: The array of custom resource provider manifests.
-    :type value: list[~azure.mgmt.customproviders.models.CustomRPManifest]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The array of custom resource provider manifests.
+    :vartype value: list[~azure.mgmt.customproviders.models.CustomRPManifest]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -433,6 +516,12 @@ class ListByCustomRPManifest(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The array of custom resource provider manifests.
+        :paramtype value: list[~azure.mgmt.customproviders.models.CustomRPManifest]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ListByCustomRPManifest, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -441,10 +530,10 @@ class ListByCustomRPManifest(msrest.serialization.Model):
 class ResourceProviderOperation(msrest.serialization.Model):
     """Supported operations of this resource provider.
 
-    :param name: Operation name, in format of {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.customproviders.models.ResourceProviderOperationDisplay
+    :ivar name: Operation name, in format of {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: Display metadata associated with the operation.
+    :vartype display: ~azure.mgmt.customproviders.models.ResourceProviderOperationDisplay
     """
 
     _attribute_map = {
@@ -459,6 +548,12 @@ class ResourceProviderOperation(msrest.serialization.Model):
         display: Optional["ResourceProviderOperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: Display metadata associated with the operation.
+        :paramtype display: ~azure.mgmt.customproviders.models.ResourceProviderOperationDisplay
+        """
         super(ResourceProviderOperation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -467,14 +562,14 @@ class ResourceProviderOperation(msrest.serialization.Model):
 class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """Display metadata associated with the operation.
 
-    :param provider: Resource provider: Microsoft Custom Providers.
-    :type provider: str
-    :param resource: Resource on which the operation is performed.
-    :type resource: str
-    :param operation: Type of operation: get, read, delete, etc.
-    :type operation: str
-    :param description: Description of this operation.
-    :type description: str
+    :ivar provider: Resource provider: Microsoft Custom Providers.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: Type of operation: get, read, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of this operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -493,6 +588,16 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Resource provider: Microsoft Custom Providers.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: Type of operation: get, read, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of this operation.
+        :paramtype description: str
+        """
         super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -503,10 +608,10 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
 class ResourceProviderOperationList(msrest.serialization.Model):
     """Results of the request to list operations.
 
-    :param value: List of operations supported by this resource provider.
-    :type value: list[~azure.mgmt.customproviders.models.ResourceProviderOperation]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: List of operations supported by this resource provider.
+    :vartype value: list[~azure.mgmt.customproviders.models.ResourceProviderOperation]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -521,6 +626,12 @@ class ResourceProviderOperationList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of operations supported by this resource provider.
+        :paramtype value: list[~azure.mgmt.customproviders.models.ResourceProviderOperation]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ResourceProviderOperationList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -529,8 +640,8 @@ class ResourceProviderOperationList(msrest.serialization.Model):
 class ResourceProvidersUpdate(msrest.serialization.Model):
     """custom resource provider update information.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -543,5 +654,9 @@ class ResourceProvidersUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ResourceProvidersUpdate, self).__init__(**kwargs)
         self.tags = tags
