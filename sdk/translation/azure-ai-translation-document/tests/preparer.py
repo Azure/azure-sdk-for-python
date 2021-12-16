@@ -43,7 +43,6 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         client = self.client_cls(
             doctranslation_test_endpoint,
             AzureKeyCredential(doctranslation_test_api_key),
-            logging_enable=True,
             **self.client_kwargs
         )
         kwargs.update({"client": client})

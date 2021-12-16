@@ -1,4 +1,4 @@
-if ($DeploymentOutputs["TRANSLATION_DOCUMENT_STORAGE_NAME"] -ne "krpraticstorageacc") {
+if ($DeploymentOutputs["TRANSLATION_DOCUMENT_STORAGE_NAME"] -ne "pythontranslationstorage") {
     $StorageAccount = Get-AzStorageAccount -ResourceGroupName $ResourceGroupName -Name $DeploymentOutputs["TRANSLATION_DOCUMENT_STORAGE_NAME"]
     $ctx = $StorageAccount.Context
     Set-AzStorageBlobContent -File "./sdk/translation/azure-ai-translation-document/samples/assets/glossary_sample.tsv" -Container "sourcecontainer" -Blob "glosario.tsv" -Context $ctx

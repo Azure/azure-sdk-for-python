@@ -54,7 +54,7 @@
             }
         },
         "staticStorageName": {
-            "defaultValue": "krpraticstorageacc",
+            "defaultValue": "pythontranslationstorage",
             "type": "string"
         },
         "blobStorageAccount": {
@@ -63,11 +63,11 @@
         },
         "storageAccResourceId": {
             "type": "string",
-            "defaultValue": "[if(parameters('useStaticStorageResource'), resourceId('faa080af-c1d8-40ad-9cce-e1a450ca5b57', 'krpratic-rg', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')), resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount')))]"
+            "defaultValue": "[resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
         },
         "targetContainerName_1": {
             "type": "string",
-            "defaultValue": "targetcontainer1"
+            "defaultValue": "testingcontainer1"
         },
         "targetContainerSasProperties_1": {
             "type": "object",
@@ -80,7 +80,7 @@
         },
         "targetContainerName_2": {
             "type": "string",
-            "defaultValue": "targetcontainer2"
+            "defaultValue": "testingcontainer2"
         },
         "targetContainerSasProperties_2": {
             "type": "object",
@@ -93,7 +93,7 @@
         },
         "targetContainerName_3": {
             "type": "string",
-            "defaultValue": "targetcontainer3"
+            "defaultValue": "testingcontainer3"
         },
         "targetContainerSasProperties_3": {
             "type": "object",
@@ -106,7 +106,7 @@
         },
         "targetContainerName_4": {
             "type": "string",
-            "defaultValue": "targetcontainer4"
+            "defaultValue": "testingcontainer4"
         },
         "targetContainerSasProperties_4": {
             "type": "object",
@@ -284,7 +284,7 @@
         "TRANSLATION_DOCUMENT_STORAGE_KEY": {
             "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value)]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         },
         "AZURE_DOCUMENT_TRANSLATION_KEY": {
             "type": "string",
