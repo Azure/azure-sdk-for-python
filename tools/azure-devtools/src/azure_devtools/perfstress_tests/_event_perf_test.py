@@ -36,9 +36,17 @@ class EventPerfTest(_PerfTestBase):
         """
         return self._completed_operations.value()
 
+    @property
+    def last_completion_time(self) -> float:
+        """
+        Elapsed time between start of warmup/run and last completed operation.
+        Reset after warmup.
+        """
+        return self._last_completion_time - self._start_time
+
     def event_raised_sync(self):
         self._completed_operations.increment()
-        self._last_completion_time = time.time() - self._start_time
+        self._last_completion_time = time.time()
 
     def error_raised_sync(self, error):
         with self._condition:
@@ -47,7 +55,7 @@ class EventPerfTest(_PerfTestBase):
 
     async def event_raised_async(self):
         self._completed_operations.increment()
-        self._last_completion_time = time.time() - self._start_time
+        self._last_completion_time = time.time()
 
     async def error_raised_async(self, error):
         async with self._condition:

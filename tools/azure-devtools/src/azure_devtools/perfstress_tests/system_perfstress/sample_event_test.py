@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from asyncio.tasks import sleep
-from socket import errorTab
+import asyncio
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import asyncio
 import time
 
 from azure_devtools.perfstress_tests import EventPerfTest
+
 
 class MockEventProcessor():
 
