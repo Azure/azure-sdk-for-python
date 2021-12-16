@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import uuid
 from dateutil.tz import tzutc
 import pytest
 import functools
@@ -783,7 +784,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     def test_update_data_feed_with_model(self, client, variables):
         data_feed = client.get_data_feed(variables["data_feed_id"])
         try:
-            data_feed.name = "update"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
+            data_feed.name = variables["data_feed_updated_name"]
             data_feed.data_feed_description = "updated"
             data_feed.schema.timestamp_column = "time"
             data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2021, 12, 10)
@@ -806,7 +810,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
             client.update_data_feed(data_feed)
             updated = client.get_data_feed(variables["data_feed_id"])
-            assert updated.name == "update"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.data_feed_description == "updated"
             assert updated.schema.timestamp_column == "time"
             assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
@@ -835,9 +839,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
         data_feed = client.get_data_feed(variables["data_feed_id"])
         try:
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
             client.update_data_feed(
                 data_feed.id,
-                name="update",
+                name=variables["data_feed_updated_name"],
                 data_feed_description="updated",
                 timestamp_column="time",
                 ingestion_begin_time=datetime.datetime(2021, 9, 10),
@@ -861,7 +868,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 )
             )
             updated = client.get_data_feed(variables["data_feed_id"])
-            assert updated.name == "update"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.data_feed_description == "updated"
             assert updated.schema.timestamp_column == "time"
             assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
@@ -890,7 +897,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
         data_feed = client.get_data_feed(variables["data_feed_id"])
         try:
-            data_feed.name = "updateMe"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
+            data_feed.name = variables["data_feed_updated_name"]
             data_feed.data_feed_description = "updateMe"
             data_feed.schema.timestamp_column = "don't update me"
             data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2021, 9, 22)
@@ -935,7 +945,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 )
             )
             updated = client.get_data_feed(variables["data_feed_id"])
-            assert updated.name == "updateMe"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.data_feed_description == "updateMe"
             assert updated.schema.timestamp_column == "time"
             assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
@@ -965,9 +975,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
         data_feed = client.get_data_feed(variables["data_feed_id"])
         try:
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
             client.update_data_feed(
                 data_feed.id,
-                name="update",
+                name=variables["data_feed_updated_name"],
                 data_feed_description=None,
                 timestamp_column=None,
                 ingestion_start_offset=None,
@@ -986,7 +999,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 action_link_template=None,
             )
             updated = client.get_data_feed(variables["data_feed_id"])
-            assert updated.name == "update"
+            assert updated.name == variables["data_feed_updated_name"]
             # assert updated.data_feed_description == ""  # doesn't currently clear
             # assert updated.schema.timestamp_column == ""  # doesn't currently clear
             assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())

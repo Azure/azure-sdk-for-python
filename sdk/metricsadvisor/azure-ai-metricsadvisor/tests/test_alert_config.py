@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import uuid
 import functools
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy
@@ -756,7 +757,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
         alert_config = client.get_alert_configuration(variables["alert_config_id"])
         try:
-            alert_config.name = "update"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
+            alert_config.name = variables["alert_config_updated_name"]
             alert_config.description = "update description"
             alert_config.cross_metrics_operator = "OR"
             alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = \
@@ -777,7 +781,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.update_alert_configuration(alert_config)
             updated = client.get_alert_configuration(variables["alert_config_id"])
 
-            assert updated.name == "update"
+            assert updated.name == variables["alert_config_updated_name"]
             assert updated.description == "update description"
             assert updated.cross_metrics_operator == "OR"
             assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
@@ -799,9 +803,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     def test_update_alert_config_with_kwargs(self, client, variables):
 
         try:
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
             client.update_alert_configuration(
                 variables["alert_config_id"],
-                name="update",
+                name=variables["alert_config_updated_name"],
                 description="update description",
                 cross_metrics_operator="OR",
                 metric_alert_configurations=[
@@ -863,7 +870,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 ]
             )
             updated = client.get_alert_configuration(variables["alert_config_id"])
-            assert updated.name == "update"
+            assert updated.name == variables["alert_config_updated_name"]
             assert updated.description == "update description"
             assert updated.cross_metrics_operator == "OR"
             assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
@@ -886,7 +893,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         alert_config = client.get_alert_configuration(variables["alert_config_id"])
 
         try:
-            alert_config.name = "updateMe"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
+            alert_config.name = variables["alert_config_updated_name"]
             alert_config.description = "updateMe"
             alert_config.cross_metrics_operator = "don't update me"
             alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = None
@@ -955,7 +965,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 ]
             )
             updated = client.get_alert_configuration(variables["alert_config_id"])
-            assert updated.name == "updateMe"
+            assert updated.name == variables["alert_config_updated_name"]
             assert updated.description == "updateMe"
             assert updated.cross_metrics_operator == "OR"
             assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
@@ -977,9 +987,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
 
         try:
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
             client.update_alert_configuration(
                 variables["alert_config_id"],
-                name="reset",
+                name=variables["alert_config_updated_name"],
                 description="",  # can't pass None currently, bug says description is required
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -997,7 +1010,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 ]
             )
             updated = client.get_alert_configuration(variables["alert_config_id"])
-            assert updated.name == "reset"
+            assert updated.name == variables["alert_config_updated_name"]
             assert updated.description == ""
             assert updated.cross_metrics_operator is None
             assert len(updated.metric_alert_configurations) == 1

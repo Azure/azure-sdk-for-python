@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import uuid
 import functools
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -424,8 +425,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     def test_update_detection_config_with_model(self, client, variables):
         try:
             detection_config = client.get_detection_configuration(variables["detection_config_id"])
-
-            detection_config.name = "updated"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
+            detection_config.name = variables["data_feed_updated_name"]
             detection_config.description = "updated"
             change_threshold_condition = ChangeThresholdCondition(
                 anomaly_detector_direction="Both",
@@ -469,7 +472,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             client.update_detection_configuration(detection_config)
             updated = client.get_detection_configuration(variables["detection_config_id"])
 
-            assert updated.name == "updated"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.description == "updated"
             assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction == "Both"
             assert updated.series_detection_conditions[0].change_threshold_condition.change_percentage == 20
@@ -553,9 +556,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                     min_ratio=2
                 )
             )
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
             client.update_detection_configuration(
                 variables["detection_config_id"],
-                name="updated",
+                name=variables["data_feed_updated_name"],
                 description="updated",
                 whole_series_detection_condition=MetricDetectionCondition(
                     condition_operator="OR",
@@ -579,7 +585,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 )]
             )
             updated = client.get_detection_configuration(variables["detection_config_id"])
-            assert updated.name == "updated"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.description == "updated"
             assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction == "Both"
             assert updated.series_detection_conditions[0].change_threshold_condition.change_percentage == 20
@@ -666,8 +672,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                     min_ratio=2
                 )
             )
-
-            detection_config.name = "updateMe"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
+            detection_config.name = variables["data_feed_updated_name"]
             detection_config.description = "updateMe"
             client.update_detection_configuration(
                 detection_config,
@@ -693,7 +701,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 )]
             )
             updated = client.get_detection_configuration(variables["detection_config_id"])
-            assert updated.name == "updateMe"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.description == "updateMe"
             assert updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction == "Both"
             assert updated.series_detection_conditions[0].change_threshold_condition.change_percentage == 20
@@ -753,15 +761,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @recorded_by_proxy
     def test_update_detection_config_by_resetting_properties(self, client, variables):
         try:
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["data_feed_updated_name"] = update_name
             client.update_detection_configuration(
                 variables["detection_config_id"],
-                name="reset",
+                name=variables["data_feed_updated_name"],
                 description="",
                 # series_detection_conditions=None,
                 # series_group_detection_conditions=None
             )
             updated = client.get_detection_configuration(variables["detection_config_id"])
-            assert updated.name == "reset"
+            assert updated.name == variables["data_feed_updated_name"]
             assert updated.description == ""  # currently won't update with None
 
             # service bug says these are required

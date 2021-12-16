@@ -9,7 +9,6 @@ import os
 import uuid
 import datetime
 from devtools_testutils import AzureRecordedTestCase, is_live
-from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
 from azure.ai.metricsadvisor.models import (
     SqlServerDataFeedSource,
@@ -68,8 +67,8 @@ class MetricsAdvisorClientPreparer(object):
         def _preparer_wrapper(test_class, credential, **kwargs):
             self.create_test_client(credential)
             self.create_resources(**kwargs)
-            if self.variables:
-                fn(test_class, self.client, self.variables)
+            if is_live():
+                fn(test_class, self.client, variables=self.variables)
             else:
                 fn(test_class, self.client)
         return _preparer_wrapper
@@ -106,8 +105,11 @@ class MetricsAdvisorClientPreparer(object):
                 pass
             raise e
 
+    def create_random_name(self, name):
+        return name + str(uuid.uuid4())
+
     def create_data_feed(self, name):
-        name = create_random_name(name)
+        name = self.create_random_name(name)
         if is_live():
             self.variables["data_feed_name"] = name
         data_feed = self.client.create_data_feed(
@@ -157,7 +159,7 @@ class MetricsAdvisorClientPreparer(object):
         return data_feed
 
     def create_detection_config(self, name):
-        detection_config_name = create_random_name(name)
+        detection_config_name = self.create_random_name(name)
         if is_live():
             self.variables["detection_config_name"] = detection_config_name
         detection_config = self.client.create_detection_configuration(
@@ -222,7 +224,7 @@ class MetricsAdvisorClientPreparer(object):
         return detection_config
 
     def create_alert_config(self, name):
-        alert_config_name = create_random_name(name)
+        alert_config_name = self.create_random_name(name)
         if is_live():
             self.variables["alert_config_name"] = alert_config_name
         alert_config = self.client.create_alert_configuration(
@@ -281,7 +283,7 @@ class MetricsAdvisorClientPreparer(object):
         return alert_config
 
     def create_email_hook(self, name):
-        email_hook_name = create_random_name(name)
+        email_hook_name = self.create_random_name(name)
         if is_live():
             self.variables["email_hook_name"] = email_hook_name
         email_hook = self.client.create_hook(
@@ -297,7 +299,7 @@ class MetricsAdvisorClientPreparer(object):
         return email_hook
 
     def create_web_hook(self, name):
-        web_hook_name = create_random_name(name)
+        web_hook_name = self.create_random_name(name)
         if is_live():
             self.variables["web_hook_name"] = web_hook_name
         web_hook = self.client.create_hook(

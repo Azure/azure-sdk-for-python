@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase
@@ -111,7 +112,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         hook = await client.get_hook(variables["email_hook_id"])
         async with client:
             try:
-                hook.name = "update"
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
+                hook.name = variables["hook_updated_name"]
                 hook.description = "update"
                 hook.external_link = "update"
                 hook.emails_to_alert = ["myemail@m.com"]
@@ -119,7 +123,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 await client.update_hook(hook)
                 updated = await client.get_hook(variables["email_hook_id"])
 
-                assert updated.name == "update"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.description == "update"
                 assert updated.external_link == "update"
                 assert updated.emails_to_alert == ["myemail@m.com"]
@@ -135,16 +139,19 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_email_hook_with_kwargs(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 await client.update_hook(
                     variables["email_hook_id"],
                     hook_type="Email",
-                    name="update",
+                    name=variables["hook_updated_name"],
                     description="update",
                     external_link="update",
                     emails_to_alert=["myemail@m.com"]
                 )
                 updated = await client.get_hook(variables["email_hook_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.description == "update"
                 assert updated.external_link == "update"
                 assert updated.emails_to_alert == ["myemail@m.com"]
@@ -160,6 +167,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_email_hook_with_model_and_kwargs(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 hook = await client.get_hook(variables["email_hook_id"])
                 hook.name = "don't update me"
                 hook.description = "don't update me"
@@ -167,13 +177,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                 await client.update_hook(
                     hook,
                     hook_type="Email",
-                    name="update",
+                    name=variables["hook_updated_name"],
                     description="update",
                     external_link="update",
                     emails_to_alert=["myemail@m.com"]
                 )
                 updated = await client.get_hook(variables["email_hook_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.description == "update"
                 assert updated.external_link == "update"
                 assert updated.emails_to_alert == ["myemail@m.com"]
@@ -189,15 +199,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_email_hook_by_resetting_properties(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 await client.update_hook(
                     variables["email_hook_id"],
                     hook_type="Email",
-                    name="reset",
+                    name=variables["hook_updated_name"],
                     description=None,
                     external_link=None,
                 )
                 updated = await client.get_hook(variables["email_hook_id"])
-                assert updated.name == "reset"
+                assert updated.name == variables["hook_updated_name"]
 
                 # sending null, but not clearing properties
                 # assert updated.description == ""
@@ -214,8 +227,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_web_hook_with_model(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 hook = await client.get_hook(variables["web_hook_id"])
-                hook.name = "update"
+                hook.name = variables["hook_updated_name"]
                 hook.description = "update"
                 hook.external_link = "update"
                 hook.username = "myusername"
@@ -223,7 +239,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
                 await client.update_hook(hook)
                 updated = await client.get_hook(variables["web_hook_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.description == "update"
                 assert updated.external_link == "update"
                 assert updated.username == "myusername"
@@ -239,18 +255,21 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_web_hook_with_kwargs(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 await client.update_hook(
                     variables["web_hook_id"],
                     hook_type="Web",
                     endpoint="https://httpbin.org/post",
-                    name="update",
+                    name=variables["hook_updated_name"],
                     description="update",
                     external_link="update",
                     username="myusername",
                     password="password"
                 )
                 updated = await client.get_hook(variables["web_hook_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.description == "update"
                 assert updated.external_link == "update"
                 assert updated.username == "myusername"
@@ -266,6 +285,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_web_hook_with_model_and_kwargs(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 hook = await client.get_hook(variables["web_hook_id"])
                 hook.name = "don't update me"
                 hook.description = "updateMe"
@@ -276,13 +298,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                     hook,
                     hook_type="Web",
                     endpoint="https://httpbin.org/post",
-                    name="update",
+                    name=variables["hook_updated_name"],
                     external_link="update",
                     username="myusername",
                     password="password"
                 )
                 updated = await client.get_hook(variables["web_hook_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.description == "updateMe"
                 assert updated.external_link == "update"
                 assert updated.username == "myusername"
@@ -298,10 +320,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     async def test_update_web_hook_by_resetting_properties(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["hook_updated_name"] = update_name
                 await client.update_hook(
                     variables["web_hook_id"],
                     hook_type="Web",
-                    name="reset",
+                    name=variables["hook_updated_name"],
                     description=None,
                     endpoint="https://httpbin.org/post",
                     external_link=None,
@@ -309,7 +334,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
                     password=None
                 )
                 updated = await client.get_hook(variables["web_hook_id"])
-                assert updated.name == "reset"
+                assert updated.name == variables["hook_updated_name"]
                 assert updated.password == ""
 
                 # sending null, but not clearing properties

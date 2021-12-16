@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase
@@ -763,8 +764,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     async def test_update_alert_config_with_model(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["alert_config_updated_name"] = update_name
                 alert_config = await client.get_alert_configuration(variables["alert_config_id"])
-                alert_config.name = "update"
+                alert_config.name = variables["alert_config_updated_name"]
                 alert_config.description = "update description"
                 alert_config.cross_metrics_operator = "OR"
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = \
@@ -784,7 +788,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
 
                 await client.update_alert_configuration(alert_config)
                 updated = await client.get_alert_configuration(variables["alert_config_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["alert_config_updated_name"]
                 assert updated.description == "update description"
                 assert updated.cross_metrics_operator == "OR"
                 assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
@@ -807,9 +811,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     async def test_update_alert_config_with_kwargs(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["alert_config_updated_name"] = update_name
                 await client.update_alert_configuration(
                     variables["alert_config_id"],
-                    name="update",
+                    name=variables["alert_config_updated_name"],
                     description="update description",
                     cross_metrics_operator="OR",
                     metric_alert_configurations=[
@@ -871,7 +878,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                     ]
                 )
                 updated = await client.get_alert_configuration(variables["alert_config_id"])
-                assert updated.name == "update"
+                assert updated.name == variables["alert_config_updated_name"]
                 assert updated.description == "update description"
                 assert updated.cross_metrics_operator == "OR"
                 assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
@@ -894,8 +901,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     async def test_update_alert_config_with_model_and_kwargs(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["alert_config_updated_name"] = update_name
                 alert_config = await client.get_alert_configuration(variables["alert_config_id"])
-                alert_config.name = "updateMe"
+                alert_config.name = variables["alert_config_updated_name"]
                 alert_config.description = "updateMe"
                 alert_config.cross_metrics_operator = "don't update me"
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = None
@@ -964,7 +974,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                     ]
                 )
                 updated = await client.get_alert_configuration(variables["alert_config_id"])
-                assert updated.name == "updateMe"
+                assert updated.name == variables["alert_config_updated_name"]
                 assert updated.description == "updateMe"
                 assert updated.cross_metrics_operator == "OR"
                 assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
@@ -987,9 +997,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     async def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
         async with client:
             try:
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["alert_config_updated_name"] = update_name
                 await client.update_alert_configuration(
                     variables["alert_config_id"],
-                    name="reset",
+                    name=variables["alert_config_updated_name"],
                     description="",  # can't pass None currently, bug says description is required
                     metric_alert_configurations=[
                         MetricAlertConfiguration(
@@ -1007,7 +1020,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
                     ]
                 )
                 updated = await client.get_alert_configuration(variables["alert_config_id"])
-                assert updated.name == "reset"
+                assert updated.name == variables["alert_config_updated_name"]
                 assert updated.description == ""
                 assert updated.cross_metrics_operator is None
                 assert len(updated.metric_alert_configurations) == 1
