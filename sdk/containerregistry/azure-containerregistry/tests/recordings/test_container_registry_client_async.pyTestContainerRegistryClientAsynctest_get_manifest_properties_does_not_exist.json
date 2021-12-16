@@ -1,0 +1,34 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/DOESNOTEXIST/_tags/DOESNOTEXIST?api-version=2021-07-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "8b36df77-5da2-11ec-9f79-5cf37093a909"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "19",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Wed, 15 Dec 2021 12:28:44 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "cdb4a725-95d2-4a6b-a763-c7ca5b9f2855"
+      },
+      "ResponseBody": [
+        "404 page not found\n"
+      ]
+    }
+  ],
+  "Variables": {}
+}
