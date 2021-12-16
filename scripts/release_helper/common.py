@@ -1,7 +1,8 @@
 from datetime import date, datetime
 from typing import Set, List, Dict
 import os
-from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag
+from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
+    MULTI_LINK_LABEL
 import re
 import logging
 import time
@@ -29,19 +30,22 @@ class IssueProcess:
     language_owner = {}  # language owner who may handle issue
 
     # will be changed by order
-    issue = None  # issue that needs to handle
+    issue_package = None  # issue that needs to handle
     assignee = ''
-    bot = ''  # bot advice to help SDK owner
+    bot_advice = []  # bot advice to help SDK owner
     target_readme_tag = ''  # swagger content that customers want
     readme_link = ''  # https link which swagger definition is in
     default_readme_tag = ''  # configured in `README.md`
+    package_name = ''  # target package name
+    target_date = ''  # target release date asked by customer
+    date_from_target = 0
 
-    def __init__(self, issue: IssuePackage, request_repo_dict: Dict[str, Repository],
+    def __init__(self, issue_package: IssuePackage, request_repo_dict: Dict[str, Repository],
                  assignee_candidates: Set[str], language_owner: Set[str]):
-        self.issue_package = issue
+        self.issue_package = issue_package
         self.request_repo_dict = request_repo_dict
-        self.assignee = issue.issue.assignee.login
-        self.owner = issue.issue.user.login
+        self.assignee = issue_package.issue.assignee.login
+        self.owner = issue_package.issue.user.login
         self.assignee_candidates = assignee_candidates
         self.language_owner = language_owner
 
@@ -79,7 +83,7 @@ class IssueProcess:
             pr = f"{_SWAGGER_PULL}/{pr_number}"
             self.comment(
                 f'Hi, @{self.assignee}, by parsing {pr}, there are multi service link: {multi_link}. Please decide which one is the right.')
-            self.bot.append('multi readme link!')
+            self.add_label(MULTI_LINK_LABEL)
             raise Exception(f'multi link in "{pr}"')
 
         return readme_link[0]
@@ -199,23 +203,62 @@ class IssueProcess:
             self.update_issue_instance()
         self.add_label(AUTO_ASSIGN_LABEL)
 
-    def bot_advice(self):
-        latest_comments = ''
+    def new_issue_policy(self):
+        new_issue_advice = 'new issue.'
+        if self.issue_package.issue.comments == 0:
+            self.bot_advice.append(new_issue_advice)
+        else:
+            # issue that no comment from language owner will also be treated as new issue
+            comment_from_owner = set(comment.user.login for comment in self.issue_package.issue.get_comments()
+                                     if comment.user.login in self.language_owner)
+            if not comment_from_owner:
+                self.bot_advice.append(new_issue_advice)
+
+    def new_comment_policy(self):
+        if self.issue_package.issue.comments == 0:
+            return
         comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in
                     self.issue_package.issue.get_comments()]
         comments.sort()
-        if comments:
-            latest_comments = comments[-1][1]
-        if self.issue_package.issue.comments == 0:
-            self.bot = 'new issue ! <br>'
-        elif latest_comments not in self.language_owner:
-            self.bot = 'new comment.  <br>'
+        latest_comments = comments[-1][1]
+        if latest_comments not in self.language_owner:
+            self.bot_advice.append('new comment.')
+
+    def multi_link_policy(self):
+        if MULTI_LINK_LABEL in self.issue_package.labels_name:
+            self.bot_advice.append('multi readme link!')
+
+    def remind_logic(self) -> bool:
+        return abs(self.date_from_target) <= 2
+
+    def print_date_from_target_date(self) -> str:
+        return str(self.date_from_target) if self.remind_logic() else ''
+
+    def date_remind_policy(self):
+        if self.remind_logic():
+            self.bot_advice.append('close to release date. ')
+
+    def auto_bot_advice(self):
+        self.new_issue_policy()
+        self.new_comment_policy()
+        self.multi_link_policy()
+        self.date_remind_policy()
+
+    def get_target_date(self):
+        body = self.get_issue_body()
+        try:
+            self.target_date = [line.split(':')[-1].strip() for line in body if 'Target release date' in line][0]
+            self.date_from_target = int((time.mktime(time.strptime(self.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        except Exception:
+            self.target_date = 'fail to get.'
+            self.date_from_target = 1000  # make a ridiculous data to remind failure when error happens
 
     def run(self) -> None:
         # common part(don't change the order)
         self.auto_assign()  # necessary flow
         self.auto_parse()  # necessary flow
-        self.bot_advice()
+        self.get_target_date()
+        self.auto_bot_advice()  # make sure this is the last step
 
 
 class Common:
@@ -241,31 +284,37 @@ class Common:
 
     def output(self):
         with open(self.file_out_name, 'w') as file_out:
-            file_out.write(
-                '| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
+            file_out.write('| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
             file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
-            file_out.writelines([self.output_md(item) for item in self.result])
+            for item in self.result:
+                try:
+                    item_status = Common.output_md(item)
+                    file_out.write(item_status)
+                except Exception as e:
+                    _LOG.error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
         Common.push_md_to_storage()
 
-    def output_md(self, item):
+    @staticmethod
+    def output_md(item: IssueProcess):
         create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
+        target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
 
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
             item.issue_package.issue.user.login,
-            self.package_name,
-            item.issue_package.issue.assignee.login,
-            item.bot,
+            item.package_name,
+            item.assignee,
+            ' '.join(item.bot_advice),
             create_date,
-            self.target_release_date,
-            self.date_from_target
+            target_date,
+            item.print_date_from_target_date()
         )
 
     @staticmethod
     def push_md_to_storage():
-        cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
-        [sp.check_call(cmd, shell=True) for cmd in cmd_list]
+        cmd_list = ['git add -u', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
+        [sp.call(cmd, shell=True) for cmd in cmd_list]
 
     def run(self):
         for item in self.issues_package:
