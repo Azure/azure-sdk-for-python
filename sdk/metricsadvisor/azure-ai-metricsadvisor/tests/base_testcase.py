@@ -42,7 +42,7 @@ subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_adviso
 api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
 API_KEY = [MetricsAdvisorKeyCredential(subscription_key, api_key)]
 AAD = ["AAD"]
-CREDENTIALS = [*API_KEY, *AAD]
+CREDENTIALS = [MetricsAdvisorKeyCredential(subscription_key, api_key), "AAD"]
 
 
 def ids(val):
