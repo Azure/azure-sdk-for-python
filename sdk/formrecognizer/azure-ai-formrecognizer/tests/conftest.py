@@ -31,10 +31,15 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(
         json_path="urlSource",
         value="blob_sas_url",
-        group_for_replace="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$"
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
     )
     add_body_key_sanitizer(
         json_path="source",
         value="blob_sas_url",
-        group_for_replace="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$"
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$",
+    )
+    add_body_key_sanitizer(
+        json_path="accessToken",
+        value="redacted",
+        group_for_replace="(\"accessToken\": \"([0-9a-z-]*)\")",
     )
