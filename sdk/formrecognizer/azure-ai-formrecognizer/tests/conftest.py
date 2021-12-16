@@ -30,9 +30,11 @@ def add_sanitizers(test_proxy):
     add_oauth_response_sanitizer()
     add_body_key_sanitizer(
         json_path="urlSource",
-        value="https://region.api.cognitive.microsoft.com/formrecognizer/"
+        value="blob_sas_url",
+        group_for_replace="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$"
     )
     add_body_key_sanitizer(
         json_path="source",
-        value="https://region.api.cognitive.microsoft.com/formrecognizer/"
+        value="blob_sas_url",
+        group_for_replace="(?<=\\/\\/)[a-z-]+(?=\\.blob\\.core\\.windows\\.net)(.*)$"
     )
