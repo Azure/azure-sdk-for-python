@@ -91,7 +91,7 @@ class Link(object):
         self._send_links = {}
         self._receive_links = {}
         self._pending_deliveries = {}
-        self._received_payload = b""
+        self._received_payload = bytearray()
         self._on_link_state_change = kwargs.get('on_link_state_change')
 
     async def __aenter__(self):
@@ -225,7 +225,7 @@ class Link(object):
             raise ValueError("Link already closed.")
         await self._outgoing_attach()
         await self._set_state(LinkState.ATTACH_SENT)
-        self._received_payload = b''
+        self._received_payload = bytearray()
 
     async def detach(self, close=False, error=None):
         if self._is_closed:

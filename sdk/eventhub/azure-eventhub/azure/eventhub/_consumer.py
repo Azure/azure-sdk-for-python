@@ -229,7 +229,7 @@ class EventHubConsumer(
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
-                        isinstance(exception, errors.LinkErrorCondition.DetachForced)
+                        isinstance(exception, errors.AMQPLinkError)
                         and exception.condition == pyamqp_constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
                     ):
                         raise self._handle_exception(exception)

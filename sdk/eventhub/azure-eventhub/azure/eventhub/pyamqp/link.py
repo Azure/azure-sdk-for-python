@@ -93,7 +93,7 @@ class Link(object):
         self._send_links = {}
         self._receive_links = {}
         self._pending_deliveries = {}
-        self._received_payload = b""
+        self._received_payload = bytearray()
         self._on_link_state_change = kwargs.get('on_link_state_change')
 
     def __enter__(self):
@@ -229,7 +229,7 @@ class Link(object):
             raise ValueError("Link already closed.")
         self._outgoing_attach()
         self._set_state(LinkState.ATTACH_SENT)
-        self._received_payload = b''
+        self._received_payload = bytearray()
 
     def detach(self, close=False, error=None):
         if self._is_closed:
