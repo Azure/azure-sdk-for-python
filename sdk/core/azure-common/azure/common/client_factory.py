@@ -62,7 +62,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
 
     This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
 
-    For compatible azure-cli-core version (< 2.20.0), This method will fill automatically the following client parameters:
+    For compatible azure-cli-core (< 2.20.0), This method will fill automatically the following client parameters:
     - credentials/credential
     - subscription_id
     - base_url
@@ -88,7 +88,8 @@ def get_client_from_cli_profile(client_class, **kwargs):
     :raises: ImportError if azure-cli-core package is not available
     """
     warnings.warn(
-        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead",
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead. "+
+        "See also https://aka.ms/azsdk/python/identity/migration.",
         DeprecationWarning
     )
 
@@ -184,7 +185,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     if _is_autorest_v3(client_class):
         raise ValueError(
             "Auth file or JSON dict are deprecated auth approach and are not supported anymore. "
-            "Please read https://aka.ms/azsdk/python/azidmigration for details"
+            "See also https://aka.ms/azsdk/python/identity/migration."
         )
 
     import adal

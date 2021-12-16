@@ -16,7 +16,7 @@ except ImportError:
 def get_cli_profile():
     """Return a CLI profile class.
 
-    *Disclaimer*: This method is not working properly for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
+    *Disclaimer*: This method is not working properly for CLI installation after 3/2021 (azure-cli-core 2.21.0).
 
     .. versionadded:: 1.1.6
 
@@ -33,8 +33,10 @@ def get_cli_profile():
         from azure.cli.core._environment import get_config_dir
     except ImportError:
         raise ImportError(
-            "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
-            "You should consider using azure-identity and AzureCliCredential instead, as this method is not supported anymore."
+            "Public API of azure-cli-core have been deprecated starting 2.21.0, " +
+            "and this method no longer can return a profile. " +
+            "If you need to load CLI profile using this method, you need to install 'azure-cli-core<2.21.0'. " +
+            "You may corrupt data if you use current CLI and old azure-cli-core."
         )
 
     azure_folder = get_config_dir()
@@ -90,7 +92,8 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
 
     *Disclaimer*: This method is not working for CLI installation after 3/2021 (version 2.21.0 of azure-cli-core).
-    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCliCredential. See example code below:
+    Recommended authentication is now to use https://pypi.org/project/azure-identity/ and AzureCliCredential.
+    See example code below:
 
     .. code:: python
 
@@ -117,7 +120,8 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     :rtype: tuple
     """
     warnings.warn(
-        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead",
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead. " +
+        "https://aka.ms/azsdk/python/identity/migration.",
         DeprecationWarning
     )
 
@@ -132,8 +136,11 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
 
     if azure_cli_core_check_failed:
         raise NotImplementedError(
-            "You need to install 'azure-cli-core<2.21.0' to load CLI credentials using this method. " +
-            "You should consider using azure-identity and AzureCliCredential instead, as this method is not supported anymore."
+            "Public API of azure-cli-core have been deprecated starting 2.21.0, " +
+            "and this method no longer can return a valid credentials. " +
+            "If you need to still use this method, you need to install 'azure-cli-core<2.21.0'. " +
+            "You may corrupt data if you use current CLI and old azure-cli-core. " +
+            "See also: https://aka.ms/azsdk/python/identity/migration"
         )
 
     profile = get_cli_profile()
