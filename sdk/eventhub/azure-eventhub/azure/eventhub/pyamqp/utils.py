@@ -122,12 +122,16 @@ def get_message_encoded_size(message):
     return len(output)
 
 
+# TODO: to have separate module/class to host those helper AMQP VALUE wrapper method
 def amqp_long_value(value):
     return {TYPE: AMQPTypes.long, VALUE: value}
 
 
 def amqp_source_filters_value(descriptor, value):
+    descriptor_type = AMQPTypes.symbol
+    if isinstance(descriptor, int):
+        descriptor_type = AMQPTypes.ulong
     return (
-        {TYPE: AMQPTypes.symbol, VALUE: descriptor},
+        {TYPE: descriptor_type, VALUE: descriptor},
         {TYPE: AMQPTypes.string, VALUE: value}
     )

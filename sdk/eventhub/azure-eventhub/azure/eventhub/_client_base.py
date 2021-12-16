@@ -423,7 +423,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        # TODO: amqp mgmt support missing
         mgmt_msg = Message(application_properties={"name": self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
@@ -504,11 +503,7 @@ class ConsumerProducerMixin(object):
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
-            self._handler.open(
-                # connection=self._client._conn_manager.get_connection(
-                #     self._client._address.hostname, auth
-                # )  # pylint: disable=protected-access
-            )
+            self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = (

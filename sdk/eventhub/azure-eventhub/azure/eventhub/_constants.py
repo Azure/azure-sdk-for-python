@@ -5,13 +5,11 @@
 from __future__ import unicode_literals
 
 from enum import Enum
-from .pyamqp import types
 
 
 PROP_SEQ_NUMBER = b"x-opt-sequence-number"
 PROP_OFFSET = b"x-opt-offset"
 PROP_PARTITION_KEY = b"x-opt-partition-key"
-#PROP_PARTITION_KEY_AMQP_SYMBOL = PROP_PARTITION_KEY  # TODO: FIND REPLACEMENT - types.AMQPSymbol(PROP_PARTITION_KEY)
 PROP_TIMESTAMP = b"x-opt-enqueued-time"
 PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
 PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"

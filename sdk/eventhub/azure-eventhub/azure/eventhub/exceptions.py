@@ -188,6 +188,7 @@ def _handle_exception(
         elif isinstance(exception, errors.ConnectionClose):
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
+        # TODO: add(?) MessageHandlerError to pyamqp
         # elif isinstance(exception, errors.MessageHandlerError):
         #     if hasattr(closable, "_close_handler"):
         #         closable._close_handler()  # pylint:disable=protected-access
