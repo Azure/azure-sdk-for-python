@@ -1,0 +1,161 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "49cf0475-5d11-11ec-b056-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022es\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "adcc0b52-4863-463c-aa7a-c289c42ee943",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:08:56 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "16"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "park"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "hotel"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "good food",
+              "restaurant"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "49d9bf51-5d11-11ec-a9e0-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f58952aa-13fc-4043-b6e7-6262fb0a5f83",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:08:56 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "12"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "park"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "hotel"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "good food",
+              "restaurant"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "49e23934-5d11-11ec-afd8-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022es\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022es\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d8f2a9a0-85c0-45ef-9a88-d310837d24e8",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:08:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "12"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "keyPhrases": [
+              "park"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "keyPhrases": [
+              "hotel"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "keyPhrases": [
+              "good food",
+              "restaurant"
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}
