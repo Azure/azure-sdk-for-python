@@ -7,6 +7,7 @@
 import pytest
 import functools
 from datetime import date, time
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
@@ -181,7 +182,7 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_receipt_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_analyze_document_from_url(
@@ -193,7 +194,7 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_analyze_document_from_url(
                     "prebuilt-receipt",
@@ -204,7 +205,7 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_receipt_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
                 result = await poller.result()
@@ -216,7 +217,7 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
                 result = await poller.result()

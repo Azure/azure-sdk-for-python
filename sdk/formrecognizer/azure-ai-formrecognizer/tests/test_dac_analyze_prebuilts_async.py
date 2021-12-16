@@ -26,7 +26,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -38,7 +38,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     async def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -63,7 +63,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_passing_unsupported_url_content_type(self, client):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             async with client:
                 poller = await client.begin_analyze_document("prebuilt-receipt", "https://badurl.jpg", content_type="application/json")
                 result = await poller.result()
@@ -74,7 +74,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",

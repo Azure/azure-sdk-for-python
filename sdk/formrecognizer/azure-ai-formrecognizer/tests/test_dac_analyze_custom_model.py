@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
@@ -20,13 +21,13 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             client.begin_analyze_document(model=None, document=b"xx")
 
     @FormRecognizerPreparer()
     def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             client.begin_analyze_document(model="", document=b"xx")
 
     @FormRecognizerPreparer()
