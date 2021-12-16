@@ -29,7 +29,10 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     async def test_active_directory_auth_async(self, translation_document_test_endpoint):
         token = self.get_credential(DocumentTranslationClient, is_async=True)
-        client = DocumentTranslationClient(translation_document_test_endpoint, token)
+        kwargs = {}
+        if os.getenv("AZURE_COGNITIVE_SCOPE"):
+            kwargs["credential_scopes"] = [os.getenv("AZURE_COGNITIVE_SCOPE")]
+        client = DocumentTranslationClient(translation_document_test_endpoint, token, **kwargs)
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
