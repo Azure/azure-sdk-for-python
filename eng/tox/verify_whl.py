@@ -18,6 +18,8 @@ from tox_helper_tasks import (
     unzip_file_to_directory,
 )
 
+from pkg_resources import parse_version
+
 logging.getLogger().setLevel(logging.INFO)
 
 # Excluding auto generated applicationinsights and loganalytics
@@ -30,9 +32,13 @@ EXCLUDED_PACKAGES = [
 ]
 
 
+def get_wheel(dist_dir, version):
+    return glob.glob(os.path.join(dist_dir, "*{}*.whl".format(version)))[0]
+
+
 def extract_whl(dist_dir, version):
     # Find whl for the package
-    path_to_whl = glob.glob(os.path.join(dist_dir, "*{}*.whl".format(version)))[0]
+    path_to_whl = get_wheel(dist_dir, version)
 
     # Cleanup any existing stale files if any and rename whl file to tar.gz
     zip_file = path_to_whl.replace(".whl", ".tar.gz")
@@ -52,9 +58,7 @@ def verify_whl_root_directory(dist_dir, expected_top_level_module, version):
     root_folders = os.listdir(extract_location)
 
     # check for non 'azure' folder as root folder
-    non_azure_folders = [
-        d for d in root_folders if d != expected_top_level_module and not d.endswith(".dist-info")
-    ]
+    non_azure_folders = [d for d in root_folders if d != expected_top_level_module and not d.endswith(".dist-info")]
     if non_azure_folders:
         logging.error(
             "whl has following incorrect directory at root level [%s]",
@@ -75,17 +79,11 @@ def cleanup(path):
 
 
 def should_verify_package(package_name):
-    return (
-        package_name not in EXCLUDED_PACKAGES
-        and "nspkg" not in package_name
-        and "-mgmt" not in package_name
-    )
+    return package_name not in EXCLUDED_PACKAGES and "nspkg" not in package_name and "-mgmt" not in package_name
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Verify directories included in whl and contents in manifest file"
-    )
+    parser = argparse.ArgumentParser(description="Verify directories included in whl and contents in manifest file")
 
     parser.add_argument(
         "-t",
@@ -107,16 +105,31 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, namespace, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    pkg_name, namespace, ver, python_requires = get_package_details(os.path.join(pkg_dir, "setup.py"))
 
-    top_level_module = namespace.split('.')[0]
+    top_level_module = namespace.split(".")[0]
+    wheel_location = get_wheel(args.dist_dir, ver)
+
+    if not os.getenv("OVERRIDE_PYVERSION_CHECK"):
+        if not python_requires:
+            logging.info("Your package must define python_requires.")
+            exit(1)
+        else:
+            if not parse_version(python_requires) >= parse_version():
+                logging.info(
+                    "The python_requires value of '{}' should instead be at least '>=3.0'.".format(python_requires)
+                )
+                exit(1)
+
+    # if python_requires and "2.7" not in SpecifierSet(python_requires):
+    #     if "py2" in wheel_location and not os.getenv('IGNORE_WHEEL_CHECK'):
+    #         logging.info("The package {} is marked with 'python_requires{}'. Check your setup.cfg and ensure that 'universal=1' configuration is not present.".format(pkg_name, python_requires))
+    #         exit(1)
 
     if should_verify_package(pkg_name):
         logging.info("Verifying root directory in whl for package: [%s]", pkg_name)
         if verify_whl_root_directory(args.dist_dir, top_level_module, ver):
             logging.info("Verified root directory in whl for package: [%s]", pkg_name)
         else:
-            logging.info(
-                "Failed to verify root directory in whl for package: [%s]", pkg_name
-            )
+            logging.info("Failed to verify root directory in whl for package: [%s]", pkg_name)
             exit(1)

@@ -66,7 +66,13 @@ def get_package_details(setup_filename):
             name_space = packages[0]
             logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
-    return package_name, name_space, kwargs["version"]
+    try:
+        python_requires = kwargs["python_requires"]
+    # most do not define this, fall back to what we define as universal
+    except KeyError as e:
+        python_requires = ">=2.7"
+
+    return package_name, name_space, kwargs["version"], python_requires
 
 
 def parse_req(req):
