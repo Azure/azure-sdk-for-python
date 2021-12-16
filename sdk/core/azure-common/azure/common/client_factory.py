@@ -62,7 +62,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
 
     This method is not working for azure-cli-core>=2.21.0 (released in March 2021).
 
-    For compatible azure-cli-core (< 2.20.0), This method will fill automatically the following client parameters:
+    For compatible azure-cli-core (< 2.20.0), This method will automatically fill the following client parameters:
     - credentials/credential
     - subscription_id
     - base_url
@@ -142,7 +142,7 @@ def _is_autorest_v3(client_class):
 def get_client_from_json_dict(client_class, config_dict, **kwargs):
     """Return a SDK client initialized with a JSON auth dict.
 
-    *Disclaimer*: This is NOT recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
+    *Disclaimer*: This is NOT the recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
 
     This method will fill automatically the following client parameters:
     - credentials
@@ -237,7 +237,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
 def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
     """Return a SDK client initialized with auth file.
 
-    *Disclaimer*: This is NOT recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
+    *Disclaimer*: This is NOT the recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
 
     You can specific the file path directly, or fill the environment variable AZURE_AUTH_LOCATION.
     File must be UTF-8.
