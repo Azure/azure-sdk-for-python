@@ -299,44 +299,53 @@
             "value": "[parameters('blobStorageAccount')]"
         },
         "AZURE_STORAGE_SOURCE_KEY": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value)]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         },
         "AZURE_STORAGE_SOURCE_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureStorageEndpoint')]"
         },
         "AZURE_SOURCE_CONTAINER_URL": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_SOURCE_CONTAINER_URL_1": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_SOURCE_CONTAINER_URL_2": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_TRANSLATION_GLOSSARY_URL": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '/', parameters('glossaryFileName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceContainerName'), '/', parameters('glossaryFileName'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('sourceContainerSasProperties')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_1'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_1')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_1'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_1')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL_FR": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_2'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_2')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_2'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_2')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL_AR": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_3'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_3')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_3'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_3')).serviceSasToken)]"
         },
         "AZURE_TARGET_CONTAINER_URL_ES": {
+            "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
-            "value": "[if(parameters('useStaticStorageResource'), '', concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken))]"
+            "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken)]"
         }
     }
 }
