@@ -6,6 +6,7 @@ from go import go_process
 from java import java_process
 from js import js_process
 from common import common_process, Common
+import subprocess as sp
 
 import os
 from typing import List
@@ -57,6 +58,10 @@ def main():
             languages[language](language_issues)
         except Exception as e:
             _LOG.error(f'Error happened during handling {language} issue: {e}')
+
+    # output
+    cmd_list = ['git add -u', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
+    [sp.call(cmd, shell=True) for cmd in cmd_list]
 
 
 if __name__ == '__main__':
