@@ -761,8 +761,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_status(self, client):
-        feeds = client.list_data_feeds(status="Paused")
-        assert len(list(feeds)) == 0
+        feeds = client.list_data_feeds(status="Active")
+        assert len(list(feeds)) > 0
 
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()

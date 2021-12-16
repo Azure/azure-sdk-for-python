@@ -794,11 +794,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     @recorded_by_proxy_async
     async def test_list_data_feeds_with_status(self, client):
         async with client:
-            feeds = client.list_data_feeds(status="Paused")
+            feeds = client.list_data_feeds(status="Active")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
-            assert len(feeds_list) == 0
+            assert len(feeds_list) > 0
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
