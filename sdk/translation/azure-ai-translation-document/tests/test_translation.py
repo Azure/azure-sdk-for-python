@@ -33,8 +33,8 @@ class TestTranslation(DocumentTranslationTest):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
         kwargs = {}
-        if os.getenv("AZURE_AUTHORITY_HOST", "").find("ppe") != -1:
-            kwargs["credential_scopes"] = ["https://ppe.cognitiveservices.azure.com/.default"]
+        if os.getenv("AZURE_COGNITIVE_SCOPE"):
+            kwargs["credential_scopes"] = [os.getenv("AZURE_COGNITIVE_SCOPE")]
         client = DocumentTranslationClient(endpoint, token, **kwargs)
         # prepare containers and test data
         blob_data = b'This is some text'
