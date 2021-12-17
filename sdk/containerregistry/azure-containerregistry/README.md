@@ -138,7 +138,7 @@ client.close()
 ## Troubleshooting
 
 ### General
-Form ACR client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+ACR client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Logging
 This library uses the standard
