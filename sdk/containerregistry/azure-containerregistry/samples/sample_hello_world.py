@@ -34,9 +34,8 @@ class HelloWorld(object):
         # Instantiate the ContainerRegistryClient
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
-        client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
         
-        with client:
+        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
@@ -46,8 +45,6 @@ class HelloWorld(object):
                     # [START delete_repository]
                     client.delete_repository(repository_name, tag.name)
                     # [END delete_repository]
-        
-        client.close()
 
 
 if __name__ == "__main__":

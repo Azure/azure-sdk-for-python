@@ -71,14 +71,11 @@ Iterate through the collection of repositories in the registry.
 
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
-with client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
     # Iterate through all the repositories
     for repository_name in client.list_repository_names():
         print(repository_name)
-
-client.close()
 ```
 
 ### List tags with anonymous access
@@ -87,14 +84,12 @@ Iterate through the collection of tags in the repository with anonymous access.
 
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
-manifest = client.get_manifest_properties("library/hello-world", "latest")
-print(manifest.repository_name + ": ")
-for tag in manifest.tags:
-    print(tag + "\n")
-
-client.close()
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    manifest = client.get_manifest_properties("library/hello-world", "latest")
+    print(manifest.repository_name + ": ")
+    for tag in manifest.tags:
+        print(tag + "\n")
 ```
 
 ### Set artifact properties
@@ -103,17 +98,15 @@ Set properties of an artifact.
 
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
-# Set permissions on the v1 image's "latest" tag
-client.update_manifest_properties(
-    "library/hello-world",
-    "latest",
-    can_write=False,
-    can_delete=False
-)
-
-client.close()
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    # Set permissions on the v1 image's "latest" tag
+    client.update_manifest_properties(
+        "library/hello-world",
+        "latest",
+        can_write=False,
+        can_delete=False
+    )
 ```
 
 ### Delete images
@@ -122,17 +115,15 @@ Delete images older than the first three in the repository.
 
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
-for repository in client.list_repository_names():
-    manifest_count = 0
-    for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
-        manifest_count += 1
-        if manifest_count > 3:
-            print("Deleting {}:{}".format(repository, manifest.digest))
-            client.delete_manifest(repository, manifest.digest)
-
-client.close()
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    for repository in client.list_repository_names():
+        manifest_count = 0
+        for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+            manifest_count += 1
+            if manifest_count > 3:
+                print("Deleting {}:{}".format(repository, manifest.digest))
+                client.delete_manifest(repository, manifest.digest)
 ```
 
 ## Troubleshooting

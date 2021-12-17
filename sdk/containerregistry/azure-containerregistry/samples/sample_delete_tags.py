@@ -34,23 +34,21 @@ class DeleteTags(object):
         # [START list_repository_names]      
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
 
-        for repository in client.list_repository_names():
-            print(repository)
-            # [END list_repository_names]
+        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+            for repository in client.list_repository_names():
+                print(repository)
+                # [END list_repository_names]
 
-            # [START list_tag_properties]
-            # Keep the three most recent tags, delete everything else
-            tag_count = 0
-            for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
-                tag_count += 1
-                if tag_count > 3:
-                    print("Deleting {}:{}".format(repository, tag.name))
-                    client.delete_tag(repository, tag.name)
-            # [END list_tag_properties]
-
-        client.close()
+                # [START list_tag_properties]
+                # Keep the three most recent tags, delete everything else
+                tag_count = 0
+                for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+                    tag_count += 1
+                    if tag_count > 3:
+                        print("Deleting {}:{}".format(repository, tag.name))
+                        client.delete_tag(repository, tag.name)
+                # [END list_tag_properties]
 
 
 if __name__ == "__main__":
