@@ -47,7 +47,6 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("Address", "hostname path")
-_AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 
 
 def _parse_conn_str(conn_str, **kwargs):
@@ -136,8 +135,8 @@ def _parse_conn_str(conn_str, **kwargs):
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> _AccessToken
-    """Create a shared access signiture token as a string literal.
+    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+    """Create a shared access signature token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
     """
@@ -150,7 +149,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     encoded_key = key.encode("utf-8")
 
     token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):
@@ -186,7 +185,7 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -205,7 +204,7 @@ class EventhubAzureNamedKeyTokenCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -378,6 +377,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
+        # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:

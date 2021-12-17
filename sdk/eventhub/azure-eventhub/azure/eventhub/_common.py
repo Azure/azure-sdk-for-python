@@ -171,6 +171,7 @@ class EventData(object):
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
         # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
+        # pylint:disable=protected-access
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.

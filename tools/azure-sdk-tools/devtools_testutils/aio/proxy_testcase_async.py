@@ -4,10 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
+import os
 
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from ..helpers import is_live_and_not_recording
 from ..proxy_testcase import (
     get_test_id,
     start_record_or_playback,
@@ -24,8 +28,6 @@ def recorded_by_proxy_async(test_func):
     """
 
     async def record_wrap(*args, **kwargs):
-        test_id = get_test_id()
-        recording_id, variables = start_record_or_playback(test_id)
 
         def transform_args(*args, **kwargs):
             copied_positional_args = list(args)
@@ -38,6 +40,11 @@ def recorded_by_proxy_async(test_func):
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
+        if is_live_and_not_recording():
+            return await test_func(*args, **trimmed_kwargs)
+
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
         original_transport_func = AioHttpTransport.send
 
         async def combined_call(*args, **kwargs):
@@ -50,14 +57,19 @@ def recorded_by_proxy_async(test_func):
         # we define test_output before invoking the test so the variable is defined in case of an exception
         test_output = None
         try:
-            test_output = await test_func(*args, variables=variables, **trimmed_kwargs)
-        except TypeError:
-            logger = logging.getLogger()
-            logger.info(
-                "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                "`variables` parameter to make use of recorded test variables."
-            )
-            test_output = await test_func(*args, **trimmed_kwargs)
+            try:
+                test_output = await test_func(*args, variables=variables, **trimmed_kwargs)
+            except TypeError:
+                logger = logging.getLogger()
+                logger.info(
+                    "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                    "`variables` parameter to make use of recorded test variables."
+                )
+                test_output = await test_func(*args, **trimmed_kwargs)
+        except ResourceNotFoundError as error:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
+            raise error_with_message
         finally:
             AioHttpTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)
