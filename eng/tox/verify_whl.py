@@ -125,7 +125,7 @@ if __name__ == "__main__":
                 exit(1)
             if "py2" in wheel_location:
                 logging.info(
-                    "The package {} is marked with 'python_requires{}', but a universal package was generated. Check your setup.cfg and ensure that 'universal=1' configuration is not present or remove the `setup.cfg` entirely.{}".format(
+                    "The package {} is marked with 'python_requires{}', but a universal package was generated. Check your setup.cfg and ensure that 'universal=1' configuration is not present or remove the `setup.cfg` entirely. {}".format(
                         pkg_name, python_requires, error_details_string
                     )
                 )
