@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # pylint: disable=too-many-lines,too-many-public-methods
-import azure.keyvault.certificates._generated_models as models
+from . import _generated_models as models
 from ._shared import parse_key_vault_id
 from ._enums import(
     CertificatePolicyAction,

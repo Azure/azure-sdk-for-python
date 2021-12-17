@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional, List
     from datetime import datetime
-    import azure.keyvault.keys._generated_models as _models
+    from . import _generated_models as _models
     from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional
     from datetime import datetime
-    import azure.keyvault.secrets._generated_models as _models
+    from . import _generated_models as _models
 
 
 class SecretProperties(object):
