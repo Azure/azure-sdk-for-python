@@ -4,8 +4,8 @@
 # ------------------------------------
 
 # pylint: disable=too-many-lines,too-many-public-methods
+import azure.keyvault.certificates._generated_models as models
 from ._shared import parse_key_vault_id
-from ._generated.v7_1 import models
 from ._enums import(
     CertificatePolicyAction,
     KeyUsageType,
