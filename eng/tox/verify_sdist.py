@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, _, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    pkg_name, _, ver, _ = get_package_details(os.path.join(pkg_dir, "setup.py"))
 
     if should_verify_package(pkg_name):
         logging.info("Verifying sdist for package [%s]", pkg_name)
