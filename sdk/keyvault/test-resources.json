@@ -77,6 +77,13 @@
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
         },
+        "baseTime": {
+            "type": "string",
+            "defaultValue": "[utcNow('u')]",
+            "metadata": {
+                "description": "The base time to add 2 hours to for SAS token expiration. The default is the current time."
+            }
+        },
         "attestationImage": {
             "type": "string",
             "defaultValue": "keyvault-mock-attestation:latest",
@@ -111,6 +118,14 @@
             "virtualNetworkRules": [],
             "ipRules": [],
             "defaultAction": "Allow"
+        },
+        "accountSasProperties": {
+            "signedServices": "b",
+            "signedPermission": "rwdlacu",
+            "signedProtocol": "https",
+            "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT2H')]",
+            "signedResourceTypes": "sco",
+            "keyToSign": "key1"
         }
     },
     "resources": [
@@ -279,6 +294,10 @@
         "BLOB_PRIMARY_STORAGE_ACCOUNT_KEY": {
             "type": "string",
             "value": "[listKeys(variables('primaryAccountName'), variables('mgmtApiVersion')).keys[0].value]"
+        },
+        "BLOB_STORAGE_SAS_TOKEN": {
+            "type": "string",
+            "value": "[listAccountSas(variables('primaryAccountName'), '2019-06-01', variables('accountSasProperties')).accountSasToken]"
         },
         "BLOB_CONTAINER_NAME" : {
             "type": "string",
