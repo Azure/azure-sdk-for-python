@@ -7,6 +7,7 @@
 import uuid
 import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
@@ -24,7 +25,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_polling_interval(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_polling_interval(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         def check_poll_value(poll):
             if self.is_live:
                 assert poll == 5
@@ -41,6 +43,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
     async def test_build_model_encoded_url(self, client):
         with pytest.raises(HttpResponseError):
             async with client:
@@ -51,7 +54,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 await poller.wait()
 
     @FormRecognizerPreparer()
-    async def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             async with client:
@@ -60,7 +64,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         model_id = str(uuid.uuid4())
         async with client:
             poller = await client.begin_build_model(
@@ -85,7 +90,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         async with client:
             poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
             model = await poller.result()
@@ -102,7 +108,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_nested_schema(self, client, formrecognizer_table_variable_rows_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_nested_schema(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         async with client:
             poller = await client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url)
             model = await poller.result()
@@ -119,7 +126,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
 
         raw_response = []
 
@@ -145,7 +153,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
 
         raw_response = []
 
@@ -166,7 +175,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_nested_schema_transform(self, client, formrecognizer_table_variable_rows_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_nested_schema_transform(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
 
         raw_response = []
 
@@ -193,7 +203,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         with pytest.raises(HttpResponseError) as e:
             async with client:
                 poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, prefix="subfolder")
@@ -213,7 +224,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             assert poller.operation_id
