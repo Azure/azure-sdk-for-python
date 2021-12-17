@@ -23,7 +23,7 @@ def get_cli_active_cloud():
     except ImportError:
         raise ImportError(
             "The public API of azure-cli-core has been deprecated starting 2.21.0, " +
-            "and this method no longer can no longer return a cloud instance. " +
+            "and this method no longer can return a cloud instance. " +
             "If you want to use this method, you need to install 'azure-cli-core<2.21.0'. " +
             "You may corrupt data if you use current CLI and old azure-cli-core."
         )

@@ -137,7 +137,7 @@ def get_azure_cli_credentials(resource=None, with_tenant=False):
     if azure_cli_core_check_failed:
         raise NotImplementedError(
             "The public API of azure-cli-core has been deprecated starting 2.21.0, " +
-            "and this method can no longer return a valid credentials. " +
+            "and this method can no longer return a valid credential. " +
             "If you need to still use this method, you need to install 'azure-cli-core<2.21.0'. " +
             "You may corrupt data if you use current CLI and old azure-cli-core. " +
             "See also: https://aka.ms/azsdk/python/identity/migration"
