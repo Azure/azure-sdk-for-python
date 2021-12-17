@@ -41,7 +41,7 @@ class FakeTokenCredential(object):
 
 class FormRecognizerTest(AzureRecordedTestCase):
 
-    testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
+    testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
     receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
     receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
     business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
