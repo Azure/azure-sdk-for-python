@@ -608,14 +608,15 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with pytest.raises(ValueError):
             client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
 
-    @acr_preparer()
-    @recorded_by_proxy
-    def test_set_api_version(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint)
-        assert client._client._config.api_version == "2021-07-01"
-        
-        client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15-preview")
-        assert client._client._config.api_version == "2019-08-15-preview"
-        
-        with pytest.raises(ValueError):
-            client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15")
+
+def test_set_api_version():
+    containerregistry_endpoint="https://fake_url.azurecr.io"
+    
+    client = ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com")
+    assert client._client._config.api_version == "2021-07-01"
+    
+    client = ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview")
+    assert client._client._config.api_version == "2019-08-15-preview"
+    
+    with pytest.raises(ValueError):
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15")
