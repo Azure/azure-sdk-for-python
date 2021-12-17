@@ -70,7 +70,7 @@ def get_package_details(setup_filename):
         python_requires = kwargs["python_requires"]
     # most do not define this, fall back to what we define as universal
     except KeyError as e:
-        python_requires = ">=2.7"
+        python_requires = None
 
     return package_name, name_space, kwargs["version"], python_requires
 
