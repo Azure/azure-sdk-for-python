@@ -208,7 +208,6 @@ class TestCustomForms(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    @recorded_by_proxy
     def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
         fr_client = client.get_form_recognizer_client()
 

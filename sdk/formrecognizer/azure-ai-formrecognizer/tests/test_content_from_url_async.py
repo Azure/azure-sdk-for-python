@@ -118,7 +118,6 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @recorded_by_proxy_async
     async def test_content_continuation_token(self, client):
         async with client:
             initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
@@ -231,7 +230,6 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    @recorded_by_proxy_async
     async def test_content_language_v2(self, client):
         async with client:
             with pytest.raises(ValueError) as e:

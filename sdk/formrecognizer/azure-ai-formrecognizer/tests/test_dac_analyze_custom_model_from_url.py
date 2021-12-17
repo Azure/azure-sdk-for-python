@@ -20,14 +20,12 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy
     def test_document_analysis_none_model(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy
     def test_document_analysis_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):

@@ -73,7 +73,6 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @recorded_by_proxy_async
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -87,7 +86,6 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @recorded_by_proxy_async
     async def test_auto_detect_unsupported_stream_content(self, client):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
@@ -214,7 +212,6 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @recorded_by_proxy_async
     async def test_content_continuation_token(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -336,7 +333,6 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    @recorded_by_proxy_async
     async def test_content_language_v2(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()

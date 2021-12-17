@@ -58,7 +58,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    @recorded_by_proxy_async
     async def test_compose_model_bad_api_version(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             with pytest.raises(ValueError) as excinfo:

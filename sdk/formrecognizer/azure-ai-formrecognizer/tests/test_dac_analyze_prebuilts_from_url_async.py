@@ -375,7 +375,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
     async def test_receipt_continuation_token(self, client):
 
         async with client:

@@ -147,7 +147,6 @@ class TestContentFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    @recorded_by_proxy
     def test_content_continuation_token(self, client):
         initial_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         cont_token = initial_poller.continuation_token()
@@ -252,7 +251,6 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    @recorded_by_proxy
     def test_content_language_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="en")

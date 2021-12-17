@@ -66,7 +66,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
     async def test_passing_unsupported_url_content_type(self, client, **kwargs):
         with pytest.raises(TypeError):
             async with client:

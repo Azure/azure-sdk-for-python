@@ -89,7 +89,8 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id):
+    @recorded_by_proxy
+    def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()

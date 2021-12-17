@@ -174,7 +174,6 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    @recorded_by_proxy
     def test_get_operation_bad_model_id(self, client):
         with pytest.raises(ValueError):
             client.get_operation("")

@@ -20,14 +20,12 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy
     def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             client.begin_analyze_document(model=None, document=b"xx")
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy
     def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):

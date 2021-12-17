@@ -23,7 +23,6 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy_async
     async def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
@@ -31,7 +30,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
                 await client.begin_analyze_document(model=None, document=b"xx")
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):

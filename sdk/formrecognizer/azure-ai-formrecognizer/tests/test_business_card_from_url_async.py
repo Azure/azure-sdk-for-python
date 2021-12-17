@@ -71,7 +71,6 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    @recorded_by_proxy_async
     async def test_business_card_v2(self, client):
         with pytest.raises(ValueError) as e:
             async with client:
