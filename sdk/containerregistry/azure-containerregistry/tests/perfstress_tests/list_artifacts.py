@@ -12,10 +12,10 @@ class ListArtifactsTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        account_url = self.get_from_env("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        endpoint = self.get_from_env("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
         audience = "https://management.azure.com"
-        self.anon_client = ContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)
-        self.async_anon_client = AsyncContainerRegistryClient(endpoint=account_url, credential=None, audience=audience)       
+        self.anon_client = ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience)
+        self.async_anon_client = AsyncContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience)       
         self.repository = "node"
 
     async def close(self):
