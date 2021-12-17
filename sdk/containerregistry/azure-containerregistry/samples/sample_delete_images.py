@@ -32,8 +32,8 @@ class DeleteImages(object):
     def delete_images(self):
         # [START list_repository_names]
         audience = "https://management.azure.com"
-        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience=audience)
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
 
         for repository in client.list_repository_names():
             print(repository)

@@ -38,9 +38,9 @@ class ListTagsAsync(object):
     async def list_tags(self):
         # Create a new ContainerRegistryClient      
         audience = "https://management.azure.com"
-        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(end_point, credential, audience=audience)
+        client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
         manifest = await client.get_manifest_properties("library/hello-world", "latest")
         print(manifest.repository_name + ": ")

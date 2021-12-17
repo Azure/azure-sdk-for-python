@@ -42,9 +42,9 @@ The [Azure Identity library][identity] provides easy Azure Active Directory supp
 from azure.containerregistry import ContainerRegistryClient
 from azure.identity import DefaultAzureCredential
 
-end_point = "https://mycontainerregistry.azurecr.io"
+endpoint = "https://mycontainerregistry.azurecr.io"
 audience = "https://management.azure.com"
-client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience=audience)
+client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
 ```
 
 ## Key concepts
@@ -70,8 +70,8 @@ Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` env
 Iterate through the collection of repositories in the registry.
 
 ```python
-end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience="https://management.azure.com")
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
 with client:
     # Iterate through all the repositories
@@ -86,8 +86,8 @@ client.close()
 Iterate through the collection of tags in the repository with anonymous access.
 
 ```python
-end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience="https://management.azure.com")
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
 manifest = client.get_manifest_properties("library/hello-world", "latest")
 print(manifest.repository_name + ": ")
@@ -102,8 +102,8 @@ client.close()
 Set properties of an artifact.
 
 ```python
-end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience="https://management.azure.com")
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
 # Set permissions on the v1 image's "latest" tag
 client.update_manifest_properties(
@@ -121,8 +121,8 @@ client.close()
 Delete images older than the first three in the repository.
 
 ```python
-end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience="https://management.azure.com")
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com")
 
 for repository in client.list_repository_names():
     manifest_count = 0

@@ -33,8 +33,8 @@ class HelloWorld(object):
     def basic_sample(self):
         # Instantiate the ContainerRegistryClient
         audience = "https://management.azure.com"
-        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
-        client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience=audience)
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
+        client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
         
         with client:
             # Iterate through all the repositories
