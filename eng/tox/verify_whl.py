@@ -16,6 +16,7 @@ from tox_helper_tasks import (
     unzip_sdist_to_directory,
     move_and_rename,
     unzip_file_to_directory,
+    trim_spec,
 )
 
 from pkg_resources import parse_version
@@ -110,21 +111,23 @@ if __name__ == "__main__":
     top_level_module = namespace.split(".")[0]
     wheel_location = get_wheel(args.dist_dir, ver)
 
-    if not os.getenv("OVERRIDE_PYVERSION_CHECK"):
+    if not os.getenv("IGNORE_WHEEL_PYVERSION_CHECK"):
         if not python_requires:
-            logging.info("Your package must define python_requires.")
+            logging.info("Your package must define a setup argument for 'python_requires'.")
             exit(1)
         else:
-            if not parse_version(python_requires) >= parse_version():
+            if not parse_version(trim_spec(python_requires)) >= parse_version("3.0"):
                 logging.info(
                     "The python_requires value of '{}' should instead be at least '>=3.0'.".format(python_requires)
                 )
                 exit(1)
-
-    # if python_requires and "2.7" not in SpecifierSet(python_requires):
-    #     if "py2" in wheel_location and not os.getenv('IGNORE_WHEEL_CHECK'):
-    #         logging.info("The package {} is marked with 'python_requires{}'. Check your setup.cfg and ensure that 'universal=1' configuration is not present.".format(pkg_name, python_requires))
-    #         exit(1)
+            if "py2" in wheel_location:
+                logging.info(
+                    "The package {} is marked with 'python_requires{}', but a universal package was generated. Check your setup.cfg and ensure that 'universal=1' configuration is not present.".format(
+                        pkg_name, python_requires
+                    )
+                )
+                exit(1)
 
     if should_verify_package(pkg_name):
         logging.info("Verifying root directory in whl for package: [%s]", pkg_name)

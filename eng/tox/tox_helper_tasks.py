@@ -154,6 +154,28 @@ def find_sdist(dist_dir, pkg_name, pkg_version):
     return packages[0]
 
 
+def trim_spec(incoming_spec):
+    """
+    Parses a valid specification. returns the version part of the text.
+    EG: ">=2.1.1" -> "2.1.1" 
+        "==3.0.0" -> "3.0.0"
+        "1.0.0" -> "1.0.0"
+    """
+    idx = 0
+    excluded_chars = ['<', '>', '=', '~', '!']
+
+   
+    for char in incoming_spec:
+        # reserved chars pulled form https://www.python.org/dev/peps/pep-0508/#grammar
+        if char not in excluded_chars:
+            break
+        else:
+            idx += 1
+
+    return incoming_spec[idx:len(excluded_chars)]
+        
+
+
 def find_whl(whl_dir, pkg_name, pkg_version):
     # This function will find a whl for given package name
     if not os.path.exists(whl_dir):
