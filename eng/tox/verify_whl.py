@@ -112,19 +112,21 @@ if __name__ == "__main__":
     wheel_location = get_wheel(args.dist_dir, ver)
 
     if not os.getenv("IGNORE_WHEEL_PYVERSION_CHECK"):
+        error_details_string = "For more information, visit https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md."
+
         if not python_requires:
-            logging.info("Your package must define a setup argument for 'python_requires'.")
+            logging.info("Your package must define a setup argument for 'python_requires'. {}".format(error_details_string))
             exit(1)
         else:
-            if not parse_version(trim_spec(python_requires)) >= parse_version("3.0"):
+            if not parse_version(trim_spec(python_requires)) >= parse_version("3.6"):
                 logging.info(
-                    "The python_requires value of '{}' should instead be at least '>=3.0'.".format(python_requires)
+                    "The python_requires value of '{}' should instead be at least '>=3.0'. {}".format(python_requires, error_details_string)
                 )
                 exit(1)
             if "py2" in wheel_location:
                 logging.info(
-                    "The package {} is marked with 'python_requires{}', but a universal package was generated. Check your setup.cfg and ensure that 'universal=1' configuration is not present.".format(
-                        pkg_name, python_requires
+                    "The package {} is marked with 'python_requires{}', but a universal package was generated. Check your setup.cfg and ensure that 'universal=1' configuration is not present or remove the `setup.cfg` entirely.{}".format(
+                        pkg_name, python_requires, error_details_string
                     )
                 )
                 exit(1)
