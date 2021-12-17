@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1eb4396c-5da1-11ec-80e3-5cf37093a909"
+        "x-ms-client-request-id": "421a3b07-69d0-11ec-9f65-5cf37093a909"
       },
       "RequestBody": null,
       "StatusCode": 401,
@@ -22,7 +22,7 @@
         "Connection": "keep-alive",
         "Content-Length": "222",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:18:32 GMT",
+        "Date": "Fri, 31 Dec 2021 00:26:12 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -31,7 +31,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:library/hello-world:metadata_read\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "9b8cb651-cd52-4737-a5e3-a0972fad965c"
+        "X-Ms-Correlation-Request-Id": "19cf0347-d98c-4c34-b1d8-f5280eec3cd6"
       },
       "ResponseBody": [
         "{\u0022errors\u0022:[{\u0022code\u0022:\u0022UNAUTHORIZED\u0022,\u0022message\u0022:\u0022authentication required, visit https://aka.ms/acr/authorization for more information.\u0022,\u0022detail\u0022:[{\u0022Type\u0022:\u0022repository\u0022,\u0022Name\u0022:\u0022library/hello-world\u0022,\u0022Action\u0022:\u0022metadata_read\u0022}]}]}\n"
@@ -54,17 +54,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:18:32 GMT",
+        "Date": "Fri, 31 Dec 2021 00:26:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ApwwGmsHy7JPiZG1HAbCatPFnawsFAAAAKXTS9kOAAAAePxThwsAAACn00vZDgAAAA; expires=Fri, 14-Jan-2022 12:18:32 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmNxi1WrRP1Botc76H_WXmjcImP6FAAAAMFEYNkOAAAAey2ohAsAAADERGDZDgAAAA; expires=Sun, 30-Jan-2022 00:26:12 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12261.14 - EUS ProdSlices",
-        "x-ms-request-id": "06bb1e07-e6fc-4ca0-bedb-b2d4d17ed200"
+        "x-ms-ests-server": "2.1.12261.17 - NCUS ProdSlices",
+        "x-ms-request-id": "f7aa5980-ae18-4d35-821c-26fe32ad3001"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
@@ -141,7 +141,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=ApwwGmsHy7JPiZG1HAbCatPFnawsFAAAAKXTS9kOAAAAePxThwsAAACn00vZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AmNxi1WrRP1Botc76H_WXmjcImP6FAAAAMFEYNkOAAAAey2ohAsAAADERGDZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.7.2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -152,17 +152,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:18:32 GMT",
+        "Date": "Fri, 31 Dec 2021 00:26:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ApwwGmsHy7JPiZG1HAbCatPFnawsFAAAAKXTS9kOAAAAePxThwsAAACn00vZDgAAAA; expires=Fri, 14-Jan-2022 12:18:32 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmNxi1WrRP1Botc76H_WXmjcImP6FAAAAMFEYNkOAAAAey2ohAsAAADERGDZDgAAAA; expires=Sun, 30-Jan-2022 00:26:12 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12249.17 - SCUS ProdSlices",
-        "x-ms-request-id": "b7242b33-259c-4f5b-9034-694611700c01"
+        "x-ms-ests-server": "2.1.12261.17 - SCUS ProdSlices",
+        "x-ms-request-id": "2e278d83-da00-42b3-bfeb-09d156783501"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -217,11 +217,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "72a56f95-c93d-410a-a945-b8d298449cdb",
+        "client-request-id": "d8275783-d534-4c5f-9349-1b64462e96eb",
         "Connection": "keep-alive",
         "Content-Length": "281",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=ApwwGmsHy7JPiZG1HAbCatPFnawsFAAAAKXTS9kOAAAAePxThwsAAACn00vZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AmNxi1WrRP1Botc76H_WXmjcImP6FAAAAMFEYNkOAAAAey2ohAsAAADERGDZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.7.2 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -231,33 +231,33 @@
         "x-client-ver": "1.14.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=fd049324-1510-4ca8-bf92-3c00a9f8d70e\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=49c17687-9c3c-4e8e-9a0d-a88c4e40d0bb\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmicrosoft.com%2F.default",
+      "RequestBody": "client_id=6c4db000-c7b5-4279-8719-1cf83a5fc269\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=339e17ee-681a-4875-a66f-e52d94940bcd\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmicrosoft.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "72a56f95-c93d-410a-a945-b8d298449cdb",
+        "client-request-id": "d8275783-d534-4c5f-9349-1b64462e96eb",
         "Content-Length": "1313",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 12:18:32 GMT",
+        "Date": "Fri, 31 Dec 2021 00:26:13 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=ApwwGmsHy7JPiZG1HAbCatPFnawsFAAAAKXTS9kOAAAAePxThwsAAACn00vZDgAAAEuNlNABAAAAGNRL2Q4AAAA; expires=Fri, 14-Jan-2022 12:18:33 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmNxi1WrRP1Botc76H_WXmjcImP6FAAAAMFEYNkOAAAAey2ohAsAAADERGDZDgAAAPUlHJQBAAAAJEVg2Q4AAAA; expires=Sun, 30-Jan-2022 00:26:13 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12261.14 - WUS2 ProdSlices",
-        "x-ms-request-id": "a9ac2494-0ee7-4b2d-826f-477d6f4dce00"
+        "x-ms-ests-server": "2.1.12261.17 - EUS ProdSlices",
+        "x-ms-request-id": "ec5228bd-e2e0-4c75-b52d-ce7840987601"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 86399,
         "ext_expires_in": 86399,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL21pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjM5NTcwNDEzLCJuYmYiOjE2Mzk1NzA0MTMsImV4cCI6MTYzOTY1NzExMywiYWlvIjoiRTJaZ1lDamFiY05RYUsxU3dqakhtL2ZQdWtzR0FBPT0iLCJhcHBpZCI6ImZkMDQ5MzI0LTE1MTAtNGNhOC1iZjkyLTNjMDBhOWY4ZDcwZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJlMzRkNmM0My1mYTQ1LTQ0YzAtOTI3Ny0wMjlhOTJhNjVjZTIiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUnlTVEJQMFFGYWhNdjVJOEFLbjQxdzRhQUFBLiIsInN1YiI6ImUzNGQ2YzQzLWZhNDUtNDRjMC05Mjc3LTAyOWE5MmE2NWNlMiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImxDU3NxZWNPTFV1Q2IwZDliMDNPQUEiLCJ2ZXIiOiIxLjAifQ.toGhSyXOZNYDVpWyf6BMKRiwSfkhYcoXwrhX0P5BVWWWR-zcCVuX3gcZWs5-Sa3IggDnUGgmBRh3Av7MJFlbkh7Qf55BxQ54zCgH9lXb73khhzxeJz4FIWzdUS4StqLqSUzHPSAb8GzK1VIxEzQWCQgKs_Fa-s53beTaxKUKV9lX3VUnkxJjfJQo_EeBhUUimaHNlFowihnHnGlTJWFK3Trd7om-4yXK1TMNovVXbVQWQTC8r7btsXOZPKvY2KYpz2jS1xLd19HwSyQvgWmv9pAOjsp_6xxuEUb-Mq2nwOBCy5tfPdWJiljEXH-bDv0fIix5N4oMNfghtlVJ_mDi5A"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL21pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQwOTEwMDcyLCJuYmYiOjE2NDA5MTAwNzIsImV4cCI6MTY0MDk5Njc3MiwiYWlvIjoiRTJaZ1lBaVFTZm9YVlJidXVsZElONU4zdDRvekFBPT0iLCJhcHBpZCI6IjZjNGRiMDAwLWM3YjUtNDI3OS04NzE5LTFjZjgzYTVmYzI2OSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5OGUzMWVkZi1jMDdjLTQ1ZDgtYjczNi01ZjMxN2JhNjU0NDMiLCJyaCI6IjAuQVFFQXY0ajVjdkdHcjBHUnF5MTgwQkhiUndDd1RXeTF4M2xDaHhrYy1EcGZ3bWthQUFBLiIsInN1YiI6Ijk4ZTMxZWRmLWMwN2MtNDVkOC1iNzM2LTVmMzE3YmE2NTQ0MyIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6InZTaFM3T0RpZFV5MUxjNTRRSmgyQVEiLCJ2ZXIiOiIxLjAifQ.V7fkC4J8zuStFDh8EQoiSityvhJN7LjVZniupZdLbUb344aqJcS-HU2O3BdPe7J_a1aUV1moFMmNQr05uzS8qRk4Md5WNS97MQCUPG_mptt7G2Lz1wgxLDSFSo3eOdxFSzALXXodK5UWuxQ_nQW7f7jZMpz7J1xEWZ5Ik2wXlWfXrdG1VkAID4g4kMVnsPXAxUHBVIwtpxyX5nB3ORr36OMulfc4tNTyIc5D1bkSKqZFm39fnfJbLC79cAMwwiijkZk1zYnls0cg_dalwgL8SOlf2horKtlxGfaF3wLJorUpT00LpJsn-CXM_tdKdKIXcvZRE_6ISbxWQxN5SBSmCA"
       }
     },
     {
@@ -270,19 +270,19 @@
         "Content-Length": "1299",
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-azure-containerregistry/1.0.0b8 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1f00a87e-5da1-11ec-8c3c-5cf37093a909"
+        "x-ms-client-request-id": "425009c4-69d0-11ec-b359-5cf37093a909"
       },
-      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL21pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjM5NTcwNDEzLCJuYmYiOjE2Mzk1NzA0MTMsImV4cCI6MTYzOTY1NzExMywiYWlvIjoiRTJaZ1lDamFiY05RYUsxU3dqakhtL2ZQdWtzR0FBPT0iLCJhcHBpZCI6ImZkMDQ5MzI0LTE1MTAtNGNhOC1iZjkyLTNjMDBhOWY4ZDcwZSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiJlMzRkNmM0My1mYTQ1LTQ0YzAtOTI3Ny0wMjlhOTJhNjVjZTIiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUnlTVEJQMFFGYWhNdjVJOEFLbjQxdzRhQUFBLiIsInN1YiI6ImUzNGQ2YzQzLWZhNDUtNDRjMC05Mjc3LTAyOWE5MmE2NWNlMiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImxDU3NxZWNPTFV1Q2IwZDliMDNPQUEiLCJ2ZXIiOiIxLjAifQ.toGhSyXOZNYDVpWyf6BMKRiwSfkhYcoXwrhX0P5BVWWWR-zcCVuX3gcZWs5-Sa3IggDnUGgmBRh3Av7MJFlbkh7Qf55BxQ54zCgH9lXb73khhzxeJz4FIWzdUS4StqLqSUzHPSAb8GzK1VIxEzQWCQgKs_Fa-s53beTaxKUKV9lX3VUnkxJjfJQo_EeBhUUimaHNlFowihnHnGlTJWFK3Trd7om-4yXK1TMNovVXbVQWQTC8r7btsXOZPKvY2KYpz2jS1xLd19HwSyQvgWmv9pAOjsp_6xxuEUb-Mq2nwOBCy5tfPdWJiljEXH-bDv0fIix5N4oMNfghtlVJ_mDi5A",
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL21pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQwOTEwMDcyLCJuYmYiOjE2NDA5MTAwNzIsImV4cCI6MTY0MDk5Njc3MiwiYWlvIjoiRTJaZ1lBaVFTZm9YVlJidXVsZElONU4zdDRvekFBPT0iLCJhcHBpZCI6IjZjNGRiMDAwLWM3YjUtNDI3OS04NzE5LTFjZjgzYTVmYzI2OSIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5OGUzMWVkZi1jMDdjLTQ1ZDgtYjczNi01ZjMxN2JhNjU0NDMiLCJyaCI6IjAuQVFFQXY0ajVjdkdHcjBHUnF5MTgwQkhiUndDd1RXeTF4M2xDaHhrYy1EcGZ3bWthQUFBLiIsInN1YiI6Ijk4ZTMxZWRmLWMwN2MtNDVkOC1iNzM2LTVmMzE3YmE2NTQ0MyIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6InZTaFM3T0RpZFV5MUxjNTRRSmgyQVEiLCJ2ZXIiOiIxLjAifQ.V7fkC4J8zuStFDh8EQoiSityvhJN7LjVZniupZdLbUb344aqJcS-HU2O3BdPe7J_a1aUV1moFMmNQr05uzS8qRk4Md5WNS97MQCUPG_mptt7G2Lz1wgxLDSFSo3eOdxFSzALXXodK5UWuxQ_nQW7f7jZMpz7J1xEWZ5Ik2wXlWfXrdG1VkAID4g4kMVnsPXAxUHBVIwtpxyX5nB3ORr36OMulfc4tNTyIc5D1bkSKqZFm39fnfJbLC79cAMwwiijkZk1zYnls0cg_dalwgL8SOlf2horKtlxGfaF3wLJorUpT00LpJsn-CXM_tdKdKIXcvZRE_6ISbxWQxN5SBSmCA",
       "StatusCode": 401,
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Length": "78",
         "Content-Type": "application/json",
-        "Date": "Wed, 15 Dec 2021 12:18:33 GMT",
+        "Date": "Fri, 31 Dec 2021 00:26:13 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Ms-Correlation-Request-Id": "a344c23d-f558-4928-af74-bf1ecfcfd3d0",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.6"
+        "X-Ms-Correlation-Request-Id": "dc9e5751-791c-4a0c-bd6f-c022dfa58a73",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.366667"
       },
       "ResponseBody": {
         "errors": [
