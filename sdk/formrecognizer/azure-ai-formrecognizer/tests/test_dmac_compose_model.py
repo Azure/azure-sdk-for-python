@@ -7,6 +7,7 @@
 import pytest
 import uuid
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModel
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
@@ -21,7 +22,8 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_compose_model(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_compose_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
@@ -49,7 +51,8 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="model1")
         model_1 = poller.result()
 
@@ -98,7 +101,8 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model_1 = poller.result()
 
