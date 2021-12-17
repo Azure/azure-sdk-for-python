@@ -46,5 +46,11 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(
         json_path="accessToken",
         value="redacted",
-        group_for_replace="(\"accessToken\": \"([0-9a-z-]*)\")",
+        regex="([0-9a-f-]{36})",
+    )
+    
+    add_body_key_sanitizer(
+        json_path="copyAuthorization.accessToken",
+        value="redacted",
+        regex="([0-9a-f-]{36})",
     )
