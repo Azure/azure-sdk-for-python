@@ -112,6 +112,7 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
 * Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
+* Cross partition queries do not handle partition splits (410 Gone errors)
 
 ### Control Plane Limitations:
 
