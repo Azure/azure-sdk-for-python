@@ -4,7 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentLine, AnalyzeResult
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
@@ -18,6 +20,7 @@ class TestGetChildren(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_line_get_words(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -31,6 +34,7 @@ class TestGetChildren(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_line_get_words_error(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
