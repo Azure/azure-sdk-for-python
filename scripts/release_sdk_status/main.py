@@ -179,7 +179,30 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
     return all_sdk_status
 
 
+def get_test_result(txt_path):
+    with open(txt_path, 'r+') as f:
+        for line in f.readlines():
+            if 'TOTAL' in line:
+                coverage = line.split()[3]
+            if '=====' in line and ('passed' in line or 'failed' in line or 'skipped' in line):
+                # print(line)
+                passed, failed, skipped = 0, 0, 0
+                if 'passed' in line:
+                    passed = re.findall('(\d{1,2}) passed', line)[0]
+                if 'failed' in line:
+                    failed = re.findall('(\d{1,2}) failed', line)[0]
+                if 'skipped' in line:
+                    skipped = re.findall('(\d{1,2}) skipped', line)[0]
+                # print(f'{passed} {failed} {skipped}')
+
+    return f'{coverage}, {passed}, {failed}, {skipped}'
+
+
 def test_sdk(all_sdk_status):
+    pass
+
+
+def add_test_result(all_sdk_status):
     for sdk in all_sdk_status:
         package = sdk.split(',')[0].replace('azure-mgmt-', '')
 
@@ -294,11 +317,10 @@ def main():
     sdk_info = sdk_info_from_swagger()
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-    all_sdk_status1 = test_sdk(all_sdk_status)
+    all_sdk_status1 = add_test_result(all_sdk_status)
     print('**')
     print(os.getenv('SWAGGER_REPO'))
     print(os.getenv('SDK_REPO'))
-    print(os.getenv('SDK_REPO1'))
 
     print_check('pwd', path=os.getenv('SDK_REPO'))
     print_check('ls', path=os.getenv('SDK_REPO'))
