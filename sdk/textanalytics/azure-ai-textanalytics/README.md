@@ -16,13 +16,13 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.7 later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
   [Cognitive Services or Language resource][ta_or_cs_resource] to use this package.
 

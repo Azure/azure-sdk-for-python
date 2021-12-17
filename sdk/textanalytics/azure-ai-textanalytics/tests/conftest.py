@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
 import pytest
 from devtools_testutils import (
     test_proxy,
@@ -14,12 +13,6 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_oauth_response_sanitizer,
 )
-
-
-# Ignore async tests for Python < 3.6
-collect_ignore_glob = []
-if sys.version_info < (3, 6):
-    collect_ignore_glob.append("*_async.py")
 
 
 @pytest.fixture(scope="session", autouse=True)
