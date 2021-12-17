@@ -3,5 +3,5 @@
 ../../core/azure-core
 ../../storage/azure-storage-blob
 -e ../../identity/azure-identity
-aiohttp
+aiohttp>=3.0
 pytz
