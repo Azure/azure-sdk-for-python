@@ -7,6 +7,7 @@
 import pytest
 import functools
 from datetime import date, time
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
@@ -21,6 +22,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
+    @recorded_by_proxy_async
     async def test_receipt_url_transform_png(self, client):
         responses = []
 
@@ -57,6 +59,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
+    @recorded_by_proxy_async
     async def test_receipt_url_include_field_elements(self, client):
 
         async with client:

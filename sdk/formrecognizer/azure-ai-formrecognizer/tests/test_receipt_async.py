@@ -8,6 +8,7 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date, time
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
@@ -22,6 +23,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
+    @recorded_by_proxy_async
     async def test_passing_enum_content_type(self, client):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
@@ -70,6 +72,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
+    @recorded_by_proxy_async
     async def test_receipt_jpg_include_field_elements(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
