@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -21,8 +22,10 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestIdDocument(FormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    def test_identity_document_bad_endpoint(self, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_identity_document_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
         with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         with pytest.raises(ServiceRequestError):
@@ -71,6 +74,7 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_stream_transform_jpg(self, client):
         responses = []
 
@@ -109,6 +113,7 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_jpg_include_field_elements(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
@@ -154,6 +159,7 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
