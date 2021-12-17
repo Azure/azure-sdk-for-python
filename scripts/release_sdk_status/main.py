@@ -295,6 +295,9 @@ def sdk_info_from_swagger():
         my_print(f'{folder} : {package_name}')
 
     my_print(f'total package kinds: {len(resource_manager)}')
+    print(resource_manager)
+    for r in resource_manager:
+        print(r.split(',')[2])
     return resource_manager
 
 
