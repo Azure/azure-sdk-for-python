@@ -32,9 +32,8 @@ class DeleteImages(object):
     def delete_images(self):
         # [START list_repository_names]
         audience = "https://management.azure.com"
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience=audience)
 
         for repository in client.list_repository_names():
             print(repository)
@@ -46,6 +45,7 @@ class DeleteImages(object):
             for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
                 manifest_count += 1
                 if manifest_count > 3:
+                    print("Deleting {}:{}".format(repository, manifest.digest))
                     client.delete_manifest(repository, manifest.digest)
             # [END list_manifest_properties]
 

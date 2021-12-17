@@ -36,9 +36,8 @@ class ListTags(object):
     def list_tags(self):
         # Create a new ContainerRegistryClient        
         audience = "https://management.azure.com"
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience=audience)
 
         manifest = client.get_manifest_properties("library/hello-world", "latest")
         print(manifest.repository_name + ": ")

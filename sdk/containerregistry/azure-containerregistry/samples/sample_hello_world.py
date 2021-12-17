@@ -26,23 +26,16 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.identity import DefaultAzureCredential
 
 
-class CreateClients(object):
+class HelloWorld(object):
     def __init__(self):
         load_dotenv(find_dotenv())
 
-    def create_registry_client(self):
-        # Instantiate the ContainerRegistryClient
-        # [START create_registry_client]
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        audience = "https://management.azure.com"
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
-        # [END create_registry_client]
-
     def basic_sample(self):
-        # Instantiate the client
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        # Instantiate the ContainerRegistryClient
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
+        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
+        client = ContainerRegistryClient(end_point, DefaultAzureCredential(), audience=audience)
+        
         with client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
@@ -53,9 +46,10 @@ class CreateClients(object):
                     # [START delete_repository]
                     client.delete_repository(repository_name, tag.name)
                     # [END delete_repository]
+        
+        client.close()
 
 
 if __name__ == "__main__":
-    sample = CreateClients()
-    sample.create_registry_client()
+    sample = HelloWorld()
     sample.basic_sample()

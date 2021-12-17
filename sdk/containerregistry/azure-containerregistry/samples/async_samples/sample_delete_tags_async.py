@@ -35,9 +35,9 @@ class DeleteTagsAsync(object):
     async def delete_tags(self):
         # [START list_repository_names]
         audience = "https://management.azure.com"
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        end_point = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        client = ContainerRegistryClient(end_point, credential, audience=audience)
 
         async with client:
             async for repository in client.list_repository_names():
