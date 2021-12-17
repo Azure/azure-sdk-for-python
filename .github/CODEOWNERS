@@ -28,8 +28,8 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
 
-/sdk/applicationinsights/azure-applicationinsights/                  @divyajay @geneh @alongafni
-/sdk/loganalytics/azure-loganalytics/                                @divyajay @geneh @alongafni
+/sdk/applicationinsights/azure-applicationinsights/                  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
+/sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
 /sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
 
