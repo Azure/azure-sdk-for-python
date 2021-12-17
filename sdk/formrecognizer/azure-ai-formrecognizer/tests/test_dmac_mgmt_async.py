@@ -7,6 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
@@ -102,7 +103,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-
+        set_bodiless_matcher()  
+        
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, description="mgmt model")
             model = await poller.result()

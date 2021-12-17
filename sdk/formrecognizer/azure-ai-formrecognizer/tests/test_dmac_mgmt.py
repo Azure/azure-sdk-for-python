@@ -7,7 +7,7 @@
 import functools
 import pytest
 import logging
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
@@ -94,7 +94,8 @@ class TestManagement(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-
+        set_bodiless_matcher()
+        
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
