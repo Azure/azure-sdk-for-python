@@ -22,6 +22,8 @@ LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 
 def _get_blob_url(container_sas_url, container, file_name):
+    if container_sas_url == "https://blob_sas_url":
+        return container_sas_url
     url = container_sas_url.split(container)
     url[0] += container + "/" + file_name
     blob_sas_url = url[0] + url[1]
