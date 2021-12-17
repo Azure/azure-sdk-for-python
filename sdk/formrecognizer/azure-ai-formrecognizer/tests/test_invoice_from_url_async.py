@@ -6,6 +6,7 @@
 
 import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -23,7 +24,8 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -37,6 +39,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_bad_url(self, client):
         with pytest.raises(HttpResponseError):
             async with client:
@@ -44,6 +47,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_url_multipage_transform_pdf(self, client):
         responses = []
 
@@ -105,6 +109,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_locale_specified(self, client):
         async with client:
             poller = await client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
@@ -114,6 +119,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_locale_error(self, client):
         with pytest.raises(HttpResponseError) as e:
             async with client:
@@ -122,6 +128,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self, client):
         async with client:
             poller = await client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])

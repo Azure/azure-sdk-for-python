@@ -8,6 +8,7 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -24,8 +25,10 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestInvoiceAsync(AsyncFormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    async def test_invoice_bad_endpoint(self, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_invoice_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
         with pytest.raises(ServiceRequestError):
@@ -35,6 +38,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -93,6 +97,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_stream_transform_pdf(self, client):
         responses = []
 
@@ -132,6 +137,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_stream_multipage_transform_pdf(self, client):
         responses = []
 
@@ -176,6 +182,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_tiff(self, client):
 
         with open(self.invoice_tiff, "rb") as fd:
@@ -200,6 +207,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_multipage_pdf(self, client):
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
@@ -229,6 +237,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_jpg_include_field_elements(self, client):
         with open(self.invoice_jpg, "rb") as fd:
             invoice = fd.read()
@@ -306,6 +315,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_locale_specified(self, client):
         with open(self.invoice_tiff, "rb") as fd:
             invoice = fd.read()
@@ -317,6 +327,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_locale_error(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
@@ -327,6 +338,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()

@@ -6,6 +6,7 @@
 
 import pytest
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -21,7 +22,8 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -34,12 +36,14 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_bad_url(self, client):
         with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_url_multipage_transform_pdf(self, client):
         responses = []
 
@@ -99,6 +103,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_locale_specified(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
@@ -107,6 +112,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_locale_error(self, client):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="not a locale")
@@ -114,6 +120,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
@@ -122,6 +129,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_no_sub_line_items(self, client):
 
         poller = client.begin_recognize_invoices_from_url(
