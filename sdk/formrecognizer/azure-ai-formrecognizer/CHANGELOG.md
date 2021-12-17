@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Python 2.7 is no longer supported in this release.
 
 ## 3.2.0b2 (2021-11-09)
 
