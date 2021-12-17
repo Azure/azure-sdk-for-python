@@ -2,4 +2,4 @@
 -e ../../../tools/azure-devtools
 ../../core/azure-core
 -e ../../identity/azure-identity
-aiohttp
+aiohttp>=3.0
