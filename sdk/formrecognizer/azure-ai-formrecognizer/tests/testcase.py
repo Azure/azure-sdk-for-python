@@ -27,6 +27,16 @@ def _get_blob_url(container_sas_url, container, file_name):
     blob_sas_url = url[0] + url[1]
     return blob_sas_url
 
+class FakeTokenCredential(object):
+    """Protocol for classes able to provide OAuth tokens.
+    :param str scopes: Lets you specify the type of access needed.
+    """
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
+
+    def get_token(self, *args):
+        return self.token
+
 class FormRecognizerTest(AzureRecordedTestCase):
 
     testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
@@ -69,6 +79,22 @@ class FormRecognizerTest(AzureRecordedTestCase):
     multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
     selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
     multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
+
+    def get_oauth_endpoint(self):
+        return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
+
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                os.getenv("FORMRECOGNIZER_TENANT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
+            )
+        return self.generate_fake_token()
+
+    def generate_fake_token(self):
+        return FakeTokenCredential()
 
     def configure_logging(self):
         self.enable_logging() if ENABLE_LOGGER == "True" else self.disable_logging()
