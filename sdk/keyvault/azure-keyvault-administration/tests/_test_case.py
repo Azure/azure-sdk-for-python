@@ -99,7 +99,7 @@ class AdministrationTestCase(AzureTestCase):
                         delete=True,
                         delete_previous_version=True,
                     ),
-                    expiry=datetime.utcnow() + timedelta(minutes=30),
+                    expiry=datetime.utcnow() + timedelta(minutes=500),
                 )
                 self.scrubber.register_name_pair(self.sas_token, playback_sas_token)
         else:
