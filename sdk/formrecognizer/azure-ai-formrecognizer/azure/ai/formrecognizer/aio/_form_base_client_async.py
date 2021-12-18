@@ -34,7 +34,7 @@ class FormRecognizerClientBaseAsync(object):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
-    
+
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
