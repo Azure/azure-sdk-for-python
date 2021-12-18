@@ -40,6 +40,9 @@ parameters:
   - name: CloudConfig
     type: object
     default: {}
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -106,6 +109,7 @@ jobs:
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
+        TestProxy: ${{ parameters.TestProxy }}
         BeforeTestSteps:
           - task: DownloadPipelineArtifact@2
             inputs:

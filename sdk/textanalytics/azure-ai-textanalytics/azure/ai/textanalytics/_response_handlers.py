@@ -11,6 +11,7 @@ from six.moves.urllib.parse import urlparse, parse_qsl
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
+    ResourceNotFoundError,
     ODataV4Format,
 )
 from azure.core.paging import ItemPaged
@@ -57,6 +58,8 @@ def process_http_response_error(error):
     raise_error = HttpResponseError
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
+    if error.status_code == 404:
+        raise_error = ResourceNotFoundError
     raise raise_error(response=error.response, error_format=CSODataV4Format)
 
 

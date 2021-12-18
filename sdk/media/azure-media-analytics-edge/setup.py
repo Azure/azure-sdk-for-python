@@ -82,7 +82,7 @@ setup(
         ]
     ),
     install_requires=[
-        "msrest>=0.5.0",
+        "msrest>=0.6.21",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-media-nspkg'],

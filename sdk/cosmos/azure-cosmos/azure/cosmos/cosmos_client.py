@@ -79,7 +79,8 @@ def _build_connection_policy(kwargs):
         policy.RequestTimeout
     policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
     policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery') \
+        if 'enable_endpoint_discovery' in kwargs.keys() else policy.EnableEndpointDiscovery
     policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
         policy.UseMultipleWriteLocations

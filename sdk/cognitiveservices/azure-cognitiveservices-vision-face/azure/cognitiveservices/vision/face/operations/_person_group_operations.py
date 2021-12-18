@@ -36,7 +36,7 @@ class PersonGroupOperations(object):
         self.config = config
 
     def create(
-            self, person_group_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+            self, person_group_id, name, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create a new person group with specified personGroupId, name,
         user-provided userData and recognitionModel.
         <br /> A person group is the container of the uploaded person data,

@@ -24,6 +24,13 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+    map_error
+)
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
 from .._helpers import (
@@ -201,9 +208,13 @@ class EventGridPublisherClient:
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        await self._client.send_request(  # pylint: disable=protected-access
+        response = await self._client.send_request(  # pylint: disable=protected-access
             _build_request(self._endpoint, content_type, events), **kwargs
         )
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        if response.status_code != 200:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
 
     async def __aenter__(self) -> "EventGridPublisherClient":
         await self._client.__aenter__()

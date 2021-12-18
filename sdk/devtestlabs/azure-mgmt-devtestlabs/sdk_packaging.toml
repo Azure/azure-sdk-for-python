@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-devtestlabs"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "DevTestLabs Management"
+package_pprint_name = "Dev Test Labs Management"
 package_doc_id = "devtest-labs"
 is_stable = true
 is_arm = true

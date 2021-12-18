@@ -22,20 +22,20 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
-
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_count_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/$count')
@@ -63,6 +63,7 @@ def build_search_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     search_text = kwargs.pop('search_text', None)  # type: Optional[str]
     include_total_result_count = kwargs.pop('include_total_result_count', None)  # type: Optional[bool]
     facets = kwargs.pop('facets', None)  # type: Optional[List[str]]
@@ -75,6 +76,7 @@ def build_search_get_request(
     query_type = kwargs.pop('query_type', None)  # type: Optional[Union[str, "_models.QueryType"]]
     scoring_parameters = kwargs.pop('scoring_parameters', None)  # type: Optional[List[str]]
     scoring_profile = kwargs.pop('scoring_profile', None)  # type: Optional[str]
+    semantic_configuration = kwargs.pop('semantic_configuration', None)  # type: Optional[str]
     search_fields = kwargs.pop('search_fields', None)  # type: Optional[List[str]]
     query_language = kwargs.pop('query_language', None)  # type: Optional[Union[str, "_models.QueryLanguage"]]
     speller = kwargs.pop('speller', None)  # type: Optional[Union[str, "_models.Speller"]]
@@ -89,7 +91,6 @@ def build_search_get_request(
     semantic_fields = kwargs.pop('semantic_fields', None)  # type: Optional[List[str]]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs')
@@ -120,6 +121,8 @@ def build_search_get_request(
         query_parameters['scoringParameter'] = [_SERIALIZER.query("scoring_parameters", q, 'str') if q is not None else '' for q in scoring_parameters]
     if scoring_profile is not None:
         query_parameters['scoringProfile'] = _SERIALIZER.query("scoring_profile", scoring_profile, 'str')
+    if semantic_configuration is not None:
+        query_parameters['semanticConfiguration'] = _SERIALIZER.query("semantic_configuration", semantic_configuration, 'str')
     if search_fields is not None:
         query_parameters['searchFields'] = _SERIALIZER.query("search_fields", search_fields, '[str]', div=',')
     if query_language is not None:
@@ -165,10 +168,10 @@ def build_search_post_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/search.post.search')
@@ -199,10 +202,10 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     selected_fields = kwargs.pop('selected_fields', None)  # type: Optional[List[str]]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs(\'{key}\')')
@@ -237,6 +240,7 @@ def build_suggest_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     search_text = kwargs.pop('search_text')  # type: str
     suggester_name = kwargs.pop('suggester_name')  # type: str
     filter = kwargs.pop('filter', None)  # type: Optional[str]
@@ -250,7 +254,6 @@ def build_suggest_get_request(
     top = kwargs.pop('top', None)  # type: Optional[int]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/search.suggest')
@@ -298,10 +301,10 @@ def build_suggest_post_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/search.post.suggest')
@@ -331,10 +334,10 @@ def build_index_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/search.index')
@@ -364,6 +367,7 @@ def build_autocomplete_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     search_text = kwargs.pop('search_text')  # type: str
     suggester_name = kwargs.pop('suggester_name')  # type: str
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
@@ -376,7 +380,6 @@ def build_autocomplete_get_request(
     search_fields = kwargs.pop('search_fields', None)  # type: Optional[List[str]]
     top = kwargs.pop('top', None)  # type: Optional[int]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/search.autocomplete')
@@ -422,10 +425,10 @@ def build_autocomplete_post_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
 
-    api_version = "2021-04-30-Preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/docs/search.post.autocomplete')
@@ -484,6 +487,9 @@ class DocumentsOperations(object):
 
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: long, or the result of cls(response)
         :rtype: long
@@ -495,11 +501,14 @@ class DocumentsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_count_request(
+            api_version=api_version,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.count.metadata['url'],
         )
@@ -546,6 +555,9 @@ class DocumentsOperations(object):
         :type search_options: ~azure.search.documents.models.SearchOptions
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
@@ -556,6 +568,8 @@ class DocumentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
 
         _include_total_result_count = None
         _facets = None
@@ -568,6 +582,7 @@ class DocumentsOperations(object):
         _query_type = None
         _scoring_parameters = None
         _scoring_profile = None
+        _semantic_configuration = None
         _search_fields = None
         _query_language = None
         _speller = None
@@ -593,6 +608,7 @@ class DocumentsOperations(object):
             _query_type = search_options.query_type
             _scoring_parameters = search_options.scoring_parameters
             _scoring_profile = search_options.scoring_profile
+            _semantic_configuration = search_options.semantic_configuration
             _search_fields = search_options.search_fields
             _query_language = search_options.query_language
             _speller = search_options.speller
@@ -609,6 +625,7 @@ class DocumentsOperations(object):
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_search_get_request(
+            api_version=api_version,
             search_text=search_text,
             include_total_result_count=_include_total_result_count,
             facets=_facets,
@@ -621,6 +638,7 @@ class DocumentsOperations(object):
             query_type=_query_type,
             scoring_parameters=_scoring_parameters,
             scoring_profile=_scoring_profile,
+            semantic_configuration=_semantic_configuration,
             search_fields=_search_fields,
             query_language=_query_language,
             speller=_speller,
@@ -675,6 +693,9 @@ class DocumentsOperations(object):
         :type search_request: ~azure.search.documents.models.SearchRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
@@ -686,6 +707,7 @@ class DocumentsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -694,9 +716,10 @@ class DocumentsOperations(object):
         json = self._serialize.body(search_request, 'SearchRequest')
 
         request = build_search_post_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.search_post.metadata['url'],
         )
         request = _convert_request(request)
@@ -742,6 +765,9 @@ class DocumentsOperations(object):
         :type selected_fields: list[str]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: any, or the result of cls(response)
         :rtype: any
@@ -753,12 +779,15 @@ class DocumentsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_get_request(
             key=key,
+            api_version=api_version,
             selected_fields=selected_fields,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.get.metadata['url'],
@@ -810,6 +839,9 @@ class DocumentsOperations(object):
         :type suggest_options: ~azure.search.documents.models.SuggestOptions
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SuggestDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
@@ -820,6 +852,8 @@ class DocumentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
 
         _filter = None
         _use_fuzzy_matching = None
@@ -845,6 +879,7 @@ class DocumentsOperations(object):
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         request = build_suggest_get_request(
+            api_version=api_version,
             search_text=search_text,
             suggester_name=suggester_name,
             filter=_filter,
@@ -898,6 +933,9 @@ class DocumentsOperations(object):
         :type suggest_request: ~azure.search.documents.models.SuggestRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SuggestDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
@@ -909,6 +947,7 @@ class DocumentsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -917,9 +956,10 @@ class DocumentsOperations(object):
         json = self._serialize.body(suggest_request, 'SuggestRequest')
 
         request = build_suggest_post_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.suggest_post.metadata['url'],
         )
         request = _convert_request(request)
@@ -961,6 +1001,9 @@ class DocumentsOperations(object):
         :type actions: list[~azure.search.documents.models.IndexAction]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IndexDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.IndexDocumentsResult
@@ -972,6 +1015,7 @@ class DocumentsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -981,9 +1025,10 @@ class DocumentsOperations(object):
         json = self._serialize.body(_batch, 'IndexBatch')
 
         request = build_index_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.index.metadata['url'],
         )
         request = _convert_request(request)
@@ -1036,6 +1081,9 @@ class DocumentsOperations(object):
         :type request_options: ~azure.search.documents.models.RequestOptions
         :param autocomplete_options: Parameter group.
         :type autocomplete_options: ~azure.search.documents.models.AutocompleteOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutocompleteResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.AutocompleteResult
@@ -1046,6 +1094,8 @@ class DocumentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
 
         _x_ms_client_request_id = None
         _autocomplete_mode = None
@@ -1069,6 +1119,7 @@ class DocumentsOperations(object):
             _top = autocomplete_options.top
 
         request = build_autocomplete_get_request(
+            api_version=api_version,
             search_text=search_text,
             suggester_name=suggester_name,
             x_ms_client_request_id=_x_ms_client_request_id,
@@ -1121,6 +1172,9 @@ class DocumentsOperations(object):
         :type autocomplete_request: ~azure.search.documents.models.AutocompleteRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
+        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutocompleteResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.AutocompleteResult
@@ -1132,6 +1186,7 @@ class DocumentsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _x_ms_client_request_id = None
@@ -1140,9 +1195,10 @@ class DocumentsOperations(object):
         json = self._serialize.body(autocomplete_request, 'AutocompleteRequest')
 
         request = build_autocomplete_post_request(
+            api_version=api_version,
             content_type=content_type,
-            x_ms_client_request_id=_x_ms_client_request_id,
             json=json,
+            x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.autocomplete_post.metadata['url'],
         )
         request = _convert_request(request)
