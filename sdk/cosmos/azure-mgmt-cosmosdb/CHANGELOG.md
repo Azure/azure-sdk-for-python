@@ -1,5 +1,76 @@
 # Release History
 
+## 7.0.0b2 (2021-10-26)
+
+**Features**
+
+  - Model DataCenterResourceProperties has a new parameter disk_capacity
+  - Model DataCenterResourceProperties has a new parameter disk_sku
+  - Model DataCenterResourceProperties has a new parameter managed_disk_customer_key_uri
+  - Model DataCenterResourceProperties has a new parameter sku
+  - Model DataCenterResourceProperties has a new parameter availability_zone
+  - Model DataCenterResourceProperties has a new parameter backup_storage_customer_key_uri
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter capacity
+  - Model ClusterResourceProperties has a new parameter cassandra_audit_logging_enabled
+  - Model ClusterResourceProperties has a new parameter deallocated
+  - Model DatabaseAccountGetResults has a new parameter capacity
+  - Added operation MongoDBResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation CassandraClustersOperations.begin_invoke_command
+  - Added operation CassandraClustersOperations.begin_start
+  - Added operation CassandraClustersOperations.begin_deallocate
+  - Added operation CassandraClustersOperations.status
+  - Added operation group LocationsOperations
+
+**Breaking changes**
+
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model LocationProperties no longer has parameter status
+  - Model DatabaseAccountCreateUpdateParameters no longer has parameter diagnostic_log_settings
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model DatabaseAccountUpdateParameters no longer has parameter diagnostic_log_settings
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter diagnostic_log_settings
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Removed operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Removed operation CassandraResourcesOperations.get_cassandra_view
+  - Removed operation CassandraResourcesOperations.list_cassandra_views
+  - Removed operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Removed operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Removed operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Removed operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Removed operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Removed operation CassandraClustersOperations.begin_request_repair
+  - Removed operation CassandraClustersOperations.begin_fetch_node_status
+  - Removed operation CassandraClustersOperations.get_backup
+  - Removed operation CassandraClustersOperations.list_backups
+  - Removed operation group ServiceOperations
+  - Removed operation group CosmosDBManagementClientOperationsMixin
+  - Removed operation group GraphResourcesOperations
+
 ## 7.0.0b1 (2021-09-17)
 
 **Features**

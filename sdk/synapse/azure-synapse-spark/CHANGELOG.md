@@ -1,6 +1,6 @@
 # Release History
 
-## 0.7.0 (Unreleased)
+## 0.8.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.7.0 (2021-10-05)
+
+### Features Added
+
+- Added `LivyStatementStates` and `LivyStates`
 
 ## 0.6.0 (2021-08-10)
 

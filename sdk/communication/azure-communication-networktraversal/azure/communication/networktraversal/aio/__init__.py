@@ -5,7 +5,9 @@
 # --------------------------------------------------------------------------
 
 from ._communication_relay_client_async import CommunicationRelayClient
+from .._generated.models import RouteType
 
 __all__ = [
-    'CommunicationRelayClient'
+    'CommunicationRelayClient',
+    'RouteType'
 ]

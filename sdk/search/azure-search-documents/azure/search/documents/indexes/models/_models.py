@@ -849,6 +849,21 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
      ~azure.search.documents.models.DataDeletionDetectionPolicy
     :keyword e_tag: The ETag of the data source.
     :paramtype e_tag: str
+    :keyword identity: An explicit managed identity to use for this datasource. If not specified and
+     the connection string is a managed identity, the system-assigned managed identity is used. If
+     not specified, the value remains unchanged. If "none" is specified, the value of this property
+     is cleared.
+    :paramtype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
+    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your datasource
+     definition when you want full assurance that no one, not even Microsoft, can decrypt your data
+     source definition in Azure Cognitive Search. Once you have encrypted your data source
+     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+     this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your datasource definition will be unaffected. Encryption with customer-managed
+     keys is not available for free search services, and is only available for paid services created
+     on or after January 1, 2019.
+    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
     _validation = {
@@ -872,7 +887,9 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             "key": "dataDeletionDetectionPolicy",
             "type": "DataDeletionDetectionPolicy",
         },
+        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
+        'identity': {'key': 'identity', 'type': 'SearchIndexerDataIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -889,6 +906,8 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             "data_deletion_detection_policy", None
         )
         self.e_tag = kwargs.get("e_tag", None)
+        self.encryption_key = kwargs.get("encryption_key", None)
+        self.identity = kwargs.get("identity", None)
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
@@ -905,6 +924,8 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             data_change_detection_policy=self.data_change_detection_policy,
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
+            encryption_key=self.encryption_key,
+            identity=self.identity
         )
 
     @classmethod
@@ -925,6 +946,8 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
+            encryption_key=search_indexer_data_source.encryption_key,
+            identity=search_indexer_data_source.identity
         )
 
 

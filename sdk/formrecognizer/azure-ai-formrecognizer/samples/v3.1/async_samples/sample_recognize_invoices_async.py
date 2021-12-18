@@ -41,7 +41,7 @@ class RecognizeInvoiceSampleAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         async with FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
             with open(path_to_sample_forms, "rb") as f:
                 poller = await form_recognizer_client.begin_recognize_invoices(invoice=f, locale="en-US")
@@ -162,5 +162,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

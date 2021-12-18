@@ -11,7 +11,7 @@ except ImportError:  # python < 3.3
 import asyncio
 import sys
 
-from asynctestcase import AsyncTextAnalyticsTest
+from testcase import TextAnalyticsTest
 from testcase import TextAnalyticsPreparer
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -33,7 +33,7 @@ class AsyncMockTransport(mock.MagicMock):
             self.__aenter__ = mock.Mock(return_value=get_completed_future())
             self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
-class TestContextManager(AsyncTextAnalyticsTest):
+class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     async def test_close(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         transport = AsyncMockTransport()

@@ -40,6 +40,9 @@ Use the Azure.Search.Documents client library to:
 [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search) |
 [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 

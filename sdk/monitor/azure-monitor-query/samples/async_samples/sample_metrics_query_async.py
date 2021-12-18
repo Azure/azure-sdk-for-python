@@ -3,18 +3,18 @@
 """
 FILE: sample_metrics_query_async.py
 DESCRIPTION:
-    This sample demonstrates authenticating the LogsQueryClient and querying a single query
-    on multiple workspaces using the additional_workspaces param.
+    This sample demonstrates authenticating the MetricsQueryClient and retrieving the "Ingress"
+    metric along with the "Average" aggregation type. The query will execute over a timespan
+    of 2 hours with a granularity of 15 minutes.
 USAGE:
     python sample_metrics_query_async.py
     Set the environment variables with your own values before running the sample:
-    1) METRICS_RESOURCE_URI - The resource uri of the resource for which the metrics are being queried.
-    In this example, a storage account resource URI is taken.
+    1) METRICS_RESOURCE_URI - The resource URI of the resource for which the metrics are being queried.
 
-    In order to use the DefaultAzureCredential, the following environment variables must be set:
-    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
-    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
-    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+    This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+    For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+
+    In this example, a Storage account resource URI is taken.
 """
 import os
 import asyncio

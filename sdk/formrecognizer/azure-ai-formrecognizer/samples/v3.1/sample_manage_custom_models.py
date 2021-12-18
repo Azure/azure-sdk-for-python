@@ -37,7 +37,7 @@ class ManageCustomModelsSample(object):
         container_sas_url = os.environ["CONTAINER_SAS_URL_V2"]
 
         # [START get_account_properties]
-        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1")
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         # First, we see how many custom models we have, and what our limit is
         account_properties = form_training_client.get_account_properties()
         print("Our account has {} custom models, and we can have at most {} custom models\n".format(
@@ -49,9 +49,9 @@ class ManageCustomModelsSample(object):
         # [START list_custom_models]
         custom_models = form_training_client.list_custom_models()
 
-        # print("We have models with the following IDs:")  TODO list models is returning null for some models
-        # for model in custom_models:
-        #     print(model.model_id)
+        print("We have models with the following IDs:")
+        for model in custom_models:
+            print(model.model_id)
         # [END list_custom_models]
 
         # let's train a model to use for this sample

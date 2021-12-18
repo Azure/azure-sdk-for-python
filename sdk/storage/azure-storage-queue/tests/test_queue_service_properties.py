@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.queue import (
@@ -20,7 +18,8 @@ from azure.storage.queue import (
     RetentionPolicy,
 )
 
-from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
+from settings.testcase import QueuePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 
@@ -103,10 +102,10 @@ class QueueServicePropertiesTest(StorageTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @GlobalStorageAccountPreparer()
-    def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_queue_service_properties(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         # Act
         resp = qsc.set_service_properties(
             analytics_logging=QueueAnalyticsLogging(),
@@ -121,10 +120,10 @@ class QueueServicePropertiesTest(StorageTestCase):
 
     # --Test cases per feature ---------------------------------------
 
-    @GlobalStorageAccountPreparer()
-    def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_set_logging(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -134,10 +133,10 @@ class QueueServicePropertiesTest(StorageTestCase):
         received_props = qsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @GlobalStorageAccountPreparer()
-    def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_set_hour_metrics(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -147,10 +146,10 @@ class QueueServicePropertiesTest(StorageTestCase):
         received_props = qsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @GlobalStorageAccountPreparer()
-    def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_set_minute_metrics(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -161,10 +160,10 @@ class QueueServicePropertiesTest(StorageTestCase):
         received_props = qsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @GlobalStorageAccountPreparer()
-    def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_set_cors(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -189,17 +188,17 @@ class QueueServicePropertiesTest(StorageTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @GlobalStorageAccountPreparer()
-    def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_retention_no_days(self, storage_account_name, storage_account_key):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @GlobalStorageAccountPreparer()
-    def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_too_many_cors_rules(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -208,10 +207,10 @@ class QueueServicePropertiesTest(StorageTestCase):
         self.assertRaises(HttpResponseError,
                           qsc.set_service_properties, None, None, None, cors)
 
-    @GlobalStorageAccountPreparer()
-    def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_retention_too_long(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 

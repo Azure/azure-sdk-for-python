@@ -23,13 +23,9 @@ from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirect
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
-from asynctestcase import (
-    StorageTestCase,
-)
-
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
-from testcase import DataLakePreparer
-
 TEST_DIRECTORY_PREFIX = 'directory'
 REMOVE_ACL = "mask," + "default:user,default:group," + \
              "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
@@ -53,7 +49,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class DirectoryTest(StorageTestCase):
     async def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key,
                                          transport=AiohttpTestTransport())
         self.config = self.dsc._config
@@ -319,7 +315,7 @@ class DirectoryTest(StorageTestCase):
                                                              match_condition=MatchConditions.IfNotModified)
         # Assert
         self.assertIsNotNone(response)
-        self.assertEquals(response['permissions'], 'rwxrwxrwx')
+        self.assertEqual(response['permissions'], 'rwxrwxrwx')
 
     @DataLakePreparer()
     async def test_set_access_control_recursive_async(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -904,7 +900,7 @@ class DirectoryTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await source_directory_client.get_directory_properties()
 
-        self.assertEquals(res.url, destination_directory_client.url)
+        self.assertEqual(res.url, destination_directory_client.url)
 
     @DataLakePreparer()
     async def test_rename_with_none_existing_destination_condition_and_source_unmodified_condition_async(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -935,7 +931,7 @@ class DirectoryTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await source_directory_client.get_directory_properties()
 
-        self.assertEquals(non_existing_dir_name, res.path_name)
+        self.assertEqual(non_existing_dir_name, res.path_name)
 
     @DataLakePreparer()
     async def test_rename_to_an_non_existing_directory_in_another_file_system_async(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -959,7 +955,7 @@ class DirectoryTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await source_directory_client.get_directory_properties()
 
-        self.assertEquals(non_existing_dir_name, res.path_name)
+        self.assertEqual(non_existing_dir_name, res.path_name)
 
     @DataLakePreparer()
     async def test_rename_directory_to_non_empty_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):

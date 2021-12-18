@@ -316,3 +316,8 @@ class MockResponse:
         self.headers = headers
         self.reason = reason
         self.content = content
+        self.raw = MockRaw()
+
+class MockRaw:
+    def __init__(self):
+        self.enforce_content_length = False

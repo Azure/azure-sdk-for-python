@@ -55,7 +55,7 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _parameters = _models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
-        api_version = "2021-04-30"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -100,6 +100,7 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         self,
         subdomain_name,  # type: str
         type,  # type: str
+        kind=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.DomainAvailability"
@@ -109,6 +110,8 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         :type subdomain_name: str
         :param type: The Type of the resource.
         :type type: str
+        :param kind: The Kind of the resource.
+        :type kind: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainAvailability, or the result of cls(response)
         :rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability
@@ -120,8 +123,8 @@ class CognitiveServicesManagementClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = _models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type)
-        api_version = "2021-04-30"
+        _parameters = _models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type, kind=kind)
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

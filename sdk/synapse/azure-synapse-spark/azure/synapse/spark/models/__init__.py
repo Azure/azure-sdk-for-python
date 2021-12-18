@@ -44,6 +44,8 @@ except (SyntaxError, ImportError):
     from ._models import SparkStatementOutput  # type: ignore
 
 from ._spark_client_enums import (
+    LivyStatementStates,
+    LivyStates,
     PluginCurrentState,
     SchedulerCurrentState,
     SparkBatchJobResultType,
@@ -71,6 +73,8 @@ __all__ = [
     'SparkStatementCollection',
     'SparkStatementOptions',
     'SparkStatementOutput',
+    'LivyStatementStates',
+    'LivyStates',
     'PluginCurrentState',
     'SchedulerCurrentState',
     'SparkBatchJobResultType',

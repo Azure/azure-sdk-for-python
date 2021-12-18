@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from msrest.authentication import BasicAuthentication
 import requests
 
+_FILE_OUT = 'published_issues_python.csv'
+
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
@@ -33,7 +35,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link)
+    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link, issue_info)
     # Check readme tag format
     if 'package' not in readme_tag:
         readme_tag = 'package-{}'.format(readme_tag)
@@ -51,7 +53,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     return package_name, readme_link, output_folder
 
 
-def _get_pkname_and_readme_link(rest_repo, link):
+def _get_pkname_and_readme_link(rest_repo, link, issue_info):
     # change commit link to pull json link(i.e. https://github.com/Azure/azure-rest-api-specs/commit/77f5d3b5d2fbae17621ea124485788f496786758#diff-708c2fb843b022cac4af8c6f996a527440c1e0d328abb81f54670747bf14ab1a)
     pk_name = ''
     if 'commit' in link:
@@ -66,6 +68,11 @@ def _get_pkname_and_readme_link(rest_repo, link):
 
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
+        
+        if not pr_info.merged:
+            issue_info.create_comment(f' @{issue_info.user.login},please merge your pr first. {link}')
+            raise Exception('PR has not been merged')
+            
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
             contents_url = pr_changed_file.contents_url
@@ -186,16 +193,25 @@ def auto_close_issue(sdk_repo, item):
     issue_number, package_name = item.issue_object.number, item.package
     issue_info = sdk_repo.get_issue(number=issue_number)
     issue_author = issue_info.user.login
-    last_comment = list(issue_info.get_comments())[-1]
-    last_comment_date = last_comment.created_at
+    issue_created_date = issue_info.created_at
     last_version, last_time = _get_last_released_date(package_name)
-    if last_time and last_time > last_comment_date:
+    if last_time and last_time > issue_created_date and 'auto-closed' not in item.labels:
         comment = f'Hi @{issue_author}, pypi link: https://pypi.org/project/{package_name}/{last_version}/'
         issue_info.create_comment(body=comment)
         issue_info.edit(state='closed')
         item.issue_object.add_to_labels('auto-closed')
         logging.info(f"issue number：{issue_number} has been closed!")
-
+     
+        created_at = issue_info.created_at.strftime('%Y-%m-%d')
+        closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
+        assignee = issue_info.assignee.login
+        link = issue_info.html_url
+        closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link}\n'
+        with open(_FILE_OUT, 'r') as file_read:
+            lines = file_read.readlines()
+        with open(_FILE_OUT, 'w') as file_write:
+            lines.insert(1, closed_issue_info)
+            file_write.writelines(lines)
 
 def _get_last_released_date(package_name):
     pypi_link = f'https://pypi.org/project/{package_name}/#history'

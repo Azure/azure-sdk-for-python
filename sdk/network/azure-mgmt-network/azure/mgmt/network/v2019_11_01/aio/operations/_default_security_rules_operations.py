@@ -45,7 +45,7 @@ class DefaultSecurityRulesOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityRuleListResult"]:
         """Gets all default security rules in a network security group.
 
@@ -120,7 +120,7 @@ class DefaultSecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         default_security_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityRule":
         """Get the specified default network security rule.
 

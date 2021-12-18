@@ -6,9 +6,10 @@
 
 # pylint: disable=protected-access, too-many-lines
 
+from typing import Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
-from ._generated.models import ModelInfo, Error
+from ._generated.v2021_09_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -1730,15 +1731,6 @@ class FormRecognizerError(object):
             else []
         )
 
-    @classmethod
-    def _from_generated_v3(cls, err):
-        if err.innererror:
-            return cls(
-                code=err.innererror.code,
-                message=err.innererror.message,
-            )
-        return cls(code=err.code, message=err.message)
-
     def __repr__(self):
         return "FormRecognizerError(code={}, message={})".format(
             self.code, self.message
@@ -2075,12 +2067,13 @@ class TextAppearance(object):
 
 
 class BoundingRegion(object):
-    """The bounding box corresponding to a page.
+    """The bounding region corresponding to a page.
 
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
-        order: top-left, top-right, bottom-right, bottom-left.
+        order relative to the text orientation: top-left, top-right,
+        bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -2133,29 +2126,37 @@ class BoundingRegion(object):
         )
 
 
-class DocumentElement(object):
-    """A DocumentElement.
+class DocumentContentElement(object):
+    """A DocumentContentElement.
 
-    :ivar content: Text content of the word.
+    :ivar content: Text content of the document content element.
     :vartype content: str
-    :ivar bounding_box: Bounding box of the word.
+    :ivar bounding_box: Bounding box of the document content element.
     :vartype bounding_box: list[Point]
-    :ivar str kind:
+    :ivar span: Location of the element in the full document content.
+    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
+    :ivar confidence: Confidence of accurately extracting the document content element.
+    :vartype confidence: float
+    :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
+        correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
+        :class:`~azure.ai.formrecognizer.DocumentSelectionMark`, respectively.
     """
 
     def __init__(self, **kwargs):
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
         self.kind = kwargs.get("kind", None)
 
     def __repr__(self):
-        return "DocumentElement(content={}, bounding_box={}, kind={})".format(
-            self.content, self.bounding_box, self.kind
+        return "DocumentContentElement(content={}, bounding_box={}, span={}, confidence={}, kind={})".format(
+            self.content, self.bounding_box, self.span, self.confidence, self.kind
         )
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of DocumentElement.
+        """Returns a dict representation of DocumentContentElement.
 
         :return: dict
         :rtype: dict
@@ -2165,23 +2166,27 @@ class DocumentElement(object):
             "bounding_box": [f.to_dict() for f in self.bounding_box]
             if self.bounding_box
             else [],
+            "span": self.span.to_dict() if self.span else None,
+            "confidence": self.confidence,
             "kind": self.kind,
         }
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> DocumentElement
-        """Converts a dict in the shape of a DocumentElement to the model itself.
+        # type: (dict) -> DocumentContentElement
+        """Converts a dict in the shape of a DocumentContentElement to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentElement.
-        :return: DocumentElement
-        :rtype: DocumentElement
+        :param dict data: A dictionary in the shape of DocumentContentElement.
+        :return: DocumentContentElement
+        :rtype: DocumentContentElement
         """
         return cls(
             content=data.get("content", None),
             bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
             if len(data.get("bounding_box", [])) > 0
             else [],
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            confidence=data.get("confidence", None),
             kind=data.get("kind", None),
         )
 
@@ -2598,8 +2603,12 @@ class DocumentKeyValuePair(object):
     @classmethod
     def _from_generated(cls, key_value_pair):
         return cls(
-            key=DocumentKeyValueElement._from_generated(key_value_pair.key),
-            value=DocumentKeyValueElement._from_generated(key_value_pair.value),
+            key=DocumentKeyValueElement._from_generated(key_value_pair.key)
+            if key_value_pair.key
+            else None,
+            value=DocumentKeyValueElement._from_generated(key_value_pair.value)
+            if key_value_pair.value
+            else None,
             confidence=key_value_pair.confidence,
         )
 
@@ -2655,13 +2664,15 @@ class DocumentLine(object):
     """
 
     def __init__(self, **kwargs):
+        self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.bounding_box = kwargs.get("bounding_box", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
-    def _from_generated(cls, line):
+    def _from_generated(cls, line, document_page):
         return cls(
+            _parent=document_page,
             content=line.content,
             bounding_box=get_bounding_box(line),
             spans=prepare_document_spans(line.spans),
@@ -2709,6 +2720,24 @@ class DocumentLine(object):
             if len(data.get("spans", [])) > 0
             else [],
         )
+
+    def get_words(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (Any) -> Iterable[DocumentWord]
+        """Get the words found in the spans of this DocumentLine.
+
+        :return: iterable[DocumentWord]
+        :rtype: iterable[DocumentWord]
+        """
+        if not self._parent:
+            raise ValueError(
+                "Cannot use get_words() on a model that has been converted from a dictionary. "
+                "Missing reference to parent element."
+                )
+        result = []
+        for word in self._parent.words:
+            if _in_span(word, self.spans):
+                result.append(word)
+        return result
 
 
 class DocumentPage(object):
@@ -2758,7 +2787,7 @@ class DocumentPage(object):
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[DocumentLine._from_generated(line) for line in page.lines]
+            lines=[DocumentLine._from_generated(line, page) for line in page.lines]
             if page.lines
             else [],
             words=[DocumentWord._from_generated(word) for word in page.words]
@@ -2846,7 +2875,7 @@ class DocumentPage(object):
         )
 
 
-class DocumentSelectionMark(DocumentElement):
+class DocumentSelectionMark(DocumentContentElement):
     """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
 
     :ivar state: State of the selection mark. Possible values include: "selected",
@@ -2861,21 +2890,21 @@ class DocumentSelectionMark(DocumentElement):
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the selection mark.
     :vartype confidence: float
-    :ivar str kind:
+    :ivar str kind: For DocumentSelectionMark, this is "selectionMark".
     """
 
     def __init__(self, **kwargs):
         super(DocumentSelectionMark, self).__init__(kind="selectionMark", **kwargs)
         self.state = kwargs.get("state", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, mark):
         return cls(
             state=mark.state,
             bounding_box=get_bounding_box(mark),
-            span=DocumentSpan._from_generated(mark.span),
+            span=DocumentSpan._from_generated(mark.span)
+            if mark.span
+            else None,
             confidence=mark.confidence,
         )
 
@@ -3120,11 +3149,11 @@ class DocumentTableCell(object):
     @classmethod
     def _from_generated(cls, cell):
         return cls(
-            kind=cell.kind,
+            kind=cell.kind if cell.kind else "content",
             row_index=cell.row_index,
             column_index=cell.column_index,
-            row_span=cell.row_span,
-            column_span=cell.column_span,
+            row_span=cell.row_span if cell.row_span else 1,
+            column_span=cell.column_span if cell.column_span else 1,
             content=cell.content,
             bounding_regions=[
                 BoundingRegion._from_generated(region)
@@ -3184,11 +3213,11 @@ class DocumentTableCell(object):
         :rtype: DocumentTableCell
         """
         return cls(
-            kind=data.get("kind", None),
+            kind=data.get("kind", "content"),
             row_index=data.get("row_index", None),
             column_index=data.get("column_index", None),
-            row_span=data.get("row_span", None),
-            column_span=data.get("column_span", None),
+            row_span=data.get("row_span", 1),
+            column_span=data.get("column_span", 1),
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -3320,9 +3349,9 @@ class ModelOperation(ModelOperationInfo):
     :vartype kind: str
     :ivar resource_location: URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar error: Encountered error, includes the error code and message for why
+    :ivar error: Encountered error, includes the error code, message, and details for why
         the operation failed.
-    :vartype error: ~azure.ai.formrecognizer.FormRecognizerError
+    :vartype error: ~azure.ai.formrecognizer.DocumentAnalysisError
     :ivar result: Operation result upon success. Returns a DocumentModel which contains
         all information about the model including the doc types
         and fields it can analyze from documents.
@@ -3387,7 +3416,7 @@ class ModelOperation(ModelOperationInfo):
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
             result=DocumentModel.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
-            error=FormRecognizerError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
+            error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
         )
 
     @classmethod
@@ -3403,12 +3432,12 @@ class ModelOperation(ModelOperationInfo):
             resource_location=op.resource_location,
             result=DocumentModel._from_generated(deserialize(ModelInfo, op.result))
             if op.result else None,
-            error=FormRecognizerError._from_generated_v3(deserialize(Error, op.error))
+            error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None
         )
 
 
-class DocumentWord(DocumentElement):
+class DocumentWord(DocumentContentElement):
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 
@@ -3420,20 +3449,20 @@ class DocumentWord(DocumentElement):
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
     :vartype confidence: float
-    :ivar str kind:
+    :ivar str kind: For DocumentWord, this is "word".
     """
 
     def __init__(self, **kwargs):
         super(DocumentWord, self).__init__(kind="word", **kwargs)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word):
         return cls(
             content=word.content,
             bounding_box=get_bounding_box(word),
-            span=DocumentSpan._from_generated(word.span),
+            span=DocumentSpan._from_generated(word.span)
+            if word.span
+            else None,
             confidence=word.confidence,
         )
 
@@ -3525,7 +3554,9 @@ class AnalyzeResult(object):
             api_version=response.api_version,
             model_id=response.model_id,
             content=response.content,
-            pages=[DocumentPage._from_generated(page) for page in response.pages],
+            pages=[DocumentPage._from_generated(page) for page in response.pages]
+            if response.pages
+            else [],
             tables=[DocumentTable._from_generated(table) for table in response.tables]
             if response.tables
             else [],
@@ -3888,3 +3919,160 @@ class AccountInfo(object):
             model_count=data.get("model_count", None),
             model_limit=data.get("model_limit", None),
         )
+
+
+class DocumentAnalysisError(object):
+    """DocumentAnalysisError contains the details of the error returned by the service.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar target: Target of the error.
+    :vartype target: str
+    :ivar details: List of detailed errors.
+    :vartype details: list[~azure.ai.formrecognizer.DocumentAnalysisError]
+    :ivar innererror: Detailed error.
+    :vartype innererror: ~azure.ai.formrecognizer.DocumentAnalysisInnerError
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+        self.innererror = kwargs.get('innererror', None)
+
+    def __repr__(self):
+        return (
+            "DocumentAnalysisError(code={}, message={}, target={}, details={}, innererror={})".format(
+                self.code,
+                self.message,
+                self.target,
+                repr(self.details),
+                repr(self.innererror)
+            )
+        )
+
+    @classmethod
+    def _from_generated(cls, err):
+        return cls(
+            code=err.code,
+            message=err.message,
+            target=err.target,
+            details=[DocumentAnalysisError._from_generated(e) for e in err.details] if err.details else [],
+            innererror=DocumentAnalysisInnerError._from_generated(err.innererror) if err.innererror else None
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of DocumentAnalysisError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "code": self.code,
+            "message": self.message,
+            "target": self.target,
+            "details": [detail.to_dict() for detail in self.details] if self.details else [],
+            "innererror": self.innererror.to_dict() if self.innererror else None
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> DocumentAnalysisError
+        """Converts a dict in the shape of a DocumentAnalysisError to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentAnalysisError.
+        :return: DocumentAnalysisError
+        :rtype: DocumentAnalysisError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+            target=data.get("target", None),
+            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
+            if data.get("details") else [],
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
+        )
+
+
+class DocumentAnalysisInnerError(object):
+    """Inner error details for the DocumentAnalysisError.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :ivar innererror: Detailed error.
+    :vartype innererror: ~azure.ai.formrecognizer.DocumentAnalysisInnerError
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.innererror = kwargs.get('innererror', None)
+
+    def __repr__(self):
+        return (
+            "DocumentAnalysisInnerError(code={}, message={}, innererror={})".format(
+                self.code,
+                self.message,
+                repr(self.innererror)
+            )
+        )
+
+    @classmethod
+    def _from_generated(cls, ierr):
+        return cls(
+            code=ierr.code,
+            message=ierr.message,
+            innererror=DocumentAnalysisInnerError._from_generated(ierr.innererror) if ierr.innererror else None
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of DocumentAnalysisInnerError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "code": self.code,
+            "message": self.message,
+            "innererror": self.innererror.to_dict() if self.innererror else None
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> DocumentAnalysisInnerError
+        """Converts a dict in the shape of a DocumentAnalysisInnerError to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentAnalysisInnerError.
+        :return: DocumentAnalysisInnerError
+        :rtype: DocumentAnalysisInnerError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
+        )
+
+
+def _in_span(element, spans):
+    # type: (DocumentWord, List[DocumentSpan]) -> bool
+    for span in spans:
+        if element.span.offset >= span.offset and (
+            element.span.offset + element.span.length
+        ) <= (span.offset + span.length):
+            return True
+    return False

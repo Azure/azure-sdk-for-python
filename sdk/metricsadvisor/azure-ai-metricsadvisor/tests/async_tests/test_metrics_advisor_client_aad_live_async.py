@@ -27,8 +27,8 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_anomalies(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 10, 21),
             )
             tolist = []
             async for result in results:
@@ -41,8 +41,8 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             results = self.client.list_anomaly_dimension_values(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
                 dimension_name=self.dimension_name,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 10, 21),
             )
             tolist = []
             async for result in results:
@@ -54,8 +54,8 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_incidents(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 10, 21),
             )
             tolist = []
             async for result in results:
@@ -89,11 +89,11 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_list_metric_enriched_series_data(self):
         async with self.client:
-            series_identity = {"city": "Los Angeles"}
+            series_identity = {"region": "Los Angeles"}
             results = self.client.list_metric_enriched_series_data(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 9, 9),
                 series=[series_identity]
             )
             tolist = []
@@ -106,8 +106,8 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_metric_enrichment_status(
                 metric_id=self.metric_id,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 9, 9),
             )
             tolist = []
             async for result in results:
@@ -119,8 +119,8 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_alerts(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 9, 9),
                 time_mode="AnomalyTime",
             )
             tolist = []
@@ -133,10 +133,10 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_metric_series_data(
                 metric_id=self.metric_id,
-                start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 10, 21),
+                start_time=datetime.datetime(2021, 1, 1),
+                end_time=datetime.datetime(2021, 10, 21),
                 series_keys=[
-                    {"city": "Los Angeles", "category": "Homemade"}
+                    {"region": "Los Angeles", "category": "Homemade"}
                 ]
             )
             tolist = []
@@ -149,7 +149,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_metric_series_definitions(
                 metric_id=self.metric_id,
-                active_since=datetime.datetime(2020, 1, 1),
+                active_since=datetime.datetime(2021, 1, 1),
             )
             tolist = []
             async for result in results:
@@ -159,9 +159,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_add_anomaly_feedback(self):
         anomaly_feedback = AnomalyFeedback(metric_id=self.metric_id,
-                                           dimension_key={"city": "Los Angeles"},
-                                           start_time=datetime.datetime(2020, 8, 5),
-                                           end_time=datetime.datetime(2020, 10, 21),
+                                           dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                           start_time=datetime.datetime(2021, 8, 5),
+                                           end_time=datetime.datetime(2021, 9, 9),
                                            value="NotAnomaly")
         async with self.client:
             await self.client.add_feedback(anomaly_feedback)
@@ -169,9 +169,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_add_change_point_feedback(self):
         change_point_feedback = ChangePointFeedback(metric_id=self.metric_id,
-                                                    dimension_key={"city": "Los Angeles"},
-                                                    start_time=datetime.datetime(2020, 8, 5),
-                                                    end_time=datetime.datetime(2020, 10, 21),
+                                                    dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                                    start_time=datetime.datetime(2021, 8, 5),
+                                                    end_time=datetime.datetime(2021, 9, 9),
                                                     value="NotChangePoint")
         async with self.client:
             await self.client.add_feedback(change_point_feedback)
@@ -179,9 +179,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_add_comment_feedback(self):
         comment_feedback = CommentFeedback(metric_id=self.metric_id,
-                                           dimension_key={"city": "Los Angeles"},
-                                           start_time=datetime.datetime(2020, 8, 5),
-                                           end_time=datetime.datetime(2020, 10, 21),
+                                           dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                           start_time=datetime.datetime(2021, 8, 5),
+                                           end_time=datetime.datetime(2021, 9, 9),
                                            value="comment")
         async with self.client:
             await self.client.add_feedback(comment_feedback)
@@ -189,9 +189,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_add_period_feedback(self):
         period_feedback = PeriodFeedback(metric_id=self.metric_id,
-                                         dimension_key={"city": "Los Angeles"},
-                                         start_time=datetime.datetime(2020, 8, 5),
-                                         end_time=datetime.datetime(2020, 10, 21),
+                                         dimension_key={"category": "Shoes Handbags & Sunglasses"},
+                                         start_time=datetime.datetime(2021, 8, 5),
+                                         end_time=datetime.datetime(2021, 9, 9),
                                          period_type="AssignValue",
                                          value=2)
         async with self.client:
@@ -202,8 +202,8 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
         async with self.client:
             results = self.client.list_feedback(
                 metric_id=self.metric_id,
-                start_time=datetime.datetime(2021, 6, 1),
-                end_time=datetime.datetime(2021, 6, 3),
+                start_time=datetime.datetime(2021, 9, 1),
+                end_time=datetime.datetime(2021, 9, 9),
                 time_mode="FeedbackCreatedTime"
             )
             tolist = []

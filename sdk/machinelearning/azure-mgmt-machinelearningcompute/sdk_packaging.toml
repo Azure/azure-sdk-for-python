@@ -1,9 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-machinelearningcompute"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Machinelearningcompute Management"
+package_pprint_name = "Machine Learning Compute Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = false
-need_azuremgmtcore = true

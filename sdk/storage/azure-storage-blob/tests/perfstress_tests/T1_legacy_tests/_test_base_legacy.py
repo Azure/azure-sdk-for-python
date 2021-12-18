@@ -37,7 +37,7 @@ class _LegacyServiceTest(PerfStressTest):
         super().__init__(arguments)
         connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
         session = None
-        if self.args.test_proxy:
+        if self.args.test_proxies:
             session = requests.Session()
             session.verify = False
         if not _LegacyServiceTest.service_client or self.args.no_client_share:
@@ -50,7 +50,7 @@ class _LegacyServiceTest(PerfStressTest):
         self.async_service_client = None
         self.service_client = _LegacyServiceTest.service_client
 
-        if self.args.test_proxy:
+        if self.args.test_proxies:
             self.service_client.request_callback = functools.partial(
                 test_proxy_callback,
                 self._test_proxy_policy

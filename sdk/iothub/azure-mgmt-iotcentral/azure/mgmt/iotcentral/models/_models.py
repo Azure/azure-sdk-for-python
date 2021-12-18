@@ -74,6 +74,8 @@ class App(Resource):
     :type tags: dict[str, str]
     :param sku: Required. A valid instance SKU.
     :type sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
+    :param identity: The managed identities for the IoT Central application.
+    :type identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
     :ivar application_id: The ID of the application.
     :vartype application_id: str
     :param display_name: The display name of the application.
@@ -84,6 +86,9 @@ class App(Resource):
      characteristics and behaviors of an application. Optional; if not specified, defaults to a
      blank blueprint and allows the application to be defined from scratch.
     :type template: str
+    :ivar state: The current state of the application. Possible values include: "created",
+     "suspended".
+    :vartype state: str or ~azure.mgmt.iotcentral.models.AppState
     """
 
     _validation = {
@@ -93,6 +98,7 @@ class App(Resource):
         'location': {'required': True},
         'sku': {'required': True},
         'application_id': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -102,10 +108,12 @@ class App(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'AppSkuInfo'},
+        'identity': {'key': 'identity', 'type': 'SystemAssignedServiceIdentity'},
         'application_id': {'key': 'properties.applicationId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
     }
 
     def __init__(
@@ -114,10 +122,12 @@ class App(Resource):
     ):
         super(App, self).__init__(**kwargs)
         self.sku = kwargs['sku']
+        self.identity = kwargs.get('identity', None)
         self.application_id = None
         self.display_name = kwargs.get('display_name', None)
         self.subdomain = kwargs.get('subdomain', None)
         self.template = kwargs.get('template', None)
+        self.state = None
 
 
 class AppAvailabilityInfo(msrest.serialization.Model):
@@ -187,6 +197,8 @@ class AppPatch(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param sku: A valid instance SKU.
     :type sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
+    :param identity: The managed identities for the IoT Central application.
+    :type identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
     :ivar application_id: The ID of the application.
     :vartype application_id: str
     :param display_name: The display name of the application.
@@ -197,19 +209,25 @@ class AppPatch(msrest.serialization.Model):
      characteristics and behaviors of an application. Optional; if not specified, defaults to a
      blank blueprint and allows the application to be defined from scratch.
     :type template: str
+    :ivar state: The current state of the application. Possible values include: "created",
+     "suspended".
+    :vartype state: str or ~azure.mgmt.iotcentral.models.AppState
     """
 
     _validation = {
         'application_id': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'AppSkuInfo'},
+        'identity': {'key': 'identity', 'type': 'SystemAssignedServiceIdentity'},
         'application_id': {'key': 'properties.applicationId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
     }
 
     def __init__(
@@ -219,10 +237,12 @@ class AppPatch(msrest.serialization.Model):
         super(AppPatch, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.application_id = None
         self.display_name = kwargs.get('display_name', None)
         self.subdomain = kwargs.get('subdomain', None)
         self.template = kwargs.get('template', None)
+        self.state = None
 
 
 class AppSkuInfo(msrest.serialization.Model):
@@ -230,8 +250,7 @@ class AppSkuInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Possible values include: "F1", "S1", "ST0", "ST1",
-     "ST2".
+    :param name: Required. The name of the SKU. Possible values include: "ST0", "ST1", "ST2".
     :type name: str or ~azure.mgmt.iotcentral.models.AppSku
     """
 
@@ -421,7 +440,7 @@ class Operation(msrest.serialization.Model):
     :ivar origin: The intended executor of the operation.
     :vartype origin: str
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: str
+    :vartype properties: any
     """
 
     _validation = {
@@ -434,7 +453,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(
@@ -544,3 +563,43 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.next_link = kwargs.get('next_link', None)
         self.value = None
+
+
+class SystemAssignedServiceIdentity(msrest.serialization.Model):
+    """Managed service identity (either system assigned, or none).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: Required. Type of managed service identity (either system assigned, or none).
+     Possible values include: "None", "SystemAssigned".
+    :type type: str or ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemAssignedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs['type']

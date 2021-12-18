@@ -96,7 +96,7 @@ class LogsTableRow(object):
             return self._row[column]
 
 
-class MetricsResult(object):
+class MetricsQueryResult(object):
     """The response to a metrics query.
 
     :ivar cost: The integer value representing the cost of the query, for data case.
@@ -235,10 +235,10 @@ class LogsQueryResult(object):
     :vartype tables: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
-    :vartype statistics: object
+    :vartype statistics: Mapping
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
-    :vartype visualization: object
+    :vartype visualization: Mapping
     :ivar status: The status of the result.
      Always 'Success' for an instance of a LogsQueryResult.
     :vartype status: ~azure.monitor.query.LogsQueryStatus
@@ -509,7 +509,7 @@ class TimeSeriesElement(object):
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.metadata_values = kwargs.get("metadatavalues", None)
+        self.metadata_values = kwargs.get("metadata_values", None)
         self.data = kwargs.get("data", None)
 
     @classmethod
@@ -585,10 +585,10 @@ class LogsQueryPartialResult(object):
     :vartype partial_data: list[~azure.monitor.query.LogsTable]
     :ivar statistics: This will include a statistics property in the response that describes various
      performance statistics such as query execution time and resource usage.
-    :vartype statistics: object
+    :vartype statistics: Mapping
     :ivar visualization: This will include a visualization property in the response that specifies the type of
      visualization selected by the query and any properties for that visualization.
-    :vartype visualization: object
+    :vartype visualization: Mapping
     :ivar partial_error: The partial errror info
     :vartype partial_error: ~azure.monitor.query.LogsQueryError
     :ivar status: The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult.

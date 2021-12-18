@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 06 Jul 2020 23:56:43 GMT
+      - Thu, 07 Oct 2021 06:28:36 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-08-04'
     method: PUT
-    uri: https://pytagstoragestorname.blob.core.windows.net/containerb6e012b1?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/containerb6e012b1?restype=container&timeout=5
   response:
     body:
       string: ''
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 06 Jul 2020 23:56:43 GMT
+      - Thu, 07 Oct 2021 06:28:35 GMT
       etag:
-      - '"0x8D822083C5E203B"'
+      - '"0x8D9895BB19E3255"'
       last-modified:
-      - Mon, 06 Jul 2020 23:56:44 GMT
+      - Thu, 07 Oct 2021 06:28:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-12-12'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
@@ -41,7 +41,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -49,19 +49,19 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-content-length:
       - '512'
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Mon, 06 Jul 2020 23:56:44 GMT
+      - Thu, 07 Oct 2021 06:28:36 GMT
       x-ms-tags:
       - tag1=firsttag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
-      - '2019-12-12'
+      - '2020-08-04'
     method: PUT
-    uri: https://pytagstoragestorname.blob.core.windows.net/containerb6e012b1/blobb6e012b1
+    uri: https://storagename.blob.core.windows.net/containerb6e012b1/blobb6e012b1
   response:
     body:
       string: ''
@@ -69,17 +69,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 06 Jul 2020 23:56:43 GMT
+      - Thu, 07 Oct 2021 06:28:35 GMT
       etag:
-      - '"0x8D822083C6CC0A3"'
+      - '"0x8D9895BB1AD55BC"'
       last-modified:
-      - Mon, 06 Jul 2020 23:56:44 GMT
+      - Thu, 07 Oct 2021 06:28:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-12-12'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
@@ -93,13 +93,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 06 Jul 2020 23:56:44 GMT
+      - Thu, 07 Oct 2021 06:28:36 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-08-04'
     method: GET
-    uri: https://pytagstoragestorname.blob.core.windows.net/containerb6e012b1/blobb6e012b1?comp=tags
+    uri: https://storagename.blob.core.windows.net/containerb6e012b1/blobb6e012b1?comp=tags
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag><Tag><Key>tag3</Key><Value>thirdtag</Value></Tag></TagSet></Tags>"
@@ -109,11 +109,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 06 Jul 2020 23:56:43 GMT
+      - Thu, 07 Oct 2021 06:28:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-version:
-      - '2019-12-12'
+      - '2020-08-04'
     status:
       code: 200
       message: OK

@@ -47,7 +47,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnGateway":
         """Retrieves the details of a virtual wan vpn gateway.
 
@@ -107,7 +107,7 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_gateway_parameters: "_models.VpnGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnGateway":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnGateway"]
         error_map = {
@@ -165,7 +165,7 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_gateway_parameters: "_models.VpnGateway",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VpnGateway"]:
         """Creates a virtual wan vpn gateway if it doesn't exist else updates the existing gateway.
 
@@ -178,8 +178,8 @@ class VpnGatewaysOperations:
         :type vpn_gateway_parameters: ~azure.mgmt.network.v2019_02_01.models.VpnGateway
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of cls(response)
@@ -237,7 +237,7 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_gateway_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnGateway":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnGateway"]
         error_map = {
@@ -295,7 +295,7 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_gateway_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VpnGateway"]:
         """Updates virtual wan vpn gateway tags.
 
@@ -307,8 +307,8 @@ class VpnGatewaysOperations:
         :type vpn_gateway_parameters: ~azure.mgmt.network.v2019_02_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of cls(response)
@@ -365,7 +365,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -410,7 +410,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a virtual wan vpn gateway.
 
@@ -420,8 +420,8 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -473,7 +473,7 @@ class VpnGatewaysOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnGatewaysResult"]:
         """Lists all the VpnGateways in a resource group.
 
@@ -543,7 +543,7 @@ class VpnGatewaysOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnGatewaysResult"]:
         """Lists all the VpnGateways in a subscription.
 

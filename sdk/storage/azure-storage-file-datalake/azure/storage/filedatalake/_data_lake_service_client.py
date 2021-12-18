@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TypeVar
 
 try:
     from urllib.parse import urlparse
@@ -22,6 +22,8 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._generated import AzureDataLakeStorageRESTAPI
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -120,10 +122,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeServiceClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeServiceClient from a Connection String.
 
@@ -207,6 +210,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
             account. The default value is `False`.
             .. versionadded:: 12.3.0
+        :keyword bool include_system:
+            Flag specifying that system filesystems should be included.
+            .. versionadded:: 12.6.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 

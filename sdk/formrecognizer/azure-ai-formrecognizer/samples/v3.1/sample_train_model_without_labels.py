@@ -41,7 +41,7 @@ class TrainModelWithoutLabelsSample(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         container_sas_url = os.environ["CONTAINER_SAS_URL_V2"]
 
-        form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key), api_version="2.1")
+        form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
         poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()
 

@@ -19,7 +19,7 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.constants import X_MS_VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalStorageAccountPreparer
+from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -135,10 +135,10 @@ class StorageClientTest(StorageTestCase):
                 api_version="foo")
         self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
 
-    @GlobalStorageAccountPreparer()
-    def test_old_api_get_page_ranges_succeeds(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_old_api_get_page_ranges_succeeds(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=4 * 1024,
             max_page_size=4 * 1024,

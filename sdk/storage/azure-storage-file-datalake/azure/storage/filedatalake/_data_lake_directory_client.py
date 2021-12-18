@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import Any, TypeVar
 
 try:
     from urllib.parse import quote, unquote
@@ -15,6 +15,8 @@ from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeDirectoryClient(PathClient):
@@ -67,12 +69,13 @@ class DataLakeDirectoryClient(PathClient):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             directory_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeDirectoryClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeDirectoryClient from a Connection String.
 

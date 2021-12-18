@@ -46,7 +46,7 @@
                 "sdk/identity/azure-identity/tests/ec-certificate.pem",
                 "sdk/core/azure-servicemanagement-legacy/tests/legacy_mgmt_settings_fake.py",
                 "sdk/storage/azure-storage-blob/tests/fake_credentials.py",
-                "sdk/storage/azure-storage-file-datalake/tests/fake_credentials.py",
+                "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
                 "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py"
             ],
             "_justification": "File contains private key used by test code."

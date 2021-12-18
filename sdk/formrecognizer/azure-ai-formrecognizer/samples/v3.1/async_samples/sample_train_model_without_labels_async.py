@@ -43,7 +43,7 @@ class TrainModelWithoutLabelsSampleAsync(object):
         container_sas_url = os.environ["CONTAINER_SAS_URL_V2"]
 
         async with FormTrainingClient(
-            endpoint, AzureKeyCredential(key), api_version="2.1"
+            endpoint, AzureKeyCredential(key)
         ) as form_training_client:
 
             poller = await form_training_client.begin_training(container_sas_url, use_training_labels=False)
@@ -79,5 +79,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

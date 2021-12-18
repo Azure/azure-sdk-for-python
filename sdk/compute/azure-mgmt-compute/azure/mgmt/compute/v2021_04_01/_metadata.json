@@ -123,6 +123,11 @@
         "virtual_machine_scale_set_vms": "VirtualMachineScaleSetVMsOperations",
         "log_analytics": "LogAnalyticsOperations",
         "virtual_machine_run_commands": "VirtualMachineRunCommandsOperations",
-        "virtual_machine_scale_set_vm_run_commands": "VirtualMachineScaleSetVMRunCommandsOperations"
+        "virtual_machine_scale_set_vm_run_commands": "VirtualMachineScaleSetVMRunCommandsOperations",
+        "disks": "DisksOperations",
+        "snapshots": "SnapshotsOperations",
+        "disk_encryption_sets": "DiskEncryptionSetsOperations",
+        "disk_accesses": "DiskAccessesOperations",
+        "disk_restore_point": "DiskRestorePointOperations"
     }
 }

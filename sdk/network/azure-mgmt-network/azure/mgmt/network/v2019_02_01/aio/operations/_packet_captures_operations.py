@@ -49,7 +49,7 @@ class PacketCapturesOperations:
         network_watcher_name: str,
         packet_capture_name: str,
         parameters: "_models.PacketCapture",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PacketCaptureResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureResult"]
         error_map = {
@@ -105,7 +105,7 @@ class PacketCapturesOperations:
         network_watcher_name: str,
         packet_capture_name: str,
         parameters: "_models.PacketCapture",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PacketCaptureResult"]:
         """Create and start a packet capture on the specified VM.
 
@@ -119,8 +119,8 @@ class PacketCapturesOperations:
         :type parameters: ~azure.mgmt.network.v2019_02_01.models.PacketCapture
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PacketCaptureResult or the result of cls(response)
@@ -180,7 +180,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PacketCaptureResult":
         """Gets a packet capture session by name.
 
@@ -243,7 +243,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -290,7 +290,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified packet capture session.
 
@@ -302,8 +302,8 @@ class PacketCapturesOperations:
         :type packet_capture_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -359,7 +359,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -406,7 +406,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops a specified packet capture session.
 
@@ -418,8 +418,8 @@ class PacketCapturesOperations:
         :type packet_capture_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -475,7 +475,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PacketCaptureQueryStatusResult":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PacketCaptureQueryStatusResult"]
         error_map = {
@@ -529,7 +529,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PacketCaptureQueryStatusResult"]:
         """Query the status of a running packet capture session.
 
@@ -541,8 +541,8 @@ class PacketCapturesOperations:
         :type packet_capture_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PacketCaptureQueryStatusResult or the result of cls(response)
@@ -600,7 +600,7 @@ class PacketCapturesOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PacketCaptureListResult"]:
         """Lists all packet capture sessions within the specified resource group.
 

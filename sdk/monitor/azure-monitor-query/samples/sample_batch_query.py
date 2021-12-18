@@ -9,13 +9,11 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) LOGS_WORKSPACE_ID - The The first (primary) workspace ID.
 
-    In order to use the DefaultAzureCredential, the following environment variables must be set:
-    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
-    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
-    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
-**Note** - Although this example uses pandas to prin the response, it is totally optional and is
-not a required package for querying. Alternatively, native python can be used as well.
+**Note** - Although this example uses pandas to print the response, it's optional and
+isn't a required package for querying. Alternatively, native Python can be used as well.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -23,7 +21,6 @@ import os
 import pandas as pd
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryStatus
 from azure.identity import DefaultAzureCredential
-
 
 credential  = DefaultAzureCredential()
 
@@ -34,18 +31,18 @@ requests = [
     LogsBatchQuery(
         query="AzureActivity | summarize count()",
         timespan=timedelta(hours=1),
-        workspace_id= os.environ['LOG_WORKSPACE_ID']
+        workspace_id= os.environ['LOGS_WORKSPACE_ID']
     ),
     LogsBatchQuery(
         query= """bad query""",
         timespan=timedelta(days=1),
-        workspace_id= os.environ['LOG_WORKSPACE_ID']
+        workspace_id= os.environ['LOGS_WORKSPACE_ID']
     ),
     LogsBatchQuery(
         query= """let Weight = 92233720368547758;
         range x from 1 to 3 step 1
         | summarize percentilesw(x, Weight * 100, 50)""",
-        workspace_id= os.environ['LOG_WORKSPACE_ID'],
+        workspace_id= os.environ['LOGS_WORKSPACE_ID'],
         timespan=(datetime(2021, 6, 2, tzinfo=timezone.utc), datetime(2021, 6, 5, tzinfo=timezone.utc)), # (start, end)
         include_statistics=True
     ),

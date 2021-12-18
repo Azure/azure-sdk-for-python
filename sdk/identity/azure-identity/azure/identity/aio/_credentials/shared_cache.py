@@ -32,9 +32,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
         will use the persistent cache shared by Microsoft development applications
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
-        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant.
     """
 
     async def __aenter__(self):
@@ -57,8 +54,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
-            is False, specifying a tenant with this argument may raise an exception.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
 

@@ -7,29 +7,51 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AttachedDatabaseConfiguration
+    from ._models_py3 import AttachedDatabaseConfigurationListResult
     from ._models_py3 import AutoPauseProperties
     from ._models_py3 import AutoScaleProperties
     from ._models_py3 import AvailableRpOperation
     from ._models_py3 import AvailableRpOperationDisplayInfo
     from ._models_py3 import AzureADOnlyAuthentication
     from ._models_py3 import AzureADOnlyAuthenticationListResult
+    from ._models_py3 import AzureCapacity
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import AzureResourceSku
+    from ._models_py3 import AzureSku
     from ._models_py3 import BigDataPoolPatchInfo
     from ._models_py3 import BigDataPoolResourceInfo
     from ._models_py3 import BigDataPoolResourceInfoListResult
     from ._models_py3 import CheckNameAvailabilityRequest
     from ._models_py3 import CheckNameAvailabilityResponse
+    from ._models_py3 import CheckNameResult
+    from ._models_py3 import ClusterPrincipalAssignment
+    from ._models_py3 import ClusterPrincipalAssignmentCheckNameRequest
+    from ._models_py3 import ClusterPrincipalAssignmentListResult
     from ._models_py3 import CmdkeySetup
     from ._models_py3 import ComponentSetup
     from ._models_py3 import CreateSqlPoolRestorePointDefinition
     from ._models_py3 import CspWorkspaceAdminProperties
     from ._models_py3 import CustomSetupBase
     from ._models_py3 import CustomerManagedKeyDetails
+    from ._models_py3 import DataConnection
+    from ._models_py3 import DataConnectionCheckNameRequest
+    from ._models_py3 import DataConnectionListResult
+    from ._models_py3 import DataConnectionValidation
+    from ._models_py3 import DataConnectionValidationListResult
+    from ._models_py3 import DataConnectionValidationResult
     from ._models_py3 import DataLakeStorageAccountDetails
     from ._models_py3 import DataMaskingPolicy
     from ._models_py3 import DataMaskingRule
     from ._models_py3 import DataMaskingRuleListResult
     from ._models_py3 import DataWarehouseUserActivities
+    from ._models_py3 import Database
+    from ._models_py3 import DatabaseCheckNameRequest
+    from ._models_py3 import DatabaseListResult
+    from ._models_py3 import DatabasePrincipalAssignment
+    from ._models_py3 import DatabasePrincipalAssignmentCheckNameRequest
+    from ._models_py3 import DatabasePrincipalAssignmentListResult
+    from ._models_py3 import DatabaseStatistics
     from ._models_py3 import DynamicExecutorAllocation
     from ._models_py3 import EncryptionDetails
     from ._models_py3 import EncryptionProtector
@@ -39,10 +61,14 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import EventGridDataConnection
+    from ._models_py3 import EventHubDataConnection
     from ._models_py3 import ExtendedServerBlobAuditingPolicy
     from ._models_py3 import ExtendedServerBlobAuditingPolicyListResult
     from ._models_py3 import ExtendedSqlPoolBlobAuditingPolicy
     from ._models_py3 import ExtendedSqlPoolBlobAuditingPolicyListResult
+    from ._models_py3 import FollowerDatabaseDefinition
+    from ._models_py3 import FollowerDatabaseListResult
     from ._models_py3 import GeoBackupPolicy
     from ._models_py3 import GeoBackupPolicyListResult
     from ._models_py3 import GetSsisObjectMetadataRequest
@@ -68,12 +94,19 @@ try:
     from ._models_py3 import IntegrationRuntimeStatus
     from ._models_py3 import IntegrationRuntimeStatusResponse
     from ._models_py3 import IntegrationRuntimeVNetProperties
+    from ._models_py3 import IotHubDataConnection
     from ._models_py3 import IpFirewallRuleInfo
     from ._models_py3 import IpFirewallRuleInfoListResult
     from ._models_py3 import IpFirewallRuleProperties
     from ._models_py3 import KekIdentityProperties
     from ._models_py3 import Key
     from ._models_py3 import KeyInfoListResult
+    from ._models_py3 import KustoPool
+    from ._models_py3 import KustoPoolCheckNameRequest
+    from ._models_py3 import KustoPoolListResult
+    from ._models_py3 import KustoPoolUpdate
+    from ._models_py3 import LanguageExtension
+    from ._models_py3 import LanguageExtensionsList
     from ._models_py3 import LibraryInfo
     from ._models_py3 import LibraryListResponse
     from ._models_py3 import LibraryRequirements
@@ -82,6 +115,7 @@ try:
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeType
+    from ._models_py3 import ListResourceSkusResult
     from ._models_py3 import ListSqlPoolSecurityAlertPolicies
     from ._models_py3 import MaintenanceWindowOptions
     from ._models_py3 import MaintenanceWindowTimeRange
@@ -96,11 +130,15 @@ try:
     from ._models_py3 import ManagedIntegrationRuntimeStatus
     from ._models_py3 import ManagedVirtualNetworkSettings
     from ._models_py3 import MetadataSyncConfig
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import OperationMetaLogSpecification
     from ._models_py3 import OperationMetaMetricDimensionSpecification
     from ._models_py3 import OperationMetaMetricSpecification
     from ._models_py3 import OperationMetaServiceSpecification
     from ._models_py3 import OperationResource
+    from ._models_py3 import OptimizedAutoscale
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionForPrivateLinkHub
@@ -121,6 +159,7 @@ try:
     from ._models_py3 import QueryInterval
     from ._models_py3 import QueryMetric
     from ._models_py3 import QueryStatistic
+    from ._models_py3 import ReadWriteDatabase
     from ._models_py3 import RecommendedSensitivityLabelUpdate
     from ._models_py3 import RecommendedSensitivityLabelUpdateList
     from ._models_py3 import RecoverableSqlPool
@@ -153,6 +192,9 @@ try:
     from ._models_py3 import ServerVulnerabilityAssessment
     from ._models_py3 import ServerVulnerabilityAssessmentListResult
     from ._models_py3 import Sku
+    from ._models_py3 import SkuDescription
+    from ._models_py3 import SkuDescriptionList
+    from ._models_py3 import SkuLocationInfoItem
     from ._models_py3 import SparkConfigProperties
     from ._models_py3 import SparkConfigurationListResponse
     from ._models_py3 import SparkConfigurationResource
@@ -189,6 +231,8 @@ try:
     from ._models_py3 import SsisProject
     from ._models_py3 import SsisVariable
     from ._models_py3 import SubResource
+    from ._models_py3 import SystemData
+    from ._models_py3 import TableLevelSharingProperties
     from ._models_py3 import TopQueries
     from ._models_py3 import TopQueriesListResult
     from ._models_py3 import TrackedResource
@@ -213,29 +257,51 @@ try:
     from ._models_py3 import WorkspacePatchInfo
     from ._models_py3 import WorkspaceRepositoryConfiguration
 except (SyntaxError, ImportError):
+    from ._models import AttachedDatabaseConfiguration  # type: ignore
+    from ._models import AttachedDatabaseConfigurationListResult  # type: ignore
     from ._models import AutoPauseProperties  # type: ignore
     from ._models import AutoScaleProperties  # type: ignore
     from ._models import AvailableRpOperation  # type: ignore
     from ._models import AvailableRpOperationDisplayInfo  # type: ignore
     from ._models import AzureADOnlyAuthentication  # type: ignore
     from ._models import AzureADOnlyAuthenticationListResult  # type: ignore
+    from ._models import AzureCapacity  # type: ignore
     from ._models import AzureEntityResource  # type: ignore
+    from ._models import AzureResourceSku  # type: ignore
+    from ._models import AzureSku  # type: ignore
     from ._models import BigDataPoolPatchInfo  # type: ignore
     from ._models import BigDataPoolResourceInfo  # type: ignore
     from ._models import BigDataPoolResourceInfoListResult  # type: ignore
     from ._models import CheckNameAvailabilityRequest  # type: ignore
     from ._models import CheckNameAvailabilityResponse  # type: ignore
+    from ._models import CheckNameResult  # type: ignore
+    from ._models import ClusterPrincipalAssignment  # type: ignore
+    from ._models import ClusterPrincipalAssignmentCheckNameRequest  # type: ignore
+    from ._models import ClusterPrincipalAssignmentListResult  # type: ignore
     from ._models import CmdkeySetup  # type: ignore
     from ._models import ComponentSetup  # type: ignore
     from ._models import CreateSqlPoolRestorePointDefinition  # type: ignore
     from ._models import CspWorkspaceAdminProperties  # type: ignore
     from ._models import CustomSetupBase  # type: ignore
     from ._models import CustomerManagedKeyDetails  # type: ignore
+    from ._models import DataConnection  # type: ignore
+    from ._models import DataConnectionCheckNameRequest  # type: ignore
+    from ._models import DataConnectionListResult  # type: ignore
+    from ._models import DataConnectionValidation  # type: ignore
+    from ._models import DataConnectionValidationListResult  # type: ignore
+    from ._models import DataConnectionValidationResult  # type: ignore
     from ._models import DataLakeStorageAccountDetails  # type: ignore
     from ._models import DataMaskingPolicy  # type: ignore
     from ._models import DataMaskingRule  # type: ignore
     from ._models import DataMaskingRuleListResult  # type: ignore
     from ._models import DataWarehouseUserActivities  # type: ignore
+    from ._models import Database  # type: ignore
+    from ._models import DatabaseCheckNameRequest  # type: ignore
+    from ._models import DatabaseListResult  # type: ignore
+    from ._models import DatabasePrincipalAssignment  # type: ignore
+    from ._models import DatabasePrincipalAssignmentCheckNameRequest  # type: ignore
+    from ._models import DatabasePrincipalAssignmentListResult  # type: ignore
+    from ._models import DatabaseStatistics  # type: ignore
     from ._models import DynamicExecutorAllocation  # type: ignore
     from ._models import EncryptionDetails  # type: ignore
     from ._models import EncryptionProtector  # type: ignore
@@ -245,10 +311,14 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import EventGridDataConnection  # type: ignore
+    from ._models import EventHubDataConnection  # type: ignore
     from ._models import ExtendedServerBlobAuditingPolicy  # type: ignore
     from ._models import ExtendedServerBlobAuditingPolicyListResult  # type: ignore
     from ._models import ExtendedSqlPoolBlobAuditingPolicy  # type: ignore
     from ._models import ExtendedSqlPoolBlobAuditingPolicyListResult  # type: ignore
+    from ._models import FollowerDatabaseDefinition  # type: ignore
+    from ._models import FollowerDatabaseListResult  # type: ignore
     from ._models import GeoBackupPolicy  # type: ignore
     from ._models import GeoBackupPolicyListResult  # type: ignore
     from ._models import GetSsisObjectMetadataRequest  # type: ignore
@@ -274,12 +344,19 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeStatus  # type: ignore
     from ._models import IntegrationRuntimeStatusResponse  # type: ignore
     from ._models import IntegrationRuntimeVNetProperties  # type: ignore
+    from ._models import IotHubDataConnection  # type: ignore
     from ._models import IpFirewallRuleInfo  # type: ignore
     from ._models import IpFirewallRuleInfoListResult  # type: ignore
     from ._models import IpFirewallRuleProperties  # type: ignore
     from ._models import KekIdentityProperties  # type: ignore
     from ._models import Key  # type: ignore
     from ._models import KeyInfoListResult  # type: ignore
+    from ._models import KustoPool  # type: ignore
+    from ._models import KustoPoolCheckNameRequest  # type: ignore
+    from ._models import KustoPoolListResult  # type: ignore
+    from ._models import KustoPoolUpdate  # type: ignore
+    from ._models import LanguageExtension  # type: ignore
+    from ._models import LanguageExtensionsList  # type: ignore
     from ._models import LibraryInfo  # type: ignore
     from ._models import LibraryListResponse  # type: ignore
     from ._models import LibraryRequirements  # type: ignore
@@ -288,6 +365,7 @@ except (SyntaxError, ImportError):
     from ._models import LinkedIntegrationRuntimeKeyAuthorization  # type: ignore
     from ._models import LinkedIntegrationRuntimeRbacAuthorization  # type: ignore
     from ._models import LinkedIntegrationRuntimeType  # type: ignore
+    from ._models import ListResourceSkusResult  # type: ignore
     from ._models import ListSqlPoolSecurityAlertPolicies  # type: ignore
     from ._models import MaintenanceWindowOptions  # type: ignore
     from ._models import MaintenanceWindowTimeRange  # type: ignore
@@ -302,11 +380,15 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIntegrationRuntimeStatus  # type: ignore
     from ._models import ManagedVirtualNetworkSettings  # type: ignore
     from ._models import MetadataSyncConfig  # type: ignore
+    from ._models import Operation  # type: ignore
+    from ._models import OperationDisplay  # type: ignore
+    from ._models import OperationListResult  # type: ignore
     from ._models import OperationMetaLogSpecification  # type: ignore
     from ._models import OperationMetaMetricDimensionSpecification  # type: ignore
     from ._models import OperationMetaMetricSpecification  # type: ignore
     from ._models import OperationMetaServiceSpecification  # type: ignore
     from ._models import OperationResource  # type: ignore
+    from ._models import OptimizedAutoscale  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionForPrivateLinkHub  # type: ignore
@@ -327,6 +409,7 @@ except (SyntaxError, ImportError):
     from ._models import QueryInterval  # type: ignore
     from ._models import QueryMetric  # type: ignore
     from ._models import QueryStatistic  # type: ignore
+    from ._models import ReadWriteDatabase  # type: ignore
     from ._models import RecommendedSensitivityLabelUpdate  # type: ignore
     from ._models import RecommendedSensitivityLabelUpdateList  # type: ignore
     from ._models import RecoverableSqlPool  # type: ignore
@@ -359,6 +442,9 @@ except (SyntaxError, ImportError):
     from ._models import ServerVulnerabilityAssessment  # type: ignore
     from ._models import ServerVulnerabilityAssessmentListResult  # type: ignore
     from ._models import Sku  # type: ignore
+    from ._models import SkuDescription  # type: ignore
+    from ._models import SkuDescriptionList  # type: ignore
+    from ._models import SkuLocationInfoItem  # type: ignore
     from ._models import SparkConfigProperties  # type: ignore
     from ._models import SparkConfigurationListResponse  # type: ignore
     from ._models import SparkConfigurationResource  # type: ignore
@@ -395,6 +481,8 @@ except (SyntaxError, ImportError):
     from ._models import SsisProject  # type: ignore
     from ._models import SsisVariable  # type: ignore
     from ._models import SubResource  # type: ignore
+    from ._models import SystemData  # type: ignore
+    from ._models import TableLevelSharingProperties  # type: ignore
     from ._models import TopQueries  # type: ignore
     from ._models import TopQueriesListResult  # type: ignore
     from ._models import TrackedResource  # type: ignore
@@ -421,18 +509,29 @@ except (SyntaxError, ImportError):
 
 from ._synapse_management_client_enums import (
     AzureADOnlyAuthenticationName,
+    AzureScaleType,
     BlobAuditingPolicyName,
     BlobAuditingPolicyState,
+    BlobStorageEventType,
+    ClusterPrincipalRole,
     ColumnDataType,
+    Compression,
     ConfigurationType,
     ConnectionPolicyName,
+    CreateMode,
+    CreatedByType,
+    DataConnectionKind,
     DataFlowComputeType,
     DataMaskingFunction,
     DataMaskingRuleState,
     DataMaskingState,
     DataWarehouseUserActivityName,
+    DatabasePrincipalRole,
     DayOfWeek,
+    DefaultPrincipalsModificationKind,
     EncryptionProtectorName,
+    EventGridDataFormat,
+    EventHubDataFormat,
     GeoBackupPolicyName,
     GeoBackupPolicyState,
     IntegrationRuntimeAuthKeyName,
@@ -445,6 +544,9 @@ from ._synapse_management_client_enums import (
     IntegrationRuntimeState,
     IntegrationRuntimeType,
     IntegrationRuntimeUpdateResult,
+    IotHubDataFormat,
+    Kind,
+    LanguageExtensionName,
     ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityActualState,
     ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityDesiredState,
     ManagedIntegrationRuntimeNodeStatus,
@@ -452,15 +554,18 @@ from ._synapse_management_client_enums import (
     NodeSize,
     NodeSizeFamily,
     OperationStatus,
+    PrincipalType,
     ProvisioningState,
     QueryAggregationFunction,
     QueryExecutionType,
     QueryMetricUnit,
     QueryObservedMetricType,
+    Reason,
     RecommendedSensitivityLabelUpdateKind,
     ReplicationRole,
     ReplicationState,
     ResourceIdentityType,
+    ResourceProvisioningState,
     RestorePointType,
     SecurityAlertPolicyName,
     SecurityAlertPolicyNameAutoGenerated,
@@ -470,11 +575,15 @@ from ._synapse_management_client_enums import (
     SensitivityLabelSource,
     SensitivityLabelUpdateKind,
     ServerKeyType,
+    SkuName,
+    SkuSize,
     SsisObjectMetadataType,
+    State,
     StateValue,
     StorageAccountType,
     TransparentDataEncryptionName,
     TransparentDataEncryptionStatus,
+    Type,
     VulnerabilityAssessmentName,
     VulnerabilityAssessmentPolicyBaselineName,
     VulnerabilityAssessmentScanState,
@@ -483,29 +592,51 @@ from ._synapse_management_client_enums import (
 )
 
 __all__ = [
+    'AttachedDatabaseConfiguration',
+    'AttachedDatabaseConfigurationListResult',
     'AutoPauseProperties',
     'AutoScaleProperties',
     'AvailableRpOperation',
     'AvailableRpOperationDisplayInfo',
     'AzureADOnlyAuthentication',
     'AzureADOnlyAuthenticationListResult',
+    'AzureCapacity',
     'AzureEntityResource',
+    'AzureResourceSku',
+    'AzureSku',
     'BigDataPoolPatchInfo',
     'BigDataPoolResourceInfo',
     'BigDataPoolResourceInfoListResult',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
+    'CheckNameResult',
+    'ClusterPrincipalAssignment',
+    'ClusterPrincipalAssignmentCheckNameRequest',
+    'ClusterPrincipalAssignmentListResult',
     'CmdkeySetup',
     'ComponentSetup',
     'CreateSqlPoolRestorePointDefinition',
     'CspWorkspaceAdminProperties',
     'CustomSetupBase',
     'CustomerManagedKeyDetails',
+    'DataConnection',
+    'DataConnectionCheckNameRequest',
+    'DataConnectionListResult',
+    'DataConnectionValidation',
+    'DataConnectionValidationListResult',
+    'DataConnectionValidationResult',
     'DataLakeStorageAccountDetails',
     'DataMaskingPolicy',
     'DataMaskingRule',
     'DataMaskingRuleListResult',
     'DataWarehouseUserActivities',
+    'Database',
+    'DatabaseCheckNameRequest',
+    'DatabaseListResult',
+    'DatabasePrincipalAssignment',
+    'DatabasePrincipalAssignmentCheckNameRequest',
+    'DatabasePrincipalAssignmentListResult',
+    'DatabaseStatistics',
     'DynamicExecutorAllocation',
     'EncryptionDetails',
     'EncryptionProtector',
@@ -515,10 +646,14 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'EventGridDataConnection',
+    'EventHubDataConnection',
     'ExtendedServerBlobAuditingPolicy',
     'ExtendedServerBlobAuditingPolicyListResult',
     'ExtendedSqlPoolBlobAuditingPolicy',
     'ExtendedSqlPoolBlobAuditingPolicyListResult',
+    'FollowerDatabaseDefinition',
+    'FollowerDatabaseListResult',
     'GeoBackupPolicy',
     'GeoBackupPolicyListResult',
     'GetSsisObjectMetadataRequest',
@@ -544,12 +679,19 @@ __all__ = [
     'IntegrationRuntimeStatus',
     'IntegrationRuntimeStatusResponse',
     'IntegrationRuntimeVNetProperties',
+    'IotHubDataConnection',
     'IpFirewallRuleInfo',
     'IpFirewallRuleInfoListResult',
     'IpFirewallRuleProperties',
     'KekIdentityProperties',
     'Key',
     'KeyInfoListResult',
+    'KustoPool',
+    'KustoPoolCheckNameRequest',
+    'KustoPoolListResult',
+    'KustoPoolUpdate',
+    'LanguageExtension',
+    'LanguageExtensionsList',
     'LibraryInfo',
     'LibraryListResponse',
     'LibraryRequirements',
@@ -558,6 +700,7 @@ __all__ = [
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
     'LinkedIntegrationRuntimeType',
+    'ListResourceSkusResult',
     'ListSqlPoolSecurityAlertPolicies',
     'MaintenanceWindowOptions',
     'MaintenanceWindowTimeRange',
@@ -572,11 +715,15 @@ __all__ = [
     'ManagedIntegrationRuntimeStatus',
     'ManagedVirtualNetworkSettings',
     'MetadataSyncConfig',
+    'Operation',
+    'OperationDisplay',
+    'OperationListResult',
     'OperationMetaLogSpecification',
     'OperationMetaMetricDimensionSpecification',
     'OperationMetaMetricSpecification',
     'OperationMetaServiceSpecification',
     'OperationResource',
+    'OptimizedAutoscale',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionForPrivateLinkHub',
@@ -597,6 +744,7 @@ __all__ = [
     'QueryInterval',
     'QueryMetric',
     'QueryStatistic',
+    'ReadWriteDatabase',
     'RecommendedSensitivityLabelUpdate',
     'RecommendedSensitivityLabelUpdateList',
     'RecoverableSqlPool',
@@ -629,6 +777,9 @@ __all__ = [
     'ServerVulnerabilityAssessment',
     'ServerVulnerabilityAssessmentListResult',
     'Sku',
+    'SkuDescription',
+    'SkuDescriptionList',
+    'SkuLocationInfoItem',
     'SparkConfigProperties',
     'SparkConfigurationListResponse',
     'SparkConfigurationResource',
@@ -665,6 +816,8 @@ __all__ = [
     'SsisProject',
     'SsisVariable',
     'SubResource',
+    'SystemData',
+    'TableLevelSharingProperties',
     'TopQueries',
     'TopQueriesListResult',
     'TrackedResource',
@@ -689,18 +842,29 @@ __all__ = [
     'WorkspacePatchInfo',
     'WorkspaceRepositoryConfiguration',
     'AzureADOnlyAuthenticationName',
+    'AzureScaleType',
     'BlobAuditingPolicyName',
     'BlobAuditingPolicyState',
+    'BlobStorageEventType',
+    'ClusterPrincipalRole',
     'ColumnDataType',
+    'Compression',
     'ConfigurationType',
     'ConnectionPolicyName',
+    'CreateMode',
+    'CreatedByType',
+    'DataConnectionKind',
     'DataFlowComputeType',
     'DataMaskingFunction',
     'DataMaskingRuleState',
     'DataMaskingState',
     'DataWarehouseUserActivityName',
+    'DatabasePrincipalRole',
     'DayOfWeek',
+    'DefaultPrincipalsModificationKind',
     'EncryptionProtectorName',
+    'EventGridDataFormat',
+    'EventHubDataFormat',
     'GeoBackupPolicyName',
     'GeoBackupPolicyState',
     'IntegrationRuntimeAuthKeyName',
@@ -713,6 +877,9 @@ __all__ = [
     'IntegrationRuntimeState',
     'IntegrationRuntimeType',
     'IntegrationRuntimeUpdateResult',
+    'IotHubDataFormat',
+    'Kind',
+    'LanguageExtensionName',
     'ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityActualState',
     'ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityDesiredState',
     'ManagedIntegrationRuntimeNodeStatus',
@@ -720,15 +887,18 @@ __all__ = [
     'NodeSize',
     'NodeSizeFamily',
     'OperationStatus',
+    'PrincipalType',
     'ProvisioningState',
     'QueryAggregationFunction',
     'QueryExecutionType',
     'QueryMetricUnit',
     'QueryObservedMetricType',
+    'Reason',
     'RecommendedSensitivityLabelUpdateKind',
     'ReplicationRole',
     'ReplicationState',
     'ResourceIdentityType',
+    'ResourceProvisioningState',
     'RestorePointType',
     'SecurityAlertPolicyName',
     'SecurityAlertPolicyNameAutoGenerated',
@@ -738,11 +908,15 @@ __all__ = [
     'SensitivityLabelSource',
     'SensitivityLabelUpdateKind',
     'ServerKeyType',
+    'SkuName',
+    'SkuSize',
     'SsisObjectMetadataType',
+    'State',
     'StateValue',
     'StorageAccountType',
     'TransparentDataEncryptionName',
     'TransparentDataEncryptionStatus',
+    'Type',
     'VulnerabilityAssessmentName',
     'VulnerabilityAssessmentPolicyBaselineName',
     'VulnerabilityAssessmentScanState',

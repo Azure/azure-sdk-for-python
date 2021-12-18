@@ -60,9 +60,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 ################################## CLASSES ######################################
 
 class HttpRequest(HttpRequestBackcompatMixin):
-    """Provisional object that represents an HTTP request.
-
-    **This object is provisional**, meaning it may be changed in a future release.
+    """HTTP request.
 
     It should be passed to your client's `send_request` method.
 
@@ -83,7 +81,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
     :keyword content: Content you want in your request body. Think of it as the kwarg you should input
      if your data doesn't fit into `json`, `data`, or `files`. Accepts a bytes type, or a generator
      that yields bytes.
-    :paramtype content: str or bytes or iterable[bytes] or asynciterable[bytes]
+    :paramtype content: str or bytes or iterable[bytes]
     :keyword dict data: Form data you want in your request body. Use for form-encoded data, i.e.
      HTML forms.
     :keyword mapping files: Files you want to in your request body. Use for uploading files with
@@ -179,6 +177,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             )
             request._data = copy.deepcopy(self._data, memo)
             request._files = copy.deepcopy(self._files, memo)
+            self._add_backcompat_properties(request, memo)
             return request
         except (ValueError, TypeError):
             return copy.copy(self)
@@ -320,9 +319,8 @@ class _HttpResponseBase(ABC):
 
 
 class HttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for HTTP responses.
+    """Abstract base class for HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your client's `send_request` method
@@ -360,8 +358,8 @@ class HttpResponse(_HttpResponseBase):
         """
 
     @abc.abstractmethod
-    def iter_raw(self):
-        # type: () -> Iterator[bytes]
+    def iter_raw(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -369,8 +367,8 @@ class HttpResponse(_HttpResponseBase):
         """
 
     @abc.abstractmethod
-    def iter_bytes(self):
-        # type: () -> Iterator[bytes]
+    def iter_bytes(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response

@@ -10,13 +10,11 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
-    In order to use the DefaultAzureCredential, the following environment variables must be set:
-    1) AZURE_CLIENT_ID - The client ID of a user-assigned managed identity.
-    2) AZURE_TENANT_ID - Tenant ID to use when authenticating a user.
-    3) AZURE_CLIENT_ID - The client secret to be used for authentication.
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
-**Note** - Although this example uses pandas to prin the response, it is totally optional and is
-not a required package for querying. Alternatively, native python can be used as well.
+**Note** - Although this example uses pandas to print the response, it's optional and
+isn't a required package for querying. Alternatively, native Python can be used as well.
 """
 import os
 import pandas as pd
@@ -33,7 +31,7 @@ client = LogsQueryClient(credential)
 query= """AppRequests | take 5"""
 
 try:
-    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    response = client.query_workspace(os.environ['LOGS_WORKSPACE_ID'], query, timespan=timedelta(days=1))
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
         data = response.partial_data

@@ -19,9 +19,8 @@ Example PR build:
 
 ![res/job_snippet.png](res/job_snippet.png)
 
- - `Analyze` tox envs run during the `Analyze job.
- - `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
-
+* `Analyze` tox envs run during the `Analyze job.
+* `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
 
 ## Targeting a specific package at build time
 
@@ -47,48 +46,59 @@ This is an example setting of that narrows the default set from `whl, sdist, dep
 
 Any combination of valid valid tox environments will work. Reference either this document or the file present at `eng/tox/tox.ini` to find what options are available.
 
+## Environment variables important to CI
+
+There are a few differences from a standard local invocation of `tox <env>`. Primarily, these differences adjust the checks to be friendly to parallel invocation. These adjustments are necessary to prevent random CI crashes.
+
+| Environment Variable | Affect on Build |
+|---|---|
+| `TF_BUILD` | EngSys uses the presence of any value in this variable as the bit indicating "in CI" or not. The primary effect of this is that all relative dev dependencies will be prebuilt prior to running the tox environments. |
+| `PREBUILT_WHEEL_DIR` | Setting this env variables means that instead of generating a fresh wheel or sdist to test, `tox` will look in this directory for the targeted package. |
+| `PIP_INDEX_URL` | Standard `pip` environment variable. During nightly `alpha` builds, this environment variable is set to a public dev feed. |
+
+The various tooling abstracted by the environments within `eng/tox/tox.ini` take the above variables into account automatically.
+
 ## Analyze Checks
+
 Analyze job in both nightly CI and pull request validation pipeline runs a set of static analysis using external and internal tools. Following are the list of these static analysis.
 
-#### MyPy
+### MyPy
+
 [`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. MyPy is an opt-in check for packages. Following are the steps to run `MyPy` locally for a specific package:
 
 1. Add the package name to the end of the [`mypy_hard_failure_packages.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/mypy_hard_failure_packages.py) file:
-```python
-MYPY_HARD_FAILURE_OPTED = [
-    ...,
-    "azure-my-package",
-]
-```
-1. Go to root of the package
-2. Execute following command:
-   ```tox -e mypy -c ../../../eng/tox/tox.ini ```
+   ```python
+   MYPY_HARD_FAILURE_OPTED = [
+      ...,
+      "azure-my-package",
+   ]
+   ```
+2. Go to root of the package
+3. Execute following command: `tox -e mypy -c ../../../eng/tox/tox.ini`
 
+### Pylint
 
-#### Pylint
 [`Pylint`](https://pypi.org/project/pylint/) is a static analysis tool to run lint checking, it is automatically run on all PRs. Following are the steps to run `pylint` locally for a specific package.
 
 1. Go to root of the package.
-2. Execute following command:
-   ```tox -e pylint -c ../../../eng/tox/tox.ini```
+2. Execute following command: `tox -e pylint -c ../../../eng/tox/tox.ini`
 
+### Bandit
 
-#### Bandit
 `Bandit` is static security analysis tool. This check is triggered for all Azure SDK package as part of analyze job. Following are the steps to `Bandit` tool locally for a specific package.
 
 1. Got to package root directory.
-2. Execute following command
-   ```tox -e bandit -c ../../../eng/tox/tox.ini```
+2. Execute command: `tox -e bandit -c ../../../eng/tox/tox.ini`
 
+### ApiStubGen
 
-#### ApiStubGen
 `ApiStubGen` is an internal tool used to create API stub to help reviewing public APIs in our SDK package using [`APIViewTool`.](https://apiview.dev/) This tool also has some built in lint checks available and purpose of having this step in analyze job is to ensure any  change in code is not impacting stubbing process and also to have more and more custom lint checks added in future.
 
-#### black
+### black
 
 [black](https://pypi.org/project/black) is an opinionated code formatter for Python source code.
 
-#### Opt-in
+#### Opt-in to formatting validation
 
 Make the following change to your projects `ci.yml`:
 
@@ -102,19 +112,21 @@ extends:
 ```
 
 #### Running locally
+
 To run locally first install `black` from pip if you do not have it already (the pipeline uses version 21.6b0). Currently, we use the `-l 120` option to allow lines up to 120 characters (consistent with our `pylint` check).
+
 ```bash
 python -m pip install black==21.6b0
 python -m black -l 120 <path/to/service_directory>
 ```
 
-#### Change log verification
+### Change log verification
 
 Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/)
 
 ## PR Validation Checks
-Each pull request runs various tests using `pytest` in addition to all the tests mentioned above in analyze check. Pull request validation performs 3 different types of test: `whl, sdist and depends`. The following section explains the purpose of each of these tests and how to execute them locally. All pull requests are validated on multiple python versions across different platforms. Find the test matrix below.
 
+Each pull request runs various tests using `pytest` in addition to all the tests mentioned above in analyze check. Pull request validation performs 3 different types of test: `whl, sdist and depends`. The following section explains the purpose of each of these tests and how to execute them locally. All pull requests are validated on multiple python versions across different platforms. Find the test matrix below.
 
 |`Python  Version`|`Platform`  |
 |--|--|
@@ -123,8 +135,11 @@ Each pull request runs various tests using `pytest` in addition to all the tests
 |3.8|Linux|
 
 ### PR validation tox test environments
+
 Tests are executed using tox environment and following are the tox test names that are part of pull request validation
+
 #### whl
+
 This test installs wheel of the package being tested and runs all tests cases in the package using `pytest`. Following is the command to run this test environment locally.
 
 1. Go to package root folder on a command line
@@ -132,6 +147,7 @@ This test installs wheel of the package being tested and runs all tests cases in
    ``tox -e whl -c ../../../eng/tox/tox.ini``
 
 #### sdist
+
 This test installs sdist of the package being tested and runs all tests cases in the package using `pytest`. Following is the command to run this test environment locally.
 
 1. Go to package root folder on a command line
@@ -139,6 +155,7 @@ This test installs sdist of the package being tested and runs all tests cases in
    ``tox -e sdist -c ../../../eng/tox/tox.ini``
 
 #### depends
+
 The `depends` check ensures all modules in a target package can be successfully imported. Actually installing and importing will verify that all package requirements are properly set in setup.py and that the `__all__` set for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked:  `from azure.core import *`.
 
 Following is the command to run this test environment locally.
@@ -146,7 +163,6 @@ Following is the command to run this test environment locally.
 1. Go to package root folder on a command line
 2. Run following command
    ``tox -e sdist -c ../../../eng/tox/tox.ini``
-
 
 ## Nightly CI Checks
 
@@ -167,8 +183,7 @@ As a developer of package `XYZ`, we need to ensure that our package works fine w
 
 Another scenario where regression test( reverse dependency) is required. Let's take same example above and assume we are developers of package `ABC` which is taken as required package by another  package `XYZ`
 
-Package `ABC is required by package `XYZ`
-
+Package `ABC` is required by package `XYZ`
 
 As a developer of `ABC`, we need to ensure that any new change in `ABC` is not breaking the use of `XYZ` and hence ensures backward compatibility.
 
@@ -185,35 +200,34 @@ Following are the additional tests we run during nightly CI checks.
 
 This test makes sure that a package being developed works absolutely fine using latest released version of required Azure SDK package as long as there is a released version which satisfies the requirement specification. Workflow of this test is as follows:
 
-1.  Identify if any azure SDK package is marked as required package in setup.py of current package being tested.
+1. Identify if any azure SDK package is marked as required package in setup.py of current package being tested.
 Note: Any dependency mentioned only in dev_requirements are not considered to identify dependency.
-2.  Identify latest released version of required azure sdk package on PyPI
-3.  Install latest released version of required package instead of dev dependency to package in code repo
-4.  Install current package that is being tested
-5.  Run pytest of all test cases in current package
+2. Identify latest released version of required azure sdk package on PyPI
+3. Install latest released version of required package instead of dev dependency to package in code repo
+4. Install current package that is being tested
+5. Run pytest of all test cases in current package
 
 Tox name of this test is `latestdependency` and steps to manually run this test locally is as follows.
-1.  Go to package root. For e.g azure-storage-blob or azure-identity
-2.  Run following command
-        `Tox –e latestdependency –c ../../../tox/tox.ini`
 
+1. Go to package root. For e.g azure-storage-blob or azure-identity
+2. Run command `Tox –e latestdependency –c ../../../tox/tox.ini`
 
 #### Minimum Dependency Test
 
 This test makes sure that a package being developed works absolutely fine using oldest released version of required Azure SDK package as long as there is a released version which satisfies the requirement specification. Workflow of this test is as follows:
 
-1.  Identify if any azure SDK package is marked as required package in setup.py of current package being tested.
+1. Identify if any azure SDK package is marked as required package in setup.py of current package being tested.
 Note: Any dependency mentioned only in dev_requirements are not considered to identify dependency.
-2.  Identify oldest released version of required azure sdk package on PyPI
-3.  Install oldest released version of required package instead of dev dependency to package in code repo
-4.  Install current package that is being tested
-5.  Run pytest of all test cases in current package
+2. Identify oldest released version of required azure sdk package on PyPI
+3. Install oldest released version of required package instead of dev dependency to package in code repo
+4. Install current package that is being tested
+5. Run pytest of all test cases in current package
 
 Tox name of this test is `mindependency` and steps to manually run this test locally is as follows.
-1.  Go to package root. For e.g azure-storage-blob or azure-identity
-2.  Run following command
-`Tox –e mindependency –c ../../../tox/tox.ini`
 
+1. Go to package root. For e.g azure-storage-blob or azure-identity
+2. Run following command
+`Tox –e mindependency –c ../../../tox/tox.ini`
 
 #### Regression Test
 
@@ -233,37 +247,32 @@ One main difference between regression tests and forward dependency test( latest
 Let's assume that we are testing regression for azure-core and this test is for regression against latest released dependent packages. Test will identify all packages that takes azure-core as required package and finds latest released version of those packages. Test framework install currently being developed azure-core and latest released dependent package and runs the test cases in dependent package, for e.g. azure-identity, that were part of repo at the time of releasing depending package.
 
 Workflow of this test is as follows when running regression for an SDK package.
-1.  Identify any packages that takes currently being tested package as required package
-2.  Find latest and oldest released versions of dependent package from PyPI
-3.  Install currently being developed version of package  we are testing regression for. E.g. azure-core
-4.  Checkout the release tag of dependent package from github
-5.  Install latest/oldest version of dependent package. For e.g. azure-identity
-6.  Run test cases within dependent package from checked out branch.
 
+1. Identify any packages that takes currently being tested package as required package
+2. Find latest and oldest released versions of dependent package from PyPI
+3. Install currently being developed version of package  we are testing regression for. E.g. azure-core
+4. Checkout the release tag of dependent package from github
+5. Install latest/oldest version of dependent package. For e.g. azure-identity
+6. Run test cases within dependent package from checked out branch.
 
 Steps to manually run regression test locally:
-1.  Run below command from your git code repo to generate the wheel of package being developed. Currently we have restricted to have prebuilt wheel.
+
+1. Run below command from your git code repo to generate the wheel of package being developed. Currently we have restricted to have prebuilt wheel.
 `./scripts/devops_tasks/build_packages.py --service= <service-name> -d <out-folder>`
-2.  Run below command to start regression test locally
+2. Run below command to start regression test locally
 `./scripts/devops_tasks/test_regression.py azure-* --service=<service-name> --whl-dir=<out-folder given above in step 2>`
 
+The following variables can be set at queueing time in order to run these additional tests. By default regression tests execute only on scheduled runs.
 
-How to run these additional tests on azure pipelines manually
-
-Following variables can be set at queueing time in order to run these additional tests which are by default run only for scheduled runs.
-
-•   Latest and oldest dependency test in addition to basic testing
-Variable name: `Run.DependencyTest`
-Value: true
-
-•   Regression test
+Regression test
 Variable name: `Run.Regression`
 Value: true
 
 #### Autorest Automation
+
 This check will automatically create PRs with updated generated code whenever autorest has made an update that results in a change to the generated code for a package.
 
-##### Opt-in
+##### Opt-in to autorest automation
 
 Make the following change to your projects `ci.yml`:
 
@@ -279,6 +288,7 @@ extends:
 ##### Running locally
 
 To run autorest automation locally run the following command from the home of `azure-sdk-for-python`
+
 ```bash
 azure-sdk-for-python> python scripts/devop_tasks/verify_autorest.py --service_directory <your_service_directory>
 ```
@@ -287,9 +297,10 @@ azure-sdk-for-python> python scripts/devop_tasks/verify_autorest.py --service_di
 
 There are additional checks that run in live tests.
 
-#### Running Samples
+### Running Samples
 
 Samples for a library can be run as part of the nightly checks. To opt-in to the check edit the `tests.yml` file to look like:
+
 ```yml
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml

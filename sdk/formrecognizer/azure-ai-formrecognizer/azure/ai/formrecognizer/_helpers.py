@@ -22,7 +22,7 @@ def _get_deserialize(api_version):
     elif api_version == "2.1":
         from ._generated.v2_1 import FormRecognizerClient
     elif api_version == "2021-09-30-preview":
-        from ._generated.v3_0_preview_1 import FormRecognizerClient
+        from ._generated.v2021_09_30_preview import FormRecognizerClient
     return FormRecognizerClient(  # pylint: disable=protected-access
         "dummy", "dummy"
     )._deserialize
@@ -185,6 +185,9 @@ class QuotaExceededPolicy(SansIOHTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
         http_response = response.http_response
-        if http_response.status_code in [403, 429] and \
-                "Out of call volume quota for FormRecognizer F0 pricing tier" in http_response.text():
+        if (
+            http_response.status_code in [403, 429]
+            and "Out of call volume quota for FormRecognizer F0 pricing tier"
+            in http_response.text()
+        ):
             raise HttpResponseError(http_response.text(), response=http_response)

@@ -44,7 +44,7 @@ class ExpressRouteGatewaysOperations:
 
     async def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteGatewayList":
         """Lists ExpressRoute gateways under a given subscription.
 
@@ -95,7 +95,7 @@ class ExpressRouteGatewaysOperations:
     async def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteGatewayList":
         """Lists ExpressRoute gateways in a given resource group.
 
@@ -151,7 +151,7 @@ class ExpressRouteGatewaysOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         put_express_route_gateway_parameters: "_models.ExpressRouteGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteGateway":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteGateway"]
         error_map = {
@@ -208,7 +208,7 @@ class ExpressRouteGatewaysOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         put_express_route_gateway_parameters: "_models.ExpressRouteGateway",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRouteGateway"]:
         """Creates or updates a ExpressRoute gateway in a specified resource group.
 
@@ -221,8 +221,8 @@ class ExpressRouteGatewaysOperations:
         :type put_express_route_gateway_parameters: ~azure.mgmt.network.v2020_03_01.models.ExpressRouteGateway
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRouteGateway or the result of cls(response)
@@ -279,7 +279,7 @@ class ExpressRouteGatewaysOperations:
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteGateway":
         """Fetches the details of a ExpressRoute gateway in a resource group.
 
@@ -337,7 +337,7 @@ class ExpressRouteGatewaysOperations:
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -381,7 +381,7 @@ class ExpressRouteGatewaysOperations:
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway
         resource can only be deleted when there are no connection subresources.
@@ -392,8 +392,8 @@ class ExpressRouteGatewaysOperations:
         :type express_route_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

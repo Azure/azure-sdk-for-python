@@ -47,7 +47,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified application security group.
 
@@ -101,8 +101,8 @@ class ApplicationSecurityGroupsOperations:
         :type application_security_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -155,7 +155,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationSecurityGroup":
         """Gets information about the specified application security group.
 
@@ -214,7 +214,7 @@ class ApplicationSecurityGroupsOperations:
         resource_group_name: str,
         application_security_group_name: str,
         parameters: "_models.ApplicationSecurityGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationSecurityGroup":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationSecurityGroup"]
         error_map = {
@@ -271,7 +271,7 @@ class ApplicationSecurityGroupsOperations:
         resource_group_name: str,
         application_security_group_name: str,
         parameters: "_models.ApplicationSecurityGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApplicationSecurityGroup"]:
         """Creates or updates an application security group.
 
@@ -284,8 +284,8 @@ class ApplicationSecurityGroupsOperations:
         :type parameters: ~azure.mgmt.network.v2020_06_01.models.ApplicationSecurityGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApplicationSecurityGroup or the result of cls(response)
@@ -343,7 +343,7 @@ class ApplicationSecurityGroupsOperations:
         resource_group_name: str,
         application_security_group_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationSecurityGroup":
         """Updates an application security group's tags.
 
@@ -406,7 +406,7 @@ class ApplicationSecurityGroupsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationSecurityGroupListResult"]:
         """Gets all application security groups in a subscription.
 
@@ -473,7 +473,7 @@ class ApplicationSecurityGroupsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationSecurityGroupListResult"]:
         """Gets all the application security groups in a resource group.
 

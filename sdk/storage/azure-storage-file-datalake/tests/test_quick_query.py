@@ -15,9 +15,8 @@ from azure.storage.filedatalake import (
     DelimitedJsonDialect,
     ArrowDialect, ArrowType, QuickQueryDialect)
 
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -115,7 +114,7 @@ CONVERTED_CSV_DATA = b"Service;Package;Version;RepoPath;MissingDocs.App Configur
 
 class StorageQuickQueryTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
         self.filesystem_name = self.get_resource_name('utqqcontainer')

@@ -23,6 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.rest import HttpResponse as RestHttpResponse
 
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
@@ -33,38 +38,26 @@ def await_result(func, *args, **kwargs):
         )
     return result
 
-def to_rest_request(pipeline_transport_request):
-    from ..rest import HttpRequest as RestHttpRequest
-    return RestHttpRequest(
-        method=pipeline_transport_request.method,
-        url=pipeline_transport_request.url,
-        headers=pipeline_transport_request.headers,
-        files=pipeline_transport_request.files,
-        data=pipeline_transport_request.data
-    )
+def is_rest(obj):
+    # type: (Any) -> bool
+    """Return whether a request or a response is a rest request / response.
 
-def to_rest_response(pipeline_transport_response):
-    from .transport._requests_basic import RequestsTransportResponse
-    from ..rest._requests_basic import RestRequestsTransportResponse
-    if isinstance(pipeline_transport_response, RequestsTransportResponse):
-        response_type = RestRequestsTransportResponse
-    else:
-        raise ValueError("Unknown transport response")
-    response = response_type(
-        request=to_rest_request(pipeline_transport_response.request),
-        internal_response=pipeline_transport_response.internal_response,
-        block_size=pipeline_transport_response.block_size
-    )
-    return response
+    Checking whether the response has the object content can sometimes result
+    in a ResponseNotRead error if you're checking the value on a response
+    that has not been read in yet. To get around this, we also have added
+    a check for is_stream_consumed, which is an exclusive property on our new responses.
+    """
+    return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
-def get_block_size(response):
+def handle_non_stream_rest_response(response):
+    # type: (RestHttpResponse) -> None
+    """Handle reading and closing of non stream rest responses.
+    For our new rest responses, we have to call .read() and .close() for our non-stream
+    responses. This way, we load in the body for users to access.
+    """
     try:
-        return response._block_size  # pylint: disable=protected-access
-    except AttributeError:
-        return response.block_size
-
-def get_internal_response(response):
-    try:
-        return response._internal_response  # pylint: disable=protected-access
-    except AttributeError:
-        return response.internal_response
+        response.read()
+        response.close()
+    except Exception as exc:
+        response.close()
+        raise exc

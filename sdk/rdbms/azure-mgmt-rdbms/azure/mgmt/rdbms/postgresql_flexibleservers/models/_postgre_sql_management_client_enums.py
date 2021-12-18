@@ -60,6 +60,15 @@ class CreateModeForUpdate(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "Default"
     UPDATE = "Update"
 
+class FailoverMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Failover mode.
+    """
+
+    PLANNED_FAILOVER = "PlannedFailover"
+    FORCED_FAILOVER = "ForcedFailover"
+    PLANNED_SWITCHOVER = "PlannedSwitchover"
+    FORCED_SWITCHOVER = "ForcedSwitchover"
+
 class GeoRedundantBackupEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A value indicating whether Geo-Redundant backup is enabled on the server.
     """

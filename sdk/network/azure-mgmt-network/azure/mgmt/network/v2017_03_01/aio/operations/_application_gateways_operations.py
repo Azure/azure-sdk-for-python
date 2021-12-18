@@ -47,7 +47,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified application gateway.
 
@@ -99,8 +99,8 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -153,7 +153,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationGateway":
         """Gets the specified application gateway.
 
@@ -212,7 +212,7 @@ class ApplicationGatewaysOperations:
         resource_group_name: str,
         application_gateway_name: str,
         parameters: "_models.ApplicationGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationGateway":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         error_map = {
@@ -269,7 +269,7 @@ class ApplicationGatewaysOperations:
         resource_group_name: str,
         application_gateway_name: str,
         parameters: "_models.ApplicationGateway",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApplicationGateway"]:
         """Creates or updates the specified application gateway.
 
@@ -281,8 +281,8 @@ class ApplicationGatewaysOperations:
         :type parameters: ~azure.mgmt.network.v2017_03_01.models.ApplicationGateway
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApplicationGateway or the result of cls(response)
@@ -338,7 +338,7 @@ class ApplicationGatewaysOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationGatewayListResult"]:
         """Lists all application gateways in a resource group.
 
@@ -407,7 +407,7 @@ class ApplicationGatewaysOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationGatewayListResult"]:
         """Gets all the application gateways in a subscription.
 
@@ -475,7 +475,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -517,7 +517,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts the specified application gateway.
 
@@ -527,8 +527,8 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -581,7 +581,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -623,7 +623,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops the specified application gateway in a resource group.
 
@@ -633,8 +633,8 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -688,7 +688,7 @@ class ApplicationGatewaysOperations:
         resource_group_name: str,
         application_gateway_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApplicationGatewayBackendHealth"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationGatewayBackendHealth"]]
         error_map = {
@@ -740,7 +740,7 @@ class ApplicationGatewaysOperations:
         resource_group_name: str,
         application_gateway_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApplicationGatewayBackendHealth"]:
         """Gets the backend health of the specified application gateway in a resource group.
 
@@ -752,8 +752,8 @@ class ApplicationGatewaysOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApplicationGatewayBackendHealth or the result of cls(response)
@@ -808,7 +808,7 @@ class ApplicationGatewaysOperations:
 
     async def list_available_waf_rule_sets(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationGatewayAvailableWafRuleSetsResult":
         """Lists all available web application firewall rule sets.
 

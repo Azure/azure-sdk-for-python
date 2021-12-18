@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:36 GMT
+      date: Thu, 18 Nov 2021 21:47:30 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,26 +27,222 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://yalinlitests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
+    url: https://yallacrtests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
 - request:
     body:
       access_token: REDACTED
-      grant_type: access_token
-      service: yalinlitests.azurecr.io
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.PostContentSchemaGrantType
+      - access_token
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
   response:
     body:
       string: '{"refresh_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:37 GMT
+      date: Thu, 18 Nov 2021 21:47:30 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
+    status:
+      code: 200
+      message: OK
+    url: https://yallacrtests.azurecr.io/oauth2/exchange?api-version=2021-07-01
+- request:
+    body:
+      grant_type: refresh_token
+      refresh_token: REDACTED
+      scope: repository:library/busybox:metadata_read
+      service: yallacrtests.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Nov 2021 21:47:31 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '166.466667'
+    status:
+      code: 200
+      message: OK
+    url: https://yallacrtests.azurecr.io/oauth2/token?api-version=2021-07-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
+  response:
+    body:
+      string: '{"registry": "yallacrtests.azurecr.io", "imageName": "library/busybox",
+        "manifests": [{"digest": "sha256:02eb46ac1dbd9302135da448098a66a33c10a677f5946487185aa29d2a7700ce",
+        "imageSize": 907271, "createdTime": "2021-11-17T21:45:47.5171777Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.5171777Z", "architecture": "riscv64", "os": "linux",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"11/18/2021
+        9:44:23 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:a306c64b6a97a94ed0df1598c4f3a7ed6057393bc114b7e8eb0da67352879725",
+        "imageSize": 2486088, "createdTime": "2021-11-17T21:45:47.4635609Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.4635609Z", "architecture": "ppc64le", "os": "linux",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:e54f3046086cfda58b89f87763245db08d93418f204629b9e875d089007f0bb9",
+        "imageSize": 962442, "createdTime": "2021-11-17T21:45:47.3824184Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.3824184Z", "architecture": "mips64le", "os": "linux",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"11/18/2021
+        9:44:20 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:54339d461e3be5eef03b0a444af67e595c7c9513b18bf6b8f343d52414ce8ec0",
+        "imageSize": 2008812, "createdTime": "2021-11-17T21:45:47.3085761Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.3085761Z", "architecture": "s390x", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:be0b3422c99de66c5bb4808cd74a30870e68252fdd361d84250f9691797a2665",
+        "imageSize": 738045, "createdTime": "2021-11-17T21:45:47.2839095Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.2839095Z", "architecture": "386", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:1bab66c8e73ab581941fc7ba417338214b0373384f1fdf03e02a65c550f818a1",
+        "imageSize": 830502, "createdTime": "2021-11-17T21:45:47.0700674Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.0700674Z", "architecture": "arm64", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:b98e846c227d038ce59a86f480a57c13eefcd41cc152cfb4a2b8d0c32c423f75",
+        "imageSize": 726234, "createdTime": "2021-11-17T21:45:46.9096835Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.9096835Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"11/18/2021
+        9:41:26 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:368f923b2fde7a9fcb461e856ed7807c5fc8bf2524d5feb0365a86288d959d42",
+        "imageSize": 954552, "createdTime": "2021-11-17T21:45:46.7599002Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.7599002Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:936a83ff87837f54e46218008fd04ff79bf743bc11b8e9a9773c2a0b11c571e0",
+        "imageSize": 758161, "createdTime": "2021-11-17T21:45:46.6090719Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.6090719Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:34efe68cca33507682b1673c851700ec66839ecf94d19b928176e20d20e02413",
+        "imageSize": 774775, "createdTime": "2021-11-17T21:45:46.5536066Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.5536066Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:e7157b6d7ebbe2cce5eaa8cfe8aa4fa82d173999b9f90a9ec42e57323546c353",
+        "imageSize": 11149177, "createdTime": "2021-11-17T21:45:45.7494596Z", "lastUpdateTime":
+        "2021-11-17T21:45:45.7494596Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Nov 2021 21:47:31 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://yallacrtests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "library/busybox", "Action": "metadata_read"}]}]}'
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '218'
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Nov 2021 21:47:31 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://yallacrtests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
+- request:
+    body:
+      access_token: REDACTED
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.PostContentSchemaGrantType
+      - access_token
+      service: yallacrtests.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Nov 2021 21:47:31 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -54,27 +250,29 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitests.azurecr.io/oauth2/exchange
+    url: https://yallacrtests.azurecr.io/oauth2/exchange?api-version=2021-07-01
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:library/busybox:metadata_read
-      service: yalinlitests.azurecr.io
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:37 GMT
+      date: Thu, 18 Nov 2021 21:47:31 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -82,79 +280,102 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitests.azurecr.io/oauth2/token
+    url: https://yallacrtests.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
   response:
     body:
-      string: '{"registry": "yalinlitests.azurecr.io", "imageName": "library/busybox",
-        "manifests": [{"digest": "sha256:29651c5534d876f22e89a6af67025e3ba63fa634b0d3349a81969ddb7b3ce3de",
-        "imageSize": 528, "createdTime": "2021-08-30T10:56:00.5683385Z", "lastUpdateTime":
-        "2021-08-30T10:56:00.5683385Z", "architecture": "ppc64le", "os": "linux",
+      string: '{"registry": "yallacrtests.azurecr.io", "imageName": "library/busybox",
+        "manifests": [{"digest": "sha256:02eb46ac1dbd9302135da448098a66a33c10a677f5946487185aa29d2a7700ce",
+        "imageSize": 907271, "createdTime": "2021-11-17T21:45:47.5171777Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.5171777Z", "architecture": "riscv64", "os": "linux",
         "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:96a17b68467be2bbf8df538d24cf8615c9790ed5d1a5f895e78bb2ae95405105",
-        "imageSize": 527, "createdTime": "2021-08-30T10:56:00.4844092Z", "lastUpdateTime":
-        "2021-08-30T10:56:00.4844092Z", "architecture": "riscv64", "os": "linux",
+        true, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"11/18/2021
+        9:44:23 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:a306c64b6a97a94ed0df1598c4f3a7ed6057393bc114b7e8eb0da67352879725",
+        "imageSize": 2486088, "createdTime": "2021-11-17T21:45:47.4635609Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.4635609Z", "architecture": "ppc64le", "os": "linux",
         "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:2bb4c4428052c54b1f45f9a56ab230eed60183b03044f21b623a2988b28fd819",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:53.4401333Z", "lastUpdateTime":
-        "2021-08-30T10:55:53.4401333Z", "architecture": "arm", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:c93de71940b756382ef4802a87b99fc089ed53dbed59e8498d8f9dd9913b2657",
-        "imageSize": 528, "createdTime": "2021-08-30T10:55:52.9013378Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.9013378Z", "architecture": "s390x", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:620bfb69727e7bb7186cc98211a048d5d9035e6dab69a412765cf6434714ea90",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:52.5351619Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.5351619Z", "architecture": "386", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:fcb3585c8c69008887c45c798c7eb02206258fc5aa2e7e5eb67ed49e7c757681",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:52.4985177Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.4985177Z", "architecture": "arm64", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:bb9022cb56ff38b33098e1c3a199460c44e21eba2d3058d53bc696b84862f70a",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:52.4342508Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.4342508Z", "architecture": "mips64le", "os": "linux",
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:e54f3046086cfda58b89f87763245db08d93418f204629b9e875d089007f0bb9",
+        "imageSize": 962442, "createdTime": "2021-11-17T21:45:47.3824184Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.3824184Z", "architecture": "mips64le", "os": "linux",
         "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:f1812cd29e13f4df55b7622a32d3c7270ca92fd87fefbb184e958b2bde13c3a7",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:51.9078274Z", "lastUpdateTime":
-        "2021-08-30T10:55:51.9078274Z", "architecture": "arm", "os": "linux", "mediaType":
+        true, "quarantineDetails": "{\"state\":\"Scan Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"11/18/2021
+        9:44:20 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:54339d461e3be5eef03b0a444af67e595c7c9513b18bf6b8f343d52414ce8ec0",
+        "imageSize": 2008812, "createdTime": "2021-11-17T21:45:47.3085761Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.3085761Z", "architecture": "s390x", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:1128c48c4a1285628b24e32c50f70d8b03de0de9ffb27906746c3be842811894",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:51.5136821Z", "lastUpdateTime":
-        "2021-08-30T10:55:51.5136821Z", "architecture": "arm", "os": "linux", "mediaType":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:be0b3422c99de66c5bb4808cd74a30870e68252fdd361d84250f9691797a2665",
+        "imageSize": 738045, "createdTime": "2021-11-17T21:45:47.2839095Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.2839095Z", "architecture": "386", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:b862520da7361ea093806d292ce355188ae83f21e8e3b2a3ce4dbdba0a230f83",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:51.426845Z", "lastUpdateTime":
-        "2021-08-30T10:55:51.426845Z", "architecture": "amd64", "os": "linux", "mediaType":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:1bab66c8e73ab581941fc7ba417338214b0373384f1fdf03e02a65c550f818a1",
+        "imageSize": 830502, "createdTime": "2021-11-17T21:45:47.0700674Z", "lastUpdateTime":
+        "2021-11-17T21:45:47.0700674Z", "architecture": "arm64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:b37dd066f59a4961024cf4bed74cae5e68ac26b48807292bd12198afa3ecb778",
-        "imageSize": 5272, "createdTime": "2021-08-30T10:55:50.5029685Z", "lastUpdateTime":
-        "2021-08-30T10:55:50.5029685Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:b98e846c227d038ce59a86f480a57c13eefcd41cc152cfb4a2b8d0c32c423f75",
+        "imageSize": 726234, "createdTime": "2021-11-17T21:45:46.9096835Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.9096835Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"11/18/2021
+        9:41:26 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:368f923b2fde7a9fcb461e856ed7807c5fc8bf2524d5feb0365a86288d959d42",
+        "imageSize": 954552, "createdTime": "2021-11-17T21:45:46.7599002Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.7599002Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:936a83ff87837f54e46218008fd04ff79bf743bc11b8e9a9773c2a0b11c571e0",
+        "imageSize": 758161, "createdTime": "2021-11-17T21:45:46.6090719Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.6090719Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:34efe68cca33507682b1673c851700ec66839ecf94d19b928176e20d20e02413",
+        "imageSize": 774775, "createdTime": "2021-11-17T21:45:46.5536066Z", "lastUpdateTime":
+        "2021-11-17T21:45:46.5536066Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-11-16T20:42:10.6325416Z\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        "quarantineState": "Passed"}}, {"digest": "sha256:e7157b6d7ebbe2cce5eaa8cfe8aa4fa82d173999b9f90a9ec42e57323546c353",
+        "imageSize": 11149177, "createdTime": "2021-11-17T21:45:45.7494596Z", "lastUpdateTime":
+        "2021-11-17T21:45:45.7494596Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
         "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:37 GMT
+      date: Thu, 18 Nov 2021 21:47:32 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -163,170 +384,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "library/busybox", "Action": "metadata_read"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '218'
-      content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:37 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://yalinlitests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
-- request:
-    body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: yalinlitests.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:37 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.416667'
-    status:
-      code: 200
-      message: OK
-    url: https://yalinlitests.azurecr.io/oauth2/exchange
-- request:
-    body:
-      grant_type: refresh_token
-      refresh_token: REDACTED
-      scope: repository:library/busybox:metadata_read
-      service: yalinlitests.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:37 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.4'
-    status:
-      code: 200
-      message: OK
-    url: https://yalinlitests.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
-  response:
-    body:
-      string: '{"registry": "yalinlitests.azurecr.io", "imageName": "library/busybox",
-        "manifests": [{"digest": "sha256:29651c5534d876f22e89a6af67025e3ba63fa634b0d3349a81969ddb7b3ce3de",
-        "imageSize": 528, "createdTime": "2021-08-30T10:56:00.5683385Z", "lastUpdateTime":
-        "2021-08-30T10:56:00.5683385Z", "architecture": "ppc64le", "os": "linux",
-        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:96a17b68467be2bbf8df538d24cf8615c9790ed5d1a5f895e78bb2ae95405105",
-        "imageSize": 527, "createdTime": "2021-08-30T10:56:00.4844092Z", "lastUpdateTime":
-        "2021-08-30T10:56:00.4844092Z", "architecture": "riscv64", "os": "linux",
-        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:2bb4c4428052c54b1f45f9a56ab230eed60183b03044f21b623a2988b28fd819",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:53.4401333Z", "lastUpdateTime":
-        "2021-08-30T10:55:53.4401333Z", "architecture": "arm", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:c93de71940b756382ef4802a87b99fc089ed53dbed59e8498d8f9dd9913b2657",
-        "imageSize": 528, "createdTime": "2021-08-30T10:55:52.9013378Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.9013378Z", "architecture": "s390x", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:620bfb69727e7bb7186cc98211a048d5d9035e6dab69a412765cf6434714ea90",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:52.5351619Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.5351619Z", "architecture": "386", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:fcb3585c8c69008887c45c798c7eb02206258fc5aa2e7e5eb67ed49e7c757681",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:52.4985177Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.4985177Z", "architecture": "arm64", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:bb9022cb56ff38b33098e1c3a199460c44e21eba2d3058d53bc696b84862f70a",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:52.4342508Z", "lastUpdateTime":
-        "2021-08-30T10:55:52.4342508Z", "architecture": "mips64le", "os": "linux",
-        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:f1812cd29e13f4df55b7622a32d3c7270ca92fd87fefbb184e958b2bde13c3a7",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:51.9078274Z", "lastUpdateTime":
-        "2021-08-30T10:55:51.9078274Z", "architecture": "arm", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:1128c48c4a1285628b24e32c50f70d8b03de0de9ffb27906746c3be842811894",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:51.5136821Z", "lastUpdateTime":
-        "2021-08-30T10:55:51.5136821Z", "architecture": "arm", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:b862520da7361ea093806d292ce355188ae83f21e8e3b2a3ce4dbdba0a230f83",
-        "imageSize": 527, "createdTime": "2021-08-30T10:55:51.426845Z", "lastUpdateTime":
-        "2021-08-30T10:55:51.426845Z", "architecture": "amd64", "os": "linux", "mediaType":
-        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:b37dd066f59a4961024cf4bed74cae5e68ac26b48807292bd12198afa3ecb778",
-        "imageSize": 5272, "createdTime": "2021-08-30T10:55:50.5029685Z", "lastUpdateTime":
-        "2021-08-30T10:55:50.5029685Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
-        "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:38 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://yalinlitests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
+    url: https://yallacrtests.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timedesc
 version: 1

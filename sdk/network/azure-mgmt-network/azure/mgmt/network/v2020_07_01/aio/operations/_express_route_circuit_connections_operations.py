@@ -49,7 +49,7 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -97,7 +97,7 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified Express Route Circuit Connection from the specified express route
         circuit.
@@ -112,8 +112,8 @@ class ExpressRouteCircuitConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -172,7 +172,7 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCircuitConnection":
         """Gets the specified Express Route Circuit Connection from the specified express route circuit.
 
@@ -239,7 +239,7 @@ class ExpressRouteCircuitConnectionsOperations:
         peering_name: str,
         connection_name: str,
         express_route_circuit_connection_parameters: "_models.ExpressRouteCircuitConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCircuitConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitConnection"]
         error_map = {
@@ -300,7 +300,7 @@ class ExpressRouteCircuitConnectionsOperations:
         peering_name: str,
         connection_name: str,
         express_route_circuit_connection_parameters: "_models.ExpressRouteCircuitConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRouteCircuitConnection"]:
         """Creates or updates a Express Route Circuit Connection in the specified express route circuits.
 
@@ -317,8 +317,8 @@ class ExpressRouteCircuitConnectionsOperations:
         :type express_route_circuit_connection_parameters: ~azure.mgmt.network.v2020_07_01.models.ExpressRouteCircuitConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuitConnection or the result of cls(response)
@@ -380,7 +380,7 @@ class ExpressRouteCircuitConnectionsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitConnectionListResult"]:
         """Gets all global reach connections associated with a private peering in an express route
         circuit.

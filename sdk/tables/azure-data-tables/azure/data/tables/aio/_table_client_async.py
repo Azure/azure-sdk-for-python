@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -664,17 +664,24 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def submit_transaction(
         self,
-        operations: Iterable[TransactionOperationType],
+        operations: Union[
+            Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]
+        ],
         **kwargs
     ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
 
-        :param operations: The list of operations to commit in a transaction. This should be a list of
-         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
-         kwargs for that operation.
-        :type operations: Iterable[Tuple[str, EntityType]]
+        :param operations: The list of operations to commit in a transaction. This should be an iterable
+         (or async iterable) of tuples containing an operation name, the entity on which to operate,
+         and optionally, a dict of additional kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations:
+         Union[Iterable[Tuple[str, Entity, Mapping[str, Any]]],AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises ~azure.data.tables.TableTransactionError:
@@ -697,13 +704,17 @@ class TableClient(AsyncTablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
-        for operation in operations:
+        try:
+            for operation in operations:  # type: ignore
+                batched_requests.add_operation(operation)
+        except TypeError:
             try:
-                operation_kwargs = operation[2]  # type: ignore
-            except IndexError:
-                operation_kwargs = {}
-            try:
-                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
-            except AttributeError:
-                raise ValueError("Unrecognized operation: {}".format(operation))
+                async for operation in operations:  # type: ignore
+                    batched_requests.add_operation(operation)
+            except TypeError:
+                raise TypeError(
+                  "The value of 'operations' must be an iterator or async iterator "
+                  "of Tuples. Please check documentation for correct Tuple format."
+                )
+
         return await self._batch_send(*batched_requests.requests, **kwargs)

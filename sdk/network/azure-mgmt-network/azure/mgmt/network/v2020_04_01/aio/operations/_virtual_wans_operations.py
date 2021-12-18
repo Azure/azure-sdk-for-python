@@ -47,7 +47,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualWAN":
         """Retrieves the details of a VirtualWAN.
 
@@ -106,7 +106,7 @@ class VirtualWansOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         wan_parameters: "_models.VirtualWAN",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualWAN":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualWAN"]
         error_map = {
@@ -163,7 +163,7 @@ class VirtualWansOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         wan_parameters: "_models.VirtualWAN",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualWAN"]:
         """Creates a VirtualWAN resource if it doesn't exist else updates the existing VirtualWAN.
 
@@ -175,8 +175,8 @@ class VirtualWansOperations:
         :type wan_parameters: ~azure.mgmt.network.v2020_04_01.models.VirtualWAN
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualWAN or the result of cls(response)
@@ -234,7 +234,7 @@ class VirtualWansOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         wan_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualWAN":
         """Updates a VirtualWAN tags.
 
@@ -299,7 +299,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -343,7 +343,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a VirtualWAN.
 
@@ -353,8 +353,8 @@ class VirtualWansOperations:
         :type virtual_wan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -406,7 +406,7 @@ class VirtualWansOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualWANsResult"]:
         """Lists all the VirtualWANs in a resource group.
 
@@ -475,7 +475,7 @@ class VirtualWansOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVirtualWANsResult"]:
         """Lists all the VirtualWANs in a subscription.
 

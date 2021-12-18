@@ -1,5 +1,12 @@
 # Release History
 
+## 9.1.0 (2021-10-13)
+
+**Features**
+
+  - Model ContainerGroup has a new parameter zones
+  - Model Resource has a new parameter zones
+
 ## 9.0.0 (2021-09-17)
 
 **Features**

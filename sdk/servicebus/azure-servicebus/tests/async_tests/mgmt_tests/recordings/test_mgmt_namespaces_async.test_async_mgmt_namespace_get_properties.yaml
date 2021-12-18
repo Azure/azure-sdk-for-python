@@ -5,23 +5,23 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/$namespaceinfo?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/$namespaceinfo?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustesttcenhmsucx.servicebus.windows.net/$namespaceinfo?api-version=2017-04</id><title
-        type="text">servicebustesttcenhmsucx</title><updated>2020-08-19T23:03:55Z</updated><author><name>servicebustesttcenhmsucx</name></author><link
-        rel="self" href="https://servicebustesttcenhmsucx.servicebus.windows.net/$namespaceinfo?api-version=2017-04"></link><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/$namespaceinfo?api-version=2021-05</id><title
+        type="text">servicebustestkjdemkkogk</title><updated>2021-10-21T05:19:15Z</updated><author><name>servicebustestkjdemkkogk</name></author><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/$namespaceinfo?api-version=2021-05"></link><content
         type="application/xml"><NamespaceInfo xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><CreatedTime>2020-08-19T23:02:52.63Z</CreatedTime><MessagingSKU>Standard</MessagingSKU><ModifiedTime>2020-08-19T23:02:52.63Z</ModifiedTime><Name>servicebustesttcenhmsucx</Name><NamespaceType>Messaging</NamespaceType></NamespaceInfo></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><CreatedTime>2021-10-21T05:18:14.32Z</CreatedTime><MessagingSKU>Standard</MessagingSKU><ModifiedTime>2021-10-21T05:18:14.32Z</ModifiedTime><Name>servicebustestkjdemkkogk</Name><NamespaceType>Messaging</NamespaceType></NamespaceInfo></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Wed, 19 Aug 2020 23:03:54 GMT
+      date: Thu, 21 Oct 2021 05:19:15 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustesttcenhmsucx.servicebus.windows.net/$namespaceinfo?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/$namespaceinfo?api-version=2021-05
 version: 1

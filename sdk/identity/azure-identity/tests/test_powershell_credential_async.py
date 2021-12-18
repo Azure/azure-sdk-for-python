@@ -244,9 +244,7 @@ async def test_windows_powershell_fallback():
     assert calls == 2
 
 
-async def test_allow_multitenant_authentication():
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+async def test_multitenant_authentication():
     first_token = "***"
     second_tenant = "second-tenant"
     second_token = first_token * 2
@@ -266,7 +264,7 @@ async def test_allow_multitenant_authentication():
         communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
         return Mock(communicate=communicate, returncode=0)
 
-    credential = AzurePowerShellCredential(allow_multitenant_authentication=True)
+    credential = AzurePowerShellCredential()
     with patch(CREATE_SUBPROCESS_EXEC, fake_exec):
         token = await credential.get_token("scope")
         assert token.token == first_token
@@ -278,10 +276,7 @@ async def test_allow_multitenant_authentication():
         token = await credential.get_token("scope")
         assert token.token == first_token
 
-
 async def test_multitenant_authentication_not_allowed():
-    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
-
     expected_token = "***"
 
     async def fake_exec(*args, **_):
@@ -302,13 +297,6 @@ async def test_multitenant_authentication_not_allowed():
         token = await credential.get_token("scope")
         assert token.token == expected_token
 
-        # specifying a tenant should get an error
-        with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-            await credential.get_token("scope", tenant_id="some tenant")
-
-        # ...unless the compat switch is enabled
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
             token = await credential.get_token("scope", tenant_id="some tenant")
-        assert (
-            token.token == expected_token
-        ), "credential should ignore tenant_id kwarg when the compat switch is enabled"
+            assert token.token == expected_token

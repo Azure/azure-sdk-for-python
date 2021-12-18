@@ -1,33 +1,9 @@
-trigger:
-  branches:
-    include:
-    - master
-    - main
-    - hotfix/*
-    - release/*
-    - restapi*
-  paths:
-    include:
-    - sdk/cognitivelanguage/
-    - scripts/
-
-pr:
-  branches:
-    include:
-    - master
-    - main
-    - feature/*
-    - hotfix/*
-    - release/*
-    - restapi*
-  paths:
-    include:
-    - sdk/cognitivelanguage/
+trigger: none
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: false
+      BuildTargetingString: azure*
       ServiceDirectory: cognitivelanguage
       MatrixReplace:
         - TestSamples=.*/true
@@ -35,9 +11,13 @@ stages:
         AZURE_QUESTIONANSWERING_KEY: $(qna-key)
         AZURE_QUESTIONANSWERING_PROJECT: 190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c
         AZURE_QUESTIONANSWERING_ENDPOINT: $(qna-uri)
+        AZURE_CONVERSATIONS_ENDPOINT: $(conversations-endpoint)
+        AZURE_CONVERSATIONS_KEY: $(conversations-key)
+        AZURE_CONVERSATIONS_PROJECT: $(conversations-project)
+        AZURE_CONVERSATIONS_WORKFLOW_PROJECT: $(conversations-workflow-project)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        TEST_MODE: 'RunLiveNoRecord' # use when allowing preparers to create the rgs for you
-        AZURE_TEST_RUN_LIVE: 'true' # use when utilizing the New-TestResources Script
+        TEST_MODE: "RunLiveNoRecord" # use when allowing preparers to create the rgs for you
+        AZURE_TEST_RUN_LIVE: "true" # use when utilizing the New-TestResources Script

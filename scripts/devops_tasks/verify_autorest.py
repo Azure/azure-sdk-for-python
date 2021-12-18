@@ -8,7 +8,6 @@
 import argparse
 import os
 import logging
-import sys
 
 from common_tasks import run_check_call
 

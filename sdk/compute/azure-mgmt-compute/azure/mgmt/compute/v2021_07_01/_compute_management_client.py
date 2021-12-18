@@ -55,6 +55,9 @@ from .operations import GallerySharingProfileOperations
 from .operations import SharedGalleriesOperations
 from .operations import SharedGalleryImagesOperations
 from .operations import SharedGalleryImageVersionsOperations
+from .operations import CommunityGalleriesOperations
+from .operations import CommunityGalleryImagesOperations
+from .operations import CommunityGalleryImageVersionsOperations
 from . import models
 
 
@@ -133,6 +136,12 @@ class ComputeManagementClient(object):
     :vartype shared_gallery_images: azure.mgmt.compute.v2021_07_01.operations.SharedGalleryImagesOperations
     :ivar shared_gallery_image_versions: SharedGalleryImageVersionsOperations operations
     :vartype shared_gallery_image_versions: azure.mgmt.compute.v2021_07_01.operations.SharedGalleryImageVersionsOperations
+    :ivar community_galleries: CommunityGalleriesOperations operations
+    :vartype community_galleries: azure.mgmt.compute.v2021_07_01.operations.CommunityGalleriesOperations
+    :ivar community_gallery_images: CommunityGalleryImagesOperations operations
+    :vartype community_gallery_images: azure.mgmt.compute.v2021_07_01.operations.CommunityGalleryImagesOperations
+    :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
+    :vartype community_gallery_image_versions: azure.mgmt.compute.v2021_07_01.operations.CommunityGalleryImageVersionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -230,6 +239,12 @@ class ComputeManagementClient(object):
         self.shared_gallery_images = SharedGalleryImagesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.community_galleries = CommunityGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.community_gallery_images = CommunityGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

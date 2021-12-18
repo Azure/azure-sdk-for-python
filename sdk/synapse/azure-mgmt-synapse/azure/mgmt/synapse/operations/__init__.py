@@ -70,6 +70,14 @@ from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeM
 from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._spark_configurations_operations import SparkConfigurationsOperations
+from ._kusto_operations_operations import KustoOperationsOperations
+from ._kusto_pools_operations import KustoPoolsOperations
+from ._kusto_pool_child_resource_operations import KustoPoolChildResourceOperations
+from ._kusto_pool_attached_database_configurations_operations import KustoPoolAttachedDatabaseConfigurationsOperations
+from ._kusto_pool_databases_operations import KustoPoolDatabasesOperations
+from ._kusto_pool_data_connections_operations import KustoPoolDataConnectionsOperations
+from ._kusto_pool_principal_assignments_operations import KustoPoolPrincipalAssignmentsOperations
+from ._kusto_pool_database_principal_assignments_operations import KustoPoolDatabasePrincipalAssignmentsOperations
 
 __all__ = [
     'AzureADOnlyAuthenticationsOperations',
@@ -136,4 +144,12 @@ __all__ = [
     'IntegrationRuntimeStatusOperations',
     'SparkConfigurationOperations',
     'SparkConfigurationsOperations',
+    'KustoOperationsOperations',
+    'KustoPoolsOperations',
+    'KustoPoolChildResourceOperations',
+    'KustoPoolAttachedDatabaseConfigurationsOperations',
+    'KustoPoolDatabasesOperations',
+    'KustoPoolDataConnectionsOperations',
+    'KustoPoolPrincipalAssignmentsOperations',
+    'KustoPoolDatabasePrincipalAssignmentsOperations',
 ]

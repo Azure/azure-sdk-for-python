@@ -90,3 +90,12 @@ def no_charset():
     )
     r.headers["Content-Type"] = "text/plain"
     return r
+
+@encoding_api.route('/gzip', methods=['GET'])
+def gzip_content_encoding():
+    r = Response(
+        b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\n\xcbH\xcd\xc9\xc9W(\xcf/\xcaI\x01\x00\x85\x11J\r\x0b\x00\x00\x00', status=200
+    )
+    r.headers["Content-Type"] = "text/plain"
+    r.headers['Content-Encoding'] = "gzip"
+    return r

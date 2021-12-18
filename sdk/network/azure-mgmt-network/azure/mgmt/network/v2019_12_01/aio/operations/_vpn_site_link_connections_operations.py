@@ -46,7 +46,7 @@ class VpnSiteLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnSiteLinkConnection":
         """Retrieves the details of a vpn site link connection.
 

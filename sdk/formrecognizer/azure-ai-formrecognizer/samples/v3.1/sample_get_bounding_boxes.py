@@ -50,7 +50,7 @@ class GetBoundingBoxesSample(object):
         model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID", custom_model_id)
 
         form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
@@ -131,7 +131,7 @@ if __name__ == '__main__':
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
         form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         model = form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL_V2"), use_training_labels=False).result()
         model_id = model.model_id

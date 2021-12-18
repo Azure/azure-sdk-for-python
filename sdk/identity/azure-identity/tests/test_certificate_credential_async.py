@@ -270,9 +270,7 @@ def test_certificate_arguments():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-async def test_allow_multitenant_authentication(cert_path, cert_password):
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
+async def test_multitenant_authentication(cert_path, cert_password):
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -290,7 +288,6 @@ async def test_allow_multitenant_authentication(cert_path, cert_password):
         "client-id",
         cert_path,
         password=cert_password,
-        allow_multitenant_authentication=True,
         transport=Mock(send=send),
     )
     token = await credential.get_token("scope")
@@ -310,8 +307,6 @@ async def test_allow_multitenant_authentication(cert_path, cert_password):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 async def test_multitenant_authentication_backcompat(cert_path, cert_password):
-    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
-
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
@@ -332,13 +327,5 @@ async def test_multitenant_authentication_backcompat(cert_path, cert_password):
     token = await credential.get_token("scope", tenant_id=expected_tenant)
     assert token.token == expected_token
 
-    # but any other tenant should get an error
-    with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
-        await credential.get_token("scope", tenant_id="un" + expected_tenant)
-
-    # ...unless the compat switch is enabled
-    with patch.dict(
-        "os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
-    ):
-        token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
-    assert token.token == expected_token, "credential should ignore tenant_id kwarg when the compat switch is enabled"
+    token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token * 2

@@ -57,9 +57,9 @@ class AgentPool(SubResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param count: Number of agents (VMs) to host docker containers. Allowed values must be in the
-     range of 0 to 1000 (inclusive) for user pools and in the range of 1 to 1000 (inclusive) for
-     system pools. The default value is 1.
+    :param count: Desired Number of agents (VMs) specified to host docker containers. Allowed
+     values must be in the range of 0 to 1000 (inclusive) for user pools and in the range of 1 to
+     1000 (inclusive) for system pools. The default value is 1.
     :type count: int
     :param vm_size: VM size availability varies by region. If a node contains insufficient compute
      resources (memory, cpu, etc) pods might fail to run correctly. For more details on restricted
@@ -1627,9 +1627,9 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param count: Number of agents (VMs) to host docker containers. Allowed values must be in the
-     range of 0 to 1000 (inclusive) for user pools and in the range of 1 to 1000 (inclusive) for
-     system pools. The default value is 1.
+    :param count: Desired Number of agents (VMs) specified to host docker containers. Allowed
+     values must be in the range of 0 to 1000 (inclusive) for user pools and in the range of 1 to
+     1000 (inclusive) for system pools. The default value is 1.
     :type count: int
     :param vm_size: VM size availability varies by region. If a node contains insufficient compute
      resources (memory, cpu, etc) pods might fail to run correctly. For more details on restricted
@@ -1862,9 +1862,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Number of agents (VMs) to host docker containers. Allowed values must be in the
-     range of 0 to 1000 (inclusive) for user pools and in the range of 1 to 1000 (inclusive) for
-     system pools. The default value is 1.
+    :param count: Desired Number of agents (VMs) specified to host docker containers. Allowed
+     values must be in the range of 0 to 1000 (inclusive) for user pools and in the range of 1 to
+     1000 (inclusive) for system pools. The default value is 1.
     :type count: int
     :param vm_size: VM size availability varies by region. If a node contains insufficient compute
      resources (memory, cpu, etc) pods might fail to run correctly. For more details on restricted

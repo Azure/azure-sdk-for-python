@@ -32,7 +32,10 @@ class TestTranslation(DocumentTranslationTest):
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
-        client = DocumentTranslationClient(endpoint, token)
+        kwargs = {}
+        if os.getenv("AZURE_COGNITIVE_SCOPE"):
+            kwargs["credential_scopes"] = [os.getenv("AZURE_COGNITIVE_SCOPE")]
+        client = DocumentTranslationClient(endpoint, token, **kwargs)
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
@@ -355,7 +358,7 @@ class TestTranslation(DocumentTranslationTest):
 
         for doc in result:
             assert doc.status == "Failed"
-            assert doc.error.code == "WrongDocumentEncoding"
+            assert doc.error.code == "NoTranslatableText"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

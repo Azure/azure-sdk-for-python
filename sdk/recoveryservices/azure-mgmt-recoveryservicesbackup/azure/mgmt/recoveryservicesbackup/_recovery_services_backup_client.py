@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
+from .operations import BackupResourceStorageConfigsNonCRROperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
@@ -62,6 +63,8 @@ from .operations import BackupProtectableItemsOperations
 from .operations import BackupProtectionContainersOperations
 from .operations import SecurityPINsOperations
 from .operations import RecoveryPointsRecommendedForMoveOperations
+from .operations import ResourceGuardProxiesOperations
+from .operations import ResourceGuardProxyOperations
 from .operations import BackupUsageSummariesCRROperations
 from .operations import AadPropertiesOperations
 from .operations import CrossRegionRestoreOperations
@@ -78,6 +81,8 @@ from . import models
 class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
+    :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRROperations operations
+    :vartype backup_resource_storage_configs_non_crr: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsNonCRROperations
     :ivar protection_intent: ProtectionIntentOperations operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatusOperations operations
@@ -162,6 +167,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     :vartype security_pins: azure.mgmt.recoveryservicesbackup.operations.SecurityPINsOperations
     :ivar recovery_points_recommended_for_move: RecoveryPointsRecommendedForMoveOperations operations
     :vartype recovery_points_recommended_for_move: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsRecommendedForMoveOperations
+    :ivar resource_guard_proxies: ResourceGuardProxiesOperations operations
+    :vartype resource_guard_proxies: azure.mgmt.recoveryservicesbackup.operations.ResourceGuardProxiesOperations
+    :ivar resource_guard_proxy: ResourceGuardProxyOperations operations
+    :vartype resource_guard_proxy: azure.mgmt.recoveryservicesbackup.operations.ResourceGuardProxyOperations
     :ivar backup_usage_summaries_crr: BackupUsageSummariesCRROperations operations
     :vartype backup_usage_summaries_crr: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesCRROperations
     :ivar aad_properties: AadPropertiesOperations operations
@@ -208,6 +217,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(
@@ -291,6 +302,10 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self.security_pins = SecurityPINsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.resource_guard_proxies = ResourceGuardProxiesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.resource_guard_proxy = ResourceGuardProxyOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
             self._client, self._config, self._serialize, self._deserialize)

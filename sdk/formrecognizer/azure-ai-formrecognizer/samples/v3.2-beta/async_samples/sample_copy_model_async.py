@@ -35,7 +35,7 @@ import asyncio
 
 
 async def sample_copy_model_async(custom_model_id):
-    # [START begin_copy_model]
+    # [START begin_copy_model_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 
@@ -69,7 +69,7 @@ async def sample_copy_model_async(custom_model_id):
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END begin_copy_model]
+    # [END begin_copy_model_async]
 
 
 async def main():
@@ -95,5 +95,4 @@ async def main():
     await sample_copy_model_async(model_id)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

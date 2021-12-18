@@ -94,7 +94,7 @@ class EventHubProducerClient(ClientBaseAsync):
             ALL_PARTITIONS: self._create_producer()
         }  # type: Dict[str, Optional[EventHubProducer]]
         self._lock = asyncio.Lock(
-            loop=self._loop
+            **self._internal_kwargs
         )  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
@@ -165,7 +165,7 @@ class EventHubProducerClient(ClientBaseAsync):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
-            loop=self._loop,
+            **self._internal_kwargs
         )
         return handler
 

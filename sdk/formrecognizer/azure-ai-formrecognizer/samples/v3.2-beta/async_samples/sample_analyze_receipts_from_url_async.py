@@ -14,7 +14,7 @@ DESCRIPTION:
     using a pre-trained receipt model.
 
     See fields found on a receipt here:
-    https://aka.ms/formanalyzer/receiptfields
+    https://aka.ms/azsdk/formrecognizer/receiptfieldschema
 
 USAGE:
     python sample_analyze_receipts_from_url_async.py
@@ -126,5 +126,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

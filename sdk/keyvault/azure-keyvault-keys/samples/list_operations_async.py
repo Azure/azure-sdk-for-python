@@ -4,40 +4,41 @@
 # ------------------------------------
 import asyncio
 import os
-from azure.keyvault.keys.aio import KeyClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys.aio import KeyClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
 # 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-keys/
+# 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set environment variable VAULT_URL with the URL of your key vault
+#
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
+#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
-# ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# 5. Key create, list, and delete permissions for your service principal in your vault
 #
-# 1. Create key (create_key)
+# ----------------------------------------------------------------------------------------------------------
+# Sample - demonstrates the basic list operations for keys
+#
+# 1. Create a key (create_key)
 #
 # 2. List keys from the Key Vault (list_keys)
 #
 # 3. List key versions from the Key Vault (list_properties_of_key_versions)
 #
-# 4. List deleted keys from the Key Vault (list_deleted_keys). The vault has to be soft-delete enabled to perform this
-# operation.
+# 4. Delete keys (delete_key)
+#
+# 5. List deleted keys from the Key Vault (list_deleted_keys)
 #
 # ----------------------------------------------------------------------------------------------------------
+
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
@@ -81,7 +82,7 @@ async def run_sample():
     await client.delete_key(rsa_key.name)
     await client.delete_key(ec_key.name)
 
-    # You can list all the deleted and non-purged keys, assuming Key Vault is soft-delete enabled.
+    # You can list all the deleted and non-purged keys.
     print("\n.. List deleted keys from the Key Vault")
     deleted_keys = client.list_deleted_keys()
     async for deleted_key in deleted_keys:

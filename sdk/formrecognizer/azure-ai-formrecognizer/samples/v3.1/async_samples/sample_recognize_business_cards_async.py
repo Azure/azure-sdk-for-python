@@ -41,7 +41,7 @@ class RecognizeBusinessCardSampleAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with form_recognizer_client:
             with open(path_to_sample_forms, "rb") as f:
@@ -108,5 +108,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

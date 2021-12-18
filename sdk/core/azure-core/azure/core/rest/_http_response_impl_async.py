@@ -23,11 +23,37 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import AsyncIterator
+from typing import Any, AsyncIterator
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
-from ._http_response_impl import _HttpResponseBaseImpl
+from ._http_response_impl import (
+    _HttpResponseBaseImpl, _HttpResponseBackcompatMixinBase, _RestHttpClientTransportResponseBase
+)
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name
+from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
 
-class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
+
+class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
+    """Backcompat mixin for async responses"""
+
+    def __getattr__(self, attr):
+        backcompat_attrs = ["parts"]
+        attr = _pad_attr_name(attr, backcompat_attrs)
+        return super().__getattr__(attr)
+
+    def parts(self):
+        """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+        This is deprecated and will be removed in a later release.
+        :rtype: AsyncIterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
+
+        return _PartGenerator(self, default_http_response_type=RestAsyncHttpClientTransportResponse)
+
+class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
 
     Since ~azure.core.rest.AsyncHttpResponse is an abstract base class, we need to
@@ -64,7 +90,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
         await self._set_read_checks()
         return self._content
 
-    async def iter_raw(self) -> AsyncIterator[bytes]:
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
@@ -76,7 +102,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
             yield part
         await self.close()
 
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
@@ -114,3 +140,18 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse):
         return "<AsyncHttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
+class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
+    """Create a Rest HTTPResponse from an http.client response.
+    """
+
+    async def iter_bytes(self, **kwargs):
+        raise TypeError("We do not support iter_bytes for this transport response")
+
+    async def iter_raw(self, **kwargs):
+        raise TypeError("We do not support iter_raw for this transport response")
+
+    async def read(self):
+        if self._content is None:
+            self._content = self._internal_response.read()
+        return self._content

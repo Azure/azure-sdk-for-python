@@ -553,9 +553,9 @@ class AppConfigurationClientTest(AzureTestCase):
         new_uri2 = "https://aka.ms/azsdk/python"
         updated_flag.secret_id = new_uri
         temp = json.loads(updated_flag.value)
-        assert temp['secret_uri'] == new_uri
+        assert temp['uri'] == new_uri
 
-        updated_flag.value = json.dumps({'secret_uri': new_uri2})
+        updated_flag.value = json.dumps({'uri': new_uri2})
         assert updated_flag.secret_id == new_uri2
 
         set_flag.value = "bad_value"

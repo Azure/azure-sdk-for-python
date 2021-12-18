@@ -32,6 +32,9 @@ class SearchClient(SearchClientOperationsMixin):
     :vartype indexes: azure.search.documents.indexes.aio.operations.IndexesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -40,7 +43,7 @@ class SearchClient(SearchClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         _base_url = '{endpoint}'
-        self._config = SearchClientConfiguration(endpoint, **kwargs)
+        self._config = SearchClientConfiguration(endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

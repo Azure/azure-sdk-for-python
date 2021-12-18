@@ -12,7 +12,6 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
 import pytest
 
 pytestmark = pytest.mark.asyncio

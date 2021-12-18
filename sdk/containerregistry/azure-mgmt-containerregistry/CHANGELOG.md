@@ -1,5 +1,12 @@
 # Release History
 
+## 8.2.0 (2021-10-26)
+
+**Features**
+
+  - Model ConnectedRegistryUpdateParameters has a new parameter notifications_list
+  - Model ConnectedRegistry has a new parameter notifications_list
+
 ## 8.1.0 (2021-07-22)
 
 **Features**

@@ -9,11 +9,13 @@
 from ._operations import Operations
 from ._disk_pools_operations import DiskPoolsOperations
 from ._disk_pool_zones_operations import DiskPoolZonesOperations
+from ._resource_skus_operations import ResourceSkusOperations
 from ._iscsi_targets_operations import IscsiTargetsOperations
 
 __all__ = [
     'Operations',
     'DiskPoolsOperations',
     'DiskPoolZonesOperations',
+    'ResourceSkusOperations',
     'IscsiTargetsOperations',
 ]

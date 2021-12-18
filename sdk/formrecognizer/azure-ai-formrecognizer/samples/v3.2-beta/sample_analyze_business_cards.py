@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze business cards.
 
     See fields found on a business card here:
-    https://aka.ms/formrecognizer/businesscardfields
+    https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 
 USAGE:
     python sample_analyze_business_cards.py
@@ -35,7 +35,7 @@ def analyze_business_card():
             "./sample_forms/business_cards/business-card-english.jpg",
         )
     )
-    # [START analyze_business_cards]
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -61,7 +61,7 @@ def analyze_business_card():
                         contact_name.value["FirstName"].value,
                         contact_name.value[
                             "FirstName"
-                        ].confidence,  # TODO confidence is None
+                        ].confidence,
                     )
                 )
                 print(
@@ -69,7 +69,7 @@ def analyze_business_card():
                         contact_name.value["LastName"].value,
                         contact_name.value[
                             "LastName"
-                        ].confidence,  # TODO confidence is None
+                        ].confidence,
                     )
                 )
         company_names = business_card.fields.get("CompanyNames")
@@ -125,7 +125,7 @@ def analyze_business_card():
                     "Mobile phone number: {} has confidence: {}".format(
                         phone.content, phone.confidence
                     )
-                )  # TODO value not getting populated
+                )
         faxes = business_card.fields.get("Faxes")
         if faxes:
             for fax in faxes.value:
@@ -133,7 +133,7 @@ def analyze_business_card():
                     "Fax number: {} has confidence: {}".format(
                         fax.content, fax.confidence
                     )
-                )  # TODO value not getting populated
+                )
         work_phones = business_card.fields.get("WorkPhones")
         if work_phones:
             for work_phone in work_phones.value:
@@ -141,7 +141,7 @@ def analyze_business_card():
                     "Work phone number: {} has confidence: {}".format(
                         work_phone.content, work_phone.confidence
                     )
-                )  # TODO value not getting populated
+                )
         other_phones = business_card.fields.get("OtherPhones")
         if other_phones:
             for other_phone in other_phones.value:
@@ -150,7 +150,6 @@ def analyze_business_card():
                         other_phone.value, other_phone.confidence
                     )
                 )
-    # [END analyze_business_cards]
 
 
 if __name__ == "__main__":

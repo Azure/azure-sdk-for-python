@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-05-01",
-    "total_api_version_list": ["2021-05-01"],
+    "chosen_version": "2021-09-01",
+    "total_api_version_list": ["2021-09-01"],
     "client": {
         "name": "StorageCacheManagementClient",
         "filename": "_storage_cache_management_client",

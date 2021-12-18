@@ -47,7 +47,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified Azure Firewall.
 
@@ -101,8 +101,8 @@ class AzureFirewallsOperations:
         :type azure_firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -155,7 +155,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureFirewall":
         """Gets the specified Azure Firewall.
 
@@ -214,7 +214,7 @@ class AzureFirewallsOperations:
         resource_group_name: str,
         azure_firewall_name: str,
         parameters: "_models.AzureFirewall",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureFirewall":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureFirewall"]
         error_map = {
@@ -271,7 +271,7 @@ class AzureFirewallsOperations:
         resource_group_name: str,
         azure_firewall_name: str,
         parameters: "_models.AzureFirewall",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AzureFirewall"]:
         """Creates or updates the specified Azure Firewall.
 
@@ -283,8 +283,8 @@ class AzureFirewallsOperations:
         :type parameters: ~azure.mgmt.network.v2019_09_01.models.AzureFirewall
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AzureFirewall or the result of cls(response)
@@ -342,7 +342,7 @@ class AzureFirewallsOperations:
         resource_group_name: str,
         azure_firewall_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.AzureFirewall"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AzureFirewall"]]
         error_map = {
@@ -397,7 +397,7 @@ class AzureFirewallsOperations:
         resource_group_name: str,
         azure_firewall_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AzureFirewall"]:
         """Updates tags of an Azure Firewall resource.
 
@@ -409,8 +409,8 @@ class AzureFirewallsOperations:
         :type parameters: ~azure.mgmt.network.v2019_09_01.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AzureFirewall or the result of cls(response)
@@ -466,7 +466,7 @@ class AzureFirewallsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AzureFirewallListResult"]:
         """Lists all Azure Firewalls in a resource group.
 
@@ -535,7 +535,7 @@ class AzureFirewallsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AzureFirewallListResult"]:
         """Gets all the Azure Firewalls in a subscription.
 

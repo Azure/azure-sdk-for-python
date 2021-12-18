@@ -31,6 +31,7 @@ from .._constants import (
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC
 )
+from ._async_utils import get_dict_with_loop_if_needed
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
@@ -56,7 +57,7 @@ class EventHubSharedKeyCredential(object):
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    async def get_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -83,6 +84,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+
 class EventhubAzureNamedKeyTokenCredentialAsync(object):
     """The named key credential used for authentication.
 
@@ -95,7 +97,7 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object):
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    async def get_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -129,7 +131,7 @@ class ClientBaseAsync(ClientBase):
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
-        self._loop = kwargs.pop("loop", None)
+        self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredentialAsync(credential) # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
@@ -142,7 +144,7 @@ class ClientBaseAsync(ClientBase):
             credential=self._credential,
             **kwargs
         )
-        self._conn_manager_async = get_connection_manager(loop=self._loop, **kwargs)
+        self._conn_manager_async = get_connection_manager(**kwargs)
 
     def __enter__(self):
         raise TypeError(
@@ -214,7 +216,7 @@ class ClientBaseAsync(ClientBase):
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
         ):  # pylint:disable=no-else-return
-            await asyncio.sleep(backoff, loop=self._loop)
+            await asyncio.sleep(backoff, **self._internal_kwargs)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
                 format(entity_name),
@@ -379,14 +381,14 @@ if TYPE_CHECKING:
             """
 
         @property
-        def _loop(self):
-            # type: () -> asyncio.AbstractEventLoop
-            """The event loop that users pass in to call wrap sync calls to async API.
+        def _internal_kwargs(self):
+            # type: () -> dict
+            """The dict with an event loop that users may pass in to wrap sync calls to async API.
             It's furthur passed to uamqp APIs
             """
 
-        @_loop.setter
-        def _loop(self, value):
+        @_internal_kwargs.setter
+        def _internal_kwargs(self, value):
             pass
 
         @property
@@ -439,7 +441,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 )
             )
             while not await self._handler.client_ready_async():
-                await asyncio.sleep(0.05, loop=self._loop)
+                await asyncio.sleep(0.05, **self._internal_kwargs)
             self._max_message_size_on_link = (
                 self._handler.message_handler._link.peer_max_message_size
                 or constants.MAX_MESSAGE_LENGTH_BYTES

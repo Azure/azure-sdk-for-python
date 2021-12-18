@@ -69,12 +69,12 @@ parameters:
 - name: ValidateFormatting
   type: boolean
   default: false
+- name: TestProxy
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
-    variables:
-      - name: BuildTargetingStringValue
-        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
@@ -87,7 +87,7 @@ stages:
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: '${{ parameters.BuildTargetingString }}'
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -102,6 +102,7 @@ stages:
         MatrixReplace: ${{ parameters.MatrixReplace }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        TestProxy: ${{ parameters.TestProxy }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

@@ -40,7 +40,7 @@ from ._models import (
     AnalyzeResult,
     AnalyzedDocument,
     BoundingRegion,
-    DocumentElement,
+    DocumentContentElement,
     DocumentEntity,
     DocumentField,
     DocumentKeyValuePair,
@@ -58,7 +58,9 @@ from ._models import (
     DocumentModel,
     DocumentModelInfo,
     DocTypeInfo,
-    AccountInfo
+    AccountInfo,
+    DocumentAnalysisError,
+    DocumentAnalysisInnerError,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -98,7 +100,7 @@ __all__ = [
     "AnalyzeResult",
     "AnalyzedDocument",
     "BoundingRegion",
-    "DocumentElement",
+    "DocumentContentElement",
     "DocumentEntity",
     "DocumentField",
     "DocumentKeyValueElement",
@@ -118,7 +120,9 @@ __all__ = [
     "DocumentModel",
     "DocumentModelInfo",
     "DocTypeInfo",
-    "AccountInfo"
+    "AccountInfo",
+    "DocumentAnalysisError",
+    "DocumentAnalysisInnerError",
 ]
 
 __VERSION__ = VERSION

@@ -39,7 +39,7 @@ class RecognizeReceiptsFromURLSample(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version="2.1"
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
         poller = form_recognizer_client.begin_recognize_receipts_from_url(receipt_url=url)

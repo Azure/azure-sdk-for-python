@@ -125,6 +125,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @pytest.mark.skip("the service is experiencing issues listing models for v2.x")
     async def test_v2_0_compatibility(self, client, formrecognizer_storage_container_sas_url_v2):
         # test that the addition of new attributes in v2.1 does not break v2.0
         async with client:

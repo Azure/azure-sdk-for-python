@@ -13,14 +13,17 @@ if TYPE_CHECKING:
 
 def get_authentication_policy(
     credential: "AsyncTokenCredential",
+    audience: str = None
 ) -> AsyncBearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
-
+    if not audience:
+        audience = "https://api.loganalytics.io/"
+    scope = audience.rstrip('/') + "/.default"
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
         return AsyncBearerTokenCredentialPolicy(
-            credential, "https://api.loganalytics.io/.default"
+            credential, scope
         )
 
     raise TypeError("Unsupported credential")
@@ -28,14 +31,17 @@ def get_authentication_policy(
 
 def get_metrics_authentication_policy(
     credential: "AsyncTokenCredential",
+    audience: str = None
 ) -> AsyncBearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
-
+    if not audience:
+        audience = "https://management.azure.com/"
+    scope = audience.rstrip('/') + "/.default"
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
         return AsyncBearerTokenCredentialPolicy(
-            credential, "https://management.azure.com/.default"
+            credential, scope
         )
 
     raise TypeError("Unsupported credential")
