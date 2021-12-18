@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
