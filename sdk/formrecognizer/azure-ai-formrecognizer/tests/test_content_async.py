@@ -45,6 +45,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_recognize_content(b"xxx", content_type="application/pdf")
                 result = await poller.result()
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -59,6 +60,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             result = await poller.result()
         assert result is not None
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -97,6 +99,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                 )
                 result = await poller.result()
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -123,6 +126,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -149,6 +153,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -170,6 +175,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.tables[0].page_number == 1
         assert layout.tables[1].page_number== 1
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -183,6 +189,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -252,6 +259,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -267,6 +275,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy_async
@@ -282,6 +291,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -306,6 +316,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert len(result) == 3
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -320,6 +331,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert result
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
