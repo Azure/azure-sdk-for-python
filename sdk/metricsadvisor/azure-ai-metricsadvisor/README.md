@@ -464,7 +464,7 @@ hook = client.create_hook(
 
 ### Async APIs
 
-This library includes a complete async API supported on Python 3.7+. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation][azure_core_docs]

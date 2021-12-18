@@ -11,7 +11,6 @@ urlFragment: metricsadvisor-samples
 # Samples for Azure Metrics Advisor client library for Python
 
 These code samples show common scenario operations with the Azure Metrics Advisor client library.
-The async versions of the samples require Python 3.7 or later.
 
 |**File Name**|**Description**|
 |----------------|-------------|
