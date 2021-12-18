@@ -400,7 +400,7 @@ These code samples show common scenario operations with the Azure Document Trans
 
 
 ### Async samples
-This library also includes a complete async API supported on Python 3.7+. To use it, you must
+This library also includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.translation.document.aio` namespace.
 
