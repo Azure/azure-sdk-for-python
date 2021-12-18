@@ -12,7 +12,6 @@ urlFragment: textanalytics-samples
 # Samples for Azure Text Analytics client library for Python
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples require Python 3.7 or later.
 
 You can authenticate your client with a Cognitive Services/Text Analytics API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
