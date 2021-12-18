@@ -21,6 +21,7 @@ GlobalClientPreparerV2 = functools.partial(_GlobalClientPreparer, FormRecognizer
 
 class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
     @recorded_by_proxy_async

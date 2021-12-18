@@ -216,6 +216,7 @@ class TestContentFromStream(FormRecognizerTest):
         assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

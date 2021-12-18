@@ -126,6 +126,7 @@ class TestInvoice(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -193,6 +194,7 @@ class TestInvoice(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["Amount"].value ==  56651.49
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

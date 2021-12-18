@@ -170,6 +170,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                 assert result is not None
                 await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
@@ -213,6 +214,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
