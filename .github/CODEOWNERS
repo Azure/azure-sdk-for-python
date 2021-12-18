@@ -133,6 +133,9 @@
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
+# PRLabel: %Digital Twins
+/sdk/digitaltwins/                                                   @johngallardo
+
 # PRLabel: %VideoAnalyzer
 /sdk/videoanalyzer/                                                  @hivyas
 
