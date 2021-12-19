@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
+from json import loads as _loads
 from typing import TYPE_CHECKING
 import warnings
 
@@ -19,7 +20,6 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
-from .. import models as _models
 from .._vendor import _format_url_section
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_question_answering_projects_list_projects_request(
+def build_list_projects_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -44,7 +44,7 @@ def build_question_answering_projects_list_projects_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects')
+    url = '/query-knowledgebases/projects'
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -69,7 +69,7 @@ def build_question_answering_projects_list_projects_request(
     )
 
 
-def build_question_answering_projects_get_project_details_request(
+def build_get_project_details_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -78,7 +78,7 @@ def build_question_answering_projects_get_project_details_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}')
+    url = '/query-knowledgebases/projects/{projectName}'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -102,7 +102,7 @@ def build_question_answering_projects_get_project_details_request(
     )
 
 
-def build_question_answering_projects_create_project_request(
+def build_create_project_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -112,7 +112,7 @@ def build_question_answering_projects_create_project_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}')
+    url = '/query-knowledgebases/projects/{projectName}'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -138,7 +138,7 @@ def build_question_answering_projects_create_project_request(
     )
 
 
-def build_question_answering_projects_delete_project_request(
+def build_delete_project_request_initial(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -147,7 +147,7 @@ def build_question_answering_projects_delete_project_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}')
+    url = '/query-knowledgebases/projects/{projectName}'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -171,51 +171,18 @@ def build_question_answering_projects_delete_project_request(
     )
 
 
-def build_question_answering_projects_get_delete_status_request(
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/deletion-jobs/{jobId}')
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_question_answering_projects_export_request_initial(
+def build_export_request_initial(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    format = kwargs.pop('format', "json")  # type: Optional[Union[str, "_models.Format"]]
-    asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[Union[str, "_models.Enum4"]]
+    format = kwargs.pop('format', "json")  # type: Optional[str]
+    asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/:export')
+    url = '/query-knowledgebases/projects/{projectName}/:export'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -243,54 +210,19 @@ def build_question_answering_projects_export_request_initial(
     )
 
 
-def build_question_answering_projects_get_export_status_request(
-    project_name,  # type: str
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/export/jobs/{jobId}')
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_question_answering_projects_import_method_request_initial(
+def build_import_assets_request_initial(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    format = kwargs.pop('format', "json")  # type: Optional[Union[str, "_models.Format"]]
-    asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[Union[str, "_models.Enum4"]]
+    format = kwargs.pop('format', "json")  # type: Optional[str]
+    asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/:import')
+    url = '/query-knowledgebases/projects/{projectName}/:import'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -320,42 +252,7 @@ def build_question_answering_projects_import_method_request_initial(
     )
 
 
-def build_question_answering_projects_get_import_status_request(
-    project_name,  # type: str
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/import/jobs/{jobId}')
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_question_answering_projects_deploy_project_request_initial(
+def build_deploy_project_request_initial(
     project_name,  # type: str
     deployment_name,  # type: str
     **kwargs  # type: Any
@@ -365,7 +262,7 @@ def build_question_answering_projects_deploy_project_request_initial(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}')
+    url = '/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
@@ -390,44 +287,7 @@ def build_question_answering_projects_deploy_project_request_initial(
     )
 
 
-def build_question_answering_projects_get_deploy_status_request(
-    project_name,  # type: str
-    deployment_name,  # type: str
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}')
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, 'str'),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_question_answering_projects_list_deployments_request(
+def build_list_deployments_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -439,7 +299,7 @@ def build_question_answering_projects_list_deployments_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/deployments')
+    url = '/query-knowledgebases/projects/{projectName}/deployments'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -469,7 +329,7 @@ def build_question_answering_projects_list_deployments_request(
     )
 
 
-def build_question_answering_projects_get_synonyms_request(
+def build_list_synonyms_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -481,7 +341,7 @@ def build_question_answering_projects_get_synonyms_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/synonyms')
+    url = '/query-knowledgebases/projects/{projectName}/synonyms'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -511,7 +371,7 @@ def build_question_answering_projects_get_synonyms_request(
     )
 
 
-def build_question_answering_projects_update_synonyms_request(
+def build_update_synonyms_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -521,7 +381,7 @@ def build_question_answering_projects_update_synonyms_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/synonyms')
+    url = '/query-knowledgebases/projects/{projectName}/synonyms'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -547,7 +407,7 @@ def build_question_answering_projects_update_synonyms_request(
     )
 
 
-def build_question_answering_projects_get_sources_request(
+def build_list_sources_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -559,7 +419,7 @@ def build_question_answering_projects_get_sources_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/sources')
+    url = '/query-knowledgebases/projects/{projectName}/sources'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -589,7 +449,7 @@ def build_question_answering_projects_get_sources_request(
     )
 
 
-def build_question_answering_projects_update_sources_request_initial(
+def build_update_sources_request_initial(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -599,7 +459,7 @@ def build_question_answering_projects_update_sources_request_initial(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/sources')
+    url = '/query-knowledgebases/projects/{projectName}/sources'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -625,42 +485,7 @@ def build_question_answering_projects_update_sources_request_initial(
     )
 
 
-def build_question_answering_projects_get_update_sources_status_request(
-    project_name,  # type: str
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/sources/jobs/{jobId}')
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_question_answering_projects_get_qnas_request(
+def build_list_qnas_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -673,7 +498,7 @@ def build_question_answering_projects_get_qnas_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/qnas')
+    url = '/query-knowledgebases/projects/{projectName}/qnas'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -705,7 +530,7 @@ def build_question_answering_projects_get_qnas_request(
     )
 
 
-def build_question_answering_projects_update_qnas_request_initial(
+def build_update_qnas_request_initial(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -715,7 +540,7 @@ def build_question_answering_projects_update_qnas_request_initial(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/qnas')
+    url = '/query-knowledgebases/projects/{projectName}/qnas'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -741,42 +566,7 @@ def build_question_answering_projects_update_qnas_request_initial(
     )
 
 
-def build_question_answering_projects_get_update_qnas_status_request(
-    project_name,  # type: str
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/qnas/jobs/{jobId}')
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_question_answering_projects_add_feedback_request(
+def build_add_feedback_request(
     project_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -786,7 +576,7 @@ def build_question_answering_projects_add_feedback_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/query-knowledgebases/projects/{projectName}/feedback')
+    url = '/query-knowledgebases/projects/{projectName}/feedback'
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, 'str', max_length=100, min_length=0),
     }
@@ -812,34 +602,14 @@ def build_question_answering_projects_add_feedback_request(
     )
 
 # fmt: on
-class QuestionAnsweringProjectsOperations(object):
-    """QuestionAnsweringProjectsOperations operations.
-
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.ai.language.questionanswering.projects.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    """
-
-    models = _models
-
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+class QuestionAnsweringProjectsClientOperationsMixin(object):
 
     @distributed_trace
     def list_projects(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.ProjectsMetadata"]
+        # type: (...) -> Iterable[JSONType]
         """Gets all projects for a user.
 
         Gets all projects for a user.
@@ -853,17 +623,38 @@ class QuestionAnsweringProjectsOperations(object):
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: An iterator like instance of ProjectsMetadata
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.projects.models.ProjectsMetadata]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "nextLink": "str",  # Optional.
+                    "value": [
+                        {
+                            "createdDateTime": "2020-02-20 00:00:00",  # Optional. Project creation date-time.
+                            "description": "str",  # Optional. Description of the project.
+                            "language": "str",  # Optional. Language of the text records. This is BCP-47 representation of a language. For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
+                            "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the project last deployment date-time.
+                            "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the project last modified date-time.
+                            "multilingualResource": bool,  # Optional. Resource enabled for multiple languages across projects or not.
+                            "projectName": "str",  # Optional. Name of the project.
+                            "settings": {
+                                "defaultAnswer": "str"  # Optional. Default Answer response when no good match is found in the knowledge base.
+                            }
+                        }
+                    ]
+                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         top = kwargs.pop('top', None)  # type: Optional[int]
         skip = kwargs.pop('skip', None)  # type: Optional[int]
         maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProjectsMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -871,12 +662,11 @@ class QuestionAnsweringProjectsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_question_answering_projects_list_projects_request(
+                request = build_list_projects_request(
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_projects.metadata['url'],
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -885,17 +675,16 @@ class QuestionAnsweringProjectsOperations(object):
 
             else:
                 
-                request = build_question_answering_projects_list_projects_request(
+                request = build_list_projects_request(
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -904,11 +693,11 @@ class QuestionAnsweringProjectsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ProjectsMetadata", pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.body())
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -918,8 +707,7 @@ class QuestionAnsweringProjectsOperations(object):
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -935,7 +723,7 @@ class QuestionAnsweringProjectsOperations(object):
         project_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ProjectMetadata"
+        # type: (...) -> JSONType
         """Get the requested project metadata.
 
         Get the requested project metadata.
@@ -945,11 +733,28 @@ class QuestionAnsweringProjectsOperations(object):
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: ProjectMetadata
-        :rtype: ~azure.ai.language.questionanswering.projects.models.ProjectMetadata
+        :return: JSON object
+        :rtype: JSONType
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. Project creation date-time.
+                    "description": "str",  # Optional. Description of the project.
+                    "language": "str",  # Optional. Language of the text records. This is BCP-47 representation of a language. For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the project last deployment date-time.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the project last modified date-time.
+                    "multilingualResource": bool,  # Optional. Resource enabled for multiple languages across projects or not.
+                    "projectName": "str",  # Optional. Name of the project.
+                    "settings": {
+                        "defaultAnswer": "str"  # Optional. Default Answer response when no good match is found in the knowledge base.
+                    }
+                }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProjectMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -958,10 +763,9 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
         
-        request = build_question_answering_projects_get_project_details_request(
+        request = build_get_project_details_request(
             project_name=project_name,
             api_version=api_version,
-            template_url=self.get_project_details.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -973,10 +777,12 @@ class QuestionAnsweringProjectsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('ProjectMetadata', pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -990,26 +796,53 @@ class QuestionAnsweringProjectsOperations(object):
     def create_project(
         self,
         project_name,  # type: str
-        body,  # type: "_models.CreateProjectOptions"
+        options,  # type: JSONType
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ProjectMetadata"
+        # type: (...) -> JSONType
         """Create or update a project.
 
         Create or update a project.
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :param body: Parameters needed to create the project.
-        :type body: ~azure.ai.language.questionanswering.projects.models.CreateProjectOptions
+        :param options: Parameters needed to create the project.
+        :type options: JSONType
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: ProjectMetadata
-        :rtype: ~azure.ai.language.questionanswering.projects.models.ProjectMetadata
+        :return: JSON object
+        :rtype: JSONType
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                options = {
+                    "description": "str",  # Optional. Description of the project.
+                    "language": "str",  # Required. Language of the text records. This is BCP-47 representation of a language. For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
+                    "multilingualResource": bool,  # Optional. Set to true to enable creating knowledgebases in different languages for the same resource.
+                    "settings": {
+                        "defaultAnswer": "str"  # Optional. Default Answer response when no good match is found in the knowledge base.
+                    }
+                }
+
+                # response body for status code(s): 200, 201
+                response.json() == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. Project creation date-time.
+                    "description": "str",  # Optional. Description of the project.
+                    "language": "str",  # Optional. Language of the text records. This is BCP-47 representation of a language. For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the project last deployment date-time.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the project last modified date-time.
+                    "multilingualResource": bool,  # Optional. Resource enabled for multiple languages across projects or not.
+                    "projectName": "str",  # Optional. Name of the project.
+                    "settings": {
+                        "defaultAnswer": "str"  # Optional. Default Answer response when no good match is found in the knowledge base.
+                    }
+                }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProjectMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1018,14 +851,13 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, 'CreateProjectOptions')
+        _json = options
 
-        request = build_question_answering_projects_create_project_request(
+        request = build_create_project_request(
             project_name=project_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.create_project.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1037,14 +869,19 @@ class QuestionAnsweringProjectsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ProjectMetadata', pipeline_response)
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ProjectMetadata', pipeline_response)
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1054,26 +891,12 @@ class QuestionAnsweringProjectsOperations(object):
     create_project.metadata = {'url': '/query-knowledgebases/projects/{projectName}'}  # type: ignore
 
 
-    @distributed_trace
-    def delete_project(
+    def _delete_project_initial(
         self,
         project_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete the project.
-
-        Delete the project.
-
-        :param project_name: The name of the project to use.
-        :type project_name: str
-        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1083,10 +906,9 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
         
-        request = build_question_answering_projects_delete_project_request(
+        request = build_delete_project_request_initial(
             project_name=project_name,
             api_version=api_version,
-            template_url=self.delete_project.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1098,8 +920,7 @@ class QuestionAnsweringProjectsOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
@@ -1108,65 +929,76 @@ class QuestionAnsweringProjectsOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_project.metadata = {'url': '/query-knowledgebases/projects/{projectName}'}  # type: ignore
+    _delete_project_initial.metadata = {'url': '/query-knowledgebases/projects/{projectName}'}  # type: ignore
 
 
     @distributed_trace
-    def get_delete_status(
+    def begin_delete_project(
         self,
-        job_id,  # type: str
+        project_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.JobState"
-        """Gets the status of a Project delete job.
+        # type: (...) -> LROPoller[None]
+        """Delete the project.
 
-        Gets the status of a Project delete job.
+        Delete the project.
 
-        :param job_id: Job ID.
-        :type job_id: str
+        :param project_name: The name of the project to use.
+        :type project_name: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: JobState
-        :rtype: ~azure.ai.language.questionanswering.projects.models.JobState
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobState"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        
-        request = build_question_answering_projects_get_delete_status_request(
-            job_id=job_id,
-            api_version=api_version,
-            template_url=self.get_delete_status.metadata['url'],
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
         )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_project_initial(
+                project_name=project_name,
+                api_version=api_version,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('JobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_delete_status.metadata = {'url': '/query-knowledgebases/projects/deletion-jobs/{jobId}'}  # type: ignore
-
+    begin_delete_project.metadata = {'url': '/query-knowledgebases/projects/{projectName}'}  # type: ignore
 
     def _export_initial(
         self,
@@ -1181,16 +1013,15 @@ class QuestionAnsweringProjectsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        format = kwargs.pop('format', "json")  # type: Optional[Union[str, "_models.Format"]]
-        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[Union[str, "_models.Enum4"]]
+        format = kwargs.pop('format', "json")  # type: Optional[str]
+        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[str]
 
         
-        request = build_question_answering_projects_export_request_initial(
+        request = build_export_request_initial(
             project_name=project_name,
             api_version=api_version,
             format=format,
             asset_kind=asset_kind,
-            template_url=self._export_initial.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1227,10 +1058,12 @@ class QuestionAnsweringProjectsOperations(object):
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :keyword format: Knowledge base Import or Export format.
-        :paramtype format: str or ~azure.ai.language.questionanswering.projects.models.Format
-        :keyword asset_kind: Kind of the asset of the project.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.projects.models.Enum4
+        :keyword format: Knowledge base Import or Export format. Possible values are: "json", "tsv",
+         and "excel".
+        :paramtype format: str
+        :keyword asset_kind: Kind of the asset of the project. Possible values are: "qnas" or
+         "synonyms".
+        :paramtype asset_kind: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1246,8 +1079,8 @@ class QuestionAnsweringProjectsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        format = kwargs.pop('format', "json")  # type: Optional[Union[str, "_models.Format"]]
-        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[Union[str, "_models.Enum4"]]
+        format = kwargs.pop('format', "json")  # type: Optional[str]
+        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1290,71 +1123,10 @@ class QuestionAnsweringProjectsOperations(object):
 
     begin_export.metadata = {'url': '/query-knowledgebases/projects/{projectName}/:export'}  # type: ignore
 
-    @distributed_trace
-    def get_export_status(
+    def _import_assets_initial(
         self,
         project_name,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ExportJobState"
-        """Gets the status of an Export job, once job completes, returns the project metadata, and assets.
-
-        Gets the status of an Export job, once job completes, returns the project metadata, and assets.
-
-        :param project_name: The name of the project to use.
-        :type project_name: str
-        :param job_id: Job ID.
-        :type job_id: str
-        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :return: ExportJobState
-        :rtype: ~azure.ai.language.questionanswering.projects.models.ExportJobState
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExportJobState"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        
-        request = build_question_answering_projects_get_export_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=api_version,
-            template_url=self.get_export_status.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('ExportJobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_export_status.metadata = {'url': '/query-knowledgebases/projects/{projectName}/export/jobs/{jobId}'}  # type: ignore
-
-
-    def _import_method_initial(
-        self,
-        project_name,  # type: str
-        body=None,  # type: Optional["_models.ImportJobOptions"]
+        options=None,  # type: JSONType
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1366,22 +1138,21 @@ class QuestionAnsweringProjectsOperations(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        format = kwargs.pop('format', "json")  # type: Optional[Union[str, "_models.Format"]]
-        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[Union[str, "_models.Enum4"]]
+        format = kwargs.pop('format', "json")  # type: Optional[str]
+        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[str]
 
-        if body is not None:
-            json = self._serialize.body(body, 'ImportJobOptions')
+        if options is not None:
+            _json = options
         else:
-            json = None
+            _json = None
 
-        request = build_question_answering_projects_import_method_request_initial(
+        request = build_import_assets_request_initial(
             project_name=project_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             format=format,
             asset_kind=asset_kind,
-            template_url=self._import_method_initial.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1402,14 +1173,14 @@ class QuestionAnsweringProjectsOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _import_method_initial.metadata = {'url': '/query-knowledgebases/projects/{projectName}/:import'}  # type: ignore
+    _import_assets_initial.metadata = {'url': '/query-knowledgebases/projects/{projectName}/:import'}  # type: ignore
 
 
     @distributed_trace
-    def begin_import_method(
+    def begin_import_assets(
         self,
         project_name,  # type: str
-        body=None,  # type: Optional["_models.ImportJobOptions"]
+        options=None,  # type: JSONType
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -1419,12 +1190,14 @@ class QuestionAnsweringProjectsOperations(object):
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :param body: Project assets the needs to be imported.
-        :type body: ~azure.ai.language.questionanswering.projects.models.ImportJobOptions
-        :keyword format: Knowledge base Import or Export format.
-        :paramtype format: str or ~azure.ai.language.questionanswering.projects.models.Format
-        :keyword asset_kind: Kind of the asset of the project.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.projects.models.Enum4
+        :param options: Project assets the needs to be imported.
+        :type options: JSONType
+        :keyword format: Knowledge base Import or Export format. Possible values are: "json", "tsv",
+         and "excel".
+        :paramtype format: str
+        :keyword asset_kind: Kind of the asset of the project. Possible values are: "qnas" or
+         "synonyms".
+        :paramtype asset_kind: str
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1438,11 +1211,97 @@ class QuestionAnsweringProjectsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                options = {
+                    "assets": {
+                        "qnas": [
+                            {
+                                "activeLearningSuggestions": [
+                                    {
+                                        "clusterHead": "str",  # Optional. Question chosen as the head of suggested questions cluster by Active Learning clustering algorithm.
+                                        "suggestedQuestions": [
+                                            {
+                                                "autoSuggestedCount": 0,  # Optional. The number of times the question was suggested automatically by the Active Learning algorithm.
+                                                "question": "str",  # Optional. Question suggested by the Active Learning feature.
+                                                "userSuggestedCount": 0  # Optional. The number of times the question was suggested explicitly by the user.
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "answer": "str",  # Optional. Answer text.
+                                "dialog": {
+                                    "isContextOnly": bool,  # Optional. To mark if a prompt is relevant only with a previous question or not. If true, do not include this QnA as answer for queries without context; otherwise, ignores context and includes this QnA in answers.
+                                    "prompts": [
+                                        {
+                                            "displayOrder": 0,  # Optional. Index of the prompt. It is used for ordering of the prompts.
+                                            "displayText": "str",  # Optional. Text displayed to represent a follow up question prompt.
+                                            "qna": {
+                                                "activeLearningSuggestions": [
+                                                    {
+                                                        "clusterHead": "str",  # Optional. Question chosen as the head of suggested questions cluster by Active Learning clustering algorithm.
+                                                        "suggestedQuestions": [
+                                                            {
+                                                                "autoSuggestedCount": 0,  # Optional. The number of times the question was suggested automatically by the Active Learning algorithm.
+                                                                "question": "str",  # Optional. Question suggested by the Active Learning feature.
+                                                                "userSuggestedCount": 0  # Optional. The number of times the question was suggested explicitly by the user.
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "answer": "str",  # Optional. Answer text.
+                                                "dialog": ...,
+                                                "id": 0,  # Optional. Unique ID for the QnA.
+                                                "metadata": {
+                                                    "str": "str"  # Optional. Metadata associated with the answer, useful to categorize or filter question answers.
+                                                },
+                                                "questions": [
+                                                    "str"  # Optional. List of questions associated with the answer.
+                                                ],
+                                                "source": "str"  # Optional. Source from which QnA was indexed e.g. https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                                            },
+                                            "qnaId": 0  # Optional. ID of the QnA corresponding to the prompt.
+                                        }
+                                    ]
+                                },
+                                "id": 0,  # Optional. Unique ID for the QnA.
+                                "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the QnA was last updated.
+                                "metadata": {
+                                    "str": "str"  # Optional. Metadata associated with the answer, useful to categorize or filter question answers.
+                                },
+                                "questions": [
+                                    "str"  # Optional. List of questions associated with the answer.
+                                ],
+                                "source": "str",  # Optional. Source from which QnA was indexed e.g. https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                                "sourceDisplayName": "str"  # Optional. Friendly name of the Source.
+                            }
+                        ],
+                        "synonyms": [
+                            {
+                                "alterations": [
+                                    "str"  # Required. Collection of word alterations.
+                                ]
+                            }
+                        ]
+                    },
+                    "fileUri": "str",  # Optional. Import data File URI.
+                    "metadata": {
+                        "description": "str",  # Optional. Description of the project.
+                        "language": "str",  # Required. Language of the text records. This is BCP-47 representation of a language. For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as default.
+                        "multilingualResource": bool,  # Optional. Set to true to enable creating knowledgebases in different languages for the same resource.
+                        "settings": {
+                            "defaultAnswer": "str"  # Optional. Default Answer response when no good match is found in the knowledge base.
+                        }
+                    }
+                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        format = kwargs.pop('format', "json")  # type: Optional[Union[str, "_models.Format"]]
-        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[Union[str, "_models.Enum4"]]
+        format = kwargs.pop('format', "json")  # type: Optional[str]
+        asset_kind = kwargs.pop('asset_kind', None)  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1451,9 +1310,9 @@ class QuestionAnsweringProjectsOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._import_method_initial(
+            raw_result = self._import_assets_initial(
                 project_name=project_name,
-                body=body,
+                options=options,
                 format=format,
                 asset_kind=asset_kind,
                 api_version=api_version,
@@ -1485,68 +1344,7 @@ class QuestionAnsweringProjectsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_import_method.metadata = {'url': '/query-knowledgebases/projects/{projectName}/:import'}  # type: ignore
-
-    @distributed_trace
-    def get_import_status(
-        self,
-        project_name,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.JobState"
-        """Gets the status of an Import job.
-
-        Gets the status of an Import job.
-
-        :param project_name: The name of the project to use.
-        :type project_name: str
-        :param job_id: Job ID.
-        :type job_id: str
-        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :return: JobState
-        :rtype: ~azure.ai.language.questionanswering.projects.models.JobState
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobState"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        
-        request = build_question_answering_projects_get_import_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=api_version,
-            template_url=self.get_import_status.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('JobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_import_status.metadata = {'url': '/query-knowledgebases/projects/{projectName}/import/jobs/{jobId}'}  # type: ignore
-
+    begin_import_assets.metadata = {'url': '/query-knowledgebases/projects/{projectName}/:import'}  # type: ignore
 
     def _deploy_project_initial(
         self,
@@ -1564,11 +1362,10 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
         
-        request = build_question_answering_projects_deploy_project_request_initial(
+        request = build_deploy_project_request_initial(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=api_version,
-            template_url=self._deploy_project_initial.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1665,77 +1462,12 @@ class QuestionAnsweringProjectsOperations(object):
     begin_deploy_project.metadata = {'url': '/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}'}  # type: ignore
 
     @distributed_trace
-    def get_deploy_status(
-        self,
-        project_name,  # type: str
-        deployment_name,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.JobState"
-        """Gets the status of a Deploy job.
-
-        Gets the status of a Deploy job.
-
-        :param project_name: The name of the project to use.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use.
-        :type deployment_name: str
-        :param job_id: Job ID.
-        :type job_id: str
-        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :return: JobState
-        :rtype: ~azure.ai.language.questionanswering.projects.models.JobState
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobState"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        
-        request = build_question_answering_projects_get_deploy_status_request(
-            project_name=project_name,
-            deployment_name=deployment_name,
-            job_id=job_id,
-            api_version=api_version,
-            template_url=self.get_deploy_status.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('JobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_deploy_status.metadata = {'url': '/query-knowledgebases/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}'}  # type: ignore
-
-
-    @distributed_trace
     def list_deployments(
         self,
         project_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.ProjectDeployments"]
+        # type: (...) -> Iterable[JSONType]
         """List all deployments of a project.
 
         List all deployments of a project.
@@ -1751,17 +1483,30 @@ class QuestionAnsweringProjectsOperations(object):
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: An iterator like instance of ProjectDeployments
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.projects.models.ProjectDeployments]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "nextLink": "str",  # Optional.
+                    "value": [
+                        {
+                            "deploymentName": "str",  # Optional. Name of the deployment.
+                            "lastDeployedDateTime": "2020-02-20 00:00:00"  # Optional. Represents the project last deployment date-time.
+                        }
+                    ]
+                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         top = kwargs.pop('top', None)  # type: Optional[int]
         skip = kwargs.pop('skip', None)  # type: Optional[int]
         maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProjectDeployments"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1769,13 +1514,12 @@ class QuestionAnsweringProjectsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_question_answering_projects_list_deployments_request(
+                request = build_list_deployments_request(
                     project_name=project_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_deployments.metadata['url'],
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1784,18 +1528,17 @@ class QuestionAnsweringProjectsOperations(object):
 
             else:
                 
-                request = build_question_answering_projects_list_deployments_request(
+                request = build_list_deployments_request(
                     project_name=project_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1804,11 +1547,11 @@ class QuestionAnsweringProjectsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ProjectDeployments", pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.body())
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1818,8 +1561,7 @@ class QuestionAnsweringProjectsOperations(object):
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -1830,12 +1572,12 @@ class QuestionAnsweringProjectsOperations(object):
     list_deployments.metadata = {'url': '/query-knowledgebases/projects/{projectName}/deployments'}  # type: ignore
 
     @distributed_trace
-    def get_synonyms(
+    def list_synonyms(
         self,
         project_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.SynonymAssets"]
+        # type: (...) -> Iterable[JSONType]
         """Gets all the synonyms of a project.
 
         Gets all the synonyms of a project.
@@ -1851,17 +1593,31 @@ class QuestionAnsweringProjectsOperations(object):
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: An iterator like instance of SynonymAssets
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.projects.models.SynonymAssets]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "nextLink": "str",  # Optional.
+                    "value": [
+                        {
+                            "alterations": [
+                                "str"  # Required. Collection of word alterations.
+                            ]
+                        }
+                    ]
+                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         top = kwargs.pop('top', None)  # type: Optional[int]
         skip = kwargs.pop('skip', None)  # type: Optional[int]
         maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SynonymAssets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1869,13 +1625,12 @@ class QuestionAnsweringProjectsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_question_answering_projects_get_synonyms_request(
+                request = build_list_synonyms_request(
                     project_name=project_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_synonyms.metadata['url'],
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1884,18 +1639,17 @@ class QuestionAnsweringProjectsOperations(object):
 
             else:
                 
-                request = build_question_answering_projects_get_synonyms_request(
+                request = build_list_synonyms_request(
                     project_name=project_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1904,11 +1658,11 @@ class QuestionAnsweringProjectsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("SynonymAssets", pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.body())
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1918,8 +1672,7 @@ class QuestionAnsweringProjectsOperations(object):
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -1927,13 +1680,13 @@ class QuestionAnsweringProjectsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    get_synonyms.metadata = {'url': '/query-knowledgebases/projects/{projectName}/synonyms'}  # type: ignore
+    list_synonyms.metadata = {'url': '/query-knowledgebases/projects/{projectName}/synonyms'}  # type: ignore
 
     @distributed_trace
     def update_synonyms(
         self,
         project_name,  # type: str
-        body,  # type: "_models.SynonymAssets"
+        synonyms,  # type: JSONType
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1943,14 +1696,29 @@ class QuestionAnsweringProjectsOperations(object):
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :param body: All the synonyms of a project.
-        :type body: ~azure.ai.language.questionanswering.projects.models.SynonymAssets
+        :param synonyms: All the synonyms of a project.
+        :type synonyms: JSONType
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                synonyms = {
+                    "nextLink": "str",  # Optional.
+                    "value": [
+                        {
+                            "alterations": [
+                                "str"  # Required. Collection of word alterations.
+                            ]
+                        }
+                    ]
+                }
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1961,14 +1729,13 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, 'SynonymAssets')
+        _json = synonyms
 
-        request = build_question_answering_projects_update_synonyms_request(
+        request = build_update_synonyms_request(
             project_name=project_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.update_synonyms.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1980,8 +1747,7 @@ class QuestionAnsweringProjectsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -1990,12 +1756,12 @@ class QuestionAnsweringProjectsOperations(object):
 
 
     @distributed_trace
-    def get_sources(
+    def list_sources(
         self,
         project_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.QnaSources"]
+        # type: (...) -> Iterable[JSONType]
         """Gets all the sources of a project.
 
         Gets all the sources of a project.
@@ -2011,17 +1777,34 @@ class QuestionAnsweringProjectsOperations(object):
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: An iterator like instance of QnaSources
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.projects.models.QnaSources]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "nextLink": "str",  # Optional.
+                    "value": [
+                        {
+                            "contentStructureKind": "unstructured",  # Optional. Default value is "unstructured". Content structure type for sources. Possible values include: "unstructured".
+                            "displayName": "str",  # Optional. Friendly name of the Source.
+                            "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the QnA was last updated.
+                            "source": "str",  # Optional. Unique source identifier. Name of the file if it's a 'file' source; otherwise, the complete URL if it's a 'url' source.
+                            "sourceKind": "str",  # Required. Supported source types. Possible values include: "file", "url".
+                            "sourceUri": "str"  # Required. URI location for the file or url.
+                        }
+                    ]
+                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         top = kwargs.pop('top', None)  # type: Optional[int]
         skip = kwargs.pop('skip', None)  # type: Optional[int]
         maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QnaSources"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2029,13 +1812,12 @@ class QuestionAnsweringProjectsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_question_answering_projects_get_sources_request(
+                request = build_list_sources_request(
                     project_name=project_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_sources.metadata['url'],
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2044,18 +1826,17 @@ class QuestionAnsweringProjectsOperations(object):
 
             else:
                 
-                request = build_question_answering_projects_get_sources_request(
+                request = build_list_sources_request(
                     project_name=project_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2064,11 +1845,11 @@ class QuestionAnsweringProjectsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("QnaSources", pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.body())
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2078,8 +1859,7 @@ class QuestionAnsweringProjectsOperations(object):
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2087,12 +1867,12 @@ class QuestionAnsweringProjectsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    get_sources.metadata = {'url': '/query-knowledgebases/projects/{projectName}/sources'}  # type: ignore
+    list_sources.metadata = {'url': '/query-knowledgebases/projects/{projectName}/sources'}  # type: ignore
 
     def _update_sources_initial(
         self,
         project_name,  # type: str
-        body,  # type: List["_models.UpdateSourceRecord"]
+        sources,  # type: List[JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2105,14 +1885,13 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, '[UpdateSourceRecord]')
+        _json = sources
 
-        request = build_question_answering_projects_update_sources_request_initial(
+        request = build_update_sources_request_initial(
             project_name=project_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self._update_sources_initial.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2140,7 +1919,7 @@ class QuestionAnsweringProjectsOperations(object):
     def begin_update_sources(
         self,
         project_name,  # type: str
-        body,  # type: List["_models.UpdateSourceRecord"]
+        sources,  # type: List[JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -2150,8 +1929,8 @@ class QuestionAnsweringProjectsOperations(object):
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :param body: Update sources parameters of a project.
-        :type body: list[~azure.ai.language.questionanswering.projects.models.UpdateSourceRecord]
+        :param sources: Update sources parameters of a project.
+        :type sources: list[JSONType]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -2165,6 +1944,24 @@ class QuestionAnsweringProjectsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                sources = [
+                    {
+                        "op": "str",  # Required. Update operation type for assets. Possible values include: "add", "delete", "replace".
+                        "value": {
+                            "contentStructureKind": "unstructured",  # Optional. Default value is "unstructured". Content structure type for sources. Possible values include: "unstructured".
+                            "displayName": "str",  # Optional. Friendly name of the Source.
+                            "refresh": bool,  # Optional. Boolean flag used to refresh data from the Source.
+                            "source": "str",  # Optional. Unique source identifier. Name of the file if it's a 'file' source; otherwise, the complete URL if it's a 'url' source.
+                            "sourceKind": "str",  # Required. Supported source types. Possible values include: "file", "url".
+                            "sourceUri": "str"  # Required. URI location for the file or url.
+                        }
+                    }
+                ]
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -2178,7 +1975,7 @@ class QuestionAnsweringProjectsOperations(object):
         if cont_token is None:
             raw_result = self._update_sources_initial(
                 project_name=project_name,
-                body=body,
+                sources=sources,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -2211,73 +2008,12 @@ class QuestionAnsweringProjectsOperations(object):
     begin_update_sources.metadata = {'url': '/query-knowledgebases/projects/{projectName}/sources'}  # type: ignore
 
     @distributed_trace
-    def get_update_sources_status(
-        self,
-        project_name,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.JobState"
-        """Gets the status of update sources job.
-
-        Gets the status of update sources job.
-
-        :param project_name: The name of the project to use.
-        :type project_name: str
-        :param job_id: Job ID.
-        :type job_id: str
-        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :return: JobState
-        :rtype: ~azure.ai.language.questionanswering.projects.models.JobState
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobState"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        
-        request = build_question_answering_projects_get_update_sources_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=api_version,
-            template_url=self.get_update_sources_status.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('JobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_update_sources_status.metadata = {'url': '/query-knowledgebases/projects/{projectName}/sources/jobs/{jobId}'}  # type: ignore
-
-
-    @distributed_trace
-    def get_qnas(
+    def list_qnas(
         self,
         project_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.QnaAssets"]
+        # type: (...) -> Iterable[JSONType]
         """Gets all the QnAs of a project.
 
         Gets all the QnAs of a project.
@@ -2295,10 +2031,77 @@ class QuestionAnsweringProjectsOperations(object):
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
-        :return: An iterator like instance of QnaAssets
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.projects.models.QnaAssets]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response.json() == {
+                    "nextLink": "str",  # Optional.
+                    "value": [
+                        {
+                            "activeLearningSuggestions": [
+                                {
+                                    "clusterHead": "str",  # Optional. Question chosen as the head of suggested questions cluster by Active Learning clustering algorithm.
+                                    "suggestedQuestions": [
+                                        {
+                                            "autoSuggestedCount": 0,  # Optional. The number of times the question was suggested automatically by the Active Learning algorithm.
+                                            "question": "str",  # Optional. Question suggested by the Active Learning feature.
+                                            "userSuggestedCount": 0  # Optional. The number of times the question was suggested explicitly by the user.
+                                        }
+                                    ]
+                                }
+                            ],
+                            "answer": "str",  # Optional. Answer text.
+                            "dialog": {
+                                "isContextOnly": bool,  # Optional. To mark if a prompt is relevant only with a previous question or not. If true, do not include this QnA as answer for queries without context; otherwise, ignores context and includes this QnA in answers.
+                                "prompts": [
+                                    {
+                                        "displayOrder": 0,  # Optional. Index of the prompt. It is used for ordering of the prompts.
+                                        "displayText": "str",  # Optional. Text displayed to represent a follow up question prompt.
+                                        "qna": {
+                                            "activeLearningSuggestions": [
+                                                {
+                                                    "clusterHead": "str",  # Optional. Question chosen as the head of suggested questions cluster by Active Learning clustering algorithm.
+                                                    "suggestedQuestions": [
+                                                        {
+                                                            "autoSuggestedCount": 0,  # Optional. The number of times the question was suggested automatically by the Active Learning algorithm.
+                                                            "question": "str",  # Optional. Question suggested by the Active Learning feature.
+                                                            "userSuggestedCount": 0  # Optional. The number of times the question was suggested explicitly by the user.
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "answer": "str",  # Optional. Answer text.
+                                            "dialog": ...,
+                                            "id": 0,  # Optional. Unique ID for the QnA.
+                                            "metadata": {
+                                                "str": "str"  # Optional. Metadata associated with the answer, useful to categorize or filter question answers.
+                                            },
+                                            "questions": [
+                                                "str"  # Optional. List of questions associated with the answer.
+                                            ],
+                                            "source": "str"  # Optional. Source from which QnA was indexed e.g. https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                                        },
+                                        "qnaId": 0  # Optional. ID of the QnA corresponding to the prompt.
+                                    }
+                                ]
+                            },
+                            "id": 0,  # Optional. Unique ID for the QnA.
+                            "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the QnA was last updated.
+                            "metadata": {
+                                "str": "str"  # Optional. Metadata associated with the answer, useful to categorize or filter question answers.
+                            },
+                            "questions": [
+                                "str"  # Optional. List of questions associated with the answer.
+                            ],
+                            "source": "str"  # Optional. Source from which QnA was indexed e.g. https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                        }
+                    ]
+                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         source = kwargs.pop('source', None)  # type: Optional[str]
@@ -2306,7 +2109,7 @@ class QuestionAnsweringProjectsOperations(object):
         skip = kwargs.pop('skip', None)  # type: Optional[int]
         maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QnaAssets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2314,14 +2117,13 @@ class QuestionAnsweringProjectsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_question_answering_projects_get_qnas_request(
+                request = build_list_qnas_request(
                     project_name=project_name,
                     api_version=api_version,
                     source=source,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.get_qnas.metadata['url'],
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2330,19 +2132,18 @@ class QuestionAnsweringProjectsOperations(object):
 
             else:
                 
-                request = build_question_answering_projects_get_qnas_request(
+                request = build_list_qnas_request(
                     project_name=project_name,
                     api_version=api_version,
                     source=source,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2351,11 +2152,11 @@ class QuestionAnsweringProjectsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("QnaAssets", pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.body())
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2365,8 +2166,7 @@ class QuestionAnsweringProjectsOperations(object):
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2374,12 +2174,12 @@ class QuestionAnsweringProjectsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    get_qnas.metadata = {'url': '/query-knowledgebases/projects/{projectName}/qnas'}  # type: ignore
+    list_qnas.metadata = {'url': '/query-knowledgebases/projects/{projectName}/qnas'}  # type: ignore
 
     def _update_qnas_initial(
         self,
         project_name,  # type: str
-        body,  # type: List["_models.UpdateQnaRecord"]
+        qnas,  # type: List[JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2392,14 +2192,13 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, '[UpdateQnaRecord]')
+        _json = qnas
 
-        request = build_question_answering_projects_update_qnas_request_initial(
+        request = build_update_qnas_request_initial(
             project_name=project_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self._update_qnas_initial.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2427,7 +2226,7 @@ class QuestionAnsweringProjectsOperations(object):
     def begin_update_qnas(
         self,
         project_name,  # type: str
-        body,  # type: List["_models.UpdateQnaRecord"]
+        qnas,  # type: List[JSONType]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -2437,8 +2236,8 @@ class QuestionAnsweringProjectsOperations(object):
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :param body: Update QnAs parameters of a project.
-        :type body: list[~azure.ai.language.questionanswering.projects.models.UpdateQnaRecord]
+        :param qnas: Update QnAs parameters of a project.
+        :type qnas: list[JSONType]
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -2452,6 +2251,50 @@ class QuestionAnsweringProjectsOperations(object):
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                qnas = [
+                    {
+                        "op": "str",  # Required. Update operation type for assets. Possible values include: "add", "delete", "replace".
+                        "value": {
+                            "activeLearningSuggestions": [
+                                {
+                                    "clusterHead": "str",  # Optional. Question chosen as the head of suggested questions cluster by Active Learning clustering algorithm.
+                                    "suggestedQuestions": [
+                                        {
+                                            "autoSuggestedCount": 0,  # Optional. The number of times the question was suggested automatically by the Active Learning algorithm.
+                                            "question": "str",  # Optional. Question suggested by the Active Learning feature.
+                                            "userSuggestedCount": 0  # Optional. The number of times the question was suggested explicitly by the user.
+                                        }
+                                    ]
+                                }
+                            ],
+                            "answer": "str",  # Optional. Answer text.
+                            "dialog": {
+                                "isContextOnly": bool,  # Optional. To mark if a prompt is relevant only with a previous question or not. If true, do not include this QnA as answer for queries without context; otherwise, ignores context and includes this QnA in answers.
+                                "prompts": [
+                                    {
+                                        "displayOrder": 0,  # Optional. Index of the prompt. It is used for ordering of the prompts.
+                                        "displayText": "str",  # Optional. Text displayed to represent a follow up question prompt.
+                                        "qna": ...,
+                                        "qnaId": 0  # Optional. ID of the QnA corresponding to the prompt.
+                                    }
+                                ]
+                            },
+                            "id": 0,  # Optional. Unique ID for the QnA.
+                            "metadata": {
+                                "str": "str"  # Optional. Metadata associated with the answer, useful to categorize or filter question answers.
+                            },
+                            "questions": [
+                                "str"  # Optional. List of questions associated with the answer.
+                            ],
+                            "source": "str"  # Optional. Source from which QnA was indexed e.g. https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                        }
+                    }
+                ]
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -2465,7 +2308,7 @@ class QuestionAnsweringProjectsOperations(object):
         if cont_token is None:
             raw_result = self._update_qnas_initial(
                 project_name=project_name,
-                body=body,
+                qnas=qnas,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -2498,71 +2341,10 @@ class QuestionAnsweringProjectsOperations(object):
     begin_update_qnas.metadata = {'url': '/query-knowledgebases/projects/{projectName}/qnas'}  # type: ignore
 
     @distributed_trace
-    def get_update_qnas_status(
-        self,
-        project_name,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.JobState"
-        """Gets the status of update QnAs job.
-
-        Gets the status of update QnAs job.
-
-        :param project_name: The name of the project to use.
-        :type project_name: str
-        :param job_id: Job ID.
-        :type job_id: str
-        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :return: JobState
-        :rtype: ~azure.ai.language.questionanswering.projects.models.JobState
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobState"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-
-        
-        request = build_question_answering_projects_get_update_qnas_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=api_version,
-            template_url=self.get_update_qnas_status.metadata['url'],
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('JobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_update_qnas_status.metadata = {'url': '/query-knowledgebases/projects/{projectName}/qnas/jobs/{jobId}'}  # type: ignore
-
-
-    @distributed_trace
     def add_feedback(
         self,
         project_name,  # type: str
-        body,  # type: "_models.ActiveLearningFeedback"
+        feedback,  # type: JSONType
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2572,14 +2354,28 @@ class QuestionAnsweringProjectsOperations(object):
 
         :param project_name: The name of the project to use.
         :type project_name: str
-        :param body: Feedback for Active Learning.
-        :type body: ~azure.ai.language.questionanswering.projects.models.ActiveLearningFeedback
+        :param feedback: Feedback for Active Learning.
+        :type feedback: JSONType
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                feedback = {
+                    "records": [
+                        {
+                            "qnaId": 0,  # Optional. Unique ID of the QnA.
+                            "userId": "str",  # Optional. Unique identifier of the user.
+                            "userQuestion": "str"  # Optional. User suggested question for the QnA.
+                        }
+                    ]
+                }
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -2590,14 +2386,13 @@ class QuestionAnsweringProjectsOperations(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, 'ActiveLearningFeedback')
+        _json = feedback
 
-        request = build_question_answering_projects_add_feedback_request(
+        request = build_add_feedback_request(
             project_name=project_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.add_feedback.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2609,8 +2404,7 @@ class QuestionAnsweringProjectsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
