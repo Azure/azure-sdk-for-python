@@ -46,6 +46,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :paramtype skip: int
         :keyword maxpagesize: The maximum number of resources to include in a single response.
         :paramtype maxpagesize: int
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -149,6 +152,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
 
         :param project_name: The name of the project to use.
         :type project_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: JSON object
         :rtype: JSONType
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -223,6 +229,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :type project_name: str
         :param options: Parameters needed to create the project.
         :type options: JSONType
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: JSON object
         :rtype: JSONType
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -355,6 +364,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
 
         :param project_name: The name of the project to use.
         :type project_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
          for this operation to not poll, or pass in your own initialized polling object for a personal
@@ -414,8 +426,8 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         format: Optional[str] = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional[JSONType]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSONType]]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -438,26 +450,16 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
-        if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
+            return cls(pipeline_response, None, response_headers)
 
     _export_initial.metadata = {'url': '/query-knowledgebases/projects/{projectName}/:export'}  # type: ignore
 
@@ -470,7 +472,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         format: Optional[str] = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[JSONType]:
+    ) -> AsyncLROPoller[None]:
         """Export project metadata and assets.
 
         Export project metadata and assets.
@@ -483,6 +485,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :keyword asset_kind: Kind of the asset of the project. Possible values are: "qnas" or
          "synonyms".
         :paramtype asset_kind: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
          for this operation to not poll, or pass in your own initialized polling object for a personal
@@ -490,45 +495,13 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSONType]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required. 
-                    "errors": [
-                        {
-                            "code": "str",  # Required. One of a server-defined set of error codes. Possible values include: "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound", "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling", "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # Required. One of a server-defined set of error codes. Possible values include: "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound", "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "message": "str",  # Required. Error message.
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "message": "str",  # Required. A human-readable representation of the error.
-                            "target": "str"  # Optional. The target of the error.
-                        }
-                    ],
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
-                    "jobId": "str",  # Required. 
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required. 
-                    "resultUrl": "str",  # Required. URL to download the result of the Export Job.
-                    "status": "str"  # Required. Job Status. Possible values include: "notStarted", "running", "succeeded", "failed", "cancelled", "cancelling", "partiallyCompleted".
-                }
         """
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -546,14 +519,8 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
 
         path_format_arguments = {
@@ -652,6 +619,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :keyword asset_kind: Kind of the asset of the project. Possible values are: "qnas" or
          "synonyms".
         :paramtype asset_kind: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
          for this operation to not poll, or pass in your own initialized polling object for a personal
@@ -852,6 +822,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use.
         :type deployment_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
          for this operation to not poll, or pass in your own initialized polling object for a personal
@@ -927,6 +900,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :paramtype skip: int
         :keyword maxpagesize: The maximum number of resources to include in a single response.
         :paramtype maxpagesize: int
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1034,6 +1010,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :paramtype skip: int
         :keyword maxpagesize: The maximum number of resources to include in a single response.
         :paramtype maxpagesize: int
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1135,6 +1114,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :type project_name: str
         :param synonyms: All the synonyms of a project.
         :type synonyms: JSONType
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1211,6 +1193,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :paramtype skip: int
         :keyword maxpagesize: The maximum number of resources to include in a single response.
         :paramtype maxpagesize: int
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1360,6 +1345,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :type project_name: str
         :param sources: Update sources parameters of a project.
         :type sources: list[JSONType]
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
          for this operation to not poll, or pass in your own initialized polling object for a personal
@@ -1458,6 +1446,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :paramtype skip: int
         :keyword maxpagesize: The maximum number of resources to include in a single response.
         :paramtype maxpagesize: int
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSONType]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1659,6 +1650,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :type project_name: str
         :param qnas: Update QnAs parameters of a project.
         :type qnas: list[JSONType]
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
          for this operation to not poll, or pass in your own initialized polling object for a personal
@@ -1773,6 +1767,9 @@ class QuestionAnsweringProjectsClientOperationsMixin:
         :type project_name: str
         :param feedback: Feedback for Active Learning.
         :type feedback: JSONType
+        :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
