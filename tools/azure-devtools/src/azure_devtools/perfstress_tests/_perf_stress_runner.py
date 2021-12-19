@@ -16,6 +16,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ._perf_stress_base import _PerfTestABC
 from ._batch_perf_test import BatchPerfTest
+from ._event_perf_test import EventPerfTest
 from ._perf_stress_test import PerfStressTest
 from ._repeated_timer import RepeatedTimer
 
@@ -120,6 +121,7 @@ class _PerfStressRunner:
         self.logger.info("")
 
     def _discover_tests(self, test_folder_path):
+        base_classes = [PerfStressTest, BatchPerfTest, EventPerfTest]
         self._test_classes = {}
         if os.path.isdir(os.path.join(test_folder_path, 'tests')):
             test_folder_path = os.path.join(test_folder_path, 'tests')
@@ -136,7 +138,7 @@ class _PerfStressRunner:
                 if name.startswith("_"):
                     continue
                 if inspect.isclass(value):
-                    if issubclass(value, _PerfTestABC) and value not in [PerfStressTest, BatchPerfTest]:
+                    if issubclass(value, _PerfTestABC) and value not in base_classes:
                         self.logger.info("Loaded test class: {}".format(name))
                         self._test_classes[name] = value
 
