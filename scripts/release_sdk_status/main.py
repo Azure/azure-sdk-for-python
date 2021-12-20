@@ -262,12 +262,14 @@ def read_file(file_name):
 
 def sdk_info_from_swagger():
     sdk_name_re = re.compile(r'azure-mgmt-[a-z]+-*([a-z])+')
+    sdk_folder_re = re.compile('output-folder: \$\(python-sdks-folder\)/')
     resource_manager = []
     SWAGGER_FOLDER = os.getenv('SWAGGER_REPO')
     readme_folders = glob.glob(f'{SWAGGER_FOLDER}/specification/*/resource-manager/readme.md')
     my_print(f'total readme folders: {len(readme_folders)}')
 
     for folder in readme_folders:
+        sdk_folder_path = False
         service_name = re.findall(r'specification/(.*?)/resource-manager/', folder)[0]
         track_config = 0
         package_name = ''
@@ -281,14 +283,18 @@ def sdk_info_from_swagger():
                 track_config += 1
             if readme_python == 'NA' and sdk_name_re.search(line) is not None and package_name == '':
                 package_name = sdk_name_re.search(line).group()
+            if sdk_folder_re.search(line) and sdk_folder_path == False:
                 SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
+                sdk_folder_path = True
 
         if readme_python != 'NA':
             readme_python_text = read_file(readme_python)
             for text in readme_python_text:
                 if sdk_name_re.search(text) is not None:
                     package_name = sdk_name_re.search(text).group()
+                if sdk_folder_re.search(text) and sdk_folder_path == False:
                     SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
+                    sdk_folder_path = True
 
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
