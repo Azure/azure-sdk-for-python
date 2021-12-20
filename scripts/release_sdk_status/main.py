@@ -175,6 +175,8 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
                                   readme_link=readme_link, rm_link=rm_link, cli_version=cli_version)
             text_to_write = pypi_ins.write_to_list()
             if pypi_ins.pypi_link != 'NA':
+                service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
+                test_result = run_playback_test(service_name)
                 all_sdk_status.append(text_to_write)
 
     my_print(f'total pypi package kinds: {len(all_sdk_status)}')
@@ -200,8 +202,10 @@ def get_test_result(txt_path):
     return f'{coverage}, {passed}, {failed}, {skipped}'
 
 
-def test_sdk(all_sdk_status):
-    pass
+def run_playback_test(service_name):
+    test_path = ''.join([os.getenv('SDK_REPO'), 'sdk/', SERVICE_TEST_PATH[service_name]])
+    print(test_path)
+    return ''
 
 
 def add_test_result(sdk_info):
@@ -307,12 +311,6 @@ def sdk_info_from_swagger():
         my_print(f'{folder} : {package_name}')
 
     my_print(f'total package kinds: {len(resource_manager)}')
-    print(resource_manager)
-    for r in resource_manager:
-        print(r.split(',')[2])
-    print('///////////////////////')
-    for k, v in SERVICE_TEST_PATH.items():
-        print(f'{k}: {v}')
 
     return resource_manager
 
