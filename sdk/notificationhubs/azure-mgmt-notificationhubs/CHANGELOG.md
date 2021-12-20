@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (2021-12-18)
+## 8.0.0 (2021-12-20)
 
+**Breaking changes**
 
+  - Return type of `list_keys` in `NamespacesOperions` changed from  `SharedAccessAuthorizationRuleListResult` to `ResourceListKeys`
 
 ## 7.0.0 (2020-12-22)
 
