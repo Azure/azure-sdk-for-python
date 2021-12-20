@@ -32,7 +32,9 @@ from . import _endpoint_discovery_retry_policy
 from . import _resource_throttle_retry_policy
 from . import _default_retry_policy
 from . import _session_retry_policy
+from . import _gone_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+
 
 # pylint: disable=protected-access
 
@@ -65,6 +67,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
         client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
     )
+    gone_retry_policy = _gone_retry_policy.GoneRetryPolicy(client, *args)
+
     while True:
         try:
             client_timeout = kwargs.get('timeout')
@@ -97,6 +101,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
             ):
                 retry_policy = sessionRetry_policy
+            elif e.status_code == StatusCodes.GONE:
+                print("using gone_retry_policy")
+                retry_policy = gone_retry_policy
+                if e.sub_status is not None and e.sub_status == SubStatusCodes.PARTITION_KEY_RANGE_GONE:
+                    print("refreshing cache in retry utility and raising")
+                    client.refresh_routing_map_provider()
+                    raise
             else:
                 retry_policy = defaultRetry_policy
 

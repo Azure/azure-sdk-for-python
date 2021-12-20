@@ -2550,6 +2550,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return partitionKey
 
+    def refresh_routing_map_provider(self):
+        print("refreshing routing map provider in cosmos client connection")
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+
+
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):
         """
         Updates session if necessary.

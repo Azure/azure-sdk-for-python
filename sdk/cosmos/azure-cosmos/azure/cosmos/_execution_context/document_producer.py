@@ -28,7 +28,7 @@ from collections import deque
 
 import six
 
-from azure.cosmos import _base
+from azure.cosmos import _base, exceptions
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
 
@@ -60,7 +60,17 @@ class _DocumentProducer(object):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options):
-            return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
+            try:
+                # partition key target range might be stale, should always get the target partition key range from cache
+                # other way - instead of not using from cache, initialize a new document producer using the cache
+                return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code == 410:
+                    print("410 found in doc prod fetch function")
+                    # works, actually gets caught here, however since it is a fetch function that is passed forward
+                    # it's not exactly within this context, goes first in 410 stack trace
+                    raise  # replace this raise with re-initializing of document producer(?)
+                return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
@@ -82,7 +92,12 @@ class _DocumentProducer(object):
             self._cur_item = None
             return res
 
-        return next(self._ex_context)
+        try:
+            return next(self._ex_context)
+        except exceptions.CosmosHttpResponseError as e:
+            if e.status_code == 410:
+                print("410 in doc producer")  # doesnt do anything
+            return next(self._ex_context)
 
     def get_target_range(self):
         """Returns the target partition key range.

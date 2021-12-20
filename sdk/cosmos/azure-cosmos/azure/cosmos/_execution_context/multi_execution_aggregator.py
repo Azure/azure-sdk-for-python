@@ -78,8 +78,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         else:
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProduerComparator()
 
-        # will be a list of (parition_min, partition_max) tuples
-        targetPartitionRanges = self._get_target_parition_key_range()
+        # will be a list of (partition_min, partition_max) tuples
+        targetPartitionRanges = self._get_target_partition_key_range()
 
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
@@ -111,7 +111,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         """
         if self._orderByPQ.size() > 0:
 
-            targetRangeExContext = self._orderByPQ.pop()
+            targetRangeExContext = self._orderByPQ.pop()  # maybe here repair document producers
             res = next(targetRangeExContext)
 
             try:
@@ -151,7 +151,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             self._options,
         )
 
-    def _get_target_parition_key_range(self):
+    def _get_target_partition_key_range(self):
 
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
