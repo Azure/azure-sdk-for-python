@@ -63,10 +63,8 @@ setup(
     classifiers=[
         '{{classifier}}',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -91,10 +89,8 @@ setup(
         'azure-core>=1.6.0,<2.0.0',
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        'azure-mgmt-core>=1.2.0,<2.0.0',
+        'azure-mgmt-core>=1.3.0,<2.0.0',
         {%- endif %}
     ],
-    extras_require={
-        ":python_version<'3.0'": ['{{package_nspkg}}'],
-    }
+    python_requires=">=3.7"
 )
