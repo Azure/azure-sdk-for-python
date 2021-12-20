@@ -206,10 +206,13 @@ def run_playback_test(service_name):
     # eg: coverage_path='$(pwd)/sdk-repo/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/'
     coverage_path = ''.join([os.getenv('SDK_REPO'), '/sdk/', SERVICE_TEST_PATH[service_name]])
     service_path = coverage_path.split('azure-mgmt-')[0]
-    test_path = service_path+'tests'
+    test_path = service_path+'/tests'
     print(f'****{service_name}*****')
     print(coverage_path)
     print(os.path.exists(coverage_path))
+    print(service_path)
+    print(os.path.exists(service_path))
+    print(test_path)
     print(os.path.exists(test_path))
     print()
     return ''
