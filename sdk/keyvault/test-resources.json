@@ -81,7 +81,7 @@
             "type": "string",
             "defaultValue": "[utcNow('u')]",
             "metadata": {
-                "description": "The base time to add 2 hours to for SAS token expiration. The default is the current time."
+                "description": "The base time to add 500 minutes to for SAS token expiration. The default is the current time."
             }
         },
         "attestationImage": {
@@ -123,7 +123,7 @@
             "signedServices": "b",
             "signedPermission": "rwdlacu",
             "signedProtocol": "https",
-            "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT2H')]",
+            "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT500M')]",
             "signedResourceTypes": "sco",
             "keyToSign": "key1"
         }
