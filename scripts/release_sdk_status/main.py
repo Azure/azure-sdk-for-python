@@ -8,6 +8,8 @@ import subprocess as sp
 from azure.storage.blob import BlobClient
 
 
+SERVICE_TEST_PATH = {}
+
 def my_print(cmd):
     print('== ' + cmd + ' ==\n')
 
@@ -202,10 +204,11 @@ def test_sdk(all_sdk_status):
     pass
 
 
-def add_test_result(all_sdk_status):
-    for sdk in all_sdk_status:
+def add_test_result(sdk_info):
+    for sdk in sdk_info:
         package = sdk.split(',')[0].replace('azure-mgmt-', '')
 
+        SERVICE_TEST_PATH[package] = ''
     return ''
 
 
@@ -265,10 +268,11 @@ def sdk_info_from_swagger():
     my_print(f'total readme folders: {len(readme_folders)}')
 
     for folder in readme_folders:
+        service_name = re.findall(r'specification/(.*?)/resource-manager/', folder)[0]
         track_config = 0
         package_name = ''
         folder = folder.replace('readme.md', '')
-        readme_python = 'NA' if 'readme.python.md' not in os.listdir(folder) else f'{folder}/readme.python.md'
+        readme_python = 'NA' if 'readme.python.md' not in os.listdir(folder) else f'{folder}readme.python.md'
         readme_text = read_file(folder + 'readme.md')
         for line in readme_text:
             if line.find('azure-sdk-for-python-track2') > -1:
@@ -277,12 +281,14 @@ def sdk_info_from_swagger():
                 track_config += 1
             if readme_python == 'NA' and sdk_name_re.search(line) is not None and package_name == '':
                 package_name = sdk_name_re.search(line).group()
+                SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
 
         if readme_python != 'NA':
             readme_python_text = read_file(readme_python)
             for text in readme_python_text:
                 if sdk_name_re.search(text) is not None:
                     package_name = sdk_name_re.search(text).group()
+                    SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
 
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
@@ -298,6 +304,10 @@ def sdk_info_from_swagger():
     print(resource_manager)
     for r in resource_manager:
         print(r.split(',')[2])
+    print('///////////////////////')
+    for k, v in SERVICE_TEST_PATH.items():
+        print(f'{k}: {v}')
+
     return resource_manager
 
 
@@ -320,7 +330,7 @@ def main():
     sdk_info = sdk_info_from_swagger()
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-    all_sdk_status1 = add_test_result(all_sdk_status)
+    all_sdk_status1 = add_test_result(sdk_info)
     print('**')
     print(os.getenv('SWAGGER_REPO'))
     print(os.getenv('SDK_REPO'))
