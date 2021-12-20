@@ -23,7 +23,6 @@ def sample_create_and_deploy_project():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
-    from azure.ai.language.questionanswering.projects import models
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
@@ -35,9 +34,9 @@ def sample_create_and_deploy_project():
 
         # create project
         project_name = "IssacNewton"
-        project = client.question_answering_projects.create_project(
+        project = client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -47,28 +46,28 @@ def sample_create_and_deploy_project():
             })
 
         print("view created project info:")
-        print(u"\tname: {}".format(project.project_name))
-        print(u"\tlanguage: {}".format(project.language))
-        print(u"\tdescription: {}".format(project.description))
+        print(u"\tname: {}".format(project["projectName"]))
+        print(u"\tlanguage: {}".format(project["language"]))
+        print(u"\tdescription: {}".format(project["description"]))
 
         # list projects
         print("view all qna projects:")
-        qna_projects = client.question_answering_projects.list_projects()
+        qna_projects = client.list_projects()
         for p in qna_projects:
-            print(u"project: {}".format(p.project_name))
-            print(u"\tlanguage: {}".format(p.language))
-            print(u"\tdescription: {}".format(p.description))
+            print(u"project: {}".format(p["projectName"]))
+            print(u"\tlanguage: {}".format(p["language"]))
+            print(u"\tdescription: {}".format(p["description"]))
 
         # update sources
-        update_sources_poller = client.question_answering_projects.begin_update_sources(
+        update_sources_poller = client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 {
                     "op": "add",
                     "value": {
-                        "display_name": "Issac Newton Bio",
-                        "source_uri": "https://wikipedia.org/wiki/Isaac_Newton",
-                        "source_kind": "url"
+                        "displayName": "Issac Newton Bio",
+                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
+                        "sourceKind": "url"
                     }
                 }
             ]
@@ -77,21 +76,24 @@ def sample_create_and_deploy_project():
 
         # list sources
         print("list project sources")
-        sources = client.question_answering_projects.get_sources(
+        sources = client.list_sources(
             project_name=project_name
         )
         for source in sources:
-            print(source) # needs to properly access values!
+            print(u"\project: {}".format(source["displayName"]))
+            print(u"\tsource: {}".format(source["source"]))
+            print(u"\tsource Uri: {}".format(source["sourceUri"]))
+            print(u"\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project
-        deployment_poller = client.question_answering_projects.begin_deploy_project(
+        deployment_poller = client.begin_deploy_project(
             project_name=project_name,
-            deployment_name="test"
+            deployment_name="production"
         )
         deployment_poller.result()
 
         # list all deployments
-        deployments = client.question_answering_projects.list_deployments(
+        deployments = client.list_deployments(
             project_name=project_name
         )
 
