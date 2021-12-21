@@ -64,6 +64,48 @@ class QuestionAnsweringTest(AzureTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+class QnaAuthoringHelper:
+
+    def create_test_project(
+        client,
+        project_name = "IssacNewton",
+        is_deployable = False,
+        add_sources = False,
+        add_qnas = False
+    ):
+        # create project
+        client.create_project(
+            project_name=project_name,
+            options={
+                "description": "biography of Sir Issac Newton",
+                "language": "en",
+                "multilingualResource": True,
+                "settings": {
+                    "defaultAnswer": "no answer"
+                }
+            })
+
+        # add sources
+        if is_deployable or add_sources:
+            add_sources(client, project_name)
+
+    def add_sources(client, project_name):
+        update_sources_poller = client.begin_update_sources(
+            project_name=project_name,
+            sources=[
+                {
+                    "op": "add",
+                    "value": {
+                        "displayName": "Issac Newton Bio",
+                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
+                        "sourceKind": "url"
+                    }
+                }
+            ]
+        )
+        update_sources_poller.result()
+        
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
