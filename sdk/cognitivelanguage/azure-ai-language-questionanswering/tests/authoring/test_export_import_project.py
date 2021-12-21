@@ -16,52 +16,48 @@ from ..testcase import (
 
 from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
 
-class CreateAndDeployTests(QuestionAnsweringTest):
+class ExportAndImportTests(QuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
-    def test_create_project(self, qna_account, qna_key):
+    def test_export_project(self, qna_account, qna_key):
         client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
 
         # create project
         project_name = "IssacNewton"
         QnaAuthoringHelper.create_test_project(client, project_name=project_name)
 
-        # list projects
-        qna_projects = client.list_projects()
-        found = False
-        for p in qna_projects:
-            if p.project_name == project_name:
-                found = True
-        assert found
+        # export project
+        export_poller = client.begin_export(
+            project_name=project_name,
+            format="json"
+        )
+        result = export_poller.result()
+        assert result["status"] == "succeeded"
+        assert result["resultUrl"] is not None
 
 
     @GlobalQuestionAnsweringAccountPreparer()
-    def test_deploy_project(self, qna_account, qna_key):
+    def test_import_project(self, qna_account, qna_key):
         client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
 
-        # create deployable project
+        # create project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name, is_deployable=True)
+        export_url = QnaAuthoringHelper.create_test_project(client, project_name=project_name, get_export_url=True, delete_old_project=True)
 
-        # test deploy
-        deployment_name = "production"
-        deployment_poller = client.begin_deploy_project(
+        # import project
+        import_poller = client.begin_import_assets(
             project_name=project_name,
-            deployment_name=deployment_name
+            format="json",
+            options={
+                "file_uri":export_url
+            }
         )
-        deployment_poller.result()
+        import_poller.result()
 
         # assert
-        deployments = client.list_deployments(
-            project_name=project_name
-        )
-        deployment_found = False
-        for d in deployments:
-            if d["value"]["deploymentName"] == deployment_name:
-                deployment_found = True
-        assert deployment_found
-
-            
-
-
-
+        project_found = False
+        projects = client.list_projects()
+        for p in projects:
+            if p["projectName"] == project_name:
+                project_found = True
+        assert project_found
