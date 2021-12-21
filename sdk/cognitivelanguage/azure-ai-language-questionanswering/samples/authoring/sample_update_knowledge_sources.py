@@ -33,11 +33,11 @@ def sample_update_knowledge_sources():
     with client:
 
         # create project
-        project_name = "IssacNewton"
+        project_name = "Microsoft"
         client.create_project(
             project_name=project_name,
             options={
-                "description": "biography of Sir Issac Newton",
+                "description": "test project for some Microsoft QnAs",
                 "language": "en",
                 "multilingualResource": True,
                 "settings": {
@@ -45,24 +45,27 @@ def sample_update_knowledge_sources():
                 }
             })
 
-        # synonyms
-        client.update_synonyms(
+        # sources
+        sources_poller = client.begin_update_sources(
             project_name=project_name,
-            synonyms={
-                "value": [
-                    {
-                        "alterations": [
-                            "string"
-                        ]
-                    }
-                ]
+            sources={
+                "op": "add",
+                "value": {
+                    "displayName": "MicrosoftFAQ",
+                    "source": "https://www.microsoft.com/en-in/software-download/faq",
+                    "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
+                    "sourceKind": "url",
+                    "contentStructureKind": "unstructured",
+                    "refresh": False
+                }
             }
         )
+        sources_poller.result() # wait until done
 
-        synonyms = client.list_synonyms(
+        sources = client.list_sources(
             project_name=project_name
         )
-        for item in synonyms:
+        for item in sources:
             print(item)
 
         # qnas
@@ -70,14 +73,14 @@ def sample_update_knowledge_sources():
             project_name=project_name,
             qnas=[
                 {
-                    'op': 'add',
+                    "op": "add",
                     "value": {
-                        "id": 0,
-                        "answer": "string",
-                        "source": "string",
                         "questions": [
-                            "string"
-                        ]
+                            {
+                                "What is the easiest way to use azure services in my .NET project?"
+                            }
+                        ],
+                        "answer": "Using Microsoft's Azure SDKs"
                     }
                 }
             ]
@@ -90,24 +93,33 @@ def sample_update_knowledge_sources():
         for item in qnas:
             print(item)
 
-        # sources
-        sources_poller = client.begin_update_sources(
+        # synonyms
+        client.update_synonyms(
             project_name=project_name,
-            sources=[
+            synonyms=[
                     {
                         "op": "add",
-                        "value": {
-                            "sourceKind": "url",
-                            "sourceUri": "please/update/with/some/url"
-                        }
+                        "value": [
+                            {
+                                "alterations": [
+                                    "qnamaker",
+                                    "qna maker"
+                                ]
+                            },
+                            {
+                                "alterations": [
+                                    "qna",
+                                    "question and answer"
+                                ]
+                            }
+                        ]
                     }
                 ]
         )
-        sources_poller.result()
-        sources = client.list_sources(
+        synonyms = client.list_synonyms(
             project_name=project_name
         )
-        for item in sources:
+        for item in synonyms:
             print(item)
 
     # [END update_knowledge_sources]
