@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -17,7 +18,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -44,132 +45,48 @@ class TransparentDataEncryptionsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def create_or_update(
-        self,
-        resource_group_name,  # type: str
-        server_name,  # type: str
-        database_name,  # type: str
-        transparent_data_encryption_name,  # type: Union[str, "_models.TransparentDataEncryptionName"]
-        parameters,  # type: "_models.TransparentDataEncryption"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.TransparentDataEncryption"
-        """Creates or updates a database's transparent data encryption configuration.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database for which setting the transparent data
-         encryption applies.
-        :type database_name: str
-        :param transparent_data_encryption_name: The name of the transparent data encryption
-         configuration.
-        :type transparent_data_encryption_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
-        :param parameters: The required parameters for creating or updating transparent data
-         encryption.
-        :type parameters: ~azure.mgmt.sql.models.TransparentDataEncryption
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TransparentDataEncryption, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.TransparentDataEncryption
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransparentDataEncryption"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'transparentDataEncryptionName': self._serialize.url("transparent_data_encryption_name", transparent_data_encryption_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'TransparentDataEncryption')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('TransparentDataEncryption', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('TransparentDataEncryption', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}'}  # type: ignore
-
     def get(
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        transparent_data_encryption_name,  # type: Union[str, "_models.TransparentDataEncryptionName"]
+        tde_name,  # type: Union[str, "_models.TransparentDataEncryptionName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.TransparentDataEncryption"
-        """Gets a database's transparent data encryption configuration.
+        # type: (...) -> "_models.LogicalDatabaseTransparentDataEncryption"
+        """Gets a logical database's transparent data encryption.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which the transparent data encryption
-         applies.
+        :param database_name: The name of the logical database for which the transparent data
+         encryption is defined.
         :type database_name: str
-        :param transparent_data_encryption_name: The name of the transparent data encryption
-         configuration.
-        :type transparent_data_encryption_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
+        :param tde_name: The name of the transparent data encryption configuration.
+        :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TransparentDataEncryption, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.TransparentDataEncryption
+        :return: LogicalDatabaseTransparentDataEncryption, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransparentDataEncryption"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogicalDatabaseTransparentDataEncryption"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'transparentDataEncryptionName': self._serialize.url("transparent_data_encryption_name", transparent_data_encryption_name, 'str'),
+            'tdeName': self._serialize.url("tde_name", tde_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -189,10 +106,173 @@ class TransparentDataEncryptionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('TransparentDataEncryption', pipeline_response)
+        deserialized = self._deserialize('LogicalDatabaseTransparentDataEncryption', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{tdeName}'}  # type: ignore
+
+    def create_or_update(
+        self,
+        resource_group_name,  # type: str
+        server_name,  # type: str
+        database_name,  # type: str
+        tde_name,  # type: Union[str, "_models.TransparentDataEncryptionName"]
+        parameters,  # type: "_models.LogicalDatabaseTransparentDataEncryption"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.LogicalDatabaseTransparentDataEncryption"]
+        """Updates a logical database's transparent data encryption configuration.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the logical database for which the security alert policy is
+         defined.
+        :type database_name: str
+        :param tde_name: The name of the transparent data encryption configuration.
+        :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
+        :param parameters: The database transparent data encryption.
+        :type parameters: ~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: LogicalDatabaseTransparentDataEncryption, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogicalDatabaseTransparentDataEncryption"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-02-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'tdeName': self._serialize.url("tde_name", tde_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'LogicalDatabaseTransparentDataEncryption')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('LogicalDatabaseTransparentDataEncryption', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('LogicalDatabaseTransparentDataEncryption', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{tdeName}'}  # type: ignore
+
+    def list_by_database(
+        self,
+        resource_group_name,  # type: str
+        server_name,  # type: str
+        database_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.LogicalDatabaseTransparentDataEncryptionListResult"]
+        """Gets a list of the logical database's transparent data encryption.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the logical database for which the transparent data
+         encryption is defined.
+        :type database_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either LogicalDatabaseTransparentDataEncryptionListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryptionListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogicalDatabaseTransparentDataEncryptionListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-02-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_database.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('LogicalDatabaseTransparentDataEncryptionListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption'}  # type: ignore
