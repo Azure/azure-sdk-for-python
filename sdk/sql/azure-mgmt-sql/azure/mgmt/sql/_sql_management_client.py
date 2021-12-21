@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 from ._configuration import SqlManagementClientConfiguration
 from .operations import RecoverableDatabasesOperations
-from .operations import ServerConnectionPoliciesOperations
 from .operations import DataMaskingPoliciesOperations
 from .operations import DataMaskingRulesOperations
 from .operations import GeoBackupPoliciesOperations
@@ -31,8 +30,6 @@ from .operations import ServerCommunicationLinksOperations
 from .operations import ServiceObjectivesOperations
 from .operations import ElasticPoolActivitiesOperations
 from .operations import ElasticPoolDatabaseActivitiesOperations
-from .operations import TransparentDataEncryptionsOperations
-from .operations import TransparentDataEncryptionActivitiesOperations
 from .operations import ServerUsagesOperations
 from .operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -66,8 +63,6 @@ from .operations import JobTargetExecutionsOperations
 from .operations import JobTargetGroupsOperations
 from .operations import JobVersionsOperations
 from .operations import CapabilitiesOperations
-from .operations import LongTermRetentionBackupsOperations
-from .operations import LongTermRetentionManagedInstanceBackupsOperations
 from .operations import LongTermRetentionPoliciesOperations
 from .operations import MaintenanceWindowOptionsOperations
 from .operations import MaintenanceWindowsOperations
@@ -94,7 +89,6 @@ from .operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from .operations import ManagedInstanceOperationsOperations
 from .operations import ManagedInstancePrivateEndpointConnectionsOperations
 from .operations import ManagedInstancePrivateLinkResourcesOperations
-from .operations import ManagedInstancesOperations
 from .operations import ManagedInstanceTdeCertificatesOperations
 from .operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
@@ -129,16 +123,21 @@ from .operations import VirtualClustersOperations
 from .operations import VirtualNetworkRulesOperations
 from .operations import WorkloadClassifiersOperations
 from .operations import WorkloadGroupsOperations
+from .operations import TransparentDataEncryptionsOperations
 from .operations import BackupShortTermRetentionPoliciesOperations
 from .operations import DatabaseExtensionsOperations
 from .operations import DatabaseOperationsOperations
 from .operations import DatabaseUsagesOperations
 from .operations import LedgerDigestUploadsOperations
 from .operations import OutboundFirewallRulesOperations
-from .operations import RestorableDroppedDatabasesOperations
-from .operations import RestorableDroppedManagedDatabasesOperations
 from .operations import ServersOperations
 from .operations import UsagesOperations
+from .operations import LongTermRetentionBackupsOperations
+from .operations import LongTermRetentionManagedInstanceBackupsOperations
+from .operations import ManagedInstancesOperations
+from .operations import RestorableDroppedDatabasesOperations
+from .operations import RestorableDroppedManagedDatabasesOperations
+from .operations import ServerConnectionPoliciesOperations
 from . import models
 
 
@@ -147,8 +146,6 @@ class SqlManagementClient(object):
 
     :ivar recoverable_databases: RecoverableDatabasesOperations operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
-    :ivar server_connection_policies: ServerConnectionPoliciesOperations operations
-    :vartype server_connection_policies: azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
     :ivar data_masking_policies: DataMaskingPoliciesOperations operations
     :vartype data_masking_policies: azure.mgmt.sql.operations.DataMaskingPoliciesOperations
     :ivar data_masking_rules: DataMaskingRulesOperations operations
@@ -169,10 +166,6 @@ class SqlManagementClient(object):
     :vartype elastic_pool_activities: azure.mgmt.sql.operations.ElasticPoolActivitiesOperations
     :ivar elastic_pool_database_activities: ElasticPoolDatabaseActivitiesOperations operations
     :vartype elastic_pool_database_activities: azure.mgmt.sql.operations.ElasticPoolDatabaseActivitiesOperations
-    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
-    :vartype transparent_data_encryptions: azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
-    :ivar transparent_data_encryption_activities: TransparentDataEncryptionActivitiesOperations operations
-    :vartype transparent_data_encryption_activities: azure.mgmt.sql.operations.TransparentDataEncryptionActivitiesOperations
     :ivar server_usages: ServerUsagesOperations operations
     :vartype server_usages: azure.mgmt.sql.operations.ServerUsagesOperations
     :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPoliciesOperations operations
@@ -239,10 +232,6 @@ class SqlManagementClient(object):
     :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
     :ivar capabilities: CapabilitiesOperations operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
-    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
-    :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
-    :ivar long_term_retention_managed_instance_backups: LongTermRetentionManagedInstanceBackupsOperations operations
-    :vartype long_term_retention_managed_instance_backups: azure.mgmt.sql.operations.LongTermRetentionManagedInstanceBackupsOperations
     :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
     :vartype long_term_retention_policies: azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
     :ivar maintenance_window_options: MaintenanceWindowOptionsOperations operations
@@ -295,8 +284,6 @@ class SqlManagementClient(object):
     :vartype managed_instance_private_endpoint_connections: azure.mgmt.sql.operations.ManagedInstancePrivateEndpointConnectionsOperations
     :ivar managed_instance_private_link_resources: ManagedInstancePrivateLinkResourcesOperations operations
     :vartype managed_instance_private_link_resources: azure.mgmt.sql.operations.ManagedInstancePrivateLinkResourcesOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar managed_instance_tde_certificates: ManagedInstanceTdeCertificatesOperations operations
     :vartype managed_instance_tde_certificates: azure.mgmt.sql.operations.ManagedInstanceTdeCertificatesOperations
     :ivar managed_instance_vulnerability_assessments: ManagedInstanceVulnerabilityAssessmentsOperations operations
@@ -365,6 +352,8 @@ class SqlManagementClient(object):
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
     :ivar workload_groups: WorkloadGroupsOperations operations
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
+    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
+    :vartype transparent_data_encryptions: azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
     :ivar backup_short_term_retention_policies: BackupShortTermRetentionPoliciesOperations operations
     :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensionsOperations operations
@@ -377,14 +366,22 @@ class SqlManagementClient(object):
     :vartype ledger_digest_uploads: azure.mgmt.sql.operations.LedgerDigestUploadsOperations
     :ivar outbound_firewall_rules: OutboundFirewallRulesOperations operations
     :vartype outbound_firewall_rules: azure.mgmt.sql.operations.OutboundFirewallRulesOperations
-    :ivar restorable_dropped_databases: RestorableDroppedDatabasesOperations operations
-    :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
-    :ivar restorable_dropped_managed_databases: RestorableDroppedManagedDatabasesOperations operations
-    :vartype restorable_dropped_managed_databases: azure.mgmt.sql.operations.RestorableDroppedManagedDatabasesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
+    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
+    :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
+    :ivar long_term_retention_managed_instance_backups: LongTermRetentionManagedInstanceBackupsOperations operations
+    :vartype long_term_retention_managed_instance_backups: azure.mgmt.sql.operations.LongTermRetentionManagedInstanceBackupsOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
+    :ivar restorable_dropped_databases: RestorableDroppedDatabasesOperations operations
+    :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
+    :ivar restorable_dropped_managed_databases: RestorableDroppedManagedDatabasesOperations operations
+    :vartype restorable_dropped_managed_databases: azure.mgmt.sql.operations.RestorableDroppedManagedDatabasesOperations
+    :ivar server_connection_policies: ServerConnectionPoliciesOperations operations
+    :vartype server_connection_policies: azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription.
@@ -413,8 +410,6 @@ class SqlManagementClient(object):
 
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.server_connection_policies = ServerConnectionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.data_masking_policies = DataMaskingPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.data_masking_rules = DataMaskingRulesOperations(
@@ -434,10 +429,6 @@ class SqlManagementClient(object):
         self.elastic_pool_activities = ElasticPoolActivitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.elastic_pool_database_activities = ElasticPoolDatabaseActivitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.transparent_data_encryption_activities = TransparentDataEncryptionActivitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.server_usages = ServerUsagesOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -505,10 +496,6 @@ class SqlManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.maintenance_window_options = MaintenanceWindowOptionsOperations(
@@ -560,8 +547,6 @@ class SqlManagementClient(object):
         self.managed_instance_private_endpoint_connections = ManagedInstancePrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.managed_instance_private_link_resources = ManagedInstancePrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.managed_instance_tde_certificates = ManagedInstanceTdeCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -631,6 +616,8 @@ class SqlManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.workload_groups = WorkloadGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.database_extensions = DatabaseExtensionsOperations(
@@ -643,13 +630,21 @@ class SqlManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.outbound_firewall_rules = OutboundFirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instances = ManagedInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.restorable_dropped_managed_databases = RestorableDroppedManagedDatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(
+        self.server_connection_policies = ServerConnectionPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

@@ -560,9 +560,8 @@ class CopyLongTermRetentionBackupParameters(msrest.serialization.Model):
     :param target_database_name: The name of the database owns the copied backup.
     :type target_database_name: str
     :param target_backup_storage_redundancy: The storage redundancy type of the copied backup.
-     Possible values include: "Geo", "Local", "Zone".
-    :type target_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.TargetBackupStorageRedundancy
+     Possible values include: "Geo", "Local", "Zone", "GeoZone".
+    :type target_backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _attribute_map = {
@@ -582,7 +581,7 @@ class CopyLongTermRetentionBackupParameters(msrest.serialization.Model):
         target_server_resource_id: Optional[str] = None,
         target_server_fully_qualified_domain_name: Optional[str] = None,
         target_database_name: Optional[str] = None,
-        target_backup_storage_redundancy: Optional[Union[str, "TargetBackupStorageRedundancy"]] = None,
+        target_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         **kwargs
     ):
         super(CopyLongTermRetentionBackupParameters, self).__init__(**kwargs)
@@ -705,6 +704,8 @@ class Database(TrackedResource):
     :vartype kind: str
     :ivar managed_by: Resource that manages the database.
     :vartype managed_by: str
+    :param identity: The Azure Active Directory identity of the database.
+    :type identity: ~azure.mgmt.sql.models.DatabaseIdentity
     :param create_mode: Specifies the mode of database creation.
     
      Default: regular database creation.
@@ -753,7 +754,7 @@ class Database(TrackedResource):
      "RecoveryPending", "Recovering", "Suspect", "Offline", "Standby", "Shutdown", "EmergencyMode",
      "AutoClosed", "Copying", "Creating", "Inaccessible", "OfflineSecondary", "Pausing", "Paused",
      "Resuming", "Scaling", "OfflineChangingDwPerformanceTiers", "OnlineChangingDwPerformanceTiers",
-     "Disabled".
+     "Disabled", "Stopping", "Stopped", "Starting".
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -816,13 +817,13 @@ class Database(TrackedResource):
      of -1 means that automatic pause is disabled.
     :type auto_pause_delay: int
     :ivar current_backup_storage_redundancy: The storage account type used to store backups for
-     this database. Possible values include: "Geo", "Local", "Zone".
+     this database. Possible values include: "Geo", "Local", "Zone", "GeoZone".
     :vartype current_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.CurrentBackupStorageRedundancy
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param requested_backup_storage_redundancy: The storage account type to be used to store
-     backups for this database. Possible values include: "Geo", "Local", "Zone".
+     backups for this database. Possible values include: "Geo", "Local", "Zone", "GeoZone".
     :type requested_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param min_capacity: Minimal capacity that database will always have allocated, if not paused.
     :type min_capacity: float
     :ivar paused_date: The date when database was paused by user configuration or action(ISO8601
@@ -840,6 +841,11 @@ class Database(TrackedResource):
     :type is_ledger_on: bool
     :ivar is_infra_encryption_enabled: Infra encryption is enabled for this database.
     :vartype is_infra_encryption_enabled: bool
+    :param federated_client_id: The Client id used for cross tenant per database CMK scenario.
+    :type federated_client_id: str
+    :param primary_delegated_identity_client_id: The Primary Delegated Identity Client id used for
+     per database CMK - for internal use only.
+    :type primary_delegated_identity_client_id: str
     """
 
     _validation = {
@@ -874,6 +880,7 @@ class Database(TrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'DatabaseIdentity'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'long'},
@@ -911,6 +918,8 @@ class Database(TrackedResource):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'is_ledger_on': {'key': 'properties.isLedgerOn', 'type': 'bool'},
         'is_infra_encryption_enabled': {'key': 'properties.isInfraEncryptionEnabled', 'type': 'bool'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
+        'primary_delegated_identity_client_id': {'key': 'properties.primaryDelegatedIdentityClientId', 'type': 'str'},
     }
 
     def __init__(
@@ -919,6 +928,7 @@ class Database(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
+        identity: Optional["DatabaseIdentity"] = None,
         create_mode: Optional[Union[str, "CreateMode"]] = None,
         collation: Optional[str] = None,
         max_size_bytes: Optional[int] = None,
@@ -938,16 +948,19 @@ class Database(TrackedResource):
         high_availability_replica_count: Optional[int] = None,
         secondary_type: Optional[Union[str, "SecondaryType"]] = None,
         auto_pause_delay: Optional[int] = None,
-        requested_backup_storage_redundancy: Optional[Union[str, "RequestedBackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         min_capacity: Optional[float] = None,
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
+        federated_client_id: Optional[str] = None,
+        primary_delegated_identity_client_id: Optional[str] = None,
         **kwargs
     ):
         super(Database, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
         self.managed_by = None
+        self.identity = identity
         self.create_mode = create_mode
         self.collation = collation
         self.max_size_bytes = max_size_bytes
@@ -985,6 +998,8 @@ class Database(TrackedResource):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
+        self.federated_client_id = federated_client_id
+        self.primary_delegated_identity_client_id = primary_delegated_identity_client_id
 
 
 class DatabaseAutomaticTuning(ProxyResource):
@@ -1391,6 +1406,47 @@ class DatabaseExtensions(ProxyResource):
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
         self.storage_uri = storage_uri
+
+
+class DatabaseIdentity(msrest.serialization.Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param type: The identity type. Possible values include: "None", "UserAssigned".
+    :type type: str or ~azure.mgmt.sql.models.DatabaseIdentityType
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    :param user_assigned_identities: The resource ids of the user assigned identities to use.
+    :type user_assigned_identities: dict[str, ~azure.mgmt.sql.models.DatabaseUserIdentity]
+    :param delegated_resources: Resources delegated to the database - Internal Use Only.
+    :type delegated_resources: dict[str, ~azure.mgmt.sql.models.Delegation]
+    """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{DatabaseUserIdentity}'},
+        'delegated_resources': {'key': 'delegatedResources', 'type': '{Delegation}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "DatabaseIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "DatabaseUserIdentity"]] = None,
+        delegated_resources: Optional[Dict[str, "Delegation"]] = None,
+        **kwargs
+    ):
+        super(DatabaseIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.tenant_id = None
+        self.user_assigned_identities = user_assigned_identities
+        self.delegated_resources = delegated_resources
 
 
 class DatabaseListResult(msrest.serialization.Model):
@@ -1814,6 +1870,8 @@ class DatabaseUpdate(msrest.serialization.Model):
 
     :param sku: The name and tier of the SKU.
     :type sku: ~azure.mgmt.sql.models.Sku
+    :param identity: Database identity.
+    :type identity: ~azure.mgmt.sql.models.DatabaseIdentity
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param create_mode: Specifies the mode of database creation.
@@ -1864,7 +1922,7 @@ class DatabaseUpdate(msrest.serialization.Model):
      "RecoveryPending", "Recovering", "Suspect", "Offline", "Standby", "Shutdown", "EmergencyMode",
      "AutoClosed", "Copying", "Creating", "Inaccessible", "OfflineSecondary", "Pausing", "Paused",
      "Resuming", "Scaling", "OfflineChangingDwPerformanceTiers", "OnlineChangingDwPerformanceTiers",
-     "Disabled".
+     "Disabled", "Stopping", "Stopped", "Starting".
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -1927,13 +1985,13 @@ class DatabaseUpdate(msrest.serialization.Model):
      of -1 means that automatic pause is disabled.
     :type auto_pause_delay: int
     :ivar current_backup_storage_redundancy: The storage account type used to store backups for
-     this database. Possible values include: "Geo", "Local", "Zone".
+     this database. Possible values include: "Geo", "Local", "Zone", "GeoZone".
     :vartype current_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.CurrentBackupStorageRedundancy
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param requested_backup_storage_redundancy: The storage account type to be used to store
-     backups for this database. Possible values include: "Geo", "Local", "Zone".
+     backups for this database. Possible values include: "Geo", "Local", "Zone", "GeoZone".
     :type requested_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param min_capacity: Minimal capacity that database will always have allocated, if not paused.
     :type min_capacity: float
     :ivar paused_date: The date when database was paused by user configuration or action(ISO8601
@@ -1951,6 +2009,11 @@ class DatabaseUpdate(msrest.serialization.Model):
     :type is_ledger_on: bool
     :ivar is_infra_encryption_enabled: Infra encryption is enabled for this database.
     :vartype is_infra_encryption_enabled: bool
+    :param federated_client_id: The Client id used for cross tenant per database CMK scenario.
+    :type federated_client_id: str
+    :param primary_delegated_identity_client_id: The Primary Delegated Identity Client id used for
+     per database CMK - for internal use only.
+    :type primary_delegated_identity_client_id: str
     """
 
     _validation = {
@@ -1972,6 +2035,7 @@ class DatabaseUpdate(msrest.serialization.Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'DatabaseIdentity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
@@ -2010,12 +2074,15 @@ class DatabaseUpdate(msrest.serialization.Model):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'is_ledger_on': {'key': 'properties.isLedgerOn', 'type': 'bool'},
         'is_infra_encryption_enabled': {'key': 'properties.isInfraEncryptionEnabled', 'type': 'bool'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
+        'primary_delegated_identity_client_id': {'key': 'properties.primaryDelegatedIdentityClientId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         sku: Optional["Sku"] = None,
+        identity: Optional["DatabaseIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         create_mode: Optional[Union[str, "CreateMode"]] = None,
         collation: Optional[str] = None,
@@ -2036,14 +2103,17 @@ class DatabaseUpdate(msrest.serialization.Model):
         high_availability_replica_count: Optional[int] = None,
         secondary_type: Optional[Union[str, "SecondaryType"]] = None,
         auto_pause_delay: Optional[int] = None,
-        requested_backup_storage_redundancy: Optional[Union[str, "RequestedBackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         min_capacity: Optional[float] = None,
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
+        federated_client_id: Optional[str] = None,
+        primary_delegated_identity_client_id: Optional[str] = None,
         **kwargs
     ):
         super(DatabaseUpdate, self).__init__(**kwargs)
         self.sku = sku
+        self.identity = identity
         self.tags = tags
         self.create_mode = create_mode
         self.collation = collation
@@ -2082,6 +2152,8 @@ class DatabaseUpdate(msrest.serialization.Model):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
+        self.federated_client_id = federated_client_id
+        self.primary_delegated_identity_client_id = primary_delegated_identity_client_id
 
 
 class DatabaseUsage(ProxyResource):
@@ -2164,6 +2236,36 @@ class DatabaseUsageListResult(msrest.serialization.Model):
         super(DatabaseUsageListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class DatabaseUserIdentity(msrest.serialization.Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :ivar client_id: The Azure Active Directory client id.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabaseUserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class DatabaseVulnerabilityAssessment(ProxyResource):
@@ -2625,6 +2727,37 @@ class DataWarehouseUserActivitiesListResult(msrest.serialization.Model):
         super(DataWarehouseUserActivitiesListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class Delegation(msrest.serialization.Model):
+    """Delegated Resource Properties - Internal Use Only.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param resource_id: The resource id of the source resource - Internal Use Only.
+    :type resource_id: str
+    :ivar tenant_id: AAD tenant guid of the source resource identity - Internal Use Only.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(Delegation, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.tenant_id = None
 
 
 class DeletedServer(ProxyResource):
@@ -6504,6 +6637,75 @@ class LocationCapabilities(msrest.serialization.Model):
         self.reason = reason
 
 
+class LogicalDatabaseTransparentDataEncryption(ProxyResource):
+    """A logical database transparent data encryption state.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param state: Specifies the state of the transparent data encryption. Possible values include:
+     "Enabled", "Disabled".
+    :type state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "TransparentDataEncryptionState"]] = None,
+        **kwargs
+    ):
+        super(LogicalDatabaseTransparentDataEncryption, self).__init__(**kwargs)
+        self.state = state
+
+
+class LogicalDatabaseTransparentDataEncryptionListResult(msrest.serialization.Model):
+    """A list of transparent data encryptions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LogicalDatabaseTransparentDataEncryption]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LogicalDatabaseTransparentDataEncryptionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class LogicalServerSecurityAlertPolicyListResult(msrest.serialization.Model):
     """A list of the server's security alert policies.
 
@@ -6589,10 +6791,10 @@ class LongTermRetentionBackup(ProxyResource):
     :ivar backup_expiration_time: The time the long term retention backup will expire.
     :vartype backup_expiration_time: ~datetime.datetime
     :ivar backup_storage_redundancy: The storage redundancy type of the backup. Possible values
-     include: "Geo", "Local", "Zone".
+     include: "Geo", "Local", "Zone", "GeoZone".
     :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param requested_backup_storage_redundancy: The storage redundancy type of the backup. Possible
-     values include: "Geo", "Local", "Zone".
+     values include: "Geo", "Local", "Zone", "GeoZone".
     :type requested_backup_storage_redundancy: str or
      ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
@@ -6691,7 +6893,7 @@ class LongTermRetentionBackupOperationResult(ProxyResource):
     :ivar to_backup_resource_id: Target backup resource id.
     :vartype to_backup_resource_id: str
     :ivar target_backup_storage_redundancy: The storage redundancy type of the copied backup.
-     Possible values include: "Geo", "Local", "Zone".
+     Possible values include: "Geo", "Local", "Zone", "GeoZone".
     :vartype target_backup_storage_redundancy: str or
      ~azure.mgmt.sql.models.BackupStorageRedundancy
     :ivar status: Operation status.
@@ -7602,7 +7804,8 @@ class ManagedInstance(TrackedResource):
      BC_Gen5.
     :type sku: ~azure.mgmt.sql.models.Sku
     :ivar provisioning_state:  Possible values include: "Creating", "Deleting", "Updating",
-     "Unknown", "Succeeded", "Failed".
+     "Unknown", "Succeeded", "Failed", "Accepted", "Created", "Deleted", "Unrecognized", "Running",
+     "Canceled", "NotSpecified", "Registering", "TimedOut".
     :vartype provisioning_state: str or
      ~azure.mgmt.sql.models.ManagedInstancePropertiesProvisioningState
     :param managed_instance_create_mode: Specifies the mode of database creation.
@@ -7670,10 +7873,18 @@ class ManagedInstance(TrackedResource):
     :vartype private_endpoint_connections: list[~azure.mgmt.sql.models.ManagedInstancePecProperty]
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :type minimal_tls_version: str
-    :param storage_account_type: The storage account type used to store backups for this instance.
-     The options are LRS (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
-     (GeoRedundantStorage). Possible values include: "GRS", "LRS", "ZRS".
-    :type storage_account_type: str or ~azure.mgmt.sql.models.StorageAccountType
+    :ivar current_backup_storage_redundancy: The storage account type used to store backups for
+     this instance. The options are Local (LocallyRedundantStorage), Zone (ZoneRedundantStorage),
+     Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Possible values include: "Geo",
+     "Local", "Zone", "GeoZone".
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :param requested_backup_storage_redundancy: The storage account type to be used to store
+     backups for this instance. The options are Local (LocallyRedundantStorage), Zone
+     (ZoneRedundantStorage), Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage).
+     Possible values include: "Geo", "Local", "Zone", "GeoZone".
+    :type requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param zone_redundant: Whether or not the multi-az is enabled.
     :type zone_redundant: bool
     :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
@@ -7683,6 +7894,8 @@ class ManagedInstance(TrackedResource):
     :type key_id: str
     :param administrators: The Azure Active Directory administrator of the server.
     :type administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+    :param service_principal: The managed instance's service principal.
+    :type service_principal: ~azure.mgmt.sql.models.ServicePrincipal
     """
 
     _validation = {
@@ -7695,6 +7908,7 @@ class ManagedInstance(TrackedResource):
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7727,11 +7941,13 @@ class ManagedInstance(TrackedResource):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ManagedInstancePecProperty]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ManagedInstanceExternalAdministrator'},
+        'service_principal': {'key': 'properties.servicePrincipal', 'type': 'ServicePrincipal'},
     }
 
     def __init__(
@@ -7758,11 +7974,12 @@ class ManagedInstance(TrackedResource):
         instance_pool_id: Optional[str] = None,
         maintenance_configuration_id: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         zone_redundant: Optional[bool] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         key_id: Optional[str] = None,
         administrators: Optional["ManagedInstanceExternalAdministrator"] = None,
+        service_principal: Optional["ServicePrincipal"] = None,
         **kwargs
     ):
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
@@ -7790,11 +8007,13 @@ class ManagedInstance(TrackedResource):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.private_endpoint_connections = None
         self.minimal_tls_version = minimal_tls_version
-        self.storage_account_type = storage_account_type
+        self.current_backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
         self.zone_redundant = zone_redundant
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
         self.key_id = key_id
         self.administrators = administrators
+        self.service_principal = service_principal
 
 
 class ManagedInstanceAdministrator(ProxyResource):
@@ -8347,7 +8566,7 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
     :ivar backup_expiration_time: The time the long term retention backup will expire.
     :vartype backup_expiration_time: ~datetime.datetime
     :ivar backup_storage_redundancy: The storage redundancy type of the backup. Possible values
-     include: "Geo", "Local", "Zone".
+     include: "Geo", "Local", "Zone", "GeoZone".
     :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
@@ -9157,7 +9376,8 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :ivar provisioning_state:  Possible values include: "Creating", "Deleting", "Updating",
-     "Unknown", "Succeeded", "Failed".
+     "Unknown", "Succeeded", "Failed", "Accepted", "Created", "Deleted", "Unrecognized", "Running",
+     "Canceled", "NotSpecified", "Registering", "TimedOut".
     :vartype provisioning_state: str or
      ~azure.mgmt.sql.models.ManagedInstancePropertiesProvisioningState
     :param managed_instance_create_mode: Specifies the mode of database creation.
@@ -9225,10 +9445,18 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
     :vartype private_endpoint_connections: list[~azure.mgmt.sql.models.ManagedInstancePecProperty]
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :type minimal_tls_version: str
-    :param storage_account_type: The storage account type used to store backups for this instance.
-     The options are LRS (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
-     (GeoRedundantStorage). Possible values include: "GRS", "LRS", "ZRS".
-    :type storage_account_type: str or ~azure.mgmt.sql.models.StorageAccountType
+    :ivar current_backup_storage_redundancy: The storage account type used to store backups for
+     this instance. The options are Local (LocallyRedundantStorage), Zone (ZoneRedundantStorage),
+     Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Possible values include: "Geo",
+     "Local", "Zone", "GeoZone".
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :param requested_backup_storage_redundancy: The storage account type to be used to store
+     backups for this instance. The options are Local (LocallyRedundantStorage), Zone
+     (ZoneRedundantStorage), Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage).
+     Possible values include: "Geo", "Local", "Zone", "GeoZone".
+    :type requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     :param zone_redundant: Whether or not the multi-az is enabled.
     :type zone_redundant: bool
     :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
@@ -9238,6 +9466,8 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
     :type key_id: str
     :param administrators: The Azure Active Directory administrator of the server.
     :type administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+    :param service_principal: The managed instance's service principal.
+    :type service_principal: ~azure.mgmt.sql.models.ServicePrincipal
     """
 
     _validation = {
@@ -9246,6 +9476,7 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -9274,11 +9505,13 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ManagedInstancePecProperty]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ManagedInstanceExternalAdministrator'},
+        'service_principal': {'key': 'properties.servicePrincipal', 'type': 'ServicePrincipal'},
     }
 
     def __init__(
@@ -9304,11 +9537,12 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         instance_pool_id: Optional[str] = None,
         maintenance_configuration_id: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         zone_redundant: Optional[bool] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         key_id: Optional[str] = None,
         administrators: Optional["ManagedInstanceExternalAdministrator"] = None,
+        service_principal: Optional["ServicePrincipal"] = None,
         **kwargs
     ):
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
@@ -9337,11 +9571,13 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.private_endpoint_connections = None
         self.minimal_tls_version = minimal_tls_version
-        self.storage_account_type = storage_account_type
+        self.current_backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
         self.zone_redundant = zone_redundant
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
         self.key_id = key_id
         self.administrators = administrators
+        self.service_principal = service_principal
 
 
 class ManagedInstanceVcoresCapability(msrest.serialization.Model):
@@ -11965,9 +12201,6 @@ class RestorableDroppedDatabase(ProxyResource):
     :vartype database_name: str
     :ivar max_size_bytes: The max size of the database expressed in bytes.
     :vartype max_size_bytes: long
-    :ivar elastic_pool_id: DEPRECATED: The resource name of the elastic pool containing this
-     database. This property is deprecated and the value will always be null.
-    :vartype elastic_pool_id: str
     :ivar creation_date: The creation date of the database (ISO8601 format).
     :vartype creation_date: ~datetime.datetime
     :ivar deletion_date: The deletion date of the database (ISO8601 format).
@@ -11975,9 +12208,8 @@ class RestorableDroppedDatabase(ProxyResource):
     :ivar earliest_restore_date: The earliest restore date of the database (ISO8601 format).
     :vartype earliest_restore_date: ~datetime.datetime
     :ivar backup_storage_redundancy: The storage account type used to store backups for this
-     database. Possible values include: "Geo", "Local", "Zone".
-    :vartype backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RestorableDroppedDatabasePropertiesBackupStorageRedundancy
+     database. Possible values include: "Geo", "Local", "Zone", "GeoZone".
+    :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _validation = {
@@ -11986,7 +12218,6 @@ class RestorableDroppedDatabase(ProxyResource):
         'type': {'readonly': True},
         'database_name': {'readonly': True},
         'max_size_bytes': {'readonly': True},
-        'elastic_pool_id': {'readonly': True},
         'creation_date': {'readonly': True},
         'deletion_date': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
@@ -12002,7 +12233,6 @@ class RestorableDroppedDatabase(ProxyResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'long'},
-        'elastic_pool_id': {'key': 'properties.elasticPoolId', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'deletion_date': {'key': 'properties.deletionDate', 'type': 'iso-8601'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
@@ -12023,7 +12253,6 @@ class RestorableDroppedDatabase(ProxyResource):
         self.tags = tags
         self.database_name = None
         self.max_size_bytes = None
-        self.elastic_pool_id = None
         self.creation_date = None
         self.deletion_date = None
         self.earliest_restore_date = None
@@ -13210,7 +13439,7 @@ class ServerCommunicationLinkListResult(msrest.serialization.Model):
 
 
 class ServerConnectionPolicy(ProxyResource):
-    """A server secure connection policy.
+    """A server connection policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -13220,12 +13449,12 @@ class ServerConnectionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar kind: Metadata used for the Azure portal experience.
-    :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
+    :ivar kind: Metadata used for the Azure portal experience.
+    :vartype kind: str
     :param connection_type: The server connection type. Possible values include: "Default",
-     "Proxy", "Redirect".
+     "Redirect", "Proxy".
     :type connection_type: str or ~azure.mgmt.sql.models.ServerConnectionType
     """
 
@@ -13233,16 +13462,16 @@ class ServerConnectionPolicy(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
         'location': {'readonly': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
     }
 
@@ -13253,9 +13482,39 @@ class ServerConnectionPolicy(ProxyResource):
         **kwargs
     ):
         super(ServerConnectionPolicy, self).__init__(**kwargs)
-        self.kind = None
         self.location = None
+        self.kind = None
         self.connection_type = connection_type
+
+
+class ServerConnectionPolicyListResult(msrest.serialization.Model):
+    """A list of server connection policy objects.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ServerConnectionPolicy]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServerConnectionPolicy]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServerConnectionPolicyListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class ServerDevOpsAuditingSettings(ProxyResource):
@@ -14508,6 +14767,47 @@ class ServiceObjectiveListResult(msrest.serialization.Model):
     ):
         super(ServiceObjectiveListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class ServicePrincipal(msrest.serialization.Model):
+    """The managed instance's service principal configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The Azure Active Directory application object id.
+    :vartype principal_id: str
+    :ivar client_id: The Azure Active Directory application client id.
+    :vartype client_id: str
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    :param type: Service principal type. Possible values include: "None", "SystemAssigned".
+    :type type: str or ~azure.mgmt.sql.models.ServicePrincipalType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "ServicePrincipalType"]] = None,
+        **kwargs
+    ):
+        super(ServicePrincipal, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+        self.tenant_id = None
+        self.type = type
 
 
 class Sku(msrest.serialization.Model):
@@ -15866,125 +16166,6 @@ class TopQueriesListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class TransparentDataEncryption(ProxyResource):
-    """Represents a database transparent data encryption configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :param status: The status of the database transparent data encryption. Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.sql.models.TransparentDataEncryptionStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "TransparentDataEncryptionStatus"]] = None,
-        **kwargs
-    ):
-        super(TransparentDataEncryption, self).__init__(**kwargs)
-        self.location = None
-        self.status = status
-
-
-class TransparentDataEncryptionActivity(ProxyResource):
-    """Represents a database transparent data encryption Scan.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar status: The status of the database. Possible values include: "Encrypting", "Decrypting".
-    :vartype status: str or ~azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus
-    :ivar percent_complete: The percent complete of the transparent data encryption scan for a
-     database.
-    :vartype percent_complete: float
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'status': {'readonly': True},
-        'percent_complete': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'percent_complete': {'key': 'properties.percentComplete', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TransparentDataEncryptionActivity, self).__init__(**kwargs)
-        self.location = None
-        self.status = None
-        self.percent_complete = None
-
-
-class TransparentDataEncryptionActivityListResult(msrest.serialization.Model):
-    """Represents the response to a list database transparent data encryption activity request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The list of database transparent data encryption activities.
-    :type value: list[~azure.mgmt.sql.models.TransparentDataEncryptionActivity]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[TransparentDataEncryptionActivity]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["TransparentDataEncryptionActivity"],
-        **kwargs
-    ):
-        super(TransparentDataEncryptionActivityListResult, self).__init__(**kwargs)
-        self.value = value
-
-
 class UnlinkParameters(msrest.serialization.Model):
     """Represents the parameters for Unlink Replication Link request.
 
@@ -16011,9 +16192,9 @@ class UpdateLongTermRetentionBackupParameters(msrest.serialization.Model):
     """Contains the information necessary to perform long term retention backup update operation.
 
     :param requested_backup_storage_redundancy: The storage redundancy type of the copied backup.
-     Possible values include: "Geo", "Local", "Zone".
+     Possible values include: "Geo", "Local", "Zone", "GeoZone".
     :type requested_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _attribute_map = {
@@ -16023,7 +16204,7 @@ class UpdateLongTermRetentionBackupParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        requested_backup_storage_redundancy: Optional[Union[str, "RequestedBackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         **kwargs
     ):
         super(UpdateLongTermRetentionBackupParameters, self).__init__(**kwargs)
