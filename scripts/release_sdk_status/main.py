@@ -227,7 +227,7 @@ def run_playback_test(service_name):
         else:
             print_check(f'pytest -s tests>result.txt', path=service_path)
 
-        return get_test_result(service_path+'/results.txt')
+        return get_test_result(service_path+'/result.txt')
 
     return '-, -, -, -\n'
 
