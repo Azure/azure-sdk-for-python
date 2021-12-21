@@ -85,18 +85,18 @@ class PyPIClient:
         if 199 < response.status_code < 400:
             self.get_release_dict(response)
             self.bot_analysis()
-            return '{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(self._package_name,
-                                                                  self.pypi_link,
-                                                                  self.track1_latest,
-                                                                  self.version_date_dict[self.track1_latest],
-                                                                  self.track1_ga,
-                                                                  self.track2_latest,
-                                                                  self.track2_ga,
-                                                                  self.version_date_dict[self.track2_latest],
-                                                                  self.cli_version,
-                                                                  self.track_config,
-                                                                  self.bot_warning,
-                                                                  self.rm_link)
+            return '{},{},{},{},{},{},{},{},{},{},{},{}'.format(self._package_name,
+                                                                self.pypi_link,
+                                                                self.track1_latest,
+                                                                self.version_date_dict[self.track1_latest],
+                                                                self.track1_ga,
+                                                                self.track2_latest,
+                                                                self.track2_ga,
+                                                                self.version_date_dict[self.track2_latest],
+                                                                self.cli_version,
+                                                                self.track_config,
+                                                                self.bot_warning,
+                                                                self.rm_link)
         else:
             self.pypi_link = 'NA'
         return
@@ -177,6 +177,7 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
             if pypi_ins.pypi_link != 'NA':
                 service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
                 test_result = run_playback_test(service_name)
+                text_to_write += test_result
                 all_sdk_status.append(text_to_write)
 
     my_print(f'total pypi package kinds: {len(all_sdk_status)}')
@@ -185,6 +186,7 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
 
 def get_test_result(txt_path):
     with open(txt_path, 'r+') as f:
+        coverage = ' - '
         for line in f.readlines():
             if 'TOTAL' in line:
                 coverage = line.split()[3]
@@ -199,7 +201,7 @@ def get_test_result(txt_path):
                     skipped = re.findall('(\d{1,2}) skipped', line)[0]
                 # print(f'{passed} {failed} {skipped}')
 
-    return f'{coverage}, {passed}, {failed}, {skipped}'
+    return f'{coverage}, {passed}, {failed}, {skipped}\n'
 
 
 def run_playback_test(service_name):
@@ -215,7 +217,19 @@ def run_playback_test(service_name):
     print(test_path)
     print(os.path.exists(test_path))
     print()
-    return ''
+    if os.path.exists(test_path):
+        print_check('pip install -e .', path=service_path)
+        print_check('pip install -r dev_requirements.txt', path=service_path)
+        if os.path.exists(coverage_path+'/operations') and os.path.exists(coverage_path+'/models'):
+            operations_path = coverage_path.replace(service_path, '')+'/operations'
+            models_path = coverage_path.replace(service_path, '')+'/models'
+            print_check(f'pytest -s tests --cov={operations_path} --cov={models_path} >result.txt', path=service_path)
+        else:
+            print_check(f'pytest -s tests>result.txt', path=service_path)
+
+        return get_test_result(service_path+'/results.txt')
+
+    return '-, -, -, -\n'
 
 
 def add_test_result(sdk_info):
@@ -239,7 +253,10 @@ def write_to_csv(sdk_status_list, csv_name):
                        'cli dependency,'
                        'readme config,'
                        'bot advice,'
-                       'readme link\n')
+                       'coverage test,'
+                       'passed,'
+                       'failed,'
+                       'skipped\n')
         file_out.writelines(
             [package for package in sorted(sdk_status_list, key=lambda x: x.split(',')[10], reverse=True)])
 
