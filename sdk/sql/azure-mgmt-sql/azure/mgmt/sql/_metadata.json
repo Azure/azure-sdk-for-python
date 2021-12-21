@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2014-04-01", "2020-11-01-preview", "2021-02-01-preview"],
+    "total_api_version_list": ["2014-04-01", "2020-11-01-preview", "2021-02-01-preview", "2021-05-01-preview"],
     "client": {
         "name": "SqlManagementClient",
         "filename": "_sql_management_client",
@@ -99,7 +99,6 @@
     },
     "operation_groups": {
         "recoverable_databases": "RecoverableDatabasesOperations",
-        "server_connection_policies": "ServerConnectionPoliciesOperations",
         "data_masking_policies": "DataMaskingPoliciesOperations",
         "data_masking_rules": "DataMaskingRulesOperations",
         "geo_backup_policies": "GeoBackupPoliciesOperations",
@@ -110,8 +109,6 @@
         "service_objectives": "ServiceObjectivesOperations",
         "elastic_pool_activities": "ElasticPoolActivitiesOperations",
         "elastic_pool_database_activities": "ElasticPoolDatabaseActivitiesOperations",
-        "transparent_data_encryptions": "TransparentDataEncryptionsOperations",
-        "transparent_data_encryption_activities": "TransparentDataEncryptionActivitiesOperations",
         "server_usages": "ServerUsagesOperations",
         "extended_database_blob_auditing_policies": "ExtendedDatabaseBlobAuditingPoliciesOperations",
         "extended_server_blob_auditing_policies": "ExtendedServerBlobAuditingPoliciesOperations",
@@ -145,8 +142,6 @@
         "job_target_groups": "JobTargetGroupsOperations",
         "job_versions": "JobVersionsOperations",
         "capabilities": "CapabilitiesOperations",
-        "long_term_retention_backups": "LongTermRetentionBackupsOperations",
-        "long_term_retention_managed_instance_backups": "LongTermRetentionManagedInstanceBackupsOperations",
         "long_term_retention_policies": "LongTermRetentionPoliciesOperations",
         "maintenance_window_options": "MaintenanceWindowOptionsOperations",
         "maintenance_windows": "MaintenanceWindowsOperations",
@@ -173,7 +168,6 @@
         "managed_instance_operations": "ManagedInstanceOperationsOperations",
         "managed_instance_private_endpoint_connections": "ManagedInstancePrivateEndpointConnectionsOperations",
         "managed_instance_private_link_resources": "ManagedInstancePrivateLinkResourcesOperations",
-        "managed_instances": "ManagedInstancesOperations",
         "managed_instance_tde_certificates": "ManagedInstanceTdeCertificatesOperations",
         "managed_instance_vulnerability_assessments": "ManagedInstanceVulnerabilityAssessmentsOperations",
         "managed_restorable_dropped_database_backup_short_term_retention_policies": "ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations",
@@ -208,15 +202,20 @@
         "virtual_network_rules": "VirtualNetworkRulesOperations",
         "workload_classifiers": "WorkloadClassifiersOperations",
         "workload_groups": "WorkloadGroupsOperations",
+        "transparent_data_encryptions": "TransparentDataEncryptionsOperations",
         "backup_short_term_retention_policies": "BackupShortTermRetentionPoliciesOperations",
         "database_extensions": "DatabaseExtensionsOperations",
         "database_operations": "DatabaseOperationsOperations",
         "database_usages": "DatabaseUsagesOperations",
         "ledger_digest_uploads": "LedgerDigestUploadsOperations",
         "outbound_firewall_rules": "OutboundFirewallRulesOperations",
+        "servers": "ServersOperations",
+        "usages": "UsagesOperations",
+        "long_term_retention_backups": "LongTermRetentionBackupsOperations",
+        "long_term_retention_managed_instance_backups": "LongTermRetentionManagedInstanceBackupsOperations",
+        "managed_instances": "ManagedInstancesOperations",
         "restorable_dropped_databases": "RestorableDroppedDatabasesOperations",
         "restorable_dropped_managed_databases": "RestorableDroppedManagedDatabasesOperations",
-        "servers": "ServersOperations",
-        "usages": "UsagesOperations"
+        "server_connection_policies": "ServerConnectionPoliciesOperations"
     }
 }
