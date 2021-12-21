@@ -255,8 +255,8 @@ def write_to_csv(sdk_status_list, csv_name):
                        'cli dependency,'
                        'readme config,'
                        'bot advice,'
-                       'coverage test,'
                        'readme link,'
+                       'coverage test,'
                        'passed,'
                        'failed,'
                        'skipped\n')
