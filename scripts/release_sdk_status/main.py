@@ -85,18 +85,18 @@ class PyPIClient:
         if 199 < response.status_code < 400:
             self.get_release_dict(response)
             self.bot_analysis()
-            return '{},{},{},{},{},{},{},{},{},{},{},{}'.format(self._package_name,
-                                                                self.pypi_link,
-                                                                self.track1_latest,
-                                                                self.version_date_dict[self.track1_latest],
-                                                                self.track1_ga,
-                                                                self.track2_latest,
-                                                                self.track2_ga,
-                                                                self.version_date_dict[self.track2_latest],
-                                                                self.cli_version,
-                                                                self.track_config,
-                                                                self.bot_warning,
-                                                                self.rm_link)
+            return '{},{},{},{},{},{},{},{},{},{},{},{},'.format(self._package_name,
+                                                                 self.pypi_link,
+                                                                 self.track1_latest,
+                                                                 self.version_date_dict[self.track1_latest],
+                                                                 self.track1_ga,
+                                                                 self.track2_latest,
+                                                                 self.track2_ga,
+                                                                 self.version_date_dict[self.track2_latest],
+                                                                 self.cli_version,
+                                                                 self.track_config,
+                                                                 self.bot_warning,
+                                                                 self.rm_link)
         else:
             self.pypi_link = 'NA'
         return
@@ -210,13 +210,6 @@ def run_playback_test(service_name):
     service_path = coverage_path.split('/azure/mgmt')[0]
     test_path = service_path + '/tests'
     print(f'****{service_name}*****')
-    print(coverage_path)
-    print(os.path.exists(coverage_path))
-    print(service_path)
-    print(os.path.exists(service_path))
-    print(test_path)
-    print(os.path.exists(test_path))
-    print()
     if os.path.exists(test_path):
         print_check('pip install -r dev_requirements.txt', path=service_path)
         print_check('python setup.py install', path=service_path)
@@ -262,6 +255,7 @@ def write_to_csv(sdk_status_list, csv_name):
                        'readme config,'
                        'bot advice,'
                        'coverage test,'
+                       'readme link,'
                        'passed,'
                        'failed,'
                        'skipped\n')
