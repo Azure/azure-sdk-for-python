@@ -19,7 +19,7 @@ USAGE:
 """
 
 def sample_create_and_deploy_project():
-    # [START query_text]
+    # [START create_and_deploy_project]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
@@ -80,7 +80,7 @@ def sample_create_and_deploy_project():
             project_name=project_name
         )
         for source in sources:
-            print(u"\project: {}".format(source["displayName"]))
+            print(u"project: {}".format(source["displayName"]))
             print(u"\tsource: {}".format(source["source"]))
             print(u"\tsource Uri: {}".format(source["sourceUri"]))
             print(u"\tsource kind: {}".format(source["sourceKind"]))
@@ -101,7 +101,7 @@ def sample_create_and_deploy_project():
         for d in deployments:
             print(d)
 
-    # [END query_text]
+    # [END create_and_deploy_project]
 
 
 if __name__ == '__main__':

@@ -19,11 +19,10 @@ USAGE:
 """
 
 def sample_export_import_project():
-    # [START query_text]
+    # [START export_import_project]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
-    from azure.ai.language.questionanswering.projects import models
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
@@ -35,9 +34,9 @@ def sample_export_import_project():
 
         # create project
         project_name = "IssacNewton"
-        client.question_answering_projects.create_project(
+        client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -47,11 +46,11 @@ def sample_export_import_project():
             })
 
         # export
-        export_poller = client.question_answering_projects.begin_export(
-            project_name=project_name
-            # can't find models for other properties!!! (not even swagger definition is clear!)
+        export_poller = client.begin_export( # returns LROPoller[None] ?!!!!
+            project_name=project_name,
+            format="json"
         )
-        export_poller.result()
+        result = export_poller.result() # still no idea how to get the result !!
 
         # delete old project
         delete_poller = client.question_answering_projects.delete_project(
@@ -79,7 +78,7 @@ def sample_export_import_project():
         client.question_answering_projects.get_project_details(
             project_name=project_name
         )
-    # [END query_text]
+    # [END export_import_project]
 
 
 if __name__ == '__main__':
