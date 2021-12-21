@@ -2,6 +2,7 @@ import os
 import sys
 import ast
 import io
+import re
 import textwrap
 import glob
 import logging
@@ -63,6 +64,19 @@ def parse_setup_requires(setup_path):
 
     return python_requires
 
+def is_track2_package(reqs):
+    for req in reqs:
+        if req.startswith('azure-core'):
+            return True
+    return False
+
+def get_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's new SDK
+    """
+    pkgName, version, _, requires = parse_setup(setup_py_path)
+    is_track2 = is_track2_package(requires)
+    return pkgName, version, is_track2, setup_py_path
+
 def filter_for_compatibility(package_set):
     collected_packages = []
     v = sys.version_info
@@ -76,64 +90,24 @@ def filter_for_compatibility(package_set):
 
     return collected_packages
 
-def remove_omitted_packages(collected_directories):
-    packages = [
-        package_dir
-        for package_dir in collected_directories
-        if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
-    ]
+def get_all_eligible_packages(path):
+    eligible_libraries = []
+    for root, dirs, files in os.walk(os.path.abspath(path)):
+        if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
+            if "setup.py" in files:
+                try:
+                    pkgName, version, is_track2, setup_py_path = get_package_properties(root)
+                    if is_track2:
+                        eligible_libraries.append((pkgName, version, is_track2, setup_py_path))
+                except:
+                    # Skip setup.py if the package cannot be parsed
+                    pass
+    return eligible_libraries
 
-    return packages
+def build_requirements_nightly(packages):
+    pass
 
-def process_glob_string(
-    glob_string,
-    target_root_dir,
-    additional_contains_filter="",
-    filter_type="Build",
-):
-    if glob_string:
-        individual_globs = glob_string.split(",")
-    else:
-        individual_globs = "azure-*"
-    collected_top_level_directories = []
 
-    for glob_string in individual_globs:
-        globbed = glob.glob(
-            os.path.join(target_root_dir, glob_string, "setup.py")
-        ) + glob.glob(os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py"))
-        collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
-
-    # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
-    collected_directories = list(
-        set(
-            [
-                p
-                for p in collected_top_level_directories
-                if additional_contains_filter in p
-            ]
-        )
-    )
-
-    # if we have individually queued this specific package, it's obvious that we want to build it specifically
-    # in this case, do not honor the omission list
-    if len(collected_directories) == 1:
-        pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
-    # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
-    # packages
-    else:
-        allowed_package_set = remove_omitted_packages(collected_directories)
-        pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
-
-    # Apply filter based on filter type. for e.g. Docs, Regression, Management
-    pkg_set_ci_filtered = list(filter(omit_funct_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
-    logging.info(
-        "Target packages after filtering by CI: {}".format(
-            pkg_set_ci_filtered
-        )
-    )
-    logging.info(
-        "Package(s) omitted by CI filter: {}".format(
-            list(set(collected_directories) - set(pkg_set_ci_filtered))
-        )
-    )
-    return sorted(pkg_set_ci_filtered)
+if __name__ == '__main__':
+    packages = get_all_eligible_packages('.')
+    build_requirements_nightly(packages)

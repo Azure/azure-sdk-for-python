@@ -87,6 +87,21 @@ steps:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
+  - task: PythonScript@0
+    displayName: 'Run Nightly SmokeTests'
+    condition: and(succeededOrFailed(), ne(variables['Skip.NightlySmkTests'],'true'))
+    inputs:
+     scriptPath: 'eng/scripts/smoketest/main.py'
+     arguments: '"--service=${{parameters.ServiceDirectory}} --toxenv=nightlysmktests'
+
+  - task: PowerShell@2
+    displayName: 'Run Nightly SmokeTests'
+    inputs:
+      targetType: 'filePath'
+      filePath: ./eng/scripts/Smoke_Tests_Nightly.ps1
+      pwsh: true
+      arguments: '${{ parameters.ServiceDirectory }}'
+
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
