@@ -50,30 +50,31 @@ def sample_export_import_project():
             project_name=project_name,
             format="json"
         )
-        result = export_poller.result() # still no idea how to get the result !!
+        export_poller.result() # still no idea how to get the result !!
 
         # delete old project
-        delete_poller = client.question_answering_projects.delete_project(
+        delete_poller = client.begin_delete_project(
             project_name=project_name
         )
         delete_poller.result()
 
         # import project
-        import_poller = client.question_answering_projects.begin_import_method(
+        import_poller = client.begin_import_assets(
             project_name=project_name,
-            body={
-                "file_uri":"asdsadasdasd"
+            format="json",
+            options={
+                "file_uri":"should/be/export/result/url"
             }
         )
         import_poller.result()
 
         # list projects
         print("view all qna projects:")
-        qna_projects = client.question_answering_projects.list_projects()
+        qna_projects = client.list_projects()
         for p in qna_projects:
-            print(u"project: {}".format(p.project_name))
-            print(u"\tlanguage: {}".format(p.language))
-            print(u"\tdescription: {}".format(p.description))
+            print(u"project: {}".format(p["projectName"]))
+            print(u"\tlanguage: {}".format(p["language"]))
+            print(u"\tdescription: {}".format(p["description"]))
 
         client.question_answering_projects.get_project_details(
             project_name=project_name
