@@ -214,8 +214,8 @@ def run_playback_test(service_name):
         print_check('pip install -r dev_requirements.txt', path=service_path)
         print_check('python setup.py install', path=service_path)
         if os.path.exists(coverage_path+'/operations') and os.path.exists(coverage_path+'/models'):
-            operations_path = coverage_path.replace(service_path, '')+'/operations'
-            models_path = coverage_path.replace(service_path, '')+'/models'
+            operations_path = coverage_path+'/operations'
+            models_path = coverage_path+'/models'
             try:
                 print_check(f'pytest -s tests --cov={operations_path} --cov={models_path} >result.txt', path=service_path)
             except Exception as e:
