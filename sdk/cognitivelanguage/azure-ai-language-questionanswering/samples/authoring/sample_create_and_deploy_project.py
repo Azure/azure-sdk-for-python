@@ -58,7 +58,7 @@ def sample_create_and_deploy_project():
             print(u"\tlanguage: {}".format(p["language"]))
             print(u"\tdescription: {}".format(p["description"]))
 
-        # update sources
+        # update sources (REQUIRED TO DEPLOY PROJECT)
         update_sources_poller = client.begin_update_sources(
             project_name=project_name,
             sources=[
