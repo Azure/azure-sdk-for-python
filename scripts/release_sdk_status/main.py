@@ -86,19 +86,19 @@ class PyPIClient:
         if 199 < response.status_code < 400:
             self.get_release_dict(response)
             self.bot_analysis()
-            return '{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(self._package_name,
-                                                                   self.pypi_link,
-                                                                   self.track1_latest,
-                                                                   self.version_date_dict[self.track1_latest],
-                                                                   self.track1_ga,
-                                                                   self.track2_latest,
-                                                                   self.track2_ga,
-                                                                   self.version_date_dict[self.track2_latest],
-                                                                   self.cli_version,
-                                                                   self.track_config,
-                                                                   self.bot_warning,
-                                                                   self.rm_link,
-                                                                   self.multi_api)
+            return '{},{},{},{},{},{},{},{},{},{},{},{},{},'.format(self._package_name,
+                                                                    self.pypi_link,
+                                                                    self.track1_latest,
+                                                                    self.version_date_dict[self.track1_latest],
+                                                                    self.track1_ga,
+                                                                    self.track2_latest,
+                                                                    self.track2_ga,
+                                                                    self.version_date_dict[self.track2_latest],
+                                                                    self.cli_version,
+                                                                    self.track_config,
+                                                                    self.bot_warning,
+                                                                    self.rm_link,
+                                                                    self.multi_api)
         else:
             self.pypi_link = 'NA'
         return
@@ -237,14 +237,6 @@ def run_playback_test(service_name):
     return '-, -, -, -\n'
 
 
-def add_test_result(sdk_info):
-    for sdk in sdk_info:
-        package = sdk.split(',')[0].replace('azure-mgmt-', '')
-
-        SERVICE_TEST_PATH[package] = ''
-    return ''
-
-
 def write_to_csv(sdk_status_list, csv_name):
     with open(csv_name, 'w') as file_out:
         file_out.write('package name,'
@@ -338,6 +330,10 @@ def sdk_info_from_swagger():
                 if sdk_folder_re.search(text) and sdk_folder_path == False:
                     SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
                     sdk_folder_path = True
+                if '$(multiapi)' in text and multi_api == '':
+                    multi_api = 'True'
+                if '- multiapiscript: true' in text:
+                    multi_api = 'fake'
 
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
@@ -374,7 +370,6 @@ def main():
     sdk_info = sdk_info_from_swagger()
     
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-    all_sdk_status1 = add_test_result(sdk_info)
     print('**')
     print(os.getenv('SWAGGER_REPO'))
     print(os.getenv('SDK_REPO'))
