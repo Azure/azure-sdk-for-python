@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. This change will be effective azure-storage-queue>12.1.6 For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure Storage Queues client library for Python
 
 Azure Queue storage is a service for storing large numbers of messages that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. A single queue message can be up to 64 KiB in size, and a queue can contain millions of messages, up to the total capacity limit of a storage account.
@@ -12,7 +15,7 @@ Common uses of Queue storage include:
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.5 or later is required to use this package (ending Python 2.7 support starting 01 January 2022).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 

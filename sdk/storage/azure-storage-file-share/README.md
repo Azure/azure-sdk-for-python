@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. This change will be effective azure-storage-file-share>12.7.0b1 For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure Storage File Share client library for Python
 Azure File Share storage offers fully managed file shares in the cloud that are accessible via the industry standard [Server Message Block (SMB) protocol](https://docs.microsoft.com/windows/desktop/FileIO/microsoft-smb-protocol-and-cifs-protocol-overview). Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS. Additionally, Azure file shares can be cached on Windows Servers with Azure File Sync for fast access near where the data is being used.
 
@@ -12,7 +15,7 @@ Azure file shares can be used to:
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.5 or later is required to use this package (ending Python 2.7 support starting 01 January 2022).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
