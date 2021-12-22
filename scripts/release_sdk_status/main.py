@@ -221,13 +221,13 @@ def run_playback_test(service_name):
                 print_check(f'pytest -s tests --cov={operations_path} --cov={models_path} >result.txt', path=service_path)
             except Exception as e:
                 print(f'{service_name} test ERROR')
-                return '-, test, failed, -\n'
+                return '-, 0, 0, 0\n'
         else:
             try:
                 print_check(f'pytest -s tests>result.txt', path=service_path)
             except Exception as e:
                 print(f'{service_name} test ERROR')
-                return '-, test, failed, -\n'
+                return '-, 0, 0, 0\n'
         if os.path.exists(service_path+'/result.txt'):
             return get_test_result(service_path+'/result.txt')
 
