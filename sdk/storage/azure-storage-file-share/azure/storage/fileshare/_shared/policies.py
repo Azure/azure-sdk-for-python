@@ -73,7 +73,7 @@ def retry_hook(settings, **kwargs):
         settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
 
 
-def is_retry(response, mode):
+def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     """Is this method/status code retryable? (Based on allowlists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
