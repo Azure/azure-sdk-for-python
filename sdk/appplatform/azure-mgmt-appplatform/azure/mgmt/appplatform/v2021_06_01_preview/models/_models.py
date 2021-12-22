@@ -30,6 +30,8 @@ class ApplicationInsightsAgentVersions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ApplicationInsightsAgentVersions, self).__init__(**kwargs)
         self.java = None
 
@@ -63,6 +65,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -98,6 +102,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -112,12 +118,12 @@ class AppResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the App resource.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResourceProperties
-    :param identity: The Managed Identity type of the app resource.
-    :type identity: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ManagedIdentityProperties
-    :param location: The GEO location of the application, always the same with its parent resource.
-    :type location: str
+    :ivar properties: Properties of the App resource.
+    :vartype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResourceProperties
+    :ivar identity: The Managed Identity type of the app resource.
+    :vartype identity: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ManagedIdentityProperties
+    :ivar location: The GEO location of the application, always the same with its parent resource.
+    :vartype location: str
     """
 
     _validation = {
@@ -139,6 +145,16 @@ class AppResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the App resource.
+        :paramtype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResourceProperties
+        :keyword identity: The Managed Identity type of the app resource.
+        :paramtype identity:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ManagedIdentityProperties
+        :keyword location: The GEO location of the application, always the same with its parent
+         resource.
+        :paramtype location: str
+        """
         super(AppResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.identity = kwargs.get('identity', None)
@@ -148,11 +164,11 @@ class AppResource(ProxyResource):
 class AppResourceCollection(msrest.serialization.Model):
     """Object that includes an array of App resources and a possible link for next set.
 
-    :param value: Collection of App resources.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResource]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar value: Collection of App resources.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResource]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -164,6 +180,13 @@ class AppResourceCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Collection of App resources.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResource]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
         super(AppResourceCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -174,28 +197,28 @@ class AppResourceProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param public: Indicates whether the App exposes public endpoint.
-    :type public: bool
+    :ivar public: Indicates whether the App exposes public endpoint.
+    :vartype public: bool
     :ivar url: URL of the App.
     :vartype url: str
     :ivar provisioning_state: Provisioning state of the App. Possible values include: "Succeeded",
      "Failed", "Creating", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.AppResourceProvisioningState
-    :param active_deployment_name: Name of the active deployment of the App.
-    :type active_deployment_name: str
-    :param fqdn: Fully qualified dns Name.
-    :type fqdn: str
-    :param https_only: Indicate if only https is allowed.
-    :type https_only: bool
+    :ivar active_deployment_name: Name of the active deployment of the App.
+    :vartype active_deployment_name: str
+    :ivar fqdn: Fully qualified dns Name.
+    :vartype fqdn: str
+    :ivar https_only: Indicate if only https is allowed.
+    :vartype https_only: bool
     :ivar created_time: Date time when the resource is created.
     :vartype created_time: ~datetime.datetime
-    :param temporary_disk: Temporary disk settings.
-    :type temporary_disk: ~azure.mgmt.appplatform.v2021_06_01_preview.models.TemporaryDisk
-    :param persistent_disk: Persistent disk settings.
-    :type persistent_disk: ~azure.mgmt.appplatform.v2021_06_01_preview.models.PersistentDisk
-    :param enable_end_to_end_tls: Indicate if end to end TLS is enabled.
-    :type enable_end_to_end_tls: bool
+    :ivar temporary_disk: Temporary disk settings.
+    :vartype temporary_disk: ~azure.mgmt.appplatform.v2021_06_01_preview.models.TemporaryDisk
+    :ivar persistent_disk: Persistent disk settings.
+    :vartype persistent_disk: ~azure.mgmt.appplatform.v2021_06_01_preview.models.PersistentDisk
+    :ivar enable_end_to_end_tls: Indicate if end to end TLS is enabled.
+    :vartype enable_end_to_end_tls: bool
     """
 
     _validation = {
@@ -221,27 +244,43 @@ class AppResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword public: Indicates whether the App exposes public endpoint.
+        :paramtype public: bool
+        :keyword active_deployment_name: Name of the active deployment of the App.
+        :paramtype active_deployment_name: str
+        :keyword fqdn: Fully qualified dns Name.
+        :paramtype fqdn: str
+        :keyword https_only: Indicate if only https is allowed.
+        :paramtype https_only: bool
+        :keyword temporary_disk: Temporary disk settings.
+        :paramtype temporary_disk: ~azure.mgmt.appplatform.v2021_06_01_preview.models.TemporaryDisk
+        :keyword persistent_disk: Persistent disk settings.
+        :paramtype persistent_disk: ~azure.mgmt.appplatform.v2021_06_01_preview.models.PersistentDisk
+        :keyword enable_end_to_end_tls: Indicate if end to end TLS is enabled.
+        :paramtype enable_end_to_end_tls: bool
+        """
         super(AppResourceProperties, self).__init__(**kwargs)
         self.public = kwargs.get('public', None)
         self.url = None
         self.provisioning_state = None
         self.active_deployment_name = kwargs.get('active_deployment_name', None)
         self.fqdn = kwargs.get('fqdn', None)
-        self.https_only = kwargs.get('https_only', None)
+        self.https_only = kwargs.get('https_only', False)
         self.created_time = None
         self.temporary_disk = kwargs.get('temporary_disk', None)
         self.persistent_disk = kwargs.get('persistent_disk', None)
-        self.enable_end_to_end_tls = kwargs.get('enable_end_to_end_tls', None)
+        self.enable_end_to_end_tls = kwargs.get('enable_end_to_end_tls', False)
 
 
 class AvailableOperations(msrest.serialization.Model):
     """Available operations of the service.
 
-    :param value: Collection of available operation details.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationDetail]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar value: Collection of available operation details.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationDetail]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -253,6 +292,13 @@ class AvailableOperations(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Collection of available operation details.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationDetail]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
         super(AvailableOperations, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -280,6 +326,8 @@ class AvailableRuntimeVersions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AvailableRuntimeVersions, self).__init__(**kwargs)
         self.value = None
 
@@ -295,8 +343,9 @@ class BindingResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the Binding resource.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.BindingResourceProperties
+    :ivar properties: Properties of the Binding resource.
+    :vartype properties:
+     ~azure.mgmt.appplatform.v2021_06_01_preview.models.BindingResourceProperties
     """
 
     _validation = {
@@ -316,6 +365,11 @@ class BindingResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the Binding resource.
+        :paramtype properties:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.BindingResourceProperties
+        """
         super(BindingResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
 
@@ -323,11 +377,11 @@ class BindingResource(ProxyResource):
 class BindingResourceCollection(msrest.serialization.Model):
     """Object that includes an array of Binding resources and a possible link for next set.
 
-    :param value: Collection of Binding resources.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.BindingResource]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar value: Collection of Binding resources.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.BindingResource]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -339,6 +393,13 @@ class BindingResourceCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Collection of Binding resources.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.BindingResource]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
         super(BindingResourceCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -353,12 +414,12 @@ class BindingResourceProperties(msrest.serialization.Model):
     :vartype resource_name: str
     :ivar resource_type: The standard Azure resource type of the bound resource.
     :vartype resource_type: str
-    :param resource_id: The Azure resource id of the bound resource.
-    :type resource_id: str
-    :param key: The key of the bound resource.
-    :type key: str
-    :param binding_parameters: Binding parameters of the Binding resource.
-    :type binding_parameters: dict[str, any]
+    :ivar resource_id: The Azure resource id of the bound resource.
+    :vartype resource_id: str
+    :ivar key: The key of the bound resource.
+    :vartype key: str
+    :ivar binding_parameters: Binding parameters of the Binding resource.
+    :vartype binding_parameters: dict[str, any]
     :ivar generated_properties: The generated Spring Boot property file for this binding. The
      secret will be deducted.
     :vartype generated_properties: str
@@ -391,6 +452,14 @@ class BindingResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword resource_id: The Azure resource id of the bound resource.
+        :paramtype resource_id: str
+        :keyword key: The key of the bound resource.
+        :paramtype key: str
+        :keyword binding_parameters: Binding parameters of the Binding resource.
+        :paramtype binding_parameters: dict[str, any]
+        """
         super(BindingResourceProperties, self).__init__(**kwargs)
         self.resource_name = None
         self.resource_type = None
@@ -411,12 +480,12 @@ class CertificateProperties(msrest.serialization.Model):
 
     :ivar thumbprint: The thumbprint of certificate.
     :vartype thumbprint: str
-    :param vault_uri: Required. The vault uri of user key vault.
-    :type vault_uri: str
-    :param key_vault_cert_name: Required. The certificate name of key vault.
-    :type key_vault_cert_name: str
-    :param cert_version: The certificate version of key vault.
-    :type cert_version: str
+    :ivar vault_uri: Required. The vault uri of user key vault.
+    :vartype vault_uri: str
+    :ivar key_vault_cert_name: Required. The certificate name of key vault.
+    :vartype key_vault_cert_name: str
+    :ivar cert_version: The certificate version of key vault.
+    :vartype cert_version: str
     :ivar issuer: The issuer of certificate.
     :vartype issuer: str
     :ivar issued_date: The issue date of certificate.
@@ -460,6 +529,14 @@ class CertificateProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword vault_uri: Required. The vault uri of user key vault.
+        :paramtype vault_uri: str
+        :keyword key_vault_cert_name: Required. The certificate name of key vault.
+        :paramtype key_vault_cert_name: str
+        :keyword cert_version: The certificate version of key vault.
+        :paramtype cert_version: str
+        """
         super(CertificateProperties, self).__init__(**kwargs)
         self.thumbprint = None
         self.vault_uri = kwargs['vault_uri']
@@ -484,8 +561,8 @@ class CertificateResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the certificate resource payload.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CertificateProperties
+    :ivar properties: Properties of the certificate resource payload.
+    :vartype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CertificateProperties
     """
 
     _validation = {
@@ -505,6 +582,10 @@ class CertificateResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the certificate resource payload.
+        :paramtype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CertificateProperties
+        """
         super(CertificateResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
 
@@ -512,10 +593,10 @@ class CertificateResource(ProxyResource):
 class CertificateResourceCollection(msrest.serialization.Model):
     """Collection compose of certificate resources list and a possible link for next page.
 
-    :param value: The certificate resources list.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CertificateResource]
-    :param next_link: The link to next page of certificate list.
-    :type next_link: str
+    :ivar value: The certificate resources list.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CertificateResource]
+    :ivar next_link: The link to next page of certificate list.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -527,6 +608,12 @@ class CertificateResourceCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: The certificate resources list.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CertificateResource]
+        :keyword next_link: The link to next page of certificate list.
+        :paramtype next_link: str
+        """
         super(CertificateResourceCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -535,17 +622,17 @@ class CertificateResourceCollection(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -559,6 +646,19 @@ class CloudErrorBody(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
@@ -576,8 +676,8 @@ class ClusterResourceProperties(msrest.serialization.Model):
      "MoveFailed".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ProvisioningState
-    :param network_profile: Network profile of the Service.
-    :type network_profile: ~azure.mgmt.appplatform.v2021_06_01_preview.models.NetworkProfile
+    :ivar network_profile: Network profile of the Service.
+    :vartype network_profile: ~azure.mgmt.appplatform.v2021_06_01_preview.models.NetworkProfile
     :ivar version: Version of the Service.
     :vartype version: int
     :ivar service_id: ServiceInstanceEntity GUID which uniquely identifies a created resource.
@@ -601,6 +701,10 @@ class ClusterResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword network_profile: Network profile of the Service.
+        :paramtype network_profile: ~azure.mgmt.appplatform.v2021_06_01_preview.models.NetworkProfile
+        """
         super(ClusterResourceProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.network_profile = kwargs.get('network_profile', None)
@@ -613,27 +717,27 @@ class ConfigServerGitProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param repositories: Repositories of git.
-    :type repositories:
+    :ivar repositories: Repositories of git.
+    :vartype repositories:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.GitPatternRepository]
-    :param uri: Required. URI of the repository.
-    :type uri: str
-    :param label: Label of the repository.
-    :type label: str
-    :param search_paths: Searching path of the repository.
-    :type search_paths: list[str]
-    :param username: Username of git repository basic auth.
-    :type username: str
-    :param password: Password of git repository basic auth.
-    :type password: str
-    :param host_key: Public sshKey of git repository.
-    :type host_key: str
-    :param host_key_algorithm: SshKey algorithm of git repository.
-    :type host_key_algorithm: str
-    :param private_key: Private sshKey algorithm of git repository.
-    :type private_key: str
-    :param strict_host_key_checking: Strict host key checking or not.
-    :type strict_host_key_checking: bool
+    :ivar uri: Required. URI of the repository.
+    :vartype uri: str
+    :ivar label: Label of the repository.
+    :vartype label: str
+    :ivar search_paths: Searching path of the repository.
+    :vartype search_paths: list[str]
+    :ivar username: Username of git repository basic auth.
+    :vartype username: str
+    :ivar password: Password of git repository basic auth.
+    :vartype password: str
+    :ivar host_key: Public sshKey of git repository.
+    :vartype host_key: str
+    :ivar host_key_algorithm: SshKey algorithm of git repository.
+    :vartype host_key_algorithm: str
+    :ivar private_key: Private sshKey algorithm of git repository.
+    :vartype private_key: str
+    :ivar strict_host_key_checking: Strict host key checking or not.
+    :vartype strict_host_key_checking: bool
     """
 
     _validation = {
@@ -657,6 +761,29 @@ class ConfigServerGitProperty(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword repositories: Repositories of git.
+        :paramtype repositories:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.GitPatternRepository]
+        :keyword uri: Required. URI of the repository.
+        :paramtype uri: str
+        :keyword label: Label of the repository.
+        :paramtype label: str
+        :keyword search_paths: Searching path of the repository.
+        :paramtype search_paths: list[str]
+        :keyword username: Username of git repository basic auth.
+        :paramtype username: str
+        :keyword password: Password of git repository basic auth.
+        :paramtype password: str
+        :keyword host_key: Public sshKey of git repository.
+        :paramtype host_key: str
+        :keyword host_key_algorithm: SshKey algorithm of git repository.
+        :paramtype host_key_algorithm: str
+        :keyword private_key: Private sshKey algorithm of git repository.
+        :paramtype private_key: str
+        :keyword strict_host_key_checking: Strict host key checking or not.
+        :paramtype strict_host_key_checking: bool
+        """
         super(ConfigServerGitProperty, self).__init__(**kwargs)
         self.repositories = kwargs.get('repositories', None)
         self.uri = kwargs['uri']
@@ -679,10 +806,10 @@ class ConfigServerProperties(msrest.serialization.Model):
      "Deleted", "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerState
-    :param error: Error when apply config server settings.
-    :type error: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Error
-    :param config_server: Settings of config server.
-    :type config_server: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerSettings
+    :ivar error: Error when apply config server settings.
+    :vartype error: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Error
+    :ivar config_server: Settings of config server.
+    :vartype config_server: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerSettings
     """
 
     _validation = {
@@ -699,6 +826,13 @@ class ConfigServerProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword error: Error when apply config server settings.
+        :paramtype error: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Error
+        :keyword config_server: Settings of config server.
+        :paramtype config_server:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerSettings
+        """
         super(ConfigServerProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.error = kwargs.get('error', None)
@@ -716,8 +850,8 @@ class ConfigServerResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the Config Server resource.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerProperties
+    :ivar properties: Properties of the Config Server resource.
+    :vartype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerProperties
     """
 
     _validation = {
@@ -737,6 +871,11 @@ class ConfigServerResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the Config Server resource.
+        :paramtype properties:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerProperties
+        """
         super(ConfigServerResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
 
@@ -744,8 +883,9 @@ class ConfigServerResource(ProxyResource):
 class ConfigServerSettings(msrest.serialization.Model):
     """The settings of config server.
 
-    :param git_property: Property of git environment.
-    :type git_property: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerGitProperty
+    :ivar git_property: Property of git environment.
+    :vartype git_property:
+     ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerGitProperty
     """
 
     _attribute_map = {
@@ -756,6 +896,11 @@ class ConfigServerSettings(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword git_property: Property of git environment.
+        :paramtype git_property:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerGitProperty
+        """
         super(ConfigServerSettings, self).__init__(**kwargs)
         self.git_property = kwargs.get('git_property', None)
 
@@ -763,12 +908,12 @@ class ConfigServerSettings(msrest.serialization.Model):
 class ConfigServerSettingsErrorRecord(msrest.serialization.Model):
     """Error record of the config server settings.
 
-    :param name: The name of the config server settings error record.
-    :type name: str
-    :param uri: The uri of the config server settings error record.
-    :type uri: str
-    :param messages: The detail error messages of the record.
-    :type messages: list[str]
+    :ivar name: The name of the config server settings error record.
+    :vartype name: str
+    :ivar uri: The uri of the config server settings error record.
+    :vartype uri: str
+    :ivar messages: The detail error messages of the record.
+    :vartype messages: list[str]
     """
 
     _attribute_map = {
@@ -781,6 +926,14 @@ class ConfigServerSettingsErrorRecord(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: The name of the config server settings error record.
+        :paramtype name: str
+        :keyword uri: The uri of the config server settings error record.
+        :paramtype uri: str
+        :keyword messages: The detail error messages of the record.
+        :paramtype messages: list[str]
+        """
         super(ConfigServerSettingsErrorRecord, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.uri = kwargs.get('uri', None)
@@ -790,10 +943,10 @@ class ConfigServerSettingsErrorRecord(msrest.serialization.Model):
 class ConfigServerSettingsValidateResult(msrest.serialization.Model):
     """Validation result for config server settings.
 
-    :param is_valid: Indicate if the config server settings are valid.
-    :type is_valid: bool
-    :param details: The detail validation results.
-    :type details:
+    :ivar is_valid: Indicate if the config server settings are valid.
+    :vartype is_valid: bool
+    :ivar details: The detail validation results.
+    :vartype details:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerSettingsErrorRecord]
     """
 
@@ -806,6 +959,13 @@ class ConfigServerSettingsValidateResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword is_valid: Indicate if the config server settings are valid.
+        :paramtype is_valid: bool
+        :keyword details: The detail validation results.
+        :paramtype details:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ConfigServerSettingsErrorRecord]
+        """
         super(ConfigServerSettingsValidateResult, self).__init__(**kwargs)
         self.is_valid = kwargs.get('is_valid', None)
         self.details = kwargs.get('details', None)
@@ -814,19 +974,19 @@ class ConfigServerSettingsValidateResult(msrest.serialization.Model):
 class CustomContainer(msrest.serialization.Model):
     """Custom container payload.
 
-    :param server: The name of the registry that contains the container image.
-    :type server: str
-    :param container_image: Container image of the custom container. This should be in the form of
+    :ivar server: The name of the registry that contains the container image.
+    :vartype server: str
+    :ivar container_image: Container image of the custom container. This should be in the form of
      :code:`<repository>`::code:`<tag>` without the server name of the registry.
-    :type container_image: str
-    :param command: Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is
+    :vartype container_image: str
+    :ivar command: Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is
      used if this is not provided.
-    :type command: list[str]
-    :param args: Arguments to the entrypoint. The docker image's CMD is used if this is not
+    :vartype command: list[str]
+    :ivar args: Arguments to the entrypoint. The docker image's CMD is used if this is not
      provided.
-    :type args: list[str]
-    :param image_registry_credential: Credential of the image registry.
-    :type image_registry_credential:
+    :vartype args: list[str]
+    :ivar image_registry_credential: Credential of the image registry.
+    :vartype image_registry_credential:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ImageRegistryCredential
     """
 
@@ -842,6 +1002,22 @@ class CustomContainer(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword server: The name of the registry that contains the container image.
+        :paramtype server: str
+        :keyword container_image: Container image of the custom container. This should be in the form
+         of :code:`<repository>`::code:`<tag>` without the server name of the registry.
+        :paramtype container_image: str
+        :keyword command: Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT
+         is used if this is not provided.
+        :paramtype command: list[str]
+        :keyword args: Arguments to the entrypoint. The docker image's CMD is used if this is not
+         provided.
+        :paramtype args: list[str]
+        :keyword image_registry_credential: Credential of the image registry.
+        :paramtype image_registry_credential:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ImageRegistryCredential
+        """
         super(CustomContainer, self).__init__(**kwargs)
         self.server = kwargs.get('server', None)
         self.container_image = kwargs.get('container_image', None)
@@ -855,12 +1031,12 @@ class CustomDomainProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param thumbprint: The thumbprint of bound certificate.
-    :type thumbprint: str
+    :ivar thumbprint: The thumbprint of bound certificate.
+    :vartype thumbprint: str
     :ivar app_name: The app name of domain.
     :vartype app_name: str
-    :param cert_name: The bound certificate name of domain.
-    :type cert_name: str
+    :ivar cert_name: The bound certificate name of domain.
+    :vartype cert_name: str
     """
 
     _validation = {
@@ -877,6 +1053,12 @@ class CustomDomainProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword thumbprint: The thumbprint of bound certificate.
+        :paramtype thumbprint: str
+        :keyword cert_name: The bound certificate name of domain.
+        :paramtype cert_name: str
+        """
         super(CustomDomainProperties, self).__init__(**kwargs)
         self.thumbprint = kwargs.get('thumbprint', None)
         self.app_name = None
@@ -894,8 +1076,8 @@ class CustomDomainResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the custom domain resource.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomDomainProperties
+    :ivar properties: Properties of the custom domain resource.
+    :vartype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomDomainProperties
     """
 
     _validation = {
@@ -915,6 +1097,11 @@ class CustomDomainResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the custom domain resource.
+        :paramtype properties:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomDomainProperties
+        """
         super(CustomDomainResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
 
@@ -922,10 +1109,10 @@ class CustomDomainResource(ProxyResource):
 class CustomDomainResourceCollection(msrest.serialization.Model):
     """Collection compose of a custom domain resources list and a possible link for next page.
 
-    :param value: The custom domain resources list.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomDomainResource]
-    :param next_link: The link to next page of custom domain list.
-    :type next_link: str
+    :ivar value: The custom domain resources list.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomDomainResource]
+    :ivar next_link: The link to next page of custom domain list.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -937,6 +1124,12 @@ class CustomDomainResourceCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: The custom domain resources list.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomDomainResource]
+        :keyword next_link: The link to next page of custom domain list.
+        :paramtype next_link: str
+        """
         super(CustomDomainResourceCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -947,8 +1140,8 @@ class CustomDomainValidatePayload(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name to be validated.
-    :type name: str
+    :ivar name: Required. Name to be validated.
+    :vartype name: str
     """
 
     _validation = {
@@ -963,6 +1156,10 @@ class CustomDomainValidatePayload(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name to be validated.
+        :paramtype name: str
+        """
         super(CustomDomainValidatePayload, self).__init__(**kwargs)
         self.name = kwargs['name']
 
@@ -970,10 +1167,10 @@ class CustomDomainValidatePayload(msrest.serialization.Model):
 class CustomDomainValidateResult(msrest.serialization.Model):
     """Validation result for custom domain.
 
-    :param is_valid: Indicates if domain name is valid.
-    :type is_valid: bool
-    :param message: Message of why domain name is invalid.
-    :type message: str
+    :ivar is_valid: Indicates if domain name is valid.
+    :vartype is_valid: bool
+    :ivar message: Message of why domain name is invalid.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -985,6 +1182,12 @@ class CustomDomainValidateResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword is_valid: Indicates if domain name is valid.
+        :paramtype is_valid: bool
+        :keyword message: Message of why domain name is invalid.
+        :paramtype message: str
+        """
         super(CustomDomainValidateResult, self).__init__(**kwargs)
         self.is_valid = kwargs.get('is_valid', None)
         self.message = kwargs.get('message', None)
@@ -1027,6 +1230,8 @@ class DeploymentInstance(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeploymentInstance, self).__init__(**kwargs)
         self.name = None
         self.status = None
@@ -1046,11 +1251,11 @@ class DeploymentResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the Deployment resource.
-    :type properties:
+    :ivar properties: Properties of the Deployment resource.
+    :vartype properties:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentResourceProperties
-    :param sku: Sku of the Deployment resource.
-    :type sku: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Sku
+    :ivar sku: Sku of the Deployment resource.
+    :vartype sku: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Sku
     """
 
     _validation = {
@@ -1071,6 +1276,13 @@ class DeploymentResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the Deployment resource.
+        :paramtype properties:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentResourceProperties
+        :keyword sku: Sku of the Deployment resource.
+        :paramtype sku: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Sku
+        """
         super(DeploymentResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.sku = kwargs.get('sku', None)
@@ -1079,11 +1291,11 @@ class DeploymentResource(ProxyResource):
 class DeploymentResourceCollection(msrest.serialization.Model):
     """Object that includes an array of App resources and a possible link for next set.
 
-    :param value: Collection of Deployment resources.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentResource]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar value: Collection of Deployment resources.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentResource]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1095,6 +1307,13 @@ class DeploymentResourceCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Collection of Deployment resources.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentResource]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
         super(DeploymentResourceCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -1105,12 +1324,12 @@ class DeploymentResourceProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param source: Uploaded source information of the deployment.
-    :type source: ~azure.mgmt.appplatform.v2021_06_01_preview.models.UserSourceInfo
+    :ivar source: Uploaded source information of the deployment.
+    :vartype source: ~azure.mgmt.appplatform.v2021_06_01_preview.models.UserSourceInfo
     :ivar app_name: App name of the deployment.
     :vartype app_name: str
-    :param deployment_settings: Deployment settings of the Deployment.
-    :type deployment_settings:
+    :ivar deployment_settings: Deployment settings of the Deployment.
+    :vartype deployment_settings:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentSettings
     :ivar provisioning_state: Provisioning state of the Deployment. Possible values include:
      "Creating", "Updating", "Succeeded", "Failed".
@@ -1152,6 +1371,13 @@ class DeploymentResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword source: Uploaded source information of the deployment.
+        :paramtype source: ~azure.mgmt.appplatform.v2021_06_01_preview.models.UserSourceInfo
+        :keyword deployment_settings: Deployment settings of the Deployment.
+        :paramtype deployment_settings:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.DeploymentSettings
+        """
         super(DeploymentResourceProperties, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
         self.app_name = None
@@ -1166,27 +1392,28 @@ class DeploymentResourceProperties(msrest.serialization.Model):
 class DeploymentSettings(msrest.serialization.Model):
     """Deployment settings payload.
 
-    :param cpu: Required CPU. This should be 1 for Basic tier, and in range [1, 4] for Standard
+    :ivar cpu: Required CPU. This should be 1 for Basic tier, and in range [1, 4] for Standard
      tier. This is deprecated starting from API version 2021-06-01-preview. Please use the
      resourceRequests field to set the CPU size.
-    :type cpu: int
-    :param memory_in_gb: Required Memory size in GB. This should be in range [1, 2] for Basic tier,
+    :vartype cpu: int
+    :ivar memory_in_gb: Required Memory size in GB. This should be in range [1, 2] for Basic tier,
      and in range [1, 8] for Standard tier. This is deprecated starting from API version
      2021-06-01-preview. Please use the resourceRequests field to set the the memory size.
-    :type memory_in_gb: int
-    :param resource_requests: The requested resource quantity for required CPU and Memory. It is
+    :vartype memory_in_gb: int
+    :ivar resource_requests: The requested resource quantity for required CPU and Memory. It is
      recommended that using this field to represent the required CPU and Memory, the old field cpu
      and memoryInGB will be deprecated later.
-    :type resource_requests: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceRequests
-    :param jvm_options: JVM parameter.
-    :type jvm_options: str
-    :param net_core_main_entry_path: The path to the .NET executable relative to zip root.
-    :type net_core_main_entry_path: str
-    :param environment_variables: Collection of environment variables.
-    :type environment_variables: dict[str, str]
-    :param runtime_version: Runtime version. Possible values include: "Java_8", "Java_11",
-     "NetCore_31".
-    :type runtime_version: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.RuntimeVersion
+    :vartype resource_requests: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceRequests
+    :ivar jvm_options: JVM parameter.
+    :vartype jvm_options: str
+    :ivar net_core_main_entry_path: The path to the .NET executable relative to zip root.
+    :vartype net_core_main_entry_path: str
+    :ivar environment_variables: Collection of environment variables.
+    :vartype environment_variables: dict[str, str]
+    :ivar runtime_version: Runtime version. Possible values include: "Java_8", "Java_11",
+     "NetCore_31". Default value: "Java_8".
+    :vartype runtime_version: str or
+     ~azure.mgmt.appplatform.v2021_06_01_preview.models.RuntimeVersion
     """
 
     _attribute_map = {
@@ -1203,6 +1430,31 @@ class DeploymentSettings(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword cpu: Required CPU. This should be 1 for Basic tier, and in range [1, 4] for Standard
+         tier. This is deprecated starting from API version 2021-06-01-preview. Please use the
+         resourceRequests field to set the CPU size.
+        :paramtype cpu: int
+        :keyword memory_in_gb: Required Memory size in GB. This should be in range [1, 2] for Basic
+         tier, and in range [1, 8] for Standard tier. This is deprecated starting from API version
+         2021-06-01-preview. Please use the resourceRequests field to set the the memory size.
+        :paramtype memory_in_gb: int
+        :keyword resource_requests: The requested resource quantity for required CPU and Memory. It is
+         recommended that using this field to represent the required CPU and Memory, the old field cpu
+         and memoryInGB will be deprecated later.
+        :paramtype resource_requests:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceRequests
+        :keyword jvm_options: JVM parameter.
+        :paramtype jvm_options: str
+        :keyword net_core_main_entry_path: The path to the .NET executable relative to zip root.
+        :paramtype net_core_main_entry_path: str
+        :keyword environment_variables: Collection of environment variables.
+        :paramtype environment_variables: dict[str, str]
+        :keyword runtime_version: Runtime version. Possible values include: "Java_8", "Java_11",
+         "NetCore_31". Default value: "Java_8".
+        :paramtype runtime_version: str or
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.RuntimeVersion
+        """
         super(DeploymentSettings, self).__init__(**kwargs)
         self.cpu = kwargs.get('cpu', 1)
         self.memory_in_gb = kwargs.get('memory_in_gb', 1)
@@ -1210,16 +1462,16 @@ class DeploymentSettings(msrest.serialization.Model):
         self.jvm_options = kwargs.get('jvm_options', None)
         self.net_core_main_entry_path = kwargs.get('net_core_main_entry_path', None)
         self.environment_variables = kwargs.get('environment_variables', None)
-        self.runtime_version = kwargs.get('runtime_version', None)
+        self.runtime_version = kwargs.get('runtime_version', "Java_8")
 
 
 class Error(msrest.serialization.Model):
     """The error code compose of code and message.
 
-    :param code: The code of error.
-    :type code: str
-    :param message: The message of error.
-    :type message: str
+    :ivar code: The code of error.
+    :vartype code: str
+    :ivar message: The message of error.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -1231,6 +1483,12 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword code: The code of error.
+        :paramtype code: str
+        :keyword message: The message of error.
+        :paramtype message: str
+        """
         super(Error, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
@@ -1241,28 +1499,28 @@ class GitPatternRepository(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the repository.
-    :type name: str
-    :param pattern: Collection of pattern of the repository.
-    :type pattern: list[str]
-    :param uri: Required. URI of the repository.
-    :type uri: str
-    :param label: Label of the repository.
-    :type label: str
-    :param search_paths: Searching path of the repository.
-    :type search_paths: list[str]
-    :param username: Username of git repository basic auth.
-    :type username: str
-    :param password: Password of git repository basic auth.
-    :type password: str
-    :param host_key: Public sshKey of git repository.
-    :type host_key: str
-    :param host_key_algorithm: SshKey algorithm of git repository.
-    :type host_key_algorithm: str
-    :param private_key: Private sshKey algorithm of git repository.
-    :type private_key: str
-    :param strict_host_key_checking: Strict host key checking or not.
-    :type strict_host_key_checking: bool
+    :ivar name: Required. Name of the repository.
+    :vartype name: str
+    :ivar pattern: Collection of pattern of the repository.
+    :vartype pattern: list[str]
+    :ivar uri: Required. URI of the repository.
+    :vartype uri: str
+    :ivar label: Label of the repository.
+    :vartype label: str
+    :ivar search_paths: Searching path of the repository.
+    :vartype search_paths: list[str]
+    :ivar username: Username of git repository basic auth.
+    :vartype username: str
+    :ivar password: Password of git repository basic auth.
+    :vartype password: str
+    :ivar host_key: Public sshKey of git repository.
+    :vartype host_key: str
+    :ivar host_key_algorithm: SshKey algorithm of git repository.
+    :vartype host_key_algorithm: str
+    :ivar private_key: Private sshKey algorithm of git repository.
+    :vartype private_key: str
+    :ivar strict_host_key_checking: Strict host key checking or not.
+    :vartype strict_host_key_checking: bool
     """
 
     _validation = {
@@ -1288,6 +1546,30 @@ class GitPatternRepository(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the repository.
+        :paramtype name: str
+        :keyword pattern: Collection of pattern of the repository.
+        :paramtype pattern: list[str]
+        :keyword uri: Required. URI of the repository.
+        :paramtype uri: str
+        :keyword label: Label of the repository.
+        :paramtype label: str
+        :keyword search_paths: Searching path of the repository.
+        :paramtype search_paths: list[str]
+        :keyword username: Username of git repository basic auth.
+        :paramtype username: str
+        :keyword password: Password of git repository basic auth.
+        :paramtype password: str
+        :keyword host_key: Public sshKey of git repository.
+        :paramtype host_key: str
+        :keyword host_key_algorithm: SshKey algorithm of git repository.
+        :paramtype host_key_algorithm: str
+        :keyword private_key: Private sshKey algorithm of git repository.
+        :paramtype private_key: str
+        :keyword strict_host_key_checking: Strict host key checking or not.
+        :paramtype strict_host_key_checking: bool
+        """
         super(GitPatternRepository, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.pattern = kwargs.get('pattern', None)
@@ -1305,10 +1587,10 @@ class GitPatternRepository(msrest.serialization.Model):
 class ImageRegistryCredential(msrest.serialization.Model):
     """Credential of the image registry.
 
-    :param username: The username of the image registry credential.
-    :type username: str
-    :param password: The password of the image registry credential.
-    :type password: str
+    :ivar username: The username of the image registry credential.
+    :vartype username: str
+    :ivar password: The password of the image registry credential.
+    :vartype password: str
     """
 
     _attribute_map = {
@@ -1320,6 +1602,12 @@ class ImageRegistryCredential(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword username: The username of the image registry credential.
+        :paramtype username: str
+        :keyword password: The password of the image registry credential.
+        :paramtype password: str
+        """
         super(ImageRegistryCredential, self).__init__(**kwargs)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
@@ -1330,8 +1618,8 @@ class LogFileUrlResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url: Required. URL of the log file.
-    :type url: str
+    :ivar url: Required. URL of the log file.
+    :vartype url: str
     """
 
     _validation = {
@@ -1346,6 +1634,10 @@ class LogFileUrlResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword url: Required. URL of the log file.
+        :paramtype url: str
+        """
         super(LogFileUrlResponse, self).__init__(**kwargs)
         self.url = kwargs['url']
 
@@ -1353,12 +1645,12 @@ class LogFileUrlResponse(msrest.serialization.Model):
 class LogSpecification(msrest.serialization.Model):
     """Specifications of the Log for Azure Monitoring.
 
-    :param name: Name of the log.
-    :type name: str
-    :param display_name: Localized friendly display name of the log.
-    :type display_name: str
-    :param blob_duration: Blob duration of the log.
-    :type blob_duration: str
+    :ivar name: Name of the log.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the log.
+    :vartype display_name: str
+    :ivar blob_duration: Blob duration of the log.
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
@@ -1371,6 +1663,14 @@ class LogSpecification(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the log.
+        :paramtype display_name: str
+        :keyword blob_duration: Blob duration of the log.
+        :paramtype blob_duration: str
+        """
         super(LogSpecification, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display_name = kwargs.get('display_name', None)
@@ -1380,13 +1680,13 @@ class LogSpecification(msrest.serialization.Model):
 class ManagedIdentityProperties(msrest.serialization.Model):
     """Managed identity properties retrieved from ARM request headers.
 
-    :param type: Type of the managed identity. Possible values include: "None", "SystemAssigned",
+    :ivar type: Type of the managed identity. Possible values include: "None", "SystemAssigned",
      "UserAssigned", "SystemAssigned,UserAssigned".
-    :type type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.ManagedIdentityType
-    :param principal_id: Principal Id.
-    :type principal_id: str
-    :param tenant_id: Tenant Id.
-    :type tenant_id: str
+    :vartype type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.ManagedIdentityType
+    :ivar principal_id: Principal Id.
+    :vartype principal_id: str
+    :ivar tenant_id: Tenant Id.
+    :vartype tenant_id: str
     """
 
     _attribute_map = {
@@ -1399,6 +1699,15 @@ class ManagedIdentityProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword type: Type of the managed identity. Possible values include: "None", "SystemAssigned",
+         "UserAssigned", "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.ManagedIdentityType
+        :keyword principal_id: Principal Id.
+        :paramtype principal_id: str
+        :keyword tenant_id: Tenant Id.
+        :paramtype tenant_id: str
+        """
         super(ManagedIdentityProperties, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.principal_id = kwargs.get('principal_id', None)
@@ -1408,13 +1717,13 @@ class ManagedIdentityProperties(msrest.serialization.Model):
 class MetricDimension(msrest.serialization.Model):
     """Specifications of the Dimension of metrics.
 
-    :param name: Name of the dimension.
-    :type name: str
-    :param display_name: Localized friendly display name of the dimension.
-    :type display_name: str
-    :param to_be_exported_for_shoebox: Whether this dimension should be included for the Shoebox
+    :ivar name: Name of the dimension.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the dimension.
+    :vartype display_name: str
+    :ivar to_be_exported_for_shoebox: Whether this dimension should be included for the Shoebox
      export scenario.
-    :type to_be_exported_for_shoebox: bool
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
@@ -1427,6 +1736,15 @@ class MetricDimension(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Name of the dimension.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the dimension.
+        :paramtype display_name: str
+        :keyword to_be_exported_for_shoebox: Whether this dimension should be included for the Shoebox
+         export scenario.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
         super(MetricDimension, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display_name = kwargs.get('display_name', None)
@@ -1436,29 +1754,31 @@ class MetricDimension(msrest.serialization.Model):
 class MetricSpecification(msrest.serialization.Model):
     """Specifications of the Metrics for Azure Monitoring.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Localized friendly display name of the metric.
-    :type display_name: str
-    :param display_description: Localized friendly description of the metric.
-    :type display_description: str
-    :param unit: Unit that makes sense for the metric.
-    :type unit: str
-    :param category: Name of the metric category that the metric belongs to. A metric can only
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Localized friendly description of the metric.
+    :vartype display_description: str
+    :ivar unit: Unit that makes sense for the metric.
+    :vartype unit: str
+    :ivar category: Name of the metric category that the metric belongs to. A metric can only
      belong to a single category.
-    :type category: str
-    :param aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
+    :vartype category: str
+    :ivar aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
      Maximum, Total, Count.
-    :type aggregation_type: str
-    :param supported_aggregation_types: Supported aggregation types.
-    :type supported_aggregation_types: list[str]
-    :param supported_time_grain_types: Supported time grain types.
-    :type supported_time_grain_types: list[str]
-    :param fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+    :vartype aggregation_type: str
+    :ivar supported_aggregation_types: Supported aggregation types.
+    :vartype supported_aggregation_types: list[str]
+    :ivar supported_time_grain_types: Supported time grain types.
+    :vartype supported_time_grain_types: list[str]
+    :ivar fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
      duration where no metric is emitted/published.
-    :type fill_gap_with_zero: bool
-    :param dimensions: Dimensions of the metric.
-    :type dimensions: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.MetricDimension]
+    :vartype fill_gap_with_zero: bool
+    :ivar dimensions: Dimensions of the metric.
+    :vartype dimensions: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.MetricDimension]
+    :ivar source_mdm_namespace: Name of the MDM namespace. Optional.
+    :vartype source_mdm_namespace: str
     """
 
     _attribute_map = {
@@ -1472,12 +1792,40 @@ class MetricSpecification(msrest.serialization.Model):
         'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
         'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword name: Name of the metric.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: Localized friendly description of the metric.
+        :paramtype display_description: str
+        :keyword unit: Unit that makes sense for the metric.
+        :paramtype unit: str
+        :keyword category: Name of the metric category that the metric belongs to. A metric can only
+         belong to a single category.
+        :paramtype category: str
+        :keyword aggregation_type: Only provide one value for this field. Valid values: Average,
+         Minimum, Maximum, Total, Count.
+        :paramtype aggregation_type: str
+        :keyword supported_aggregation_types: Supported aggregation types.
+        :paramtype supported_aggregation_types: list[str]
+        :keyword supported_time_grain_types: Supported time grain types.
+        :paramtype supported_time_grain_types: list[str]
+        :keyword fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+         duration where no metric is emitted/published.
+        :paramtype fill_gap_with_zero: bool
+        :keyword dimensions: Dimensions of the metric.
+        :paramtype dimensions: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.MetricDimension]
+        :keyword source_mdm_namespace: Name of the MDM namespace. Optional.
+        :paramtype source_mdm_namespace: str
+        """
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display_name = kwargs.get('display_name', None)
@@ -1489,6 +1837,7 @@ class MetricSpecification(msrest.serialization.Model):
         self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
         self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
         self.dimensions = kwargs.get('dimensions', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
 
 
 class MonitoringSettingProperties(msrest.serialization.Model):
@@ -1500,20 +1849,20 @@ class MonitoringSettingProperties(msrest.serialization.Model):
      "NotAvailable", "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.MonitoringSettingState
-    :param error: Error when apply Monitoring Setting changes.
-    :type error: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Error
-    :param trace_enabled: Indicates whether enable the trace functionality, which will be
-     deprecated since api version 2020-11-01-preview. Please leverage appInsightsInstrumentationKey
-     to indicate if monitoringSettings enabled or not.
-    :type trace_enabled: bool
-    :param app_insights_instrumentation_key: Target application insight instrumentation key, null
-     or whitespace include empty will disable monitoringSettings.
-    :type app_insights_instrumentation_key: str
-    :param app_insights_sampling_rate: Indicates the sampling rate of application insight agent,
+    :ivar error: Error when apply Monitoring Setting changes.
+    :vartype error: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Error
+    :ivar trace_enabled: Indicates whether enable the trace functionality, which will be deprecated
+     since api version 2020-11-01-preview. Please leverage appInsightsInstrumentationKey to indicate
+     if monitoringSettings enabled or not.
+    :vartype trace_enabled: bool
+    :ivar app_insights_instrumentation_key: Target application insight instrumentation key, null or
+     whitespace include empty will disable monitoringSettings.
+    :vartype app_insights_instrumentation_key: str
+    :ivar app_insights_sampling_rate: Indicates the sampling rate of application insight agent,
      should be in range [0.0, 100.0].
-    :type app_insights_sampling_rate: float
-    :param app_insights_agent_versions: Indicates the versions of application insight agent.
-    :type app_insights_agent_versions:
+    :vartype app_insights_sampling_rate: float
+    :ivar app_insights_agent_versions: Indicates the versions of application insight agent.
+    :vartype app_insights_agent_versions:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ApplicationInsightsAgentVersions
     """
 
@@ -1535,6 +1884,23 @@ class MonitoringSettingProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword error: Error when apply Monitoring Setting changes.
+        :paramtype error: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Error
+        :keyword trace_enabled: Indicates whether enable the trace functionality, which will be
+         deprecated since api version 2020-11-01-preview. Please leverage appInsightsInstrumentationKey
+         to indicate if monitoringSettings enabled or not.
+        :paramtype trace_enabled: bool
+        :keyword app_insights_instrumentation_key: Target application insight instrumentation key, null
+         or whitespace include empty will disable monitoringSettings.
+        :paramtype app_insights_instrumentation_key: str
+        :keyword app_insights_sampling_rate: Indicates the sampling rate of application insight agent,
+         should be in range [0.0, 100.0].
+        :paramtype app_insights_sampling_rate: float
+        :keyword app_insights_agent_versions: Indicates the versions of application insight agent.
+        :paramtype app_insights_agent_versions:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ApplicationInsightsAgentVersions
+        """
         super(MonitoringSettingProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.error = kwargs.get('error', None)
@@ -1555,8 +1921,8 @@ class MonitoringSettingResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Properties of the Monitoring Setting resource.
-    :type properties:
+    :ivar properties: Properties of the Monitoring Setting resource.
+    :vartype properties:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.MonitoringSettingProperties
     """
 
@@ -1577,6 +1943,11 @@ class MonitoringSettingResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the Monitoring Setting resource.
+        :paramtype properties:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.MonitoringSettingProperties
+        """
         super(MonitoringSettingResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
 
@@ -1584,12 +1955,12 @@ class MonitoringSettingResource(ProxyResource):
 class NameAvailability(msrest.serialization.Model):
     """Name availability result payload.
 
-    :param name_available: Indicates whether the name is available.
-    :type name_available: bool
-    :param reason: Reason why the name is not available.
-    :type reason: str
-    :param message: Message why the name is not available.
-    :type message: str
+    :ivar name_available: Indicates whether the name is available.
+    :vartype name_available: bool
+    :ivar reason: Reason why the name is not available.
+    :vartype reason: str
+    :ivar message: Message why the name is not available.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -1602,6 +1973,14 @@ class NameAvailability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name_available: Indicates whether the name is available.
+        :paramtype name_available: bool
+        :keyword reason: Reason why the name is not available.
+        :paramtype reason: str
+        :keyword message: Message why the name is not available.
+        :paramtype message: str
+        """
         super(NameAvailability, self).__init__(**kwargs)
         self.name_available = kwargs.get('name_available', None)
         self.reason = kwargs.get('reason', None)
@@ -1613,10 +1992,10 @@ class NameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of the resource to check name availability.
-    :type type: str
-    :param name: Required. Name to be checked.
-    :type name: str
+    :ivar type: Required. Type of the resource to check name availability.
+    :vartype type: str
+    :ivar name: Required. Name to be checked.
+    :vartype name: str
     """
 
     _validation = {
@@ -1633,6 +2012,12 @@ class NameAvailabilityParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword type: Required. Type of the resource to check name availability.
+        :paramtype type: str
+        :keyword name: Required. Name to be checked.
+        :paramtype name: str
+        """
         super(NameAvailabilityParameters, self).__init__(**kwargs)
         self.type = kwargs['type']
         self.name = kwargs['name']
@@ -1643,20 +2028,19 @@ class NetworkProfile(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param service_runtime_subnet_id: Fully qualified resource Id of the subnet to host Azure
-     Spring Cloud Service Runtime.
-    :type service_runtime_subnet_id: str
-    :param app_subnet_id: Fully qualified resource Id of the subnet to host Azure Spring Cloud
-     Apps.
-    :type app_subnet_id: str
-    :param service_cidr: Azure Spring Cloud service reserved CIDR.
-    :type service_cidr: str
-    :param service_runtime_network_resource_group: Name of the resource group containing network
+    :ivar service_runtime_subnet_id: Fully qualified resource Id of the subnet to host Azure Spring
+     Cloud Service Runtime.
+    :vartype service_runtime_subnet_id: str
+    :ivar app_subnet_id: Fully qualified resource Id of the subnet to host Azure Spring Cloud Apps.
+    :vartype app_subnet_id: str
+    :ivar service_cidr: Azure Spring Cloud service reserved CIDR.
+    :vartype service_cidr: str
+    :ivar service_runtime_network_resource_group: Name of the resource group containing network
      resources of Azure Spring Cloud Service Runtime.
-    :type service_runtime_network_resource_group: str
-    :param app_network_resource_group: Name of the resource group containing network resources of
+    :vartype service_runtime_network_resource_group: str
+    :ivar app_network_resource_group: Name of the resource group containing network resources of
      Azure Spring Cloud Apps.
-    :type app_network_resource_group: str
+    :vartype app_network_resource_group: str
     :ivar outbound_i_ps: Desired outbound IP resources for Azure Spring Cloud instance.
     :vartype outbound_i_ps:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.NetworkProfileOutboundIPs
@@ -1684,6 +2068,22 @@ class NetworkProfile(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword service_runtime_subnet_id: Fully qualified resource Id of the subnet to host Azure
+         Spring Cloud Service Runtime.
+        :paramtype service_runtime_subnet_id: str
+        :keyword app_subnet_id: Fully qualified resource Id of the subnet to host Azure Spring Cloud
+         Apps.
+        :paramtype app_subnet_id: str
+        :keyword service_cidr: Azure Spring Cloud service reserved CIDR.
+        :paramtype service_cidr: str
+        :keyword service_runtime_network_resource_group: Name of the resource group containing network
+         resources of Azure Spring Cloud Service Runtime.
+        :paramtype service_runtime_network_resource_group: str
+        :keyword app_network_resource_group: Name of the resource group containing network resources of
+         Azure Spring Cloud Apps.
+        :paramtype app_network_resource_group: str
+        """
         super(NetworkProfile, self).__init__(**kwargs)
         self.service_runtime_subnet_id = kwargs.get('service_runtime_subnet_id', None)
         self.app_subnet_id = kwargs.get('app_subnet_id', None)
@@ -1715,6 +2115,8 @@ class NetworkProfileOutboundIPs(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(NetworkProfileOutboundIPs, self).__init__(**kwargs)
         self.public_i_ps = None
 
@@ -1722,22 +2124,32 @@ class NetworkProfileOutboundIPs(msrest.serialization.Model):
 class OperationDetail(msrest.serialization.Model):
     """Operation detail payload.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: Display of the operation.
-    :type display: ~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationProperties
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: Display of the operation.
+    :vartype display: ~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationDisplay
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. Possible values include: "Internal".
+    :vartype action_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.ActionType
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationProperties
     """
+
+    _validation = {
+        'action_type': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
@@ -1746,10 +2158,23 @@ class OperationDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: Display of the operation.
+        :paramtype display: ~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.OperationProperties
+        """
         super(OperationDetail, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.is_data_action = kwargs.get('is_data_action', None)
         self.display = kwargs.get('display', None)
+        self.action_type = None
         self.origin = kwargs.get('origin', None)
         self.properties = kwargs.get('properties', None)
 
@@ -1757,14 +2182,14 @@ class OperationDetail(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """Operation display payload.
 
-    :param provider: Resource provider of the operation.
-    :type provider: str
-    :param resource: Resource of the operation.
-    :type resource: str
-    :param operation: Localized friendly name for the operation.
-    :type operation: str
-    :param description: Localized friendly description for the operation.
-    :type description: str
+    :ivar provider: Resource provider of the operation.
+    :vartype provider: str
+    :ivar resource: Resource of the operation.
+    :vartype resource: str
+    :ivar operation: Localized friendly name for the operation.
+    :vartype operation: str
+    :ivar description: Localized friendly description for the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -1778,6 +2203,16 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword provider: Resource provider of the operation.
+        :paramtype provider: str
+        :keyword resource: Resource of the operation.
+        :paramtype resource: str
+        :keyword operation: Localized friendly name for the operation.
+        :paramtype operation: str
+        :keyword description: Localized friendly description for the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = kwargs.get('provider', None)
         self.resource = kwargs.get('resource', None)
@@ -1788,8 +2223,8 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationProperties(msrest.serialization.Model):
     """Extra Operation properties.
 
-    :param service_specification: Service specifications of the operation.
-    :type service_specification:
+    :ivar service_specification: Service specifications of the operation.
+    :vartype service_specification:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ServiceSpecification
     """
 
@@ -1801,6 +2236,11 @@ class OperationProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword service_specification: Service specifications of the operation.
+        :paramtype service_specification:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ServiceSpecification
+        """
         super(OperationProperties, self).__init__(**kwargs)
         self.service_specification = kwargs.get('service_specification', None)
 
@@ -1810,12 +2250,12 @@ class PersistentDisk(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param size_in_gb: Size of the persistent disk in GB.
-    :type size_in_gb: int
+    :ivar size_in_gb: Size of the persistent disk in GB.
+    :vartype size_in_gb: int
     :ivar used_in_gb: Size of the used persistent disk in GB.
     :vartype used_in_gb: int
-    :param mount_path: Mount path of the persistent disk.
-    :type mount_path: str
+    :ivar mount_path: Mount path of the persistent disk.
+    :vartype mount_path: str
     """
 
     _validation = {
@@ -1833,6 +2273,12 @@ class PersistentDisk(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword size_in_gb: Size of the persistent disk in GB.
+        :paramtype size_in_gb: int
+        :keyword mount_path: Mount path of the persistent disk.
+        :paramtype mount_path: str
+        """
         super(PersistentDisk, self).__init__(**kwargs)
         self.size_in_gb = kwargs.get('size_in_gb', None)
         self.used_in_gb = None
@@ -1844,9 +2290,9 @@ class RegenerateTestKeyRequestPayload(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_type: Required. Type of the test key. Possible values include: "Primary",
+    :ivar key_type: Required. Type of the test key. Possible values include: "Primary",
      "Secondary".
-    :type key_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.TestKeyType
+    :vartype key_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.TestKeyType
     """
 
     _validation = {
@@ -1861,6 +2307,11 @@ class RegenerateTestKeyRequestPayload(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword key_type: Required. Type of the test key. Possible values include: "Primary",
+         "Secondary".
+        :paramtype key_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.TestKeyType
+        """
         super(RegenerateTestKeyRequestPayload, self).__init__(**kwargs)
         self.key_type = kwargs['key_type']
 
@@ -1903,6 +2354,8 @@ class RequiredTraffic(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RequiredTraffic, self).__init__(**kwargs)
         self.protocol = None
         self.port = None
@@ -1914,12 +2367,12 @@ class RequiredTraffic(msrest.serialization.Model):
 class ResourceRequests(msrest.serialization.Model):
     """Deployment resource request payload.
 
-    :param cpu: Required CPU. 1 core can be represented by 1 or 1000m. This should be 500m or 1 for
+    :ivar cpu: Required CPU. 1 core can be represented by 1 or 1000m. This should be 500m or 1 for
      Basic tier, and {500m, 1, 2, 3, 4} for Standard tier.
-    :type cpu: str
-    :param memory: Required memory. 1 GB can be represented by 1Gi or 1024Mi. This should be
-     {512Mi, 1Gi, 2Gi} for Basic tier, and {512Mi, 1Gi, 2Gi, ..., 8Gi} for Standard tier.
-    :type memory: str
+    :vartype cpu: str
+    :ivar memory: Required memory. 1 GB can be represented by 1Gi or 1024Mi. This should be {512Mi,
+     1Gi, 2Gi} for Basic tier, and {512Mi, 1Gi, 2Gi, ..., 8Gi} for Standard tier.
+    :vartype memory: str
     """
 
     _attribute_map = {
@@ -1931,6 +2384,14 @@ class ResourceRequests(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword cpu: Required CPU. 1 core can be represented by 1 or 1000m. This should be 500m or 1
+         for Basic tier, and {500m, 1, 2, 3, 4} for Standard tier.
+        :paramtype cpu: str
+        :keyword memory: Required memory. 1 GB can be represented by 1Gi or 1024Mi. This should be
+         {512Mi, 1Gi, 2Gi} for Basic tier, and {512Mi, 1Gi, 2Gi, ..., 8Gi} for Standard tier.
+        :paramtype memory: str
+        """
         super(ResourceRequests, self).__init__(**kwargs)
         self.cpu = kwargs.get('cpu', None)
         self.memory = kwargs.get('memory', None)
@@ -1939,23 +2400,23 @@ class ResourceRequests(msrest.serialization.Model):
 class ResourceSku(msrest.serialization.Model):
     """Describes an available Azure Spring Cloud SKU.
 
-    :param resource_type: Gets the type of resource the SKU applies to.
-    :type resource_type: str
-    :param name: Gets the name of SKU.
-    :type name: str
-    :param tier: Gets the tier of SKU.
-    :type tier: str
-    :param capacity: Gets the capacity of SKU.
-    :type capacity: ~azure.mgmt.appplatform.v2021_06_01_preview.models.SkuCapacity
-    :param locations: Gets the set of locations that the SKU is available.
-    :type locations: list[str]
-    :param location_info: Gets a list of locations and availability zones in those locations where
+    :ivar resource_type: Gets the type of resource the SKU applies to.
+    :vartype resource_type: str
+    :ivar name: Gets the name of SKU.
+    :vartype name: str
+    :ivar tier: Gets the tier of SKU.
+    :vartype tier: str
+    :ivar capacity: Gets the capacity of SKU.
+    :vartype capacity: ~azure.mgmt.appplatform.v2021_06_01_preview.models.SkuCapacity
+    :ivar locations: Gets the set of locations that the SKU is available.
+    :vartype locations: list[str]
+    :ivar location_info: Gets a list of locations and availability zones in those locations where
      the SKU is available.
-    :type location_info:
+    :vartype location_info:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuLocationInfo]
-    :param restrictions: Gets the restrictions because of which SKU cannot be used. This is
+    :ivar restrictions: Gets the restrictions because of which SKU cannot be used. This is
      empty if there are no restrictions.
-    :type restrictions:
+    :vartype restrictions:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictions]
     """
 
@@ -1973,6 +2434,26 @@ class ResourceSku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword resource_type: Gets the type of resource the SKU applies to.
+        :paramtype resource_type: str
+        :keyword name: Gets the name of SKU.
+        :paramtype name: str
+        :keyword tier: Gets the tier of SKU.
+        :paramtype tier: str
+        :keyword capacity: Gets the capacity of SKU.
+        :paramtype capacity: ~azure.mgmt.appplatform.v2021_06_01_preview.models.SkuCapacity
+        :keyword locations: Gets the set of locations that the SKU is available.
+        :paramtype locations: list[str]
+        :keyword location_info: Gets a list of locations and availability zones in those locations
+         where the SKU is available.
+        :paramtype location_info:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuLocationInfo]
+        :keyword restrictions: Gets the restrictions because of which SKU cannot be used. This is
+         empty if there are no restrictions.
+        :paramtype restrictions:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictions]
+        """
         super(ResourceSku, self).__init__(**kwargs)
         self.resource_type = kwargs.get('resource_type', None)
         self.name = kwargs.get('name', None)
@@ -1986,10 +2467,10 @@ class ResourceSku(msrest.serialization.Model):
 class ResourceSkuCapabilities(msrest.serialization.Model):
     """ResourceSkuCapabilities.
 
-    :param name: Gets an invariant to describe the feature.
-    :type name: str
-    :param value: Gets an invariant if the feature is measured by quantity.
-    :type value: str
+    :ivar name: Gets an invariant to describe the feature.
+    :vartype name: str
+    :ivar value: Gets an invariant if the feature is measured by quantity.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -2001,6 +2482,12 @@ class ResourceSkuCapabilities(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Gets an invariant to describe the feature.
+        :paramtype name: str
+        :keyword value: Gets an invariant if the feature is measured by quantity.
+        :paramtype value: str
+        """
         super(ResourceSkuCapabilities, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.value = kwargs.get('value', None)
@@ -2009,11 +2496,11 @@ class ResourceSkuCapabilities(msrest.serialization.Model):
 class ResourceSkuCollection(msrest.serialization.Model):
     """Object that includes an array of Azure Spring Cloud SKU and a possible link for next set.
 
-    :param value: Collection of resource SKU.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSku]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar value: Collection of resource SKU.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSku]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2025,6 +2512,13 @@ class ResourceSkuCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Collection of resource SKU.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSku]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
         super(ResourceSkuCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -2033,12 +2527,12 @@ class ResourceSkuCollection(msrest.serialization.Model):
 class ResourceSkuLocationInfo(msrest.serialization.Model):
     """Locations and availability zones where the SKU is available.
 
-    :param location: Gets location of the SKU.
-    :type location: str
-    :param zones: Gets list of availability zones where the SKU is supported.
-    :type zones: list[str]
-    :param zone_details: Gets details of capabilities available to a SKU in specific zones.
-    :type zone_details:
+    :ivar location: Gets location of the SKU.
+    :vartype location: str
+    :ivar zones: Gets list of availability zones where the SKU is supported.
+    :vartype zones: list[str]
+    :ivar zone_details: Gets details of capabilities available to a SKU in specific zones.
+    :vartype zone_details:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuZoneDetails]
     """
 
@@ -2052,6 +2546,15 @@ class ResourceSkuLocationInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword location: Gets location of the SKU.
+        :paramtype location: str
+        :keyword zones: Gets list of availability zones where the SKU is supported.
+        :paramtype zones: list[str]
+        :keyword zone_details: Gets details of capabilities available to a SKU in specific zones.
+        :paramtype zone_details:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuZoneDetails]
+        """
         super(ResourceSkuLocationInfo, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
         self.zones = kwargs.get('zones', None)
@@ -2061,10 +2564,10 @@ class ResourceSkuLocationInfo(msrest.serialization.Model):
 class ResourceSkuRestrictionInfo(msrest.serialization.Model):
     """Information about the restriction where the SKU cannot be used.
 
-    :param locations: Gets locations where the SKU is restricted.
-    :type locations: list[str]
-    :param zones: Gets list of availability zones where the SKU is restricted.
-    :type zones: list[str]
+    :ivar locations: Gets locations where the SKU is restricted.
+    :vartype locations: list[str]
+    :ivar zones: Gets list of availability zones where the SKU is restricted.
+    :vartype zones: list[str]
     """
 
     _attribute_map = {
@@ -2076,6 +2579,12 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword locations: Gets locations where the SKU is restricted.
+        :paramtype locations: list[str]
+        :keyword zones: Gets list of availability zones where the SKU is restricted.
+        :paramtype zones: list[str]
+        """
         super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
         self.locations = kwargs.get('locations', None)
         self.zones = kwargs.get('zones', None)
@@ -2084,21 +2593,21 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
 class ResourceSkuRestrictions(msrest.serialization.Model):
     """Restrictions where the SKU cannot be used.
 
-    :param type: Gets the type of restrictions. Possible values include: 'Location', 'Zone'.
+    :ivar type: Gets the type of restrictions. Possible values include: 'Location', 'Zone'.
      Possible values include: "Location", "Zone".
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictionsType
-    :param values: Gets the value of restrictions. If the restriction type is set to
+    :ivar values: Gets the value of restrictions. If the restriction type is set to
      location. This would be different locations where the SKU is restricted.
-    :type values: list[str]
-    :param restriction_info: Gets the information about the restriction where the SKU cannot be
+    :vartype values: list[str]
+    :ivar restriction_info: Gets the information about the restriction where the SKU cannot be
      used.
-    :type restriction_info:
+    :vartype restriction_info:
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictionInfo
-    :param reason_code: Gets the reason for restriction. Possible values include: 'QuotaId',
+    :ivar reason_code: Gets the reason for restriction. Possible values include: 'QuotaId',
      'NotAvailableForSubscription'. Possible values include: "QuotaId",
      "NotAvailableForSubscription".
-    :type reason_code: str or
+    :vartype reason_code: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictionsReasonCode
     """
 
@@ -2113,6 +2622,24 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword type: Gets the type of restrictions. Possible values include: 'Location', 'Zone'.
+         Possible values include: "Location", "Zone".
+        :paramtype type: str or
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictionsType
+        :keyword values: Gets the value of restrictions. If the restriction type is set to
+         location. This would be different locations where the SKU is restricted.
+        :paramtype values: list[str]
+        :keyword restriction_info: Gets the information about the restriction where the SKU cannot be
+         used.
+        :paramtype restriction_info:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictionInfo
+        :keyword reason_code: Gets the reason for restriction. Possible values include: 'QuotaId',
+         'NotAvailableForSubscription'. Possible values include: "QuotaId",
+         "NotAvailableForSubscription".
+        :paramtype reason_code: str or
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuRestrictionsReasonCode
+        """
         super(ResourceSkuRestrictions, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.values = kwargs.get('values', None)
@@ -2123,12 +2650,12 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
 class ResourceSkuZoneDetails(msrest.serialization.Model):
     """Details of capabilities available to a SKU in specific zones.
 
-    :param name: Gets the set of zones that the SKU is available in with the
+    :ivar name: Gets the set of zones that the SKU is available in with the
      specified capabilities.
-    :type name: list[str]
-    :param capabilities: Gets a list of capabilities that are available for the SKU in the
+    :vartype name: list[str]
+    :ivar capabilities: Gets a list of capabilities that are available for the SKU in the
      specified list of zones.
-    :type capabilities:
+    :vartype capabilities:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuCapabilities]
     """
 
@@ -2141,6 +2668,15 @@ class ResourceSkuZoneDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Gets the set of zones that the SKU is available in with the
+         specified capabilities.
+        :paramtype name: list[str]
+        :keyword capabilities: Gets a list of capabilities that are available for the SKU in the
+         specified list of zones.
+        :paramtype capabilities:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ResourceSkuCapabilities]
+        """
         super(ResourceSkuZoneDetails, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.capabilities = kwargs.get('capabilities', None)
@@ -2149,10 +2685,10 @@ class ResourceSkuZoneDetails(msrest.serialization.Model):
 class ResourceUploadDefinition(msrest.serialization.Model):
     """Resource upload definition payload.
 
-    :param relative_path: Source relative path.
-    :type relative_path: str
-    :param upload_url: Upload URL.
-    :type upload_url: str
+    :ivar relative_path: Source relative path.
+    :vartype relative_path: str
+    :ivar upload_url: Upload URL.
+    :vartype upload_url: str
     """
 
     _attribute_map = {
@@ -2164,6 +2700,12 @@ class ResourceUploadDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword relative_path: Source relative path.
+        :paramtype relative_path: str
+        :keyword upload_url: Upload URL.
+        :paramtype upload_url: str
+        """
         super(ResourceUploadDefinition, self).__init__(**kwargs)
         self.relative_path = kwargs.get('relative_path', None)
         self.upload_url = kwargs.get('upload_url', None)
@@ -2180,11 +2722,11 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The GEO location of the resource.
-    :type location: str
-    :param tags: A set of tags. Tags of the service which is a list of key value pairs that
-     describe the resource.
-    :type tags: dict[str, str]
+    :ivar location: The GEO location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
+     the resource.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -2205,6 +2747,13 @@ class TrackedResource(Resource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: The GEO location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
+         describe the resource.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
@@ -2221,15 +2770,16 @@ class ServiceResource(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The GEO location of the resource.
-    :type location: str
-    :param tags: A set of tags. Tags of the service which is a list of key value pairs that
-     describe the resource.
-    :type tags: dict[str, str]
-    :param properties: Properties of the Service resource.
-    :type properties: ~azure.mgmt.appplatform.v2021_06_01_preview.models.ClusterResourceProperties
-    :param sku: Sku of the Service resource.
-    :type sku: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Sku
+    :ivar location: The GEO location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
+     the resource.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the Service resource.
+    :vartype properties:
+     ~azure.mgmt.appplatform.v2021_06_01_preview.models.ClusterResourceProperties
+    :ivar sku: Sku of the Service resource.
+    :vartype sku: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Sku
     """
 
     _validation = {
@@ -2252,6 +2802,18 @@ class ServiceResource(TrackedResource):
         self,
         **kwargs
     ):
+        """
+        :keyword location: The GEO location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
+         describe the resource.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of the Service resource.
+        :paramtype properties:
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.ClusterResourceProperties
+        :keyword sku: Sku of the Service resource.
+        :paramtype sku: ~azure.mgmt.appplatform.v2021_06_01_preview.models.Sku
+        """
         super(ServiceResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.sku = kwargs.get('sku', None)
@@ -2260,11 +2822,11 @@ class ServiceResource(TrackedResource):
 class ServiceResourceList(msrest.serialization.Model):
     """Object that includes an array of Service resources and a possible link for next set.
 
-    :param value: Collection of Service resources.
-    :type value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ServiceResource]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar value: Collection of Service resources.
+    :vartype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ServiceResource]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2276,6 +2838,13 @@ class ServiceResourceList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Collection of Service resources.
+        :paramtype value: list[~azure.mgmt.appplatform.v2021_06_01_preview.models.ServiceResource]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
         super(ServiceResourceList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -2284,11 +2853,11 @@ class ServiceResourceList(msrest.serialization.Model):
 class ServiceSpecification(msrest.serialization.Model):
     """Service specification payload.
 
-    :param log_specifications: Specifications of the Log for Azure Monitoring.
-    :type log_specifications:
+    :ivar log_specifications: Specifications of the Log for Azure Monitoring.
+    :vartype log_specifications:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.LogSpecification]
-    :param metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :type metric_specifications:
+    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
+    :vartype metric_specifications:
      list[~azure.mgmt.appplatform.v2021_06_01_preview.models.MetricSpecification]
     """
 
@@ -2301,6 +2870,14 @@ class ServiceSpecification(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword log_specifications: Specifications of the Log for Azure Monitoring.
+        :paramtype log_specifications:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.LogSpecification]
+        :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.appplatform.v2021_06_01_preview.models.MetricSpecification]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.log_specifications = kwargs.get('log_specifications', None)
         self.metric_specifications = kwargs.get('metric_specifications', None)
@@ -2309,12 +2886,12 @@ class ServiceSpecification(msrest.serialization.Model):
 class Sku(msrest.serialization.Model):
     """Sku of Azure Spring Cloud.
 
-    :param name: Name of the Sku.
-    :type name: str
-    :param tier: Tier of the Sku.
-    :type tier: str
-    :param capacity: Current capacity of the target resource.
-    :type capacity: int
+    :ivar name: Name of the Sku.
+    :vartype name: str
+    :ivar tier: Tier of the Sku.
+    :vartype tier: str
+    :ivar capacity: Current capacity of the target resource.
+    :vartype capacity: int
     """
 
     _attribute_map = {
@@ -2327,6 +2904,14 @@ class Sku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Name of the Sku.
+        :paramtype name: str
+        :keyword tier: Tier of the Sku.
+        :paramtype tier: str
+        :keyword capacity: Current capacity of the target resource.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs.get('name', "S0")
         self.tier = kwargs.get('tier', "Standard")
@@ -2338,15 +2923,15 @@ class SkuCapacity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param minimum: Required. Gets or sets the minimum.
-    :type minimum: int
-    :param maximum: Gets or sets the maximum.
-    :type maximum: int
-    :param default: Gets or sets the default.
-    :type default: int
-    :param scale_type: Gets or sets the type of the scale. Possible values include: "None",
+    :ivar minimum: Required. Gets or sets the minimum.
+    :vartype minimum: int
+    :ivar maximum: Gets or sets the maximum.
+    :vartype maximum: int
+    :ivar default: Gets or sets the default.
+    :vartype default: int
+    :ivar scale_type: Gets or sets the type of the scale. Possible values include: "None",
      "Manual", "Automatic".
-    :type scale_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.SkuScaleType
+    :vartype scale_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.SkuScaleType
     """
 
     _validation = {
@@ -2364,6 +2949,17 @@ class SkuCapacity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword minimum: Required. Gets or sets the minimum.
+        :paramtype minimum: int
+        :keyword maximum: Gets or sets the maximum.
+        :paramtype maximum: int
+        :keyword default: Gets or sets the default.
+        :paramtype default: int
+        :keyword scale_type: Gets or sets the type of the scale. Possible values include: "None",
+         "Manual", "Automatic".
+        :paramtype scale_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.SkuScaleType
+        """
         super(SkuCapacity, self).__init__(**kwargs)
         self.minimum = kwargs['minimum']
         self.maximum = kwargs.get('maximum', None)
@@ -2374,15 +2970,15 @@ class SkuCapacity(msrest.serialization.Model):
 class SupportedRuntimeVersion(msrest.serialization.Model):
     """Supported deployment runtime version descriptor.
 
-    :param value: The raw value which could be passed to deployment CRUD operations. Possible
-     values include: "Java_8", "Java_11", "NetCore_31".
-    :type value: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.SupportedRuntimeValue
-    :param platform: The platform of this runtime version (possible values: "Java" or ".NET").
+    :ivar value: The raw value which could be passed to deployment CRUD operations. Possible values
+     include: "Java_8", "Java_11", "NetCore_31".
+    :vartype value: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.SupportedRuntimeValue
+    :ivar platform: The platform of this runtime version (possible values: "Java" or ".NET").
      Possible values include: "Java", ".NET Core".
-    :type platform: str or
+    :vartype platform: str or
      ~azure.mgmt.appplatform.v2021_06_01_preview.models.SupportedRuntimePlatform
-    :param version: The detailed version (major.minor) of the platform.
-    :type version: str
+    :ivar version: The detailed version (major.minor) of the platform.
+    :vartype version: str
     """
 
     _attribute_map = {
@@ -2395,6 +2991,18 @@ class SupportedRuntimeVersion(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: The raw value which could be passed to deployment CRUD operations. Possible
+         values include: "Java_8", "Java_11", "NetCore_31".
+        :paramtype value: str or
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.SupportedRuntimeValue
+        :keyword platform: The platform of this runtime version (possible values: "Java" or ".NET").
+         Possible values include: "Java", ".NET Core".
+        :paramtype platform: str or
+         ~azure.mgmt.appplatform.v2021_06_01_preview.models.SupportedRuntimePlatform
+        :keyword version: The detailed version (major.minor) of the platform.
+        :paramtype version: str
+        """
         super(SupportedRuntimeVersion, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.platform = kwargs.get('platform', None)
@@ -2404,10 +3012,10 @@ class SupportedRuntimeVersion(msrest.serialization.Model):
 class TemporaryDisk(msrest.serialization.Model):
     """Temporary disk payload.
 
-    :param size_in_gb: Size of the temporary disk in GB.
-    :type size_in_gb: int
-    :param mount_path: Mount path of the temporary disk.
-    :type mount_path: str
+    :ivar size_in_gb: Size of the temporary disk in GB.
+    :vartype size_in_gb: int
+    :ivar mount_path: Mount path of the temporary disk.
+    :vartype mount_path: str
     """
 
     _validation = {
@@ -2423,24 +3031,30 @@ class TemporaryDisk(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword size_in_gb: Size of the temporary disk in GB.
+        :paramtype size_in_gb: int
+        :keyword mount_path: Mount path of the temporary disk.
+        :paramtype mount_path: str
+        """
         super(TemporaryDisk, self).__init__(**kwargs)
         self.size_in_gb = kwargs.get('size_in_gb', None)
-        self.mount_path = kwargs.get('mount_path', None)
+        self.mount_path = kwargs.get('mount_path', "/tmp")
 
 
 class TestKeys(msrest.serialization.Model):
     """Test keys payload.
 
-    :param primary_key: Primary key.
-    :type primary_key: str
-    :param secondary_key: Secondary key.
-    :type secondary_key: str
-    :param primary_test_endpoint: Primary test endpoint.
-    :type primary_test_endpoint: str
-    :param secondary_test_endpoint: Secondary test endpoint.
-    :type secondary_test_endpoint: str
-    :param enabled: Indicates whether the test endpoint feature enabled or not.
-    :type enabled: bool
+    :ivar primary_key: Primary key.
+    :vartype primary_key: str
+    :ivar secondary_key: Secondary key.
+    :vartype secondary_key: str
+    :ivar primary_test_endpoint: Primary test endpoint.
+    :vartype primary_test_endpoint: str
+    :ivar secondary_test_endpoint: Secondary test endpoint.
+    :vartype secondary_test_endpoint: str
+    :ivar enabled: Indicates whether the test endpoint feature enabled or not.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
@@ -2455,6 +3069,18 @@ class TestKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword primary_key: Primary key.
+        :paramtype primary_key: str
+        :keyword secondary_key: Secondary key.
+        :paramtype secondary_key: str
+        :keyword primary_test_endpoint: Primary test endpoint.
+        :paramtype primary_test_endpoint: str
+        :keyword secondary_test_endpoint: Secondary test endpoint.
+        :paramtype secondary_test_endpoint: str
+        :keyword enabled: Indicates whether the test endpoint feature enabled or not.
+        :paramtype enabled: bool
+        """
         super(TestKeys, self).__init__(**kwargs)
         self.primary_key = kwargs.get('primary_key', None)
         self.secondary_key = kwargs.get('secondary_key', None)
@@ -2466,19 +3092,19 @@ class TestKeys(msrest.serialization.Model):
 class UserSourceInfo(msrest.serialization.Model):
     """Source information for a deployment.
 
-    :param type: Type of the source uploaded. Possible values include: "Jar", "NetCoreZip",
+    :ivar type: Type of the source uploaded. Possible values include: "Jar", "NetCoreZip",
      "Source", "Container".
-    :type type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.UserSourceType
-    :param relative_path: Relative path of the storage which stores the source.
-    :type relative_path: str
-    :param version: Version of the source.
-    :type version: str
-    :param artifact_selector: Selector for the artifact to be used for the deployment for
+    :vartype type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.UserSourceType
+    :ivar relative_path: Relative path of the storage which stores the source.
+    :vartype relative_path: str
+    :ivar version: Version of the source.
+    :vartype version: str
+    :ivar artifact_selector: Selector for the artifact to be used for the deployment for
      multi-module projects. This should be
      the relative path to the target module/project.
-    :type artifact_selector: str
-    :param custom_container: Custom container payload.
-    :type custom_container: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomContainer
+    :vartype artifact_selector: str
+    :ivar custom_container: Custom container payload.
+    :vartype custom_container: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomContainer
     """
 
     _attribute_map = {
@@ -2493,6 +3119,21 @@ class UserSourceInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword type: Type of the source uploaded. Possible values include: "Jar", "NetCoreZip",
+         "Source", "Container".
+        :paramtype type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.UserSourceType
+        :keyword relative_path: Relative path of the storage which stores the source.
+        :paramtype relative_path: str
+        :keyword version: Version of the source.
+        :paramtype version: str
+        :keyword artifact_selector: Selector for the artifact to be used for the deployment for
+         multi-module projects. This should be
+         the relative path to the target module/project.
+        :paramtype artifact_selector: str
+        :keyword custom_container: Custom container payload.
+        :paramtype custom_container: ~azure.mgmt.appplatform.v2021_06_01_preview.models.CustomContainer
+        """
         super(UserSourceInfo, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.relative_path = kwargs.get('relative_path', None)
