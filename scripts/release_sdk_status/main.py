@@ -26,7 +26,7 @@ def print_check(cmd, path=''):
 
 class PyPIClient:
     def __init__(self, host="https://pypi.org", package_name='', track_config='',
-                 readme_link='', rm_link='', cli_version=''):
+                 readme_link='', rm_link='', cli_version='', multi_api=''):
         self._host = host
         self._session = requests.Session()
         self._package_name = package_name
@@ -42,6 +42,7 @@ class PyPIClient:
         self.rm_link = rm_link
         self.cli_version = cli_version
         self.bot_warning = ''
+        self.multi_api = multi_api
 
     def get_package_name(self):
         return self._package_name
@@ -85,18 +86,19 @@ class PyPIClient:
         if 199 < response.status_code < 400:
             self.get_release_dict(response)
             self.bot_analysis()
-            return '{},{},{},{},{},{},{},{},{},{},{},{},'.format(self._package_name,
-                                                                 self.pypi_link,
-                                                                 self.track1_latest,
-                                                                 self.version_date_dict[self.track1_latest],
-                                                                 self.track1_ga,
-                                                                 self.track2_latest,
-                                                                 self.track2_ga,
-                                                                 self.version_date_dict[self.track2_latest],
-                                                                 self.cli_version,
-                                                                 self.track_config,
-                                                                 self.bot_warning,
-                                                                 self.rm_link)
+            return '{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(self._package_name,
+                                                                   self.pypi_link,
+                                                                   self.track1_latest,
+                                                                   self.version_date_dict[self.track1_latest],
+                                                                   self.track1_ga,
+                                                                   self.track2_latest,
+                                                                   self.track2_ga,
+                                                                   self.version_date_dict[self.track2_latest],
+                                                                   self.cli_version,
+                                                                   self.track_config,
+                                                                   self.bot_warning,
+                                                                   self.rm_link,
+                                                                   self.multi_api)
         else:
             self.pypi_link = 'NA'
         return
@@ -171,8 +173,9 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
             track_config = package[1].strip()
             readme_link = package[2].strip()
             rm_link = package[3].strip()
+            multi_api = package[4].strip()
             pypi_ins = PyPIClient(package_name=sdk_name, track_config=track_config,
-                                  readme_link=readme_link, rm_link=rm_link, cli_version=cli_version)
+                                  readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
             text_to_write = pypi_ins.write_to_list()
             if pypi_ins.pypi_link != 'NA':
                 service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
@@ -256,7 +259,8 @@ def write_to_csv(sdk_status_list, csv_name):
                        'readme config,'
                        'bot advice,'
                        'readme link,'
-                       'coverage test,'
+                       'multi api,'
+                       'test coverage,'
                        'passed,'
                        'failed,'
                        'skipped\n')
@@ -304,6 +308,7 @@ def sdk_info_from_swagger():
 
     for folder in readme_folders:
         sdk_folder_path = False
+        multi_api = ''
         service_name = re.findall(r'specification/(.*?)/resource-manager/', folder)[0]
         track_config = 0
         package_name = ''
@@ -320,6 +325,10 @@ def sdk_info_from_swagger():
             if sdk_folder_re.search(line) and sdk_folder_path == False:
                 SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
                 sdk_folder_path = True
+            if '$(multiapi)' in line and multi_api == '':
+                multi_api = 'True'
+            if '- multiapiscript: true' in line:
+                multi_api = 'fake'
 
         if readme_python != 'NA':
             readme_python_text = read_file(readme_python)
@@ -334,10 +343,11 @@ def sdk_info_from_swagger():
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
         readme_html = folder.replace(SWAGGER_FOLDER, 'https://github.com/Azure/azure-rest-api-specs/tree/main')
         if package_name != '':
-            resource_manager.append('{},{},{},{}\n'.format(package_name,
-                                                           track_config,
-                                                           readme_python,
-                                                           readme_html))
+            resource_manager.append('{},{},{},{},{}\n'.format(package_name,
+                                                              track_config,
+                                                              readme_python,
+                                                              readme_html,
+                                                              multi_api))
         my_print(f'{folder} : {package_name}')
 
     my_print(f'total package kinds: {len(resource_manager)}')
