@@ -91,7 +91,7 @@ steps:
     displayName: 'Run Nightly SmokeTests'
     inputs:
       targetType: 'filePath'
-      filePath: ./eng/scripts/Smoke_Tests_Nightly.ps1
+      filePath: scripts/devops_tasks//Smoke_Tests_Nightly.ps1
       pwsh: true
       arguments: '${{ parameters.ServiceDirectory }}'
 

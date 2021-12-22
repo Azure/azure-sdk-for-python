@@ -1,15 +1,8 @@
 import os
-import sys
 import ast
 import io
 import re
 import textwrap
-import glob
-import logging
-
-# assuming the presence of packaging
-from packaging.specifiers import SpecifierSet
-from packaging.version import Version
 
 def parse_setup(setup_path):
     setup_filename = os.path.join(setup_path, "setup.py")
@@ -73,22 +66,9 @@ def is_track2_package(reqs):
 def get_package_properties(setup_py_path):
     """Parse setup.py and return package details like package name, version, whether it's new SDK
     """
-    pkgName, version, _, requires = parse_setup(setup_py_path)
+    pkg_name, version, _, requires = parse_setup(setup_py_path)
     is_track2 = is_track2_package(requires)
-    return pkgName, version, is_track2, setup_py_path
-
-def filter_for_compatibility(package_set):
-    collected_packages = []
-    v = sys.version_info
-    running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
-
-    for pkg in package_set:
-        spec_set = SpecifierSet(parse_setup_requires(pkg))
-
-        if running_major_version in spec_set:
-            collected_packages.append(pkg)
-
-    return collected_packages
+    return pkg_name, version, is_track2, setup_py_path
 
 def get_all_eligible_packages(path):
     eligible_libraries = []
@@ -96,18 +76,23 @@ def get_all_eligible_packages(path):
         if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
             if "setup.py" in files:
                 try:
-                    pkgName, version, is_track2, setup_py_path = get_package_properties(root)
+                    pkg_name, version, is_track2, setup_py_path = get_package_properties(root)
                     if is_track2:
-                        eligible_libraries.append((pkgName, version, is_track2, setup_py_path))
+                        eligible_libraries.append((pkg_name, version, setup_py_path))
                 except:
                     # Skip setup.py if the package cannot be parsed
                     pass
     return eligible_libraries
 
 def build_requirements_nightly(packages):
-    pass
+    f = open('requirements-nightly.txt', 'w')
+    for package in packages:
+        pkg_name, _, setup_py_path = package
+        f.write(pkg_name + ' ' + setup_py_path + '\n')
+    f.close()
 
 
 if __name__ == '__main__':
+    print("Running get_track2_packages.py")
     packages = get_all_eligible_packages('.')
     build_requirements_nightly(packages)
