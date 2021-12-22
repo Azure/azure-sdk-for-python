@@ -151,6 +151,16 @@ The following components make up the Azure Queue Service:
 The Azure Storage Queues client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
+### Async Clients 
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+for more information.
+
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods.
+
 ### Clients
 Two different clients are provided to interact with the various components of the Queue Service:
 1. [QueueServiceClient](https://aka.ms/azsdk-python-storage-queue-queueserviceclient) -

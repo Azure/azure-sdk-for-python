@@ -184,6 +184,16 @@ Four different clients are provided to interact with the various components of t
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
+### Async Clients 
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+for more information.
+
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods.
+
 ### Blob Types
 Once you've initialized a Client, you can choose from the different types of blobs:
 * [Block blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-block-blobs)

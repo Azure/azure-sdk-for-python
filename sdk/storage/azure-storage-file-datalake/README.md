@@ -77,6 +77,16 @@ DataLake storage offers four types of resources:
 * A directory under the file system
 * A file in a the file system or under directory
 
+### Async Clients 
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+for more information.
+
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods.
+
 #### Clients
 
 The DataLake Storage SDK provides four different clients to interact with the DataLake Service:
