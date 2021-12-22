@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. This change will be effective azure-storage-file-datalake>12.6.0b2 For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure DataLake service client library for Python
 Overview
 
