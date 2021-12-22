@@ -16,7 +16,7 @@ _LOG = logging.getLogger(__name__)
 _LANGUAGE_OWNER = {'msyyc'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN = {'msyyc': os.getenv('PYTHON_MSYYC_TOKEN')}
+_ASSIGNEE_TOKEN = {'msyyc': os.getenv('AZURESDK_BOT_TOKEN')}
 
 _SWAGGER_URL = 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification'
 _SWAGGER_PULL = 'https://github.com/Azure/azure-rest-api-specs/pull'

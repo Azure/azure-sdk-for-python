@@ -15,6 +15,12 @@ schedules:
       - main
     always: true
 
+variables:
+  - group: Release Secrets for GitHub
+  - group: SDK Release Helper
+  - group: Azure SDK Auto Release Pipeline Secrets
+
+
 jobs:
 - job: ReleaseHelper
   displayName: ReleaseHelper Python 3.8
@@ -48,6 +54,8 @@ jobs:
         export GO_DAPENGZHANG_TOKEN=$(Dapeng-GitToken)
         export JS_QIAOQIAO_TOKEN=$(QiaoQiao-GitToken)
         export LANGUAGE=$(RUN_LANGUAGE)
+        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+
 
         # create virtual env
         python -m venv venv-sdk
