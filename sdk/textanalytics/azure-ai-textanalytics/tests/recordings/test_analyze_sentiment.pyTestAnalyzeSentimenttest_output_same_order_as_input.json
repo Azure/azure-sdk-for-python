@@ -1,0 +1,151 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "249",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "a4924003-5d10-11ec-af0d-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022one\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022two\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022three\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022four\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00225\u0022, \u0022text\u0022: \u0022five\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e6e69ccc-cc1b-450b-8284-ab5012825f7d",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=5,CognitiveServices.TextAnalytics.TextRecords=5",
+        "Date": "Tue, 14 Dec 2021 19:04:19 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "99"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.06,
+              "neutral": 0.9,
+              "negative": 0.04
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.06,
+                  "neutral": 0.9,
+                  "negative": 0.04
+                },
+                "offset": 0,
+                "length": 3,
+                "text": "one"
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.01,
+              "neutral": 0.97,
+              "negative": 0.02
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.01,
+                  "neutral": 0.97,
+                  "negative": 0.02
+                },
+                "offset": 0,
+                "length": 3,
+                "text": "two"
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.05,
+              "neutral": 0.93,
+              "negative": 0.02
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.05,
+                  "neutral": 0.93,
+                  "negative": 0.02
+                },
+                "offset": 0,
+                "length": 5,
+                "text": "three"
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "4",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.03,
+              "neutral": 0.96,
+              "negative": 0.01
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.03,
+                  "neutral": 0.96,
+                  "negative": 0.01
+                },
+                "offset": 0,
+                "length": 4,
+                "text": "four"
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "5",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.05,
+              "neutral": 0.93,
+              "negative": 0.02
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.05,
+                  "neutral": 0.93,
+                  "negative": 0.02
+                },
+                "offset": 0,
+                "length": 4,
+                "text": "five"
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2020-04-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

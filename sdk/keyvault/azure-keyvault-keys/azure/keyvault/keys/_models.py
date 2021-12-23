@@ -4,7 +4,7 @@
 # -------------------------------------
 from collections import namedtuple
 from ._shared import parse_key_vault_id
-from ._generated.v7_1.models import JsonWebKey as _JsonWebKey
+from ._generated_models import JsonWebKey as _JsonWebKey
 
 try:
     from typing import TYPE_CHECKING
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional, List
     from datetime import datetime
-    from ._generated.v7_0 import models as _models
+    from . import _generated_models as _models
     from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
@@ -286,9 +286,11 @@ class KeyRotationLifetimeAction(object):
     :type action: ~azure.keyvault.keys.KeyRotationPolicyAction or str
 
     :keyword str time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
-        For example, 90 days is "P90D".
+        For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
+        information on ISO 8601 durations.
     :keyword str time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
-        For example, 90 days is "P90D".
+        For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
+        information on ISO 8601 durations.
     """
 
     def __init__(self, action, **kwargs):
@@ -315,7 +317,8 @@ class KeyRotationPolicy(object):
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
     :type lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
     :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO
-        8601 duration. For example, 90 days is "P90D".
+        8601 duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_
+        for more information on ISO 8601 durations.
     :ivar created_on: When the policy was created, in UTC
     :type created_on: ~datetime.datetime
     :ivar updated_on: When the policy was last updated, in UTC

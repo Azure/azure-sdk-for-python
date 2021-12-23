@@ -241,8 +241,11 @@ print(deleted_key.deleted_date)
 ```
 
 ### Configure automatic key rotation
-`update_key_rotation_policy` allows you to configure automatic key rotation for a key by specifying a rotation policy.
-In addition, `rotate_key` allows you to rotate a key on-demand by creating a new version of the given key.
+[update_key_rotation_policy](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.5.0b5/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient.update_key_rotation_policy)
+allows you to configure automatic key rotation for a key by specifying a rotation policy.
+In addition,
+[rotate_key](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.5.0b5/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient.rotate_key)
+allows you to rotate a key on-demand by creating a new version of the given key.
 
 ```python
 from azure.identity import DefaultAzureCredential
