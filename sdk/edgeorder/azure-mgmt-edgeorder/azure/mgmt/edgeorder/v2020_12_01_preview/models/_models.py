@@ -6,13 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._edge_order_management_client_enums import *
 
 
 class AddressDetails(msrest.serialization.Model):
@@ -24,9 +19,9 @@ class AddressDetails(msrest.serialization.Model):
 
     :param forward_address: Required. Customer address and contact details. It should be address
      resource.
-    :type forward_address: ~edge_order_management_client.models.AddressProperties
+    :type forward_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressProperties
     :ivar return_address: Return shipping address.
-    :vartype return_address: ~edge_order_management_client.models.AddressProperties
+    :vartype return_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressProperties
     """
 
     _validation = {
@@ -41,12 +36,10 @@ class AddressDetails(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        forward_address: "AddressProperties",
         **kwargs
     ):
         super(AddressDetails, self).__init__(**kwargs)
-        self.forward_address = forward_address
+        self.forward_address = kwargs['forward_address']
         self.return_address = None
 
 
@@ -56,9 +49,9 @@ class AddressProperties(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param shipping_address: Shipping details for the address.
-    :type shipping_address: ~edge_order_management_client.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ShippingAddress
     :param contact_details: Required. Contact details for the address.
-    :type contact_details: ~edge_order_management_client.models.ContactDetails
+    :type contact_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ContactDetails
     """
 
     _validation = {
@@ -72,14 +65,11 @@ class AddressProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        contact_details: "ContactDetails",
-        shipping_address: Optional["ShippingAddress"] = None,
         **kwargs
     ):
         super(AddressProperties, self).__init__(**kwargs)
-        self.shipping_address = shipping_address
-        self.contact_details = contact_details
+        self.shipping_address = kwargs.get('shipping_address', None)
+        self.contact_details = kwargs['contact_details']
 
 
 class Resource(msrest.serialization.Model):
@@ -157,14 +147,11 @@ class TrackedResource(Resource):
 
     def __init__(
         self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(TrackedResource, self).__init__(**kwargs)
-        self.tags = tags
-        self.location = location
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs['location']
 
 
 class AddressResource(TrackedResource):
@@ -187,11 +174,11 @@ class AddressResource(TrackedResource):
     :param location: Required. The geo-location where the resource lives.
     :type location: str
     :ivar system_data: Represents resource creation and update time.
-    :vartype system_data: ~edge_order_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.SystemData
     :param shipping_address: Shipping details for the address.
-    :type shipping_address: ~edge_order_management_client.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ShippingAddress
     :param contact_details: Required. Contact details for the address.
-    :type contact_details: ~edge_order_management_client.models.ContactDetails
+    :type contact_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ContactDetails
     """
 
     _validation = {
@@ -216,17 +203,12 @@ class AddressResource(TrackedResource):
 
     def __init__(
         self,
-        *,
-        location: str,
-        contact_details: "ContactDetails",
-        tags: Optional[Dict[str, str]] = None,
-        shipping_address: Optional["ShippingAddress"] = None,
         **kwargs
     ):
-        super(AddressResource, self).__init__(tags=tags, location=location, **kwargs)
+        super(AddressResource, self).__init__(**kwargs)
         self.system_data = None
-        self.shipping_address = shipping_address
-        self.contact_details = contact_details
+        self.shipping_address = kwargs.get('shipping_address', None)
+        self.contact_details = kwargs['contact_details']
 
 
 class AddressResourceList(msrest.serialization.Model):
@@ -235,7 +217,7 @@ class AddressResourceList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of address resources.
-    :vartype value: list[~edge_order_management_client.models.AddressResource]
+    :vartype value: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource]
     :param next_link: Link for the next set of job resources.
     :type next_link: str
     """
@@ -251,13 +233,11 @@ class AddressResourceList(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(AddressResourceList, self).__init__(**kwargs)
         self.value = None
-        self.next_link = next_link
+        self.next_link = kwargs.get('next_link', None)
 
 
 class AddressUpdateParameter(msrest.serialization.Model):
@@ -267,9 +247,9 @@ class AddressUpdateParameter(msrest.serialization.Model):
      can be used in viewing and grouping this resource (across resource groups).
     :type tags: dict[str, str]
     :param shipping_address: Shipping details for the address.
-    :type shipping_address: ~edge_order_management_client.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ShippingAddress
     :param contact_details: Contact details for the address.
-    :type contact_details: ~edge_order_management_client.models.ContactDetails
+    :type contact_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ContactDetails
     """
 
     _attribute_map = {
@@ -280,16 +260,12 @@ class AddressUpdateParameter(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        shipping_address: Optional["ShippingAddress"] = None,
-        contact_details: Optional["ContactDetails"] = None,
         **kwargs
     ):
         super(AddressUpdateParameter, self).__init__(**kwargs)
-        self.tags = tags
-        self.shipping_address = shipping_address
-        self.contact_details = contact_details
+        self.tags = kwargs.get('tags', None)
+        self.shipping_address = kwargs.get('shipping_address', None)
+        self.contact_details = kwargs.get('contact_details', None)
 
 
 class AvailabilityInformation(msrest.serialization.Model):
@@ -300,11 +276,13 @@ class AvailabilityInformation(msrest.serialization.Model):
     :ivar availability_stage: Current availability stage of the product. Availability stage.
      Possible values include: "Available", "ComingSoon", "Preview", "Deprecated", "Signup",
      "Unavailable".
-    :vartype availability_stage: str or ~edge_order_management_client.models.AvailabilityStage
+    :vartype availability_stage: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityStage
     :ivar disabled_reason: Reason why the product is disabled. Possible values include: "None",
      "Country", "Region", "Feature", "OfferType", "NoSubscriptionInfo", "NotAvailable",
      "OutOfStock".
-    :vartype disabled_reason: str or ~edge_order_management_client.models.DisabledReason
+    :vartype disabled_reason: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.DisabledReason
     :ivar disabled_reason_message: Message for why the product is disabled.
     :vartype disabled_reason_message: str
     """
@@ -339,15 +317,18 @@ class BasicInformation(msrest.serialization.Model):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     """
 
     _validation = {
@@ -389,10 +370,10 @@ class BillingMeterDetails(msrest.serialization.Model):
     :ivar name: Represents Billing type name.
     :vartype name: str
     :ivar meter_details: Represents MeterDetails.
-    :vartype meter_details: ~edge_order_management_client.models.MeterDetails
+    :vartype meter_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.MeterDetails
     :ivar metering_type: Represents Metering type (eg one-time or recurrent). Possible values
      include: "OneTime", "Recurring", "Adhoc".
-    :vartype metering_type: str or ~edge_order_management_client.models.MeteringType
+    :vartype metering_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.MeteringType
     :ivar frequency: Frequency of recurrence.
     :vartype frequency: str
     """
@@ -441,12 +422,10 @@ class CancellationReason(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        reason: str,
         **kwargs
     ):
         super(CancellationReason, self).__init__(**kwargs)
-        self.reason = reason
+        self.reason = kwargs['reason']
 
 
 class CommonProperties(BasicInformation):
@@ -457,17 +436,21 @@ class CommonProperties(BasicInformation):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     """
 
     _validation = {
@@ -506,21 +489,25 @@ class Configuration(msrest.serialization.Model):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar specifications: Specifications of the configuration.
-    :vartype specifications: list[~edge_order_management_client.models.Specification]
+    :vartype specifications: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Specification]
     :ivar dimensions: Dimensions of the configuration.
-    :vartype dimensions: ~edge_order_management_client.models.Dimensions
+    :vartype dimensions: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Dimensions
     """
 
     _validation = {
@@ -569,9 +556,11 @@ class ConfigurationFilters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param hierarchy_information: Required. Product hierarchy information.
-    :type hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :type hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :param filterable_property: Filters specific to product.
-    :type filterable_property: list[~edge_order_management_client.models.FilterableProperty]
+    :type filterable_property:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     """
 
     _validation = {
@@ -585,14 +574,11 @@ class ConfigurationFilters(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        hierarchy_information: "HierarchyInformation",
-        filterable_property: Optional[List["FilterableProperty"]] = None,
         **kwargs
     ):
         super(ConfigurationFilters, self).__init__(**kwargs)
-        self.hierarchy_information = hierarchy_information
-        self.filterable_property = filterable_property
+        self.hierarchy_information = kwargs['hierarchy_information']
+        self.filterable_property = kwargs.get('filterable_property', None)
 
 
 class ConfigurationProperties(CommonProperties):
@@ -603,21 +589,25 @@ class ConfigurationProperties(CommonProperties):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar specifications: Specifications of the configuration.
-    :vartype specifications: list[~edge_order_management_client.models.Specification]
+    :vartype specifications: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Specification]
     :ivar dimensions: Dimensions of the configuration.
-    :vartype dimensions: ~edge_order_management_client.models.Dimensions
+    :vartype dimensions: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Dimensions
     """
 
     _validation = {
@@ -659,7 +649,7 @@ class Configurations(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of configurations.
-    :vartype value: list[~edge_order_management_client.models.Configuration]
+    :vartype value: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Configuration]
     :param next_link: Link for the next set of configurations.
     :type next_link: str
     """
@@ -675,13 +665,11 @@ class Configurations(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(Configurations, self).__init__(**kwargs)
         self.value = None
-        self.next_link = next_link
+        self.next_link = kwargs.get('next_link', None)
 
 
 class ConfigurationsRequest(msrest.serialization.Model):
@@ -691,11 +679,12 @@ class ConfigurationsRequest(msrest.serialization.Model):
 
     :param configuration_filters: Required. Holds details about product hierarchy information and
      filterable property.
-    :type configuration_filters: list[~edge_order_management_client.models.ConfigurationFilters]
+    :type configuration_filters:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ConfigurationFilters]
     :param customer_subscription_details: Customer subscription properties. Clients can display
      available products to unregistered customers by explicitly passing subscription details.
     :type customer_subscription_details:
-     ~edge_order_management_client.models.CustomerSubscriptionDetails
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CustomerSubscriptionDetails
     """
 
     _validation = {
@@ -709,14 +698,11 @@ class ConfigurationsRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        configuration_filters: List["ConfigurationFilters"],
-        customer_subscription_details: Optional["CustomerSubscriptionDetails"] = None,
         **kwargs
     ):
         super(ConfigurationsRequest, self).__init__(**kwargs)
-        self.configuration_filters = configuration_filters
-        self.customer_subscription_details = customer_subscription_details
+        self.configuration_filters = kwargs['configuration_filters']
+        self.customer_subscription_details = kwargs.get('customer_subscription_details', None)
 
 
 class ContactDetails(msrest.serialization.Model):
@@ -752,20 +738,14 @@ class ContactDetails(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        contact_name: str,
-        phone: str,
-        email_list: List[str],
-        phone_extension: Optional[str] = None,
-        mobile: Optional[str] = None,
         **kwargs
     ):
         super(ContactDetails, self).__init__(**kwargs)
-        self.contact_name = contact_name
-        self.phone = phone
-        self.phone_extension = phone_extension
-        self.mobile = mobile
-        self.email_list = email_list
+        self.contact_name = kwargs['contact_name']
+        self.phone = kwargs['phone']
+        self.phone_extension = kwargs.get('phone_extension', None)
+        self.mobile = kwargs.get('mobile', None)
+        self.email_list = kwargs['email_list']
 
 
 class CostInformation(msrest.serialization.Model):
@@ -774,7 +754,8 @@ class CostInformation(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar billing_meter_details: Details on the various billing aspects for the product system.
-    :vartype billing_meter_details: list[~edge_order_management_client.models.BillingMeterDetails]
+    :vartype billing_meter_details:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.BillingMeterDetails]
     :ivar billing_info_url: Default url to display billing information.
     :vartype billing_info_url: str
     """
@@ -805,7 +786,7 @@ class CustomerSubscriptionDetails(msrest.serialization.Model):
 
     :param registered_features: List of registered feature flags for subscription.
     :type registered_features:
-     list[~edge_order_management_client.models.CustomerSubscriptionRegisteredFeatures]
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.CustomerSubscriptionRegisteredFeatures]
     :param location_placement_id: Location placement Id of a subscription.
     :type location_placement_id: str
     :param quota_id: Required. Quota ID of a subscription.
@@ -824,16 +805,12 @@ class CustomerSubscriptionDetails(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        quota_id: str,
-        registered_features: Optional[List["CustomerSubscriptionRegisteredFeatures"]] = None,
-        location_placement_id: Optional[str] = None,
         **kwargs
     ):
         super(CustomerSubscriptionDetails, self).__init__(**kwargs)
-        self.registered_features = registered_features
-        self.location_placement_id = location_placement_id
-        self.quota_id = quota_id
+        self.registered_features = kwargs.get('registered_features', None)
+        self.location_placement_id = kwargs.get('location_placement_id', None)
+        self.quota_id = kwargs['quota_id']
 
 
 class CustomerSubscriptionRegisteredFeatures(msrest.serialization.Model):
@@ -852,14 +829,11 @@ class CustomerSubscriptionRegisteredFeatures(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: Optional[str] = None,
-        state: Optional[str] = None,
         **kwargs
     ):
         super(CustomerSubscriptionRegisteredFeatures, self).__init__(**kwargs)
-        self.name = name
-        self.state = state
+        self.name = kwargs.get('name', None)
+        self.state = kwargs.get('state', None)
 
 
 class Description(msrest.serialization.Model):
@@ -868,7 +842,8 @@ class Description(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar description_type: Type of description. Possible values include: "Base".
-    :vartype description_type: str or ~edge_order_management_client.models.DescriptionType
+    :vartype description_type: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.DescriptionType
     :ivar short_description: Short description of the product system.
     :vartype short_description: str
     :ivar long_description: Long description of the product system.
@@ -878,7 +853,7 @@ class Description(msrest.serialization.Model):
     :ivar attributes: Attributes for the product system.
     :vartype attributes: list[str]
     :ivar links: Links for the product system.
-    :vartype links: list[~edge_order_management_client.models.Link]
+    :vartype links: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Link]
     """
 
     _validation = {
@@ -921,16 +896,20 @@ class DeviceDetails(msrest.serialization.Model):
     :vartype serial_number: str
     :ivar management_resource_id: Management Resource Id.
     :vartype management_resource_id: str
+    :ivar management_resource_tenant_id: Management Resource Tenant ID.
+    :vartype management_resource_tenant_id: str
     """
 
     _validation = {
         'serial_number': {'readonly': True},
         'management_resource_id': {'readonly': True},
+        'management_resource_tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
         'serial_number': {'key': 'serialNumber', 'type': 'str'},
         'management_resource_id': {'key': 'managementResourceId', 'type': 'str'},
+        'management_resource_tenant_id': {'key': 'managementResourceTenantId', 'type': 'str'},
     }
 
     def __init__(
@@ -940,6 +919,7 @@ class DeviceDetails(msrest.serialization.Model):
         super(DeviceDetails, self).__init__(**kwargs)
         self.serial_number = None
         self.management_resource_id = None
+        self.management_resource_tenant_id = None
 
 
 class Dimensions(msrest.serialization.Model):
@@ -955,13 +935,15 @@ class Dimensions(msrest.serialization.Model):
     :vartype width: float
     :ivar length_height_unit: Unit for the dimensions of length, height and width. Possible values
      include: "IN", "CM".
-    :vartype length_height_unit: str or ~edge_order_management_client.models.LengthHeightUnit
+    :vartype length_height_unit: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.LengthHeightUnit
     :ivar weight: Weight of the device.
     :vartype weight: float
     :ivar depth: Depth of the device.
     :vartype depth: float
     :ivar weight_unit: Unit for the dimensions of weight. Possible values include: "LBS", "KGS".
-    :vartype weight_unit: str or ~edge_order_management_client.models.WeightMeasurementUnit
+    :vartype weight_unit: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.WeightMeasurementUnit
     """
 
     _validation = {
@@ -1031,10 +1013,11 @@ class DisplayInfo(msrest.serialization.Model):
 class EncryptionPreferences(msrest.serialization.Model):
     """Preferences related to the double encryption.
 
-    :param double_encryption_status: Defines secondary layer of software-based encryption
-     enablement. Possible values include: "Disabled", "Enabled". Default value: "Disabled".
+    :param double_encryption_status: Double encryption status as entered by the customer. It is
+     compulsory to give this parameter if the 'Deny' or 'Disabled' policy is configured. Possible
+     values include: "Disabled", "Enabled".
     :type double_encryption_status: str or
-     ~edge_order_management_client.models.DoubleEncryptionStatus
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.DoubleEncryptionStatus
     """
 
     _attribute_map = {
@@ -1043,12 +1026,10 @@ class EncryptionPreferences(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        double_encryption_status: Optional[Union[str, "DoubleEncryptionStatus"]] = "Disabled",
         **kwargs
     ):
         super(EncryptionPreferences, self).__init__(**kwargs)
-        self.double_encryption_status = double_encryption_status
+        self.double_encryption_status = kwargs.get('double_encryption_status', None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -1093,9 +1074,10 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~edge_order_management_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~edge_order_management_client.models.ErrorAdditionalInfo]
+    :vartype additional_info:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -1130,7 +1112,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :param error: The error object.
-    :type error: ~edge_order_management_client.models.ErrorDetail
+    :type error: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -1139,12 +1121,10 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs.get('error', None)
 
 
 class FilterableProperty(msrest.serialization.Model):
@@ -1154,7 +1134,7 @@ class FilterableProperty(msrest.serialization.Model):
 
     :param type: Required. Type of product filter. Possible values include: "ShipToCountries",
      "DoubleEncryptionStatus".
-    :type type: str or ~edge_order_management_client.models.SupportedFilterTypes
+    :type type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.SupportedFilterTypes
     :param supported_values: Required. Values to be filtered.
     :type supported_values: list[str]
     """
@@ -1171,14 +1151,52 @@ class FilterableProperty(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        type: Union[str, "SupportedFilterTypes"],
-        supported_values: List[str],
         **kwargs
     ):
         super(FilterableProperty, self).__init__(**kwargs)
-        self.type = type
-        self.supported_values = supported_values
+        self.type = kwargs['type']
+        self.supported_values = kwargs['supported_values']
+
+
+class ForwardShippingDetails(msrest.serialization.Model):
+    """Forward shipment details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar carrier_name: Name of the carrier.
+    :vartype carrier_name: str
+    :ivar carrier_display_name: Carrier Name for display purpose. Not to be used for any
+     processing.
+    :vartype carrier_display_name: str
+    :ivar tracking_id: TrackingId of the package.
+    :vartype tracking_id: str
+    :ivar tracking_url: TrackingUrl of the package.
+    :vartype tracking_url: str
+    """
+
+    _validation = {
+        'carrier_name': {'readonly': True},
+        'carrier_display_name': {'readonly': True},
+        'tracking_id': {'readonly': True},
+        'tracking_url': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'carrier_name': {'key': 'carrierName', 'type': 'str'},
+        'carrier_display_name': {'key': 'carrierDisplayName', 'type': 'str'},
+        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ForwardShippingDetails, self).__init__(**kwargs)
+        self.carrier_name = None
+        self.carrier_display_name = None
+        self.tracking_id = None
+        self.tracking_url = None
 
 
 class HierarchyInformation(msrest.serialization.Model):
@@ -1205,18 +1223,13 @@ class HierarchyInformation(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        product_family_name: Optional[str] = None,
-        product_line_name: Optional[str] = None,
-        product_name: Optional[str] = None,
-        configuration_name: Optional[str] = None,
         **kwargs
     ):
         super(HierarchyInformation, self).__init__(**kwargs)
-        self.product_family_name = product_family_name
-        self.product_line_name = product_line_name
-        self.product_name = product_name
-        self.configuration_name = configuration_name
+        self.product_family_name = kwargs.get('product_family_name', None)
+        self.product_line_name = kwargs.get('product_line_name', None)
+        self.product_name = kwargs.get('product_name', None)
+        self.configuration_name = kwargs.get('configuration_name', None)
 
 
 class ImageInformation(msrest.serialization.Model):
@@ -1226,7 +1239,7 @@ class ImageInformation(msrest.serialization.Model):
 
     :ivar image_type: Type of the image. Possible values include: "MainImage", "BulletImage",
      "GenericImage".
-    :vartype image_type: str or ~edge_order_management_client.models.ImageType
+    :vartype image_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageType
     :ivar image_url: Url of the image.
     :vartype image_url: str
     """
@@ -1257,7 +1270,7 @@ class Link(msrest.serialization.Model):
 
     :ivar link_type: Type of link. Possible values include: "Generic", "TermsAndConditions",
      "Specification", "Documentation", "KnowMore", "SignUp".
-    :vartype link_type: str or ~edge_order_management_client.models.LinkType
+    :vartype link_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.LinkType
     :ivar link_url: Url of the link.
     :vartype link_url: str
     """
@@ -1294,12 +1307,10 @@ class ManagementResourcePreferences(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        preferred_management_resource_id: Optional[str] = None,
         **kwargs
     ):
         super(ManagementResourcePreferences, self).__init__(**kwargs)
-        self.preferred_management_resource_id = preferred_management_resource_id
+        self.preferred_management_resource_id = kwargs.get('preferred_management_resource_id', None)
 
 
 class MeterDetails(msrest.serialization.Model):
@@ -1314,11 +1325,11 @@ class MeterDetails(msrest.serialization.Model):
 
     :param billing_type: Required. Represents billing type.Constant filled by server.  Possible
      values include: "Pav2", "Purchase".
-    :type billing_type: str or ~edge_order_management_client.models.BillingType
+    :type billing_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.BillingType
     :ivar multiplier: Billing unit applicable for Pav2 billing.
     :vartype multiplier: float
     :ivar charging_type: Charging type. Possible values include: "PerOrder", "PerDevice".
-    :vartype charging_type: str or ~edge_order_management_client.models.ChargingType
+    :vartype charging_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ChargingType
     """
 
     _validation = {
@@ -1354,7 +1365,7 @@ class NotificationPreference(msrest.serialization.Model):
 
     :param stage_name: Required. Name of the stage. Possible values include: "Shipped",
      "Delivered".
-    :type stage_name: str or ~edge_order_management_client.models.NotificationStageName
+    :type stage_name: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.NotificationStageName
     :param send_notification: Required. Notification is required or not.
     :type send_notification: bool
     """
@@ -1371,14 +1382,11 @@ class NotificationPreference(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        stage_name: Union[str, "NotificationStageName"],
-        send_notification: bool,
         **kwargs
     ):
         super(NotificationPreference, self).__init__(**kwargs)
-        self.stage_name = stage_name
-        self.send_notification = send_notification
+        self.stage_name = kwargs['stage_name']
+        self.send_notification = kwargs['send_notification']
 
 
 class Operation(msrest.serialization.Model):
@@ -1393,14 +1401,14 @@ class Operation(msrest.serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :param display: Localized display information for this particular operation.
-    :type display: ~edge_order_management_client.models.OperationDisplay
+    :type display: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
      "system", "user,system".
-    :vartype origin: str or ~edge_order_management_client.models.Origin
+    :vartype origin: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. Possible values include: "Internal".
-    :vartype action_type: str or ~edge_order_management_client.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ActionType
     """
 
     _validation = {
@@ -1420,14 +1428,12 @@ class Operation(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
-        self.display = display
+        self.display = kwargs.get('display', None)
         self.origin = None
         self.action_type = None
 
@@ -1482,7 +1488,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~edge_order_management_client.models.Operation]
+    :vartype value: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -1514,40 +1520,50 @@ class OrderItemDetails(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param product_details: Required. Unique identifier for configuration.
-    :type product_details: ~edge_order_management_client.models.ProductDetails
+    :type product_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductDetails
     :param order_item_type: Required. Order item type. Possible values include: "Purchase",
      "Rental".
-    :type order_item_type: str or ~edge_order_management_client.models.OrderItemType
+    :type order_item_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemType
     :ivar current_stage: Current Order item Status.
-    :vartype current_stage: ~edge_order_management_client.models.StageDetails
+    :vartype current_stage: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.StageDetails
     :ivar order_item_stage_history: Order item status history.
-    :vartype order_item_stage_history: list[~edge_order_management_client.models.StageDetails]
+    :vartype order_item_stage_history:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.StageDetails]
     :param preferences: Customer notification Preferences.
-    :type preferences: ~edge_order_management_client.models.Preferences
+    :type preferences: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Preferences
     :ivar forward_shipping_details: Forward Package Shipping details.
-    :vartype forward_shipping_details: ~edge_order_management_client.models.ShippingDetails
+    :vartype forward_shipping_details:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ForwardShippingDetails
     :ivar reverse_shipping_details: Reverse Package Shipping details.
-    :vartype reverse_shipping_details: ~edge_order_management_client.models.ShippingDetails
+    :vartype reverse_shipping_details:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ReverseShippingDetails
     :param notification_email_list: Additional notification email list.
     :type notification_email_list: list[str]
     :ivar cancellation_reason: Cancellation reason.
     :vartype cancellation_reason: str
-    :ivar cancellation_status: Describes whether the orderItem is cancellable or not. Possible
+    :ivar cancellation_status: Describes whether the order item is cancellable or not. Possible
      values include: "Cancellable", "CancellableWithFee", "NotCancellable".
     :vartype cancellation_status: str or
-     ~edge_order_management_client.models.OrderItemCancellationEnum
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemCancellationEnum
     :ivar deletion_status: Describes whether the order item is deletable or not. Possible values
      include: "Allowed", "NotAllowed".
-    :vartype deletion_status: str or ~edge_order_management_client.models.ActionStatusEnum
+    :vartype deletion_status: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ActionStatusEnum
     :ivar return_reason: Return reason.
     :vartype return_reason: str
-    :ivar return_status: Describes whether the orderItem is returnable or not. Possible values
+    :ivar return_status: Describes whether the order item is returnable or not. Possible values
      include: "Returnable", "ReturnableWithFee", "NotReturnable".
-    :vartype return_status: str or ~edge_order_management_client.models.OrderItemReturnEnum
-    :ivar management_rp_details: parent RP details.
-    :vartype management_rp_details: any
+    :vartype return_status: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemReturnEnum
+    :ivar management_rp_details: Parent RP details - this returns only the first or default parent
+     RP from the entire list.
+    :vartype management_rp_details:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ResourceProviderDetails
+    :ivar management_rp_details_list: List of parent RP details supported for configuration.
+    :vartype management_rp_details_list:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ResourceProviderDetails]
     :ivar error: Top level error for the job.
-    :vartype error: ~edge_order_management_client.models.ErrorDetail
+    :vartype error: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ErrorDetail
     """
 
     _validation = {
@@ -1563,6 +1579,7 @@ class OrderItemDetails(msrest.serialization.Model):
         'return_reason': {'readonly': True},
         'return_status': {'readonly': True},
         'management_rp_details': {'readonly': True},
+        'management_rp_details_list': {'readonly': True},
         'error': {'readonly': True},
     }
 
@@ -1572,42 +1589,39 @@ class OrderItemDetails(msrest.serialization.Model):
         'current_stage': {'key': 'currentStage', 'type': 'StageDetails'},
         'order_item_stage_history': {'key': 'orderItemStageHistory', 'type': '[StageDetails]'},
         'preferences': {'key': 'preferences', 'type': 'Preferences'},
-        'forward_shipping_details': {'key': 'forwardShippingDetails', 'type': 'ShippingDetails'},
-        'reverse_shipping_details': {'key': 'reverseShippingDetails', 'type': 'ShippingDetails'},
+        'forward_shipping_details': {'key': 'forwardShippingDetails', 'type': 'ForwardShippingDetails'},
+        'reverse_shipping_details': {'key': 'reverseShippingDetails', 'type': 'ReverseShippingDetails'},
         'notification_email_list': {'key': 'notificationEmailList', 'type': '[str]'},
         'cancellation_reason': {'key': 'cancellationReason', 'type': 'str'},
         'cancellation_status': {'key': 'cancellationStatus', 'type': 'str'},
         'deletion_status': {'key': 'deletionStatus', 'type': 'str'},
         'return_reason': {'key': 'returnReason', 'type': 'str'},
         'return_status': {'key': 'returnStatus', 'type': 'str'},
-        'management_rp_details': {'key': 'managementRpDetails', 'type': 'object'},
+        'management_rp_details': {'key': 'managementRpDetails', 'type': 'ResourceProviderDetails'},
+        'management_rp_details_list': {'key': 'managementRpDetailsList', 'type': '[ResourceProviderDetails]'},
         'error': {'key': 'error', 'type': 'ErrorDetail'},
     }
 
     def __init__(
         self,
-        *,
-        product_details: "ProductDetails",
-        order_item_type: Union[str, "OrderItemType"],
-        preferences: Optional["Preferences"] = None,
-        notification_email_list: Optional[List[str]] = None,
         **kwargs
     ):
         super(OrderItemDetails, self).__init__(**kwargs)
-        self.product_details = product_details
-        self.order_item_type = order_item_type
+        self.product_details = kwargs['product_details']
+        self.order_item_type = kwargs['order_item_type']
         self.current_stage = None
         self.order_item_stage_history = None
-        self.preferences = preferences
+        self.preferences = kwargs.get('preferences', None)
         self.forward_shipping_details = None
         self.reverse_shipping_details = None
-        self.notification_email_list = notification_email_list
+        self.notification_email_list = kwargs.get('notification_email_list', None)
         self.cancellation_reason = None
         self.cancellation_status = None
         self.deletion_status = None
         self.return_reason = None
         self.return_status = None
         self.management_rp_details = None
+        self.management_rp_details_list = None
         self.error = None
 
 
@@ -1631,11 +1645,11 @@ class OrderItemResource(TrackedResource):
     :param location: Required. The geo-location where the resource lives.
     :type location: str
     :ivar system_data: Represents resource creation and update time.
-    :vartype system_data: ~edge_order_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.SystemData
     :param order_item_details: Required. Represents order item details.
-    :type order_item_details: ~edge_order_management_client.models.OrderItemDetails
+    :type order_item_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemDetails
     :param address_details: Required. Represents shipping and return address for order item.
-    :type address_details: ~edge_order_management_client.models.AddressDetails
+    :type address_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressDetails
     :ivar start_time: Start time of order item.
     :vartype start_time: ~datetime.datetime
     :param order_id: Required. Id of the order to which order item belongs to.
@@ -1669,20 +1683,14 @@ class OrderItemResource(TrackedResource):
 
     def __init__(
         self,
-        *,
-        location: str,
-        order_item_details: "OrderItemDetails",
-        address_details: "AddressDetails",
-        order_id: str,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(OrderItemResource, self).__init__(tags=tags, location=location, **kwargs)
+        super(OrderItemResource, self).__init__(**kwargs)
         self.system_data = None
-        self.order_item_details = order_item_details
-        self.address_details = address_details
+        self.order_item_details = kwargs['order_item_details']
+        self.address_details = kwargs['address_details']
         self.start_time = None
-        self.order_id = order_id
+        self.order_id = kwargs['order_id']
 
 
 class OrderItemResourceList(msrest.serialization.Model):
@@ -1691,7 +1699,7 @@ class OrderItemResourceList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of order item resources.
-    :vartype value: list[~edge_order_management_client.models.OrderItemResource]
+    :vartype value: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource]
     :param next_link: Link for the next set of order item resources.
     :type next_link: str
     """
@@ -1707,13 +1715,11 @@ class OrderItemResourceList(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(OrderItemResourceList, self).__init__(**kwargs)
         self.value = None
-        self.next_link = next_link
+        self.next_link = kwargs.get('next_link', None)
 
 
 class OrderItemUpdateParameter(msrest.serialization.Model):
@@ -1723,9 +1729,9 @@ class OrderItemUpdateParameter(msrest.serialization.Model):
      can be used in viewing and grouping this resource (across resource groups).
     :type tags: dict[str, str]
     :param forward_address: Updates forward shipping address and contact details.
-    :type forward_address: ~edge_order_management_client.models.AddressProperties
+    :type forward_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressProperties
     :param preferences: Customer preference.
-    :type preferences: ~edge_order_management_client.models.Preferences
+    :type preferences: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Preferences
     :param notification_email_list: Additional notification email list.
     :type notification_email_list: list[str]
     """
@@ -1739,18 +1745,13 @@ class OrderItemUpdateParameter(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        forward_address: Optional["AddressProperties"] = None,
-        preferences: Optional["Preferences"] = None,
-        notification_email_list: Optional[List[str]] = None,
         **kwargs
     ):
         super(OrderItemUpdateParameter, self).__init__(**kwargs)
-        self.tags = tags
-        self.forward_address = forward_address
-        self.preferences = preferences
-        self.notification_email_list = notification_email_list
+        self.tags = kwargs.get('tags', None)
+        self.forward_address = kwargs.get('forward_address', None)
+        self.preferences = kwargs.get('preferences', None)
+        self.notification_email_list = kwargs.get('notification_email_list', None)
 
 
 class ProxyResource(Resource):
@@ -1801,13 +1802,14 @@ class OrderResource(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: Represents resource creation and update time.
-    :vartype system_data: ~edge_order_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.SystemData
     :ivar order_item_ids: List of order item ARM Ids which are part of an order.
     :vartype order_item_ids: list[str]
     :ivar current_stage: Order current status.
-    :vartype current_stage: ~edge_order_management_client.models.StageDetails
+    :vartype current_stage: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.StageDetails
     :ivar order_stage_history: Order status history.
-    :vartype order_stage_history: list[~edge_order_management_client.models.StageDetails]
+    :vartype order_stage_history:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.StageDetails]
     """
 
     _validation = {
@@ -1847,7 +1849,7 @@ class OrderResourceList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of order resources.
-    :vartype value: list[~edge_order_management_client.models.OrderResource]
+    :vartype value: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResource]
     :param next_link: Link for the next set of order resources.
     :type next_link: str
     """
@@ -1863,13 +1865,11 @@ class OrderResourceList(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(OrderResourceList, self).__init__(**kwargs)
         self.value = None
-        self.next_link = next_link
+        self.next_link = kwargs.get('next_link', None)
 
 
 class Pav2MeterDetails(MeterDetails):
@@ -1881,11 +1881,11 @@ class Pav2MeterDetails(MeterDetails):
 
     :param billing_type: Required. Represents billing type.Constant filled by server.  Possible
      values include: "Pav2", "Purchase".
-    :type billing_type: str or ~edge_order_management_client.models.BillingType
+    :type billing_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.BillingType
     :ivar multiplier: Billing unit applicable for Pav2 billing.
     :vartype multiplier: float
     :ivar charging_type: Charging type. Possible values include: "PerOrder", "PerDevice".
-    :vartype charging_type: str or ~edge_order_management_client.models.ChargingType
+    :vartype charging_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ChargingType
     :ivar meter_guid: Validation status of requested data center and transport.
     :vartype meter_guid: str
     """
@@ -1918,14 +1918,16 @@ class Preferences(msrest.serialization.Model):
 
     :param notification_preferences: Notification preferences.
     :type notification_preferences:
-     list[~edge_order_management_client.models.NotificationPreference]
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.NotificationPreference]
     :param transport_preferences: Preferences related to the shipment logistics of the order.
-    :type transport_preferences: ~edge_order_management_client.models.TransportPreferences
+    :type transport_preferences:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.TransportPreferences
     :param encryption_preferences: Preferences related to the Encryption.
-    :type encryption_preferences: ~edge_order_management_client.models.EncryptionPreferences
+    :type encryption_preferences:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.EncryptionPreferences
     :param management_resource_preferences: Preferences related to the Management resource.
     :type management_resource_preferences:
-     ~edge_order_management_client.models.ManagementResourcePreferences
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ManagementResourcePreferences
     """
 
     _attribute_map = {
@@ -1937,18 +1939,13 @@ class Preferences(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        notification_preferences: Optional[List["NotificationPreference"]] = None,
-        transport_preferences: Optional["TransportPreferences"] = None,
-        encryption_preferences: Optional["EncryptionPreferences"] = None,
-        management_resource_preferences: Optional["ManagementResourcePreferences"] = None,
         **kwargs
     ):
         super(Preferences, self).__init__(**kwargs)
-        self.notification_preferences = notification_preferences
-        self.transport_preferences = transport_preferences
-        self.encryption_preferences = encryption_preferences
-        self.management_resource_preferences = management_resource_preferences
+        self.notification_preferences = kwargs.get('notification_preferences', None)
+        self.transport_preferences = kwargs.get('transport_preferences', None)
+        self.encryption_preferences = kwargs.get('encryption_preferences', None)
+        self.management_resource_preferences = kwargs.get('management_resource_preferences', None)
 
 
 class Product(msrest.serialization.Model):
@@ -1959,19 +1956,23 @@ class Product(msrest.serialization.Model):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar configurations: List of configurations for the product.
-    :vartype configurations: list[~edge_order_management_client.models.Configuration]
+    :vartype configurations: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Configuration]
     """
 
     _validation = {
@@ -2019,18 +2020,25 @@ class ProductDetails(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param display_info: Display details of the product.
-    :type display_info: ~edge_order_management_client.models.DisplayInfo
+    :type display_info: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.DisplayInfo
     :param hierarchy_information: Required. Hierarchy of the product which uniquely identifies the
      product.
-    :type hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
-    :param count: Quantity of the product.
-    :type count: int
+    :type hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
+    :ivar count: Quantity of the product.
+    :vartype count: int
+    :ivar product_double_encryption_status: Double encryption status of the configuration.
+     Read-only field. Possible values include: "Disabled", "Enabled".
+    :vartype product_double_encryption_status: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.DoubleEncryptionStatus
     :ivar device_details: list of device details.
-    :vartype device_details: list[~edge_order_management_client.models.DeviceDetails]
+    :vartype device_details: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.DeviceDetails]
     """
 
     _validation = {
         'hierarchy_information': {'required': True},
+        'count': {'readonly': True},
+        'product_double_encryption_status': {'readonly': True},
         'device_details': {'readonly': True},
     }
 
@@ -2038,21 +2046,19 @@ class ProductDetails(msrest.serialization.Model):
         'display_info': {'key': 'displayInfo', 'type': 'DisplayInfo'},
         'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
         'count': {'key': 'count', 'type': 'int'},
+        'product_double_encryption_status': {'key': 'productDoubleEncryptionStatus', 'type': 'str'},
         'device_details': {'key': 'deviceDetails', 'type': '[DeviceDetails]'},
     }
 
     def __init__(
         self,
-        *,
-        hierarchy_information: "HierarchyInformation",
-        display_info: Optional["DisplayInfo"] = None,
-        count: Optional[int] = None,
         **kwargs
     ):
         super(ProductDetails, self).__init__(**kwargs)
-        self.display_info = display_info
-        self.hierarchy_information = hierarchy_information
-        self.count = count
+        self.display_info = kwargs.get('display_info', None)
+        self.hierarchy_information = kwargs['hierarchy_information']
+        self.count = None
+        self.product_double_encryption_status = None
         self.device_details = None
 
 
@@ -2062,7 +2068,7 @@ class ProductFamilies(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of product families.
-    :vartype value: list[~edge_order_management_client.models.ProductFamily]
+    :vartype value: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamily]
     :param next_link: Link for the next set of product families.
     :type next_link: str
     """
@@ -2078,13 +2084,11 @@ class ProductFamilies(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(ProductFamilies, self).__init__(**kwargs)
         self.value = None
-        self.next_link = next_link
+        self.next_link = kwargs.get('next_link', None)
 
 
 class ProductFamiliesMetadata(msrest.serialization.Model):
@@ -2093,7 +2097,8 @@ class ProductFamiliesMetadata(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of product family metadata details.
-    :vartype value: list[~edge_order_management_client.models.ProductFamiliesMetadataDetails]
+    :vartype value:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamiliesMetadataDetails]
     :ivar next_link: Link for the next set of product families.
     :vartype next_link: str
     """
@@ -2125,19 +2130,26 @@ class ProductFamiliesMetadataDetails(msrest.serialization.Model):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar product_lines: List of product lines supported in the product family.
-    :vartype product_lines: list[~edge_order_management_client.models.ProductLine]
+    :vartype product_lines: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductLine]
+    :param resource_provider_details: Contains details related to resource provider.
+    :type resource_provider_details:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ResourceProviderDetails]
     """
 
     _validation = {
@@ -2160,6 +2172,7 @@ class ProductFamiliesMetadataDetails(msrest.serialization.Model):
         'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
         'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
         'product_lines': {'key': 'properties.productLines', 'type': '[ProductLine]'},
+        'resource_provider_details': {'key': 'properties.resourceProviderDetails', 'type': '[ResourceProviderDetails]'},
     }
 
     def __init__(
@@ -2175,6 +2188,7 @@ class ProductFamiliesMetadataDetails(msrest.serialization.Model):
         self.hierarchy_information = None
         self.filterable_properties = None
         self.product_lines = None
+        self.resource_provider_details = kwargs.get('resource_provider_details', None)
 
 
 class ProductFamiliesRequest(msrest.serialization.Model):
@@ -2184,11 +2198,11 @@ class ProductFamiliesRequest(msrest.serialization.Model):
 
     :param filterable_properties: Required. Dictionary of filterable properties on product family.
     :type filterable_properties: dict[str,
-     list[~edge_order_management_client.models.FilterableProperty]]
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]]
     :param customer_subscription_details: Customer subscription properties. Clients can display
      available products to unregistered customers by explicitly passing subscription details.
     :type customer_subscription_details:
-     ~edge_order_management_client.models.CustomerSubscriptionDetails
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CustomerSubscriptionDetails
     """
 
     _validation = {
@@ -2202,14 +2216,11 @@ class ProductFamiliesRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        filterable_properties: Dict[str, List["FilterableProperty"]],
-        customer_subscription_details: Optional["CustomerSubscriptionDetails"] = None,
         **kwargs
     ):
         super(ProductFamiliesRequest, self).__init__(**kwargs)
-        self.filterable_properties = filterable_properties
-        self.customer_subscription_details = customer_subscription_details
+        self.filterable_properties = kwargs['filterable_properties']
+        self.customer_subscription_details = kwargs.get('customer_subscription_details', None)
 
 
 class ProductFamily(msrest.serialization.Model):
@@ -2220,19 +2231,26 @@ class ProductFamily(msrest.serialization.Model):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar product_lines: List of product lines supported in the product family.
-    :vartype product_lines: list[~edge_order_management_client.models.ProductLine]
+    :vartype product_lines: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductLine]
+    :param resource_provider_details: Contains details related to resource provider.
+    :type resource_provider_details:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ResourceProviderDetails]
     """
 
     _validation = {
@@ -2255,6 +2273,7 @@ class ProductFamily(msrest.serialization.Model):
         'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
         'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
         'product_lines': {'key': 'properties.productLines', 'type': '[ProductLine]'},
+        'resource_provider_details': {'key': 'properties.resourceProviderDetails', 'type': '[ResourceProviderDetails]'},
     }
 
     def __init__(
@@ -2270,6 +2289,7 @@ class ProductFamily(msrest.serialization.Model):
         self.hierarchy_information = None
         self.filterable_properties = None
         self.product_lines = None
+        self.resource_provider_details = kwargs.get('resource_provider_details', None)
 
 
 class ProductFamilyProperties(CommonProperties):
@@ -2280,19 +2300,26 @@ class ProductFamilyProperties(CommonProperties):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar product_lines: List of product lines supported in the product family.
-    :vartype product_lines: list[~edge_order_management_client.models.ProductLine]
+    :vartype product_lines: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductLine]
+    :param resource_provider_details: Contains details related to resource provider.
+    :type resource_provider_details:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ResourceProviderDetails]
     """
 
     _validation = {
@@ -2315,6 +2342,7 @@ class ProductFamilyProperties(CommonProperties):
         'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
         'filterable_properties': {'key': 'filterableProperties', 'type': '[FilterableProperty]'},
         'product_lines': {'key': 'productLines', 'type': '[ProductLine]'},
+        'resource_provider_details': {'key': 'resourceProviderDetails', 'type': '[ResourceProviderDetails]'},
     }
 
     def __init__(
@@ -2323,6 +2351,7 @@ class ProductFamilyProperties(CommonProperties):
     ):
         super(ProductFamilyProperties, self).__init__(**kwargs)
         self.product_lines = None
+        self.resource_provider_details = kwargs.get('resource_provider_details', None)
 
 
 class ProductLine(msrest.serialization.Model):
@@ -2333,19 +2362,23 @@ class ProductLine(msrest.serialization.Model):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar products: List of products in the product line.
-    :vartype products: list[~edge_order_management_client.models.Product]
+    :vartype products: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Product]
     """
 
     _validation = {
@@ -2393,19 +2426,23 @@ class ProductLineProperties(CommonProperties):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar products: List of products in the product line.
-    :vartype products: list[~edge_order_management_client.models.Product]
+    :vartype products: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Product]
     """
 
     _validation = {
@@ -2446,19 +2483,23 @@ class ProductProperties(CommonProperties):
     :ivar display_name: Display Name for the product system.
     :vartype display_name: str
     :ivar description: Description related to the product system.
-    :vartype description: ~edge_order_management_client.models.Description
+    :vartype description: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.Description
     :ivar image_information: Image information for the product system.
-    :vartype image_information: list[~edge_order_management_client.models.ImageInformation]
+    :vartype image_information:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ImageInformation]
     :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: ~edge_order_management_client.models.CostInformation
+    :vartype cost_information: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CostInformation
     :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: ~edge_order_management_client.models.AvailabilityInformation
+    :vartype availability_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AvailabilityInformation
     :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: ~edge_order_management_client.models.HierarchyInformation
+    :vartype hierarchy_information:
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.HierarchyInformation
     :ivar filterable_properties: list of filters supported for a product.
-    :vartype filterable_properties: list[~edge_order_management_client.models.FilterableProperty]
+    :vartype filterable_properties:
+     list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.FilterableProperty]
     :ivar configurations: List of configurations for the product.
-    :vartype configurations: list[~edge_order_management_client.models.Configuration]
+    :vartype configurations: list[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Configuration]
     """
 
     _validation = {
@@ -2500,11 +2541,11 @@ class PurchaseMeterDetails(MeterDetails):
 
     :param billing_type: Required. Represents billing type.Constant filled by server.  Possible
      values include: "Pav2", "Purchase".
-    :type billing_type: str or ~edge_order_management_client.models.BillingType
+    :type billing_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.BillingType
     :ivar multiplier: Billing unit applicable for Pav2 billing.
     :vartype multiplier: float
     :ivar charging_type: Charging type. Possible values include: "PerOrder", "PerDevice".
-    :vartype charging_type: str or ~edge_order_management_client.models.ChargingType
+    :vartype charging_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ChargingType
     :ivar product_id: Product Id.
     :vartype product_id: str
     :ivar sku_id: Sku Id.
@@ -2568,14 +2609,37 @@ class ResourceIdentity(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        type: Optional[str] = None,
         **kwargs
     ):
         super(ResourceIdentity, self).__init__(**kwargs)
-        self.type = type
+        self.type = kwargs.get('type', None)
         self.principal_id = None
         self.tenant_id = None
+
+
+class ResourceProviderDetails(msrest.serialization.Model):
+    """Management RP details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_provider_namespace: Resource provider namespace.
+    :vartype resource_provider_namespace: str
+    """
+
+    _validation = {
+        'resource_provider_namespace': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_provider_namespace': {'key': 'resourceProviderNamespace', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceProviderDetails, self).__init__(**kwargs)
+        self.resource_provider_namespace = None
 
 
 class ReturnOrderItemDetails(msrest.serialization.Model):
@@ -2584,9 +2648,13 @@ class ReturnOrderItemDetails(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param return_address: customer return address.
-    :type return_address: ~edge_order_management_client.models.AddressProperties
+    :type return_address: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressProperties
     :param return_reason: Required. Return Reason.
     :type return_reason: str
+    :param service_tag: Service tag (located on the bottom-right corner of the device).
+    :type service_tag: str
+    :param shipping_box_required: Shipping Box required.
+    :type shipping_box_required: bool
     """
 
     _validation = {
@@ -2596,18 +2664,65 @@ class ReturnOrderItemDetails(msrest.serialization.Model):
     _attribute_map = {
         'return_address': {'key': 'returnAddress', 'type': 'AddressProperties'},
         'return_reason': {'key': 'returnReason', 'type': 'str'},
+        'service_tag': {'key': 'serviceTag', 'type': 'str'},
+        'shipping_box_required': {'key': 'shippingBoxRequired', 'type': 'bool'},
     }
 
     def __init__(
         self,
-        *,
-        return_reason: str,
-        return_address: Optional["AddressProperties"] = None,
         **kwargs
     ):
         super(ReturnOrderItemDetails, self).__init__(**kwargs)
-        self.return_address = return_address
-        self.return_reason = return_reason
+        self.return_address = kwargs.get('return_address', None)
+        self.return_reason = kwargs['return_reason']
+        self.service_tag = kwargs.get('service_tag', None)
+        self.shipping_box_required = kwargs.get('shipping_box_required', False)
+
+
+class ReverseShippingDetails(msrest.serialization.Model):
+    """Reverse shipment details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar sas_key_for_label: SAS key to download the reverse shipment label of the package.
+    :vartype sas_key_for_label: str
+    :ivar carrier_name: Name of the carrier.
+    :vartype carrier_name: str
+    :ivar carrier_display_name: Carrier Name for display purpose. Not to be used for any
+     processing.
+    :vartype carrier_display_name: str
+    :ivar tracking_id: TrackingId of the package.
+    :vartype tracking_id: str
+    :ivar tracking_url: TrackingUrl of the package.
+    :vartype tracking_url: str
+    """
+
+    _validation = {
+        'sas_key_for_label': {'readonly': True},
+        'carrier_name': {'readonly': True},
+        'carrier_display_name': {'readonly': True},
+        'tracking_id': {'readonly': True},
+        'tracking_url': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'sas_key_for_label': {'key': 'sasKeyForLabel', 'type': 'str'},
+        'carrier_name': {'key': 'carrierName', 'type': 'str'},
+        'carrier_display_name': {'key': 'carrierDisplayName', 'type': 'str'},
+        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ReverseShippingDetails, self).__init__(**kwargs)
+        self.sas_key_for_label = None
+        self.carrier_name = None
+        self.carrier_display_name = None
+        self.tracking_id = None
+        self.tracking_url = None
 
 
 class ShippingAddress(msrest.serialization.Model):
@@ -2635,7 +2750,7 @@ class ShippingAddress(msrest.serialization.Model):
     :type company_name: str
     :param address_type: Type of address. Possible values include: "None", "Residential",
      "Commercial".
-    :type address_type: str or ~edge_order_management_client.models.AddressType
+    :type address_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressType
     """
 
     _validation = {
@@ -2658,30 +2773,19 @@ class ShippingAddress(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        street_address1: str,
-        country: str,
-        street_address2: Optional[str] = None,
-        street_address3: Optional[str] = None,
-        city: Optional[str] = None,
-        state_or_province: Optional[str] = None,
-        postal_code: Optional[str] = None,
-        zip_extended_code: Optional[str] = None,
-        company_name: Optional[str] = None,
-        address_type: Optional[Union[str, "AddressType"]] = None,
         **kwargs
     ):
         super(ShippingAddress, self).__init__(**kwargs)
-        self.street_address1 = street_address1
-        self.street_address2 = street_address2
-        self.street_address3 = street_address3
-        self.city = city
-        self.state_or_province = state_or_province
-        self.country = country
-        self.postal_code = postal_code
-        self.zip_extended_code = zip_extended_code
-        self.company_name = company_name
-        self.address_type = address_type
+        self.street_address1 = kwargs['street_address1']
+        self.street_address2 = kwargs.get('street_address2', None)
+        self.street_address3 = kwargs.get('street_address3', None)
+        self.city = kwargs.get('city', None)
+        self.state_or_province = kwargs.get('state_or_province', None)
+        self.country = kwargs['country']
+        self.postal_code = kwargs.get('postal_code', None)
+        self.zip_extended_code = kwargs.get('zip_extended_code', None)
+        self.company_name = kwargs.get('company_name', None)
+        self.address_type = kwargs.get('address_type', None)
 
 
 class ShippingDetails(msrest.serialization.Model):
@@ -2762,11 +2866,11 @@ class StageDetails(msrest.serialization.Model):
 
     :ivar stage_status: Stage status. Possible values include: "None", "InProgress", "Succeeded",
      "Failed", "Cancelled", "Cancelling".
-    :vartype stage_status: str or ~edge_order_management_client.models.StageStatus
+    :vartype stage_status: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.StageStatus
     :ivar stage_name: Stage name. Possible values include: "Placed", "InReview", "Confirmed",
      "ReadyToShip", "Shipped", "Delivered", "InUse", "ReturnInitiated", "ReturnPickedUp",
      "ReturnedToMicrosoft", "ReturnCompleted", "Cancelled".
-    :vartype stage_name: str or ~edge_order_management_client.models.StageName
+    :vartype stage_name: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.StageName
     :ivar display_name: Display name of the resource stage.
     :vartype display_name: str
     :ivar start_time: Stage start time.
@@ -2805,14 +2909,15 @@ class SystemData(msrest.serialization.Model):
     :type created_by: str
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~edge_order_management_client.models.CreatedByType
+    :type created_by_type: str or ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
     :type last_modified_by: str
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~edge_order_management_client.models.CreatedByType
+    :type last_modified_by_type: str or
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CreatedByType
     :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
@@ -2828,22 +2933,15 @@ class SystemData(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
 class TransportPreferences(msrest.serialization.Model):
@@ -2854,7 +2952,7 @@ class TransportPreferences(msrest.serialization.Model):
     :param preferred_shipment_type: Required. Indicates Shipment Logistics type that the customer
      preferred. Possible values include: "CustomerManaged", "MicrosoftManaged".
     :type preferred_shipment_type: str or
-     ~edge_order_management_client.models.TransportShipmentTypes
+     ~azure.mgmt.edgeorder.v2020_12_01_preview.models.TransportShipmentTypes
     """
 
     _validation = {
@@ -2867,9 +2965,7 @@ class TransportPreferences(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        preferred_shipment_type: Union[str, "TransportShipmentTypes"],
         **kwargs
     ):
         super(TransportPreferences, self).__init__(**kwargs)
-        self.preferred_shipment_type = preferred_shipment_type
+        self.preferred_shipment_type = kwargs['preferred_shipment_type']
