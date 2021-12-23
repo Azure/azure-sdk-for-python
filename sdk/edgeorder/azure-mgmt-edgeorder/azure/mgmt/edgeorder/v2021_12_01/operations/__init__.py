@@ -6,11 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._edge_order_management_client import EdgeOrderManagementClient
-__all__ = ['EdgeOrderManagementClient']
+from ._edge_order_management_client_operations import EdgeOrderManagementClientOperationsMixin
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'EdgeOrderManagementClientOperationsMixin',
+]
