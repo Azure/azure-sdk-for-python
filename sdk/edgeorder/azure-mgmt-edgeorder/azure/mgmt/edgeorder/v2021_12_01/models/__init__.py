@@ -35,6 +35,7 @@ try:
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import FilterableProperty
+    from ._models_py3 import ForwardShippingDetails
     from ._models_py3 import HierarchyInformation
     from ._models_py3 import ImageInformation
     from ._models_py3 import Link
@@ -67,7 +68,9 @@ try:
     from ._models_py3 import PurchaseMeterDetails
     from ._models_py3 import Resource
     from ._models_py3 import ResourceIdentity
+    from ._models_py3 import ResourceProviderDetails
     from ._models_py3 import ReturnOrderItemDetails
+    from ._models_py3 import ReverseShippingDetails
     from ._models_py3 import ShippingAddress
     from ._models_py3 import ShippingDetails
     from ._models_py3 import Specification
@@ -104,6 +107,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import FilterableProperty  # type: ignore
+    from ._models import ForwardShippingDetails  # type: ignore
     from ._models import HierarchyInformation  # type: ignore
     from ._models import ImageInformation  # type: ignore
     from ._models import Link  # type: ignore
@@ -136,7 +140,9 @@ except (SyntaxError, ImportError):
     from ._models import PurchaseMeterDetails  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceIdentity  # type: ignore
+    from ._models import ResourceProviderDetails  # type: ignore
     from ._models import ReturnOrderItemDetails  # type: ignore
+    from ._models import ReverseShippingDetails  # type: ignore
     from ._models import ShippingAddress  # type: ignore
     from ._models import ShippingDetails  # type: ignore
     from ._models import Specification  # type: ignore
@@ -149,6 +155,7 @@ from ._edge_order_management_client_enums import (
     ActionStatusEnum,
     ActionType,
     AddressType,
+    AddressValidationStatus,
     AvailabilityStage,
     BillingType,
     ChargingType,
@@ -201,6 +208,7 @@ __all__ = [
     'ErrorDetail',
     'ErrorResponse',
     'FilterableProperty',
+    'ForwardShippingDetails',
     'HierarchyInformation',
     'ImageInformation',
     'Link',
@@ -233,7 +241,9 @@ __all__ = [
     'PurchaseMeterDetails',
     'Resource',
     'ResourceIdentity',
+    'ResourceProviderDetails',
     'ReturnOrderItemDetails',
+    'ReverseShippingDetails',
     'ShippingAddress',
     'ShippingDetails',
     'Specification',
@@ -244,6 +254,7 @@ __all__ = [
     'ActionStatusEnum',
     'ActionType',
     'AddressType',
+    'AddressValidationStatus',
     'AvailabilityStage',
     'BillingType',
     'ChargingType',

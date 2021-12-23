@@ -126,7 +126,8 @@ class DisabledReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OUT_OF_STOCK = "OutOfStock"
 
 class DoubleEncryptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines secondary layer of software-based encryption enablement.
+    """Double encryption status as entered by the customer. It is compulsory to give this parameter if
+    the 'Deny' or 'Disabled' policy is configured.
     """
 
     #: Double encryption is disabled.
@@ -192,7 +193,7 @@ class NotificationStageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     DELIVERED = "Delivered"
 
 class OrderItemCancellationEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes whether the orderItem is cancellable or not.
+    """Describes whether the order item is cancellable or not.
     """
 
     #: Order item can be cancelled without fee.
@@ -203,7 +204,7 @@ class OrderItemCancellationEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     NOT_CANCELLABLE = "NotCancellable"
 
 class OrderItemReturnEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes whether the orderItem is returnable or not.
+    """Describes whether the order item is returnable or not.
     """
 
     #: Order item can be returned without fee.
