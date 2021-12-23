@@ -181,12 +181,24 @@ if __name__ == '__main__':
     # Delete model
     sample.delete_model(model_id)
 
-    # ***************************************************
-    # use your own inference data sending to last detection api
-    # ***************************************************
-    variables = "<YOUR OWN variables>"
-
-    detectingPoints = "<YOUR OWN number of detectingPoints>"
+    # *******************************************************************************************************************
+    # use your own inference data sending to last detection api, you should define your own variables and detectingPoints
+    # *****************************************************************************************************************
+    # define "<YOUR OWN variables>"
+    variables = [
+        {
+            "name": "variables_name1",
+            "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
+            "values": [0, 0, ...]
+        },
+        {
+            "name": "variables_name2",
+            "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
+            "values": [0, 0, ...]
+        }
+    ]
+    # define <YOUR OWN number of detectingPoints>"
+    detectingPoints = 10
 
     # Last detection
     last_detect_result = sample.last_detect(model_id, variables, detectingPoints)
