@@ -319,6 +319,7 @@ def sdk_info_from_swagger():
                 sdk_folder_path = True
             if '$(multiapi)' in line and multi_api == '':
                 multi_api = 'fake'
+                print(f'*********{service_name} is fake')
             if '- multiapiscript: true' in line:
                 multi_api = 'True'
 
@@ -332,6 +333,7 @@ def sdk_info_from_swagger():
                     sdk_folder_path = True
                 if '$(multiapi)' in text and multi_api == '':
                     multi_api = 'fake'
+                    print(f'*********{service_name} is fake 1111')
                 if '- multiapiscript: true' in text:
                     multi_api = 'True'
 
