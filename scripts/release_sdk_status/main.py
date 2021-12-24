@@ -17,9 +17,7 @@ def my_print(cmd):
 def print_check(cmd, path=''):
     my_print(cmd)
     if path:
-        print('********')
         output = sp.check_output(cmd, shell=True, cwd=path)
-        print(output)
     else:
         sp.check_call(cmd, shell=True)
 
@@ -227,6 +225,7 @@ def run_playback_test(service_name):
                 return '-, 0, 0, 0\n'
         else:
             try:
+                print(f'hhh {service_name} no coverage')
                 print_check(f'pytest -s tests >result.txt', path=service_path)
             except Exception as e:
                 print(f'{service_name} test ERROR')
@@ -234,7 +233,6 @@ def run_playback_test(service_name):
         if os.path.exists(service_path+'/result.txt'):
             return get_test_result(service_path+'/result.txt')
 
-    print(f'{service_name} has no tests!!!!!!')
     return '-, -, -, -\n'
 
 
