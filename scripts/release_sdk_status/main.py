@@ -177,8 +177,6 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
             pypi_ins = PyPIClient(package_name=sdk_name, track_config=track_config,
                                   readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
             text_to_write = pypi_ins.write_to_list()
-            print('SERVICE_TEST_PATH---')
-            print(SERVICE_TEST_PATH)
             if pypi_ins.pypi_link != 'NA':
                 service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
                 test_result = run_playback_test(service_name)
@@ -219,7 +217,7 @@ def run_playback_test(service_name):
         print_check('pip install -r dev_requirements.txt', path=service_path)
         print_check('pip install -e .', path=service_path)
         # print_check('python setup.py install', path=service_path)
-        if os.path.exists(coverage_path+'/operations') and os.path.exists(coverage_path+'/models'):
+        if os.path.exists(coverage_path+'/operations') and os.path.exists(coverage_path+'/models') and:
             operations_path = coverage_path+'/operations'
             models_path = coverage_path+'/models'
             try:
@@ -229,13 +227,14 @@ def run_playback_test(service_name):
                 return '-, 0, 0, 0\n'
         else:
             try:
-                print_check(f'pytest -s tests>result.txt', path=service_path)
+                print_check(f'pytest -s tests >result.txt', path=service_path)
             except Exception as e:
                 print(f'{service_name} test ERROR')
                 return '-, 0, 0, 0\n'
         if os.path.exists(service_path+'/result.txt'):
             return get_test_result(service_path+'/result.txt')
 
+    print(f'{service_name} has no tests!!!!!!')
     return '-, -, -, -\n'
 
 
