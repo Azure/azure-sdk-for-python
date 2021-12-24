@@ -217,7 +217,7 @@ function DockerValidation{
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
     Write-Host $commandLine
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
     Write-Host $commandLine
@@ -560,16 +560,8 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-function Validate-Python-DocMsPackages
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageSourceOverride, $DocValidationImageId)
 {
-  Param(
-    [Parameter(Mandatory=$true)]
-    [PSCustomObject]$PackageInfo,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride,
-    [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId
-  )
   $packageName = $packageInfo.Name
   $packageVersion = $packageInfo.Version
   ValidatePackage -packageName $packageName -packageVersion $packageVersion `

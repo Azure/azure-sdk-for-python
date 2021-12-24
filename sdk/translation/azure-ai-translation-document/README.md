@@ -9,10 +9,14 @@ and dialects while preserving document structure and data format. Use the client
 
 [Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs] | [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Translator resource][DT_resource] to use this package.
 
@@ -396,7 +400,7 @@ These code samples show common scenario operations with the Azure Document Trans
 
 
 ### Async samples
-This library also includes a complete async API supported on Python 3.6+. To use it, you must
+This library also includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.translation.document.aio` namespace.
 
