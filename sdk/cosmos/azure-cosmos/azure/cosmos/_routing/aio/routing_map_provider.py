@@ -127,7 +127,7 @@ def _subtract_range(r, partition_key_range):
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary
+    Efficiently uses PartitionKeyRangeCache and minimizes the unnecessary
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 

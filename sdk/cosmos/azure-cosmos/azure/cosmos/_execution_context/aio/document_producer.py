@@ -26,7 +26,7 @@ database service.
 import numbers
 from collections import deque
 
-from azure.cosmos import _base
+from azure.cosmos import _base, exceptions
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 
 
@@ -58,7 +58,19 @@ class _DocumentProducer(object):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         async def fetch_fn(options):
-            return await self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
+            try:
+                # partition key target range might be stale, should always get the target partition key range from cache
+                # other way - instead of not using from cache, initialize a new document producer using the cache
+                return await self._client.QueryFeed(path, collection_id, query, options,
+                                                    partition_key_target_range["id"])
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code == 410:
+                    print("410 found in doc prod fetch function")
+                    # works, actually gets caught here, however since it is a fetch function that is passed forward
+                    # it's not exactly within this context, goes first in 410 stack trace
+                    raise
+                return await self._client.QueryFeed(path, collection_id, query, options,
+                                                    partition_key_target_range["id"])
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
@@ -99,16 +111,25 @@ class _DocumentProducer(object):
 
         """
         if self._cur_item is None:
-            self._cur_item = await self._ex_context.__anext__()
+            try:
+                self._cur_item = await self._ex_context.__anext__()
+            except exceptions.CosmosHttpResponseError as e:
+                if partition_range_is_gone(e):
+                    print("410 found in doc_prod peek()")
+                    raise
 
         return self._cur_item
-
 
 
 def _compare_helper(a, b):
     if a is None and b is None:
         return 0
     return (a > b) - (a < b)
+
+
+def partition_range_is_gone(e):
+    if e.status_code == 410 and e.sub_status == 1002:
+        return True
 
 
 class _PartitionKeyRangeDocumentProduerComparator(object):

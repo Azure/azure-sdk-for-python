@@ -27,7 +27,7 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
-from ... import http_constants
+from ... import http_constants, exceptions
 
 # pylint: disable=protected-access
 
@@ -121,7 +121,13 @@ class _QueryExecutionContextBase(object):
                 self._has_started = True
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
-            (fetched_items, response_headers) = await fetch_function(new_options)
+            try:
+                (fetched_items, response_headers) = await fetch_function(new_options)
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code == http_constants.StatusCodes.GONE:
+                    print("410 found in base_execution_context")  # This one gets called after the fetch_fn in doc prod
+                    raise
+                (fetched_items, response_headers) = await fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
