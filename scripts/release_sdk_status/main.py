@@ -317,11 +317,6 @@ def sdk_info_from_swagger():
             if sdk_folder_re.search(line) and sdk_folder_path == False:
                 SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
                 sdk_folder_path = True
-            if '$(multiapi)' in line and multi_api == '':
-                multi_api = 'fake'
-                print(f'*********{service_name} is fake')
-            if '- multiapiscript: true' in line:
-                multi_api = 'True'
 
         if readme_python != 'NA':
             readme_python_text = read_file(readme_python)
