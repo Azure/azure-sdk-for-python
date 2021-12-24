@@ -176,8 +176,11 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
                                   readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
             text_to_write = pypi_ins.write_to_list()
             if pypi_ins.pypi_link != 'NA':
-                service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
-                test_result = run_playback_test(service_name)
+                if sdk_name == 'azure-mgmt-resource':
+                    test_result = run_playback_test('resources')
+                else:
+                    service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
+                    test_result = run_playback_test(service_name)
                 text_to_write += test_result
                 all_sdk_status.append(text_to_write)
 
