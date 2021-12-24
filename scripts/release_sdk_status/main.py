@@ -326,10 +326,10 @@ def sdk_info_from_swagger():
                 if sdk_folder_re.search(text) and sdk_folder_path == False:
                     SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
                     sdk_folder_path = True
-                if '$(multiapi)' in text and multi_api == '':
+                if 'batch: ' in text and multi_api == '':
                     multi_api = 'fake'
                     print(f'*********{service_name} is fake 1111')
-                if '- multiapiscript: true' in text:
+                if 'multiapiscript: true' in text:
                     multi_api = 'True'
 
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
