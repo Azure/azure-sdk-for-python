@@ -102,12 +102,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             ):
                 retry_policy = sessionRetry_policy
             elif e.status_code == StatusCodes.GONE:
-                print("using gone_retry_policy")
                 retry_policy = gone_retry_policy
-                if e.sub_status is not None and e.sub_status == SubStatusCodes.PARTITION_KEY_RANGE_GONE:
-                    print("refreshing cache in retry utility and raising")
-                    client.refresh_routing_map_provider()
-                    raise
             else:
                 retry_policy = defaultRetry_policy
 

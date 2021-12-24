@@ -35,7 +35,6 @@ class GoneRetryPolicy(object):
         self.retry_after_in_milliseconds = 1000
         self.args = args
         self.client = client
-        self.needs_refresh = True
 
 
     def ShouldRetry(self, exception):
@@ -45,10 +44,12 @@ class GoneRetryPolicy(object):
         :rtype: boolean
 
         """
-        if self.needs_refresh:
-            print("refreshing in shouldRetry")
+        if exception.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE:
+            print("returning False for ShouldRetry in policy to raise error")
+            # refresh routing_map_provider to refresh partition key range cache
+            # return False to raise error to multi_execution_aggregator and repair document producer
             self.client.refresh_routing_map_provider()
-        self.needs_refresh = False
+            return False
         if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
             return True

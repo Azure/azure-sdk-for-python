@@ -46,16 +46,22 @@ def partition_split_test():
     time.sleep(240)
     print("now starting queries")
     body, i = None, None
+    ret_list = list()
     while True:
-        ret_list = list()
         try:
-            query = 'SELECT * FROM  c WHERE c.attr1="' + str(random.randint(0, 100)) + '" order by c.attr1'
-            ret_list.append(list(container.query_items(query=query, enable_cross_partition_query=True)))
+            curr = str(random.randint(0, 100))
+            query = 'SELECT * FROM  c WHERE c.attr1="' + curr + '" order by c.attr1'
+            ret_list.append((curr, list(container.query_items(query=query, enable_cross_partition_query=True))))
             success += 1
-            if success == 2000 or success == 4000:  # Error should happen at around 2.6k query requests made
-                print("Successful queries: {}".format(success))
-            if success == 5000:
-                print("5k queries succeeded - there's either no error or it's not being raised properly")
+            if success == 1000:
+                print("1000 queries succeeded - there's either no error or it's not being raised properly")
+                print("list length: {}".format(len(ret_list)))
+                for ret in ret_list:
+                    curr = ret[0]
+                    for results in ret[1]:
+                        id_number = results['id'].split("_")[1]
+                        assert id_number == curr  # verify that all results match their randomly generated ids
+                print("validation succeeded for all results")
                 return
             # Use breakpoint to stop execution, change provisioned RUs on container
             # Increase to >10k RUs causes partition split (11k to be safe)

@@ -26,6 +26,7 @@ import heapq
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
+from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 
@@ -91,13 +92,17 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
-
             try:
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 targetQueryExContext.peek()
                 # if there are matching results in the target ex range add it to the priority queue
 
                 self._orderByPQ.push(targetQueryExContext)
+
+            except exceptions.CosmosHttpResponseError as e:
+                if document_producer.partition_range_is_gone(e):
+                    # repairing document producer for partition split
+                    self._repair_document_producer()
 
             except StopIteration:
                 continue
@@ -128,6 +133,37 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     def fetch_next_block(self):
 
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
+
+    def _repair_document_producer(self):
+        # refresh the routing provider to get the newly initialized one post-refresh
+        self._routing_provider = self._client._routing_map_provider
+        # will be a list of (partition_min, partition_max) tuples
+        targetPartitionRanges = self._get_target_partition_key_range()
+
+        targetPartitionQueryExecutionContextList = []
+        for partitionTargetRange in targetPartitionRanges:
+            # create and add the child execution context for the target range
+            targetPartitionQueryExecutionContextList.append(
+                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+            )
+
+        self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+
+        for targetQueryExContext in targetPartitionQueryExecutionContextList:
+            try:
+                # TODO: we can also use more_itertools.peekable to be more python friendly
+                targetQueryExContext.peek()
+                # if there are matching results in the target ex range add it to the priority queue
+
+                self._orderByPQ.push(targetQueryExContext)
+
+            except exceptions.CosmosHttpResponseError as e:
+                if document_producer.partition_range_is_gone(e):
+                    print("410 found within the repair context")
+                    raise
+
+            except StopIteration:
+                continue
 
     def _createTargetPartitionQueryExecutionContext(self, partition_key_target_range):
 

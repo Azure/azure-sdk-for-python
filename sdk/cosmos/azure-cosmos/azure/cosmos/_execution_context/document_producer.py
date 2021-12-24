@@ -92,12 +92,7 @@ class _DocumentProducer(object):
             self._cur_item = None
             return res
 
-        try:
-            return next(self._ex_context)
-        except exceptions.CosmosHttpResponseError as e:
-            if e.status_code == 410:
-                print("410 in doc producer")  # doesnt do anything
-            return next(self._ex_context)
+        return next(self._ex_context)
 
     def get_target_range(self):
         """Returns the target partition key range.
@@ -116,7 +111,12 @@ class _DocumentProducer(object):
 
         """
         if self._cur_item is None:
-            self._cur_item = next(self._ex_context)
+            try:
+                self._cur_item = next(self._ex_context)
+            except exceptions.CosmosHttpResponseError as e:
+                if partition_range_is_gone(e):
+                    print("410 found in doc_prod peek()")
+                    raise
 
         return self._cur_item
 
@@ -127,6 +127,11 @@ def _compare_helper(a, b):
     if a is None and b is None:
         return 0
     return (a > b) - (a < b)
+
+
+def partition_range_is_gone(e):
+    if e.status_code == 410 and e.sub_status == 1002:
+        return True
 
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
