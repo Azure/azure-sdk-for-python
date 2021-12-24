@@ -177,6 +177,8 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
             pypi_ins = PyPIClient(package_name=sdk_name, track_config=track_config,
                                   readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
             text_to_write = pypi_ins.write_to_list()
+            print('SERVICE_TEST_PATH---')
+            print(SERVICE_TEST_PATH)
             if pypi_ins.pypi_link != 'NA':
                 service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
                 test_result = run_playback_test(service_name)
@@ -326,7 +328,7 @@ def sdk_info_from_swagger():
                 if sdk_folder_re.search(text) and sdk_folder_path == False:
                     SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
                     sdk_folder_path = True
-                if 'batch: ' in text and multi_api == '':
+                if 'batch:' in text and multi_api == '':
                     multi_api = 'fake'
                     print(f'*********{service_name} is fake 1111')
                 if 'multiapiscript: true' in text:
