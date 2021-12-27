@@ -25,6 +25,7 @@
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 import six
+import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -228,7 +229,6 @@ class CosmosClient(object):
         Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -254,6 +254,10 @@ class CosmosClient(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
@@ -340,7 +344,6 @@ class CosmosClient(object):
         """List the databases in a Cosmos DB SQL database account.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -352,6 +355,10 @@ class CosmosClient(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
@@ -377,7 +384,6 @@ class CosmosClient(object):
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -391,6 +397,10 @@ class CosmosClient(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         if query:
@@ -420,7 +430,6 @@ class CosmosClient(object):
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
         :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -433,6 +442,10 @@ class CosmosClient(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = self._get_database_link(database)
