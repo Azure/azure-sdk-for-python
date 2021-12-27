@@ -6,7 +6,7 @@ Param(
 
 $repoRoot = Resolve-Path "$PSScriptRoot/../../"
 
-Push-Location $repoRoot/eng/tools/smoketests
+Push-Location $repoRoot
 
 # create a smoketests directory
 $smoketestsDir = Join-Path $repoRoot eng scripts smoketest 

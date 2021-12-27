@@ -3,6 +3,7 @@ import ast
 import io
 import re
 import textwrap
+from subprocess import check_call
 
 def parse_setup(setup_path):
     setup_filename = os.path.join(setup_path, "setup.py")
