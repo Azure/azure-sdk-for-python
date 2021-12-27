@@ -503,6 +503,10 @@ class SendClient(AMQPClient):
             MessageDeliveryState.WaitingToBeSent,
             expire_time
         )
+
+        while not self.client_ready():
+            time.sleep(0.05)
+
         self._transfer_message(message_delivery, timeout)
 
         running = True

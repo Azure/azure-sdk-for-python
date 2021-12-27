@@ -382,13 +382,16 @@ class TokenAuthFailure(AuthenticationException):
     """
 
     """
-    def __init__(self, status_code, status_description):
+    def __init__(self, status_code, status_description, **kwargs):
+        encoding = kwargs.get("encoding", 'utf-8')
         self.status_code = status_code
         self.status_description = status_description
         message = "CBS Token authentication failed.\nStatus code: {}".format(self.status_code)
-        if self.description:
-            message += u"\nDescription: {}".format(self.status_description.decode('utf-8'))
-        super(TokenAuthFailure, self).__init__(message)
+        try:
+            message += "\nDescription: {}".format(self.status_description.decode(encoding))
+        except (TypeError, AttributeError):
+            message += "\nDescription: {}".format(self.status_description)
+        super(TokenAuthFailure, self).__init__(condition=None, description=None, info=None, message=message)
 
 
 class MessageException(AMQPException):

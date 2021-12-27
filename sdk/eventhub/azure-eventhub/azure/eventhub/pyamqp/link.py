@@ -37,7 +37,8 @@ from .error import (
     ErrorCodes,
     LinkDetach,
     VendorLinkDetach,
-    LinkRedirect
+    LinkRedirect,
+    AMQPConnectionError
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -126,6 +127,17 @@ class Link(object):
         if self.state.value == 6:  # error
             raise self._error
         return self.state
+
+    def _check_if_closed(self):
+        if self._is_closed:
+            try:
+                raise self._error
+            except TypeError:
+                raise AMQPConnectionError(
+                    condition=ErrorCodes.UnknownError,
+                    description="Link already closed.",
+                    info=None
+                )
 
     def _process_link_error(self, condition, description, info):
         try:
@@ -264,8 +276,9 @@ class Link(object):
         self._received_payload = b''
 
     def detach(self, close=False, error=None):
-        if self._is_closed:
-            raise ValueError("Link already closed.")
+        if self.state in (LinkState.DETACHED, LinkState.ERROR):
+            return
+        self._check_if_closed()
         self._remove_pending_deliveries()  # TODO: Keep?
         if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
             self._outgoing_detach(close=close, error=error)

@@ -81,7 +81,8 @@ def generate_sas_token(audience, policy, key, expiry=None):
     result = {
         'sr': audience,
         'sig': signature,
-        'se': str(ttl)}
+        'se': str(ttl)
+    }
     if policy:
         result['skn'] = encoded_policy
     return 'SharedAccessSignature ' + urlencode(result)
@@ -127,11 +128,9 @@ def amqp_long_value(value):
     return {TYPE: AMQPTypes.long, VALUE: value}
 
 
-def amqp_source_filters_value(descriptor, value):
-    descriptor_type = AMQPTypes.symbol
-    if isinstance(descriptor, int):
-        descriptor_type = AMQPTypes.ulong
-    return (
-        {TYPE: descriptor_type, VALUE: descriptor},
-        {TYPE: AMQPTypes.string, VALUE: value}
-    )
+def amqp_uint_value(value):
+    return {TYPE: AMQPTypes.uint, VALUE: value}
+
+
+def amqp_string_value(value):
+    return {TYPE: AMQPTypes.string, VALUE: value}

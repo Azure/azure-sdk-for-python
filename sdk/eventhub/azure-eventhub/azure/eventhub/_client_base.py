@@ -20,9 +20,9 @@ except ImportError:
 
 
 from .pyamqp.client import AMQPClient
-from .pyamqp.authentication import _generate_sas_token
+from .pyamqp.authentication import _generate_sas_access_token
 from .pyamqp.message import Message, Properties
-from .pyamqp import constants, error as errors, utils
+from .pyamqp import constants, error as errors, utils as pyamqp_utils
 from .pyamqp.authentication import JWTTokenAuth
 
 
@@ -145,8 +145,8 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-
-    token = utils.generate_sas_token(uri, policy, key, abs_expiry)
+    #return _generate_sas_access_token(uri, policy, key, abs_expiry)
+    token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry)
     return _AccessToken(token=token, expires_on=abs_expiry)
 
 
@@ -224,6 +224,7 @@ class EventHubSASTokenCredential(object):
         This method is automatically called when token is about to expire.
         """
         return AccessToken(self.token, self.expiry)
+
 
 class EventhubAzureSasTokenCredential(object):
     """The shared access token credential used for authentication

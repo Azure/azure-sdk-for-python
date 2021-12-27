@@ -122,8 +122,9 @@ class EventHubProducer(
             self._client._address.hostname,
             self._target,
             auth=auth,
-            idle_timeout=10,
-            network_trace=self._client._config.network_tracing
+            idle_timeout=self._idle_timeout,
+            network_trace=self._client._config.network_tracing,
+            error_policy=self._retry_policy,
         )
 
     def _open_with_retry(self):

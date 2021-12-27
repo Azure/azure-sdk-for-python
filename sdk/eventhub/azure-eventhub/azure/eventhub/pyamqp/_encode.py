@@ -584,7 +584,7 @@ def encode_filter_set(value):
             described_filter = {
                 TYPE: AMQPTypes.described,
                 VALUE: (
-                    descriptor,
+                    {TYPE: AMQPTypes.symbol, VALUE: descriptor},
                     filter_value
                 )
             }

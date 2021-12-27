@@ -136,7 +136,15 @@ class EventHubConsumer(
         source = Source(address=self._source, filters={})
         if self._offset is not None:
             filter_key = ApacheFilters.selector_filter
-            source.filters[filter_key] = pyamqp_utils.amqp_source_filters_value(filter_key, event_position_selector(self._offset, self._offset_inclusive))
+            source.filters[filter_key] = (
+                filter_key,
+                pyamqp_utils.amqp_string_value(
+                    event_position_selector(
+                        self._offset,
+                        self._offset_inclusive
+                    )
+                )
+            )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
         properties = create_properties(
