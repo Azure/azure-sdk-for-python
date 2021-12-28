@@ -1,0 +1,8 @@
+-e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+../../nspkg/{{ folder_first }}-{{ folder_second }}-nspkg
+aiohttp>=3.0; python_version >= '3.5'
+typing_extensions>=3.7.2
+asyncio; python_version >= '3.5'

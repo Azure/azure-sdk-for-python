@@ -1,0 +1,37 @@
+interactions:
+- request:
+    body: 'b''{"modelId": "ad161e6b-b577-4c6d-a86a-2738849b32b4", "azureBlobSource":
+      {"containerUrl": "xx"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '94'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview
+  response:
+    body:
+      string: '{"error": {"code": "401", "message": "Access denied due to invalid
+        subscription key or wrong API endpoint. Make sure to provide a valid key for
+        an active subscription and use a correct regional API endpoint for your resource."}}'
+    headers:
+      apim-request-id:
+      - 2b37eac2-9be6-4592-95d3-d93be9718d40
+      content-length:
+      - '224'
+      content-type:
+      - application/json
+      date:
+      - Thu, 09 Dec 2021 23:38:40 GMT
+    status:
+      code: 401
+      message: PermissionDenied
+version: 1

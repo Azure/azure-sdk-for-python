@@ -40,6 +40,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_get_operations.py][sample_get_operations] and [sample_get_operations_async.py][sample_get_operations_async]|Get and list the document model operations created within the past 24 hours|
 |[sample_copy_model.py][sample_copy] and [sample_copy_model_async.py][sample_copy_async]|Copy a custom model from one Form Recognizer resource to another|
 |[sample_get_words_on_document_line.py][sample_get_words_on_document_line] and [sample_get_words_on_document_line_async.py][sample_get_words_on_document_line_async]|Get the words in a DocumentLine|
+|[sample_convert_to_and_from_dict.py][sample_convert_to_and_from_dict_v3_2] and [sample_convert_to_and_from_dict_async.py][sample_convert_to_and_from_dict_async_v3_2]|Convert model types to a dictionary that can be used to create JSON content, then convert the same dictionary back to the original model type|
 |[sample_get_elements_with_spans.py][sample_get_elements_with_spans] and [sample_get_elements_with_spans_async.py][sample_get_elements_with_spans_async]|Get elements, such as words, lines, and styles, in the result of an analyze operation by searching with spans|
 
 ## Samples for client library versions 3.1.X
@@ -63,13 +64,14 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_get_bounding_boxes.py][sample_get_bounding_boxes] and [sample_get_bounding_boxes_async.py][sample_get_bounding_boxes_async]|Get info to visualize the outlines of form content and fields, which can be used for manual validation|
 |[sample_differentiate_output_models_trained_with_and_without_labels.py][sample_differentiate_output_models_trained_with_and_without_labels] and [sample_differentiate_output_models_trained_with_and_without_labels_async.py][sample_differentiate_output_models_trained_with_and_without_labels_async]|See the differences in output when using a custom model trained with labeled data and one trained with unlabeled data|
 |[sample_differentiate_output_labeled_tables.py][sample_differentiate_output_labeled_tables] and [sample_differentiate_output_labeled_tables_async.py][sample_differentiate_output_labeled_tables_async]|See the differences in output when using a custom model trained with fixed vs. dynamic table tags|
+|[sample_convert_to_and_from_dict.py][sample_convert_to_and_from_dict_v3_1] and [sample_convert_to_and_from_dict_async.py][sample_convert_to_and_from_dict_async_v3_1]|Convert model types to a dictionary that can be used to create JSON content, then convert the same dictionary back to the original model type|
 
 ## Samples for client library versions 3.0.0 and below
 
 Please see the samples [here][v3.0.0-samples-tag].
 
 ## Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
+* Python 3.7 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Form Recognizer account][azure_form_recognizer_account] to run these samples.
 
@@ -141,7 +143,8 @@ what you can do with the Azure Form Recognizer client library.
 [sample_get_words_on_document_line_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_get_words_on_document_line_async.py
 [sample_get_elements_with_spans]: https://aka.ms/azsdk/python/formrecognizer/spansamplesync
 [sample_get_elements_with_spans_async]: https://aka.ms/azsdk/python/formrecognizer/spansampleasync
-
+[sample_convert_to_and_from_dict_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/sample_convert_to_and_from_dict.py
+[sample_convert_to_and_from_dict_async_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2-beta/async_samples/sample_convert_to_and_from_dict_async.py
 
 <!-- V3.1 links -->
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_authentication.py
@@ -178,3 +181,5 @@ what you can do with the Azure Form Recognizer client library.
 [sample_create_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/async_samples/sample_create_composed_model_async.py
 [sample_differentiate_output_labeled_tables]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_differentiate_output_labeled_tables.py
 [sample_differentiate_output_labeled_tables_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/async_samples/sample_differentiate_output_labeled_tables_async.py
+[sample_convert_to_and_from_dict_v3_1]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_convert_to_and_from_dict.py
+[sample_convert_to_and_from_dict_async_v3_1]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/async_samples/sample_convert_to_and_from_dict_async.py

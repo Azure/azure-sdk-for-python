@@ -5,6 +5,8 @@ from python import python_process
 from go import go_process
 from java import java_process
 from js import js_process
+from common import common_process, Common
+
 
 import os
 from typing import List
@@ -22,7 +24,7 @@ _CONVERT = {
     't': 'Test'
 }
 _LANGUAGES = {
-    'Test': python_process,
+    'Test': common_process,
     # 'Python': python_process,
     'Java': java_process,
     'Go': go_process,
@@ -53,6 +55,7 @@ def main():
     for language in languages:
         language_issues = select_language_issues(issues, language)
         languages[language](language_issues)
+    Common.push_md_to_storage()
 
 
 if __name__ == '__main__':

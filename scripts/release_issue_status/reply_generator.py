@@ -71,6 +71,7 @@ def get_reply_and_sdk_number_from_readme(rest_repo, link_dict, item):
                + '</details>'
     info_model = 'hi @{} Please check the package whether works well and the changelog info ' \
                  'is as below:\n{}\n' \
+                 '\n* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n' \
                  '\n* (The version of the package is only a temporary version for testing)\n' \
                  '\nhttps://github.com/Azure/azure-rest-api-specs/pull/{}\n' \
         .format(issue_object_rg.user.login, changelog, str(latest_pr_number))
