@@ -37,6 +37,102 @@ class ErrorFieldContract(msrest.serialization.Model):
         self.target = kwargs.get('target', None)
 
 
+class ErrorResponse(msrest.serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+
+    :param code: Error code.
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+
+class Operation(msrest.serialization.Model):
+    """CDN REST API operation.
+
+    :param name: Operation name: {provider}/{resource}/{operation}.
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.OperationDisplay
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """The object that represents the operation.
+
+    :param provider: Service provider: Microsoft.Cdn.
+    :type provider: str
+    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :type resource: str
+    :param operation: Operation type: Read, write, delete, etc.
+    :type operation: str
+    """
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+
+
+class OperationListResult(msrest.serialization.Model):
+    """Result of the request to list CDN operations. It contains a list of operations and a URL link to get the next set of results.
+
+    :param value: List of CDN operations supported by the CDN resource provider.
+    :type value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Operation]
+    :param next_link: URL to get the next set of operation list results if there are any.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class Resource(msrest.serialization.Model):
     """An azure resource object.
 

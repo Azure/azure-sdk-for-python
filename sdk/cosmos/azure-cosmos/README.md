@@ -112,6 +112,7 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
 * Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
+* Cross partition queries do not handle partition splits (410 Gone errors)
 
 ### Control Plane Limitations:
 
@@ -432,7 +433,7 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
-### Using the asynchronous client
+### Using the asynchronous client (Preview)
 
 The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
 
@@ -482,7 +483,7 @@ async with CosmosClient(URL, credential=KEY) as client: # the with statement wil
         )
 ```
 
-### Queries with the asynchronous client
+### Queries with the asynchronous client (Preview)
 
 Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
 

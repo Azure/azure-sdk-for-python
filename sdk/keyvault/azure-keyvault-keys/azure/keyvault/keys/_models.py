@@ -4,7 +4,7 @@
 # -------------------------------------
 from collections import namedtuple
 from ._shared import parse_key_vault_id
-from ._generated.v7_1.models import JsonWebKey as _JsonWebKey
+from ._generated_models import JsonWebKey as _JsonWebKey
 
 try:
     from typing import TYPE_CHECKING
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional, List
     from datetime import datetime
-    from ._generated.v7_0 import models as _models
+    from . import _generated_models as _models
     from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
