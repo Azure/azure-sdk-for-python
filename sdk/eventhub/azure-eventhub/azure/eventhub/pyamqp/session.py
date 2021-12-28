@@ -308,7 +308,7 @@ class Session(object):
             pass  # TODO: close session with unattached-handle
 
     def _wait_for_response(self, wait, end_state):
-        # type: (Union[bool, float], ConnectionState) -> None
+        # type: (Union[bool, float], SessionState) -> None
         if wait == True:
             self._connection.listen(wait=False)
             while self.state != end_state:
@@ -333,12 +333,16 @@ class Session(object):
 
     def end(self, error=None, wait=False):
         # type: (Optional[AMQPError]) -> None
-        if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
-            self._outgoing_end(error=error)
-        # TODO: destroy all links
-        new_state = SessionState.DISCARDING if error else SessionState.END_SENT
-        self._set_state(new_state)
-        self._wait_for_response(wait, SessionState.UNMAPPED)
+        try:
+            if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
+                self._outgoing_end(error=error)
+            # TODO: destroy all links
+            new_state = SessionState.DISCARDING if error else SessionState.END_SENT
+            self._set_state(new_state)
+            self._wait_for_response(wait, SessionState.UNMAPPED)
+        except Exception as exc:
+            _LOGGER.info("An error occurred when ending the session: %r", exc)
+            self._set_state(SessionState.UNMAPPED)
 
     def create_receiver_link(self, source_address, **kwargs):
         assigned_handle = self._get_next_output_handle()

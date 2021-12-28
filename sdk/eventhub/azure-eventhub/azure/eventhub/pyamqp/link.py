@@ -124,8 +124,10 @@ class Link(object):
         raise NotImplementedError('Pending')  # TODO: Assuming we establish all links for now...
 
     def get_state(self):
-        if self.state.value == 6:  # error
+        try:
             raise self._error
+        except TypeError:
+            pass
         return self.state
 
     def _check_if_closed(self):
@@ -143,12 +145,12 @@ class Link(object):
         try:
             amqp_condition = ErrorCodes(condition)
         except ValueError:
-            error = VendorLinkDetach(condition, description, info)
+            error = VendorLinkDetach(condition, description=description, info=info)
         else:
             if amqp_condition == ErrorCodes.LinkRedirect:
-                error = LinkRedirect(amqp_condition, description, info)
+                error = LinkRedirect(amqp_condition, description=description, info=info)
             else:
-                error = LinkDetach(amqp_condition, description, info)
+                error = LinkDetach(amqp_condition, description=description, info=info)
         self._error = error
 
     def _set_state(self, new_state):
@@ -278,11 +280,15 @@ class Link(object):
     def detach(self, close=False, error=None):
         if self.state in (LinkState.DETACHED, LinkState.ERROR):
             return
-        self._check_if_closed()
-        self._remove_pending_deliveries()  # TODO: Keep?
-        if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
-            self._outgoing_detach(close=close, error=error)
+        try:
+            self._check_if_closed()
+            self._remove_pending_deliveries()  # TODO: Keep?
+            if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
+                self._outgoing_detach(close=close, error=error)
+                self._set_state(LinkState.DETACHED)
+            elif self.state == LinkState.ATTACHED:
+                self._outgoing_detach(close=close, error=error)
+                self._set_state(LinkState.DETACH_SENT)
+        except Exception as exc:
+            _LOGGER.info("An error occurred when detaching the link: %r", exc)
             self._set_state(LinkState.DETACHED)
-        elif self.state == LinkState.ATTACHED:
-            self._outgoing_detach(close=close, error=error)
-            self._set_state(LinkState.DETACH_SENT)

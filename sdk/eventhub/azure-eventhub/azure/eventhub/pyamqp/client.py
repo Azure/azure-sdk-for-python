@@ -195,7 +195,7 @@ class AMQPClient(object):
                     raise TimeoutError("Operation timed out.")
                 return operation(*args, timeout=absolute_timeout, **kwargs)
             except AMQPException as exc:
-                if absolute_timeout > 0:
+                if absolute_timeout >= 0:
                     retry_active = self._error_policy.increment(retry_settings, exc)
                     if not retry_active:
                         break
@@ -507,9 +507,9 @@ class SendClient(AMQPClient):
         try:
             amqp_condition = ErrorCodes(condition)
         except ValueError:
-            error = MessageException(condition, description, info)
+            error = MessageException(condition, description=description, info=info)
         else:
-            error = MessageSendFailed(amqp_condition, description, info)
+            error = MessageSendFailed(amqp_condition, description=description, info=info)
         message_delivery.state = MessageDeliveryState.Error
         message_delivery.error = error
 

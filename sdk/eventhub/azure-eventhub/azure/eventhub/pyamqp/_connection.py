@@ -128,9 +128,9 @@ class Connection(object):
         try:
             amqp_condition = ErrorCodes(condition)
         except ValueError:
-            error = VendorConnectionClose(condition, description, info)
+            error = VendorConnectionClose(condition, description=description, info=info)
         else:
-            error = ConnectionClose(amqp_condition, description, info)
+            error = ConnectionClose(amqp_condition, description=description, info=info)
         self._error = error
 
     def _set_state(self, new_state):
@@ -225,15 +225,25 @@ class Connection(object):
         :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
         :rtype: None
         """
-        #self.listen()
-        if self._can_write():
-            self._last_frame_sent_time = time.time()
-            if timeout:
-                with self._transport.block_with_timeout(timeout):
-                    self._transport.send_frame(channel, frame, **kwargs)
-            self._transport.send_frame(channel, frame, **kwargs)
-        else:
-            _LOGGER.warning("Cannot write frame in current state: %r", self.state)
+        try:
+            raise self._error
+        except TypeError:
+            pass
+        try:
+            if self._can_write():
+                self._last_frame_sent_time = time.time()
+                if timeout:
+                    with self._transport.block_with_timeout(timeout):
+                        self._transport.send_frame(channel, frame, **kwargs)
+                self._transport.send_frame(channel, frame, **kwargs)
+            else:
+                _LOGGER.warning("Cannot write frame in current state: %r", self.state)
+        except Exception as exc:
+            self._error = AMQPConnectionError(
+                condition=ErrorCodes.InternalError,
+                description=str(exc),
+                info=exc
+            )
 
     def _get_next_outgoing_channel(self):
         # type: () -> int
@@ -380,13 +390,15 @@ class Connection(object):
             return
         if channel > self._channel_max:
             _LOGGER.error("Invalid channel")
-        if frame[0]:
-            self._process_connection_error(condition=frame[0][0], description=frame[0][1], info=frame[0][2])
-            _LOGGER.error("Connection error: {}".format(frame[0]))
 
         self._set_state(ConnectionState.CLOSE_RCVD)
         self._outgoing_close()
         self._disconnect()
+
+        if frame[0]:
+            self._process_connection_error(condition=frame[0][0], description=frame[0][1], info=frame[0][2])
+            _LOGGER.error("Connection error: {}".format(frame[0]))
+
         self._set_state(ConnectionState.END)
 
     def _incoming_begin(self, channel, frame):
@@ -627,7 +639,7 @@ class Connection(object):
                     break
         except Exception as exc:
             self._error = AMQPConnectionError(
-                ErrorCodes.InternalError,
+                condition=ErrorCodes.InternalError,
                 description=str(exc),
                 info=exc
             )
@@ -698,14 +710,18 @@ class Connection(object):
         """
         if self.state in [ConnectionState.END, ConnectionState.CLOSE_SENT, ConnectionState.DISCARDING]:
             return
-        self._outgoing_close(error=error)
-        if self.state == ConnectionState.OPEN_PIPE:
-            self._set_state(ConnectionState.OC_PIPE)
-        elif self.state == ConnectionState.OPEN_SENT:
-            self._set_state(ConnectionState.CLOSE_PIPE)
-        elif error:
-            self._set_state(ConnectionState.DISCARDING)
-        else:
-            self._set_state(ConnectionState.CLOSE_SENT)
-        self._wait_for_response(wait, ConnectionState.END)
-        self._disconnect()
+        try:
+            self._outgoing_close(error=error)
+            if self.state == ConnectionState.OPEN_PIPE:
+                self._set_state(ConnectionState.OC_PIPE)
+            elif self.state == ConnectionState.OPEN_SENT:
+                self._set_state(ConnectionState.CLOSE_PIPE)
+            elif error:
+                self._set_state(ConnectionState.DISCARDING)
+            else:
+                self._set_state(ConnectionState.CLOSE_SENT)
+            self._wait_for_response(wait, ConnectionState.END)
+        except Exception as exc:
+            _LOGGER.info("An error occurred when closing the connection: %r", exc)
+        finally:
+            self._disconnect()
