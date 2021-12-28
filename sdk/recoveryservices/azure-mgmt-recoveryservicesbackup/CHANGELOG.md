@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.0 (2021-12-21)
+
+**Breaking changes**
+
+  - namespace splitted from `azure.mgmt.recoveryservicesbackup` to `azure.mgmt.recoveryservicesbackup.activestamp` and `azure.mgmt.recoveryservicesbackup.passivestamp`
+
 ## 3.0.0 (2021-10-19)
 
 **Features**
