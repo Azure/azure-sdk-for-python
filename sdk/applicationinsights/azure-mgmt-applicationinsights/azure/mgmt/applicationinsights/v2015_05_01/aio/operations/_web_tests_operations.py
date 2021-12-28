@@ -44,7 +44,7 @@ class WebTestsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebTestListResult"]:
         """Get all Application Insights web tests defined within a specified resource group.
 
@@ -72,7 +72,7 @@ class WebTestsOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -115,7 +115,7 @@ class WebTestsOperations:
         self,
         resource_group_name: str,
         web_test_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebTest":
         """Get a specific Application Insights web test definition.
 
@@ -139,7 +139,7 @@ class WebTestsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'webTestName': self._serialize.url("web_test_name", web_test_name, 'str'),
         }
@@ -174,7 +174,7 @@ class WebTestsOperations:
         resource_group_name: str,
         web_test_name: str,
         web_test_definition: "_models.WebTest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebTest":
         """Creates or updates an Application Insights web test definition.
 
@@ -202,7 +202,7 @@ class WebTestsOperations:
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'webTestName': self._serialize.url("web_test_name", web_test_name, 'str'),
         }
@@ -241,7 +241,7 @@ class WebTestsOperations:
         resource_group_name: str,
         web_test_name: str,
         web_test_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebTest":
         """Creates or updates an Application Insights web test definition.
 
@@ -268,7 +268,7 @@ class WebTestsOperations:
         # Construct URL
         url = self.update_tags.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'webTestName': self._serialize.url("web_test_name", web_test_name, 'str'),
         }
@@ -306,7 +306,7 @@ class WebTestsOperations:
         self,
         resource_group_name: str,
         web_test_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an Application Insights web test.
 
@@ -330,7 +330,7 @@ class WebTestsOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'webTestName': self._serialize.url("web_test_name", web_test_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -357,7 +357,7 @@ class WebTestsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebTestListResult"]:
         """Get all Application Insights web test alerts definitions within a subscription.
 
@@ -425,7 +425,7 @@ class WebTestsOperations:
         self,
         component_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebTestListResult"]:
         """Get all Application Insights web tests defined for the specified component.
 
@@ -456,7 +456,7 @@ class WebTestsOperations:
                 url = self.list_by_component.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'componentName': self._serialize.url("component_name", component_name, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)

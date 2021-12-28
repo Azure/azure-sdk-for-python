@@ -6,70 +6,41 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class ApiError(msrest.serialization.Model):
-    """Api error.
+class CloudErrorBody(msrest.serialization.Model):
+    """An error response from the Azure VM Image Builder service.
 
-    :param details: The Api error details.
-    :type details: list[~azure.mgmt.imagebuilder.models.ApiErrorBase]
-    :param inner_error: The Api inner error.
-    :type inner_error: ~azure.mgmt.imagebuilder.models.InnerError
-    :param code: The error code.
+    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+     programmatically.
     :type code: str
-    :param target: The target of the particular error.
-    :type target: str
-    :param message: The error message.
+    :param message: A message describing the error, intended to be suitable for display in a user
+     interface.
     :type message: str
+    :param target: The target of the particular error. For example, the name of the property in
+     error.
+    :type target: str
+    :param details: A list of additional details about the error.
+    :type details: list[~azure.mgmt.imagebuilder.models.CloudErrorBody]
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
         'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ApiError, self).__init__(**kwargs)
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
         self.details = kwargs.get('details', None)
-        self.inner_error = kwargs.get('inner_error', None)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
-
-
-class ApiErrorBase(msrest.serialization.Model):
-    """Api error base.
-
-    :param code: The error code.
-    :type code: str
-    :param target: The target of the particular error.
-    :type target: str
-    :param message: The error message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
 
 
 class ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
@@ -103,22 +74,61 @@ class ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentiti
 
 
 class Resource(msrest.serialization.Model):
-    """The Resource model definition.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
     """
 
     _validation = {
@@ -132,41 +142,42 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs['location']
+        super(TrackedResource, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.location = kwargs['location']
 
 
-class ImageTemplate(Resource):
+class ImageTemplate(TrackedResource):
     """Image template is an ARM resource managed by Microsoft.VirtualMachineImages provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
     :param identity: Required. The identity of the image template, if configured.
     :type identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.imagebuilder.models.SystemData
     :param source: Specifies the properties used to describe the source image.
     :type source: ~azure.mgmt.imagebuilder.models.ImageTemplateSource
     :param customize: Specifies the properties used to describe the customization steps of the
@@ -194,6 +205,7 @@ class ImageTemplate(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'identity': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'provisioning_error': {'readonly': True},
         'last_run_status': {'readonly': True},
@@ -204,9 +216,10 @@ class ImageTemplate(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ImageTemplateIdentity'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'source': {'key': 'properties.source', 'type': 'ImageTemplateSource'},
         'customize': {'key': 'properties.customize', 'type': '[ImageTemplateCustomizer]'},
         'distribute': {'key': 'properties.distribute', 'type': '[ImageTemplateDistributor]'},
@@ -223,6 +236,7 @@ class ImageTemplate(Resource):
     ):
         super(ImageTemplate, self).__init__(**kwargs)
         self.identity = kwargs['identity']
+        self.system_data = None
         self.source = kwargs.get('source', None)
         self.customize = kwargs.get('customize', None)
         self.distribute = kwargs.get('distribute', None)
@@ -552,6 +566,8 @@ class ImageTemplateManagedImageSource(ImageTemplateSource):
 class ImageTemplatePlatformImageSource(ImageTemplateSource):
     """Describes an image source from `Azure Gallery Images <https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages>`_.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Specifies the type of source image you want to start with.Constant
@@ -569,15 +585,19 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
     :param version: Image version from the `Azure Gallery Images
      <https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages>`_. If 'latest' is
      specified here, the version is evaluated when the image build takes place, not when the
-     template is submitted. Specifying 'latest' could cause ROUNDTRIP_INCONSISTENT_PROPERTY issue
-     which will be fixed.
+     template is submitted.
     :type version: str
+    :ivar exact_version: Image version from the `Azure Gallery Images
+     <https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages>`_. This readonly field
+     differs from 'version', only if the value specified in 'version' field is 'latest'.
+    :vartype exact_version: str
     :param plan_info: Optional configuration of purchase plan for platform image.
     :type plan_info: ~azure.mgmt.imagebuilder.models.PlatformImagePurchasePlan
     """
 
     _validation = {
         'type': {'required': True},
+        'exact_version': {'readonly': True},
     }
 
     _attribute_map = {
@@ -586,6 +606,7 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
         'offer': {'key': 'offer', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
+        'exact_version': {'key': 'exactVersion', 'type': 'str'},
         'plan_info': {'key': 'planInfo', 'type': 'PlatformImagePurchasePlan'},
     }
 
@@ -599,6 +620,7 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
         self.offer = kwargs.get('offer', None)
         self.sku = kwargs.get('sku', None)
         self.version = kwargs.get('version', None)
+        self.exact_version = None
         self.plan_info = kwargs.get('plan_info', None)
 
 
@@ -889,11 +911,15 @@ class ImageTemplateVmProfile(msrest.serialization.Model):
     """Describes the virtual machine used to build, customize and capture images.
 
     :param vm_size: Size of the virtual machine used to build, customize and capture images. Omit
-     or specify empty string to use the default (Standard_D1_v2).
+     or specify empty string to use the default (Standard_D2ds_v4).
     :type vm_size: str
     :param os_disk_size_gb: Size of the OS disk in GB. Omit or specify 0 to use Azure's default OS
      disk size.
     :type os_disk_size_gb: int
+    :param user_assigned_identities: Optional array of resource IDs of user assigned managed
+     identities to be configured on the build VM. This may include the identity of the image
+     template.
+    :type user_assigned_identities: list[str]
     :param vnet_config: Optional configuration of the virtual network to use to deploy the build
      virtual machine in. Omit if no specific virtual network needs to be used.
     :type vnet_config: ~azure.mgmt.imagebuilder.models.VirtualNetworkConfig
@@ -906,6 +932,7 @@ class ImageTemplateVmProfile(msrest.serialization.Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '[str]'},
         'vnet_config': {'key': 'vnetConfig', 'type': 'VirtualNetworkConfig'},
     }
 
@@ -916,6 +943,7 @@ class ImageTemplateVmProfile(msrest.serialization.Model):
         super(ImageTemplateVmProfile, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', "")
         self.os_disk_size_gb = kwargs.get('os_disk_size_gb', 0)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
         self.vnet_config = kwargs.get('vnet_config', None)
 
 
@@ -963,29 +991,6 @@ class ImageTemplateWindowsUpdateCustomizer(ImageTemplateCustomizer):
         self.search_criteria = kwargs.get('search_criteria', None)
         self.filters = kwargs.get('filters', None)
         self.update_limit = kwargs.get('update_limit', None)
-
-
-class InnerError(msrest.serialization.Model):
-    """Inner error details.
-
-    :param exception_type: The exception type.
-    :type exception_type: str
-    :param error_detail: The internal error message or exception dump.
-    :type error_detail: str
-    """
-
-    _attribute_map = {
-        'exception_type': {'key': 'exceptionType', 'type': 'str'},
-        'error_detail': {'key': 'errorDetail', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(InnerError, self).__init__(**kwargs)
-        self.exception_type = kwargs.get('exception_type', None)
-        self.error_detail = kwargs.get('error_detail', None)
 
 
 class Operation(msrest.serialization.Model):
@@ -1246,15 +1251,61 @@ class RunOutputCollection(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.imagebuilder.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.imagebuilder.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class VirtualNetworkConfig(msrest.serialization.Model):
     """Virtual Network configuration.
 
     :param subnet_id: Resource id of a pre-existing subnet.
     :type subnet_id: str
+    :param proxy_vm_size: Size of the virtual machine used to build, customize and capture images.
+     Omit or specify empty string to use the default (Standard_D1_v2 for Gen1 images and
+     Standard_D2ds_v4 for Gen2 images).
+    :type proxy_vm_size: str
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'proxy_vm_size': {'key': 'proxyVmSize', 'type': 'str'},
     }
 
     def __init__(
@@ -1263,3 +1314,4 @@ class VirtualNetworkConfig(msrest.serialization.Model):
     ):
         super(VirtualNetworkConfig, self).__init__(**kwargs)
         self.subnet_id = kwargs.get('subnet_id', None)
+        self.proxy_vm_size = kwargs.get('proxy_vm_size', "")

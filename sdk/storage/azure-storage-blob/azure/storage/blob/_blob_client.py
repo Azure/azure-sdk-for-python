@@ -16,7 +16,6 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import quote, unquote  # type: ignore
-
 import six
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
