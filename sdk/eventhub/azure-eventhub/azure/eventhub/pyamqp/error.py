@@ -256,11 +256,13 @@ AMQPError._definition = (
 
 class AMQPException(Exception):
 
-    def __init__(self, condition, description, info, message=None):
-        self.condition = condition
-        self.description = description
-        self.info = info
-        message = message or (str(condition) if isinstance(condition, ErrorCodes) else condition.decode())
+    def __init__(self, condition, **kwargs):
+
+        self.condition = condition or ErrorCodes.UnknownError
+        self.description = kwargs.get("description", None)
+        self.info = kwargs.get("info", None)
+        self.message = kwargs.get("message", None)
+        message = self.message or (str(condition) if isinstance(condition, ErrorCodes) else condition.decode())
         if self.description:
             if isinstance(self.description, str):
                 message += ": {}".format(self.description)

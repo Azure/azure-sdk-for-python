@@ -596,6 +596,7 @@ class Connection(object):
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
+                # TODO: send empty frame
                 if self._get_local_timeout(now) or self._get_remote_timeout(now):
                     self.close(
                         error=AMQPError(

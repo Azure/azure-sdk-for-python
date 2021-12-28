@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import struct
 import uuid
 import logging
 import time
@@ -92,7 +92,7 @@ class SenderLink(Link):
         delivery_count = self.delivery_count + 1
         delivery.frame = {
             'handle': self.handle,
-            'delivery_tag': bytes(delivery_count),
+            'delivery_tag': struct.pack('>I', abs(delivery_count)),
             'message_format': delivery.message._code,
             'settled': delivery.settled,
             'more': False,

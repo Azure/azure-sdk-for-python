@@ -128,7 +128,7 @@ class AMQPClient(object):
     def __init__(self, hostname, auth=None, **kwargs):
         self._hostname = hostname
         self._auth = auth
-        self._name = str(uuid.uuid4())
+        self._name = kwargs.pop("client_name", str(uuid.uuid4()))
         self._shutdown = False
         self._connection = None
         self._session = None
@@ -187,7 +187,7 @@ class AMQPClient(object):
     def _do_retryable_operation(self, operation, *args, **kwargs):
         retry_settings = self._error_policy.configure_retries()
         retry_active = True
-        absolute_timeout = kwargs.pop("timeout", 0)
+        absolute_timeout = kwargs.pop("timeout", 0) or 0
         while retry_active:
             try:
                 start_time = time.time()
@@ -195,7 +195,7 @@ class AMQPClient(object):
                     raise TimeoutError("Operation timed out.")
                 return operation(*args, timeout=absolute_timeout, **kwargs)
             except AMQPException as exc:
-                if absolute_timeout >= 0:
+                if absolute_timeout > 0:
                     retry_active = self._error_policy.increment(retry_settings, exc)
                     if not retry_active:
                         break
@@ -376,6 +376,72 @@ class AMQPClient(object):
 
 
 class SendClient(AMQPClient):
+    """An AMQP client for sending messages
+
+    :param target: The AMQP endpoint to connect to. This could be a send target
+     or a receive source.
+    :type target: str, bytes or ~uamqp.address.Address
+    :param auth: Authentication for the connection. This should be one of the subclasses of
+     uamqp.authentication.AMQPAuth. Currently this includes:
+        - uamqp.authentication.SASLAnonymous
+        - uamqp.authentication.SASLPlain
+        - uamqp.authentication.SASTokenAuth
+     If no authentication is supplied, SASLAnnoymous will be used by default.
+    :type auth: ~uamqp.authentication.common.AMQPAuth
+    :param client_name: The name for the client, also known as the Container ID.
+     If no name is provided, a random GUID will be used.
+    :type client_name: str or bytes
+    :param debug: Whether to turn on network trace logs. If `True`, trace logs
+     will be logged at INFO level. Default is `False`.
+    :type debug: bool
+    :param error_policy: A policy for parsing errors on link, connection and message
+     disposition to determine whether the error should be retryable.
+    :type error_policy: ~uamqp.errors.ErrorPolicy
+    :param keep_alive_interval: If set, a thread will be started to keep the connection
+     alive during periods of user inactivity. The value will determine how long the
+     thread will sleep (in seconds) between pinging the connection. If 0 or None, no
+     thread will be started.
+    :type keep_alive_interval: int
+    :param max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
+    :type max_frame_size: int
+    :param channel_max: Maximum number of Session channels in the Connection.
+    :type channel_max: int
+    :param idle_timeout: Timeout in milliseconds after which the Connection will close
+     if there is no further activity.
+    :type idle_timeout: int
+    :param auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
+     Default value is 60s.
+    :type auth_timeout: int
+    :param properties: Connection properties.
+    :type properties: dict
+    :param remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
+     idle time for Connections with no activity. Value must be between
+     0.0 and 1.0 inclusive. Default is 0.5.
+    :type remote_idle_timeout_empty_frame_send_ratio: float
+    :param incoming_window: The size of the allowed window for incoming messages.
+    :type incoming_window: int
+    :param outgoing_window: The size of the allowed window for outgoing messages.
+    :type outgoing_window: int
+    :param handle_max: The maximum number of concurrent link handles.
+    :type handle_max: int
+    :param on_attach: A callback function to be run on receipt of an ATTACH frame.
+     The function must take 4 arguments: source, target, properties and error.
+    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~uamqp.errors.AMQPConnectionError]
+    :param send_settle_mode: The mode by which to settle message send
+     operations. If set to `Unsettled`, the client will wait for a confirmation
+     from the service that the message was successfully sent. If set to 'Settled',
+     the client will not wait for confirmation and assume success.
+    :type send_settle_mode: ~uamqp.constants.SenderSettleMode
+    :param receive_settle_mode: The mode by which to settle message receive
+     operations. If set to `PeekLock`, the receiver will lock a message once received until
+     the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
+     will assume successful receipt of the message and clear it from the queue. The
+     default is `PeekLock`.
+    :type receive_settle_mode: ~uamqp.constants.ReceiverSettleMode
+    :param encoding: The encoding to use for parameters supplied as strings.
+     Default is 'UTF-8'
+    :type encoding: str
+    """
     def __init__(self, hostname, target, auth=None, **kwargs):
         self.target = target
         # Sender and Link settings
@@ -496,7 +562,7 @@ class SendClient(AMQPClient):
 
     def _send_message_impl(self, message, **kwargs):
         timeout = kwargs.pop("timeout", 0)
-        expire_time = (time.time() + timeout / 1000) if timeout else None
+        expire_time = (time.time() + timeout) if timeout else None
         self.open()
         message_delivery = _MessageDelivery(
             message,
@@ -534,7 +600,7 @@ class SendClient(AMQPClient):
 class ReceiveClient(AMQPClient):
     """An AMQP client for receiving messages.
 
-    :param target: The source AMQP service endpoint. This can either be the URI as
+    :param source: The source AMQP service endpoint. This can either be the URI as
      a string or a ~uamqp.address.Source object.
     :type target: str, bytes or ~uamqp.address.Source
     :param auth: Authentication for the connection. This should be one of the subclasses of
@@ -621,9 +687,9 @@ class ReceiveClient(AMQPClient):
 
     def __init__(self, hostname, source, auth=None, **kwargs):
         self.source = source
-        self._streaming_receive = False
+        self._streaming_receive = kwargs.pop("streaming_receive", False)
         self._received_messages = queue.Queue()
-        self._message_received_callback = None
+        self._message_received_callback = kwargs.pop("message_received_callback", None)
 
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
@@ -712,7 +778,6 @@ class ReceiveClient(AMQPClient):
                 break
         else:
             return batch
-        # TODO: we should return as soon as there are some messages in the queue instead of waiting for timeout
         while receiving and not expired and len(batch) < max_batch_size:
 
             while receiving and self._received_messages.qsize() < max_batch_size:
