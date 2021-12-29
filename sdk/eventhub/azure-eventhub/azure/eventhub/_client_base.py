@@ -20,7 +20,6 @@ except ImportError:
 
 
 from .pyamqp.client import AMQPClient
-from .pyamqp.authentication import _generate_sas_access_token
 from .pyamqp.message import Message, Properties
 from .pyamqp import constants, error as errors, utils as pyamqp_utils
 from .pyamqp.authentication import JWTTokenAuth
@@ -145,7 +144,6 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    #return _generate_sas_access_token(uri, policy, key, abs_expiry)
     token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry)
     return _AccessToken(token=token, expires_on=abs_expiry)
 
@@ -372,35 +370,27 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 if status_code < 400:
                     return response
                 if status_code in [401]:
-                    raise errors.AMQPException(
-                        status_code,
-                        description,
-                        {}
+                    raise errors.AuthenticationException(
+                        errors.ErrorCodes.UnauthorizedAccess,
+                        message="Management authentication failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
                     )
-                    # TODO: FEATURE PARITY
-                    #raise errors.AuthenticationException(
-                    #    "Management authentication failed. Status code: {}, Description: {!r}".format(
-                    #        status_code,
-                    #        description
-                    #    )
-                    #)
                 if status_code in [404]:
-                    raise errors.AMQPException(
-                        status_code,
-                        description,
-                        {}
+                    raise errors.AMQPConnectionError(
+                        errors.ErrorCodes.NotFound,
+                        message="Management connection failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
                     )
-                    # TODO: FEATURE PARITY
-                    #raise ConnectError(
-                    #    "Management connection failed. Status code: {}, Description: {!r}".format(
-                    #        status_code,
-                    #        description
-                    #    )
-                    #)
                 raise errors.AMQPConnectionError(
-                    status_code,
-                    description,
-                    {}
+                    errors.ErrorCodes.UnknownError,
+                    message="Management operation failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
                 )
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = _handle_exception(exception, self)
@@ -523,8 +513,8 @@ class ConsumerProducerMixin(object):
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception):
-        #if not self.running and isinstance(exception, compat.TimeoutException):
-        #    exception = errors.AuthenticationException("Authorization timeout.")
+        if not self.running and isinstance(exception, TimeoutError):
+           exception = errors.AuthenticationException(errors.ErrorCodes.InternalError, message="Authorization timeout.")
         return _handle_exception(exception, self)
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):

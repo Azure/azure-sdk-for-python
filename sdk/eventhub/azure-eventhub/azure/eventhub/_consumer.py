@@ -14,7 +14,7 @@ from .pyamqp import (
     ReceiveClient,
     types,
     utils as pyamqp_utils,
-    error as errors,
+    error,
     constants as pyamqp_constants
 )
 from .pyamqp.endpoints import Source, ApacheFilters
@@ -105,10 +105,9 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        # TODO: FIND ErrorPolicy replacement
-        #self._retry_policy = ErrorPolicy(
-        #    max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
-        #)
+        self._retry_policy = error.ErrorPolicy(  # TODO: custom error policy
+           max_retries=self._client._config.max_retries  # pylint:disable=protected-access
+        )
         self._reconnect_backoff = 1
         self._link_properties = {}  # type: Dict[types.AMQPType, types.AMQPType]
         self._error = None
@@ -147,9 +146,6 @@ class EventHubConsumer(
             )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
-        properties = create_properties(
-            self._client._config.user_agent  # pylint:disable=protected-access
-        )
         self._handler = ReceiveClient(
             urlparse(source.address).hostname,
             source,
@@ -158,21 +154,13 @@ class EventHubConsumer(
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
             link_properties=self._link_properties,
-            #timeout=self._timeout,
-            ##error_policy=self._retry_policy,   # TODO: finish
-            #keep_alive_interval=self._keep_alive,
-            #client_name=self._name,
-            #receive_settle_mode=pyamqp_constants.ReceiverSettleMode.Second, # ask if same as RAndD
-            #auto_complete=False,
-            #settled=False,
-            #properties=properties,
-            desired_capabilities=desired_capabilities
-        )
-
-        # TODO: the below should be True, but not working - figure out why
-        self._handler._streaming_receive = False # pylint:disable=protected-access
-        self._handler._message_received_callback = (  # pylint:disable=protected-access
-            self._message_received
+            error_policy=self._retry_policy,
+            client_name=self._name,
+            receive_settle_mode=pyamqp_constants.ReceiverSettleMode.First,
+            properties=create_properties(self._client._config.user_agent),  # pylint:disable=protected-access
+            desired_capabilities=desired_capabilities,
+            streaming_receive=True,
+            message_received_callback=self._message_received
         )
 
     def _open_with_retry(self):
@@ -182,11 +170,11 @@ class EventHubConsumer(
     def _message_received(self, message):
         # type: (Message) -> None
         # pylint:disable=protected-access
-        self._message_buffer.appendleft(message)
+        self._message_buffer.append(message)
 
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
-        message = self._message_buffer.pop()
+        message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
         self._last_received_event = event_data
         return event_data
@@ -219,21 +207,20 @@ class EventHubConsumer(
         self._receive_start_time = self._receive_start_time or time.time()
         deadline = self._receive_start_time + (max_wait_time or 0)  # max_wait_time can be None
         if len(self._message_buffer) < max_batch_size:
+            # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client
+            #  besides, the retry will create a new AMQPClient + new link properties (offset)
+            #  so we need to create new amqp client or update the link properties of existing one
+            #  I probably want to add one more optional step into the retry of amqp lib
+            #  to allow updating existing properties of a client if link/connection error happens
             while retried_times <= max_retries:
                 try:
                     if self._open():
-                        messages = self._handler.receive_message_batch(
-                            max_batch_size=max_batch_size,
-                            timeout=1000
-                        )
-                        for message in messages:
-                            self._message_buffer.appendleft(message)
-                        #self._handler.do_work()  # type: ignore
+                        self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
-                        isinstance(exception, errors.LinkDetach)
-                        and exception.condition == errors.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                        isinstance(exception, error.LinkDetach)
+                        and exception.condition == error.ErrorCodes.LinkStolen  # pylint: disable=no-member
                     ):
                         raise self._handle_exception(exception)
                     if not self.running:  # exit by close
