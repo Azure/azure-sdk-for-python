@@ -153,8 +153,8 @@ class AMQPClient(object):
         self._handle_max = kwargs.pop('handle_max', None)
 
         # Link settings
-        self._send_settle_mode = kwargs.pop('send_settle_mode', None) or SenderSettleMode.Unsettled
-        self._receive_settle_mode = kwargs.pop('receive_settle_mode', None) or ReceiverSettleMode.Second
+        self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
+        self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
         self._desired_capabilities = kwargs.pop('desired_capabilities', None)
 
     def __enter__(self):

@@ -14,12 +14,12 @@ from .sasl import SASLTransport
 from .session import Session
 from .performatives import OpenFrame, CloseFrame
 from .constants import (
-    PORT, 
+    PORT,
     SECURE_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
-    ConnectionState
+    ConnectionState, EMPTY_FRAME
 )
 
 from .error import (
@@ -262,8 +262,21 @@ class Connection(object):
         # type: () -> None
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
         if self._network_trace:
-            _LOGGER.info("<- empty()", extra=self._network_trace_params)
-        self._send_frame(0, None)
+            _LOGGER.info("-> empty()", extra=self._network_trace_params)
+        try:
+            raise self._error
+        except TypeError:
+            pass
+        try:
+            if self._can_write():
+                self._transport.write(EMPTY_FRAME)
+                self._last_frame_sent_time = time.time()
+        except Exception as exc:
+            self._error = AMQPConnectionError(
+                condition=ErrorCodes.InternalError,
+                description=str(exc),
+                info=exc
+            )
 
     def _outgoing_header(self):
         # type: () -> None
