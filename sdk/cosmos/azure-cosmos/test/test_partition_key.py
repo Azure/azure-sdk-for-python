@@ -107,6 +107,7 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def get_authorization(cls, client, verb, resource_id_or_fullname, resource_type, headers):
+        # Here the method is being called
         authorization = auth.GetAuthorizationHeader(
             cosmos_client_connection=client,
             verb=verb,

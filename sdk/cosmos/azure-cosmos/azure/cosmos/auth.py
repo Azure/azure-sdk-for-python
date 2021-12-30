@@ -27,12 +27,23 @@ from hashlib import sha256
 import hmac
 
 import six
+import warnings
 
 from . import http_constants
 
 
 def GetAuthorizationHeader(
-    cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+):
+    warnings.warn("This method is being removed from the SDK, please use recommended authorization patterns by passing "
+                  "in credentials directly within the creation of the cosmos client instance", UserWarning)
+
+    return _get_authorization_header(
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
+
+
+def _get_authorization_header(
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
 
@@ -43,7 +54,7 @@ def GetAuthorizationHeader(
     :param str resource_type:
     :param dict headers:
     :return: The authorization headers.
-    :rtype: dict
+    :rtype: str
     """
     # In the AuthorizationToken generation logic, lower casing of ResourceID is required
     # as rest of the fields are lower cased. Lower casing should not be done for named
@@ -144,7 +155,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
 
         # Get the last resource id or resource name from the path and get it's token from resource_tokens
         for i in range(len(path_parts), 1, -1):
-            segment = path_parts[i-1]
+            segment = path_parts[i - 1]
             sub_path = "/".join(path_parts[:i])
             if not segment in resource_types and sub_path in resource_tokens:
                 return resource_tokens[sub_path]
