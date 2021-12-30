@@ -64,15 +64,6 @@ class _SchemaRegistryTest(PerfStressTest):
             help="Size of a single schema. Max 1000000 bytes. Defaults to 150 bytes",
             default=150,
         )
-        parser.add_argument(
-            "--num-schemas",
-            nargs="?",
-            type=int,
-            help="""Number of schemas to register/get by ID/get properties for. Default is 10.
-                May result in 'Forbidden' Exception for `RegisterSchemaTest` operation, if reached
-                the limit of schemas allowed for Schema Registry tier.""",
-            default=10,
-        )
 
 
 class _RegisterTest(_SchemaRegistryTest):
@@ -83,8 +74,6 @@ class _RegisterTest(_SchemaRegistryTest):
             raise ValueError(
                 "Registering multiple times in parallel results in conflict. Parallel can only be 1 for `Register`."
             )
-
-        # Max num schemas based on account type might result in 'Forbidden' Error.
         self.args.parallel = 1
         self.sync_credential = DefaultAzureCredential()
         self.sync_client = SchemaRegistryClient(
