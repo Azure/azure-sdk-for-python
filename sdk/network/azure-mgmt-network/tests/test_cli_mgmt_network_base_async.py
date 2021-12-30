@@ -15,25 +15,25 @@ import time
 
 import azure.mgmt.network.aio
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtNetworkTest(AzureMgmtAsyncTestCase):
+class TestMgmtNetwork(AzureMgmtAsyncTestCase):
 
-    def setUp(self):
-        super(MgmtNetworkTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_aio_client(
             azure.mgmt.network.aio.NetworkManagementClient
         )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         
         VIRTUAL_NETWORK_NAME = "virtualnetworkname"

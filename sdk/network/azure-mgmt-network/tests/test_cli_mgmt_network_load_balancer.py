@@ -28,14 +28,13 @@
 import unittest
 
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtNetworkTest(AzureMgmtTestCase):
+class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtNetworkTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
@@ -79,9 +78,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         return subnet_info
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_NETWORK_NAME = "virtualnetwork"
         SUBNET_NAME = "subnet"

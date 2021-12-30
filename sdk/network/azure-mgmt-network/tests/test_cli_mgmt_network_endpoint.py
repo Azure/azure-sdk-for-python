@@ -25,14 +25,13 @@
 import unittest
 
 import azure.mgmt.network as az_network
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtNetworkTest(AzureMgmtTestCase):
+class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtNetworkTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             az_network.NetworkManagementClient
         )
@@ -105,7 +104,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
     def create_private_dns_zone(self, group_name, zone_name):
         if self.is_live:
             # Zones are a 'global' resource.
-            zone = self.dns_client.private_zones.create_or_update(
+            zone = self.dns_client.private_zones.begin_create_or_update(
                 group_name,
                 zone_name,
                 {
@@ -119,9 +118,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         SERVICE_NAME = "myService"
         PRIVATE_ENDPOINT_NAME = "myPrivateEndpoint"
