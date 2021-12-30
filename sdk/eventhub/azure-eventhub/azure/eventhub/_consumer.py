@@ -20,7 +20,6 @@ from .pyamqp import (
 from .pyamqp.endpoints import Source, ApacheFilters
 from .pyamqp.message import Message
 
-from .exceptions import _error_handler
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
@@ -28,6 +27,8 @@ from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
+    NO_RETRY_ERRORS,
+    CUSTOM_RETRY_POLICY
 )
 
 from urllib.parse import urlparse
@@ -105,8 +106,10 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = error.ErrorPolicy(  # TODO: custom error policy
-           max_retries=self._client._config.max_retries  # pylint:disable=protected-access
+        self._retry_policy = error.ErrorPolicy(
+            max_retries=self._client._config.max_retries,  # pylint:disable=protected-access
+            no_retry_condition=NO_RETRY_ERRORS,
+            custom_retry_policy=CUSTOM_RETRY_POLICY
         )
         self._reconnect_backoff = 1
         self._link_properties = {}  # type: Dict[types.AMQPType, types.AMQPType]

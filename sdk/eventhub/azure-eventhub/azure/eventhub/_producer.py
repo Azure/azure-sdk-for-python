@@ -20,7 +20,7 @@ from typing import (
 
 from azure.core.tracing import AbstractSpan
 
-from .exceptions import _error_handler, OperationTimeoutError
+from .exceptions import OperationTimeoutError
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
 from ._utils import (
@@ -30,7 +30,11 @@ from ._utils import (
     send_context_manager,
     transform_outbound_single_message,
 )
-from ._constants import TIMEOUT_SYMBOL
+from ._constants import (
+    TIMEOUT_SYMBOL,
+    NO_RETRY_ERRORS,
+    CUSTOM_RETRY_POLICY
+)
 from .pyamqp import (
     error,
     utils as pyamqp_utils,
@@ -104,7 +108,9 @@ class EventHubProducer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._retry_policy = error.ErrorPolicy(
-            retry_total=self._client._config.max_retries  # pylint: disable=protected-access
+            retry_total=self._client._config.max_retries,  # pylint: disable=protected-access
+            no_retry_condition=NO_RETRY_ERRORS,
+            custom_retry_policy=CUSTOM_RETRY_POLICY
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -224,6 +230,8 @@ class EventHubProducer(
                 try:
                     self._open()
                     self._handler.send_message(wrapper_event_data.message, timeout=timeout)
+                except TimeoutError as exception:
+                    raise OperationTimeoutError(message=str(exception), details=exception)
                 except Exception as exception:  # pylint:disable=broad-except
                     raise self._handle_exception(exception)
 
