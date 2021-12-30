@@ -36,15 +36,12 @@ USAGE:
     1) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
     2) SCHEMAREGISTRY_GROUP - The name of the schema group.
-
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on DefaultAzureCredential, see
  https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
 import os
 import json
-import sys
-import math
 
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
@@ -55,31 +52,17 @@ GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 NAME = "your-schema-name"
 FORMAT = SchemaFormat.AVRO
 
-fields = []
-# max fields = (schema size - no fields bytes)/size of each fields
-schema_size = 100
 SCHEMA_JSON = {
+    "namespace": "example.avro",
     "type": "record",
-    "name": "example.User",
-    "fields": fields,
+    "name": "User",
+    "fields": [
+        {"name": "name", "type": "string"},
+        {"name": "favorite_number", "type": ["int", "null"]},
+        {"name": "favorite_color", "type": ["string", "null"]},
+    ],
 }
-schema_no_fields_size = sys.getsizeof(json.dumps(SCHEMA_JSON, separators=(",", ":")))
-print(schema_no_fields_size)
-fields.append({"name": "favor_number00000", "type": ["int", "null"]})
-one_field_size = sys.getsizeof(json.dumps(SCHEMA_JSON, separators=(",", ":")))
-print(one_field_size)
-field_size = one_field_size - schema_no_fields_size
-print(field_size)
-num_fields = math.floor((schema_size-schema_no_fields_size)/field_size)
-print(num_fields)
-for i in range(1,num_fields):
-    num_idx = f'{i:05d}'
-    fields.append(
-        {"name": f"favo_number{num_idx}", "type": ["int", "null"]},
-    )
-
 DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
-print(sys.getsizeof(DEFINITION))
 
 
 def register_schema(client, group_name, name, definition, format):
@@ -121,7 +104,7 @@ if __name__ == "__main__":
         schema_id = register_schema(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
-#        schema_str = get_schema_by_id(schema_registry_client, schema_id)
-#        schema_id = get_schema_id(
-#            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
-#        )
+        schema_str = get_schema_by_id(schema_registry_client, schema_id)
+        schema_id = get_schema_id(
+            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
+        )
