@@ -337,11 +337,7 @@ class AMQPClient(object):
         :keyword str node: The target node. Default node is `$management`.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
-        :keyword callback: The function to process the returned parameters of the management
-         request including status code and a description if available. This can be used
-         to reformat the response or raise an error based on content. The function must
-         take 3 arguments - status code, response message and description.
-        :paramtype callback: ~callable[int, str, ~uamqp.message.Message]
+        :rtype: ~uamqp.message.Message
         """
 
         # The method also takes "status_code_field" and "status_description_field"
@@ -351,7 +347,6 @@ class AMQPClient(object):
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop('timeout', 0)
-        parse_response = kwargs.pop('callback', None)
         try:
             mgmt_link = self._mgmt_links[node]
         except KeyError:
@@ -370,8 +365,6 @@ class AMQPClient(object):
             operation_type=operation_type,
             timeout=timeout
         )
-        if parse_response:
-            return parse_response(status, response, description)
         return response
 
 

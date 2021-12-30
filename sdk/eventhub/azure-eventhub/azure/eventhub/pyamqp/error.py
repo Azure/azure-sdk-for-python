@@ -254,7 +254,6 @@ AMQPError._definition = (
 
 
 class AMQPException(Exception):
-
     def __init__(self, condition, **kwargs):
 
         self.condition = condition or ErrorCodes.UnknownError

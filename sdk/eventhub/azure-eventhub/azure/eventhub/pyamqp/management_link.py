@@ -55,8 +55,8 @@ class ManagementLink(object):
         self._on_amqp_management_error = kwargs.get('on_amqp_management_error')
         self._on_amqp_management_open_complete = kwargs.get('on_amqp_management_open_complete')
 
-        self._status_code_field = kwargs.pop('status_code_field', b'statusCode')
-        self._status_description_field = kwargs.pop('status_description_field', b'statusDescription')
+        self._status_code_field = kwargs.get('status_code_field', b'statusCode')
+        self._status_description_field = kwargs.get('status_description_field', b'statusDescription')
 
         self._sender_connected = False
         self._receiver_connected = False
@@ -145,28 +145,27 @@ class ManagementLink(object):
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if SEND_DISPOSITION_REJECT in state:
+            # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None
             for operation in self._pending_operations:
                 if message_delivery.message == operation.message:
                     to_remove_operation = operation
                     break
             self._pending_operations.remove(to_remove_operation)
-            if SEND_DISPOSITION_REJECT in state:  # either rejected or accepted
-                # TODO: better error handling
-                # The callback is defined in management_operation.py
-                # TODO: AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
-                #  or should there an error mapping which maps the condition to the error type
-                to_remove_operation.on_execute_operation_complete(
-                    ManagementExecuteOperationResult.ERROR,
-                    None,
-                    None,
-                    message_delivery.message,
-                    error=AMQPException(
-                        state[SEND_DISPOSITION_REJECT][0][0],
-                        state[SEND_DISPOSITION_REJECT][0][1],
-                        state[SEND_DISPOSITION_REJECT][0][2],
-                    )
+            # TODO: better error handling
+            #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
+            #  or should there an error mapping which maps the condition to the error type
+            to_remove_operation.on_execute_operation_complete(  # The callback is defined in management_operation.py
+                ManagementExecuteOperationResult.ERROR,
+                None,
+                None,
+                message_delivery.message,
+                error=AMQPException(
+                    state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
+                    state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
+                    state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
                 )
+            )
 
     def open(self):
         if self.state != ManagementLinkState.IDLE:
@@ -179,14 +178,34 @@ class ManagementLink(object):
         self,
         message,
         on_execute_operation_complete,
-        timeout=None,
-        operation=None,
-        type=None,
-        locales=None
+        **kwargs
     ):
-        message.application_properties["operation"] = operation
-        message.application_properties["type"] = type
-        message.application_properties["locales"] = locales
+        """Execute a request and wait on a response.
+
+        :param message: The message to send in the management request.
+        :type message: ~uamqp.message.Message
+        :param on_execute_operation_complete: Callback to be called when the operation is complete.
+         The following value will be passed to the callback: operation_id, operation_result, status_code,
+         status_description, raw_message and error.
+        :type on_execute_operation_complete: Callable[[str, str, int, str, ~uamqp.message.Message, Exception], None]
+        :keyword operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :paramtype operation: bytes or str
+        :keyword type: The type on which to carry out the operation. This will
+         be specific to the entities of the service. This value will be added as
+         an application property on the message.
+        :paramtype type: bytes or str
+        :keyword str locales: A list of locales that the sending peer permits for incoming
+         informational text in response messages.
+        :keyword float timeout: Provide an optional timeout in milliseconds within which a response
+         to the management request must be received.
+        :rtype: None
+        """
+        timeout = kwargs.get("timeout")
+        message.application_properties["operation"] = kwargs.get("operation")
+        message.application_properties["type"] = kwargs.get("type")
+        message.application_properties["locales"] = kwargs.get("locales")
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
             new_properties = message.properties._replace(message_id=self.next_message_id)
