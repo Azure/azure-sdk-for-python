@@ -6,9 +6,13 @@ from lxml import etree
 import lxml.html
 import subprocess as sp
 from azure.storage.blob import BlobClient
-
+from pathlib import Path
+from typing import List
+from github import Github
+from github.Repository import Repository
 
 SERVICE_TEST_PATH = {}
+MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
 
 def my_print(cmd):
     print('== ' + cmd + ' ==\n')
@@ -17,7 +21,7 @@ def my_print(cmd):
 def print_check(cmd, path=''):
     my_print(cmd)
     if path:
-        output = sp.check_output(cmd, shell=True, cwd=path)
+        sp.check_output(cmd, shell=True, cwd=path)
     else:
         sp.check_call(cmd, shell=True)
 
@@ -336,7 +340,7 @@ def sdk_info_from_swagger():
 
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
-        readme_html = folder.replace(SWAGGER_FOLDER, 'https://github.com/Azure/azure-rest-api-specs/tree/main')
+        readme_html = folder.replace(SWAGGER_FOLDER, MAIN_REPO_SWAGGER)
         if package_name != '':
             resource_manager.append('{},{},{},{},{}\n'.format(package_name,
                                                               track_config,
@@ -364,23 +368,63 @@ def upload_to_azure(out_file):
         blob.upload_blob(data, overwrite=True)
 
 
-def main():
+def count_sdk_status():
     cli_dependency = get_cli_dependency()
     sdk_info = sdk_info_from_swagger()
-    
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-    print('**')
-    print(os.getenv('SWAGGER_REPO'))
-    print(os.getenv('SDK_REPO'))
 
-    print_check('pwd', path=os.getenv('SDK_REPO'))
-    print_check('ls', path=os.getenv('SDK_REPO'))
-
-
-    OUT_FILE = 'release_sdk_status.csv'
-    write_to_csv(all_sdk_status, OUT_FILE)
+    out_file = 'release_sdk_status.csv'
+    write_to_csv(all_sdk_status, out_file)
     commit_to_github()
-    upload_to_azure(OUT_FILE)
+    upload_to_azure(out_file)
+
+
+def get_all_readme_html() -> List[str]:
+    swagger_folder = os.getenv('SWAGGER_REPO')
+    readme_folders = glob.glob(f'{swagger_folder}/specification/*/resource-manager')
+    my_print(f'total readme folders: {len(readme_folders)}')
+    service_name = [Path(item).parts[-2] for item in readme_folders]
+    return [f'{MAIN_REPO_SWAGGER}/specification/{item}/resource-manager' for item in service_name]
+
+
+def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
+    commit_url = service_html.split('main/')[-1]
+    commits = rest_repo.get_commits(path=commit_url)
+    latest_commit = None
+    for commit in commits:
+        latest_commit = commit
+        break
+    latest_pr_brief = latest_commit.commit.message
+    latest_pr_number = re.findall('\(\#[0-9]+\)', latest_pr_brief)
+    latest_pr_number_int = []
+    for number in latest_pr_number:
+        number = int(re.search('\d+', number).group())
+        latest_pr_number_int.append(number)
+    latest_pr_number_int.sort()
+
+    return latest_pr_number_int[-1]
+
+
+def trigger_pipeline(readme_html: List[str]) -> None:
+    g = Github(os.getenv('TOKEN'))  # please fill user_token
+    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
+    for item in readme_html:
+        num = get_latest_pr_from_readme(rest_repo, item)
+        pr = rest_repo.get_pull(num)
+        pr.create_issue_comment(body='/azp run')
+        my_print(f'get latest PR "{num}" from {item} and comment "/azp run" successfully')
+
+
+def trigger_swagger_pipeline() -> None:
+    readme_html_all = get_all_readme_html()
+    trigger_pipeline(readme_html_all)
+
+
+def main():
+    if os.environ.get('AZP_RUN') in ('yes', 'true'):
+        trigger_swagger_pipeline()
+    else:
+        count_sdk_status()
 
 
 if __name__ == '__main__':
