@@ -36,7 +36,8 @@ class Common:
     def collect_open_issues(self) -> List[Issue]:
         hub = Github(os.getenv('TOKEN'))
         repo = hub.get_repo(self.repo_name)
-        open_issues = repo.get_issues(state='open')
+        mgmt_label = repo.get_label('Mgmt')
+        open_issues = repo.get_issues(state='open', labels=[mgmt_label])
         return [issue for issue in open_issues if not issue.pull_request]
 
     def judge_status(self, issue: Issue) -> str:
