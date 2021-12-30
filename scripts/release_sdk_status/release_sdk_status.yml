@@ -7,6 +7,13 @@ trigger:
     exclude:
     - '*'
 
+schedules:
+  - cron: "0 16 * * *"
+    displayName: Daily Statistics
+    branches:
+      include:
+      - main
+    always: true
 
 jobs:
 - job: ReleaseSdkStatus
@@ -42,6 +49,7 @@ jobs:
         export TOKEN=$(USR_TOKEN)
         export SWAGGER_REPO=$(pwd)/azure-rest-api-specs
         export SDK_REPO=$(pwd)/sdk-repo
+        export AZP_RUN=$(AZP_RUN)
 
         # create virtual env
         python -m venv venv-sdk
