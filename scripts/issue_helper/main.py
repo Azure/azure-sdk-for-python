@@ -24,7 +24,7 @@ def main():
     languages = {language: _LANGUAGES[language]} if language in _LANGUAGES.keys() else _LANGUAGES
     for language_process in languages.values():
         language_process()
-    # Common.push_md_to_storage()
+    Common.push_md_to_storage()
 
 
 if __name__ == '__main__':
