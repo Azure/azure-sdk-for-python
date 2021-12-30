@@ -36,6 +36,7 @@ USAGE:
     1) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
     2) SCHEMAREGISTRY_GROUP - The name of the schema group.
+
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on DefaultAzureCredential, see
  https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
