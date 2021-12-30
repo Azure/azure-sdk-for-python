@@ -22,8 +22,11 @@ _LANGUAGES = {
 def main():
     language = os.getenv('LANGUAGE')
     languages = {language: _LANGUAGES[language]} if language in _LANGUAGES.keys() else _LANGUAGES
-    for language_process in languages.values():
-        language_process()
+    for language in languages:
+        try:
+            languages[language]()
+        except Exception as e:
+            _LOG.info(f'Failed to collect issues status for {language}: {e}')
     Common.push_md_to_storage()
 
 
