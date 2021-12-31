@@ -17,6 +17,7 @@ schedules:
 
 variables:
   - group: Azure SDK Auto Release Pipeline Secrets
+  - group: SDK Release Helper
 
 jobs:
 - job: IssueHelper

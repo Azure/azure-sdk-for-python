@@ -67,7 +67,7 @@ class Common:
                     'title': issue.title,
                     'labels': [label.name for label in issue.labels],
                     'assignees': assignees,
-                    'created_date': str(date.fromtimestamp(issue.created_at.timestamp()).strftime('%m-%d')),
+                    'created_date': str(date.fromtimestamp(issue.created_at.timestamp()).strftime('%Y-%m-%d')),
                     'status': self.judge_status(issue)
                 }
                 issues_info.append(issue_info)
@@ -77,7 +77,7 @@ class Common:
 
     @staticmethod
     def output_line(issue_info: Dict[str, Any]) -> str:
-        return '|{No}|[{number}]({issue_html})|{title}|{labels}|{assignees}|{bot_advice}|{created_date}|\n'.format(
+        return '|{No}|[#{number}]({issue_html})|{title}|{labels}|{assignees}|{bot_advice}|{created_date}|\n'.format(
             No=issue_info['idx'],
             number=issue_info['number'],
             issue_html=issue_info['html'],
