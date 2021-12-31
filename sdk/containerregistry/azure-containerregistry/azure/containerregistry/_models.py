@@ -139,15 +139,6 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             _strip_alg(self._digest)
         )
 
-    def _to_generated(self):
-        # type: () -> ManifestWriteableProperties
-        return ManifestWriteableProperties(
-            can_delete=self.can_delete,
-            can_read=self.can_read,
-            can_write=self.can_write,
-            can_list=self.can_list,
-        )
-
 
 class RepositoryProperties(object):
     """Model for storing properties of a single repository
