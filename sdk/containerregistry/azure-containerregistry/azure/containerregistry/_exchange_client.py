@@ -37,6 +37,8 @@ class ACRExchangeClient(object):
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
     :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :keyword credential_scopes: URL for credential authentication if different from the default
+    :paramtype credential_scopes: List[str]
     """
 
     def __init__(self, endpoint, credential, **kwargs):
