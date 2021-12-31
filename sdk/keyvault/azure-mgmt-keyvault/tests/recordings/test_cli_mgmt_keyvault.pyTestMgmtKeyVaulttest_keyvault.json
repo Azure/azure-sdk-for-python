@@ -1,0 +1,1033 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:07:42 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AiHFCTGnDQVIufizwOPl4oM; expires=Sun, 30-Jan-2022 08:07:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrMxgh13umNC83gcsJAU3KVDI62Emq3Rg62ExZlqhS8ahV3jAD83N2L7ufNAwSV0Ei_YTduMb_t39_yPLbETtCfBZq1m12sfbx6xDAXJEiIHpCapHB3ASoPQ09TO-PKa337dB7ldMAQ86kS3qfjfBxMss0MxfPw7i5w0sn4jDsNBkgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.17 - EUS ProdSlices",
+        "x-ms-request-id": "6e829456-984b-4992-b3ae-028ddf5bba01"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "NA",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AiHFCTGnDQVIufizwOPl4oM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:07:43 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AiHFCTGnDQVIufizwOPl4oM; expires=Sun, 30-Jan-2022 08:07:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.17 - KRSLR2 ProdSlices",
+        "x-ms-request-id": "47af5f47-bd6e-4acd-b8d8-aa961e845200"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "199b0ba9-9f4d-4eba-89c6-32a601edb4fd",
+        "Connection": "keep-alive",
+        "Content-Length": "289",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "fpc=AiHFCTGnDQVIufizwOPl4oM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.16.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=0vj7Q~IsFayrD0V_8oyOfygU-GE3ELOabq95a\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "199b0ba9-9f4d-4eba-89c6-32a601edb4fd",
+        "Content-Length": "1391",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:07:43 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AiHFCTGnDQVIufizwOPl4oOZHqKEAQAAAE-xYNkOAAAA; expires=Sun, 30-Jan-2022 08:07:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.12261.17 - SCUS ProdSlices",
+        "x-ms-request-id": "1a6943d6-1708-4916-9b17-7cbc66c4b601"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTY0MDkzNzc2MywibmJmIjoxNjQwOTM3NzYzLCJleHAiOjE2NDA5NDE2NjMsImFpbyI6IkUyWmdZUGo1OThqeGszY1BYbEUzWDNiczVVK2UrUUE9IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJyaCI6IjAuQVRjQUltdUNWTlk0c2stNjJiZTVPajZjV3RWVTM2SURxeVZIbTRDYUFMT3hsbjgzQUFBLiIsInN1YiI6Ijg4N2M0MmIxLTc5NDYtNGMyMi1iYWE2LTE1MDQzZTRiMTMyMyIsInRpZCI6IjU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YSIsInV0aSI6IjFrTnBHZ2dYRmttYkYzeThac1MyQVEiLCJ2ZXIiOiIxLjAiLCJ4bXNfY2MiOlsiQ1AxIl0sInhtc190Y2R0IjoxNDEyMjA2ODQwfQ.IJCVMstxFaFhfmvX9-WqM6tUJDlzcb8wEHfv2dBy8jl1Ra-ZOkekEOgnM-KhDB1J2WCITZe8SR9cxNY0LUQSnY4C2sgnezKdZbaHfA6IpiwSFAkCPKBfM8cKqe9SRMAusZXq7ka_irKszD2QMVopFzE6HnNAVNRXJwnhKTVaBoDkS_R7vTsM3vFKIrbx6jc0reEwH6uzsRRj9s6uUGq_GfLZAFD926WG68Opx_5Prg7pPzXo7-QZyGMIjEME2As8iBPHHePDvnG48vkf5pOG1RJgLvqb6ueXr1GHfDN2tvjEBPIltADxnByT4L7MtLmJ_vzrk9D1n9xDCv2XsFP3AA"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "823",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "ba32511c-6a10-11ec-a59c-70b5e82527ff"
+      },
+      "RequestBody": "{\u0022location\u0022: \u0022eastus\u0022, \u0022properties\u0022: {\u0022tenantId\u0022: \u002272f988bf-86f1-41af-91ab-2d7cd011db47\u0022, \u0022sku\u0022: {\u0022family\u0022: \u0022A\u0022, \u0022name\u0022: \u0022standard\u0022}, \u0022accessPolicies\u0022: [{\u0022tenantId\u0022: \u002272f988bf-86f1-41af-91ab-2d7cd011db47\u0022, \u0022objectId\u0022: \u002200000000-0000-0000-0000-000000000000\u0022, \u0022permissions\u0022: {\u0022keys\u0022: [\u0022encrypt\u0022, \u0022decrypt\u0022, \u0022wrapKey\u0022, \u0022unwrapKey\u0022, \u0022sign\u0022, \u0022verify\u0022, \u0022get\u0022, \u0022list\u0022, \u0022create\u0022, \u0022update\u0022, \u0022import\u0022, \u0022delete\u0022, \u0022backup\u0022, \u0022restore\u0022, \u0022recover\u0022, \u0022purge\u0022], \u0022secrets\u0022: [\u0022get\u0022, \u0022list\u0022, \u0022set\u0022, \u0022delete\u0022, \u0022backup\u0022, \u0022restore\u0022, \u0022recover\u0022, \u0022purge\u0022], \u0022certificates\u0022: [\u0022get\u0022, \u0022list\u0022, \u0022delete\u0022, \u0022create\u0022, \u0022import\u0022, \u0022update\u0022, \u0022managecontacts\u0022, \u0022getissuers\u0022, \u0022listissuers\u0022, \u0022setissuers\u0022, \u0022deleteissuers\u0022, \u0022manageissuers\u0022, \u0022recover\u0022, \u0022purge\u0022]}}], \u0022enabledForDeployment\u0022: true, \u0022enabledForDiskEncryption\u0022: true, \u0022enabledForTemplateDeployment\u0022: true}}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:07:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "ba32511c-6a10-11ec-a59c-70b5e82527ff",
+        "x-ms-correlation-request-id": "817e76d0-9d76-4d4a-98ea-cc2b63ccb304",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-request-id": "b7ca2b80-3578-42c4-aebb-523a6ba9a6d9",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080754Z:817e76d0-9d76-4d4a-98ea-cc2b63ccb304",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
+        "name": "myValtZikfikxz",
+        "type": "Microsoft.KeyVault/vaults",
+        "location": "eastus",
+        "tags": {},
+        "properties": {
+          "sku": {
+            "family": "A",
+            "name": "standard"
+          },
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "accessPolicies": [
+            {
+              "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+              "objectId": "00000000-0000-0000-0000-000000000000",
+              "permissions": {
+                "keys": [
+                  "encrypt",
+                  "decrypt",
+                  "wrapKey",
+                  "unwrapKey",
+                  "sign",
+                  "verify",
+                  "get",
+                  "list",
+                  "create",
+                  "update",
+                  "import",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "secrets": [
+                  "get",
+                  "list",
+                  "set",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "certificates": [
+                  "get",
+                  "list",
+                  "delete",
+                  "create",
+                  "import",
+                  "update",
+                  "managecontacts",
+                  "getissuers",
+                  "listissuers",
+                  "setissuers",
+                  "deleteissuers",
+                  "manageissuers",
+                  "recover",
+                  "purge"
+                ]
+              }
+            }
+          ],
+          "enabledForDeployment": true,
+          "enabledForDiskEncryption": true,
+          "enabledForTemplateDeployment": true,
+          "enableSoftDelete": true,
+          "vaultUri": "https://myValtZikfikxz.vault.azure.net",
+          "provisioningState": "RegisteringDns"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "ba32511c-6a10-11ec-a59c-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:27 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "ba32511c-6a10-11ec-a59c-70b5e82527ff",
+        "x-ms-correlation-request-id": "fa577ea6-8ef0-4f04-99af-aa22ef6697bb",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-request-id": "72dbe736-89e4-4e75-8620-f821f0490f80",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080827Z:fa577ea6-8ef0-4f04-99af-aa22ef6697bb",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
+        "name": "myValtZikfikxz",
+        "type": "Microsoft.KeyVault/vaults",
+        "location": "eastus",
+        "tags": {},
+        "properties": {
+          "sku": {
+            "family": "A",
+            "name": "standard"
+          },
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "accessPolicies": [
+            {
+              "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+              "objectId": "00000000-0000-0000-0000-000000000000",
+              "permissions": {
+                "keys": [
+                  "encrypt",
+                  "decrypt",
+                  "wrapKey",
+                  "unwrapKey",
+                  "sign",
+                  "verify",
+                  "get",
+                  "list",
+                  "create",
+                  "update",
+                  "import",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "secrets": [
+                  "get",
+                  "list",
+                  "set",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "certificates": [
+                  "get",
+                  "list",
+                  "delete",
+                  "create",
+                  "import",
+                  "update",
+                  "managecontacts",
+                  "getissuers",
+                  "listissuers",
+                  "setissuers",
+                  "deleteissuers",
+                  "manageissuers",
+                  "recover",
+                  "purge"
+                ]
+              }
+            }
+          ],
+          "enabledForDeployment": true,
+          "enabledForDiskEncryption": true,
+          "enabledForTemplateDeployment": true,
+          "enableSoftDelete": true,
+          "vaultUri": "https://myvaltzikfikxz.vault.azure.net/",
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz/accessPolicies/add?api-version=2019-09-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "225",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d50d7534-6a10-11ec-b5fa-70b5e82527ff"
+      },
+      "RequestBody": "{\u0022properties\u0022: {\u0022accessPolicies\u0022: [{\u0022tenantId\u0022: \u002272f988bf-86f1-41af-91ab-2d7cd011db47\u0022, \u0022objectId\u0022: \u002200000000-0000-0000-0000-000000000000\u0022, \u0022permissions\u0022: {\u0022keys\u0022: [\u0022encrypt\u0022], \u0022secrets\u0022: [\u0022get\u0022], \u0022certificates\u0022: [\u0022get\u0022]}}]}}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "d50d7534-6a10-11ec-b5fa-70b5e82527ff",
+        "x-ms-correlation-request-id": "ab444d8c-87ba-4e3c-bd2a-b281419eb687",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-request-id": "63f7e4aa-7554-4c17-924d-f002ac517d74",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080828Z:ab444d8c-87ba-4e3c-bd2a-b281419eb687",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz/accessPolicies/",
+        "type": "Microsoft.KeyVault/vaults/accessPolicies",
+        "properties": {
+          "accessPolicies": [
+            {
+              "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+              "objectId": "00000000-0000-0000-0000-000000000000",
+              "permissions": {
+                "keys": [
+                  "encrypt",
+                  "decrypt",
+                  "wrapKey",
+                  "unwrapKey",
+                  "sign",
+                  "verify",
+                  "get",
+                  "list",
+                  "create",
+                  "update",
+                  "import",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "secrets": [
+                  "get",
+                  "list",
+                  "set",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "certificates": [
+                  "get",
+                  "list",
+                  "delete",
+                  "create",
+                  "import",
+                  "update",
+                  "managecontacts",
+                  "getissuers",
+                  "listissuers",
+                  "setissuers",
+                  "deleteissuers",
+                  "manageissuers",
+                  "recover",
+                  "purge"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d5df9905-6a10-11ec-ac89-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:29 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "d5df9905-6a10-11ec-ac89-70b5e82527ff",
+        "x-ms-correlation-request-id": "edd2e38b-615b-4815-baee-3a772454c495",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-request-id": "51c96a7f-c1a0-4c59-8e84-5487918af935",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080829Z:edd2e38b-615b-4815-baee-3a772454c495",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
+        "name": "myValtZikfikxz",
+        "type": "Microsoft.KeyVault/vaults",
+        "location": "eastus",
+        "tags": {},
+        "properties": {
+          "sku": {
+            "family": "A",
+            "name": "standard"
+          },
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "accessPolicies": [
+            {
+              "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+              "objectId": "00000000-0000-0000-0000-000000000000",
+              "permissions": {
+                "keys": [
+                  "encrypt",
+                  "decrypt",
+                  "wrapKey",
+                  "unwrapKey",
+                  "sign",
+                  "verify",
+                  "get",
+                  "list",
+                  "create",
+                  "update",
+                  "import",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "secrets": [
+                  "get",
+                  "list",
+                  "set",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "certificates": [
+                  "get",
+                  "list",
+                  "delete",
+                  "create",
+                  "import",
+                  "update",
+                  "managecontacts",
+                  "getissuers",
+                  "listissuers",
+                  "setissuers",
+                  "deleteissuers",
+                  "manageissuers",
+                  "recover",
+                  "purge"
+                ]
+              }
+            }
+          ],
+          "enabledForDeployment": true,
+          "enabledForDiskEncryption": true,
+          "enabledForTemplateDeployment": true,
+          "enableSoftDelete": true,
+          "vaultUri": "https://myvaltzikfikxz.vault.azure.net/",
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "2",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d61ac9a7-6a10-11ec-98a7-70b5e82527ff"
+      },
+      "RequestBody": {},
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:29 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "d61ac9a7-6a10-11ec-98a7-70b5e82527ff",
+        "x-ms-correlation-request-id": "8e77d8a4-b413-4ca7-bf59-265031df81db",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-request-id": "61f9e913-c1b8-4381-86f0-d2c808230b20",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080829Z:8e77d8a4-b413-4ca7-bf59-265031df81db",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
+        "name": "myValtZikfikxz",
+        "type": "Microsoft.KeyVault/vaults",
+        "location": "eastus",
+        "tags": {},
+        "properties": {
+          "sku": {
+            "family": "A",
+            "name": "standard"
+          },
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "accessPolicies": [
+            {
+              "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+              "objectId": "00000000-0000-0000-0000-000000000000",
+              "permissions": {
+                "keys": [
+                  "encrypt",
+                  "decrypt",
+                  "wrapKey",
+                  "unwrapKey",
+                  "sign",
+                  "verify",
+                  "get",
+                  "list",
+                  "create",
+                  "update",
+                  "import",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "secrets": [
+                  "get",
+                  "list",
+                  "set",
+                  "delete",
+                  "backup",
+                  "restore",
+                  "recover",
+                  "purge"
+                ],
+                "certificates": [
+                  "get",
+                  "list",
+                  "delete",
+                  "create",
+                  "import",
+                  "update",
+                  "managecontacts",
+                  "getissuers",
+                  "listissuers",
+                  "setissuers",
+                  "deleteissuers",
+                  "manageissuers",
+                  "recover",
+                  "purge"
+                ]
+              }
+            }
+          ],
+          "enabledForDeployment": true,
+          "enabledForDiskEncryption": true,
+          "enabledForTemplateDeployment": true,
+          "enableSoftDelete": true,
+          "vaultUri": "https://myvaltzikfikxz.vault.azure.net/",
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/checkNameAvailability?api-version=2019-09-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "61",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d666dcd2-6a10-11ec-a1a6-70b5e82527ff"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022sample-vault\u0022, \u0022type\u0022: \u0022Microsoft.KeyVault/vaults\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "d666dcd2-6a10-11ec-a1a6-70b5e82527ff",
+        "x-ms-correlation-request-id": "d9138334-5f6d-46ad-a523-2d1213bca747",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-request-id": "03ef02d5-0f12-4cd0-bc1e-4fd1175f3ae1",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080831Z:d9138334-5f6d-46ad-a523-2d1213bca747",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "nameAvailable": false,
+        "reason": "AlreadyExists",
+        "message": "The vault name \u0027sample-vault\u0027 is already in use. Vault names are globaly unique so it is possible that the name is already taken. If you are sure that the vault name was not taken then it is possible that a vault with the same name was recently deleted but not purged after being placed in a recoverable state. If the vault is in a recoverable state then the vault will need to be purged before reusing the name. For more information on soft delete and purging a vault follow this link https://go.microsoft.com/fwlink/?linkid=2147740."
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d788b534-6a10-11ec-8773-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 31 Dec 2021 08:08:36 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "d788b534-6a10-11ec-8773-70b5e82527ff",
+        "x-ms-correlation-request-id": "633640ff-ac2e-41c9-bc6f-f46beee03b62",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14998",
+        "x-ms-request-id": "2627534d-b4ce-4812-9fbf-990543a787f6",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080836Z:633640ff-ac2e-41c9-bc6f-f46beee03b62",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "da456cbd-6a10-11ec-b8b8-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:36 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "da456cbd-6a10-11ec-b8b8-70b5e82527ff",
+        "x-ms-correlation-request-id": "a1afa177-a54d-4e78-ab52-9eb55113c956",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-request-id": "4f4f258a-b59d-4d18-b0e2-f3cd09f5774c",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080836Z:a1afa177-a54d-4e78-ab52-9eb55113c956",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz",
+        "name": "myValtZikfikxz",
+        "type": "Microsoft.KeyVault/deletedVaults",
+        "properties": {
+          "vaultId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
+          "location": "eastus",
+          "tags": {},
+          "deletionDate": "2021-12-31T08:08:32Z",
+          "scheduledPurgeDate": "2022-03-31T08:08:32Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz/purge?api-version=2019-09-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 31 Dec 2021 08:08:37 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzc2NTM0OTE3OTE2MzI2NHxENTM4RTRERjJFREU0ODY0OTVEMkI0QzlFMDMwQkYwMw?api-version=2019-09-01",
+        "Pragma": "no-cache",
+        "Retry-After": "5",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff",
+        "x-ms-correlation-request-id": "91fc399a-0374-463e-a8ea-7d7585d8f0fd",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-request-id": "6679bbd3-6faf-4779-9572-5df4fd054b7f",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080837Z:91fc399a-0374-463e-a8ea-7d7585d8f0fd",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzc2NTM0OTE3OTE2MzI2NHxENTM4RTRERjJFREU0ODY0OTVEMkI0QzlFMDMwQkYwMw?api-version=2019-09-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "64",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:42 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzc2NTM0OTE3OTE2MzI2NHxENTM4RTRERjJFREU0ODY0OTVEMkI0QzlFMDMwQkYwMw?api-version=2019-09-01",
+        "Pragma": "no-cache",
+        "Retry-After": "5",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff",
+        "x-ms-correlation-request-id": "ec5bca58-1fcc-443c-b0cd-3164e06adcaa",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-request-id": "f5f1a5ac-b1ec-4ce5-83e9-43c5a61d3103",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080842Z:ec5bca58-1fcc-443c-b0cd-3164e06adcaa",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2021-12-31 08:08:36Z",
+        "status": "NotStarted"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzc2NTM0OTE3OTE2MzI2NHxENTM4RTRERjJFREU0ODY0OTVEMkI0QzlFMDMwQkYwMw?api-version=2019-09-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "64",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:47 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzc2NTM0OTE3OTE2MzI2NHxENTM4RTRERjJFREU0ODY0OTVEMkI0QzlFMDMwQkYwMw?api-version=2019-09-01",
+        "Pragma": "no-cache",
+        "Retry-After": "5",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff",
+        "x-ms-correlation-request-id": "ab8b0a6e-3e58-4ade-b384-9a530a68574a",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-request-id": "03a275f6-e563-4cc1-96b5-81ade6bcf3bb",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080848Z:ab8b0a6e-3e58-4ade-b384-9a530a68574a",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2021-12-31 08:08:36Z",
+        "status": "NotStarted"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzc2NTM0OTE3OTE2MzI2NHxENTM4RTRERjJFREU0ODY0OTVEMkI0QzlFMDMwQkYwMw?api-version=2019-09-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 31 Dec 2021 08:08:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "da7f570a-6a10-11ec-9487-70b5e82527ff",
+        "x-ms-correlation-request-id": "697c5d9d-e5ae-448a-a784-c3bf25e79537",
+        "x-ms-keyvault-service-version": "1.5.225.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-request-id": "650d2404-3894-4e3f-bcf0-f6b5337c257d",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20211231T080853Z:697c5d9d-e5ae-448a-a784-c3bf25e79537",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2021-12-31 08:08:36Z",
+        "lastActionDateTime": "2021-12-31 08:08:49Z",
+        "status": "Succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}
