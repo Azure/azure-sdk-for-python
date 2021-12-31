@@ -72,7 +72,7 @@ class Common:
                 }
                 issues_info.append(issue_info)
                 idx = idx + 1
-        _LOG.info(f'collect {len(issues_info)} open issues assigned to language owner')
+        _LOG.info(f'collect {len(issues_info)} open issues assigned to {str(self.language_owner)}')
         return issues_info
 
     @staticmethod
