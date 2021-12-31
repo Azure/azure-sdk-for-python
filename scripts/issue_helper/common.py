@@ -27,6 +27,7 @@ class Common:
         self.repo_name = repo_name
         self.file_out_name = file_out_name
         self.issue_html = f'https://github.com/{repo_name}/issues'
+        self.bot_assignees = {'msftbot[bot]'}
 
     @staticmethod
     def push_md_to_storage():
@@ -42,7 +43,8 @@ class Common:
 
     def judge_status(self, issue: Issue) -> str:
         latest_comments = ''
-        comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in issue.get_comments()]
+        comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in issue.get_comments()
+                    if comment.user.login not in self.bot_assignees]
         comments.sort()
         if comments:
             latest_comments = comments[-1][1]
