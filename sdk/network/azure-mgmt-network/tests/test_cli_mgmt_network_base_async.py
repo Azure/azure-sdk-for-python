@@ -17,11 +17,11 @@ import azure.mgmt.network.aio
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-from _aio_testcase import AzureMgmtAsyncTestCase
+from _aio_testcase import AzureMgmtRecordedAsyncTestCase
 
 AZURE_LOCATION = 'eastus'
 
-class TestMgmtNetwork(AzureMgmtAsyncTestCase):
+class TestMgmtNetwork(AzureMgmtRecordedAsyncTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_aio_client(
