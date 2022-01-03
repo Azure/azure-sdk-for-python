@@ -22850,6 +22850,9 @@ class FtpReadSettings(StoreReadSettings):
     :vartype file_list_path: any
     :ivar use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
     :vartype use_binary_transfer: bool
+    :ivar disable_chunking: If true, disable parallel reading within each file. Default is false.
+     Type: boolean (or Expression with resultType boolean).
+    :vartype disable_chunking: any
     """
 
     _validation = {
@@ -22868,6 +22871,7 @@ class FtpReadSettings(StoreReadSettings):
         'delete_files_after_completion': {'key': 'deleteFilesAfterCompletion', 'type': 'object'},
         'file_list_path': {'key': 'fileListPath', 'type': 'object'},
         'use_binary_transfer': {'key': 'useBinaryTransfer', 'type': 'bool'},
+        'disable_chunking': {'key': 'disableChunking', 'type': 'object'},
     }
 
     def __init__(
@@ -22883,6 +22887,7 @@ class FtpReadSettings(StoreReadSettings):
         delete_files_after_completion: Optional[Any] = None,
         file_list_path: Optional[Any] = None,
         use_binary_transfer: Optional[bool] = None,
+        disable_chunking: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -22915,6 +22920,9 @@ class FtpReadSettings(StoreReadSettings):
         :paramtype file_list_path: any
         :keyword use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
         :paramtype use_binary_transfer: bool
+        :keyword disable_chunking: If true, disable parallel reading within each file. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_chunking: any
         """
         super(FtpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.type = 'FtpReadSettings'  # type: str
@@ -22926,6 +22934,7 @@ class FtpReadSettings(StoreReadSettings):
         self.delete_files_after_completion = delete_files_after_completion
         self.file_list_path = file_list_path
         self.use_binary_transfer = use_binary_transfer
+        self.disable_chunking = disable_chunking
 
 
 class FtpServerLinkedService(LinkedService):
@@ -23364,15 +23373,18 @@ class GoogleAdWordsLinkedService(LinkedService):
     :vartype parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[any]
-    :ivar client_customer_id: Required. The Client customer ID of the AdWords account that you want
-     to fetch report data for.
+    :ivar connection_properties: Properties used to connect to GoogleAds. It is mutually exclusive
+     with any other properties in the linked service. Type: object.
+    :vartype connection_properties: any
+    :ivar client_customer_id: The Client customer ID of the AdWords account that you want to fetch
+     report data for.
     :vartype client_customer_id: any
-    :ivar developer_token: Required. The developer token associated with the manager account that
-     you use to grant access to the AdWords API.
+    :ivar developer_token: The developer token associated with the manager account that you use to
+     grant access to the AdWords API.
     :vartype developer_token: ~azure.synapse.artifacts.models.SecretBase
-    :ivar authentication_type: Required. The OAuth 2.0 authentication mechanism used for
-     authentication. ServiceAuthentication can only be used on self-hosted IR. Possible values
-     include: "ServiceAuthentication", "UserAuthentication".
+    :ivar authentication_type: The OAuth 2.0 authentication mechanism used for authentication.
+     ServiceAuthentication can only be used on self-hosted IR. Possible values include:
+     "ServiceAuthentication", "UserAuthentication".
     :vartype authentication_type: str or
      ~azure.synapse.artifacts.models.GoogleAdWordsAuthenticationType
     :ivar refresh_token: The refresh token obtained from Google for authorizing access to AdWords
@@ -23405,9 +23417,6 @@ class GoogleAdWordsLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'client_customer_id': {'required': True},
-        'developer_token': {'required': True},
-        'authentication_type': {'required': True},
     }
 
     _attribute_map = {
@@ -23417,6 +23426,7 @@ class GoogleAdWordsLinkedService(LinkedService):
         'description': {'key': 'description', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'client_customer_id': {'key': 'typeProperties.clientCustomerID', 'type': 'object'},
         'developer_token': {'key': 'typeProperties.developerToken', 'type': 'SecretBase'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
@@ -23433,14 +23443,15 @@ class GoogleAdWordsLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        client_customer_id: Any,
-        developer_token: "SecretBase",
-        authentication_type: Union[str, "GoogleAdWordsAuthenticationType"],
         additional_properties: Optional[Dict[str, Any]] = None,
         connect_via: Optional["IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
         annotations: Optional[List[Any]] = None,
+        connection_properties: Optional[Any] = None,
+        client_customer_id: Optional[Any] = None,
+        developer_token: Optional["SecretBase"] = None,
+        authentication_type: Optional[Union[str, "GoogleAdWordsAuthenticationType"]] = None,
         refresh_token: Optional["SecretBase"] = None,
         client_id: Optional[Any] = None,
         client_secret: Optional["SecretBase"] = None,
@@ -23463,15 +23474,18 @@ class GoogleAdWordsLinkedService(LinkedService):
         :paramtype parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[any]
-        :keyword client_customer_id: Required. The Client customer ID of the AdWords account that you
-         want to fetch report data for.
+        :keyword connection_properties: Properties used to connect to GoogleAds. It is mutually
+         exclusive with any other properties in the linked service. Type: object.
+        :paramtype connection_properties: any
+        :keyword client_customer_id: The Client customer ID of the AdWords account that you want to
+         fetch report data for.
         :paramtype client_customer_id: any
-        :keyword developer_token: Required. The developer token associated with the manager account
-         that you use to grant access to the AdWords API.
+        :keyword developer_token: The developer token associated with the manager account that you use
+         to grant access to the AdWords API.
         :paramtype developer_token: ~azure.synapse.artifacts.models.SecretBase
-        :keyword authentication_type: Required. The OAuth 2.0 authentication mechanism used for
-         authentication. ServiceAuthentication can only be used on self-hosted IR. Possible values
-         include: "ServiceAuthentication", "UserAuthentication".
+        :keyword authentication_type: The OAuth 2.0 authentication mechanism used for authentication.
+         ServiceAuthentication can only be used on self-hosted IR. Possible values include:
+         "ServiceAuthentication", "UserAuthentication".
         :paramtype authentication_type: str or
          ~azure.synapse.artifacts.models.GoogleAdWordsAuthenticationType
         :keyword refresh_token: The refresh token obtained from Google for authorizing access to
@@ -23503,6 +23517,7 @@ class GoogleAdWordsLinkedService(LinkedService):
         """
         super(GoogleAdWordsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.type = 'GoogleAdWords'  # type: str
+        self.connection_properties = connection_properties
         self.client_customer_id = client_customer_id
         self.developer_token = developer_token
         self.authentication_type = authentication_type
@@ -32277,6 +32292,149 @@ class MarketoSource(TabularSource):
         self.query = query
 
 
+class MetastoreRegisterObject(msrest.serialization.Model):
+    """MetastoreRegisterObject.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_folder: Required. The input folder containing CDM files.
+    :vartype input_folder: str
+    """
+
+    _validation = {
+        'input_folder': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_folder': {'key': 'inputFolder', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        input_folder: str,
+        **kwargs
+    ):
+        """
+        :keyword input_folder: Required. The input folder containing CDM files.
+        :paramtype input_folder: str
+        """
+        super(MetastoreRegisterObject, self).__init__(**kwargs)
+        self.input_folder = input_folder
+
+
+class MetastoreRegistrationResponse(msrest.serialization.Model):
+    """MetastoreRegistrationResponse.
+
+    :ivar status: Enumerates possible request statuses. Possible values include: "Running",
+     "Completed", "Failed".
+    :vartype status: str or ~azure.synapse.artifacts.models.RequestStatus
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "RequestStatus"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Enumerates possible request statuses. Possible values include: "Running",
+         "Completed", "Failed".
+        :paramtype status: str or ~azure.synapse.artifacts.models.RequestStatus
+        """
+        super(MetastoreRegistrationResponse, self).__init__(**kwargs)
+        self.status = status
+
+
+class MetastoreRequestSuccessResponse(msrest.serialization.Model):
+    """MetastoreRequestSuccessResponse.
+
+    :ivar status: Enumerates possible Status of the resource. Possible values include: "Creating",
+     "Created", "Failed".
+    :vartype status: str or ~azure.synapse.artifacts.models.ResourceStatus
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "ResourceStatus"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Enumerates possible Status of the resource. Possible values include:
+         "Creating", "Created", "Failed".
+        :paramtype status: str or ~azure.synapse.artifacts.models.ResourceStatus
+        """
+        super(MetastoreRequestSuccessResponse, self).__init__(**kwargs)
+        self.status = status
+
+
+class MetastoreUpdateObject(msrest.serialization.Model):
+    """MetastoreUpdateObject.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_folder: Required. The input folder containing CDM files.
+    :vartype input_folder: str
+    """
+
+    _validation = {
+        'input_folder': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_folder': {'key': 'inputFolder', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        input_folder: str,
+        **kwargs
+    ):
+        """
+        :keyword input_folder: Required. The input folder containing CDM files.
+        :paramtype input_folder: str
+        """
+        super(MetastoreUpdateObject, self).__init__(**kwargs)
+        self.input_folder = input_folder
+
+
+class MetastoreUpdationResponse(msrest.serialization.Model):
+    """MetastoreUpdationResponse.
+
+    :ivar status: Enumerates possible request statuses. Possible values include: "Running",
+     "Completed", "Failed".
+    :vartype status: str or ~azure.synapse.artifacts.models.RequestStatus
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "RequestStatus"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Enumerates possible request statuses. Possible values include: "Running",
+         "Completed", "Failed".
+        :paramtype status: str or ~azure.synapse.artifacts.models.RequestStatus
+        """
+        super(MetastoreUpdationResponse, self).__init__(**kwargs)
+        self.status = status
+
+
 class MicrosoftAccessLinkedService(LinkedService):
     """Microsoft Access linked service.
 
@@ -34664,6 +34822,39 @@ class NotebookMetadata(msrest.serialization.Model):
         self.additional_properties = additional_properties
         self.kernelspec = kernelspec
         self.language_info = language_info
+
+
+class NotebookParameter(msrest.serialization.Model):
+    """Notebook parameter.
+
+    :ivar value: Notebook parameter value. Type: string (or Expression with resultType string).
+    :vartype value: any
+    :ivar type: Notebook parameter type. Possible values include: "string", "int", "float", "bool".
+    :vartype type: str or ~azure.synapse.artifacts.models.NotebookParameterType
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[Any] = None,
+        type: Optional[Union[str, "NotebookParameterType"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Notebook parameter value. Type: string (or Expression with resultType string).
+        :paramtype value: any
+        :keyword type: Notebook parameter type. Possible values include: "string", "int", "float",
+         "bool".
+        :paramtype type: str or ~azure.synapse.artifacts.models.NotebookParameterType
+        """
+        super(NotebookParameter, self).__init__(**kwargs)
+        self.value = value
+        self.type = type
 
 
 class NotebookResource(msrest.serialization.Model):
@@ -45653,6 +45844,9 @@ class SftpReadSettings(StoreReadSettings):
     :ivar modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
      with resultType string).
     :vartype modified_datetime_end: any
+    :ivar disable_chunking: If true, disable parallel reading within each file. Default is false.
+     Type: boolean (or Expression with resultType boolean).
+    :vartype disable_chunking: any
     """
 
     _validation = {
@@ -45672,6 +45866,7 @@ class SftpReadSettings(StoreReadSettings):
         'delete_files_after_completion': {'key': 'deleteFilesAfterCompletion', 'type': 'object'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+        'disable_chunking': {'key': 'disableChunking', 'type': 'object'},
     }
 
     def __init__(
@@ -45688,6 +45883,7 @@ class SftpReadSettings(StoreReadSettings):
         delete_files_after_completion: Optional[Any] = None,
         modified_datetime_start: Optional[Any] = None,
         modified_datetime_end: Optional[Any] = None,
+        disable_chunking: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -45724,6 +45920,9 @@ class SftpReadSettings(StoreReadSettings):
         :keyword modified_datetime_end: The end of file's modified datetime. Type: string (or
          Expression with resultType string).
         :paramtype modified_datetime_end: any
+        :keyword disable_chunking: If true, disable parallel reading within each file. Default is
+         false. Type: boolean (or Expression with resultType boolean).
+        :paramtype disable_chunking: any
         """
         super(SftpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.type = 'SftpReadSettings'  # type: str
@@ -45736,6 +45935,7 @@ class SftpReadSettings(StoreReadSettings):
         self.delete_files_after_completion = delete_files_after_completion
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.disable_chunking = disable_chunking
 
 
 class SftpServerLinkedService(LinkedService):
@@ -51917,7 +52117,7 @@ class SynapseNotebookActivity(ExecutionActivity):
     :ivar notebook: Required. Synapse notebook reference.
     :vartype notebook: ~azure.synapse.artifacts.models.SynapseNotebookReference
     :ivar parameters: Notebook parameters.
-    :vartype parameters: dict[str, any]
+    :vartype parameters: dict[str, ~azure.synapse.artifacts.models.NotebookParameter]
     """
 
     _validation = {
@@ -51936,7 +52136,7 @@ class SynapseNotebookActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'notebook': {'key': 'typeProperties.notebook', 'type': 'SynapseNotebookReference'},
-        'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
+        'parameters': {'key': 'typeProperties.parameters', 'type': '{NotebookParameter}'},
     }
 
     def __init__(
@@ -51950,7 +52150,7 @@ class SynapseNotebookActivity(ExecutionActivity):
         user_properties: Optional[List["UserProperty"]] = None,
         linked_service_name: Optional["LinkedServiceReference"] = None,
         policy: Optional["ActivityPolicy"] = None,
-        parameters: Optional[Dict[str, Any]] = None,
+        parameters: Optional[Dict[str, "NotebookParameter"]] = None,
         **kwargs
     ):
         """
@@ -51972,7 +52172,7 @@ class SynapseNotebookActivity(ExecutionActivity):
         :keyword notebook: Required. Synapse notebook reference.
         :paramtype notebook: ~azure.synapse.artifacts.models.SynapseNotebookReference
         :keyword parameters: Notebook parameters.
-        :paramtype parameters: dict[str, any]
+        :paramtype parameters: dict[str, ~azure.synapse.artifacts.models.NotebookParameter]
         """
         super(SynapseNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'SynapseNotebook'  # type: str

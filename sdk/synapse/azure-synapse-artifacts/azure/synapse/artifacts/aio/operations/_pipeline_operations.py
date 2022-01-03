@@ -144,13 +144,13 @@ class PipelineOperations:
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(pipeline, 'PipelineResource')
+        _json = self._serialize.body(pipeline, 'PipelineResource')
 
         request = build_create_or_update_pipeline_request_initial(
             pipeline_name=pipeline_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_pipeline_initial.metadata['url'],
         )
@@ -443,13 +443,13 @@ class PipelineOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_pipeline_request_initial(
             pipeline_name=pipeline_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_pipeline_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -587,15 +587,15 @@ class PipelineOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if parameters is not None:
-            json = self._serialize.body(parameters, '{object}')
+            _json = self._serialize.body(parameters, '{object}')
         else:
-            json = None
+            _json = None
 
         request = build_create_pipeline_run_request(
             pipeline_name=pipeline_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             reference_pipeline_run_id=reference_pipeline_run_id,
             is_recovery=is_recovery,
             start_activity_name=start_activity_name,
