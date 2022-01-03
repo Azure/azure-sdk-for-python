@@ -143,6 +143,6 @@ def test_backoff_fixed_retry():
     client._backoff(retried_times=1, last_exception=Exception('fake'), timeout_time=None)
     sleep_time = time.time() - start_time
     # exp = 0.8 * (2 ** 1) = 1.6
-    # time.sleep() in _backoff will take AT LEAST time 'exp' for RetryMode.Exponential
+    # time.sleep() in _backoff will take AT LEAST time 'exp' for RetryMode.EXPONENTIAL
     # check that fixed is less than 'exp'
     assert sleep_time < backoff * (2 ** 1)

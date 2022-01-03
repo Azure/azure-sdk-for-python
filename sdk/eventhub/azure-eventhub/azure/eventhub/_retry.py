@@ -7,5 +7,5 @@ from typing import Optional, Dict, Any
 from enum import Enum
 
 class RetryMode(str, Enum):
-    Exponential = 'exponential'
-    Fixed = 'fixed'
+    EXPONENTIAL = 'exponential'
+    FIXED = 'fixed'
