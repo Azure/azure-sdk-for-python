@@ -498,7 +498,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/index.html
+[api_docs]: https://docs.microsoft.com/python/api/overview/azure/servicebus-readme
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
