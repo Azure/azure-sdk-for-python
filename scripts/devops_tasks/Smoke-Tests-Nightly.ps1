@@ -15,7 +15,7 @@ New-Item -Path $smoketestsDir -ItemType Directory
 
 # Run smoketests python script to create requirements.txt
 Write-Host "Creating requirements.txt in the smoketest folder"
-python get_track2_packages.py
+python ./get_track2_packages.py
 if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
