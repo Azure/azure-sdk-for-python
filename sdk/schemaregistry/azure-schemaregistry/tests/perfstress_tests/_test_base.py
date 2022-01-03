@@ -69,12 +69,6 @@ class _SchemaRegistryTest(PerfStressTest):
 class _RegisterTest(_SchemaRegistryTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        # CANNOT do parallel>1 , results in Conflict
-        if self.args.parallel > 1:
-            raise ValueError(
-                "Registering multiple times in parallel results in conflict. Parallel can only be 1 for `Register`."
-            )
-        self.args.parallel = 1
         self.sync_credential = DefaultAzureCredential()
         self.sync_client = SchemaRegistryClient(
             fully_qualified_namespace=self.fully_qualified_namespace,

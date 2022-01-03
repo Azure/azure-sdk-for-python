@@ -11,7 +11,7 @@ SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=<the connection string of a Schema Regi
 SCHEMAREGISTRY_GROUP=<a schema group in a Schema Registry.>
 ```
 
-### Setup for T2 perf test runs
+### Setup for perf test runs
 
 ```cmd
 (env) ~/azure-schemaregistry> pip install -r dev_requirements.txt
