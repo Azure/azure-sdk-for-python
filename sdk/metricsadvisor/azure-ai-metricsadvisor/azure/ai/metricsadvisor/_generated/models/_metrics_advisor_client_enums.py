@@ -13,7 +13,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 class AnomalyAlertingConfigurationLogicType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """cross metrics operator
-    
+
     should be specified when setting up multiple metric alerting configurations
     """
 
@@ -23,7 +23,7 @@ class AnomalyAlertingConfigurationLogicType(with_metaclass(CaseInsensitiveEnumMe
 
 class AnomalyDetectionConfigurationLogicType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """condition operator
-    
+
     should be specified when combining multiple detection conditions
     """
 
@@ -40,7 +40,7 @@ class AnomalyDetectorDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
 
 class AnomalyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """anomaly status
-    
+
     only return for alerting anomaly result
     """
 
@@ -53,7 +53,7 @@ class AnomalyValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ANOMALY = "Anomaly"
     NOT_ANOMALY = "NotAnomaly"
 
-class AuthenticationTypeEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatasourceAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """authentication type for corresponding data source
     """
 
@@ -78,7 +78,7 @@ class DataFeedRollupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_ROLLUP = "AutoRollup"
     ALREADY_ROLLUP = "AlreadyRollup"
 
-class DataSourceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatasourceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of data source credential
     """
 
@@ -87,7 +87,7 @@ class DataSourceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     SERVICE_PRINCIPAL = "ServicePrincipal"
     SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
 
-class DataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatasourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """data source type
     """
 
@@ -113,7 +113,7 @@ class Direction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DOWN = "Down"
     UP = "Up"
 
-class EntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataFeedStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """data feed status
     """
 
@@ -136,7 +136,7 @@ class FeedbackType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PERIOD = "Period"
     COMMENT = "Comment"
 
-class FillMissingPointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatasourceMissingDataPointFillType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """the type of fill missing point for anomaly detection
     """
 
@@ -145,7 +145,7 @@ class FillMissingPointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM_VALUE = "CustomValue"
     NO_FILLING = "NoFilling"
 
-class Granularity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataFeedGranularityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """granularity of the time series
     """
 
@@ -164,9 +164,9 @@ class HookType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WEBHOOK = "Webhook"
     EMAIL = "Email"
 
-class IncidentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AnomalyIncidentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """incident status
-    
+
     only return for alerting incident result
     """
 
@@ -209,7 +209,7 @@ class PeriodType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_DETECT = "AutoDetect"
     ASSIGN_VALUE = "AssignValue"
 
-class RollUpMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataFeedAutoRollupMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """roll up method
     """
 
@@ -220,7 +220,7 @@ class RollUpMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AVG = "Avg"
     COUNT = "Count"
 
-class Severity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AnomalySeverity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """min alert severity
     """
 
@@ -235,7 +235,7 @@ class SnoozeScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     METRIC = "Metric"
     SERIES = "Series"
 
-class TimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AlertQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """time mode
     """
 
@@ -250,7 +250,7 @@ class ValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VALUE = "Value"
     MEAN = "Mean"
 
-class ViewMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataFeedAccessMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """data feed access mode, default is Private
     """
 

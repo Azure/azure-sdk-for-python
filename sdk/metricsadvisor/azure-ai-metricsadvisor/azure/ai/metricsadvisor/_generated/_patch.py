@@ -23,21 +23,6 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from .models import (
-    MetricFeedbackFilter,
-    DetectionSeriesQuery,
-    AlertingResultQuery,
-    DetectionAnomalyResultQuery,
-    AnomalyDimensionQuery,
-    DetectionIncidentResultQuery,
-    MetricDimensionQueryOptions,
-    MetricDataQueryOptions,
-    MetricSeriesQueryOptions,
-    EnrichmentStatusQueryOption,
-    SeriesIdentity,
-    FeedbackDimensionFilter,
-    DimensionGroupIdentity,
-)
 from ..models._models import (
     AnomalyIncident,
     DataPointAnomaly,
@@ -695,6 +680,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         dimension_filter = None
         dimension_key = kwargs.pop("dimension_key", None)
         if dimension_key:
+            from .models import FeedbackDimensionFilter
             dimension_filter = FeedbackDimensionFilter(dimension=dimension_key)
         feedback_type = kwargs.pop("feedback_type", None)
         start_time = kwargs.pop("start_time", None)
@@ -702,6 +688,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         converted_start_time = convert_datetime(start_time) if start_time else None
         converted_end_time = convert_datetime(end_time) if end_time else None
         time_mode = kwargs.pop("time_mode", None)
+        from .models import MetricFeedbackFilter
         feedback_filter = MetricFeedbackFilter(
             metric_id=metric_id,
             dimension_filter=dimension_filter,
@@ -788,7 +775,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
                 :dedent: 4
                 :caption: Query metric enriched series data.
         """
-
+        from .models import SeriesIdentity
         series_list = [
             SeriesIdentity(dimension=dimension)
             for dimension in series
@@ -798,6 +785,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         series_list = cast(List[SeriesIdentity], series_list)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
+        from .models import DetectionSeriesQuery
         detection_series_query = DetectionSeriesQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -855,7 +843,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         skip = kwargs.pop("skip", None)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-
+        from .models import AlertingResultQuery
         alerting_result_query = AlertingResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -899,6 +887,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
+        from .models import DetectionAnomalyResultQuery
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -1030,9 +1019,11 @@ class MetricsAdvisorClientOperationsMixinCustomization:
 
         skip = kwargs.pop("skip", None)
         dimension = kwargs.pop("dimension_filter", None)
+        from .models import DimensionGroupIdentity
         dimension_filter = DimensionGroupIdentity(dimension=dimension) if dimension else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
+        from .models import AnomalyDimensionQuery
         anomaly_dimension_query = AnomalyDimensionQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -1070,7 +1061,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-
+        from .models import DetectionIncidentResultQuery
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -1208,7 +1199,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
 
         skip = kwargs.pop("skip", None)
         dimension_value_filter = kwargs.pop("dimension_value_filter", None)
-
+        from .models import MetricDimensionQueryOptions
         metric_dimension_query_options = MetricDimensionQueryOptions(
             dimension_name=dimension_name,
             dimension_value_filter=dimension_value_filter,
@@ -1257,7 +1248,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
 
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-
+        from .models import MetricDataQueryOptions
         metric_data_query_options = MetricDataQueryOptions(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -1308,7 +1299,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         from ._vendor import _convert_request
         skip = kwargs.pop("skip", None)
         dimension_filter = kwargs.pop("dimension_filter", None)
-
+        from .models import MetricSeriesQueryOptions
         body = MetricSeriesQueryOptions(
             active_since=active_since,
             dimension_filter=dimension_filter,
@@ -1412,6 +1403,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         skip = kwargs.pop("skip", None)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
+        from .models import EnrichmentStatusQueryOption
         enrichment_status_query_option = EnrichmentStatusQueryOption(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -2765,94 +2757,148 @@ class MetricsAdvisorAdministrationClient(
         super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
 
 
-    "MetricFeedback",
-    "AnomalyFeedback",
-    "ChangePointFeedback",
-    "CommentFeedback",
-    "PeriodFeedback",
-    "FeedbackQueryTimeMode",
-    "RootCause",
-    "AnomalyAlertConfiguration",
-    "DetectionAnomalyFilterCondition",
-    "DimensionGroupIdentity",
-    "AnomalyIncident",
-    "DetectionIncidentFilterCondition",
-    "AnomalyDetectionConfiguration",
-    "MetricAnomalyAlertConfigurationsOperator",
-    "DataFeedStatus",
-    "DataFeedGranularity",
-    "DataFeedIngestionSettings",
-    "DataFeedMissingDataPointFillSettings",
-    "DataFeedRollupSettings",
-    "DataFeedSchema",
-    "DataFeedDimension",
-    "DataFeedMetric",
-    "DataFeed",
-    "TopNGroupScope",
-    "MetricAnomalyAlertScope",
-    "MetricAlertConfiguration",
-    "SnoozeScope",
-    "AnomalySeverity",
-    "MetricAnomalyAlertSnoozeCondition",
-    "MetricBoundaryCondition",
-    "AzureApplicationInsightsDataFeedSource",
-    "AzureBlobDataFeedSource",
-    "AzureCosmosDbDataFeedSource",
-    "AzureTableDataFeedSource",
-    "AzureLogAnalyticsDataFeedSource",
-    "InfluxDbDataFeedSource",
-    "SqlServerDataFeedSource",
-    "MongoDbDataFeedSource",
-    "MySqlDataFeedSource",
-    "PostgreSqlDataFeedSource",
-    "AzureDataExplorerDataFeedSource",
-    "MetricDetectionCondition",
-    "MetricSeriesGroupDetectionCondition",
-    "MetricSingleSeriesDetectionCondition",
-    "SeverityCondition",
-    "DatasourceType",
-    "AnomalyDetectorDirection",
-    "NotificationHook",
-    "EmailNotificationHook",
-    "WebNotificationHook",
-    "DataFeedIngestionProgress",
-    "DetectionConditionOperator",
-    "MetricAnomalyAlertConditions",
-    "EnrichmentStatus",
-    "DataFeedGranularityType",
-    "DataPointAnomaly",
-    "AnomalyIncidentStatus",
-    "MetricSeriesData",
-    "MetricSeriesDefinition",
-    "AnomalyAlert",
-    "DataFeedAccessMode",
-    "DataFeedRollupType",
-    "DataFeedAutoRollupMethod",
-    "DatasourceMissingDataPointFillType",
-    "DataFeedIngestionStatus",
-    "SmartDetectionCondition",
-    "SuppressCondition",
-    "ChangeThresholdCondition",
-    "HardThresholdCondition",
-    "SeriesIdentity",
-    "AzureDataLakeStorageGen2DataFeedSource",
-    "AzureEventHubsDataFeedSource",
-    "AnomalyValue",
-    "ChangePointValue",
-    "PeriodType",
-    "FeedbackType",
-    "AlertQueryTimeMode",
-    "IncidentRootCause",
-    "SeverityFilterCondition",
-    "MetricEnrichedSeriesData",
-    "DatasourceSqlConnectionString",
-    "DatasourceDataLakeGen2SharedKey",
-    "DatasourceServicePrincipal",
-    "DatasourceServicePrincipalInKeyVault",
-    "DatasourceCredentialType",
-    "DatasourceAuthenticationType",
-    "DatasourceCredential",
-    "DataFeedSource",
+##################### MODELS #####################
+
+
+
+class MetricFeedbackCustomization(dict):
+    """Feedback base class
+    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    include: "Anomaly", "ChangePoint", "Period", "Comment".
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :ivar created_time: feedback created time.
+    :vartype created_time: ~datetime.datetime
+    :ivar user_principal: user who gives this feedback.
+    :vartype user_principal: str
+    :ivar str metric_id: Required. metric unique id.
+    :ivar dict[str, str] dimension_key: Required. metric dimension filter.
+    """
+
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
+    }
+
+    def __init__(self, feedback_type, metric_id, dimension_key, **kwargs):
+        super().__init__(
+            metric_id=metric_id,
+            dimension_filter=dimension_key,
+            **kwargs
+        )
+        self.feedback_type = feedback_type  # type: str
+        self.id = kwargs.get("id", None)
+        self.created_time = kwargs.get("created_time", None)
+        self.user_principal = kwargs.get("user_principal", None)
+        self.metric_id = metric_id
+        self.dimension_key = dimension_key
+
+    def __repr__(self):
+        return (
+            "MetricFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, "
+            "dimension_key={})".format(
+                self.feedback_type,
+                self.id,
+                self.created_time,
+                self.user_principal,
+                self.metric_id,
+                self.dimension_key,
+            )[:1024]
+        )
+
+    # "AnomalyFeedback",
+    # "ChangePointFeedback",
+    # "CommentFeedback",
+    # "PeriodFeedback",
+    # "FeedbackQueryTimeMode",
+    # "RootCause",
+    # "AnomalyAlertConfiguration",
+    # "DetectionAnomalyFilterCondition",
+    # "DimensionGroupIdentity",
+    # "AnomalyIncident",
+    # "DetectionIncidentFilterCondition",
+    # "AnomalyDetectionConfiguration",
+    # "MetricAnomalyAlertConfigurationsOperator",
+    # "DataFeedStatus",
+    # "DataFeedGranularity",
+    # "DataFeedIngestionSettings",
+    # "DataFeedMissingDataPointFillSettings",
+    # "DataFeedRollupSettings",
+    # "DataFeedSchema",
+    # "DataFeedDimension",
+    # "DataFeedMetric",
+    # "DataFeed",
+    # "TopNGroupScope",
+    # "MetricAnomalyAlertScope",
+    # "MetricAlertConfiguration",
+    # "SnoozeScope",
+    # "AnomalySeverity",
+    # "MetricAnomalyAlertSnoozeCondition",
+    # "MetricBoundaryCondition",
+    # "AzureApplicationInsightsDataFeedSource",
+    # "AzureBlobDataFeedSource",
+    # "AzureCosmosDbDataFeedSource",
+    # "AzureTableDataFeedSource",
+    # "AzureLogAnalyticsDataFeedSource",
+    # "InfluxDbDataFeedSource",
+    # "SqlServerDataFeedSource",
+    # "MongoDbDataFeedSource",
+    # "MySqlDataFeedSource",
+    # "PostgreSqlDataFeedSource",
+    # "AzureDataExplorerDataFeedSource",
+    # "MetricDetectionCondition",
+    # "MetricSeriesGroupDetectionCondition",
+    # "MetricSingleSeriesDetectionCondition",
+    # "SeverityCondition",
+    # "DatasourceType",
+    # "AnomalyDetectorDirection",
+    # "NotificationHook",
+    # "EmailNotificationHook",
+    # "WebNotificationHook",
+    # "DataFeedIngestionProgress",
+    # "DetectionConditionOperator",
+    # "MetricAnomalyAlertConditions",
+    # "EnrichmentStatus",
+    # "DataFeedGranularityType",
+    # "DataPointAnomaly",
+    # "AnomalyIncidentStatus",
+    # "MetricSeriesData",
+    # "MetricSeriesDefinition",
+    # "AnomalyAlert",
+    # "DataFeedAccessMode",
+    # "DataFeedRollupType",
+    # "DataFeedAutoRollupMethod",
+    # "DatasourceMissingDataPointFillType",
+    # "DataFeedIngestionStatus",
+    # "SmartDetectionCondition",
+    # "SuppressCondition",
+    # "ChangeThresholdCondition",
+    # "HardThresholdCondition",
+    # "SeriesIdentity",
+    # "AzureDataLakeStorageGen2DataFeedSource",
+    # "AzureEventHubsDataFeedSource",
+    # "AnomalyValue",
+    # "ChangePointValue",
+    # "PeriodType",
+    # "FeedbackType",
+    # "AlertQueryTimeMode",
+    # "IncidentRootCause",
+    # "SeverityFilterCondition",
+    # "MetricEnrichedSeriesData",
+    # "DatasourceSqlConnectionString",
+    # "DatasourceDataLakeGen2SharedKey",
+    # "DatasourceServicePrincipal",
+    # "DatasourceServicePrincipalInKeyVault",
+    # "DatasourceCredentialType",
+    # "DatasourceAuthenticationType",
+    # "DatasourceCredential",
+    # "DataFeedSource",
 
 def patch_sdk():
     pass

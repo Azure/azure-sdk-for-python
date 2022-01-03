@@ -16,6 +16,7 @@ from ._metrics_advisor_client_enums import *
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from .._patch import MetricFeedbackCustomization
     from ..._patch import AlertResultCustomization, AlertResultListCustomization, AlertSnoozeConditionCustomization, AlertingResultQueryCustomization, AnomalyAlertingConfigurationCustomization, AnomalyAlertingConfigurationListCustomization, AnomalyAlertingConfigurationPatchCustomization, AnomalyDetectionConfigurationCustomization, AnomalyDetectionConfigurationListCustomization, AnomalyDetectionConfigurationPatchCustomization, AnomalyDimensionListCustomization, AnomalyDimensionQueryCustomization, AnomalyFeedbackCustomization, AnomalyFeedbackValueCustomization, AnomalyPropertyCustomization, AnomalyResultCustomization, AnomalyResultListCustomization, AzureApplicationInsightsDataFeedCustomization, AzureApplicationInsightsDataFeedPatchCustomization, AzureApplicationInsightsParameterCustomization, AzureApplicationInsightsParameterPatchCustomization, AzureBlobDataFeedCustomization, AzureBlobDataFeedPatchCustomization, AzureBlobParameterCustomization, AzureBlobParameterPatchCustomization, AzureCosmosDBDataFeedCustomization, AzureCosmosDBDataFeedPatchCustomization, AzureCosmosDBParameterCustomization, AzureCosmosDBParameterPatchCustomization, AzureDataExplorerDataFeedCustomization, AzureDataExplorerDataFeedPatchCustomization, AzureDataLakeStorageGen2DataFeedCustomization, AzureDataLakeStorageGen2DataFeedPatchCustomization, AzureDataLakeStorageGen2ParameterCustomization, AzureDataLakeStorageGen2ParameterPatchCustomization, AzureEventHubsDataFeedCustomization, AzureEventHubsDataFeedPatchCustomization, AzureEventHubsParameterCustomization, AzureEventHubsParameterPatchCustomization, AzureLogAnalyticsDataFeedCustomization, AzureLogAnalyticsDataFeedPatchCustomization, AzureLogAnalyticsParameterCustomization, AzureLogAnalyticsParameterPatchCustomization, AzureSQLConnectionStringCredentialCustomization, AzureSQLConnectionStringCredentialPatchCustomization, AzureSQLConnectionStringParamCustomization, AzureSQLConnectionStringParamPatchCustomization, AzureTableDataFeedCustomization, AzureTableDataFeedPatchCustomization, AzureTableParameterCustomization, AzureTableParameterPatchCustomization, ChangePointFeedbackCustomization, ChangePointFeedbackValueCustomization, ChangeThresholdConditionCustomization, ChangeThresholdConditionPatchCustomization, CommentFeedbackCustomization, CommentFeedbackValueCustomization, DataFeedDetailCustomization, DataFeedDetailPatchCustomization, DataFeedIngestionProgressCustomization, DataFeedListCustomization, DataLakeGen2SharedKeyCredentialCustomization, DataLakeGen2SharedKeyCredentialPatchCustomization, DataLakeGen2SharedKeyParamCustomization, DataLakeGen2SharedKeyParamPatchCustomization, DataSourceCredentialCustomization, DataSourceCredentialListCustomization, DataSourceCredentialPatchCustomization, DetectionAnomalyFilterConditionCustomization, DetectionAnomalyResultQueryCustomization, DetectionIncidentFilterConditionCustomization, DetectionIncidentResultQueryCustomization, DetectionSeriesQueryCustomization, DimensionCustomization, DimensionGroupConfigurationCustomization, DimensionGroupIdentityCustomization, EmailHookInfoCustomization, EmailHookInfoPatchCustomization, EmailHookParameterCustomization, EmailHookParameterPatchCustomization, EnrichmentStatusCustomization, EnrichmentStatusListCustomization, EnrichmentStatusQueryOptionCustomization, ErrorCodeCustomization, FeedbackDimensionFilterCustomization, HardThresholdConditionCustomization, HardThresholdConditionPatchCustomization, HookInfoCustomization, HookInfoPatchCustomization, HookListCustomization, IncidentPropertyCustomization, IncidentResultCustomization, IncidentResultListCustomization, InfluxDBDataFeedCustomization, InfluxDBDataFeedPatchCustomization, InfluxDBParameterCustomization, InfluxDBParameterPatchCustomization, IngestionProgressResetOptionsCustomization, IngestionStatusCustomization, IngestionStatusListCustomization, IngestionStatusQueryOptionsCustomization, MetricAlertConfigurationCustomization, MetricCustomization, MetricDataItemCustomization, MetricDataListCustomization, MetricDataQueryOptionsCustomization, MetricDimensionListCustomization, MetricDimensionQueryOptionsCustomization, MetricFeedbackCustomization, MetricFeedbackFilterCustomization, MetricFeedbackListCustomization, MetricSeriesItemCustomization, MetricSeriesListCustomization, MetricSeriesQueryOptionsCustomization, MongoDBDataFeedCustomization, MongoDBDataFeedPatchCustomization, MongoDBParameterCustomization, MongoDBParameterPatchCustomization, MySqlDataFeedCustomization, MySqlDataFeedPatchCustomization, PeriodFeedbackCustomization, PeriodFeedbackValueCustomization, PostgreSqlDataFeedCustomization, PostgreSqlDataFeedPatchCustomization, RootCauseCustomization, RootCauseListCustomization, SQLServerDataFeedCustomization, SQLServerDataFeedPatchCustomization, SQLSourceParameterPatchCustomization, SeriesConfigurationCustomization, SeriesIdentityCustomization, SeriesResultCustomization, SeriesResultListCustomization, ServicePrincipalCredentialCustomization, ServicePrincipalCredentialPatchCustomization, ServicePrincipalInKVCredentialCustomization, ServicePrincipalInKVCredentialPatchCustomization, ServicePrincipalInKVParamCustomization, ServicePrincipalInKVParamPatchCustomization, ServicePrincipalParamCustomization, ServicePrincipalParamPatchCustomization, SeverityConditionCustomization, SeverityFilterConditionCustomization, SmartDetectionConditionCustomization, SmartDetectionConditionPatchCustomization, SqlSourceParameterCustomization, SuppressConditionCustomization, SuppressConditionPatchCustomization, TopNGroupScopeCustomization, UsageStatsCustomization, ValueConditionCustomization, WebhookHookInfoCustomization, WebhookHookInfoPatchCustomization, WebhookHookParameterCustomization, WebhookHookParameterPatchCustomization, WholeMetricConfigurationCustomization, WholeMetricConfigurationPatchCustomization
 else:
     try:
@@ -79,7 +80,7 @@ else:
         class AnomalyDimensionQueryCustomization(object):
             pass
     try:
-        from ..._patch import MetricFeedbackCustomization
+        from .._patch import MetricFeedbackCustomization
     except ImportError:
         class MetricFeedbackCustomization(object):
             pass
@@ -1007,7 +1008,7 @@ class _AnomalyAlertingConfigurationGenerated(msrest.serialization.Model):
     :ivar description: anomaly alerting configuration description.
     :vartype description: str
     :ivar cross_metrics_operator: cross metrics operator
-    
+
      should be specified when setting up multiple metric alerting configurations. Possible values
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
@@ -1056,7 +1057,7 @@ class _AnomalyAlertingConfigurationGenerated(msrest.serialization.Model):
         :keyword description: anomaly alerting configuration description.
         :paramtype description: str
         :keyword cross_metrics_operator: cross metrics operator
-        
+
          should be specified when setting up multiple metric alerting configurations. Possible values
          include: "AND", "OR", "XOR".
         :paramtype cross_metrics_operator: str or
@@ -1698,7 +1699,7 @@ class _AnomalyPropertyGenerated(msrest.serialization.Model):
      "High".
     :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.Severity
     :ivar anomaly_status: anomaly status
-    
+
      only return for alerting anomaly result. Possible values include: "Active", "Resolved".
     :vartype anomaly_status: str or ~azure.ai.metricsadvisor.models.AnomalyStatus
     :ivar value: value of the anomaly.
@@ -1750,25 +1751,25 @@ class _AnomalyResultGenerated(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_feed_id: data feed unique id
-    
+
      only return for alerting anomaly result.
     :vartype data_feed_id: str
     :ivar metric_id: metric unique id
-    
+
      only return for alerting anomaly result.
     :vartype metric_id: str
     :ivar anomaly_detection_configuration_id: anomaly detection configuration unique id
-    
+
      only return for alerting anomaly result.
     :vartype anomaly_detection_configuration_id: str
     :ivar timestamp: Required. anomaly time.
     :vartype timestamp: ~datetime.datetime
     :ivar created_time: created time
-    
+
      only return for alerting result.
     :vartype created_time: ~datetime.datetime
     :ivar modified_time: modified time
-    
+
      only return for alerting result.
     :vartype modified_time: ~datetime.datetime
     :ivar dimension: Required. dimension specified for series.
@@ -7733,7 +7734,7 @@ class _DimensionGroupConfigurationGenerated(msrest.serialization.Model):
     :ivar group: Required.
     :vartype group: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -7772,7 +7773,7 @@ class _DimensionGroupConfigurationGenerated(msrest.serialization.Model):
         :keyword group: Required.
         :paramtype group: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -8367,11 +8368,11 @@ class _HardThresholdConditionGenerated(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lower_bound: lower bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Down.
     :vartype lower_bound: float
     :ivar upper_bound: upper bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Up.
     :vartype upper_bound: float
     :ivar anomaly_detector_direction: Required. detection direction. Possible values include:
@@ -8405,11 +8406,11 @@ class _HardThresholdConditionGenerated(msrest.serialization.Model):
     ):
         """
         :keyword lower_bound: lower bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Down.
         :paramtype lower_bound: float
         :keyword upper_bound: upper bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Up.
         :paramtype upper_bound: float
         :keyword anomaly_detector_direction: Required. detection direction. Possible values include:
@@ -8433,11 +8434,11 @@ class _HardThresholdConditionPatchGenerated(msrest.serialization.Model):
     """HardThresholdConditionPatch.
 
     :ivar lower_bound: lower bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Down.
     :vartype lower_bound: float
     :ivar upper_bound: upper bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Up.
     :vartype upper_bound: float
     :ivar anomaly_detector_direction: detection direction. Possible values include: "Both", "Down",
@@ -8466,11 +8467,11 @@ class _HardThresholdConditionPatchGenerated(msrest.serialization.Model):
     ):
         """
         :keyword lower_bound: lower bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Down.
         :paramtype lower_bound: float
         :keyword upper_bound: upper bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Up.
         :paramtype upper_bound: float
         :keyword anomaly_detector_direction: detection direction. Possible values include: "Both",
@@ -8536,7 +8537,7 @@ class _IncidentPropertyGenerated(msrest.serialization.Model):
      include: "Low", "Medium", "High".
     :vartype max_severity: str or ~azure.ai.metricsadvisor.models.Severity
     :ivar incident_status: incident status
-    
+
      only return for alerting incident result. Possible values include: "Active", "Resolved".
     :vartype incident_status: str or ~azure.ai.metricsadvisor.models.IncidentStatus
     :ivar value_of_root_node: value of the root node.
@@ -8588,15 +8589,15 @@ class _IncidentResultGenerated(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_feed_id: data feed unique id
-    
+
      only return for alerting anomaly result.
     :vartype data_feed_id: str
     :ivar metric_id: metric unique id
-    
+
      only return for alerting incident result.
     :vartype metric_id: str
     :ivar anomaly_detection_configuration_id: anomaly detection configuration unique id
-    
+
      only return for alerting incident result.
     :vartype anomaly_detection_configuration_id: str
     :ivar incident_id: Required. incident id.
@@ -11580,7 +11581,7 @@ class _SeriesConfigurationGenerated(msrest.serialization.Model):
     :ivar series: Required.
     :vartype series: ~azure.ai.metricsadvisor.models.SeriesIdentity
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -11619,7 +11620,7 @@ class _SeriesConfigurationGenerated(msrest.serialization.Model):
         :keyword series: Required.
         :paramtype series: ~azure.ai.metricsadvisor.models.SeriesIdentity
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -13047,7 +13048,7 @@ class _TopNGroupScopeGenerated(msrest.serialization.Model):
     :ivar period: Required. point count used to look back, value range : [1, +∞).
     :vartype period: int
     :ivar min_top_count: Required. min count should be in top N, value range : [1, +∞)
-    
+
      should be less than or equal to period.
     :vartype min_top_count: int
     """
@@ -13078,7 +13079,7 @@ class _TopNGroupScopeGenerated(msrest.serialization.Model):
         :keyword period: Required. point count used to look back, value range : [1, +∞).
         :paramtype period: int
         :keyword min_top_count: Required. min count should be in top N, value range : [1, +∞)
-        
+
          should be less than or equal to period.
         :paramtype min_top_count: int
         """
@@ -13147,11 +13148,11 @@ class _ValueConditionGenerated(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lower: lower bound
-    
+
      should be specified when direction is Both or Down.
     :vartype lower: float
     :ivar upper: upper bound
-    
+
      should be specified when direction is Both or Up.
     :vartype upper: float
     :ivar direction: Required. value filter direction. Possible values include: "Both", "Down",
@@ -13164,7 +13165,7 @@ class _ValueConditionGenerated(msrest.serialization.Model):
     :vartype metric_id: str
     :ivar trigger_for_missing: trigger alert when the corresponding point is missing in the other
      metric
-    
+
      should be specified only when using other metric to filter.
     :vartype trigger_for_missing: bool
     """
@@ -13195,11 +13196,11 @@ class _ValueConditionGenerated(msrest.serialization.Model):
     ):
         """
         :keyword lower: lower bound
-        
+
          should be specified when direction is Both or Down.
         :paramtype lower: float
         :keyword upper: upper bound
-        
+
          should be specified when direction is Both or Up.
         :paramtype upper: float
         :keyword direction: Required. value filter direction. Possible values include: "Both", "Down",
@@ -13212,7 +13213,7 @@ class _ValueConditionGenerated(msrest.serialization.Model):
         :paramtype metric_id: str
         :keyword trigger_for_missing: trigger alert when the corresponding point is missing in the
          other metric
-        
+
          should be specified only when using other metric to filter.
         :paramtype trigger_for_missing: bool
         """
@@ -13508,7 +13509,7 @@ class _WholeMetricConfigurationGenerated(msrest.serialization.Model):
     """WholeMetricConfiguration.
 
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -13539,7 +13540,7 @@ class _WholeMetricConfigurationGenerated(msrest.serialization.Model):
     ):
         """
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -13565,7 +13566,7 @@ class _WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
     """WholeMetricConfigurationPatch.
 
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -13598,7 +13599,7 @@ class _WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
     ):
         """
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
