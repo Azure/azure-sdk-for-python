@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed a bug that `EventHubProduerClient` is not reusable after getting closed (issue #21849).
+- Fixed a bug that `EventHubProduerClient` could be reopened for sending events instead of encountering with `KeyError` when the client is previously closed (issue #21849).
 
 ### Other Changes
 
