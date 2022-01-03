@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed bug that when setting `ServiceBusMessage.time_to_live` with value being type of`datetime.timedelta`, `total_seconds` should be respected (PR #21869, thanks @jyggen).
+- Fixed bug that when setting `ServiceBusMessage.time_to_live` with value being `datetime.timedelta`, `total_seconds` should be respected (PR #21869, thanks @jyggen).
 
 ### Other Changes
 
