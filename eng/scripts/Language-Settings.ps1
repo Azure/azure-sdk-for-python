@@ -206,7 +206,7 @@ function DockerValidation{
   $commandLine = ""
   if ($PackageSourceOverride) {
     $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
-       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 | Out-Null
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1
   }
   else {
     $commandLine = docker run -v "${workingDirectory}:/workdir/out" `
