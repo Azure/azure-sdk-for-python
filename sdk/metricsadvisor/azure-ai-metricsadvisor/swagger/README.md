@@ -33,6 +33,7 @@ head-as-boolean: true
 package-version: 1.0.0
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
+want-operation-metadata: false
 ```
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable

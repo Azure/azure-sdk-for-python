@@ -109,7 +109,7 @@ try:
     from ._models_py3 import IngestionStatusList
     from ._models_py3 import IngestionStatusQueryOptions
     from ._models_py3 import Metric
-    from ._models_py3 import MetricAlertingConfiguration
+    from ._models_py3 import MetricAlertConfiguration
     from ._models_py3 import MetricDataItem
     from ._models_py3 import MetricDataList
     from ._models_py3 import MetricDataQueryOptions
@@ -267,7 +267,7 @@ except (SyntaxError, ImportError):
     from ._models import IngestionStatusList  # type: ignore
     from ._models import IngestionStatusQueryOptions  # type: ignore
     from ._models import Metric  # type: ignore
-    from ._models import MetricAlertingConfiguration  # type: ignore
+    from ._models import MetricAlertConfiguration  # type: ignore
     from ._models import MetricDataItem  # type: ignore
     from ._models import MetricDataList  # type: ignore
     from ._models import MetricDataQueryOptions  # type: ignore
@@ -457,7 +457,7 @@ __all__ = [
     'IngestionStatusList',
     'IngestionStatusQueryOptions',
     'Metric',
-    'MetricAlertingConfiguration',
+    'MetricAlertConfiguration',
     'MetricDataItem',
     'MetricDataList',
     'MetricDataQueryOptions',

@@ -12,7 +12,7 @@ from typing import Any, Union, List, Dict, TYPE_CHECKING
 from enum import Enum
 import msrest
 from .._generated.models import (
-    MetricAlertingConfiguration as _MetricAlertingConfiguration,
+    MetricAlertConfiguration as _MetricAlertConfiguration,
     SeverityCondition as _SeverityCondition,
     TopNGroupScope as _TopNGroupScope,
     AlertSnoozeCondition as _AlertSnoozeCondition,
@@ -104,34 +104,6 @@ if TYPE_CHECKING:
         RootCause,
     )
     from .._metrics_advisor_administration_client import DataFeedSourceUnion
-
-class DataFeedRollupType(str, Enum):
-    """Data feed rollup type"""
-
-    NO_ROLLUP = "NoRollup"
-    AUTO_ROLLUP = "AutoRollup"
-    ALREADY_ROLLUP = "AlreadyRollup"
-
-    @classmethod
-    def _to_generated(cls, rollup):
-        try:
-            rollup = rollup.value
-        except AttributeError:
-            pass
-        if rollup == "AutoRollup":
-            return "NeedRollup"
-        return rollup
-
-    @classmethod
-    def _from_generated(cls, rollup):
-        try:
-            rollup = rollup.value
-        except AttributeError:
-            pass
-        if rollup == "NeedRollup":
-            return "AutoRollup"
-        return rollup
-
 
 class MetricAnomalyAlertConfigurationsOperator(str, Enum):
     """Cross metrics operator"""
@@ -755,7 +727,7 @@ class MetricAlertConfiguration(object):
         )
 
     def _to_generated(self):
-        return _MetricAlertingConfiguration(
+        return _MetricAlertConfiguration(
             anomaly_detection_configuration_id=self.detection_configuration_id,
             anomaly_scope_type=MetricAnomalyAlertScopeType._to_generated(
                 self.alert_scope.scope_type
@@ -3150,7 +3122,7 @@ class IncidentRootCause(msrest.serialization.Model):
         )
 
 
-class MetricFeedback(dict):
+class MetricFeedbackCustomization(dict):
     """Feedback base class
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3179,7 +3151,11 @@ class MetricFeedback(dict):
     }
 
     def __init__(self, feedback_type, metric_id, dimension_key, **kwargs):
-        super(MetricFeedback, self).__init__(**kwargs)
+        super(MetricFeedbackCustomization, self).__init__(
+            metric_id=metric_id,
+            dimension_filter=dimension_key,
+            **kwargs
+        )
         self.feedback_type = feedback_type  # type: str
         self.id = kwargs.get("id", None)
         self.created_time = kwargs.get("created_time", None)
@@ -3204,7 +3180,7 @@ class MetricFeedback(dict):
         pass
 
 
-class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attributes
+class AnomalyFeedback(MetricFeedbackCustomization):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3326,7 +3302,7 @@ class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attri
         )
 
 
-class ChangePointFeedback(MetricFeedback):
+class ChangePointFeedback(MetricFeedbackCustomization):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3425,7 +3401,7 @@ class ChangePointFeedback(MetricFeedback):
         )
 
 
-class CommentFeedback(MetricFeedback):
+class CommentFeedback(MetricFeedbackCustomization):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3520,7 +3496,7 @@ class CommentFeedback(MetricFeedback):
         )
 
 
-class PeriodFeedback(MetricFeedback):
+class PeriodFeedback(MetricFeedbackCustomization):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.

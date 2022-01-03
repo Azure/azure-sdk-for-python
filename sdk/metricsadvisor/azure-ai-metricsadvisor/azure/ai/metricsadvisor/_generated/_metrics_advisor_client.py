@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from ._patch import MetricsAdvisorClientCustomization
 else:
     try:
-        from .._patch import MetricsAdvisorClientCustomization
+        from ._patch import MetricsAdvisorClientCustomization
     except ImportError:
         class MetricsAdvisorClientCustomization(object):
             pass

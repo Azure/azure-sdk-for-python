@@ -14,7 +14,14 @@ import six
 # pylint: disable=protected-access
 
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
-
+from azure.core.exceptions import (
+    map_error,
+    HttpResponseError,
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+)
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from .models import (
     MetricFeedbackFilter,
@@ -556,7 +563,7 @@ class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
         ] = self._credential.subscription_key
         request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
 
-class MetricsAdvisorClientCustomization:
+class MetricsAdvisorClientCustomization(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -577,7 +584,7 @@ class MetricsAdvisorClientCustomization:
             raise ValueError("Base URL must be a string.")
         authentication_policy = get_authentication_policy(credential)
         self._endpoint = endpoint
-        super().__init__(
+        super(MetricsAdvisorClientCustomization, self).__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             sdk_moniker=SDK_MONIKER,
@@ -619,6 +626,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         return super().add_feedback(
             body=feedback._to_generated(), **kwargs
         )
+    add_feedback.metadata = {'url': '/feedback/metric'}  # type: ignore
 
     @distributed_trace
     def get_feedback(self, feedback_id, **kwargs):
@@ -648,6 +656,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         return convert_to_sub_feedback(
             super().get_feedback(feedback_id=feedback_id, **kwargs)
         )
+    get_feedback.metadata = {'url': '/feedback/metric/{feedbackId}'}  # type: ignore
 
     @distributed_trace
     def list_feedback(self, metric_id, **kwargs):
@@ -710,6 +719,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             ),
             **kwargs
         )
+    list_feedback.metadata = {'url': '/feedback/metric/query'}  # type: ignore
 
     @distributed_trace
     def list_incident_root_causes(
@@ -746,6 +756,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             ),
             **kwargs
         )
+    list_incident_root_causes.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause'}  # type: ignore
 
     @distributed_trace
     def list_metric_enriched_series_data(
@@ -804,6 +815,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             ),
             **kwargs
         )
+    list_metric_enriched_series_data.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/series/query'}  # type: ignore
 
     @distributed_trace
     def list_alerts(
@@ -862,13 +874,14 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             ),
             **kwargs
         )
+    list_alerts.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/query'}  # type: ignore
 
     def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop("skip", None)
 
-        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
+        return super().get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
@@ -892,7 +905,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             filter=filter_condition,
         )
 
-        return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
+        return super().get_anomalies_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=detection_anomaly_result_query,
@@ -1033,13 +1046,14 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             body=anomaly_dimension_query,
             **kwargs
         )
+    list_anomaly_dimension_values.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query'}  # type: ignore
 
     def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
 
         skip = kwargs.pop("skip", None)
 
-        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
+        return super().get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
@@ -1063,7 +1077,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             filter=filter_condition,
         )
 
-        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
+        return super().get_incidents_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_incident_result_query,
             cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
@@ -1206,6 +1220,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             skip=skip,
             **kwargs
         )
+    list_metric_dimension_values.metadata = {'url': '/metrics/{metricId}/dimension/query'}  # type: ignore
 
     @distributed_trace
     def list_metric_series_data(
@@ -1260,6 +1275,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             ),
             **kwargs
         )
+    list_metric_series_data.metadata = {'url': '/metrics/{metricId}/data/query'}  # type: ignore
 
     @distributed_trace
     def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
@@ -1288,18 +1304,85 @@ class MetricsAdvisorClientOperationsMixinCustomization:
                 :dedent: 4
                 :caption: Query metric series definitions.
         """
-
+        from .operations._metrics_advisor_client_operations import build_list_metric_series_definitions_request
+        from ._vendor import _convert_request
         skip = kwargs.pop("skip", None)
         dimension_filter = kwargs.pop("dimension_filter", None)
 
-        metric_series_query_options = MetricSeriesQueryOptions(
+        body = MetricSeriesQueryOptions(
             active_since=active_since,
             dimension_filter=dimension_filter,
         )
+        maxpagesize = None
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        return super().list_metric_series_definitions(  # type: ignore
-            metric_id=metric_id, body=metric_series_query_options, skip=skip, **kwargs
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricSeriesList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                _json = self._serialize.body(body, 'MetricSeriesQueryOptions')
+
+                request = build_list_metric_series_definitions_request(
+                    metric_id=metric_id,
+                    content_type=content_type,
+                    json=_json,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    template_url=self.list_metric_series_definitions.metadata['url'],
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            else:
+                _json = self._serialize.body(body, 'MetricSeriesQueryOptions')
+
+                request = build_list_metric_series_definitions_request(
+                    metric_id=metric_id,
+                    content_type=content_type,
+                    json=_json,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "nextLink": self._serialize.url("next_link", next_link, "str", skip_quote=True)
+                }
+                request.url = self._client.format_url("{nextLink}", **path_format_arguments)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("MetricSeriesList", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
         )
+    list_metric_series_definitions.metadata = {'url': '/metrics/{metricId}/series/query'}  # type: ignore
 
     @distributed_trace
     def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
@@ -1340,6 +1423,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             body=enrichment_status_query_option,
             **kwargs
         )
+    list_metric_enrichment_status.metadata = {'url': '/metrics/{metricId}/status/enrichment/anomalyDetection/query'}  # type: ignore
 
 class MetricsAdvisorAdministrationClient(
     object

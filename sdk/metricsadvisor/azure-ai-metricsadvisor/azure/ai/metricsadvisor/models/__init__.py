@@ -42,6 +42,9 @@ from .._generated.models import (
     TimeMode as AlertQueryTimeMode,
     DataSourceCredentialType as DatasourceCredentialType,
     AuthenticationTypeEnum as DatasourceAuthenticationType,
+    MetricAnomalyAlertScopeType,
+    DataFeedRollupType,
+    MetricFeedback,
 )
 
 from .._generated.models import (
@@ -57,7 +60,6 @@ from .._generated.models import (
 )
 
 from ._models import (
-    MetricFeedback,
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
@@ -109,8 +111,6 @@ from ._models import (
     AnomalyAlert,
     AzureDataLakeStorageGen2DataFeedSource,
     AzureEventHubsDataFeedSource,
-    MetricAnomalyAlertScopeType,
-    DataFeedRollupType,
     IncidentRootCause,
     MetricEnrichedSeriesData,
     DatasourceSqlConnectionString,

@@ -13,790 +13,790 @@ import msrest.serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from ..._patch import AlertResultCustomization, AlertResultListCustomization, AlertSnoozeConditionCustomization, AlertingResultQueryCustomization, AnomalyAlertingConfigurationCustomization, AnomalyAlertingConfigurationListCustomization, AnomalyAlertingConfigurationPatchCustomization, AnomalyDetectionConfigurationCustomization, AnomalyDetectionConfigurationListCustomization, AnomalyDetectionConfigurationPatchCustomization, AnomalyDimensionListCustomization, AnomalyDimensionQueryCustomization, AnomalyFeedbackCustomization, AnomalyFeedbackValueCustomization, AnomalyPropertyCustomization, AnomalyResultCustomization, AnomalyResultListCustomization, AzureApplicationInsightsDataFeedCustomization, AzureApplicationInsightsDataFeedPatchCustomization, AzureApplicationInsightsParameterCustomization, AzureApplicationInsightsParameterPatchCustomization, AzureBlobDataFeedCustomization, AzureBlobDataFeedPatchCustomization, AzureBlobParameterCustomization, AzureBlobParameterPatchCustomization, AzureCosmosDBDataFeedCustomization, AzureCosmosDBDataFeedPatchCustomization, AzureCosmosDBParameterCustomization, AzureCosmosDBParameterPatchCustomization, AzureDataExplorerDataFeedCustomization, AzureDataExplorerDataFeedPatchCustomization, AzureDataLakeStorageGen2DataFeedCustomization, AzureDataLakeStorageGen2DataFeedPatchCustomization, AzureDataLakeStorageGen2ParameterCustomization, AzureDataLakeStorageGen2ParameterPatchCustomization, AzureEventHubsDataFeedCustomization, AzureEventHubsDataFeedPatchCustomization, AzureEventHubsParameterCustomization, AzureEventHubsParameterPatchCustomization, AzureLogAnalyticsDataFeedCustomization, AzureLogAnalyticsDataFeedPatchCustomization, AzureLogAnalyticsParameterCustomization, AzureLogAnalyticsParameterPatchCustomization, AzureSQLConnectionStringCredentialCustomization, AzureSQLConnectionStringCredentialPatchCustomization, AzureSQLConnectionStringParamCustomization, AzureSQLConnectionStringParamPatchCustomization, AzureTableDataFeedCustomization, AzureTableDataFeedPatchCustomization, AzureTableParameterCustomization, AzureTableParameterPatchCustomization, ChangePointFeedbackCustomization, ChangePointFeedbackValueCustomization, ChangeThresholdConditionCustomization, ChangeThresholdConditionPatchCustomization, CommentFeedbackCustomization, CommentFeedbackValueCustomization, DataFeedDetailCustomization, DataFeedDetailPatchCustomization, DataFeedIngestionProgressCustomization, DataFeedListCustomization, DataLakeGen2SharedKeyCredentialCustomization, DataLakeGen2SharedKeyCredentialPatchCustomization, DataLakeGen2SharedKeyParamCustomization, DataLakeGen2SharedKeyParamPatchCustomization, DataSourceCredentialCustomization, DataSourceCredentialListCustomization, DataSourceCredentialPatchCustomization, DetectionAnomalyFilterConditionCustomization, DetectionAnomalyResultQueryCustomization, DetectionIncidentFilterConditionCustomization, DetectionIncidentResultQueryCustomization, DetectionSeriesQueryCustomization, DimensionCustomization, DimensionGroupConfigurationCustomization, DimensionGroupIdentityCustomization, EmailHookInfoCustomization, EmailHookInfoPatchCustomization, EmailHookParameterCustomization, EmailHookParameterPatchCustomization, EnrichmentStatusCustomization, EnrichmentStatusListCustomization, EnrichmentStatusQueryOptionCustomization, ErrorCodeCustomization, FeedbackDimensionFilterCustomization, HardThresholdConditionCustomization, HardThresholdConditionPatchCustomization, HookInfoCustomization, HookInfoPatchCustomization, HookListCustomization, IncidentPropertyCustomization, IncidentResultCustomization, IncidentResultListCustomization, InfluxDBDataFeedCustomization, InfluxDBDataFeedPatchCustomization, InfluxDBParameterCustomization, InfluxDBParameterPatchCustomization, IngestionProgressResetOptionsCustomization, IngestionStatusCustomization, IngestionStatusListCustomization, IngestionStatusQueryOptionsCustomization, MetricAlertingConfigurationCustomization, MetricCustomization, MetricDataItemCustomization, MetricDataListCustomization, MetricDataQueryOptionsCustomization, MetricDimensionListCustomization, MetricDimensionQueryOptionsCustomization, MetricFeedbackCustomization, MetricFeedbackFilterCustomization, MetricFeedbackListCustomization, MetricSeriesItemCustomization, MetricSeriesListCustomization, MetricSeriesQueryOptionsCustomization, MongoDBDataFeedCustomization, MongoDBDataFeedPatchCustomization, MongoDBParameterCustomization, MongoDBParameterPatchCustomization, MySqlDataFeedCustomization, MySqlDataFeedPatchCustomization, PeriodFeedbackCustomization, PeriodFeedbackValueCustomization, PostgreSqlDataFeedCustomization, PostgreSqlDataFeedPatchCustomization, RootCauseCustomization, RootCauseListCustomization, SQLServerDataFeedCustomization, SQLServerDataFeedPatchCustomization, SQLSourceParameterPatchCustomization, SeriesConfigurationCustomization, SeriesIdentityCustomization, SeriesResultCustomization, SeriesResultListCustomization, ServicePrincipalCredentialCustomization, ServicePrincipalCredentialPatchCustomization, ServicePrincipalInKVCredentialCustomization, ServicePrincipalInKVCredentialPatchCustomization, ServicePrincipalInKVParamCustomization, ServicePrincipalInKVParamPatchCustomization, ServicePrincipalParamCustomization, ServicePrincipalParamPatchCustomization, SeverityConditionCustomization, SeverityFilterConditionCustomization, SmartDetectionConditionCustomization, SmartDetectionConditionPatchCustomization, SqlSourceParameterCustomization, SuppressConditionCustomization, SuppressConditionPatchCustomization, TopNGroupScopeCustomization, UsageStatsCustomization, ValueConditionCustomization, WebhookHookInfoCustomization, WebhookHookInfoPatchCustomization, WebhookHookParameterCustomization, WebhookHookParameterPatchCustomization, WholeMetricConfigurationCustomization, WholeMetricConfigurationPatchCustomization
+    from ..._patch import AlertResultCustomization, AlertResultListCustomization, AlertSnoozeConditionCustomization, AlertingResultQueryCustomization, AnomalyAlertingConfigurationCustomization, AnomalyAlertingConfigurationListCustomization, AnomalyAlertingConfigurationPatchCustomization, AnomalyDetectionConfigurationCustomization, AnomalyDetectionConfigurationListCustomization, AnomalyDetectionConfigurationPatchCustomization, AnomalyDimensionListCustomization, AnomalyDimensionQueryCustomization, AnomalyFeedbackCustomization, AnomalyFeedbackValueCustomization, AnomalyPropertyCustomization, AnomalyResultCustomization, AnomalyResultListCustomization, AzureApplicationInsightsDataFeedCustomization, AzureApplicationInsightsDataFeedPatchCustomization, AzureApplicationInsightsParameterCustomization, AzureApplicationInsightsParameterPatchCustomization, AzureBlobDataFeedCustomization, AzureBlobDataFeedPatchCustomization, AzureBlobParameterCustomization, AzureBlobParameterPatchCustomization, AzureCosmosDBDataFeedCustomization, AzureCosmosDBDataFeedPatchCustomization, AzureCosmosDBParameterCustomization, AzureCosmosDBParameterPatchCustomization, AzureDataExplorerDataFeedCustomization, AzureDataExplorerDataFeedPatchCustomization, AzureDataLakeStorageGen2DataFeedCustomization, AzureDataLakeStorageGen2DataFeedPatchCustomization, AzureDataLakeStorageGen2ParameterCustomization, AzureDataLakeStorageGen2ParameterPatchCustomization, AzureEventHubsDataFeedCustomization, AzureEventHubsDataFeedPatchCustomization, AzureEventHubsParameterCustomization, AzureEventHubsParameterPatchCustomization, AzureLogAnalyticsDataFeedCustomization, AzureLogAnalyticsDataFeedPatchCustomization, AzureLogAnalyticsParameterCustomization, AzureLogAnalyticsParameterPatchCustomization, AzureSQLConnectionStringCredentialCustomization, AzureSQLConnectionStringCredentialPatchCustomization, AzureSQLConnectionStringParamCustomization, AzureSQLConnectionStringParamPatchCustomization, AzureTableDataFeedCustomization, AzureTableDataFeedPatchCustomization, AzureTableParameterCustomization, AzureTableParameterPatchCustomization, ChangePointFeedbackCustomization, ChangePointFeedbackValueCustomization, ChangeThresholdConditionCustomization, ChangeThresholdConditionPatchCustomization, CommentFeedbackCustomization, CommentFeedbackValueCustomization, DataFeedDetailCustomization, DataFeedDetailPatchCustomization, DataFeedIngestionProgressCustomization, DataFeedListCustomization, DataLakeGen2SharedKeyCredentialCustomization, DataLakeGen2SharedKeyCredentialPatchCustomization, DataLakeGen2SharedKeyParamCustomization, DataLakeGen2SharedKeyParamPatchCustomization, DataSourceCredentialCustomization, DataSourceCredentialListCustomization, DataSourceCredentialPatchCustomization, DetectionAnomalyFilterConditionCustomization, DetectionAnomalyResultQueryCustomization, DetectionIncidentFilterConditionCustomization, DetectionIncidentResultQueryCustomization, DetectionSeriesQueryCustomization, DimensionCustomization, DimensionGroupConfigurationCustomization, DimensionGroupIdentityCustomization, EmailHookInfoCustomization, EmailHookInfoPatchCustomization, EmailHookParameterCustomization, EmailHookParameterPatchCustomization, EnrichmentStatusCustomization, EnrichmentStatusListCustomization, EnrichmentStatusQueryOptionCustomization, ErrorCodeCustomization, FeedbackDimensionFilterCustomization, HardThresholdConditionCustomization, HardThresholdConditionPatchCustomization, HookInfoCustomization, HookInfoPatchCustomization, HookListCustomization, IncidentPropertyCustomization, IncidentResultCustomization, IncidentResultListCustomization, InfluxDBDataFeedCustomization, InfluxDBDataFeedPatchCustomization, InfluxDBParameterCustomization, InfluxDBParameterPatchCustomization, IngestionProgressResetOptionsCustomization, IngestionStatusCustomization, IngestionStatusListCustomization, IngestionStatusQueryOptionsCustomization, MetricAlertConfigurationCustomization, MetricCustomization, MetricDataItemCustomization, MetricDataListCustomization, MetricDataQueryOptionsCustomization, MetricDimensionListCustomization, MetricDimensionQueryOptionsCustomization, MetricFeedbackCustomization, MetricFeedbackFilterCustomization, MetricFeedbackListCustomization, MetricSeriesItemCustomization, MetricSeriesListCustomization, MetricSeriesQueryOptionsCustomization, MongoDBDataFeedCustomization, MongoDBDataFeedPatchCustomization, MongoDBParameterCustomization, MongoDBParameterPatchCustomization, MySqlDataFeedCustomization, MySqlDataFeedPatchCustomization, PeriodFeedbackCustomization, PeriodFeedbackValueCustomization, PostgreSqlDataFeedCustomization, PostgreSqlDataFeedPatchCustomization, RootCauseCustomization, RootCauseListCustomization, SQLServerDataFeedCustomization, SQLServerDataFeedPatchCustomization, SQLSourceParameterPatchCustomization, SeriesConfigurationCustomization, SeriesIdentityCustomization, SeriesResultCustomization, SeriesResultListCustomization, ServicePrincipalCredentialCustomization, ServicePrincipalCredentialPatchCustomization, ServicePrincipalInKVCredentialCustomization, ServicePrincipalInKVCredentialPatchCustomization, ServicePrincipalInKVParamCustomization, ServicePrincipalInKVParamPatchCustomization, ServicePrincipalParamCustomization, ServicePrincipalParamPatchCustomization, SeverityConditionCustomization, SeverityFilterConditionCustomization, SmartDetectionConditionCustomization, SmartDetectionConditionPatchCustomization, SqlSourceParameterCustomization, SuppressConditionCustomization, SuppressConditionPatchCustomization, TopNGroupScopeCustomization, UsageStatsCustomization, ValueConditionCustomization, WebhookHookInfoCustomization, WebhookHookInfoPatchCustomization, WebhookHookParameterCustomization, WebhookHookParameterPatchCustomization, WholeMetricConfigurationCustomization, WholeMetricConfigurationPatchCustomization
 else:
     try:
-        from .._patch import AlertingResultQueryCustomization
+        from ..._patch import AlertingResultQueryCustomization
     except ImportError:
         class AlertingResultQueryCustomization(object):
             pass
     try:
-        from .._patch import AlertResultCustomization
+        from ..._patch import AlertResultCustomization
     except ImportError:
         class AlertResultCustomization(object):
             pass
     try:
-        from .._patch import AlertResultListCustomization
+        from ..._patch import AlertResultListCustomization
     except ImportError:
         class AlertResultListCustomization(object):
             pass
     try:
-        from .._patch import AlertSnoozeConditionCustomization
+        from ..._patch import AlertSnoozeConditionCustomization
     except ImportError:
         class AlertSnoozeConditionCustomization(object):
             pass
     try:
-        from .._patch import AnomalyAlertingConfigurationCustomization
+        from ..._patch import AnomalyAlertingConfigurationCustomization
     except ImportError:
         class AnomalyAlertingConfigurationCustomization(object):
             pass
     try:
-        from .._patch import AnomalyAlertingConfigurationListCustomization
+        from ..._patch import AnomalyAlertingConfigurationListCustomization
     except ImportError:
         class AnomalyAlertingConfigurationListCustomization(object):
             pass
     try:
-        from .._patch import AnomalyAlertingConfigurationPatchCustomization
+        from ..._patch import AnomalyAlertingConfigurationPatchCustomization
     except ImportError:
         class AnomalyAlertingConfigurationPatchCustomization(object):
             pass
     try:
-        from .._patch import AnomalyDetectionConfigurationCustomization
+        from ..._patch import AnomalyDetectionConfigurationCustomization
     except ImportError:
         class AnomalyDetectionConfigurationCustomization(object):
             pass
     try:
-        from .._patch import AnomalyDetectionConfigurationListCustomization
+        from ..._patch import AnomalyDetectionConfigurationListCustomization
     except ImportError:
         class AnomalyDetectionConfigurationListCustomization(object):
             pass
     try:
-        from .._patch import AnomalyDetectionConfigurationPatchCustomization
+        from ..._patch import AnomalyDetectionConfigurationPatchCustomization
     except ImportError:
         class AnomalyDetectionConfigurationPatchCustomization(object):
             pass
     try:
-        from .._patch import AnomalyDimensionListCustomization
+        from ..._patch import AnomalyDimensionListCustomization
     except ImportError:
         class AnomalyDimensionListCustomization(object):
             pass
     try:
-        from .._patch import AnomalyDimensionQueryCustomization
+        from ..._patch import AnomalyDimensionQueryCustomization
     except ImportError:
         class AnomalyDimensionQueryCustomization(object):
             pass
     try:
-        from .._patch import MetricFeedbackCustomization
+        from ..._patch import MetricFeedbackCustomization
     except ImportError:
         class MetricFeedbackCustomization(object):
             pass
     try:
-        from .._patch import AnomalyFeedbackCustomization
+        from ..._patch import AnomalyFeedbackCustomization
     except ImportError:
         class AnomalyFeedbackCustomization(object):
             pass
     try:
-        from .._patch import AnomalyFeedbackValueCustomization
+        from ..._patch import AnomalyFeedbackValueCustomization
     except ImportError:
         class AnomalyFeedbackValueCustomization(object):
             pass
     try:
-        from .._patch import AnomalyPropertyCustomization
+        from ..._patch import AnomalyPropertyCustomization
     except ImportError:
         class AnomalyPropertyCustomization(object):
             pass
     try:
-        from .._patch import AnomalyResultCustomization
+        from ..._patch import AnomalyResultCustomization
     except ImportError:
         class AnomalyResultCustomization(object):
             pass
     try:
-        from .._patch import AnomalyResultListCustomization
+        from ..._patch import AnomalyResultListCustomization
     except ImportError:
         class AnomalyResultListCustomization(object):
             pass
     try:
-        from .._patch import DataFeedDetailCustomization
+        from ..._patch import DataFeedDetailCustomization
     except ImportError:
         class DataFeedDetailCustomization(object):
             pass
     try:
-        from .._patch import AzureApplicationInsightsDataFeedCustomization
+        from ..._patch import AzureApplicationInsightsDataFeedCustomization
     except ImportError:
         class AzureApplicationInsightsDataFeedCustomization(object):
             pass
     try:
-        from .._patch import DataFeedDetailPatchCustomization
+        from ..._patch import DataFeedDetailPatchCustomization
     except ImportError:
         class DataFeedDetailPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureApplicationInsightsDataFeedPatchCustomization
+        from ..._patch import AzureApplicationInsightsDataFeedPatchCustomization
     except ImportError:
         class AzureApplicationInsightsDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureApplicationInsightsParameterCustomization
+        from ..._patch import AzureApplicationInsightsParameterCustomization
     except ImportError:
         class AzureApplicationInsightsParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureApplicationInsightsParameterPatchCustomization
+        from ..._patch import AzureApplicationInsightsParameterPatchCustomization
     except ImportError:
         class AzureApplicationInsightsParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureBlobDataFeedCustomization
+        from ..._patch import AzureBlobDataFeedCustomization
     except ImportError:
         class AzureBlobDataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureBlobDataFeedPatchCustomization
+        from ..._patch import AzureBlobDataFeedPatchCustomization
     except ImportError:
         class AzureBlobDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureBlobParameterCustomization
+        from ..._patch import AzureBlobParameterCustomization
     except ImportError:
         class AzureBlobParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureBlobParameterPatchCustomization
+        from ..._patch import AzureBlobParameterPatchCustomization
     except ImportError:
         class AzureBlobParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureCosmosDBDataFeedCustomization
+        from ..._patch import AzureCosmosDBDataFeedCustomization
     except ImportError:
         class AzureCosmosDBDataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureCosmosDBDataFeedPatchCustomization
+        from ..._patch import AzureCosmosDBDataFeedPatchCustomization
     except ImportError:
         class AzureCosmosDBDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureCosmosDBParameterCustomization
+        from ..._patch import AzureCosmosDBParameterCustomization
     except ImportError:
         class AzureCosmosDBParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureCosmosDBParameterPatchCustomization
+        from ..._patch import AzureCosmosDBParameterPatchCustomization
     except ImportError:
         class AzureCosmosDBParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureDataExplorerDataFeedCustomization
+        from ..._patch import AzureDataExplorerDataFeedCustomization
     except ImportError:
         class AzureDataExplorerDataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureDataExplorerDataFeedPatchCustomization
+        from ..._patch import AzureDataExplorerDataFeedPatchCustomization
     except ImportError:
         class AzureDataExplorerDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureDataLakeStorageGen2DataFeedCustomization
+        from ..._patch import AzureDataLakeStorageGen2DataFeedCustomization
     except ImportError:
         class AzureDataLakeStorageGen2DataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureDataLakeStorageGen2DataFeedPatchCustomization
+        from ..._patch import AzureDataLakeStorageGen2DataFeedPatchCustomization
     except ImportError:
         class AzureDataLakeStorageGen2DataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureDataLakeStorageGen2ParameterCustomization
+        from ..._patch import AzureDataLakeStorageGen2ParameterCustomization
     except ImportError:
         class AzureDataLakeStorageGen2ParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureDataLakeStorageGen2ParameterPatchCustomization
+        from ..._patch import AzureDataLakeStorageGen2ParameterPatchCustomization
     except ImportError:
         class AzureDataLakeStorageGen2ParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureEventHubsDataFeedCustomization
+        from ..._patch import AzureEventHubsDataFeedCustomization
     except ImportError:
         class AzureEventHubsDataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureEventHubsDataFeedPatchCustomization
+        from ..._patch import AzureEventHubsDataFeedPatchCustomization
     except ImportError:
         class AzureEventHubsDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureEventHubsParameterCustomization
+        from ..._patch import AzureEventHubsParameterCustomization
     except ImportError:
         class AzureEventHubsParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureEventHubsParameterPatchCustomization
+        from ..._patch import AzureEventHubsParameterPatchCustomization
     except ImportError:
         class AzureEventHubsParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureLogAnalyticsDataFeedCustomization
+        from ..._patch import AzureLogAnalyticsDataFeedCustomization
     except ImportError:
         class AzureLogAnalyticsDataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureLogAnalyticsDataFeedPatchCustomization
+        from ..._patch import AzureLogAnalyticsDataFeedPatchCustomization
     except ImportError:
         class AzureLogAnalyticsDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureLogAnalyticsParameterCustomization
+        from ..._patch import AzureLogAnalyticsParameterCustomization
     except ImportError:
         class AzureLogAnalyticsParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureLogAnalyticsParameterPatchCustomization
+        from ..._patch import AzureLogAnalyticsParameterPatchCustomization
     except ImportError:
         class AzureLogAnalyticsParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import DataSourceCredentialCustomization
+        from ..._patch import DataSourceCredentialCustomization
     except ImportError:
         class DataSourceCredentialCustomization(object):
             pass
     try:
-        from .._patch import AzureSQLConnectionStringCredentialCustomization
+        from ..._patch import AzureSQLConnectionStringCredentialCustomization
     except ImportError:
         class AzureSQLConnectionStringCredentialCustomization(object):
             pass
     try:
-        from .._patch import DataSourceCredentialPatchCustomization
+        from ..._patch import DataSourceCredentialPatchCustomization
     except ImportError:
         class DataSourceCredentialPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureSQLConnectionStringCredentialPatchCustomization
+        from ..._patch import AzureSQLConnectionStringCredentialPatchCustomization
     except ImportError:
         class AzureSQLConnectionStringCredentialPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureSQLConnectionStringParamCustomization
+        from ..._patch import AzureSQLConnectionStringParamCustomization
     except ImportError:
         class AzureSQLConnectionStringParamCustomization(object):
             pass
     try:
-        from .._patch import AzureSQLConnectionStringParamPatchCustomization
+        from ..._patch import AzureSQLConnectionStringParamPatchCustomization
     except ImportError:
         class AzureSQLConnectionStringParamPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureTableDataFeedCustomization
+        from ..._patch import AzureTableDataFeedCustomization
     except ImportError:
         class AzureTableDataFeedCustomization(object):
             pass
     try:
-        from .._patch import AzureTableDataFeedPatchCustomization
+        from ..._patch import AzureTableDataFeedPatchCustomization
     except ImportError:
         class AzureTableDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import AzureTableParameterCustomization
+        from ..._patch import AzureTableParameterCustomization
     except ImportError:
         class AzureTableParameterCustomization(object):
             pass
     try:
-        from .._patch import AzureTableParameterPatchCustomization
+        from ..._patch import AzureTableParameterPatchCustomization
     except ImportError:
         class AzureTableParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import ChangePointFeedbackCustomization
+        from ..._patch import ChangePointFeedbackCustomization
     except ImportError:
         class ChangePointFeedbackCustomization(object):
             pass
     try:
-        from .._patch import ChangePointFeedbackValueCustomization
+        from ..._patch import ChangePointFeedbackValueCustomization
     except ImportError:
         class ChangePointFeedbackValueCustomization(object):
             pass
     try:
-        from .._patch import ChangeThresholdConditionCustomization
+        from ..._patch import ChangeThresholdConditionCustomization
     except ImportError:
         class ChangeThresholdConditionCustomization(object):
             pass
     try:
-        from .._patch import ChangeThresholdConditionPatchCustomization
+        from ..._patch import ChangeThresholdConditionPatchCustomization
     except ImportError:
         class ChangeThresholdConditionPatchCustomization(object):
             pass
     try:
-        from .._patch import CommentFeedbackCustomization
+        from ..._patch import CommentFeedbackCustomization
     except ImportError:
         class CommentFeedbackCustomization(object):
             pass
     try:
-        from .._patch import CommentFeedbackValueCustomization
+        from ..._patch import CommentFeedbackValueCustomization
     except ImportError:
         class CommentFeedbackValueCustomization(object):
             pass
     try:
-        from .._patch import DataFeedIngestionProgressCustomization
+        from ..._patch import DataFeedIngestionProgressCustomization
     except ImportError:
         class DataFeedIngestionProgressCustomization(object):
             pass
     try:
-        from .._patch import DataFeedListCustomization
+        from ..._patch import DataFeedListCustomization
     except ImportError:
         class DataFeedListCustomization(object):
             pass
     try:
-        from .._patch import DataLakeGen2SharedKeyCredentialCustomization
+        from ..._patch import DataLakeGen2SharedKeyCredentialCustomization
     except ImportError:
         class DataLakeGen2SharedKeyCredentialCustomization(object):
             pass
     try:
-        from .._patch import DataLakeGen2SharedKeyCredentialPatchCustomization
+        from ..._patch import DataLakeGen2SharedKeyCredentialPatchCustomization
     except ImportError:
         class DataLakeGen2SharedKeyCredentialPatchCustomization(object):
             pass
     try:
-        from .._patch import DataLakeGen2SharedKeyParamCustomization
+        from ..._patch import DataLakeGen2SharedKeyParamCustomization
     except ImportError:
         class DataLakeGen2SharedKeyParamCustomization(object):
             pass
     try:
-        from .._patch import DataLakeGen2SharedKeyParamPatchCustomization
+        from ..._patch import DataLakeGen2SharedKeyParamPatchCustomization
     except ImportError:
         class DataLakeGen2SharedKeyParamPatchCustomization(object):
             pass
     try:
-        from .._patch import DataSourceCredentialListCustomization
+        from ..._patch import DataSourceCredentialListCustomization
     except ImportError:
         class DataSourceCredentialListCustomization(object):
             pass
     try:
-        from .._patch import DetectionAnomalyFilterConditionCustomization
+        from ..._patch import DetectionAnomalyFilterConditionCustomization
     except ImportError:
         class DetectionAnomalyFilterConditionCustomization(object):
             pass
     try:
-        from .._patch import DetectionAnomalyResultQueryCustomization
+        from ..._patch import DetectionAnomalyResultQueryCustomization
     except ImportError:
         class DetectionAnomalyResultQueryCustomization(object):
             pass
     try:
-        from .._patch import DetectionIncidentFilterConditionCustomization
+        from ..._patch import DetectionIncidentFilterConditionCustomization
     except ImportError:
         class DetectionIncidentFilterConditionCustomization(object):
             pass
     try:
-        from .._patch import DetectionIncidentResultQueryCustomization
+        from ..._patch import DetectionIncidentResultQueryCustomization
     except ImportError:
         class DetectionIncidentResultQueryCustomization(object):
             pass
     try:
-        from .._patch import DetectionSeriesQueryCustomization
+        from ..._patch import DetectionSeriesQueryCustomization
     except ImportError:
         class DetectionSeriesQueryCustomization(object):
             pass
     try:
-        from .._patch import DimensionCustomization
+        from ..._patch import DimensionCustomization
     except ImportError:
         class DimensionCustomization(object):
             pass
     try:
-        from .._patch import DimensionGroupConfigurationCustomization
+        from ..._patch import DimensionGroupConfigurationCustomization
     except ImportError:
         class DimensionGroupConfigurationCustomization(object):
             pass
     try:
-        from .._patch import DimensionGroupIdentityCustomization
+        from ..._patch import DimensionGroupIdentityCustomization
     except ImportError:
         class DimensionGroupIdentityCustomization(object):
             pass
     try:
-        from .._patch import HookInfoCustomization
+        from ..._patch import HookInfoCustomization
     except ImportError:
         class HookInfoCustomization(object):
             pass
     try:
-        from .._patch import EmailHookInfoCustomization
+        from ..._patch import EmailHookInfoCustomization
     except ImportError:
         class EmailHookInfoCustomization(object):
             pass
     try:
-        from .._patch import HookInfoPatchCustomization
+        from ..._patch import HookInfoPatchCustomization
     except ImportError:
         class HookInfoPatchCustomization(object):
             pass
     try:
-        from .._patch import EmailHookInfoPatchCustomization
+        from ..._patch import EmailHookInfoPatchCustomization
     except ImportError:
         class EmailHookInfoPatchCustomization(object):
             pass
     try:
-        from .._patch import EmailHookParameterCustomization
+        from ..._patch import EmailHookParameterCustomization
     except ImportError:
         class EmailHookParameterCustomization(object):
             pass
     try:
-        from .._patch import EmailHookParameterPatchCustomization
+        from ..._patch import EmailHookParameterPatchCustomization
     except ImportError:
         class EmailHookParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import EnrichmentStatusCustomization
+        from ..._patch import EnrichmentStatusCustomization
     except ImportError:
         class EnrichmentStatusCustomization(object):
             pass
     try:
-        from .._patch import EnrichmentStatusListCustomization
+        from ..._patch import EnrichmentStatusListCustomization
     except ImportError:
         class EnrichmentStatusListCustomization(object):
             pass
     try:
-        from .._patch import EnrichmentStatusQueryOptionCustomization
+        from ..._patch import EnrichmentStatusQueryOptionCustomization
     except ImportError:
         class EnrichmentStatusQueryOptionCustomization(object):
             pass
     try:
-        from .._patch import ErrorCodeCustomization
+        from ..._patch import ErrorCodeCustomization
     except ImportError:
         class ErrorCodeCustomization(object):
             pass
     try:
-        from .._patch import FeedbackDimensionFilterCustomization
+        from ..._patch import FeedbackDimensionFilterCustomization
     except ImportError:
         class FeedbackDimensionFilterCustomization(object):
             pass
     try:
-        from .._patch import HardThresholdConditionCustomization
+        from ..._patch import HardThresholdConditionCustomization
     except ImportError:
         class HardThresholdConditionCustomization(object):
             pass
     try:
-        from .._patch import HardThresholdConditionPatchCustomization
+        from ..._patch import HardThresholdConditionPatchCustomization
     except ImportError:
         class HardThresholdConditionPatchCustomization(object):
             pass
     try:
-        from .._patch import HookListCustomization
+        from ..._patch import HookListCustomization
     except ImportError:
         class HookListCustomization(object):
             pass
     try:
-        from .._patch import IncidentPropertyCustomization
+        from ..._patch import IncidentPropertyCustomization
     except ImportError:
         class IncidentPropertyCustomization(object):
             pass
     try:
-        from .._patch import IncidentResultCustomization
+        from ..._patch import IncidentResultCustomization
     except ImportError:
         class IncidentResultCustomization(object):
             pass
     try:
-        from .._patch import IncidentResultListCustomization
+        from ..._patch import IncidentResultListCustomization
     except ImportError:
         class IncidentResultListCustomization(object):
             pass
     try:
-        from .._patch import InfluxDBDataFeedCustomization
+        from ..._patch import InfluxDBDataFeedCustomization
     except ImportError:
         class InfluxDBDataFeedCustomization(object):
             pass
     try:
-        from .._patch import InfluxDBDataFeedPatchCustomization
+        from ..._patch import InfluxDBDataFeedPatchCustomization
     except ImportError:
         class InfluxDBDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import InfluxDBParameterCustomization
+        from ..._patch import InfluxDBParameterCustomization
     except ImportError:
         class InfluxDBParameterCustomization(object):
             pass
     try:
-        from .._patch import InfluxDBParameterPatchCustomization
+        from ..._patch import InfluxDBParameterPatchCustomization
     except ImportError:
         class InfluxDBParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import IngestionProgressResetOptionsCustomization
+        from ..._patch import IngestionProgressResetOptionsCustomization
     except ImportError:
         class IngestionProgressResetOptionsCustomization(object):
             pass
     try:
-        from .._patch import IngestionStatusCustomization
+        from ..._patch import IngestionStatusCustomization
     except ImportError:
         class IngestionStatusCustomization(object):
             pass
     try:
-        from .._patch import IngestionStatusListCustomization
+        from ..._patch import IngestionStatusListCustomization
     except ImportError:
         class IngestionStatusListCustomization(object):
             pass
     try:
-        from .._patch import IngestionStatusQueryOptionsCustomization
+        from ..._patch import IngestionStatusQueryOptionsCustomization
     except ImportError:
         class IngestionStatusQueryOptionsCustomization(object):
             pass
     try:
-        from .._patch import MetricCustomization
+        from ..._patch import MetricCustomization
     except ImportError:
         class MetricCustomization(object):
             pass
     try:
-        from .._patch import MetricAlertingConfigurationCustomization
+        from ..._patch import MetricAlertConfigurationCustomization
     except ImportError:
-        class MetricAlertingConfigurationCustomization(object):
+        class MetricAlertConfigurationCustomization(object):
             pass
     try:
-        from .._patch import MetricDataItemCustomization
+        from ..._patch import MetricDataItemCustomization
     except ImportError:
         class MetricDataItemCustomization(object):
             pass
     try:
-        from .._patch import MetricDataListCustomization
+        from ..._patch import MetricDataListCustomization
     except ImportError:
         class MetricDataListCustomization(object):
             pass
     try:
-        from .._patch import MetricDataQueryOptionsCustomization
+        from ..._patch import MetricDataQueryOptionsCustomization
     except ImportError:
         class MetricDataQueryOptionsCustomization(object):
             pass
     try:
-        from .._patch import MetricDimensionListCustomization
+        from ..._patch import MetricDimensionListCustomization
     except ImportError:
         class MetricDimensionListCustomization(object):
             pass
     try:
-        from .._patch import MetricDimensionQueryOptionsCustomization
+        from ..._patch import MetricDimensionQueryOptionsCustomization
     except ImportError:
         class MetricDimensionQueryOptionsCustomization(object):
             pass
     try:
-        from .._patch import MetricFeedbackFilterCustomization
+        from ..._patch import MetricFeedbackFilterCustomization
     except ImportError:
         class MetricFeedbackFilterCustomization(object):
             pass
     try:
-        from .._patch import MetricFeedbackListCustomization
+        from ..._patch import MetricFeedbackListCustomization
     except ImportError:
         class MetricFeedbackListCustomization(object):
             pass
     try:
-        from .._patch import MetricSeriesItemCustomization
+        from ..._patch import MetricSeriesItemCustomization
     except ImportError:
         class MetricSeriesItemCustomization(object):
             pass
     try:
-        from .._patch import MetricSeriesListCustomization
+        from ..._patch import MetricSeriesListCustomization
     except ImportError:
         class MetricSeriesListCustomization(object):
             pass
     try:
-        from .._patch import MetricSeriesQueryOptionsCustomization
+        from ..._patch import MetricSeriesQueryOptionsCustomization
     except ImportError:
         class MetricSeriesQueryOptionsCustomization(object):
             pass
     try:
-        from .._patch import MongoDBDataFeedCustomization
+        from ..._patch import MongoDBDataFeedCustomization
     except ImportError:
         class MongoDBDataFeedCustomization(object):
             pass
     try:
-        from .._patch import MongoDBDataFeedPatchCustomization
+        from ..._patch import MongoDBDataFeedPatchCustomization
     except ImportError:
         class MongoDBDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import MongoDBParameterCustomization
+        from ..._patch import MongoDBParameterCustomization
     except ImportError:
         class MongoDBParameterCustomization(object):
             pass
     try:
-        from .._patch import MongoDBParameterPatchCustomization
+        from ..._patch import MongoDBParameterPatchCustomization
     except ImportError:
         class MongoDBParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import MySqlDataFeedCustomization
+        from ..._patch import MySqlDataFeedCustomization
     except ImportError:
         class MySqlDataFeedCustomization(object):
             pass
     try:
-        from .._patch import MySqlDataFeedPatchCustomization
+        from ..._patch import MySqlDataFeedPatchCustomization
     except ImportError:
         class MySqlDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import PeriodFeedbackCustomization
+        from ..._patch import PeriodFeedbackCustomization
     except ImportError:
         class PeriodFeedbackCustomization(object):
             pass
     try:
-        from .._patch import PeriodFeedbackValueCustomization
+        from ..._patch import PeriodFeedbackValueCustomization
     except ImportError:
         class PeriodFeedbackValueCustomization(object):
             pass
     try:
-        from .._patch import PostgreSqlDataFeedCustomization
+        from ..._patch import PostgreSqlDataFeedCustomization
     except ImportError:
         class PostgreSqlDataFeedCustomization(object):
             pass
     try:
-        from .._patch import PostgreSqlDataFeedPatchCustomization
+        from ..._patch import PostgreSqlDataFeedPatchCustomization
     except ImportError:
         class PostgreSqlDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import RootCauseCustomization
+        from ..._patch import RootCauseCustomization
     except ImportError:
         class RootCauseCustomization(object):
             pass
     try:
-        from .._patch import RootCauseListCustomization
+        from ..._patch import RootCauseListCustomization
     except ImportError:
         class RootCauseListCustomization(object):
             pass
     try:
-        from .._patch import SeriesConfigurationCustomization
+        from ..._patch import SeriesConfigurationCustomization
     except ImportError:
         class SeriesConfigurationCustomization(object):
             pass
     try:
-        from .._patch import SeriesIdentityCustomization
+        from ..._patch import SeriesIdentityCustomization
     except ImportError:
         class SeriesIdentityCustomization(object):
             pass
     try:
-        from .._patch import SeriesResultCustomization
+        from ..._patch import SeriesResultCustomization
     except ImportError:
         class SeriesResultCustomization(object):
             pass
     try:
-        from .._patch import SeriesResultListCustomization
+        from ..._patch import SeriesResultListCustomization
     except ImportError:
         class SeriesResultListCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalCredentialCustomization
+        from ..._patch import ServicePrincipalCredentialCustomization
     except ImportError:
         class ServicePrincipalCredentialCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalCredentialPatchCustomization
+        from ..._patch import ServicePrincipalCredentialPatchCustomization
     except ImportError:
         class ServicePrincipalCredentialPatchCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalInKVCredentialCustomization
+        from ..._patch import ServicePrincipalInKVCredentialCustomization
     except ImportError:
         class ServicePrincipalInKVCredentialCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalInKVCredentialPatchCustomization
+        from ..._patch import ServicePrincipalInKVCredentialPatchCustomization
     except ImportError:
         class ServicePrincipalInKVCredentialPatchCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalInKVParamCustomization
+        from ..._patch import ServicePrincipalInKVParamCustomization
     except ImportError:
         class ServicePrincipalInKVParamCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalInKVParamPatchCustomization
+        from ..._patch import ServicePrincipalInKVParamPatchCustomization
     except ImportError:
         class ServicePrincipalInKVParamPatchCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalParamCustomization
+        from ..._patch import ServicePrincipalParamCustomization
     except ImportError:
         class ServicePrincipalParamCustomization(object):
             pass
     try:
-        from .._patch import ServicePrincipalParamPatchCustomization
+        from ..._patch import ServicePrincipalParamPatchCustomization
     except ImportError:
         class ServicePrincipalParamPatchCustomization(object):
             pass
     try:
-        from .._patch import SeverityConditionCustomization
+        from ..._patch import SeverityConditionCustomization
     except ImportError:
         class SeverityConditionCustomization(object):
             pass
     try:
-        from .._patch import SeverityFilterConditionCustomization
+        from ..._patch import SeverityFilterConditionCustomization
     except ImportError:
         class SeverityFilterConditionCustomization(object):
             pass
     try:
-        from .._patch import SmartDetectionConditionCustomization
+        from ..._patch import SmartDetectionConditionCustomization
     except ImportError:
         class SmartDetectionConditionCustomization(object):
             pass
     try:
-        from .._patch import SmartDetectionConditionPatchCustomization
+        from ..._patch import SmartDetectionConditionPatchCustomization
     except ImportError:
         class SmartDetectionConditionPatchCustomization(object):
             pass
     try:
-        from .._patch import SQLServerDataFeedCustomization
+        from ..._patch import SQLServerDataFeedCustomization
     except ImportError:
         class SQLServerDataFeedCustomization(object):
             pass
     try:
-        from .._patch import SQLServerDataFeedPatchCustomization
+        from ..._patch import SQLServerDataFeedPatchCustomization
     except ImportError:
         class SQLServerDataFeedPatchCustomization(object):
             pass
     try:
-        from .._patch import SqlSourceParameterCustomization
+        from ..._patch import SqlSourceParameterCustomization
     except ImportError:
         class SqlSourceParameterCustomization(object):
             pass
     try:
-        from .._patch import SQLSourceParameterPatchCustomization
+        from ..._patch import SQLSourceParameterPatchCustomization
     except ImportError:
         class SQLSourceParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import SuppressConditionCustomization
+        from ..._patch import SuppressConditionCustomization
     except ImportError:
         class SuppressConditionCustomization(object):
             pass
     try:
-        from .._patch import SuppressConditionPatchCustomization
+        from ..._patch import SuppressConditionPatchCustomization
     except ImportError:
         class SuppressConditionPatchCustomization(object):
             pass
     try:
-        from .._patch import TopNGroupScopeCustomization
+        from ..._patch import TopNGroupScopeCustomization
     except ImportError:
         class TopNGroupScopeCustomization(object):
             pass
     try:
-        from .._patch import UsageStatsCustomization
+        from ..._patch import UsageStatsCustomization
     except ImportError:
         class UsageStatsCustomization(object):
             pass
     try:
-        from .._patch import ValueConditionCustomization
+        from ..._patch import ValueConditionCustomization
     except ImportError:
         class ValueConditionCustomization(object):
             pass
     try:
-        from .._patch import WebhookHookInfoCustomization
+        from ..._patch import WebhookHookInfoCustomization
     except ImportError:
         class WebhookHookInfoCustomization(object):
             pass
     try:
-        from .._patch import WebhookHookInfoPatchCustomization
+        from ..._patch import WebhookHookInfoPatchCustomization
     except ImportError:
         class WebhookHookInfoPatchCustomization(object):
             pass
     try:
-        from .._patch import WebhookHookParameterCustomization
+        from ..._patch import WebhookHookParameterCustomization
     except ImportError:
         class WebhookHookParameterCustomization(object):
             pass
     try:
-        from .._patch import WebhookHookParameterPatchCustomization
+        from ..._patch import WebhookHookParameterPatchCustomization
     except ImportError:
         class WebhookHookParameterPatchCustomization(object):
             pass
     try:
-        from .._patch import WholeMetricConfigurationCustomization
+        from ..._patch import WholeMetricConfigurationCustomization
     except ImportError:
         class WholeMetricConfigurationCustomization(object):
             pass
     try:
-        from .._patch import WholeMetricConfigurationPatchCustomization
+        from ..._patch import WholeMetricConfigurationPatchCustomization
     except ImportError:
         class WholeMetricConfigurationPatchCustomization(object):
             pass
@@ -841,7 +841,7 @@ class _AlertingResultQueryGenerated(msrest.serialization.Model):
          "ModifiedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.TimeMode
         """
-        super(AlertingResultQuery, self).__init__(**kwargs)
+        super(_AlertingResultQueryGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.time_mode = kwargs['time_mode']
@@ -885,7 +885,7 @@ class _AlertResultGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(AlertResult, self).__init__(**kwargs)
+        super(_AlertResultGenerated, self).__init__(**kwargs)
         self.alert_id = None
         self.timestamp = None
         self.created_time = None
@@ -926,7 +926,7 @@ class _AlertResultListGenerated(msrest.serialization.Model):
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.AlertResult]
         """
-        super(AlertResultList, self).__init__(**kwargs)
+        super(_AlertResultListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = kwargs['value']
 
@@ -971,7 +971,7 @@ class _AlertSnoozeConditionGenerated(msrest.serialization.Model):
         :keyword only_for_successive: Required. only snooze for successive anomalies.
         :paramtype only_for_successive: bool
         """
-        super(AlertSnoozeCondition, self).__init__(**kwargs)
+        super(_AlertSnoozeConditionGenerated, self).__init__(**kwargs)
         self.auto_snooze = kwargs['auto_snooze']
         self.snooze_scope = kwargs['snooze_scope']
         self.only_for_successive = kwargs['only_for_successive']
@@ -1005,7 +1005,7 @@ class _AnomalyAlertingConfigurationGenerated(msrest.serialization.Model):
     :vartype hook_ids: list[str]
     :ivar metric_alerting_configurations: Required. Anomaly alerting configurations.
     :vartype metric_alerting_configurations:
-     list[~azure.ai.metricsadvisor.models.MetricAlertingConfiguration]
+     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
     """
 
     _validation = {
@@ -1023,7 +1023,7 @@ class _AnomalyAlertingConfigurationGenerated(msrest.serialization.Model):
         'cross_metrics_operator': {'key': 'crossMetricsOperator', 'type': 'str'},
         'split_alert_by_dimensions': {'key': 'splitAlertByDimensions', 'type': '[str]'},
         'hook_ids': {'key': 'hookIds', 'type': '[str]'},
-        'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertingConfiguration]'},
+        'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertConfiguration]'},
     }
 
     def __init__(
@@ -1047,9 +1047,9 @@ class _AnomalyAlertingConfigurationGenerated(msrest.serialization.Model):
         :paramtype hook_ids: list[str]
         :keyword metric_alerting_configurations: Required. Anomaly alerting configurations.
         :paramtype metric_alerting_configurations:
-         list[~azure.ai.metricsadvisor.models.MetricAlertingConfiguration]
+         list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         """
-        super(AnomalyAlertingConfiguration, self).__init__(**kwargs)
+        super(_AnomalyAlertingConfigurationGenerated, self).__init__(**kwargs)
         self.anomaly_alerting_configuration_id = None
         self.name = kwargs['name']
         self.description = kwargs.get('description', "")
@@ -1089,7 +1089,7 @@ class _AnomalyAlertingConfigurationListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(AnomalyAlertingConfigurationList, self).__init__(**kwargs)
+        super(_AnomalyAlertingConfigurationListGenerated, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1114,7 +1114,7 @@ class _AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
     :vartype hook_ids: list[str]
     :ivar metric_alerting_configurations: Anomaly alerting configurations.
     :vartype metric_alerting_configurations:
-     list[~azure.ai.metricsadvisor.models.MetricAlertingConfiguration]
+     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
     """
 
     _validation = {
@@ -1129,7 +1129,7 @@ class _AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
         'cross_metrics_operator': {'key': 'crossMetricsOperator', 'type': 'str'},
         'split_alert_by_dimensions': {'key': 'splitAlertByDimensions', 'type': '[str]'},
         'hook_ids': {'key': 'hookIds', 'type': '[str]'},
-        'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertingConfiguration]'},
+        'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertConfiguration]'},
     }
 
     def __init__(
@@ -1151,9 +1151,9 @@ class _AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
         :paramtype hook_ids: list[str]
         :keyword metric_alerting_configurations: Anomaly alerting configurations.
         :paramtype metric_alerting_configurations:
-         list[~azure.ai.metricsadvisor.models.MetricAlertingConfiguration]
+         list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         """
-        super(AnomalyAlertingConfigurationPatch, self).__init__(**kwargs)
+        super(_AnomalyAlertingConfigurationPatchGenerated, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', "")
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
@@ -1229,7 +1229,7 @@ class _AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
         :paramtype series_override_configurations:
          list[~azure.ai.metricsadvisor.models.SeriesConfiguration]
         """
-        super(AnomalyDetectionConfiguration, self).__init__(**kwargs)
+        super(_AnomalyDetectionConfigurationGenerated, self).__init__(**kwargs)
         self.anomaly_detection_configuration_id = None
         self.name = kwargs['name']
         self.description = kwargs.get('description', "")
@@ -1269,7 +1269,7 @@ class _AnomalyDetectionConfigurationListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(AnomalyDetectionConfigurationList, self).__init__(**kwargs)
+        super(_AnomalyDetectionConfigurationListGenerated, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1327,7 +1327,7 @@ class _AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
         :paramtype series_override_configurations:
          list[~azure.ai.metricsadvisor.models.SeriesConfiguration]
         """
-        super(AnomalyDetectionConfigurationPatch, self).__init__(**kwargs)
+        super(_AnomalyDetectionConfigurationPatchGenerated, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', "")
         self.whole_metric_configuration = kwargs.get('whole_metric_configuration', None)
@@ -1369,7 +1369,7 @@ class _AnomalyDimensionListGenerated(msrest.serialization.Model):
         :keyword value: Required.
         :paramtype value: list[str]
         """
-        super(AnomalyDimensionList, self).__init__(**kwargs)
+        super(_AnomalyDimensionListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = kwargs['value']
 
@@ -1419,7 +1419,7 @@ class _AnomalyDimensionQueryGenerated(msrest.serialization.Model):
         :keyword dimension_filter:
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         """
-        super(AnomalyDimensionQuery, self).__init__(**kwargs)
+        super(_AnomalyDimensionQueryGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.dimension_name = kwargs['dimension_name']
@@ -1486,7 +1486,7 @@ class _MetricFeedbackGenerated(msrest.serialization.Model):
         :keyword dimension_filter: Required.
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
         """
-        super(MetricFeedback, self).__init__(**kwargs)
+        super(_MetricFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = None  # type: Optional[str]
         self.feedback_id = None
         self.created_time = None
@@ -1582,7 +1582,7 @@ class _AnomalyFeedbackGenerated(_MetricFeedbackGenerated):
         :paramtype anomaly_detection_configuration_snapshot:
          ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         """
-        super(AnomalyFeedback, self).__init__(**kwargs)
+        super(_AnomalyFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'Anomaly'  # type: str
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
@@ -1620,7 +1620,7 @@ class _AnomalyFeedbackValueGenerated(msrest.serialization.Model):
          "NotAnomaly".
         :paramtype anomaly_value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
         """
-        super(AnomalyFeedbackValue, self).__init__(**kwargs)
+        super(_AnomalyFeedbackValueGenerated, self).__init__(**kwargs)
         self.anomaly_value = kwargs['anomaly_value']
 
 class AnomalyFeedbackValue(AnomalyFeedbackValueCustomization, _AnomalyFeedbackValueGenerated):
@@ -1670,7 +1670,7 @@ class _AnomalyPropertyGenerated(msrest.serialization.Model):
          "Medium", "High".
         :paramtype anomaly_severity: str or ~azure.ai.metricsadvisor.models.Severity
         """
-        super(AnomalyProperty, self).__init__(**kwargs)
+        super(_AnomalyPropertyGenerated, self).__init__(**kwargs)
         self.anomaly_severity = kwargs['anomaly_severity']
         self.anomaly_status = None
         self.value = None
@@ -1749,7 +1749,7 @@ class _AnomalyResultGenerated(msrest.serialization.Model):
         :keyword property: Required.
         :paramtype property: ~azure.ai.metricsadvisor.models.AnomalyProperty
         """
-        super(AnomalyResult, self).__init__(**kwargs)
+        super(_AnomalyResultGenerated, self).__init__(**kwargs)
         self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
@@ -1794,7 +1794,7 @@ class _AnomalyResultListGenerated(msrest.serialization.Model):
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.AnomalyResult]
         """
-        super(AnomalyResultList, self).__init__(**kwargs)
+        super(_AnomalyResultListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = kwargs['value']
 
@@ -2008,7 +2008,7 @@ class _DataFeedDetailGenerated(msrest.serialization.Model):
         :keyword credential_id: The credential entity id.
         :paramtype credential_id: str
         """
-        super(DataFeedDetail, self).__init__(**kwargs)
+        super(_DataFeedDetailGenerated, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_id = None
         self.data_feed_name = kwargs['data_feed_name']
@@ -2251,7 +2251,7 @@ class _AzureApplicationInsightsDataFeedGenerated(_DataFeedDetailGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameter
         """
-        super(AzureApplicationInsightsDataFeed, self).__init__(**kwargs)
+        super(_AzureApplicationInsightsDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -2421,7 +2421,7 @@ class _DataFeedDetailPatchGenerated(msrest.serialization.Model):
         :keyword credential_id: The credential entity id.
         :paramtype credential_id: str
         """
-        super(DataFeedDetailPatch, self).__init__(**kwargs)
+        super(_DataFeedDetailPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_name = kwargs.get('data_feed_name', None)
         self.data_feed_description = kwargs.get('data_feed_description', None)
@@ -2611,7 +2611,7 @@ class _AzureApplicationInsightsDataFeedPatchGenerated(_DataFeedDetailPatchGenera
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameterPatch
         """
-        super(AzureApplicationInsightsDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureApplicationInsightsDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -2659,7 +2659,7 @@ class _AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
         :keyword query: Required. The statement to query this Azure Application Insights.
         :paramtype query: str
         """
-        super(AzureApplicationInsightsParameter, self).__init__(**kwargs)
+        super(_AzureApplicationInsightsParameterGenerated, self).__init__(**kwargs)
         self.azure_cloud = kwargs.get('azure_cloud', None)
         self.application_id = kwargs.get('application_id', None)
         self.api_key = kwargs.get('api_key', None)
@@ -2703,7 +2703,7 @@ class _AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Mode
         :keyword query: The statement to query this Azure Application Insights.
         :paramtype query: str
         """
-        super(AzureApplicationInsightsParameterPatch, self).__init__(**kwargs)
+        super(_AzureApplicationInsightsParameterPatchGenerated, self).__init__(**kwargs)
         self.azure_cloud = kwargs.get('azure_cloud', None)
         self.application_id = kwargs.get('application_id', None)
         self.api_key = kwargs.get('api_key', None)
@@ -2918,7 +2918,7 @@ class _AzureBlobDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameter
         """
-        super(AzureBlobDataFeed, self).__init__(**kwargs)
+        super(_AzureBlobDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureBlob'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -3086,7 +3086,7 @@ class _AzureBlobDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameterPatch
         """
-        super(AzureBlobDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureBlobDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureBlob'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -3130,7 +3130,7 @@ class _AzureBlobParameterGenerated(msrest.serialization.Model):
         :keyword blob_template: Required. The path template in this container.
         :paramtype blob_template: str
         """
-        super(AzureBlobParameter, self).__init__(**kwargs)
+        super(_AzureBlobParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.container = kwargs['container']
         self.blob_template = kwargs['blob_template']
@@ -3168,7 +3168,7 @@ class _AzureBlobParameterPatchGenerated(msrest.serialization.Model):
         :keyword blob_template: The path template in this container.
         :paramtype blob_template: str
         """
-        super(AzureBlobParameterPatch, self).__init__(**kwargs)
+        super(_AzureBlobParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.container = kwargs.get('container', None)
         self.blob_template = kwargs.get('blob_template', None)
@@ -3382,7 +3382,7 @@ class _AzureCosmosDBDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameter
         """
-        super(AzureCosmosDBDataFeed, self).__init__(**kwargs)
+        super(_AzureCosmosDBDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -3550,7 +3550,7 @@ class _AzureCosmosDBDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameterPatch
         """
-        super(AzureCosmosDBDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureCosmosDBDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -3600,7 +3600,7 @@ class _AzureCosmosDBParameterGenerated(msrest.serialization.Model):
         :keyword collection_id: Required. A collection id in this database.
         :paramtype collection_id: str
         """
-        super(AzureCosmosDBParameter, self).__init__(**kwargs)
+        super(_AzureCosmosDBParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.sql_query = kwargs['sql_query']
         self.database = kwargs['database']
@@ -3644,7 +3644,7 @@ class _AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
         :keyword collection_id: A collection id in this database.
         :paramtype collection_id: str
         """
-        super(AzureCosmosDBParameterPatch, self).__init__(**kwargs)
+        super(_AzureCosmosDBParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.sql_query = kwargs.get('sql_query', None)
         self.database = kwargs.get('database', None)
@@ -3859,7 +3859,7 @@ class _AzureDataExplorerDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(AzureDataExplorerDataFeed, self).__init__(**kwargs)
+        super(_AzureDataExplorerDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -4027,7 +4027,7 @@ class _AzureDataExplorerDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(AzureDataExplorerDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureDataExplorerDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -4242,7 +4242,7 @@ class _AzureDataLakeStorageGen2DataFeedGenerated(_DataFeedDetailGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2Parameter
         """
-        super(AzureDataLakeStorageGen2DataFeed, self).__init__(**kwargs)
+        super(_AzureDataLakeStorageGen2DataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -4412,7 +4412,7 @@ class _AzureDataLakeStorageGen2DataFeedPatchGenerated(_DataFeedDetailPatchGenera
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2ParameterPatch
         """
-        super(AzureDataLakeStorageGen2DataFeedPatch, self).__init__(**kwargs)
+        super(_AzureDataLakeStorageGen2DataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -4467,7 +4467,7 @@ class _AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
         :keyword file_template: Required. The file template.
         :paramtype file_template: str
         """
-        super(AzureDataLakeStorageGen2Parameter, self).__init__(**kwargs)
+        super(_AzureDataLakeStorageGen2ParameterGenerated, self).__init__(**kwargs)
         self.account_name = kwargs.get('account_name', None)
         self.account_key = kwargs.get('account_key', None)
         self.file_system_name = kwargs['file_system_name']
@@ -4517,7 +4517,7 @@ class _AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Mode
         :keyword file_template: The file template.
         :paramtype file_template: str
         """
-        super(AzureDataLakeStorageGen2ParameterPatch, self).__init__(**kwargs)
+        super(_AzureDataLakeStorageGen2ParameterPatchGenerated, self).__init__(**kwargs)
         self.account_name = kwargs.get('account_name', None)
         self.account_key = kwargs.get('account_key', None)
         self.file_system_name = kwargs.get('file_system_name', None)
@@ -4733,7 +4733,7 @@ class _AzureEventHubsDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameter
         """
-        super(AzureEventHubsDataFeed, self).__init__(**kwargs)
+        super(_AzureEventHubsDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -4901,7 +4901,7 @@ class _AzureEventHubsDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameterPatch
         """
-        super(AzureEventHubsDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureEventHubsDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureEventHubs'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -4939,7 +4939,7 @@ class _AzureEventHubsParameterGenerated(msrest.serialization.Model):
         :keyword consumer_group: Required. The consumer group to be used in this data feed.
         :paramtype consumer_group: str
         """
-        super(AzureEventHubsParameter, self).__init__(**kwargs)
+        super(_AzureEventHubsParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.consumer_group = kwargs['consumer_group']
 
@@ -4971,7 +4971,7 @@ class _AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
         :keyword consumer_group: The consumer group to be used in this data feed.
         :paramtype consumer_group: str
         """
-        super(AzureEventHubsParameterPatch, self).__init__(**kwargs)
+        super(_AzureEventHubsParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.consumer_group = kwargs.get('consumer_group', None)
 
@@ -5184,7 +5184,7 @@ class _AzureLogAnalyticsDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameter
         """
-        super(AzureLogAnalyticsDataFeed, self).__init__(**kwargs)
+        super(_AzureLogAnalyticsDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureLogAnalytics'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -5353,7 +5353,7 @@ class _AzureLogAnalyticsDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameterPatch
         """
-        super(AzureLogAnalyticsDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureLogAnalyticsDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureLogAnalytics'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -5411,7 +5411,7 @@ class _AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
          Analytics.
         :paramtype query: str
         """
-        super(AzureLogAnalyticsParameter, self).__init__(**kwargs)
+        super(_AzureLogAnalyticsParameterGenerated, self).__init__(**kwargs)
         self.tenant_id = kwargs.get('tenant_id', None)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
@@ -5463,7 +5463,7 @@ class _AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
         :keyword query: The KQL (Kusto Query Language) query to fetch data from this Log Analytics.
         :paramtype query: str
         """
-        super(AzureLogAnalyticsParameterPatch, self).__init__(**kwargs)
+        super(_AzureLogAnalyticsParameterPatchGenerated, self).__init__(**kwargs)
         self.tenant_id = kwargs.get('tenant_id', None)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
@@ -5524,7 +5524,7 @@ class _DataSourceCredentialGenerated(msrest.serialization.Model):
         :keyword data_source_credential_description: Description of data source credential.
         :paramtype data_source_credential_description: str
         """
-        super(DataSourceCredential, self).__init__(**kwargs)
+        super(_DataSourceCredentialGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = None  # type: Optional[str]
         self.data_source_credential_id = None
         self.data_source_credential_name = kwargs['data_source_credential_name']
@@ -5583,7 +5583,7 @@ class _AzureSQLConnectionStringCredentialGenerated(_DataSourceCredentialGenerate
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParam
         """
-        super(AzureSQLConnectionStringCredential, self).__init__(**kwargs)
+        super(_AzureSQLConnectionStringCredentialGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
         self.parameters = kwargs['parameters']
 
@@ -5634,7 +5634,7 @@ class _DataSourceCredentialPatchGenerated(msrest.serialization.Model):
         :keyword data_source_credential_description: Description of data source credential.
         :paramtype data_source_credential_description: str
         """
-        super(DataSourceCredentialPatch, self).__init__(**kwargs)
+        super(_DataSourceCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = None  # type: Optional[str]
         self.data_source_credential_name = kwargs.get('data_source_credential_name', None)
         self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
@@ -5684,7 +5684,7 @@ class _AzureSQLConnectionStringCredentialPatchGenerated(_DataSourceCredentialPat
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParamPatch
         """
-        super(AzureSQLConnectionStringCredentialPatch, self).__init__(**kwargs)
+        super(_AzureSQLConnectionStringCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
@@ -5711,7 +5711,7 @@ class _AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
         :keyword connection_string: The connection string to access the Azure SQL.
         :paramtype connection_string: str
         """
-        super(AzureSQLConnectionStringParam, self).__init__(**kwargs)
+        super(_AzureSQLConnectionStringParamGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
 
 class AzureSQLConnectionStringParam(AzureSQLConnectionStringParamCustomization, _AzureSQLConnectionStringParamGenerated):
@@ -5737,7 +5737,7 @@ class _AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
         :keyword connection_string: The connection string to access the Azure SQL.
         :paramtype connection_string: str
         """
-        super(AzureSQLConnectionStringParamPatch, self).__init__(**kwargs)
+        super(_AzureSQLConnectionStringParamPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
 
 class AzureSQLConnectionStringParamPatch(AzureSQLConnectionStringParamPatchCustomization, _AzureSQLConnectionStringParamPatchGenerated):
@@ -5949,7 +5949,7 @@ class _AzureTableDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameter
         """
-        super(AzureTableDataFeed, self).__init__(**kwargs)
+        super(_AzureTableDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureTable'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -6117,7 +6117,7 @@ class _AzureTableDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameterPatch
         """
-        super(AzureTableDataFeedPatch, self).__init__(**kwargs)
+        super(_AzureTableDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureTable'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -6163,7 +6163,7 @@ class _AzureTableParameterGenerated(msrest.serialization.Model):
          from Azure Table documents.
         :paramtype query: str
         """
-        super(AzureTableParameter, self).__init__(**kwargs)
+        super(_AzureTableParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.table = kwargs['table']
         self.query = kwargs['query']
@@ -6203,7 +6203,7 @@ class _AzureTableParameterPatchGenerated(msrest.serialization.Model):
          Table documents.
         :paramtype query: str
         """
-        super(AzureTableParameterPatch, self).__init__(**kwargs)
+        super(_AzureTableParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.table = kwargs.get('table', None)
         self.query = kwargs.get('query', None)
@@ -6282,7 +6282,7 @@ class _ChangePointFeedbackGenerated(_MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.ChangePointFeedbackValue
         """
-        super(ChangePointFeedback, self).__init__(**kwargs)
+        super(_ChangePointFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'ChangePoint'  # type: str
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
@@ -6319,7 +6319,7 @@ class _ChangePointFeedbackValueGenerated(msrest.serialization.Model):
          "NotChangePoint".
         :paramtype change_point_value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
         """
-        super(ChangePointFeedbackValue, self).__init__(**kwargs)
+        super(_ChangePointFeedbackValueGenerated, self).__init__(**kwargs)
         self.change_point_value = kwargs['change_point_value']
 
 class ChangePointFeedbackValue(ChangePointFeedbackValueCustomization, _ChangePointFeedbackValueGenerated):
@@ -6383,7 +6383,7 @@ class _ChangeThresholdConditionGenerated(msrest.serialization.Model):
         :keyword suppress_condition: Required.
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
-        super(ChangeThresholdCondition, self).__init__(**kwargs)
+        super(_ChangeThresholdConditionGenerated, self).__init__(**kwargs)
         self.change_percentage = kwargs['change_percentage']
         self.shift_point = kwargs['shift_point']
         self.within_range = kwargs['within_range']
@@ -6441,7 +6441,7 @@ class _ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
         :keyword suppress_condition:
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
-        super(ChangeThresholdConditionPatch, self).__init__(**kwargs)
+        super(_ChangeThresholdConditionPatchGenerated, self).__init__(**kwargs)
         self.change_percentage = kwargs.get('change_percentage', None)
         self.shift_point = kwargs.get('shift_point', None)
         self.within_range = kwargs.get('within_range', None)
@@ -6520,7 +6520,7 @@ class _CommentFeedbackGenerated(_MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.CommentFeedbackValue
         """
-        super(CommentFeedback, self).__init__(**kwargs)
+        super(_CommentFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'Comment'  # type: str
         self.start_time = kwargs.get('start_time', None)
         self.end_time = kwargs.get('end_time', None)
@@ -6555,7 +6555,7 @@ class _CommentFeedbackValueGenerated(msrest.serialization.Model):
         :keyword comment_value: Required. the comment string.
         :paramtype comment_value: str
         """
-        super(CommentFeedbackValue, self).__init__(**kwargs)
+        super(_CommentFeedbackValueGenerated, self).__init__(**kwargs)
         self.comment_value = kwargs['comment_value']
 
 class CommentFeedbackValue(CommentFeedbackValueCustomization, _CommentFeedbackValueGenerated):
@@ -6591,7 +6591,7 @@ class _DataFeedIngestionProgressGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(DataFeedIngestionProgress, self).__init__(**kwargs)
+        super(_DataFeedIngestionProgressGenerated, self).__init__(**kwargs)
         self.latest_success_timestamp = None
         self.latest_active_timestamp = None
 
@@ -6626,7 +6626,7 @@ class _DataFeedListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(DataFeedList, self).__init__(**kwargs)
+        super(_DataFeedListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -6683,7 +6683,7 @@ class _DataLakeGen2SharedKeyCredentialGenerated(_DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParam
         """
-        super(DataLakeGen2SharedKeyCredential, self).__init__(**kwargs)
+        super(_DataLakeGen2SharedKeyCredentialGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
         self.parameters = kwargs['parameters']
 
@@ -6732,7 +6732,7 @@ class _DataLakeGen2SharedKeyCredentialPatchGenerated(_DataSourceCredentialPatchG
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParamPatch
         """
-        super(DataLakeGen2SharedKeyCredentialPatch, self).__init__(**kwargs)
+        super(_DataLakeGen2SharedKeyCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
@@ -6759,7 +6759,7 @@ class _DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
         :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
         :paramtype account_key: str
         """
-        super(DataLakeGen2SharedKeyParam, self).__init__(**kwargs)
+        super(_DataLakeGen2SharedKeyParamGenerated, self).__init__(**kwargs)
         self.account_key = kwargs.get('account_key', None)
 
 class DataLakeGen2SharedKeyParam(DataLakeGen2SharedKeyParamCustomization, _DataLakeGen2SharedKeyParamGenerated):
@@ -6785,7 +6785,7 @@ class _DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
         :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
         :paramtype account_key: str
         """
-        super(DataLakeGen2SharedKeyParamPatch, self).__init__(**kwargs)
+        super(_DataLakeGen2SharedKeyParamPatchGenerated, self).__init__(**kwargs)
         self.account_key = kwargs.get('account_key', None)
 
 class DataLakeGen2SharedKeyParamPatch(DataLakeGen2SharedKeyParamPatchCustomization, _DataLakeGen2SharedKeyParamPatchGenerated):
@@ -6819,7 +6819,7 @@ class _DataSourceCredentialListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(DataSourceCredentialList, self).__init__(**kwargs)
+        super(_DataSourceCredentialListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -6855,7 +6855,7 @@ class _DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
         :keyword severity_filter:
         :paramtype severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
         """
-        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
+        super(_DetectionAnomalyFilterConditionGenerated, self).__init__(**kwargs)
         self.dimension_filter = kwargs.get('dimension_filter', None)
         self.severity_filter = kwargs.get('severity_filter', None)
 
@@ -6899,7 +6899,7 @@ class _DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         """
-        super(DetectionAnomalyResultQuery, self).__init__(**kwargs)
+        super(_DetectionAnomalyResultQueryGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.filter = kwargs.get('filter', None)
@@ -6931,7 +6931,7 @@ class _DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
         :keyword dimension_filter: dimension filter.
         :paramtype dimension_filter: list[~azure.ai.metricsadvisor.models.DimensionGroupIdentity]
         """
-        super(DetectionIncidentFilterCondition, self).__init__(**kwargs)
+        super(_DetectionIncidentFilterConditionGenerated, self).__init__(**kwargs)
         self.dimension_filter = kwargs.get('dimension_filter', None)
 
 class DetectionIncidentFilterCondition(DetectionIncidentFilterConditionCustomization, _DetectionIncidentFilterConditionGenerated):
@@ -6974,7 +6974,7 @@ class _DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         """
-        super(DetectionIncidentResultQuery, self).__init__(**kwargs)
+        super(_DetectionIncidentResultQueryGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.filter = kwargs.get('filter', None)
@@ -7026,7 +7026,7 @@ class _DetectionSeriesQueryGenerated(msrest.serialization.Model):
          single time series instead of a group of time series. The maximum number of series is 100.
         :paramtype series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
         """
-        super(DetectionSeriesQuery, self).__init__(**kwargs)
+        super(_DetectionSeriesQueryGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.series = kwargs['series']
@@ -7066,7 +7066,7 @@ class _DimensionGenerated(msrest.serialization.Model):
         :keyword dimension_display_name: dimension display name.
         :paramtype dimension_display_name: str
         """
-        super(Dimension, self).__init__(**kwargs)
+        super(_DimensionGenerated, self).__init__(**kwargs)
         self.dimension_name = kwargs['dimension_name']
         self.dimension_display_name = kwargs.get('dimension_display_name', None)
 
@@ -7127,7 +7127,7 @@ class _DimensionGroupConfigurationGenerated(msrest.serialization.Model):
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
-        super(DimensionGroupConfiguration, self).__init__(**kwargs)
+        super(_DimensionGroupConfigurationGenerated, self).__init__(**kwargs)
         self.group = kwargs['group']
         self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
@@ -7163,7 +7163,7 @@ class _DimensionGroupIdentityGenerated(msrest.serialization.Model):
         :keyword dimension: Required. dimension specified for series group.
         :paramtype dimension: dict[str, str]
         """
-        super(DimensionGroupIdentity, self).__init__(**kwargs)
+        super(_DimensionGroupIdentityGenerated, self).__init__(**kwargs)
         self.dimension = kwargs['dimension']
 
 class DimensionGroupIdentity(DimensionGroupIdentityCustomization, _DimensionGroupIdentityGenerated):
@@ -7229,7 +7229,7 @@ class _HookInfoGenerated(msrest.serialization.Model):
         :keyword admins: hook administrators.
         :paramtype admins: list[str]
         """
-        super(HookInfo, self).__init__(**kwargs)
+        super(_HookInfoGenerated, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
         self.hook_id = None
         self.hook_name = kwargs['hook_name']
@@ -7299,7 +7299,7 @@ class _EmailHookInfoGenerated(_HookInfoGenerated):
         :keyword hook_parameter: Required.
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
         """
-        super(EmailHookInfo, self).__init__(**kwargs)
+        super(_EmailHookInfoGenerated, self).__init__(**kwargs)
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = kwargs['hook_parameter']
 
@@ -7359,7 +7359,7 @@ class _HookInfoPatchGenerated(msrest.serialization.Model):
         :keyword admins: hook administrators.
         :paramtype admins: list[str]
         """
-        super(HookInfoPatch, self).__init__(**kwargs)
+        super(_HookInfoPatchGenerated, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
         self.hook_name = kwargs.get('hook_name', None)
         self.description = kwargs.get('description', None)
@@ -7420,7 +7420,7 @@ class _EmailHookInfoPatchGenerated(_HookInfoPatchGenerated):
         :keyword hook_parameter:
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
         """
-        super(EmailHookInfoPatch, self).__init__(**kwargs)
+        super(_EmailHookInfoPatchGenerated, self).__init__(**kwargs)
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = kwargs.get('hook_parameter', None)
 
@@ -7453,7 +7453,7 @@ class _EmailHookParameterGenerated(msrest.serialization.Model):
         :keyword to_list: Required. Email TO: list.
         :paramtype to_list: list[str]
         """
-        super(EmailHookParameter, self).__init__(**kwargs)
+        super(_EmailHookParameterGenerated, self).__init__(**kwargs)
         self.to_list = kwargs['to_list']
 
 class EmailHookParameter(EmailHookParameterCustomization, _EmailHookParameterGenerated):
@@ -7483,7 +7483,7 @@ class _EmailHookParameterPatchGenerated(msrest.serialization.Model):
         :keyword to_list: Email TO: list.
         :paramtype to_list: list[str]
         """
-        super(EmailHookParameterPatch, self).__init__(**kwargs)
+        super(_EmailHookParameterPatchGenerated, self).__init__(**kwargs)
         self.to_list = kwargs.get('to_list', None)
 
 class EmailHookParameterPatch(EmailHookParameterPatchCustomization, _EmailHookParameterPatchGenerated):
@@ -7521,7 +7521,7 @@ class _EnrichmentStatusGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(EnrichmentStatus, self).__init__(**kwargs)
+        super(_EnrichmentStatusGenerated, self).__init__(**kwargs)
         self.timestamp = None
         self.status = None
         self.message = None
@@ -7557,7 +7557,7 @@ class _EnrichmentStatusListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(EnrichmentStatusList, self).__init__(**kwargs)
+        super(_EnrichmentStatusListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -7596,7 +7596,7 @@ class _EnrichmentStatusQueryOptionGenerated(msrest.serialization.Model):
         :keyword end_time: Required. the end point of time range to query anomaly detection status.
         :paramtype end_time: ~datetime.datetime
         """
-        super(EnrichmentStatusQueryOption, self).__init__(**kwargs)
+        super(_EnrichmentStatusQueryOptionGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
 
@@ -7628,7 +7628,7 @@ class _ErrorCodeGenerated(msrest.serialization.Model):
         :keyword code:
         :paramtype code: str
         """
-        super(ErrorCode, self).__init__(**kwargs)
+        super(_ErrorCodeGenerated, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
         self.code = kwargs.get('code', None)
 
@@ -7661,7 +7661,7 @@ class _FeedbackDimensionFilterGenerated(msrest.serialization.Model):
         :keyword dimension: Required. metric dimension filter.
         :paramtype dimension: dict[str, str]
         """
-        super(FeedbackDimensionFilter, self).__init__(**kwargs)
+        super(_FeedbackDimensionFilterGenerated, self).__init__(**kwargs)
         self.dimension = kwargs['dimension']
 
 class FeedbackDimensionFilter(FeedbackDimensionFilterCustomization, _FeedbackDimensionFilterGenerated):
@@ -7721,7 +7721,7 @@ class _HardThresholdConditionGenerated(msrest.serialization.Model):
         :keyword suppress_condition: Required.
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
-        super(HardThresholdCondition, self).__init__(**kwargs)
+        super(_HardThresholdConditionGenerated, self).__init__(**kwargs)
         self.lower_bound = kwargs.get('lower_bound', None)
         self.upper_bound = kwargs.get('upper_bound', None)
         self.anomaly_detector_direction = kwargs['anomaly_detector_direction']
@@ -7777,7 +7777,7 @@ class _HardThresholdConditionPatchGenerated(msrest.serialization.Model):
         :keyword suppress_condition:
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
-        super(HardThresholdConditionPatch, self).__init__(**kwargs)
+        super(_HardThresholdConditionPatchGenerated, self).__init__(**kwargs)
         self.lower_bound = kwargs.get('lower_bound', None)
         self.upper_bound = kwargs.get('upper_bound', None)
         self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
@@ -7814,7 +7814,7 @@ class _HookListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(HookList, self).__init__(**kwargs)
+        super(_HookListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -7865,7 +7865,7 @@ class _IncidentPropertyGenerated(msrest.serialization.Model):
          values include: "Low", "Medium", "High".
         :paramtype max_severity: str or ~azure.ai.metricsadvisor.models.Severity
         """
-        super(IncidentProperty, self).__init__(**kwargs)
+        super(_IncidentPropertyGenerated, self).__init__(**kwargs)
         self.max_severity = kwargs['max_severity']
         self.incident_status = None
         self.value_of_root_node = None
@@ -7944,7 +7944,7 @@ class _IncidentResultGenerated(msrest.serialization.Model):
         :keyword property: Required.
         :paramtype property: ~azure.ai.metricsadvisor.models.IncidentProperty
         """
-        super(IncidentResult, self).__init__(**kwargs)
+        super(_IncidentResultGenerated, self).__init__(**kwargs)
         self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
@@ -7989,7 +7989,7 @@ class _IncidentResultListGenerated(msrest.serialization.Model):
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.IncidentResult]
         """
-        super(IncidentResultList, self).__init__(**kwargs)
+        super(_IncidentResultListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = kwargs['value']
 
@@ -8202,7 +8202,7 @@ class _InfluxDBDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameter
         """
-        super(InfluxDBDataFeed, self).__init__(**kwargs)
+        super(_InfluxDBDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'InfluxDB'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -8370,7 +8370,7 @@ class _InfluxDBDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameterPatch
         """
-        super(InfluxDBDataFeedPatch, self).__init__(**kwargs)
+        super(_InfluxDBDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'InfluxDB'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -8423,7 +8423,7 @@ class _InfluxDBParameterGenerated(msrest.serialization.Model):
         :keyword query: Required. The script to query this database.
         :paramtype query: str
         """
-        super(InfluxDBParameter, self).__init__(**kwargs)
+        super(_InfluxDBParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.database = kwargs.get('database', None)
         self.user_name = kwargs.get('user_name', None)
@@ -8473,7 +8473,7 @@ class _InfluxDBParameterPatchGenerated(msrest.serialization.Model):
         :keyword query: The script to query this database.
         :paramtype query: str
         """
-        super(InfluxDBParameterPatch, self).__init__(**kwargs)
+        super(_InfluxDBParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.database = kwargs.get('database', None)
         self.user_name = kwargs.get('user_name', None)
@@ -8515,7 +8515,7 @@ class _IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
         :keyword end_time: Required. the end point of time range to reset data ingestion status.
         :paramtype end_time: ~datetime.datetime
         """
-        super(IngestionProgressResetOptions, self).__init__(**kwargs)
+        super(_IngestionProgressResetOptionsGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
 
@@ -8555,7 +8555,7 @@ class _IngestionStatusGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(IngestionStatus, self).__init__(**kwargs)
+        super(_IngestionStatusGenerated, self).__init__(**kwargs)
         self.timestamp = None
         self.status = None
         self.message = None
@@ -8591,7 +8591,7 @@ class _IngestionStatusListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(IngestionStatusList, self).__init__(**kwargs)
+        super(_IngestionStatusListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -8630,7 +8630,7 @@ class _IngestionStatusQueryOptionsGenerated(msrest.serialization.Model):
         :keyword end_time: Required. the end point of time range to query data ingestion status.
         :paramtype end_time: ~datetime.datetime
         """
-        super(IngestionStatusQueryOptions, self).__init__(**kwargs)
+        super(_IngestionStatusQueryOptionsGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
 
@@ -8680,7 +8680,7 @@ class _MetricGenerated(msrest.serialization.Model):
         :keyword metric_description: metric description.
         :paramtype metric_description: str
         """
-        super(Metric, self).__init__(**kwargs)
+        super(_MetricGenerated, self).__init__(**kwargs)
         self.metric_id = None
         self.metric_name = kwargs['metric_name']
         self.metric_display_name = kwargs.get('metric_display_name', None)
@@ -8690,8 +8690,8 @@ class Metric(MetricCustomization, _MetricGenerated):
     pass
 
 
-class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
-    """MetricAlertingConfiguration.
+class _MetricAlertConfigurationGenerated(msrest.serialization.Model):
+    """MetricAlertConfiguration.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8755,7 +8755,7 @@ class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
         :keyword value_filter:
         :paramtype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
         """
-        super(MetricAlertingConfiguration, self).__init__(**kwargs)
+        super(_MetricAlertConfigurationGenerated, self).__init__(**kwargs)
         self.anomaly_detection_configuration_id = kwargs['anomaly_detection_configuration_id']
         self.anomaly_scope_type = kwargs['anomaly_scope_type']
         self.negation_operation = kwargs.get('negation_operation', False)
@@ -8765,7 +8765,7 @@ class _MetricAlertingConfigurationGenerated(msrest.serialization.Model):
         self.snooze_filter = kwargs.get('snooze_filter', None)
         self.value_filter = kwargs.get('value_filter', None)
 
-class MetricAlertingConfiguration(MetricAlertingConfigurationCustomization, _MetricAlertingConfigurationGenerated):
+class MetricAlertConfiguration(MetricAlertConfigurationCustomization, _MetricAlertConfigurationGenerated):
     pass
 
 
@@ -8801,7 +8801,7 @@ class _MetricDataItemGenerated(msrest.serialization.Model):
         :keyword id:
         :paramtype id: ~azure.ai.metricsadvisor.models.MetricSeriesItem
         """
-        super(MetricDataItem, self).__init__(**kwargs)
+        super(_MetricDataItemGenerated, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.timestamp_list = None
         self.value_list = None
@@ -8833,7 +8833,7 @@ class _MetricDataListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(MetricDataList, self).__init__(**kwargs)
+        super(_MetricDataListGenerated, self).__init__(**kwargs)
         self.value = None
 
 class MetricDataList(MetricDataListCustomization, _MetricDataListGenerated):
@@ -8881,7 +8881,7 @@ class _MetricDataQueryOptionsGenerated(msrest.serialization.Model):
         :keyword series: Required. query specific series. The maximum number of series is 100.
         :paramtype series: list[dict[str, str]]
         """
-        super(MetricDataQueryOptions, self).__init__(**kwargs)
+        super(_MetricDataQueryOptionsGenerated, self).__init__(**kwargs)
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.series = kwargs['series']
@@ -8917,7 +8917,7 @@ class _MetricDimensionListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(MetricDimensionList, self).__init__(**kwargs)
+        super(_MetricDimensionListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -8955,7 +8955,7 @@ class _MetricDimensionQueryOptionsGenerated(msrest.serialization.Model):
         :keyword dimension_value_filter: dimension value to be filtered.
         :paramtype dimension_value_filter: str
         """
-        super(MetricDimensionQueryOptions, self).__init__(**kwargs)
+        super(_MetricDimensionQueryOptionsGenerated, self).__init__(**kwargs)
         self.dimension_name = kwargs['dimension_name']
         self.dimension_value_filter = kwargs.get('dimension_value_filter', None)
 
@@ -9017,7 +9017,7 @@ class _MetricFeedbackFilterGenerated(msrest.serialization.Model):
          "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         """
-        super(MetricFeedbackFilter, self).__init__(**kwargs)
+        super(_MetricFeedbackFilterGenerated, self).__init__(**kwargs)
         self.metric_id = kwargs['metric_id']
         self.dimension_filter = kwargs.get('dimension_filter', None)
         self.feedback_type = kwargs.get('feedback_type', None)
@@ -9056,7 +9056,7 @@ class _MetricFeedbackListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(MetricFeedbackList, self).__init__(**kwargs)
+        super(_MetricFeedbackListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -9091,7 +9091,7 @@ class _MetricSeriesItemGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(MetricSeriesItem, self).__init__(**kwargs)
+        super(_MetricSeriesItemGenerated, self).__init__(**kwargs)
         self.metric_id = None
         self.dimension = None
 
@@ -9126,7 +9126,7 @@ class _MetricSeriesListGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(MetricSeriesList, self).__init__(**kwargs)
+        super(_MetricSeriesListGenerated, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
@@ -9166,7 +9166,7 @@ class _MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
         :keyword dimension_filter: filter specific dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         """
-        super(MetricSeriesQueryOptions, self).__init__(**kwargs)
+        super(_MetricSeriesQueryOptionsGenerated, self).__init__(**kwargs)
         self.active_since = kwargs['active_since']
         self.dimension_filter = kwargs.get('dimension_filter', None)
 
@@ -9379,7 +9379,7 @@ class _MongoDBDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameter
         """
-        super(MongoDBDataFeed, self).__init__(**kwargs)
+        super(_MongoDBDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MongoDB'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -9547,7 +9547,7 @@ class _MongoDBDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameterPatch
         """
-        super(MongoDBDataFeedPatch, self).__init__(**kwargs)
+        super(_MongoDBDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MongoDB'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -9590,7 +9590,7 @@ class _MongoDBParameterGenerated(msrest.serialization.Model):
         :keyword command: Required. The script to query this database.
         :paramtype command: str
         """
-        super(MongoDBParameter, self).__init__(**kwargs)
+        super(_MongoDBParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.database = kwargs.get('database', None)
         self.command = kwargs['command']
@@ -9628,7 +9628,7 @@ class _MongoDBParameterPatchGenerated(msrest.serialization.Model):
         :keyword command: The script to query this database.
         :paramtype command: str
         """
-        super(MongoDBParameterPatch, self).__init__(**kwargs)
+        super(_MongoDBParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.database = kwargs.get('database', None)
         self.command = kwargs.get('command', None)
@@ -9842,7 +9842,7 @@ class _MySqlDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(MySqlDataFeed, self).__init__(**kwargs)
+        super(_MySqlDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MySql'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -10010,7 +10010,7 @@ class _MySqlDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(MySqlDataFeedPatch, self).__init__(**kwargs)
+        super(_MySqlDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MySql'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -10074,7 +10074,7 @@ class _PeriodFeedbackGenerated(_MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.PeriodFeedbackValue
         """
-        super(PeriodFeedback, self).__init__(**kwargs)
+        super(_PeriodFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'Period'  # type: str
         self.value = kwargs['value']
 
@@ -10117,7 +10117,7 @@ class _PeriodFeedbackValueGenerated(msrest.serialization.Model):
          to 0.
         :paramtype period_value: int
         """
-        super(PeriodFeedbackValue, self).__init__(**kwargs)
+        super(_PeriodFeedbackValueGenerated, self).__init__(**kwargs)
         self.period_type = kwargs['period_type']
         self.period_value = kwargs['period_value']
 
@@ -10330,7 +10330,7 @@ class _PostgreSqlDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(PostgreSqlDataFeed, self).__init__(**kwargs)
+        super(_PostgreSqlDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'PostgreSql'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -10498,7 +10498,7 @@ class _PostgreSqlDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(PostgreSqlDataFeedPatch, self).__init__(**kwargs)
+        super(_PostgreSqlDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'PostgreSql'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -10549,7 +10549,7 @@ class _RootCauseGenerated(msrest.serialization.Model):
         :keyword description: Required. description of the root cause.
         :paramtype description: str
         """
-        super(RootCause, self).__init__(**kwargs)
+        super(_RootCauseGenerated, self).__init__(**kwargs)
         self.root_cause = kwargs['root_cause']
         self.path = kwargs['path']
         self.score = kwargs['score']
@@ -10584,7 +10584,7 @@ class _RootCauseListGenerated(msrest.serialization.Model):
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.RootCause]
         """
-        super(RootCauseList, self).__init__(**kwargs)
+        super(_RootCauseListGenerated, self).__init__(**kwargs)
         self.value = kwargs['value']
 
 class RootCauseList(RootCauseListCustomization, _RootCauseListGenerated):
@@ -10644,7 +10644,7 @@ class _SeriesConfigurationGenerated(msrest.serialization.Model):
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
-        super(SeriesConfiguration, self).__init__(**kwargs)
+        super(_SeriesConfigurationGenerated, self).__init__(**kwargs)
         self.series = kwargs['series']
         self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
@@ -10680,7 +10680,7 @@ class _SeriesIdentityGenerated(msrest.serialization.Model):
         :keyword dimension: Required. dimension specified for series.
         :paramtype dimension: dict[str, str]
         """
-        super(SeriesIdentity, self).__init__(**kwargs)
+        super(_SeriesIdentityGenerated, self).__init__(**kwargs)
         self.dimension = kwargs['dimension']
 
 class SeriesIdentity(SeriesIdentityCustomization, _SeriesIdentityGenerated):
@@ -10756,7 +10756,7 @@ class _SeriesResultGenerated(msrest.serialization.Model):
          detector.
         :paramtype upper_boundary_list: list[float]
         """
-        super(SeriesResult, self).__init__(**kwargs)
+        super(_SeriesResultGenerated, self).__init__(**kwargs)
         self.series = kwargs['series']
         self.timestamp_list = kwargs['timestamp_list']
         self.value_list = kwargs['value_list']
@@ -10795,7 +10795,7 @@ class _SeriesResultListGenerated(msrest.serialization.Model):
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.SeriesResult]
         """
-        super(SeriesResultList, self).__init__(**kwargs)
+        super(_SeriesResultListGenerated, self).__init__(**kwargs)
         self.value = kwargs['value']
 
 class SeriesResultList(SeriesResultListCustomization, _SeriesResultListGenerated):
@@ -10851,7 +10851,7 @@ class _ServicePrincipalCredentialGenerated(_DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParam
         """
-        super(ServicePrincipalCredential, self).__init__(**kwargs)
+        super(_ServicePrincipalCredentialGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
         self.parameters = kwargs['parameters']
 
@@ -10900,7 +10900,7 @@ class _ServicePrincipalCredentialPatchGenerated(_DataSourceCredentialPatchGenera
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParamPatch
         """
-        super(ServicePrincipalCredentialPatch, self).__init__(**kwargs)
+        super(_ServicePrincipalCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
@@ -10957,7 +10957,7 @@ class _ServicePrincipalInKVCredentialGenerated(_DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParam
         """
-        super(ServicePrincipalInKVCredential, self).__init__(**kwargs)
+        super(_ServicePrincipalInKVCredentialGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
         self.parameters = kwargs['parameters']
 
@@ -11006,7 +11006,7 @@ class _ServicePrincipalInKVCredentialPatchGenerated(_DataSourceCredentialPatchGe
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParamPatch
         """
-        super(ServicePrincipalInKVCredentialPatch, self).__init__(**kwargs)
+        super(_ServicePrincipalInKVCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
         self.parameters = kwargs.get('parameters', None)
 
@@ -11073,7 +11073,7 @@ class _ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
         :keyword tenant_id: Required. The tenant id of your service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalInKVParam, self).__init__(**kwargs)
+        super(_ServicePrincipalInKVParamGenerated, self).__init__(**kwargs)
         self.key_vault_endpoint = kwargs['key_vault_endpoint']
         self.key_vault_client_id = kwargs['key_vault_client_id']
         self.key_vault_client_secret = kwargs.get('key_vault_client_secret', None)
@@ -11133,7 +11133,7 @@ class _ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
         :keyword tenant_id: The tenant id of your service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalInKVParamPatch, self).__init__(**kwargs)
+        super(_ServicePrincipalInKVParamPatchGenerated, self).__init__(**kwargs)
         self.key_vault_endpoint = kwargs.get('key_vault_endpoint', None)
         self.key_vault_client_id = kwargs.get('key_vault_client_id', None)
         self.key_vault_client_secret = kwargs.get('key_vault_client_secret', None)
@@ -11181,7 +11181,7 @@ class _ServicePrincipalParamGenerated(msrest.serialization.Model):
         :keyword tenant_id: Required. The tenant id of the service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalParam, self).__init__(**kwargs)
+        super(_ServicePrincipalParamGenerated, self).__init__(**kwargs)
         self.client_id = kwargs['client_id']
         self.client_secret = kwargs.get('client_secret', None)
         self.tenant_id = kwargs['tenant_id']
@@ -11219,7 +11219,7 @@ class _ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
         :keyword tenant_id: The tenant id of the service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalParamPatch, self).__init__(**kwargs)
+        super(_ServicePrincipalParamPatchGenerated, self).__init__(**kwargs)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
         self.tenant_id = kwargs.get('tenant_id', None)
@@ -11263,7 +11263,7 @@ class _SeverityConditionGenerated(msrest.serialization.Model):
          "Medium", "High".
         :paramtype max_alert_severity: str or ~azure.ai.metricsadvisor.models.Severity
         """
-        super(SeverityCondition, self).__init__(**kwargs)
+        super(_SeverityConditionGenerated, self).__init__(**kwargs)
         self.min_alert_severity = kwargs['min_alert_severity']
         self.max_alert_severity = kwargs['max_alert_severity']
 
@@ -11302,7 +11302,7 @@ class _SeverityFilterConditionGenerated(msrest.serialization.Model):
         :keyword max: Required. max severity. Possible values include: "Low", "Medium", "High".
         :paramtype max: str or ~azure.ai.metricsadvisor.models.Severity
         """
-        super(SeverityFilterCondition, self).__init__(**kwargs)
+        super(_SeverityFilterConditionGenerated, self).__init__(**kwargs)
         self.min = kwargs['min']
         self.max = kwargs['max']
 
@@ -11351,7 +11351,7 @@ class _SmartDetectionConditionGenerated(msrest.serialization.Model):
         :keyword suppress_condition: Required.
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
-        super(SmartDetectionCondition, self).__init__(**kwargs)
+        super(_SmartDetectionConditionGenerated, self).__init__(**kwargs)
         self.sensitivity = kwargs['sensitivity']
         self.anomaly_detector_direction = kwargs['anomaly_detector_direction']
         self.suppress_condition = kwargs['suppress_condition']
@@ -11393,7 +11393,7 @@ class _SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
         :keyword suppress_condition:
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
-        super(SmartDetectionConditionPatch, self).__init__(**kwargs)
+        super(_SmartDetectionConditionPatchGenerated, self).__init__(**kwargs)
         self.sensitivity = kwargs.get('sensitivity', None)
         self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
         self.suppress_condition = kwargs.get('suppress_condition', None)
@@ -11607,7 +11607,7 @@ class _SQLServerDataFeedGenerated(_DataFeedDetailGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(SQLServerDataFeed, self).__init__(**kwargs)
+        super(_SQLServerDataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = 'SqlServer'  # type: str
         self.data_source_parameter = kwargs['data_source_parameter']
 
@@ -11775,7 +11775,7 @@ class _SQLServerDataFeedPatchGenerated(_DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(SQLServerDataFeedPatch, self).__init__(**kwargs)
+        super(_SQLServerDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'SqlServer'  # type: str
         self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
@@ -11813,7 +11813,7 @@ class _SqlSourceParameterGenerated(msrest.serialization.Model):
         :keyword query: Required. The script to query this database.
         :paramtype query: str
         """
-        super(SqlSourceParameter, self).__init__(**kwargs)
+        super(_SqlSourceParameterGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.query = kwargs['query']
 
@@ -11845,7 +11845,7 @@ class _SQLSourceParameterPatchGenerated(msrest.serialization.Model):
         :keyword query: The script to query this database.
         :paramtype query: str
         """
-        super(SQLSourceParameterPatch, self).__init__(**kwargs)
+        super(_SQLSourceParameterPatchGenerated, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
         self.query = kwargs.get('query', None)
 
@@ -11884,7 +11884,7 @@ class _SuppressConditionGenerated(msrest.serialization.Model):
         :keyword min_ratio: Required. min point ratio, value range : (0, 100].
         :paramtype min_ratio: float
         """
-        super(SuppressCondition, self).__init__(**kwargs)
+        super(_SuppressConditionGenerated, self).__init__(**kwargs)
         self.min_number = kwargs['min_number']
         self.min_ratio = kwargs['min_ratio']
 
@@ -11916,7 +11916,7 @@ class _SuppressConditionPatchGenerated(msrest.serialization.Model):
         :keyword min_ratio: min point ratio, value range : (0, 100].
         :paramtype min_ratio: float
         """
-        super(SuppressConditionPatch, self).__init__(**kwargs)
+        super(_SuppressConditionPatchGenerated, self).__init__(**kwargs)
         self.min_number = kwargs.get('min_number', None)
         self.min_ratio = kwargs.get('min_ratio', None)
 
@@ -11965,7 +11965,7 @@ class _TopNGroupScopeGenerated(msrest.serialization.Model):
          should be less than or equal to period.
         :paramtype min_top_count: int
         """
-        super(TopNGroupScope, self).__init__(**kwargs)
+        super(_TopNGroupScopeGenerated, self).__init__(**kwargs)
         self.top = kwargs['top']
         self.period = kwargs['period']
         self.min_top_count = kwargs['min_top_count']
@@ -12013,7 +12013,7 @@ class _UsageStatsGenerated(msrest.serialization.Model):
     ):
         """
         """
-        super(UsageStats, self).__init__(**kwargs)
+        super(_UsageStatsGenerated, self).__init__(**kwargs)
         self.timestamp = None
         self.active_series_count = None
         self.all_series_count = None
@@ -12092,7 +12092,7 @@ class _ValueConditionGenerated(msrest.serialization.Model):
          should be specified only when using other metric to filter.
         :paramtype trigger_for_missing: bool
         """
-        super(ValueCondition, self).__init__(**kwargs)
+        super(_ValueConditionGenerated, self).__init__(**kwargs)
         self.lower = kwargs.get('lower', None)
         self.upper = kwargs.get('upper', None)
         self.direction = kwargs['direction']
@@ -12162,7 +12162,7 @@ class _WebhookHookInfoGenerated(_HookInfoGenerated):
         :keyword hook_parameter: Required.
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
         """
-        super(WebhookHookInfo, self).__init__(**kwargs)
+        super(_WebhookHookInfoGenerated, self).__init__(**kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = kwargs['hook_parameter']
 
@@ -12220,7 +12220,7 @@ class _WebhookHookInfoPatchGenerated(_HookInfoPatchGenerated):
         :keyword hook_parameter:
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
         """
-        super(WebhookHookInfoPatch, self).__init__(**kwargs)
+        super(_WebhookHookInfoPatchGenerated, self).__init__(**kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = kwargs.get('hook_parameter', None)
 
@@ -12284,7 +12284,7 @@ class _WebhookHookParameterGenerated(msrest.serialization.Model):
          read documents for more informations.
         :paramtype certificate_password: str
         """
-        super(WebhookHookParameter, self).__init__(**kwargs)
+        super(_WebhookHookParameterGenerated, self).__init__(**kwargs)
         self.endpoint = kwargs['endpoint']
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
@@ -12342,7 +12342,7 @@ class _WebhookHookParameterPatchGenerated(msrest.serialization.Model):
         :keyword certificate_password: The certificate password, if using client certificate.
         :paramtype certificate_password: str
         """
-        super(WebhookHookParameterPatch, self).__init__(**kwargs)
+        super(_WebhookHookParameterPatchGenerated, self).__init__(**kwargs)
         self.endpoint = kwargs.get('endpoint', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
@@ -12396,7 +12396,7 @@ class _WholeMetricConfigurationGenerated(msrest.serialization.Model):
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
-        super(WholeMetricConfiguration, self).__init__(**kwargs)
+        super(_WholeMetricConfigurationGenerated, self).__init__(**kwargs)
         self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
         self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
@@ -12453,7 +12453,7 @@ class _WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
         :paramtype change_threshold_condition:
          ~azure.ai.metricsadvisor.models.ChangeThresholdConditionPatch
         """
-        super(WholeMetricConfigurationPatch, self).__init__(**kwargs)
+        super(_WholeMetricConfigurationPatchGenerated, self).__init__(**kwargs)
         self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
         self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
