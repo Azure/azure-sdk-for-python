@@ -333,7 +333,7 @@ class HttpResponseError(AzureError):
             pass
         return None
 
-    def __str__(self) -> str:
+    def __str__(self):
         retval = super(HttpResponseError, self).__str__()
         try:
             body = self.response.text()
