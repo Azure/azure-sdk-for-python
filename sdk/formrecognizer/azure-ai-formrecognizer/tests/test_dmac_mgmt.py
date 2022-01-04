@@ -7,6 +7,7 @@
 import functools
 import pytest
 import logging
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
@@ -35,7 +36,8 @@ class TestManagement(FormRecognizerTest):
         assert info
 
     @FormRecognizerPreparer()
-    def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             result = client.get_account_info()
@@ -66,6 +68,7 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
     def test_account_info(self, client):
         info = client.get_account_info()
 
@@ -74,6 +77,7 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
     def test_get_model_prebuilt(self, client):
         model = client.get_model("prebuilt-invoice")
         assert model.model_id == "prebuilt-invoice"
@@ -88,8 +92,10 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url):
-
+    @recorded_by_proxy
+    def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
@@ -117,6 +123,7 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
     def test_get_list_operations(self, client):
         operations = client.list_operations()
         successful_op = None
@@ -175,7 +182,9 @@ class TestManagement(FormRecognizerTest):
             client.get_operation(None)
 
     @FormRecognizerPreparer()
-    def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()  
         transport = RequestsTransport()
         dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 

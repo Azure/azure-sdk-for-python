@@ -7,6 +7,7 @@
 import pytest
 import functools
 from datetime import date, time
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult
@@ -19,12 +20,13 @@ from preparers import FormRecognizerPreparer
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
-class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
+class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client):
-
+        set_bodiless_matcher()
         poller = client.begin_analyze_document_from_url("prebuilt-businessCard", self.business_card_multipage_url_pdf)
         result = poller.result()
 
@@ -81,7 +83,9 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_jpg_passport(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg_passport)
 
         result = poller.result()
@@ -101,7 +105,9 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_jpg(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg)
 
         result = poller.result()
@@ -121,7 +127,9 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_invoice_tiff(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document_from_url(model="prebuilt-invoice", document_url=self.invoice_url_tiff)
 
         result = poller.result()
@@ -140,7 +148,9 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
     @FormRecognizerPreparer()
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -162,40 +172,53 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipts_encoded_url(self, client):
+        set_bodiless_matcher()
         try:
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://fakeuri.com/blank%20space")
         except HttpResponseError as e:
             assert "https://fakeuri.com/blank%20space" in  e.response.request.body
 
+    @pytest.mark.skip("TODO check if the error changed")
     @FormRecognizerPreparer()
-    def test_receipt_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with self.assertRaises(ServiceRequestError):
+    @recorded_by_proxy
+    def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
     @FormRecognizerPreparer()
-    def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, **kwargs):
+        set_bodiless_matcher()
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        set_bodiless_matcher()
+        with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_url_pass_stream(self, client):
+        set_bodiless_matcher()
         with open(self.receipt_png, "rb") as receipt:
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_url_transform_jpg(self, client):
+        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -231,8 +254,10 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_url_png(self, client):
-
+        set_bodiless_matcher()
+        
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_png)
 
         result = poller.result()
@@ -253,8 +278,10 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_multipage_url(self, client):
-
+        set_bodiless_matcher()
+        
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.multipage_receipt_url_pdf)
         result = poller.result()
 
@@ -288,8 +315,10 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_receipt_multipage_transform_url(self, client):
-
+    @recorded_by_proxy
+    def test_receipt_multipage_transform_url(self, client, **kwargs):
+        set_bodiless_matcher()
+        
         responses = []
 
         def callback(raw_response, _, headers):
@@ -337,7 +366,9 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_locale_specified(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="en-IN")
         assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
         result = poller.result()
@@ -345,14 +376,18 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_receipt_locale_error(self, client):
+        set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, pages="1")
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()

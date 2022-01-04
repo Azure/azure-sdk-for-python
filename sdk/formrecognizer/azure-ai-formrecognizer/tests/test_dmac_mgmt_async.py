@@ -6,6 +6,8 @@
 
 import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
@@ -36,7 +38,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         assert info
 
     @FormRecognizerPreparer()
-    async def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             async with client:
@@ -72,6 +75,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
     async def test_account_info(self, client):
         async with client:
             info = await client.get_account_info()
@@ -81,6 +85,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
     async def test_get_model_prebuilt(self, client):
         async with client:
             model = await client.get_model("prebuilt-invoice")
@@ -96,8 +101,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url):
-
+    @recorded_by_proxy_async
+    async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()  
+        
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, description="mgmt model")
             model = await poller.result()
@@ -126,6 +133,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
     async def test_get_list_operations(self, client):
         async with client:
             operations = client.list_operations()
@@ -184,7 +192,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             await client.get_operation(None)
 
     @FormRecognizerPreparer()
-    async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()  
         transport = AioHttpTransport()
         dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 

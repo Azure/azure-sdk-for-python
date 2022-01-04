@@ -8,6 +8,7 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date, time
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -17,8 +18,10 @@ GlobalClientPreparerV2 = functools.partial(_GlobalClientPreparer, FormRecognizer
 
 class TestReceiptFromStream(FormRecognizerTest):
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
+    @recorded_by_proxy
     def test_passing_enum_content_type_v2(self, client):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
@@ -33,7 +36,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     @GlobalClientPreparerV2()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
                 damaged_pdf
             )
@@ -43,7 +46,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     # TODO should there be a v3 version of this test?
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
                 damaged_pdf
             )
@@ -53,7 +56,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
                 myfile,
                 content_type="application/jpeg"
@@ -62,7 +65,7 @@ class TestReceiptFromStream(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
     def test_passing_unsupported_url_content_type(self, client):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             poller = client.begin_recognize_receipts(
                 "https://badurl.jpg",
                 content_type="application/json"
@@ -70,6 +73,7 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparerV2()
+    @recorded_by_proxy
     def test_receipt_jpg_include_field_elements(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()

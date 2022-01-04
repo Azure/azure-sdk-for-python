@@ -7,6 +7,8 @@
 import pytest
 import uuid
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from azure.ai.formrecognizer import DocumentModel
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
@@ -21,7 +23,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_compose_model(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_compose_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
@@ -50,7 +54,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         raw_response = []
 
         def callback(response, _, headers):
@@ -101,7 +107,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model_1 = await poller.result()

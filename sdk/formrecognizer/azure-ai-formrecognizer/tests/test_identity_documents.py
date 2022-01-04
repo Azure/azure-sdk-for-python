@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -21,11 +22,13 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestIdDocument(FormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    def test_identity_document_bad_endpoint(self, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_identity_document_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
         with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_identity_documents(myfile)
 
@@ -33,7 +36,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
                 damaged_pdf
             )
@@ -42,7 +45,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
                 damaged_pdf
             )
@@ -52,7 +55,7 @@ class TestIdDocument(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
                 myfile,
                 content_type="application/jpeg"
@@ -64,13 +67,14 @@ class TestIdDocument(FormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
                 myfile
             )
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_stream_transform_jpg(self, client):
         responses = []
 
@@ -109,6 +113,7 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_jpg_include_field_elements(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
@@ -154,6 +159,7 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()

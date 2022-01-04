@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils.aio import recorded_by_proxy_async
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
@@ -24,9 +25,10 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -36,9 +38,10 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -48,6 +51,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_blank_page(self, client):
 
         with open(self.blank_pdf, "rb") as fd:
@@ -62,19 +66,20 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    async def test_passing_unsupported_url_content_type(self, client):
-        with self.assertRaises(TypeError):
+    async def test_passing_unsupported_url_content_type(self, client, **kwargs):
+        with pytest.raises(TypeError):
             async with client:
                 poller = await client.begin_analyze_document("prebuilt-receipt", "https://badurl.jpg", content_type="application/json")
                 result = await poller.result()
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_auto_detect_unsupported_stream_content(self, client):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
@@ -82,8 +87,10 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
                 )
                 result = await poller.result()
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_stream_transform_png(self, client):
 
         responses = []
@@ -125,6 +132,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_stream_transform_jpg(self, client):
         responses = []
 
@@ -163,8 +171,10 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_png(self, client):
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read()
@@ -189,6 +199,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_multipage(self, client):
         with open(self.multipage_receipt_pdf, "rb") as fd:
             receipt = fd.read()
@@ -229,6 +240,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_multipage_transform(self, client):
         responses = []
 
@@ -286,6 +298,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_locale_specified(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
@@ -297,6 +310,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_receipt_locale_error(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
@@ -307,6 +321,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
@@ -318,6 +333,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_business_card_multipage_pdf(self, client):
         with open(self.business_card_multipage_pdf, "rb") as fd:
             business_card = fd.read()
@@ -378,6 +394,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_identity_document_jpg_passport(self, client):
         with open(self.identity_document_passport_jpg, "rb") as fd:
             id_document = fd.read()
@@ -401,6 +418,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_identity_document_jpg(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
@@ -424,6 +442,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_stream_transform_tiff(self, client):
         responses = []
 
@@ -464,6 +483,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_invoice_jpg(self, client):
         with open(self.invoice_jpg, "rb") as fd:
             invoice = fd.read()

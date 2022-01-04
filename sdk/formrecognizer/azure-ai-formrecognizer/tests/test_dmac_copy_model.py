@@ -7,6 +7,7 @@
 import pytest
 import uuid
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer import DocumentModel
@@ -18,7 +19,7 @@ from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
+@pytest.mark.skip()
 class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -36,7 +37,8 @@ class TestCopyModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -59,7 +61,8 @@ class TestCopyModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -85,7 +88,8 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -100,7 +104,8 @@ class TestCopyModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
 
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
@@ -125,7 +130,8 @@ class TestCopyModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id):
+    @recorded_by_proxy
+    def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
 
         target = client.get_copy_authorization()
 
@@ -139,7 +145,8 @@ class TestCopyModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
 
         poller_1 = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model_1 = poller_1.result()
@@ -189,7 +196,8 @@ class TestCopyModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
 

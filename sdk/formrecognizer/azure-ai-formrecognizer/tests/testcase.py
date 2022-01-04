@@ -16,90 +16,18 @@ from azure.ai.formrecognizer._helpers import (
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import AzureTestCase
-from azure_devtools.scenario_tests import (
-    RecordingProcessor,
-    ReplayableTest
-)
-from azure_devtools.scenario_tests.utilities import is_text_payload
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 
-
-class RequestBodyReplacer(RecordingProcessor):
-    """Replace request body when a file is read."""
-
-    def __init__(self, max_request_body=128):
-        self._max_request_body = max_request_body
-
-    def process_request(self, request):
-        try:
-            if request.body and six.binary_type(request.body) and len(request.body) > self._max_request_body * 1024:
-                request.body = '!!! The request body has been omitted from the recording because its ' \
-                               'size {} is larger than {}KB. !!!'.format(len(request.body),
-                                                                         self._max_request_body)
-        except TypeError:
-            pass
-        return request
-
-
-class OperationLocationReplacer(RecordingProcessor):
-    """Replace the location/operation location uri in a request/response body."""
-
-    def __init__(self):
-        self._replacement = "https://region.api.cognitive.microsoft.com/formrecognizer/"
-
-    def process_response(self, response):
-        try:
-            headers = response['headers']
-            location_header = None
-            if 'operation-location' in headers:
-                location_header = "operation-location"
-            if 'location' in headers:
-                location_header = "location"
-            if location_header:
-                if isinstance(headers[location_header], list):
-                    suffix = headers[location_header][0].split("/formrecognizer/")[1]
-                    response['headers'][location_header] = [self._replacement + suffix]
-                else:
-                    suffix = headers[location_header].split("/formrecognizer/")[1]
-                    response['headers'][location_header] = self._replacement + suffix
-            url = response["url"]
-            if url is not None:
-                suffix = url.split("/formrecognizer/")[1]
-                response['url'] = self._replacement + suffix
-            return response
-        except (KeyError, ValueError):
-            return response
-
-
-class AccessTokenReplacer(RecordingProcessor):
-    """Replace the access token in a request/response body."""
-
-    def __init__(self, replacement='redacted'):
-
-        self._replacement = replacement
-
-    def process_request(self, request):
-        import re
-        if is_text_payload(request) and request.body:
-            body = str(request.body)
-            body = re.sub(r'"accessToken": "([0-9a-f-]{36})"', r'"accessToken": 00000000-0000-0000-0000-000000000000', body)
-            request.body = body
-        return request
-
-    def process_response(self, response):
-        import json
-        try:
-            body = json.loads(response['body']['string'])
-            if 'accessToken' in body:
-                body['accessToken'] = self._replacement
-            response['body']['string'] = json.dumps(body)
-            return response
-        except (KeyError, ValueError):
-            return response
-
+def _get_blob_url(container_sas_url, container, file_name):
+    if container_sas_url == "https://blob_sas_url":
+        return container_sas_url
+    url = container_sas_url.split(container)
+    url[0] += container + "/" + file_name
+    blob_sas_url = url[0] + url[1]
+    return blob_sas_url
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -111,85 +39,48 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
+class FormRecognizerTest(AzureRecordedTestCase):
 
-class FormRecognizerTest(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
+    testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
+    receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
+    receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
+    business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
+    business_card_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
+    business_card_multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
+    identity_document_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
+    identity_document_url_jpg_passport = _get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
+    invoice_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
+    invoice_url_tiff = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
+    invoice_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
+    multipage_vendor_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
+    form_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
+    multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
+    multipage_table_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
+    selection_mark_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
+    label_table_variable_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
+    label_table_fixed_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
+    multipage_receipt_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
+    invoice_no_sub_line_item = _get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
 
-    def __init__(self, method_name):
-        super(FormRecognizerTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(AccessTokenReplacer())
-        self.recording_processors.append(RequestBodyReplacer())
-        self.recording_processors.append(OperationLocationReplacer())
-        self.configure_logging()
-
-        # URL samples
-        # self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
-        # self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-        # self.business_card_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.jpg"
-        # self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
-        # self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
-        # self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
-        # self.invoice_url_tiff = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"
-        # self.multipage_vendor_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multi1.pdf"
-        # self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
-        # self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
-        # self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
-        # self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
-
-        testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
-        self.receipt_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
-        self.receipt_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
-        self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
-        self.business_card_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
-        self.business_card_multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
-        self.identity_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
-        self.identity_document_url_jpg_passport = self.get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
-        self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
-        self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
-        self.invoice_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
-        self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
-        self.form_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
-        self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
-        self.multipage_table_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
-        self.selection_mark_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
-        self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
-        self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
-        self.multipage_receipt_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
-        self.invoice_no_sub_line_item = self.get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
-
-        # file stream samples
-        self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
-        self.receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
-        self.business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
-        self.business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
-        self.business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
-        self.identity_document_license_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg"))
-        self.identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
-        self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
-        self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
-        self.invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
-        self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
-        self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
-        self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
-        self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
-        self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
-        self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
-        self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
-        self.multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
-
-    def get_blob_url(self, container_sas_url, container, file_name):
-        if self.is_live:
-            url = container_sas_url.split(container)
-            url[0] += container + "/" + file_name
-            blob_sas_url = url[0] + url[1]
-            self.scrubber.register_name_pair(
-                blob_sas_url,
-                "blob_sas_url"
-            )
-        else:
-            blob_sas_url = "blob_sas_url"
-        return blob_sas_url
+    # file stream samples
+    receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
+    receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
+    business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
+    business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
+    business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
+    identity_document_license_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg"))
+    identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
+    invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
+    invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
+    invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
+    form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
+    blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
+    multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
+    unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
+    multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
+    multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
+    selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
+    multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
 
     def get_oauth_endpoint(self):
         return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")

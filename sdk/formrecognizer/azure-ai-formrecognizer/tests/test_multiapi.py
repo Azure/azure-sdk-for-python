@@ -6,6 +6,7 @@
 # ------------------------------------
 import pytest
 import functools
+from devtools_testutils import recorded_by_proxy
 from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -124,10 +125,11 @@ class TestMultiapi(FormRecognizerTest):
                "only available for FormRecognizerClient and FormTrainingClient.".format(
             ", ".join(v.value for v in DocumentAnalysisApiVersion)) == str(excinfo.value)
 
+    @pytest.mark.skip("the service is experiencing issues listing models for v2.x")
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    @pytest.mark.skip("the service is experiencing issues listing models for v2.x")
-    def test_v2_0_compatibility(self, client, formrecognizer_storage_container_sas_url_v2):
+    @recorded_by_proxy
+    def test_v2_0_compatibility(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
         # test that the addition of new attributes in v2.1 does not break v2.0
 
         label_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)

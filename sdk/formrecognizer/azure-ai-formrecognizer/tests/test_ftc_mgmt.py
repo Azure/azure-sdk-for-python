@@ -6,6 +6,7 @@
 
 import functools
 import pytest
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import RequestsTransport
@@ -24,6 +25,7 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @recorded_by_proxy
     def test_account_properties_v2(self, client):
         properties = client.get_account_properties()
 
@@ -33,7 +35,8 @@ class TestManagement(FormRecognizerTest):
     @pytest.mark.skip("service is returning null for some models")
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_mgmt_model_labeled_v2(self, client, formrecognizer_storage_container_sas_url_v2):
+    @recorded_by_proxy
+    def test_mgmt_model_labeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         labeled_model_from_train = poller.result()
@@ -70,7 +73,8 @@ class TestManagement(FormRecognizerTest):
     @pytest.mark.skip("service is returning null for some models")
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_mgmt_model_unlabeled_v2(self, client, formrecognizer_storage_container_sas_url_v2):
+    @recorded_by_proxy
+    def test_mgmt_model_unlabeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
 
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         unlabeled_model_from_train = poller.result()
@@ -104,7 +108,9 @@ class TestManagement(FormRecognizerTest):
             client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @FormRecognizerPreparer()
-    def test_get_form_recognizer_client_v2(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_get_form_recognizer_client_v2(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()  
         transport = RequestsTransport()
         ftc = FormTrainingClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport, api_version="2.1")
 

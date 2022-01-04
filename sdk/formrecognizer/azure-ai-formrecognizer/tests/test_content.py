@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -21,22 +22,26 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestContentFromStream(FormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_content(myfile)
 
     @FormRecognizerPreparer()
-    def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             poller = client.begin_recognize_content(b"xx", content_type="application/pdf")
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -49,9 +54,10 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_content(
                 damaged_pdf,
             )
@@ -61,7 +67,7 @@ class TestContentFromStream(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_content(
                 myfile,
                 content_type="application/jpeg"
@@ -73,13 +79,14 @@ class TestContentFromStream(FormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_content(
                 myfile
             )
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -104,6 +111,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_reading_order(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -116,6 +124,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             myform = fd.read()
@@ -140,6 +149,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_stream_jpg(self, client):
         with open(self.form_jpg, "rb") as stream:
             poller = client.begin_recognize_content(stream)
@@ -157,6 +167,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_multipage(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             invoice = fd.read()
@@ -168,6 +179,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -204,8 +216,10 @@ class TestContentFromStream(FormRecognizerTest):
         assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_multipage_table_span_transform(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
             myform = fd.read()
@@ -230,6 +244,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_selection_marks(self, client):
         with open(self.selection_form_pdf, "rb") as fd:
             myform = fd.read()
@@ -243,6 +258,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @recorded_by_proxy
     def test_content_selection_marks_v2(self, client):
         with open(self.selection_form_pdf, "rb") as fd:
             myform = fd.read()
@@ -256,6 +272,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_specify_pages(self, client):
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
@@ -279,6 +296,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_language_specified(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
@@ -289,6 +307,7 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_content_language_error(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
