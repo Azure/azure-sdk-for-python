@@ -136,7 +136,7 @@ def test_backoff_fixed_retry():
         'fake.host.com',
         'fake_eh',
         None,
-        retry_mode=RetryMode.Fixed
+        retry_mode=RetryMode.FIXED
     )
     backoff = client._config.backoff_factor
     start_time = time.time()

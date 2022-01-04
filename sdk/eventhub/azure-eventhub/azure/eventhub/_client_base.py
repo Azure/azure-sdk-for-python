@@ -164,7 +164,7 @@ def _build_uri(address, entity):
 
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
-    if retry_mode == RetryMode.Fixed:
+    if retry_mode == RetryMode.FIXED:
         backoff_value = backoff_factor
     else:
         backoff_value = backoff_factor * (2 ** retried_times)
