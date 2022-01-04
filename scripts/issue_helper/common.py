@@ -42,6 +42,8 @@ class Common:
         return [issue for issue in open_issues if not issue.pull_request]
 
     def judge_status(self, issue: Issue) -> str:
+        if issue.user.login in self.language_owner:
+            return ''
         latest_comments = ''
         comments = [(comment.updated_at.timestamp(), comment.user.login) for comment in issue.get_comments()
                     if comment.user.login not in self.bot_assignees]
