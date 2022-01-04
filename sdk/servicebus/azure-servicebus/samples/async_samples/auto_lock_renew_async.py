@@ -127,8 +127,6 @@ async def renew_lock_with_lock_renewal_failure_callback():
                 print('Lock renew failure demonstration complete.')
 
 
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(renew_lock_on_message_received_from_non_sessionful_entity())
-loop.run_until_complete(renew_lock_on_session_of_the_sessionful_entity())
-loop.run_until_complete(renew_lock_with_lock_renewal_failure_callback())
+asyncio.run(renew_lock_on_message_received_from_non_sessionful_entity())
+asyncio.run(renew_lock_on_session_of_the_sessionful_entity())
+asyncio.run(renew_lock_with_lock_renewal_failure_callback())

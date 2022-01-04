@@ -77,5 +77,4 @@ async def main():
         await get_subscription_runtime_properties(servicebus_mgmt_client)
         await delete_subscription(servicebus_mgmt_client)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

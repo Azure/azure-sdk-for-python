@@ -52,5 +52,5 @@ async def main():
             await sender.cancel_scheduled_messages(sequence_numbers)
             print("All scheduled messages are cancelled.")
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+
+asyncio.run(main())

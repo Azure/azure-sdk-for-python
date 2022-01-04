@@ -29,5 +29,5 @@ async def main():
             for msg in received_msgs:
                 print(str(msg))
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+
+asyncio.run(main())
