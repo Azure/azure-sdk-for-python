@@ -207,6 +207,6 @@ async def example_eventhub_async_consumer_receive_and_close():
     # [END eventhub_consumer_client_close_async]
 
 if __name__ == '__main__':
-    # asyncio.run(example_eventhub_async_consumer_receive_and_close())
-    # asyncio.run(example_eventhub_async_producer_send_and_close())
+    asyncio.run(example_eventhub_async_consumer_receive_and_close())
+    asyncio.run(example_eventhub_async_producer_send_and_close())
     asyncio.run(example_eventhub_async_send_and_receive())
