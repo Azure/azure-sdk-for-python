@@ -20,7 +20,7 @@
     "sdk/**/azure-mgmt**/**",
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
-    "dev_requirement.txt"
+    "**/*requirement*.txt"
   ],
   "words": [
     "adls",
