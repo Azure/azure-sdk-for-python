@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: scheduler
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-scheduler
       safeName: azuremgmtscheduler
