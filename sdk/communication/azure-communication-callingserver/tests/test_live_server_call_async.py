@@ -83,12 +83,12 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
 
             try:
                 # Play Audio
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 OperationContext = str(uuid.uuid4())
 
                 play_audio_result = await self.callingserver_client.play_audio(
                     GroupCallLocator(group_id),
-                    CONST.AudioFileUrl,
+                    CONST.AUDIO_FILE_URL,
                     is_looped = True,
                     audio_file_id = str(uuid.uuid4()),
                     callback_uri = CONST.AppCallbackUrl,
@@ -97,11 +97,13 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CallingServerLiveTestUtils.validate_play_audio_result(play_audio_result)
 
                 # Cancel Prompt Audio
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 await CallingServerLiveTestUtilsAsync.cancel_all_media_operations_for_group_call_async(call_connections)
+            except Exception as ex:
+                print(str(ex))
             finally:
                 # Clean up/Hang up
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @AsyncCommunicationTestCase.await_prepared_test
@@ -125,7 +127,7 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
 
             try:
                 # Add Participant
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 OperationContext = str(uuid.uuid4())
                 added_participant = CallingServerLiveTestUtils.get_fixed_user_id("0000000e-33ea-48b2-99c6-593a0d001849")
                 add_participant_result = await self.callingserver_client.add_participant(
@@ -138,14 +140,14 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 CallingServerLiveTestUtils.validate_add_participant(add_participant_result)
 
                 # Remove Participant
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 await self.callingserver_client.remove_participant(
                     GroupCallLocator(group_id),
                     CommunicationUserIdentifier(added_participant)
                     )
             finally:
                 # Clean up/Hang up
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @AsyncCommunicationTestCase.await_prepared_test
@@ -172,25 +174,25 @@ class ServerCallTestAsync(AsyncCommunicationTestCase):
                 recording_id = start_call_recording_result.recording_id
 
                 assert recording_id is not None
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
 
                 recording_state = await self.callingserver_client.get_recording_properties(recording_id)
                 assert recording_state.recording_state == "active"
 
                 await self.callingserver_client.pause_recording(recording_id)
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 recording_state = await self.callingserver_client.get_recording_properties(recording_id)
                 assert recording_state.recording_state == "inactive"
 
                 await self.callingserver_client.resume_recording(recording_id)
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 recording_state = await self.callingserver_client.get_recording_properties(recording_id)
                 assert recording_state.recording_state == "active"
 
                 await self.callingserver_client.stop_recording(recording_id)
             finally:
                 # Clean up/Hang up
-                CallingServerLiveTestUtils.sleep_if_in_live_mode()
+                CallingServerLiveTestUtils.wait_for_operation_completion()
                 await CallingServerLiveTestUtilsAsync.clean_up_connections_async(call_connections)
 
     @AsyncCommunicationTestCase.await_prepared_test

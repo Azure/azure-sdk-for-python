@@ -45,7 +45,7 @@ class CallingServerLiveTestUtilsAsync:
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
                 )
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
-            CallingServerLiveTestUtils.sleep_if_in_live_mode()
+            CallingServerLiveTestUtils.wait_for_operation_completion()
 
             # join to_participant to Server Call
             to_call_connection = await callingserver_client.join_call(
@@ -56,7 +56,7 @@ class CallingServerLiveTestUtilsAsync:
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
                 )
             CallingServerLiveTestUtilsAsync.validate_callconnection_Async(from_call_connection)
-            CallingServerLiveTestUtils.sleep_if_in_live_mode()
+            CallingServerLiveTestUtils.wait_for_operation_completion()
 
             group_calls.append(from_call_connection)
             group_calls.append(to_call_connection)

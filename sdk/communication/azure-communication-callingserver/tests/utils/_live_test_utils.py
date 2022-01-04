@@ -9,7 +9,7 @@ import time, uuid
 import re
 from typing import List
 from devtools_testutils import is_live
-from ._test_constants import RESOURCE_IDENTIFIER, AZURE_TENANT_ID
+from ._test_constants import RESOURCE_IDENTIFIER, AZURE_TENANT_ID, USER_GUID
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.callingserver import (
@@ -23,7 +23,8 @@ from azure.communication.callingserver import (
     CallMediaType,
     CallingEventSubscriptionType,
     GroupCallLocator,
-    TransferCallResult
+    TransferCallResult,
+    CreateAudioGroupResult
     )
 
 class RequestReplacerProcessor(RecordingProcessor):
@@ -44,6 +45,12 @@ class RequestReplacerProcessor(RecordingProcessor):
         return request
 
 class CallingServerLiveTestUtils:
+
+    @staticmethod
+    def validate_create_audio_group(create_audio_group_result):
+        # type: (CreateAudioGroupResult) -> None
+        assert create_audio_group_result is not None
+        assert create_audio_group_result.audio_group_id is not None
 
     @staticmethod
     def validate_callconnection(call_connection):
@@ -96,12 +103,16 @@ class CallingServerLiveTestUtils:
                 connection.hang_up()
 
     @staticmethod
-    def get_fixed_user_id(user_guid):
-        # type: (str) -> str
-        return "8:acs:" + RESOURCE_IDENTIFIER + "_" + user_guid
+    def get_fixed_user_id(user_id=''):
+        if is_live():
+            if user_id != '':
+                return "8:acs:" + RESOURCE_IDENTIFIER + "_" + user_id
+            return "8:acs:" + RESOURCE_IDENTIFIER + "_" + USER_GUID
+
+        return "8:acs:" + RESOURCE_IDENTIFIER + "_" + str(uuid.uuid4())
 
     @staticmethod
-    def sleep_if_in_live_mode():
+    def wait_for_operation_completion():
         # type: () -> None
         if is_live():
             time.sleep(10)
@@ -130,7 +141,7 @@ class CallingServerLiveTestUtils:
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
                 )
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
-            CallingServerLiveTestUtils.sleep_if_in_live_mode()
+            CallingServerLiveTestUtils.wait_for_operation_completion()
 
             # join to_participant to Server Call
             to_call_connection = callingserver_client.join_call(
@@ -141,7 +152,7 @@ class CallingServerLiveTestUtils:
                 requested_call_events=[CallingEventSubscriptionType.PARTICIPANTS_UPDATED]
                 )
             CallingServerLiveTestUtils.validate_callconnection(from_call_connection)
-            CallingServerLiveTestUtils.sleep_if_in_live_mode()
+            CallingServerLiveTestUtils.wait_for_operation_completion()
 
             group_calls.append(from_call_connection)
             group_calls.append(to_call_connection)

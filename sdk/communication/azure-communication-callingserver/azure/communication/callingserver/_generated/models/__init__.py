@@ -11,10 +11,11 @@ try:
     from ._models_py3 import AddParticipantResult
     from ._models_py3 import AddParticipantResultEvent
     from ._models_py3 import AddParticipantWithCallLocatorRequest
+    from ._models_py3 import AddToDefaultAudioGroupRequest
     from ._models_py3 import AnswerCallRequest
     from ._models_py3 import AnswerCallResult
-    from ._models_py3 import AudioRoutingGroupRequest
-    from ._models_py3 import AudioRoutingGroupResult
+    from ._models_py3 import AudioGroupRequest
+    from ._models_py3 import AudioGroupResult
     from ._models_py3 import CallConnectionProperties
     from ._models_py3 import CallConnectionStateChangedEvent
     from ._models_py3 import CallLocatorModel
@@ -29,13 +30,12 @@ try:
     from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import CommunicationIdentifierModel
     from ._models_py3 import CommunicationUserIdentifierModel
-    from ._models_py3 import CreateAudioRoutingGroupResult
+    from ._models_py3 import CreateAudioGroupResult
     from ._models_py3 import CreateCallRequest
     from ._models_py3 import CreateCallResult
     from ._models_py3 import GetAllParticipantsWithCallLocatorRequest
     from ._models_py3 import GetParticipantRequest
     from ._models_py3 import GetParticipantWithCallLocatorRequest
-    from ._models_py3 import HoldMeetingAudioRequest
     from ._models_py3 import JoinCallRequest
     from ._models_py3 import JoinCallResult
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
@@ -50,9 +50,9 @@ try:
     from ._models_py3 import PlayAudioWithCallLocatorRequest
     from ._models_py3 import RedirectCallRequest
     from ._models_py3 import RejectCallRequest
+    from ._models_py3 import RemoveFromDefaultAudioGroupRequest
     from ._models_py3 import RemoveParticipantRequest
     from ._models_py3 import RemoveParticipantWithCallLocatorRequest
-    from ._models_py3 import ResumeMeetingAudioRequest
     from ._models_py3 import StartCallRecordingResult
     from ._models_py3 import StartCallRecordingWithCallLocatorRequest
     from ._models_py3 import ToneInfo
@@ -62,16 +62,17 @@ try:
     from ._models_py3 import TransferToCallRequest
     from ._models_py3 import TransferToParticipantRequest
     from ._models_py3 import UnmuteParticipantRequest
-    from ._models_py3 import UpdateAudioRoutingGroupRequest
+    from ._models_py3 import UpdateAudioGroupRequest
 except (SyntaxError, ImportError):
     from ._models import AddParticipantRequest  # type: ignore
     from ._models import AddParticipantResult  # type: ignore
     from ._models import AddParticipantResultEvent  # type: ignore
     from ._models import AddParticipantWithCallLocatorRequest  # type: ignore
+    from ._models import AddToDefaultAudioGroupRequest  # type: ignore
     from ._models import AnswerCallRequest  # type: ignore
     from ._models import AnswerCallResult  # type: ignore
-    from ._models import AudioRoutingGroupRequest  # type: ignore
-    from ._models import AudioRoutingGroupResult  # type: ignore
+    from ._models import AudioGroupRequest  # type: ignore
+    from ._models import AudioGroupResult  # type: ignore
     from ._models import CallConnectionProperties  # type: ignore
     from ._models import CallConnectionStateChangedEvent  # type: ignore
     from ._models import CallLocatorModel  # type: ignore
@@ -86,13 +87,12 @@ except (SyntaxError, ImportError):
     from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import CommunicationIdentifierModel  # type: ignore
     from ._models import CommunicationUserIdentifierModel  # type: ignore
-    from ._models import CreateAudioRoutingGroupResult  # type: ignore
+    from ._models import CreateAudioGroupResult  # type: ignore
     from ._models import CreateCallRequest  # type: ignore
     from ._models import CreateCallResult  # type: ignore
     from ._models import GetAllParticipantsWithCallLocatorRequest  # type: ignore
     from ._models import GetParticipantRequest  # type: ignore
     from ._models import GetParticipantWithCallLocatorRequest  # type: ignore
-    from ._models import HoldMeetingAudioRequest  # type: ignore
     from ._models import JoinCallRequest  # type: ignore
     from ._models import JoinCallResult  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
@@ -107,9 +107,9 @@ except (SyntaxError, ImportError):
     from ._models import PlayAudioWithCallLocatorRequest  # type: ignore
     from ._models import RedirectCallRequest  # type: ignore
     from ._models import RejectCallRequest  # type: ignore
+    from ._models import RemoveFromDefaultAudioGroupRequest  # type: ignore
     from ._models import RemoveParticipantRequest  # type: ignore
     from ._models import RemoveParticipantWithCallLocatorRequest  # type: ignore
-    from ._models import ResumeMeetingAudioRequest  # type: ignore
     from ._models import StartCallRecordingResult  # type: ignore
     from ._models import StartCallRecordingWithCallLocatorRequest  # type: ignore
     from ._models import ToneInfo  # type: ignore
@@ -119,7 +119,7 @@ except (SyntaxError, ImportError):
     from ._models import TransferToCallRequest  # type: ignore
     from ._models import TransferToParticipantRequest  # type: ignore
     from ._models import UnmuteParticipantRequest  # type: ignore
-    from ._models import UpdateAudioRoutingGroupRequest  # type: ignore
+    from ._models import UpdateAudioGroupRequest  # type: ignore
 
 from ._azure_communication_calling_server_service_enums import (
     AudioRoutingMode,
@@ -142,10 +142,11 @@ __all__ = [
     'AddParticipantResult',
     'AddParticipantResultEvent',
     'AddParticipantWithCallLocatorRequest',
+    'AddToDefaultAudioGroupRequest',
     'AnswerCallRequest',
     'AnswerCallResult',
-    'AudioRoutingGroupRequest',
-    'AudioRoutingGroupResult',
+    'AudioGroupRequest',
+    'AudioGroupResult',
     'CallConnectionProperties',
     'CallConnectionStateChangedEvent',
     'CallLocatorModel',
@@ -160,13 +161,12 @@ __all__ = [
     'CommunicationErrorResponse',
     'CommunicationIdentifierModel',
     'CommunicationUserIdentifierModel',
-    'CreateAudioRoutingGroupResult',
+    'CreateAudioGroupResult',
     'CreateCallRequest',
     'CreateCallResult',
     'GetAllParticipantsWithCallLocatorRequest',
     'GetParticipantRequest',
     'GetParticipantWithCallLocatorRequest',
-    'HoldMeetingAudioRequest',
     'JoinCallRequest',
     'JoinCallResult',
     'MicrosoftTeamsUserIdentifierModel',
@@ -181,9 +181,9 @@ __all__ = [
     'PlayAudioWithCallLocatorRequest',
     'RedirectCallRequest',
     'RejectCallRequest',
+    'RemoveFromDefaultAudioGroupRequest',
     'RemoveParticipantRequest',
     'RemoveParticipantWithCallLocatorRequest',
-    'ResumeMeetingAudioRequest',
     'StartCallRecordingResult',
     'StartCallRecordingWithCallLocatorRequest',
     'ToneInfo',
@@ -193,7 +193,7 @@ __all__ = [
     'TransferToCallRequest',
     'TransferToParticipantRequest',
     'UnmuteParticipantRequest',
-    'UpdateAudioRoutingGroupRequest',
+    'UpdateAudioGroupRequest',
     'AudioRoutingMode',
     'CallConnectionState',
     'CallLocatorKindModel',

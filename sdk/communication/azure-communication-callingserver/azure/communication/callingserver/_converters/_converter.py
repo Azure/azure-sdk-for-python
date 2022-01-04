@@ -29,12 +29,12 @@ from .._generated.models import (
     PhoneNumberIdentifierModel,
     CallLocatorModel,
     RedirectCallRequest,
-    AudioRoutingGroupRequest,
+    AudioGroupRequest,
     MuteParticipantRequest,
     UnmuteParticipantRequest,
-    HoldMeetingAudioRequest,
-    ResumeMeetingAudioRequest,
-    UpdateAudioRoutingGroupRequest,
+    RemoveFromDefaultAudioGroupRequest,
+    AddToDefaultAudioGroupRequest,
+    UpdateAudioGroupRequest,
     GetAllParticipantsWithCallLocatorRequest,
     GetParticipantWithCallLocatorRequest
     )
@@ -434,33 +434,33 @@ class UnmuteParticipantRequestConverter(object):
             identifier=identifier
         )
 
-class HoldMeetingAudioRequestConverter(object):
+class RemoveFromDefaultAudioGroupRequestConverter(object):
     @staticmethod
     def convert(
         identifier, # type: CommunicationIdentifierModel
-        ): # type: (...) -> HoldMeetingAudioRequest
+        ): # type: (...) -> RemoveFromDefaultAudioGroupRequest
 
         if not identifier:
             raise ValueError("identifier can not be None")
 
-        return HoldMeetingAudioRequest(
+        return RemoveFromDefaultAudioGroupRequest(
             identifier=identifier
         )
 
-class ResumeMeetingAudioRequestConverter(object):
+class AddToDefaultAudioGroupRequestConverter(object):
     @staticmethod
     def convert(
         identifier, # type: CommunicationIdentifierModel
-        ): # type: (...) -> ResumeMeetingAudioRequest
+        ): # type: (...) -> AddToDefaultAudioGroupRequest
 
         if not identifier:
             raise ValueError("identifier can not be None")
 
-        return ResumeMeetingAudioRequest(
+        return AddToDefaultAudioGroupRequest(
             identifier=identifier
         )
 
-class AudioRoutingGroupRequestConverter(object):
+class AudioGroupRequestConverter(object):
     @staticmethod
     def convert(
         audio_routing_mode, # type: AudioRoutingMode
@@ -472,20 +472,20 @@ class AudioRoutingGroupRequestConverter(object):
         if not target_identities:
             raise ValueError("target_identities can not be None")
 
-        return AudioRoutingGroupRequest(
+        return AudioGroupRequest(
             audio_routing_mode=audio_routing_mode,
             targets=target_identities
         )
 
-class UpdateAudioRoutingGroupRequestConverter(object):
+class UpdateAudioGroupRequestConverter(object):
     @staticmethod
     def convert(
         target_identities, # type: CommunicationIdentifierModel
-        ): # type: (...) -> UpdateAudioRoutingGroupRequest
+        ): # type: (...) -> UpdateAudioGroupRequest
 
         if not target_identities:
             raise ValueError("target_identities can not be None")
 
-        return UpdateAudioRoutingGroupRequest(
+        return UpdateAudioGroupRequest(
             targets=target_identities
         )

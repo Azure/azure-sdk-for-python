@@ -15,7 +15,9 @@ interactions:
       Date:
       - Mon, 13 Dec 2021 09:33:49 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 29 Dec 2021 12:41:41 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +34,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 13 Dec 2021 09:33:49 GMT
+      - Wed, 29 Dec 2021 12:41:39 GMT
       ms-cv:
-      - 88vi54GlxEyl4aN8tshmgg.2.0
+      - wUf/5UcwBEyNJTZ955QBbA.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +44,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 30ms
+      - 23ms
     status:
       code: 201
       message: Created
@@ -62,7 +64,9 @@ interactions:
       Date:
       - Mon, 13 Dec 2021 09:33:50 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.9.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 29 Dec 2021 12:41:41 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -79,9 +83,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 13 Dec 2021 09:33:51 GMT
+      - Wed, 29 Dec 2021 12:41:39 GMT
       ms-cv:
-      - nm4q9KqOIUqeGk2/BlObXQ.2.0
+      - IVsht2sV60Kj3RJyB3B9rg.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +93,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 39ms
+      - 24ms
     status:
       code: 201
       message: Created
@@ -105,7 +109,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.9.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-callingserver/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-host:
       - acs-app-validations.communication.azure.com
     method: DELETE
@@ -117,12 +121,12 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 13 Dec 2021 09:34:19 GMT
+      - Wed, 29 Dec 2021 12:41:42 GMT
       server:
       - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
     status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
 version: 1

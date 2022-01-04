@@ -79,12 +79,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(get_all_participants_with_call_locator_request, 'GetAllParticipantsWithCallLocatorRequest')
+        _json = self._serialize.body(get_all_participants_with_call_locator_request, 'GetAllParticipantsWithCallLocatorRequest')
 
         request = build_get_participants_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.get_participants.metadata['url'],
         )
         request = _convert_request(request)
@@ -146,12 +146,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(add_participant_with_call_locator_request, 'AddParticipantWithCallLocatorRequest')
+        _json = self._serialize.body(add_participant_with_call_locator_request, 'AddParticipantWithCallLocatorRequest')
 
         request = build_add_participant_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.add_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -213,12 +213,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(remove_participant_with_call_locator_request, 'RemoveParticipantWithCallLocatorRequest')
+        _json = self._serialize.body(remove_participant_with_call_locator_request, 'RemoveParticipantWithCallLocatorRequest')
 
         request = build_remove_participant_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.remove_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -275,12 +275,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(get_participant_with_call_locator_request, 'GetParticipantWithCallLocatorRequest')
+        _json = self._serialize.body(get_participant_with_call_locator_request, 'GetParticipantWithCallLocatorRequest')
 
         request = build_get_participant_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.get_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -341,12 +341,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantWithCallLocatorRequest')
+        _json = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantWithCallLocatorRequest')
 
         request = build_participant_play_audio_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.participant_play_audio.metadata['url'],
         )
         request = _convert_request(request)
@@ -408,12 +408,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(cancel_participant_media_operation_request, 'CancelParticipantMediaOperationWithCallLocatorRequest')
+        _json = self._serialize.body(cancel_participant_media_operation_request, 'CancelParticipantMediaOperationWithCallLocatorRequest')
 
         request = build_cancel_participant_media_operation_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.cancel_participant_media_operation.metadata['url'],
         )
         request = _convert_request(request)
@@ -471,12 +471,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(start_call_recording_with_call_locator_request, 'StartCallRecordingWithCallLocatorRequest')
+        _json = self._serialize.body(start_call_recording_with_call_locator_request, 'StartCallRecordingWithCallLocatorRequest')
 
         request = build_start_recording_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.start_recording.metadata['url'],
         )
         request = _convert_request(request)
@@ -772,12 +772,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(call_request, 'JoinCallRequest')
+        _json = self._serialize.body(call_request, 'JoinCallRequest')
 
         request = build_join_call_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.join_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -838,12 +838,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(play_audio_request, 'PlayAudioWithCallLocatorRequest')
+        _json = self._serialize.body(play_audio_request, 'PlayAudioWithCallLocatorRequest')
 
         request = build_play_audio_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.play_audio.metadata['url'],
         )
         request = _convert_request(request)
@@ -904,12 +904,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationWithCallLocatorRequest')
+        _json = self._serialize.body(cancel_media_operation_request, 'CancelMediaOperationWithCallLocatorRequest')
 
         request = build_cancel_media_operation_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.cancel_media_operation.metadata['url'],
         )
         request = _convert_request(request)
@@ -965,12 +965,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(answer_call_request, 'AnswerCallRequest')
+        _json = self._serialize.body(answer_call_request, 'AnswerCallRequest')
 
         request = build_answer_call_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.answer_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -1030,12 +1030,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(reject_call_request, 'RejectCallRequest')
+        _json = self._serialize.body(reject_call_request, 'RejectCallRequest')
 
         request = build_reject_call_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.reject_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -1091,12 +1091,12 @@ class ServerCallsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(redirect_call_request, 'RedirectCallRequest')
+        _json = self._serialize.body(redirect_call_request, 'RedirectCallRequest')
 
         request = build_redirect_call_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.redirect_call.metadata['url'],
         )
         request = _convert_request(request)
