@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.2 (Unreleased)
+## 1.8.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
 
 ## 1.7.1 (2021-11-09)
 

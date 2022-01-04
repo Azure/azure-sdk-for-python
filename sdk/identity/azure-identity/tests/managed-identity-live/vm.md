@@ -140,7 +140,7 @@ echo -e `az vm run-command invoke \
 Successful test output looks like this:
 ```
 ============================= test session starts ==============================
-platform linux -- Python 3.6.9, pytest-5.3.2, py-1.8.1, pluggy-0.13.1 -- /usr/bin/python3
+platform linux -- Python 3.9.9, pytest-5.3.2, py-1.8.1, pluggy-0.13.1 -- /usr/bin/python3
 cachedir: .pytest_cache
 rootdir: /azure-sdk-for-python, inifile: setup.cfg
 plugins: asyncio-0.10.0
