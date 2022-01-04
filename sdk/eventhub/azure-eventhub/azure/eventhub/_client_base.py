@@ -26,12 +26,17 @@ from ._pyamqp.authentication import JWTTokenAuth
 
 
 import six
-from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+)
 from azure.core.utils import parse_connection_string as core_parse_connection_string
 
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
+from ._retry import RetryMode
 from ._utils import utc_from_timestamp, parse_sas_credential
 from ._connection_manager import get_connection_manager
 from ._constants import (
@@ -61,9 +66,11 @@ def _parse_conn_str(conn_str, **kwargs):
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None
-    eventhub_name = kwargs.pop("eventhub_name", None) # type: Optional[str]
-    check_case = kwargs.pop("check_case", False) # type: bool
-    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=check_case)
+    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
+    check_case = kwargs.pop("check_case", False)  # type: bool
+    conn_settings = core_parse_connection_string(
+        conn_str, case_sensitive_keys=check_case
+    )
     if check_case:
         shared_access_key = conn_settings.get("SharedAccessKey")
         shared_access_key_name = conn_settings.get("SharedAccessKeyName")
@@ -88,7 +95,7 @@ def _parse_conn_str(conn_str, **kwargs):
         try:
             # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
             shared_access_signature_expiry = int(
-                shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+                shared_access_signature.split("se=")[1].split("&")[0]  # type: ignore
             )
         except (
             IndexError,
@@ -126,12 +133,14 @@ def _parse_conn_str(conn_str, **kwargs):
             "At least one of the SharedAccessKey or SharedAccessSignature must be present."
         )
 
-    return (host,
-            str(shared_access_key_name) if shared_access_key_name else None,
-            str(shared_access_key) if shared_access_key else None,
-            entity,
-            str(shared_access_signature) if shared_access_signature else None,
-            shared_access_signature_expiry)
+    return (
+        host,
+        str(shared_access_key_name) if shared_access_key_name else None,
+        str(shared_access_key) if shared_access_key else None,
+        entity,
+        str(shared_access_signature) if shared_access_signature else None,
+        shared_access_signature_expiry,
+    )
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -158,6 +167,14 @@ def _build_uri(address, entity):
         raise ValueError("No EventHub specified")
     address += "/" + str(entity)
     return address
+
+
+def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
+    if retry_mode == RetryMode.FIXED:
+        backoff_value = backoff_factor
+    else:
+        backoff_value = backoff_factor * (2 ** retried_times)
+    return min(backoff_max, backoff_value)
 
 
 class EventHubSharedKeyCredential(object):
@@ -207,6 +224,7 @@ class EventHubSASTokenCredential(object):
     :param str token: The shared access token string
     :param int expiry: The epoch timestamp
     """
+
     def __init__(self, token, expiry):
         # type: (str, int) -> None
         """
@@ -232,6 +250,7 @@ class EventhubAzureSasTokenCredential(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
+
     def __init__(self, azure_sas_credential):
         # type: (AzureSasCredential) -> None
         """The shared access token credential used for authentication
@@ -264,9 +283,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = EventhubAzureNamedKeyTokenCredential(credential) # type: ignore
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
-            self._credential = credential #type: ignore
+            self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(
@@ -281,7 +300,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, **kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+            conn_str, **kwargs
+        )
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:
@@ -291,14 +312,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         return kwargs
 
     def _create_auth(self):
-        # type: () -> authentication.JWTTokenAuth
+        # type: () -> JWTTokenAuth
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
         """
         try:
             # ignore mypy's warning because token_type is Optional
-            token_type = self._credential.token_type    # type: ignore
+            token_type = self._credential.token_type  # type: ignore
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
@@ -313,7 +334,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             transport_type=self._config.transport_type,
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
-            verify=self._config.connection_verify
+            verify=self._config.connection_verify,
         )
 
     def _close_connection(self):
@@ -325,7 +346,12 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     ):
         # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
-        backoff = self._config.backoff_factor * 2 ** retried_times
+        backoff = _get_backoff_time(
+            self._config.retry_mode,
+            self._config.backoff_factor,
+            self._config.backoff_max,
+            retried_times,
+        )
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
         ):  # pylint:disable=no-else-return
@@ -365,14 +391,16 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     description_fields=MGMT_STATUS_DESC,
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[Union[str, bytes]]
+                description = response.application_properties.get(
+                    MGMT_STATUS_DESC
+                )  # type: Optional[Union[str, bytes]]
                 if description and isinstance(description, six.binary_type):
-                    description = description.decode('utf-8')
+                    description = description.decode("utf-8")
                 if status_code < 400:
                     return response
                 if status_code in [401]:
                     raise errors.AuthenticationException(
-                        errors.ErrorCodes.UnauthorizedAccess,
+                        errors.ErrorCondition.UnauthorizedAccess,
                         description="Management authentication failed. Status code: {}, Description: {!r}".format(
                             status_code,
                             description
@@ -380,14 +408,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     )
                 if status_code in [404]:
                     raise errors.AMQPConnectionError(
-                        errors.ErrorCodes.NotFound,
+                        errors.ErrorCondition.NotFound,
                         description="Management connection failed. Status code: {}, Description: {!r}".format(
                             status_code,
                             description
                         )
                     )
                 raise errors.AMQPConnectionError(
-                    errors.ErrorCodes.UnknownError,
+                    errors.ErrorCondition.UnknownError,
                     description="Management operation failed. Status code: {}, Description: {!r}".format(
                         status_code,
                         description
@@ -486,9 +514,7 @@ class ConsumerProducerMixin(object):
             )
 
     def _open(self):
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
-
-        """
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:

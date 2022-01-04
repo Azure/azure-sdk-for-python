@@ -20,6 +20,7 @@ from ._connection_string_parser import (
 )
 from ._constants import TransportType
 
+
 __all__ = [
     "EventData",
     "EventDataBatch",
