@@ -2,6 +2,8 @@
 
 ## 7.4.1 (Unreleased)
 
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+
 ### Features Added
 
 ### Breaking Changes
