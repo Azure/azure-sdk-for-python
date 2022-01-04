@@ -61,7 +61,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(refresher.call_count, 2)
         self.assertEqual(access_token.token, self.expired_token)
 
-    '''# @patch_threading_timer(user_credential.__name__+'.Timer')
+    # @patch_threading_timer(user_credential.__name__+'.Timer')
     def test_uses_initial_token_as_expected(self):  # , timer_mock):
         refresher = MagicMock(
             return_value=self.expired_token)
@@ -73,7 +73,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(refresher.call_count, 0)
         self.assertEqual(access_token.token, self.sample_token)
 
-    def test_proactive_refresher_should_not_be_called_before_specified_time(self):
+    '''def test_proactive_refresher_should_not_be_called_before_specified_time(self):
         refresh_minutes = 30
         token_validity_minutes = 60
         start_timestamp = get_current_utc_as_int()
