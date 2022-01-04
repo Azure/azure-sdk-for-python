@@ -182,6 +182,7 @@ class EventData(object):
         """
         event_data = cls(body="")
         event_data.message = message
+        # pylint: disable=protected-access
         event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
