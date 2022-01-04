@@ -1,6 +1,6 @@
 # Release History
 
-## 1.22.0 (Unreleased)
+## 1.21.2 (Unreleased)
 
 ### Features Added
 
@@ -9,8 +9,6 @@
 ### Bugs Fixed
 
 ### Other Changes
-
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
 
 ## 1.21.1 (2021-12-06)
 
