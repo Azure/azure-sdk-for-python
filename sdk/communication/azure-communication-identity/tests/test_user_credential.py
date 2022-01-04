@@ -99,7 +99,7 @@ class TestCommunicationTokenCredential(TestCase):
         # check that next refresh is always scheduled
         assert credential._timer is not None
 
-    '''def test_proactive_refresher_should_be_called_after_specified_time(self):
+    def test_proactive_refresher_should_be_called_after_specified_time(self):
         refresh_minutes = 30
         token_validity_minutes = 60
         start_timestamp = get_current_utc_as_int()
@@ -126,7 +126,7 @@ class TestCommunicationTokenCredential(TestCase):
         # check that next refresh is always scheduled
         assert credential._timer is not None
 
-    def test_proactive_refresher_keeps_scheduling_again(self):
+    '''def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_seconds = 2
         expired_token = generate_token_with_custom_expiry(-5 * 60)
         skip_to_timestamp = get_current_utc_as_int() + refresh_seconds + 4
