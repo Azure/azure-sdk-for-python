@@ -16,9 +16,9 @@ from utils import update_issue_body, get_readme_and_output_folder, \
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'RAY-316', 'BigCat20196']
-_PYTHON_SDK_ASSIGNEES = ['RAY-316', 'BigCat20196']
-_ASSIGNER_DICT = {'RAY-316': os.getenv('ZED_TOKEN'), 'BigCat20196': os.getenv('JF_TOKEN')}
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196']
+_PYTHON_SDK_ASSIGNEES = ['BigCat20196']
+_ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN')}
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 

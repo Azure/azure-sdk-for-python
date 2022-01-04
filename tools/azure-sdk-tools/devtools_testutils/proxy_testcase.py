@@ -9,7 +9,6 @@ import requests
 import six
 import sys
 from typing import TYPE_CHECKING
-import pdb
 
 try:
     # py3
@@ -179,7 +178,18 @@ def recorded_by_proxy(test_func):
 
         def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            return original_transport_func(*adjusted_args, **adjusted_kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+
+            result.request.url = original_target
+            return result
 
         RequestsTransport.send = combined_call
 
