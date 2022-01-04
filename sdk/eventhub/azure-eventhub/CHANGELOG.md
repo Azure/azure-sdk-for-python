@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug that `EventHubProducerClient` could be reopened for sending events instead of encountering with `KeyError` when the client is previously closed (issue #21849).
+
 ### Other Changes
 
 ## 5.6.1 (2021-10-06)
