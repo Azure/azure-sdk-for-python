@@ -2,6 +2,8 @@
 
 ## 1.1.5 (Unreleased)
 
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+
 ### Bugs Fixed
 
 - Fixed a bug with `BlobCheckpointStore.claim_ownership` mutating the `ownership_list` argument to no longer mutate the argument.
