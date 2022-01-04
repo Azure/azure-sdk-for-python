@@ -126,7 +126,7 @@ class TestCommunicationTokenCredential(TestCase):
         # check that next refresh is always scheduled
         assert credential._timer is not None
 
-    '''def test_proactive_refresher_keeps_scheduling_again(self):
+    def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_seconds = 2
         expired_token = generate_token_with_custom_expiry(-5 * 60)
         skip_to_timestamp = get_current_utc_as_int() + refresh_seconds + 4
@@ -152,7 +152,7 @@ class TestCommunicationTokenCredential(TestCase):
         # check that next refresh is always scheduled
         assert credential._timer is not None
 
-    def test_exit_cancels_timer(self):
+    '''def test_exit_cancels_timer(self):
         refreshed_token = create_access_token(
             generate_token_with_custom_expiry(30 * 60))
         refresher = MagicMock(return_value=refreshed_token)
