@@ -317,61 +317,6 @@ class TestHealth(TextAnalyticsTest):
             )).result()
         assert res == "cls result"
 
-    """Commenting out multi page tests until service returns multiple pages"""
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # @recorded_by_proxy_async
-    # async def test_multiple_pages_of_results_returned_successfully(self, client):
-    #     single_doc = "hello world"
-    #     docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
-    #     # Service now only accepts 10 documents for a job, and since the current default server-side value
-    #     # for records per page is 20, pagination logic will never be activated.  This is intended to change
-    #     # in the future but for now this test actually won't hit the pagination logic now.
-
-    #     async with client:
-    #         poller = await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
-    #         result = await poller.result()
-    #         response = []
-    #         async for r in result:
-    #             response.append(r)
-
-    #     assert len(docs) == len(response)
-    #     assert result.statistics is not None
-
-    #     for (idx, doc) in enumerate(response):
-    #         assert docs[idx]["id"] == doc.id
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # @recorded_by_proxy_async
-    # async def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
-    #     single_doc = "hello world"
-    #     docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 9)))]
-    #     docs.append({"id": "9", "text": ""})
-    #     # Service now only accepts 10 documents for a job, and since the current default server-side value
-    #     # for records per page is 20, pagination logic will never be activated.  This is intended to change
-    #     # in the future but for now this test actually won't hit the pagination logic now.
-
-    #     async with client:
-    #         result = await (await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())).result()
-    #         response = []
-    #         async for r in result:
-    #             response.append(r)
-
-    #         assert len(docs) == len(response)
-    #         assert result.statistics is not None
-
-    #         for (idx, doc) in enumerate(response):
-    #             assert docs[idx]["id"] == doc.id
-
-    #             if doc.id == "9":
-    #                 assert doc.is_error
-
-    #             else:
-    #                 assert not doc.is_error
-    #                 assert doc.statistics is not None
-
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -388,7 +333,6 @@ class TestHealth(TextAnalyticsTest):
 
             except HttpResponseError:
                 pass # expected if the operation was already in a terminal state.
-
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
