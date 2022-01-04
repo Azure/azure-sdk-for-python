@@ -3901,6 +3901,16 @@ class AzureBlobFSLinkedService(LinkedService):
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
     :vartype azure_cloud_type: any
+    :ivar service_principal_credential_type: The service principal credential type to use in
+     Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+     for certificate. Type: string (or Expression with resultType string).
+    :vartype service_principal_credential_type: any
+    :ivar service_principal_credential: The credential of the service principal object in Azure
+     Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+     servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+     be AzureKeyVaultSecretReference.
+    :vartype service_principal_credential: ~azure.synapse.artifacts.models.SecretBase
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
@@ -3925,6 +3935,8 @@ class AzureBlobFSLinkedService(LinkedService):
         'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'azure_cloud_type': {'key': 'typeProperties.azureCloudType', 'type': 'object'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
+        'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -3942,6 +3954,8 @@ class AzureBlobFSLinkedService(LinkedService):
         service_principal_key: Optional["SecretBase"] = None,
         tenant: Optional[Any] = None,
         azure_cloud_type: Optional[Any] = None,
+        service_principal_credential_type: Optional[Any] = None,
+        service_principal_credential: Optional["SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         **kwargs
     ):
@@ -3976,6 +3990,16 @@ class AzureBlobFSLinkedService(LinkedService):
          Allowed values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is
          the data factory regions’ cloud type. Type: string (or Expression with resultType string).
         :paramtype azure_cloud_type: any
+        :keyword service_principal_credential_type: The service principal credential type to use in
+         Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
+         for certificate. Type: string (or Expression with resultType string).
+        :paramtype service_principal_credential_type: any
+        :keyword service_principal_credential: The credential of the service principal object in Azure
+         Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
+         servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
+         servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
+         be AzureKeyVaultSecretReference.
+        :paramtype service_principal_credential: ~azure.synapse.artifacts.models.SecretBase
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
@@ -3989,6 +4013,8 @@ class AzureBlobFSLinkedService(LinkedService):
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_credential = service_principal_credential
         self.encrypted_credential = encrypted_credential
 
 
