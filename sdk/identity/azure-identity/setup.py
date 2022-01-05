@@ -15,6 +15,21 @@ PACKAGE_PPRINT_NAME = "Identity"
 package_folder_path = PACKAGE_NAME.replace("-", "/")
 namespace_name = PACKAGE_NAME.replace("-", ".")
 
+# azure v0.x is not compatible with this package
+# azure v0.x used to have a __version__ attribute (newer versions don't)
+try:
+    import azure
+
+    try:
+        ver = azure.__version__  # type: ignore
+        raise Exception(
+            "This package is incompatible with azure=={}. ".format(ver) + 'Uninstall it with "pip uninstall azure".'
+        )
+    except AttributeError:
+        pass
+except ImportError:
+    pass
+
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
     VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)  # type: ignore
 if not VERSION:
@@ -39,7 +54,10 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -54,7 +72,6 @@ setup(
             "azure",
         ]
     ),
-    python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.5",
@@ -62,4 +79,8 @@ setup(
         "msal-extensions~=0.3.0",
         "six>=1.12.0",
     ],
+    extras_require={
+        ":python_version<'3.0'": ["azure-nspkg"],
+        ":python_version<'3.5'": ["typing"],
+    },
 )
