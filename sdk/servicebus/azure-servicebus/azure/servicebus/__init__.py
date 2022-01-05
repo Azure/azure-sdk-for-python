@@ -28,6 +28,7 @@ from ._common._connection_string_parser import (
     parse_connection_string,
     ServiceBusConnectionStringProperties,
 )
+from ._retry import RetryMode
 
 TransportType = constants.TransportType
 
@@ -46,4 +47,5 @@ __all__ = [
     "AutoLockRenewer",
     "parse_connection_string",
     "ServiceBusConnectionStringProperties",
+    "RetryMode",
 ]
