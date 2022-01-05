@@ -151,7 +151,9 @@ class TestManagement(FormRecognizerTest):
             assert op.error is None
             model = op.result
             assert model.model_id
-            assert model.description is None
+            # operations may or may not have descriptions
+            if model.description:
+                assert model.description
             assert model.created_on
             for name, doc_type in model.doc_types.items():
                 assert name
