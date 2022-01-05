@@ -205,12 +205,12 @@ function DockerValidation{
   ) 
   if ($PackageSourceOverride) {'
     Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
-    docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
        -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 | Out-Null
   }
   else {
     Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId"
-    docker run -v "${workingDirectory}:/workdir/out" `
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" `
       -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1 | Out-Null
   }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
@@ -218,10 +218,12 @@ function DockerValidation{
   # we should skip the validation and keep the packages. 
   
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
+    Write-Debug $commandLine
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
     FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
+    Write-Debug $commandLine
     LogWarning "Package $packageName ref docs validation failed."
     return $false
   }
