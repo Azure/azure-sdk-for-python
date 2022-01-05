@@ -8,9 +8,9 @@ _JAVA_OWNER = {'weidongxu-microsoft', 'haolingdong-msft', 'XiaofeiCao'}
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN_JAVA = {
-    'weidongxu-microsoft': os.getenv('JAVA_WEIDONGXU_TOKEN'),
-    'haolingdong-msft': os.getenv('JAVA_WEIDONGXU_TOKEN'),
-    'XiaofeiCao': os.getenv('JAVA_WEIDONGXU_TOKEN'),
+    'weidongxu-microsoft': os.getenv('AZURESDK_BOT_TOKEN'),
+    'haolingdong-msft': os.getenv('AZURESDK_BOT_TOKEN'),
+    'XiaofeiCao': os.getenv('AZURESDK_BOT_TOKEN'),
 }
 
 

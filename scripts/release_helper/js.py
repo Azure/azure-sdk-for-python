@@ -6,7 +6,7 @@ import os
 _JS_OWNER = {'qiaozha', 'lirenhe'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('JS_QIAOQIAO_TOKEN')}
+_ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('AZURESDK_BOT_TOKEN')}
 
 
 class IssueProcessJs(IssueProcess):
