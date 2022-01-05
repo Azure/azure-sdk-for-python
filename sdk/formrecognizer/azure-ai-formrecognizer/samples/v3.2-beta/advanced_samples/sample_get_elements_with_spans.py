@@ -59,6 +59,7 @@ def get_elements_with_spans():
             os.path.abspath(__file__),
             "..",
             "..",
+            "..",
             "./sample_forms/forms/Form_1.jpg",
         )
     )

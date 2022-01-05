@@ -130,6 +130,8 @@ IGNORED_SAMPLES = {
     "azure-ai-formrecognizer": [
         "sample_manage_custom_models.py",
         "sample_manage_custom_models_async.py",
+        "sample_copy_model.py",
+        "sample_copy_model_async.py",
     ],
     "azure-ai-language-questionanswering": ["sample_chat.py"],
 }

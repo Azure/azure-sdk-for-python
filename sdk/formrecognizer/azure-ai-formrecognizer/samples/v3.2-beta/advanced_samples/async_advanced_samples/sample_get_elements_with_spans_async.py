@@ -61,6 +61,7 @@ async def get_elements_with_spans_async():
             "..",
             "..",
             "..",
+            "..",
             "./sample_forms/forms/Form_1.jpg",
         )
     )
