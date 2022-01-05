@@ -54,7 +54,7 @@ For more information about how the versioning story of the SDK corresponds to th
   pip install azure-identity
   ```
 
-2. Clone or download this sample file
+2. Clone the repo or download the sample file
 3. Open the sample file in Visual Studio Code or your IDE of choice.
 
 ## Running the samples
