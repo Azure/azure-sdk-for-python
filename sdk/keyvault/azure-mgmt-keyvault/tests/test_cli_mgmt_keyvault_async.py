@@ -37,7 +37,7 @@ class TestMgmtKeyVault(AzureMgmtAsyncTestCase):
     def test_keyvault(self, resource_group):
 
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
-        TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47" # self.settings.TENANT_ID
+        TENANT_ID = self.get_settings_value("TENANT_ID") # self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
         VAULT_NAME = "myValtZikfikxyzz"
         OPERATION_KIND = "add"
