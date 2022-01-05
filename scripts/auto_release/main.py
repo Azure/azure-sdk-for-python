@@ -5,6 +5,7 @@ import time
 import argparse
 import logging
 from ghapi.all import GhApi
+from util import CERTIFICATION
 
 
 SERVICE_NAME = 'servicename'
@@ -413,13 +414,13 @@ def create_branch():
     NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}-{}'.format(TRACK, SERVICE_NAME, d.tm_year, d.tm_mon, d.tm_mday, str(t)[-5:])
     print_exec(f'git checkout -b {NEW_BRANCH}')
 
-def add_certifi():
+
+def add_certificate():
     cacert_path = r'../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem'
     with open(cacert_path, 'a+') as f:
         f.seek(0, 0)
-        if certification[-65:-28] not in f.read():
-            f.write(certification)
-            print("===========Added certification into cacert.pem==========")
+        f.write(CERTIFICATION)
+        my_print(f"Added CERTIFICATION into cacert.pem of {cacert_path}")
 
 
 def commit_file():
@@ -434,7 +435,7 @@ def main():
     git_remote_add()
     judge_sdk_folder()
     create_branch()
-    add_certifi()
+    add_certificate()
     init_env()
     edit_file()
     edit_useless_file()
@@ -443,30 +444,6 @@ def main():
     run_live_test()
     build_wheel()
     commit_test()
-
-
-certification = '''
------BEGIN CERTIFICATE-----
-MIIDSDCCAjCgAwIBAgIUPMKpJ/j10eQrcQBNnkImIaOYHakwDQYJKoZIhvcNAQEL
-BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIxMDgwNTAwMzU1NloXDTIyMDgw
-NTAwMzU1NlowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAxe/ZseXgOTVoF7uTjX5Leknk95jIoyGc+VlxA8BhzGOr
-r4u6VNQZRCMq+svHY36tW4+u/xHNe2kvbwy2mnS8cFFLfst+94qBZVJDBxSGZ9I/
-wekErNsjFsik4UrMvcC+ZlGPh7hb3f7tSx29tn1DIkAUXVnbZ6TT5s+mYRQpZ6fW
-6kR3RNfc0A1IUM7Zs9yfNEr0O2H41P2HcLKoOPtvd7GvTQm9Ofh3srKvII+sZn/J
-WH7r76oRQMX904mOMdryQwZLObsqX4dXIEbafKVSecB3PBVIhv8gVtJhcZbQP1pI
-mMiWd6PHv46ZhGf7+cKnYUSa8Ia2t/wetK1wd00dFwIDAQABo4GRMIGOMA8GA1Ud
-EwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgGmMBYGA1UdJQEB/wQMMAoGCCsGAQUF
-BwMBMBcGA1UdEQEB/wQNMAuCCWxvY2FsaG9zdDA6BgorBgEEAYI3VAEBBCwMKkFT
-UC5ORVQgQ29yZSBIVFRQUyBkZXZlbG9wbWVudCBjZXJ0aWZpY2F0ZTANBgkqhkiG
-9w0BAQsFAAOCAQEAIj2VlBVcXGSly6KCBg6lgwFi+henWfSox77iuGAaAxDjN3jd
-9lZahW4MPNLHKSrPRb4YNSLZ2jh7zdcttQrqd4qH65o1q56q5JrCmli99iIzY9Y8
-RdYyxK4Zzr31wjpsyFiWQfqJTuSFUUg9uDDj0negwEZLIGlt7nr12wflt2+QOJtD
-byMeSZLbB5dPzn341DK0qfJEJMMgL0XsPEVZ3TQ6Alc9zq5wI608C/mXnz3xJE05
-UTYD8pRJJ/DyG0empvOVE8Sg93msHPquAbgqO9aqCpykgg/a8CFvI4wRdfvGEFlv
-8XJKL8Y/PFsmFeO3axq3zUYKFVdc9Un4dFIaag==
------END CERTIFICATE-----
-'''
 
 
 if __name__ == '__main__':
@@ -488,11 +465,12 @@ if __name__ == '__main__':
     SCRIPT_PATH = args.script_path
     OUT_PATH = args.out_path
 
-    # extract info
+    # extract info. (e.g. AzureSDKAutomation:sdkAuto/track2_azure-mgmt-apimanagement)
     sys.path.append(OUT_PATH)
     TRACK = '2' if BRANCH_BASE.find('track2_') > -1 else '1'
     SERVICE_NAME = BRANCH_BASE.replace('sdkAuto/', '').replace('sdkAutomation/', '').replace('track2_', '').replace(
         'azure-mgmt-', '')
+    # compatible with `azclibot:t2-apimanagement-2022-01-05-26928`
     if len(SERVICE_NAME.split('-')) > 1:
         SERVICE_NAME = SERVICE_NAME.split('-')[1]
     try:
