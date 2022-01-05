@@ -4,9 +4,15 @@
 
 ### Features Added
 
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `EventHubProducerClient` and `EventHubConsumerClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+  - `RetryMode` enum has been added to `azure.eventhub`, with values `FIXED` and `EXPONENTIAL`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed a bug that `EventHubProducerClient` could be reopened for sending events instead of encountering with `KeyError` when the client is previously closed (issue #21849).
 
 ### Other Changes
 
