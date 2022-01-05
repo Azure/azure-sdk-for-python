@@ -195,6 +195,7 @@ class CallingServerClient:
             call_request=request,
             **kwargs
         )
+
         return CallConnection(
             create_call_response.call_connection_id,
             self._call_connection_client,

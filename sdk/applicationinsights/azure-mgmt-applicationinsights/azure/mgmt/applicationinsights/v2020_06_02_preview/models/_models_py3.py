@@ -6,20 +6,50 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponseLinkedStorage(msrest.serialization.Model):
+    """ErrorResponseLinkedStorage.
+
+    :param error: Error response indicates Insights service is not able to process the incoming
+     request. The reason is provided in the error message.
+    :type error:
+     ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.ErrorResponseLinkedStorageError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseLinkedStorageError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorResponseLinkedStorageError"] = None,
+        **kwargs
+    ):
+        super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseLinkedStorageError(msrest.serialization.Model):
     """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -28,14 +58,11 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
 
 
 class LiveTokenResponse(msrest.serialization.Model):
@@ -109,7 +136,7 @@ class OperationLive(msrest.serialization.Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -125,7 +152,7 @@ class OperationLive(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationInfo"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(OperationLive, self).__init__(**kwargs)
