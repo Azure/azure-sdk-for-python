@@ -6,24 +6,25 @@
 
 import pytest
 import functools
-from datetime import date
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion, DocumentAnalysisClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -36,13 +37,17 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_bad_url(self, client):
-        with self.assertRaises(HttpResponseError):
+        set_bodiless_matcher()
+        with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_url_multipage_transform_pdf(self, client):
+        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -80,26 +85,6 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_invoice_tiff(self, client):
-        poller = client.begin_analyze_document_from_url(model="prebuilt-invoice", document_url=self.invoice_url_tiff)
-
-        result = poller.result()
-        assert len(result.documents) == 1
-        invoice = result.documents[0]
-
-        # check dict values
-        assert invoice.fields.get("VendorName").value ==  "Contoso"
-        assert invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond ==  WA 99243'
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft"
-        assert invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale ==  CA 87659'
-        assert invoice.fields.get("CustomerName").value ==  "Microsoft"
-        assert invoice.fields.get("InvoiceId").value ==  '34278587'
-        assert invoice.fields.get("InvoiceDate").value, date(2017, 6 ==  18)
-        assert invoice.fields.get("Items").value[0].value["Amount"].value ==  56651.49
-        assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
-
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -121,7 +106,9 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_locale_specified(self, client):
+        set_bodiless_matcher()
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
         result = poller.result()
@@ -129,14 +116,18 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_locale_error(self, client):
+        set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="not a locale")
         assert "locale" in e.value.error.message
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
+        set_bodiless_matcher()
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
@@ -144,8 +135,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_no_sub_line_items(self, client):
-
+        set_bodiless_matcher()
+        
         poller = client.begin_recognize_invoices_from_url(
             invoice_url=self.invoice_no_sub_line_item,
         )

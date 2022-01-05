@@ -217,7 +217,7 @@ function DockerValidation{
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
     Write-Host $commandLine
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
     Write-Host $commandLine
@@ -284,7 +284,6 @@ $PackageExclusions = @{
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
-  'azure-monitor-query' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/19417';
   'azure-mgmt-network' = 'Manual process used to build';
 }
 
@@ -561,16 +560,8 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-function Validate-Python-DocMsPackages
-{ 
-  Param(
-    [Parameter(Mandatory=$true)]
-    [PSCustomObject]$PackageInfo,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride,
-    [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId
-  ) 
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageSourceOverride, $DocValidationImageId)
+{
   $packageName = $packageInfo.Name
   $packageVersion = $packageInfo.Version
   ValidatePackage -packageName $packageName -packageVersion $packageVersion `

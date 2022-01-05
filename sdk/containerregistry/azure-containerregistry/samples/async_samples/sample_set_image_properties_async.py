@@ -36,10 +36,10 @@ class SetImagePropertiesAsync(object):
 
     async def set_image_properties(self):
         # Create a new ContainerRegistryClient
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
         # [START update_manifest_properties]
         # Set permissions on the v1 image's "latest" tag
