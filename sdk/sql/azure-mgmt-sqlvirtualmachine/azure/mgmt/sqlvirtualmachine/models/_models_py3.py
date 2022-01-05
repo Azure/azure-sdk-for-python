@@ -16,8 +16,8 @@ from ._sql_virtual_machine_management_client_enums import *
 class AdditionalFeaturesServerConfigurations(msrest.serialization.Model):
     """Additional SQL Server feature settings.
 
-    :param is_r_services_enabled: Enable or disable R services (SQL 2016 onwards).
-    :type is_r_services_enabled: bool
+    :ivar is_r_services_enabled: Enable or disable R services (SQL 2016 onwards).
+    :vartype is_r_services_enabled: bool
     """
 
     _attribute_map = {
@@ -30,6 +30,10 @@ class AdditionalFeaturesServerConfigurations(msrest.serialization.Model):
         is_r_services_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword is_r_services_enabled: Enable or disable R services (SQL 2016 onwards).
+        :paramtype is_r_services_enabled: bool
+        """
         super(AdditionalFeaturesServerConfigurations, self).__init__(**kwargs)
         self.is_r_services_enabled = is_r_services_enabled
 
@@ -37,35 +41,35 @@ class AdditionalFeaturesServerConfigurations(msrest.serialization.Model):
 class AutoBackupSettings(msrest.serialization.Model):
     """Configure backups for databases in your SQL virtual machine.
 
-    :param enable: Enable or disable autobackup on SQL virtual machine.
-    :type enable: bool
-    :param enable_encryption: Enable or disable encryption for backup on SQL virtual machine.
-    :type enable_encryption: bool
-    :param retention_period: Retention period of backup: 1-30 days.
-    :type retention_period: int
-    :param storage_account_url: Storage account url where backup will be taken to.
-    :type storage_account_url: str
-    :param storage_access_key: Storage account key where backup will be taken to.
-    :type storage_access_key: str
-    :param password: Password for encryption on backup.
-    :type password: str
-    :param backup_system_dbs: Include or exclude system databases from auto backup.
-    :type backup_system_dbs: bool
-    :param backup_schedule_type: Backup schedule type. Possible values include: "Manual",
+    :ivar enable: Enable or disable autobackup on SQL virtual machine.
+    :vartype enable: bool
+    :ivar enable_encryption: Enable or disable encryption for backup on SQL virtual machine.
+    :vartype enable_encryption: bool
+    :ivar retention_period: Retention period of backup: 1-30 days.
+    :vartype retention_period: int
+    :ivar storage_account_url: Storage account url where backup will be taken to.
+    :vartype storage_account_url: str
+    :ivar storage_access_key: Storage account key where backup will be taken to.
+    :vartype storage_access_key: str
+    :ivar password: Password for encryption on backup.
+    :vartype password: str
+    :ivar backup_system_dbs: Include or exclude system databases from auto backup.
+    :vartype backup_system_dbs: bool
+    :ivar backup_schedule_type: Backup schedule type. Possible values include: "Manual",
      "Automated".
-    :type backup_schedule_type: str or ~azure.mgmt.sqlvirtualmachine.models.BackupScheduleType
-    :param full_backup_frequency: Frequency of full backups. In both cases, full backups begin
+    :vartype backup_schedule_type: str or ~azure.mgmt.sqlvirtualmachine.models.BackupScheduleType
+    :ivar full_backup_frequency: Frequency of full backups. In both cases, full backups begin
      during the next scheduled time window. Possible values include: "Daily", "Weekly".
-    :type full_backup_frequency: str or
+    :vartype full_backup_frequency: str or
      ~azure.mgmt.sqlvirtualmachine.models.FullBackupFrequencyType
-    :param full_backup_start_time: Start time of a given day during which full backups can take
+    :ivar full_backup_start_time: Start time of a given day during which full backups can take
      place. 0-23 hours.
-    :type full_backup_start_time: int
-    :param full_backup_window_hours: Duration of the time window of a given day during which full
+    :vartype full_backup_start_time: int
+    :ivar full_backup_window_hours: Duration of the time window of a given day during which full
      backups can take place. 1-23 hours.
-    :type full_backup_window_hours: int
-    :param log_backup_frequency: Frequency of log backups. 5-60 minutes.
-    :type log_backup_frequency: int
+    :vartype full_backup_window_hours: int
+    :ivar log_backup_frequency: Frequency of log backups. 5-60 minutes.
+    :vartype log_backup_frequency: int
     """
 
     _attribute_map = {
@@ -100,6 +104,37 @@ class AutoBackupSettings(msrest.serialization.Model):
         log_backup_frequency: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enable: Enable or disable autobackup on SQL virtual machine.
+        :paramtype enable: bool
+        :keyword enable_encryption: Enable or disable encryption for backup on SQL virtual machine.
+        :paramtype enable_encryption: bool
+        :keyword retention_period: Retention period of backup: 1-30 days.
+        :paramtype retention_period: int
+        :keyword storage_account_url: Storage account url where backup will be taken to.
+        :paramtype storage_account_url: str
+        :keyword storage_access_key: Storage account key where backup will be taken to.
+        :paramtype storage_access_key: str
+        :keyword password: Password for encryption on backup.
+        :paramtype password: str
+        :keyword backup_system_dbs: Include or exclude system databases from auto backup.
+        :paramtype backup_system_dbs: bool
+        :keyword backup_schedule_type: Backup schedule type. Possible values include: "Manual",
+         "Automated".
+        :paramtype backup_schedule_type: str or ~azure.mgmt.sqlvirtualmachine.models.BackupScheduleType
+        :keyword full_backup_frequency: Frequency of full backups. In both cases, full backups begin
+         during the next scheduled time window. Possible values include: "Daily", "Weekly".
+        :paramtype full_backup_frequency: str or
+         ~azure.mgmt.sqlvirtualmachine.models.FullBackupFrequencyType
+        :keyword full_backup_start_time: Start time of a given day during which full backups can take
+         place. 0-23 hours.
+        :paramtype full_backup_start_time: int
+        :keyword full_backup_window_hours: Duration of the time window of a given day during which full
+         backups can take place. 1-23 hours.
+        :paramtype full_backup_window_hours: int
+        :keyword log_backup_frequency: Frequency of log backups. 5-60 minutes.
+        :paramtype log_backup_frequency: int
+        """
         super(AutoBackupSettings, self).__init__(**kwargs)
         self.enable = enable
         self.enable_encryption = enable_encryption
@@ -118,16 +153,16 @@ class AutoBackupSettings(msrest.serialization.Model):
 class AutoPatchingSettings(msrest.serialization.Model):
     """Set a patching window during which Windows and SQL patches will be applied.
 
-    :param enable: Enable or disable autopatching on SQL virtual machine.
-    :type enable: bool
-    :param day_of_week: Day of week to apply the patch on. Possible values include: "Monday",
+    :ivar enable: Enable or disable autopatching on SQL virtual machine.
+    :vartype enable: bool
+    :ivar day_of_week: Day of week to apply the patch on. Possible values include: "Monday",
      "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
-    :type day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
-    :param maintenance_window_starting_hour: Hour of the day when patching is initiated. Local VM
+    :vartype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
+    :ivar maintenance_window_starting_hour: Hour of the day when patching is initiated. Local VM
      time.
-    :type maintenance_window_starting_hour: int
-    :param maintenance_window_duration: Duration of patching.
-    :type maintenance_window_duration: int
+    :vartype maintenance_window_starting_hour: int
+    :ivar maintenance_window_duration: Duration of patching.
+    :vartype maintenance_window_duration: int
     """
 
     _attribute_map = {
@@ -146,6 +181,18 @@ class AutoPatchingSettings(msrest.serialization.Model):
         maintenance_window_duration: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enable: Enable or disable autopatching on SQL virtual machine.
+        :paramtype enable: bool
+        :keyword day_of_week: Day of week to apply the patch on. Possible values include: "Monday",
+         "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
+        :paramtype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
+        :keyword maintenance_window_starting_hour: Hour of the day when patching is initiated. Local VM
+         time.
+        :paramtype maintenance_window_starting_hour: int
+        :keyword maintenance_window_duration: Duration of patching.
+        :paramtype maintenance_window_duration: int
+        """
         super(AutoPatchingSettings, self).__init__(**kwargs)
         self.enable = enable
         self.day_of_week = day_of_week
@@ -182,6 +229,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -217,6 +266,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -233,17 +284,17 @@ class AvailabilityGroupListener(ProxyResource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state to track the async operation status.
     :vartype provisioning_state: str
-    :param availability_group_name: Name of the availability group.
-    :type availability_group_name: str
-    :param load_balancer_configurations: List of load balancer configurations for an availability
+    :ivar availability_group_name: Name of the availability group.
+    :vartype availability_group_name: str
+    :ivar load_balancer_configurations: List of load balancer configurations for an availability
      group listener.
-    :type load_balancer_configurations:
+    :vartype load_balancer_configurations:
      list[~azure.mgmt.sqlvirtualmachine.models.LoadBalancerConfiguration]
-    :param create_default_availability_group_if_not_exist: Create a default availability group if
-     it does not exist.
-    :type create_default_availability_group_if_not_exist: bool
-    :param port: Listener port.
-    :type port: int
+    :ivar create_default_availability_group_if_not_exist: Create a default availability group if it
+     does not exist.
+    :vartype create_default_availability_group_if_not_exist: bool
+    :ivar port: Listener port.
+    :vartype port: int
     """
 
     _validation = {
@@ -273,6 +324,19 @@ class AvailabilityGroupListener(ProxyResource):
         port: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword availability_group_name: Name of the availability group.
+        :paramtype availability_group_name: str
+        :keyword load_balancer_configurations: List of load balancer configurations for an availability
+         group listener.
+        :paramtype load_balancer_configurations:
+         list[~azure.mgmt.sqlvirtualmachine.models.LoadBalancerConfiguration]
+        :keyword create_default_availability_group_if_not_exist: Create a default availability group if
+         it does not exist.
+        :paramtype create_default_availability_group_if_not_exist: bool
+        :keyword port: Listener port.
+        :paramtype port: int
+        """
         super(AvailabilityGroupListener, self).__init__(**kwargs)
         self.provisioning_state = None
         self.availability_group_name = availability_group_name
@@ -306,6 +370,8 @@ class AvailabilityGroupListenerListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AvailabilityGroupListenerListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -314,16 +380,16 @@ class AvailabilityGroupListenerListResult(msrest.serialization.Model):
 class KeyVaultCredentialSettings(msrest.serialization.Model):
     """Configure your SQL virtual machine to be able to connect to the Azure Key Vault service.
 
-    :param enable: Enable or disable key vault credential setting.
-    :type enable: bool
-    :param credential_name: Credential name.
-    :type credential_name: str
-    :param azure_key_vault_url: Azure Key Vault url.
-    :type azure_key_vault_url: str
-    :param service_principal_name: Service principal name to access key vault.
-    :type service_principal_name: str
-    :param service_principal_secret: Service principal name secret to access key vault.
-    :type service_principal_secret: str
+    :ivar enable: Enable or disable key vault credential setting.
+    :vartype enable: bool
+    :ivar credential_name: Credential name.
+    :vartype credential_name: str
+    :ivar azure_key_vault_url: Azure Key Vault url.
+    :vartype azure_key_vault_url: str
+    :ivar service_principal_name: Service principal name to access key vault.
+    :vartype service_principal_name: str
+    :ivar service_principal_secret: Service principal name secret to access key vault.
+    :vartype service_principal_secret: str
     """
 
     _attribute_map = {
@@ -344,6 +410,18 @@ class KeyVaultCredentialSettings(msrest.serialization.Model):
         service_principal_secret: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword enable: Enable or disable key vault credential setting.
+        :paramtype enable: bool
+        :keyword credential_name: Credential name.
+        :paramtype credential_name: str
+        :keyword azure_key_vault_url: Azure Key Vault url.
+        :paramtype azure_key_vault_url: str
+        :keyword service_principal_name: Service principal name to access key vault.
+        :paramtype service_principal_name: str
+        :keyword service_principal_secret: Service principal name secret to access key vault.
+        :paramtype service_principal_secret: str
+        """
         super(KeyVaultCredentialSettings, self).__init__(**kwargs)
         self.enable = enable
         self.credential_name = credential_name
@@ -355,17 +433,17 @@ class KeyVaultCredentialSettings(msrest.serialization.Model):
 class LoadBalancerConfiguration(msrest.serialization.Model):
     """A load balancer configuration for an availability group listener.
 
-    :param private_ip_address: Private IP address.
-    :type private_ip_address: ~azure.mgmt.sqlvirtualmachine.models.PrivateIPAddress
-    :param public_ip_address_resource_id: Resource id of the public IP.
-    :type public_ip_address_resource_id: str
-    :param load_balancer_resource_id: Resource id of the load balancer.
-    :type load_balancer_resource_id: str
-    :param probe_port: Probe port.
-    :type probe_port: int
-    :param sql_virtual_machine_instances: List of the SQL virtual machine instance resource id's
+    :ivar private_ip_address: Private IP address.
+    :vartype private_ip_address: ~azure.mgmt.sqlvirtualmachine.models.PrivateIPAddress
+    :ivar public_ip_address_resource_id: Resource id of the public IP.
+    :vartype public_ip_address_resource_id: str
+    :ivar load_balancer_resource_id: Resource id of the load balancer.
+    :vartype load_balancer_resource_id: str
+    :ivar probe_port: Probe port.
+    :vartype probe_port: int
+    :ivar sql_virtual_machine_instances: List of the SQL virtual machine instance resource id's
      that are enrolled into the availability group listener.
-    :type sql_virtual_machine_instances: list[str]
+    :vartype sql_virtual_machine_instances: list[str]
     """
 
     _attribute_map = {
@@ -386,6 +464,19 @@ class LoadBalancerConfiguration(msrest.serialization.Model):
         sql_virtual_machine_instances: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword private_ip_address: Private IP address.
+        :paramtype private_ip_address: ~azure.mgmt.sqlvirtualmachine.models.PrivateIPAddress
+        :keyword public_ip_address_resource_id: Resource id of the public IP.
+        :paramtype public_ip_address_resource_id: str
+        :keyword load_balancer_resource_id: Resource id of the load balancer.
+        :paramtype load_balancer_resource_id: str
+        :keyword probe_port: Probe port.
+        :paramtype probe_port: int
+        :keyword sql_virtual_machine_instances: List of the SQL virtual machine instance resource id's
+         that are enrolled into the availability group listener.
+        :paramtype sql_virtual_machine_instances: list[str]
+        """
         super(LoadBalancerConfiguration, self).__init__(**kwargs)
         self.private_ip_address = private_ip_address
         self.public_ip_address_resource_id = public_ip_address_resource_id
@@ -428,6 +519,8 @@ class Operation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
@@ -469,6 +562,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -501,6 +596,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -509,10 +606,10 @@ class OperationListResult(msrest.serialization.Model):
 class PrivateIPAddress(msrest.serialization.Model):
     """A private IP address bound to the availability group listener.
 
-    :param ip_address: Private IP address bound to the availability group listener.
-    :type ip_address: str
-    :param subnet_resource_id: Subnet used to include private IP.
-    :type subnet_resource_id: str
+    :ivar ip_address: Private IP address bound to the availability group listener.
+    :vartype ip_address: str
+    :ivar subnet_resource_id: Subnet used to include private IP.
+    :vartype subnet_resource_id: str
     """
 
     _attribute_map = {
@@ -527,6 +624,12 @@ class PrivateIPAddress(msrest.serialization.Model):
         subnet_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ip_address: Private IP address bound to the availability group listener.
+        :paramtype ip_address: str
+        :keyword subnet_resource_id: Subnet used to include private IP.
+        :paramtype subnet_resource_id: str
+        """
         super(PrivateIPAddress, self).__init__(**kwargs)
         self.ip_address = ip_address
         self.subnet_resource_id = subnet_resource_id
@@ -539,10 +642,10 @@ class ResourceIdentity(msrest.serialization.Model):
 
     :ivar principal_id: The Azure Active Directory principal id.
     :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+    :ivar type: The identity type. Set this to 'SystemAssigned' in order to automatically create
      and assign an Azure Active Directory principal for the resource. Possible values include:
      "SystemAssigned".
-    :type type: str or ~azure.mgmt.sqlvirtualmachine.models.IdentityType
+    :vartype type: str or ~azure.mgmt.sqlvirtualmachine.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
     """
@@ -564,6 +667,12 @@ class ResourceIdentity(msrest.serialization.Model):
         type: Optional[Union[str, "IdentityType"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+         and assign an Azure Active Directory principal for the resource. Possible values include:
+         "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.sqlvirtualmachine.models.IdentityType
+        """
         super(ResourceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.type = type
@@ -573,17 +682,17 @@ class ResourceIdentity(msrest.serialization.Model):
 class ServerConfigurationsManagementSettings(msrest.serialization.Model):
     """Set the connectivity, storage and workload settings.
 
-    :param sql_connectivity_update_settings: SQL connectivity type settings.
-    :type sql_connectivity_update_settings:
+    :ivar sql_connectivity_update_settings: SQL connectivity type settings.
+    :vartype sql_connectivity_update_settings:
      ~azure.mgmt.sqlvirtualmachine.models.SqlConnectivityUpdateSettings
-    :param sql_workload_type_update_settings: SQL workload type settings.
-    :type sql_workload_type_update_settings:
+    :ivar sql_workload_type_update_settings: SQL workload type settings.
+    :vartype sql_workload_type_update_settings:
      ~azure.mgmt.sqlvirtualmachine.models.SqlWorkloadTypeUpdateSettings
-    :param sql_storage_update_settings: SQL storage update settings.
-    :type sql_storage_update_settings:
+    :ivar sql_storage_update_settings: SQL storage update settings.
+    :vartype sql_storage_update_settings:
      ~azure.mgmt.sqlvirtualmachine.models.SqlStorageUpdateSettings
-    :param additional_features_server_configurations: Additional SQL feature settings.
-    :type additional_features_server_configurations:
+    :ivar additional_features_server_configurations: Additional SQL feature settings.
+    :vartype additional_features_server_configurations:
      ~azure.mgmt.sqlvirtualmachine.models.AdditionalFeaturesServerConfigurations
     """
 
@@ -603,6 +712,20 @@ class ServerConfigurationsManagementSettings(msrest.serialization.Model):
         additional_features_server_configurations: Optional["AdditionalFeaturesServerConfigurations"] = None,
         **kwargs
     ):
+        """
+        :keyword sql_connectivity_update_settings: SQL connectivity type settings.
+        :paramtype sql_connectivity_update_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.SqlConnectivityUpdateSettings
+        :keyword sql_workload_type_update_settings: SQL workload type settings.
+        :paramtype sql_workload_type_update_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.SqlWorkloadTypeUpdateSettings
+        :keyword sql_storage_update_settings: SQL storage update settings.
+        :paramtype sql_storage_update_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.SqlStorageUpdateSettings
+        :keyword additional_features_server_configurations: Additional SQL feature settings.
+        :paramtype additional_features_server_configurations:
+         ~azure.mgmt.sqlvirtualmachine.models.AdditionalFeaturesServerConfigurations
+        """
         super(ServerConfigurationsManagementSettings, self).__init__(**kwargs)
         self.sql_connectivity_update_settings = sql_connectivity_update_settings
         self.sql_workload_type_update_settings = sql_workload_type_update_settings
@@ -613,15 +736,15 @@ class ServerConfigurationsManagementSettings(msrest.serialization.Model):
 class SqlConnectivityUpdateSettings(msrest.serialization.Model):
     """Set the access level and network port settings for SQL Server.
 
-    :param connectivity_type: SQL Server connectivity option. Possible values include: "LOCAL",
+    :ivar connectivity_type: SQL Server connectivity option. Possible values include: "LOCAL",
      "PRIVATE", "PUBLIC".
-    :type connectivity_type: str or ~azure.mgmt.sqlvirtualmachine.models.ConnectivityType
-    :param port: SQL Server port.
-    :type port: int
-    :param sql_auth_update_user_name: SQL Server sysadmin login to create.
-    :type sql_auth_update_user_name: str
-    :param sql_auth_update_password: SQL Server sysadmin login password.
-    :type sql_auth_update_password: str
+    :vartype connectivity_type: str or ~azure.mgmt.sqlvirtualmachine.models.ConnectivityType
+    :ivar port: SQL Server port.
+    :vartype port: int
+    :ivar sql_auth_update_user_name: SQL Server sysadmin login to create.
+    :vartype sql_auth_update_user_name: str
+    :ivar sql_auth_update_password: SQL Server sysadmin login password.
+    :vartype sql_auth_update_password: str
     """
 
     _attribute_map = {
@@ -640,6 +763,17 @@ class SqlConnectivityUpdateSettings(msrest.serialization.Model):
         sql_auth_update_password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword connectivity_type: SQL Server connectivity option. Possible values include: "LOCAL",
+         "PRIVATE", "PUBLIC".
+        :paramtype connectivity_type: str or ~azure.mgmt.sqlvirtualmachine.models.ConnectivityType
+        :keyword port: SQL Server port.
+        :paramtype port: int
+        :keyword sql_auth_update_user_name: SQL Server sysadmin login to create.
+        :paramtype sql_auth_update_user_name: str
+        :keyword sql_auth_update_password: SQL Server sysadmin login password.
+        :paramtype sql_auth_update_password: str
+        """
         super(SqlConnectivityUpdateSettings, self).__init__(**kwargs)
         self.connectivity_type = connectivity_type
         self.port = port
@@ -650,10 +784,10 @@ class SqlConnectivityUpdateSettings(msrest.serialization.Model):
 class SQLStorageSettings(msrest.serialization.Model):
     """Set disk storage settings for SQL Server.
 
-    :param luns: Logical Unit Numbers for the disks.
-    :type luns: list[int]
-    :param default_file_path: SQL Server default file path.
-    :type default_file_path: str
+    :ivar luns: Logical Unit Numbers for the disks.
+    :vartype luns: list[int]
+    :ivar default_file_path: SQL Server default file path.
+    :vartype default_file_path: str
     """
 
     _attribute_map = {
@@ -668,6 +802,12 @@ class SQLStorageSettings(msrest.serialization.Model):
         default_file_path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword luns: Logical Unit Numbers for the disks.
+        :paramtype luns: list[int]
+        :keyword default_file_path: SQL Server default file path.
+        :paramtype default_file_path: str
+        """
         super(SQLStorageSettings, self).__init__(**kwargs)
         self.luns = luns
         self.default_file_path = default_file_path
@@ -676,13 +816,13 @@ class SQLStorageSettings(msrest.serialization.Model):
 class SqlStorageUpdateSettings(msrest.serialization.Model):
     """Set disk storage settings for SQL Server.
 
-    :param disk_count: Virtual machine disk count.
-    :type disk_count: int
-    :param starting_device_id: Device id of the first disk to be updated.
-    :type starting_device_id: int
-    :param disk_configuration_type: Disk configuration to apply to SQL Server. Possible values
+    :ivar disk_count: Virtual machine disk count.
+    :vartype disk_count: int
+    :ivar starting_device_id: Device id of the first disk to be updated.
+    :vartype starting_device_id: int
+    :ivar disk_configuration_type: Disk configuration to apply to SQL Server. Possible values
      include: "NEW", "EXTEND", "ADD".
-    :type disk_configuration_type: str or
+    :vartype disk_configuration_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.DiskConfigurationType
     """
 
@@ -700,6 +840,16 @@ class SqlStorageUpdateSettings(msrest.serialization.Model):
         disk_configuration_type: Optional[Union[str, "DiskConfigurationType"]] = None,
         **kwargs
     ):
+        """
+        :keyword disk_count: Virtual machine disk count.
+        :paramtype disk_count: int
+        :keyword starting_device_id: Device id of the first disk to be updated.
+        :paramtype starting_device_id: int
+        :keyword disk_configuration_type: Disk configuration to apply to SQL Server. Possible values
+         include: "NEW", "EXTEND", "ADD".
+        :paramtype disk_configuration_type: str or
+         ~azure.mgmt.sqlvirtualmachine.models.DiskConfigurationType
+        """
         super(SqlStorageUpdateSettings, self).__init__(**kwargs)
         self.disk_count = disk_count
         self.starting_device_id = starting_device_id
@@ -719,10 +869,10 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -747,6 +897,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -765,47 +921,48 @@ class SqlVirtualMachine(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.sqlvirtualmachine.models.ResourceIdentity
-    :param virtual_machine_resource_id: ARM Resource id of underlying virtual machine created from
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: Azure Active Directory identity of the server.
+    :vartype identity: ~azure.mgmt.sqlvirtualmachine.models.ResourceIdentity
+    :ivar virtual_machine_resource_id: ARM Resource id of underlying virtual machine created from
      SQL marketplace image.
-    :type virtual_machine_resource_id: str
+    :vartype virtual_machine_resource_id: str
     :ivar provisioning_state: Provisioning state to track the async operation status.
     :vartype provisioning_state: str
-    :param sql_image_offer: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
-    :type sql_image_offer: str
-    :param sql_server_license_type: SQL Server license type. Possible values include: "PAYG",
+    :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
+    :vartype sql_image_offer: str
+    :ivar sql_server_license_type: SQL Server license type. Possible values include: "PAYG",
      "AHUB", "DR".
-    :type sql_server_license_type: str or ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
-    :param sql_management: SQL Server Management type. Possible values include: "Full",
+    :vartype sql_server_license_type: str or
+     ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
+    :ivar sql_management: SQL Server Management type. Possible values include: "Full",
      "LightWeight", "NoAgent".
-    :type sql_management: str or ~azure.mgmt.sqlvirtualmachine.models.SqlManagementMode
-    :param sql_image_sku: SQL Server edition type. Possible values include: "Developer", "Express",
+    :vartype sql_management: str or ~azure.mgmt.sqlvirtualmachine.models.SqlManagementMode
+    :ivar sql_image_sku: SQL Server edition type. Possible values include: "Developer", "Express",
      "Standard", "Enterprise", "Web".
-    :type sql_image_sku: str or ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
-    :param sql_virtual_machine_group_resource_id: ARM resource id of the SQL virtual machine group
+    :vartype sql_image_sku: str or ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
+    :ivar sql_virtual_machine_group_resource_id: ARM resource id of the SQL virtual machine group
      this SQL virtual machine is or will be part of.
-    :type sql_virtual_machine_group_resource_id: str
-    :param wsfc_domain_credentials: Domain credentials for setting up Windows Server Failover
+    :vartype sql_virtual_machine_group_resource_id: str
+    :ivar wsfc_domain_credentials: Domain credentials for setting up Windows Server Failover
      Cluster for SQL availability group.
-    :type wsfc_domain_credentials: ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainCredentials
-    :param auto_patching_settings: Auto patching settings for applying critical security updates to
+    :vartype wsfc_domain_credentials: ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainCredentials
+    :ivar auto_patching_settings: Auto patching settings for applying critical security updates to
      SQL virtual machine.
-    :type auto_patching_settings: ~azure.mgmt.sqlvirtualmachine.models.AutoPatchingSettings
-    :param auto_backup_settings: Auto backup settings for SQL Server.
-    :type auto_backup_settings: ~azure.mgmt.sqlvirtualmachine.models.AutoBackupSettings
-    :param key_vault_credential_settings: Key vault credential settings.
-    :type key_vault_credential_settings:
+    :vartype auto_patching_settings: ~azure.mgmt.sqlvirtualmachine.models.AutoPatchingSettings
+    :ivar auto_backup_settings: Auto backup settings for SQL Server.
+    :vartype auto_backup_settings: ~azure.mgmt.sqlvirtualmachine.models.AutoBackupSettings
+    :ivar key_vault_credential_settings: Key vault credential settings.
+    :vartype key_vault_credential_settings:
      ~azure.mgmt.sqlvirtualmachine.models.KeyVaultCredentialSettings
-    :param server_configurations_management_settings: SQL Server configuration management settings.
-    :type server_configurations_management_settings:
+    :ivar server_configurations_management_settings: SQL Server configuration management settings.
+    :vartype server_configurations_management_settings:
      ~azure.mgmt.sqlvirtualmachine.models.ServerConfigurationsManagementSettings
-    :param storage_configuration_settings: Storage Configuration Settings.
-    :type storage_configuration_settings:
+    :ivar storage_configuration_settings: Storage Configuration Settings.
+    :vartype storage_configuration_settings:
      ~azure.mgmt.sqlvirtualmachine.models.StorageConfigurationSettings
     """
 
@@ -859,6 +1016,50 @@ class SqlVirtualMachine(TrackedResource):
         storage_configuration_settings: Optional["StorageConfigurationSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Azure Active Directory identity of the server.
+        :paramtype identity: ~azure.mgmt.sqlvirtualmachine.models.ResourceIdentity
+        :keyword virtual_machine_resource_id: ARM Resource id of underlying virtual machine created
+         from SQL marketplace image.
+        :paramtype virtual_machine_resource_id: str
+        :keyword sql_image_offer: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
+        :paramtype sql_image_offer: str
+        :keyword sql_server_license_type: SQL Server license type. Possible values include: "PAYG",
+         "AHUB", "DR".
+        :paramtype sql_server_license_type: str or
+         ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
+        :keyword sql_management: SQL Server Management type. Possible values include: "Full",
+         "LightWeight", "NoAgent".
+        :paramtype sql_management: str or ~azure.mgmt.sqlvirtualmachine.models.SqlManagementMode
+        :keyword sql_image_sku: SQL Server edition type. Possible values include: "Developer",
+         "Express", "Standard", "Enterprise", "Web".
+        :paramtype sql_image_sku: str or ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
+        :keyword sql_virtual_machine_group_resource_id: ARM resource id of the SQL virtual machine
+         group this SQL virtual machine is or will be part of.
+        :paramtype sql_virtual_machine_group_resource_id: str
+        :keyword wsfc_domain_credentials: Domain credentials for setting up Windows Server Failover
+         Cluster for SQL availability group.
+        :paramtype wsfc_domain_credentials: ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainCredentials
+        :keyword auto_patching_settings: Auto patching settings for applying critical security updates
+         to SQL virtual machine.
+        :paramtype auto_patching_settings: ~azure.mgmt.sqlvirtualmachine.models.AutoPatchingSettings
+        :keyword auto_backup_settings: Auto backup settings for SQL Server.
+        :paramtype auto_backup_settings: ~azure.mgmt.sqlvirtualmachine.models.AutoBackupSettings
+        :keyword key_vault_credential_settings: Key vault credential settings.
+        :paramtype key_vault_credential_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.KeyVaultCredentialSettings
+        :keyword server_configurations_management_settings: SQL Server configuration management
+         settings.
+        :paramtype server_configurations_management_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.ServerConfigurationsManagementSettings
+        :keyword storage_configuration_settings: Storage Configuration Settings.
+        :paramtype storage_configuration_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.StorageConfigurationSettings
+        """
         super(SqlVirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.virtual_machine_resource_id = virtual_machine_resource_id
@@ -889,16 +1090,16 @@ class SqlVirtualMachineGroup(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: Provisioning state to track the async operation status.
     :vartype provisioning_state: str
-    :param sql_image_offer: SQL image offer. Examples may include SQL2016-WS2016, SQL2017-WS2016.
-    :type sql_image_offer: str
-    :param sql_image_sku: SQL image sku. Possible values include: "Developer", "Enterprise".
-    :type sql_image_sku: str or ~azure.mgmt.sqlvirtualmachine.models.SqlVmGroupImageSku
+    :ivar sql_image_offer: SQL image offer. Examples may include SQL2016-WS2016, SQL2017-WS2016.
+    :vartype sql_image_offer: str
+    :ivar sql_image_sku: SQL image sku. Possible values include: "Developer", "Enterprise".
+    :vartype sql_image_sku: str or ~azure.mgmt.sqlvirtualmachine.models.SqlVmGroupImageSku
     :ivar scale_type: Scale type. Possible values include: "HA".
     :vartype scale_type: str or ~azure.mgmt.sqlvirtualmachine.models.ScaleType
     :ivar cluster_manager_type: Type of cluster manager: Windows Server Failover Cluster (WSFC),
@@ -907,8 +1108,8 @@ class SqlVirtualMachineGroup(TrackedResource):
     :ivar cluster_configuration: Cluster type. Possible values include: "Domainful".
     :vartype cluster_configuration: str or
      ~azure.mgmt.sqlvirtualmachine.models.ClusterConfiguration
-    :param wsfc_domain_profile: Cluster Active Directory domain profile.
-    :type wsfc_domain_profile: ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainProfile
+    :ivar wsfc_domain_profile: Cluster Active Directory domain profile.
+    :vartype wsfc_domain_profile: ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainProfile
     """
 
     _validation = {
@@ -947,6 +1148,18 @@ class SqlVirtualMachineGroup(TrackedResource):
         wsfc_domain_profile: Optional["WsfcDomainProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sql_image_offer: SQL image offer. Examples may include SQL2016-WS2016, SQL2017-WS2016.
+        :paramtype sql_image_offer: str
+        :keyword sql_image_sku: SQL image sku. Possible values include: "Developer", "Enterprise".
+        :paramtype sql_image_sku: str or ~azure.mgmt.sqlvirtualmachine.models.SqlVmGroupImageSku
+        :keyword wsfc_domain_profile: Cluster Active Directory domain profile.
+        :paramtype wsfc_domain_profile: ~azure.mgmt.sqlvirtualmachine.models.WsfcDomainProfile
+        """
         super(SqlVirtualMachineGroup, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.sql_image_offer = sql_image_offer
@@ -982,6 +1195,8 @@ class SqlVirtualMachineGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlVirtualMachineGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -990,8 +1205,8 @@ class SqlVirtualMachineGroupListResult(msrest.serialization.Model):
 class SqlVirtualMachineGroupUpdate(msrest.serialization.Model):
     """An update to a SQL virtual machine group.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -1004,6 +1219,10 @@ class SqlVirtualMachineGroupUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(SqlVirtualMachineGroupUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -1033,6 +1252,8 @@ class SqlVirtualMachineListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlVirtualMachineListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1041,8 +1262,8 @@ class SqlVirtualMachineListResult(msrest.serialization.Model):
 class SqlVirtualMachineUpdate(msrest.serialization.Model):
     """An update to a SQL virtual machine.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -1055,6 +1276,10 @@ class SqlVirtualMachineUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(SqlVirtualMachineUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -1062,9 +1287,9 @@ class SqlVirtualMachineUpdate(msrest.serialization.Model):
 class SqlWorkloadTypeUpdateSettings(msrest.serialization.Model):
     """Set workload type to optimize storage for SQL Server.
 
-    :param sql_workload_type: SQL Server workload type. Possible values include: "GENERAL", "OLTP",
+    :ivar sql_workload_type: SQL Server workload type. Possible values include: "GENERAL", "OLTP",
      "DW".
-    :type sql_workload_type: str or ~azure.mgmt.sqlvirtualmachine.models.SqlWorkloadType
+    :vartype sql_workload_type: str or ~azure.mgmt.sqlvirtualmachine.models.SqlWorkloadType
     """
 
     _attribute_map = {
@@ -1077,6 +1302,11 @@ class SqlWorkloadTypeUpdateSettings(msrest.serialization.Model):
         sql_workload_type: Optional[Union[str, "SqlWorkloadType"]] = None,
         **kwargs
     ):
+        """
+        :keyword sql_workload_type: SQL Server workload type. Possible values include: "GENERAL",
+         "OLTP", "DW".
+        :paramtype sql_workload_type: str or ~azure.mgmt.sqlvirtualmachine.models.SqlWorkloadType
+        """
         super(SqlWorkloadTypeUpdateSettings, self).__init__(**kwargs)
         self.sql_workload_type = sql_workload_type
 
@@ -1084,19 +1314,19 @@ class SqlWorkloadTypeUpdateSettings(msrest.serialization.Model):
 class StorageConfigurationSettings(msrest.serialization.Model):
     """Storage Configurations for SQL Data, Log and TempDb.
 
-    :param sql_data_settings: SQL Server Data Storage Settings.
-    :type sql_data_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
-    :param sql_log_settings: SQL Server Log Storage Settings.
-    :type sql_log_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
-    :param sql_temp_db_settings: SQL Server TempDb Storage Settings.
-    :type sql_temp_db_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
-    :param disk_configuration_type: Disk configuration to apply to SQL Server. Possible values
+    :ivar sql_data_settings: SQL Server Data Storage Settings.
+    :vartype sql_data_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
+    :ivar sql_log_settings: SQL Server Log Storage Settings.
+    :vartype sql_log_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
+    :ivar sql_temp_db_settings: SQL Server TempDb Storage Settings.
+    :vartype sql_temp_db_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
+    :ivar disk_configuration_type: Disk configuration to apply to SQL Server. Possible values
      include: "NEW", "EXTEND", "ADD".
-    :type disk_configuration_type: str or
+    :vartype disk_configuration_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.DiskConfigurationType
-    :param storage_workload_type: Storage workload type. Possible values include: "GENERAL",
-     "OLTP", "DW".
-    :type storage_workload_type: str or ~azure.mgmt.sqlvirtualmachine.models.StorageWorkloadType
+    :ivar storage_workload_type: Storage workload type. Possible values include: "GENERAL", "OLTP",
+     "DW".
+    :vartype storage_workload_type: str or ~azure.mgmt.sqlvirtualmachine.models.StorageWorkloadType
     """
 
     _attribute_map = {
@@ -1117,6 +1347,22 @@ class StorageConfigurationSettings(msrest.serialization.Model):
         storage_workload_type: Optional[Union[str, "StorageWorkloadType"]] = None,
         **kwargs
     ):
+        """
+        :keyword sql_data_settings: SQL Server Data Storage Settings.
+        :paramtype sql_data_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
+        :keyword sql_log_settings: SQL Server Log Storage Settings.
+        :paramtype sql_log_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
+        :keyword sql_temp_db_settings: SQL Server TempDb Storage Settings.
+        :paramtype sql_temp_db_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
+        :keyword disk_configuration_type: Disk configuration to apply to SQL Server. Possible values
+         include: "NEW", "EXTEND", "ADD".
+        :paramtype disk_configuration_type: str or
+         ~azure.mgmt.sqlvirtualmachine.models.DiskConfigurationType
+        :keyword storage_workload_type: Storage workload type. Possible values include: "GENERAL",
+         "OLTP", "DW".
+        :paramtype storage_workload_type: str or
+         ~azure.mgmt.sqlvirtualmachine.models.StorageWorkloadType
+        """
         super(StorageConfigurationSettings, self).__init__(**kwargs)
         self.sql_data_settings = sql_data_settings
         self.sql_log_settings = sql_log_settings
@@ -1128,12 +1374,12 @@ class StorageConfigurationSettings(msrest.serialization.Model):
 class WsfcDomainCredentials(msrest.serialization.Model):
     """Domain credentials for setting up Windows Server Failover Cluster for SQL availability group.
 
-    :param cluster_bootstrap_account_password: Cluster bootstrap account password.
-    :type cluster_bootstrap_account_password: str
-    :param cluster_operator_account_password: Cluster operator account password.
-    :type cluster_operator_account_password: str
-    :param sql_service_account_password: SQL service account password.
-    :type sql_service_account_password: str
+    :ivar cluster_bootstrap_account_password: Cluster bootstrap account password.
+    :vartype cluster_bootstrap_account_password: str
+    :ivar cluster_operator_account_password: Cluster operator account password.
+    :vartype cluster_operator_account_password: str
+    :ivar sql_service_account_password: SQL service account password.
+    :vartype sql_service_account_password: str
     """
 
     _attribute_map = {
@@ -1150,6 +1396,14 @@ class WsfcDomainCredentials(msrest.serialization.Model):
         sql_service_account_password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword cluster_bootstrap_account_password: Cluster bootstrap account password.
+        :paramtype cluster_bootstrap_account_password: str
+        :keyword cluster_operator_account_password: Cluster operator account password.
+        :paramtype cluster_operator_account_password: str
+        :keyword sql_service_account_password: SQL service account password.
+        :paramtype sql_service_account_password: str
+        """
         super(WsfcDomainCredentials, self).__init__(**kwargs)
         self.cluster_bootstrap_account_password = cluster_bootstrap_account_password
         self.cluster_operator_account_password = cluster_operator_account_password
@@ -1159,25 +1413,25 @@ class WsfcDomainCredentials(msrest.serialization.Model):
 class WsfcDomainProfile(msrest.serialization.Model):
     """Active Directory account details to operate Windows Server Failover Cluster.
 
-    :param domain_fqdn: Fully qualified name of the domain.
-    :type domain_fqdn: str
-    :param ou_path: Organizational Unit path in which the nodes and cluster will be present.
-    :type ou_path: str
-    :param cluster_bootstrap_account: Account name used for creating cluster (at minimum needs
+    :ivar domain_fqdn: Fully qualified name of the domain.
+    :vartype domain_fqdn: str
+    :ivar ou_path: Organizational Unit path in which the nodes and cluster will be present.
+    :vartype ou_path: str
+    :ivar cluster_bootstrap_account: Account name used for creating cluster (at minimum needs
      permissions to 'Create Computer Objects' in domain).
-    :type cluster_bootstrap_account: str
-    :param cluster_operator_account: Account name used for operating cluster i.e. will be part of
+    :vartype cluster_bootstrap_account: str
+    :ivar cluster_operator_account: Account name used for operating cluster i.e. will be part of
      administrators group on all the participating virtual machines in the cluster.
-    :type cluster_operator_account: str
-    :param sql_service_account: Account name under which SQL service will run on all participating
+    :vartype cluster_operator_account: str
+    :ivar sql_service_account: Account name under which SQL service will run on all participating
      SQL virtual machines in the cluster.
-    :type sql_service_account: str
-    :param file_share_witness_path: Optional path for fileshare witness.
-    :type file_share_witness_path: str
-    :param storage_account_url: Fully qualified ARM resource id of the witness storage account.
-    :type storage_account_url: str
-    :param storage_account_primary_key: Primary key of the witness storage account.
-    :type storage_account_primary_key: str
+    :vartype sql_service_account: str
+    :ivar file_share_witness_path: Optional path for fileshare witness.
+    :vartype file_share_witness_path: str
+    :ivar storage_account_url: Fully qualified ARM resource id of the witness storage account.
+    :vartype storage_account_url: str
+    :ivar storage_account_primary_key: Primary key of the witness storage account.
+    :vartype storage_account_primary_key: str
     """
 
     _attribute_map = {
@@ -1204,6 +1458,27 @@ class WsfcDomainProfile(msrest.serialization.Model):
         storage_account_primary_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword domain_fqdn: Fully qualified name of the domain.
+        :paramtype domain_fqdn: str
+        :keyword ou_path: Organizational Unit path in which the nodes and cluster will be present.
+        :paramtype ou_path: str
+        :keyword cluster_bootstrap_account: Account name used for creating cluster (at minimum needs
+         permissions to 'Create Computer Objects' in domain).
+        :paramtype cluster_bootstrap_account: str
+        :keyword cluster_operator_account: Account name used for operating cluster i.e. will be part of
+         administrators group on all the participating virtual machines in the cluster.
+        :paramtype cluster_operator_account: str
+        :keyword sql_service_account: Account name under which SQL service will run on all
+         participating SQL virtual machines in the cluster.
+        :paramtype sql_service_account: str
+        :keyword file_share_witness_path: Optional path for fileshare witness.
+        :paramtype file_share_witness_path: str
+        :keyword storage_account_url: Fully qualified ARM resource id of the witness storage account.
+        :paramtype storage_account_url: str
+        :keyword storage_account_primary_key: Primary key of the witness storage account.
+        :paramtype storage_account_primary_key: str
+        """
         super(WsfcDomainProfile, self).__init__(**kwargs)
         self.domain_fqdn = domain_fqdn
         self.ou_path = ou_path
