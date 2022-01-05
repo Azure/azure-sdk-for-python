@@ -21,13 +21,7 @@ from uamqp.authentication import SASTokenAuth
 
 from devtools_testutils import get_region_override
 
-# Ignore async tests for Python < 3.5
 collect_ignore = []
-if sys.version_info < (3, 5):
-    collect_ignore.append("tests/livetest/asynctests")
-    collect_ignore.append("tests/unittest/asynctests")
-    collect_ignore.append("features")
-    collect_ignore.append("samples/async_samples")
 PARTITION_COUNT = 2
 CONN_STR = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}"
 RES_GROUP_PREFIX = "eh-res-group"
