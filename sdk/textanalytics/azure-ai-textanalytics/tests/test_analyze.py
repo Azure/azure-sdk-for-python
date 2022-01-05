@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -15,7 +14,7 @@ import json
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
-    import mock  # type: ignore
+    from unittest import mock  # type: ignore
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -282,7 +281,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_bad_request_on_empty_document(self, client):
-        docs = [u""]
+        docs = [""]
 
         with pytest.raises(HttpResponseError):
             response = client.begin_analyze_actions(
@@ -1250,7 +1249,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "./mock_test_responses/action_error_no_target.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1311,7 +1310,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "./mock_test_responses/action_error_with_targets.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1398,7 +1397,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "./mock_test_responses/action_job_failure.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
