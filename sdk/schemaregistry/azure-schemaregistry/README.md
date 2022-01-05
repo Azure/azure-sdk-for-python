@@ -8,7 +8,7 @@ schema identifiers rather than full schemas.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -24,7 +24,7 @@ pip install azure-schemaregistry
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service]
-* Python 2.7, 3.6 or later - [Install Python][python]
+* Python 3.7 or later - [Install Python][python]
 
 ### Authenticate the client
 
@@ -39,7 +39,7 @@ Interaction with Schema Registry starts with an instance of SchemaRegistryClient
 pip install azure-identity
 ```
 
-* Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
+* Additionally, to use the async API,  you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```Bash
 pip install aiohttp
