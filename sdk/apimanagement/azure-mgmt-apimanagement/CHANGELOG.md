@@ -1,5 +1,78 @@
 # Release History
 
+## 3.0.0 (2022-01-05)
+
+**Features**
+
+  - Model RepresentationContract has a new parameter examples
+  - Model ApiCreateOrUpdateParameter has a new parameter terms_of_service_url
+  - Model ApiCreateOrUpdateParameter has a new parameter contact
+  - Model ApiCreateOrUpdateParameter has a new parameter license
+  - Model TenantConfigurationSyncStateContract has a new parameter id
+  - Model TenantConfigurationSyncStateContract has a new parameter type
+  - Model TenantConfigurationSyncStateContract has a new parameter name
+  - Model ApiEntityBaseContract has a new parameter terms_of_service_url
+  - Model ApiEntityBaseContract has a new parameter contact
+  - Model ApiEntityBaseContract has a new parameter license
+  - Model ApiManagementServiceBackupRestoreParameters has a new parameter client_id
+  - Model ApiManagementServiceBackupRestoreParameters has a new parameter access_type
+  - Model SchemaContract has a new parameter components
+  - Model ApiContract has a new parameter terms_of_service_url
+  - Model ApiContract has a new parameter contact
+  - Model ApiContract has a new parameter license
+  - Model ApiManagementServiceProperties has a new parameter public_network_access
+  - Model ApiManagementServiceProperties has a new parameter public_ip_address_id
+  - Model ApiManagementServiceProperties has a new parameter platform_version
+  - Model ApiManagementServiceProperties has a new parameter private_endpoint_connections
+  - Model ApiUpdateContract has a new parameter terms_of_service_url
+  - Model ApiUpdateContract has a new parameter contact
+  - Model ApiUpdateContract has a new parameter license
+  - Model AdditionalLocation has a new parameter public_ip_address_id
+  - Model AdditionalLocation has a new parameter platform_version
+  - Model ApiContractUpdateProperties has a new parameter terms_of_service_url
+  - Model ApiContractUpdateProperties has a new parameter contact
+  - Model ApiContractUpdateProperties has a new parameter license
+  - Model ApiTagResourceContractProperties has a new parameter terms_of_service_url
+  - Model ApiTagResourceContractProperties has a new parameter contact
+  - Model ApiTagResourceContractProperties has a new parameter license
+  - Model ApiCreateOrUpdateProperties has a new parameter terms_of_service_url
+  - Model ApiCreateOrUpdateProperties has a new parameter contact
+  - Model ApiCreateOrUpdateProperties has a new parameter license
+  - Model ApiManagementServiceUpdateProperties has a new parameter public_network_access
+  - Model ApiManagementServiceUpdateProperties has a new parameter public_ip_address_id
+  - Model ApiManagementServiceUpdateProperties has a new parameter platform_version
+  - Model ApiManagementServiceUpdateProperties has a new parameter private_endpoint_connections
+  - Model ApiManagementServiceUpdateParameters has a new parameter public_ip_address_id
+  - Model ApiManagementServiceUpdateParameters has a new parameter zones
+  - Model ApiManagementServiceUpdateParameters has a new parameter public_network_access
+  - Model ApiManagementServiceUpdateParameters has a new parameter platform_version
+  - Model ApiManagementServiceUpdateParameters has a new parameter private_endpoint_connections
+  - Model ParameterContract has a new parameter type_name
+  - Model ParameterContract has a new parameter schema_id
+  - Model ParameterContract has a new parameter examples
+  - Model ApiManagementServiceResource has a new parameter public_ip_address_id
+  - Model ApiManagementServiceResource has a new parameter public_network_access
+  - Model ApiManagementServiceResource has a new parameter system_data
+  - Model ApiManagementServiceResource has a new parameter platform_version
+  - Model ApiManagementServiceResource has a new parameter private_endpoint_connections
+  - Model ApiManagementServiceBaseProperties has a new parameter public_network_access
+  - Model ApiManagementServiceBaseProperties has a new parameter public_ip_address_id
+  - Model ApiManagementServiceBaseProperties has a new parameter platform_version
+  - Model ApiManagementServiceBaseProperties has a new parameter private_endpoint_connections
+  - Model ApiContractProperties has a new parameter terms_of_service_url
+  - Model ApiContractProperties has a new parameter contact
+  - Model ApiContractProperties has a new parameter license
+  - Model HostnameConfiguration has a new parameter certificate_status
+  - Model HostnameConfiguration has a new parameter certificate_source
+  - Added operation group ApiManagementClientOperationsMixin
+  - Added operation group OutboundNetworkDependenciesEndpointsOperations
+  - Added operation group GlobalSchemaOperations
+  - Added operation group PrivateEndpointConnectionOperations
+
+**Breaking changes**
+
+  - Model RepresentationContract no longer has parameter sample
+
 ## 2.1.0 (2021-08-03)
 
 **Features**
