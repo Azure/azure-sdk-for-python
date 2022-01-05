@@ -469,7 +469,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
 |  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is `exponential`. |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is `exponential`. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 | AsyncRetryPolicy | AsyncHTTPPolicy |  |  |  |  |
 |  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
@@ -478,7 +478,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
 |  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 
 ### The Pipeline

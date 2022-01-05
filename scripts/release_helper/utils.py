@@ -7,6 +7,7 @@ REQUEST_REPO = 'Azure/sdk-release-request'
 REST_REPO = 'Azure/azure-rest-api-specs'
 AUTO_ASSIGN_LABEL = 'assigned'
 AUTO_PARSE_LABEL = 'auto-link'
+MULTI_LINK_LABEL = 'MultiLink'
 
 _LOG = logging.getLogger(__name__)
 
@@ -14,9 +15,9 @@ _LOG = logging.getLogger(__name__)
 def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
     link, readme_tag = '', ''
     for row in issue_body_list:
-        if 'link' in row.lower():
+        if 'link' in row.lower() and link == '':
             link = row.split(":", 1)[-1].strip()
-        if 'readme tag' in row.lower():
+        if 'readme tag' in row.lower() and readme_tag == '':
             readme_tag = row.split(":", 1)[-1].strip()
         if link and readme_tag:
             break

@@ -6,81 +6,24 @@
 
 import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from azure.ai.formrecognizer import FormRecognizerApiVersion
-from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
+from azure.ai.formrecognizer.aio import FormRecognizerClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
-
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    async def test_business_card_multipage_pdf(self, client):
-
-        async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-businessCard", self.business_card_multipage_url_pdf)
-            result = await poller.result()
-
-        assert len(result.documents) == 2
-        business_card = result.documents[0]
-        assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'JOHN'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'SINGER'
-
-        assert len(business_card.fields.get("JobTitles").value) == 1
-        assert business_card.fields.get("JobTitles").value[0].value == "Software Engineer"
-
-        assert len(business_card.fields.get("Emails").value) == 1
-        assert business_card.fields.get("Emails").value[0].value == "johnsinger@contoso.com"
-
-        assert len(business_card.fields.get("Websites").value) == 1
-        assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com"
-
-        assert len(business_card.fields.get("OtherPhones").value) == 1
-        assert business_card.fields.get("OtherPhones").value[0].value == "+14257793479"
-
-        business_card = result.documents[1]
-        assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
-
-        assert len(business_card.fields.get("JobTitles").value) == 1
-        assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
-
-        assert len(business_card.fields.get("Departments").value) == 1
-        assert business_card.fields.get("Departments").value[0].value == "Cloud & Al Department"
-
-        assert len(business_card.fields.get("Emails").value) == 1
-        assert business_card.fields.get("Emails").value[0].value == "avery.smith@contoso.com"
-
-        assert len(business_card.fields.get("Websites").value) == 1
-        assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com/"
-
-        # The phone number values are not getting normalized to a phone number type. Just assert on text.
-        assert len(business_card.fields.get("MobilePhones").value) == 1
-        assert business_card.fields.get("MobilePhones").value[0].content == "+44 (0) 7911 123456"
-
-        assert len(business_card.fields.get("WorkPhones").value) == 1
-        assert business_card.fields.get("WorkPhones").value[0].content == "+44 (0) 20 9876 5432"
-
-        assert len(business_card.fields.get("Faxes").value) == 1
-        assert business_card.fields.get("Faxes").value[0].content == "+44 (0) 20 6789 2345"
-
-        assert len(business_card.fields.get("Addresses").value) == 1
-        assert business_card.fields.get("Addresses").value[0].value == "2 Kingdom Street Paddington, London, W2 6BD"
-
-        assert len(business_card.fields.get("CompanyNames").value) == 1
-        assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
-
-    @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_business_card_jpg_include_field_elements(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, include_field_elements=True)
 

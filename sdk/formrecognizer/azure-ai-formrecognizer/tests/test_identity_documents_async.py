@@ -7,28 +7,29 @@
 import pytest
 import functools
 from io import BytesIO
-from datetime import date, time
-from azure.core.exceptions import ServiceRequestError, HttpResponseError
+from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
-from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
+from azure.ai.formrecognizer.aio import FormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerApiVersion
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    async def test_identity_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_identity_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_recognize_identity_documents(myfile)
@@ -37,7 +38,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_identity_documents(
                     damaged_pdf
@@ -47,7 +48,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_identity_documents(
                     damaged_pdf
@@ -58,7 +59,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_identity_documents(
                     myfile,
@@ -71,7 +72,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_identity_documents(
                     myfile
@@ -79,6 +80,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_identity_document_stream_transform_jpg(self, client):
         responses = []
 
@@ -117,53 +119,8 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    async def test_identity_document_jpg_passport(self, client):
-        with open(self.identity_document_passport_jpg, "rb") as fd:
-            id_document = fd.read()
-
-        async with client:
-            poller = await client.begin_analyze_document("prebuilt-idDocument", id_document)
-
-            result = await poller.result()
-            assert len(result.documents) == 1
-        
-            id_document = result.documents[0]
-
-            passport = id_document.fields.get("MachineReadableZone").value
-            assert passport["LastName"].value == "MARTIN"
-            assert passport["FirstName"].value == "SARAH"
-            assert passport["DocumentNumber"].value == "ZE000509"
-            assert passport["DateOfBirth"].value == date(1985,1,1)
-            assert passport["DateOfExpiration"].value == date(2023,1,14)
-            assert passport["Sex"].value == "F"
-            assert passport["CountryRegion"].value == "CAN"
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    async def test_identity_document_jpg(self, client):
-        with open(self.identity_document_license_jpg, "rb") as fd:
-            id_document = fd.read()
-
-        async with client:
-            poller = await client.begin_analyze_document("prebuilt-idDocument", id_document)
-
-            result = await poller.result()
-        assert len(result.documents) == 1
-        id_document = result.documents[0]
-
-        assert id_document.fields.get("LastName").value == "TALBOT"
-        assert id_document.fields.get("FirstName").value == "LIAM R."
-        assert id_document.fields.get("DocumentNumber").value == "WDLABCD456DG"
-        assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
-        assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
-        assert id_document.fields.get("Sex").value == "M"
-        assert id_document.fields.get("Address").value == "123 STREET ADDRESS YOUR CITY WA 99999-1234"
-        assert id_document.fields.get("CountryRegion").value == "USA"
-        assert id_document.fields.get("Region").value == "Washington"
-
-    @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_identity_document_jpg_include_field_elements(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
@@ -211,6 +168,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self, client):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()

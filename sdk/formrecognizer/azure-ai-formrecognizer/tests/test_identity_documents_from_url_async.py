@@ -6,24 +6,26 @@
 
 import pytest
 import functools
-from datetime import date
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
-from azure.ai.formrecognizer.aio import FormRecognizerClient, DocumentAnalysisClient
+from azure.ai.formrecognizer.aio import FormRecognizerClient
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -37,7 +39,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_identity_document_url_transform_jpg(self, client):
+        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -72,51 +76,10 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    async def test_identity_document_jpg_passport(self, client):
-        async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg_passport)
-
-            result = await poller.result()
-            assert len(result.documents) == 1
-        
-            id_document = result.documents[0]
-            # check dict values
-
-            passport = id_document.fields.get("MachineReadableZone").value
-            assert passport["LastName"].value == "MARTIN"
-            assert passport["FirstName"].value == "SARAH"
-            assert passport["DocumentNumber"].value == "ZE000509"
-            assert passport["DateOfBirth"].value == date(1985,1,1)
-            assert passport["DateOfExpiration"].value == date(2023,1,14)
-            assert passport["Sex"].value == "F"
-            assert passport["CountryRegion"].value == "CAN"
-
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    async def test_identity_document_jpg(self, client):
-        async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg)
-
-            result = await poller.result()
-        assert len(result.documents) == 1
-        id_document = result.documents[0]
-
-        # check dict values
-        assert id_document.fields.get("LastName").value == "TALBOT"
-        assert id_document.fields.get("FirstName").value == "LIAM R."
-        assert id_document.fields.get("DocumentNumber").value == "WDLABCD456DG"
-        assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
-        assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
-        assert id_document.fields.get("Sex").value == "M"
-        assert id_document.fields.get("Address").value == "123 STREET ADDRESS YOUR CITY WA 99999-1234"
-        assert id_document.fields.get("CountryRegion").value == "USA"
-        assert id_document.fields.get("Region").value == "Washington"
-
-
-    @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_identity_document_jpg_include_field_elements(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
@@ -157,7 +120,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, pages=["1"])
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']

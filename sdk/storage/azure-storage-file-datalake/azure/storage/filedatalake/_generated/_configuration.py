@@ -39,7 +39,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
 
         self.url = url
         self.resource = "filesystem"
-        self.version = "2020-06-12"
+        self.version = "2020-10-02"
         kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
         self._configure(**kwargs)
 

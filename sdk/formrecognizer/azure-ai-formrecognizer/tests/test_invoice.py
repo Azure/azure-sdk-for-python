@@ -8,32 +8,34 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion, DocumentAnalysisClient, AnalyzeResult
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestInvoice(FormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    def test_invoice_bad_endpoint(self, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_invoice_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_invoices(myfile)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -48,7 +50,7 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
                 damaged_pdf
             )
@@ -57,7 +59,7 @@ class TestInvoice(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
                 damaged_pdf
             )
@@ -67,7 +69,7 @@ class TestInvoice(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
                 myfile,
                 content_type="application/jpeg"
@@ -80,13 +82,14 @@ class TestInvoice(FormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
                 myfile
             )
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_stream_transform_pdf(self, client):
         responses = []
 
@@ -123,47 +126,10 @@ class TestInvoice(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_invoice_stream_transform_tiff(self, client):
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_invoice = AnalyzeResult._from_generated(analyze_result.analyze_result)
-            responses.append(analyze_result)
-            responses.append(extracted_invoice)
-
-        with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
-
-        poller = client.begin_analyze_document(
-            model="prebuilt-invoice",
-            document=myfile,
-            cls=callback
-        )
-
-        result = poller.result()
-        raw_analyze_result = responses[0].analyze_result
-        returned_model = responses[1]
-
-        # Check AnalyzeResult
-        assert returned_model.model_id == raw_analyze_result.model_id
-        assert returned_model.api_version == raw_analyze_result.api_version
-        assert returned_model.content == raw_analyze_result.content
-        
-        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
-        self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
-        self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
-        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
-
-        # check page range
-        assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_stream_multipage_transform_pdf(self, client):
         responses = []
 
@@ -207,6 +173,7 @@ class TestInvoice(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_tiff(self, client):
 
         with open(self.invoice_tiff, "rb") as stream:
@@ -227,8 +194,10 @@ class TestInvoice(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["Amount"].value ==  56651.49
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_multipage_pdf(self, client):
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
@@ -255,52 +224,8 @@ class TestInvoice(FormRecognizerTest):
         assert remittance_address.value_data.page_number ==  1
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    def test_invoice_jpg(self, client):
-        with open(self.invoice_jpg, "rb") as fd:
-            invoice = fd.read()
-        poller = client.begin_analyze_document("prebuilt-invoice", invoice)
-
-        result = poller.result()
-        assert len(result.documents) == 1
-        invoice = result.documents[0]
-
-        assert result.pages
-
-        # check dict values
-        assert invoice.fields.get("AmountDue").value ==  610.0
-        assert invoice.fields.get("BillingAddress").value, "123 Bill St, Redmond WA ==  98052"
-        assert invoice.fields.get("BillingAddressRecipient").value ==  "Microsoft Finance"
-        assert invoice.fields.get("CustomerAddress").value, "123 Other St, Redmond WA ==  98052"
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft Corp"
-        assert invoice.fields.get("CustomerId").value ==  "CID-12345"
-        assert invoice.fields.get("CustomerName").value ==  "MICROSOFT CORPORATION"
-        assert invoice.fields.get("DueDate").value, date(2019, 12 ==  15)
-        assert invoice.fields.get("InvoiceDate").value, date(2019, 11 ==  15)
-        assert invoice.fields.get("InvoiceId").value ==  "INV-100"
-        assert invoice.fields.get("InvoiceTotal").value ==  110.0
-        assert invoice.fields.get("PreviousUnpaidBalance").value ==  500.0
-        assert invoice.fields.get("PurchaseOrder").value ==  "PO-3333"
-        assert invoice.fields.get("RemittanceAddress").value, "123 Remit St New York, NY ==  10001"
-        assert invoice.fields.get("RemittanceAddressRecipient").value ==  "Contoso Billing"
-        assert invoice.fields.get("ServiceAddress").value, "123 Service St, Redmond WA ==  98052"
-        assert invoice.fields.get("ServiceAddressRecipient").value ==  "Microsoft Services"
-        assert invoice.fields.get("ServiceEndDate").value, date(2019, 11 ==  14)
-        assert invoice.fields.get("ServiceStartDate").value, date(2019, 10 ==  14)
-        assert invoice.fields.get("ShippingAddress").value, "123 Ship St, Redmond WA ==  98052"
-        assert invoice.fields.get("ShippingAddressRecipient").value ==  "Microsoft Delivery"
-        assert invoice.fields.get("SubTotal").value ==  100.0
-        assert invoice.fields.get("TotalTax").value ==  10.0
-        assert invoice.fields.get("VendorName").value ==  "CONTOSO LTD."
-        assert invoice.fields.get("VendorAddress").value, "123 456th St New York, NY ==  10001"
-        assert invoice.fields.get("VendorAddressRecipient").value ==  "Contoso Headquarters"
-        assert invoice.fields.get("Items").value[0].value["Amount"].value ==  100.0
-        assert invoice.fields.get("Items").value[0].value["Description"].value ==  "Consulting service"
-        assert invoice.fields.get("Items").value[0].value["Quantity"].value ==  1.0
-        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value ==  1.0
-
-    @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_jpg_include_field_elements(self, client):
         with open(self.invoice_jpg, "rb") as fd:
             invoice = fd.read()
@@ -376,6 +301,7 @@ class TestInvoice(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_locale_specified(self, client):
         with open(self.invoice_tiff, "rb") as fd:
             invoice = fd.read()
@@ -386,6 +312,7 @@ class TestInvoice(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_invoice_locale_error(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
@@ -395,6 +322,7 @@ class TestInvoice(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()

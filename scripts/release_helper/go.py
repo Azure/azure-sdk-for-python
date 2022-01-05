@@ -6,7 +6,7 @@ import os
 _GO_OWNER = {'ArcturusZhang'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN_GO = {'ArcturusZhang': os.getenv('GO_DAPENGZHANG_TOKEN')}
+_ASSIGNEE_TOKEN_GO = {'ArcturusZhang': os.getenv('AZURESDK_BOT_TOKEN')}
 
 
 class IssueProcessGo(IssueProcess):
@@ -14,7 +14,9 @@ class IssueProcessGo(IssueProcess):
 
 
 class Go(Common):
-    pass
+    def __init__(self, issues, assignee_token, language_owner):
+        super(Go, self).__init__(issues, assignee_token, language_owner)
+        self.file_out_name = 'release_go_status.md'
 
 
 def go_process(issues: List[Any]):
