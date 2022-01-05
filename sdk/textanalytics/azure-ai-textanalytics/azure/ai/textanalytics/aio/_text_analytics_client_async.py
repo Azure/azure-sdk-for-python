@@ -170,8 +170,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
-        :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.DetectLanguageResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -258,8 +257,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -359,8 +357,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -466,8 +463,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -556,8 +552,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
-        :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -646,8 +641,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
-        :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -766,8 +760,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.aio.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.AsyncItemPaged[
-            Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
+            ~azure.ai.textanalytics.aio.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
@@ -955,9 +949,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, RecognizeCustomEntitiesResult,
-            SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]
+            list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult,
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
+            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1

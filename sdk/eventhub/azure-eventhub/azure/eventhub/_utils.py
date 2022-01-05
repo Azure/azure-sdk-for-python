@@ -311,14 +311,14 @@ def decode_with_recurse(data, encoding="UTF-8"):
         return data
     if isinstance(data, six.binary_type):
         return data.decode(encoding)
-    if isinstance(data, Mapping):
+    if isinstance(data, Mapping): # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_mapping = {}
         for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(data, Iterable):
+    if isinstance(data, Iterable): # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))
