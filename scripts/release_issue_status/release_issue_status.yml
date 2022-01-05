@@ -20,7 +20,7 @@ jobs:
   displayName: ReleaseIssueStatus Python 3.8
   timeoutInMinutes: 30
   strategy:
-    maxParallel: 3
+    maxParallel: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
