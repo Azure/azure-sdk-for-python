@@ -16,6 +16,9 @@
 
 ### Other Changes
 
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.0.
+
 ## 7.4.0 (2021-11-09)
 
 ### Features Added

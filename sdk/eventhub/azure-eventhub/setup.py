@@ -69,6 +69,6 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
-        "uamqp>=1.4.3,<2.0.0",
+        "uamqp>=1.5.0,<2.0.0",
     ]
 )
