@@ -7,6 +7,7 @@
 import pytest
 import functools
 from datetime import date
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
@@ -21,7 +22,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestIdDocumentsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy
+    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -34,7 +37,9 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_url_transform_jpg(self, client):
+        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -69,7 +74,9 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_identity_document_jpg_include_field_elements(self, client):
+        set_bodiless_matcher()
         poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
         result = poller.result()
@@ -107,7 +114,9 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
+        set_bodiless_matcher()
         poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, pages=["1"])
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()

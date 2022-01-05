@@ -32,5 +32,4 @@ async def run():
     async with ServiceBusClient.from_connection_string(connstr) as client:
         pass # Client is now initialized and can be used.
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run())
+asyncio.run(run())

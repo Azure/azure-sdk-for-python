@@ -1,5 +1,13 @@
 # Release History
 
+## 13.1.0 (2021-12-16)
+
+**Features**
+
+  - Model RedisResource has a new parameter identity
+  - Model RedisUpdateParameters has a new parameter identity
+  - Model RedisCreateParameters has a new parameter identity
+
 ## 13.0.0 (2021-07-16)
 
 **Features**
