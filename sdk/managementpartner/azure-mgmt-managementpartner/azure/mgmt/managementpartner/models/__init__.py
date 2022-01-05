@@ -6,20 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Error
-    from ._models_py3 import ExtendedErrorInfo
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationList
-    from ._models_py3 import OperationResponse
-    from ._models_py3 import PartnerResponse
-except (SyntaxError, ImportError):
-    from ._models import Error  # type: ignore
-    from ._models import ExtendedErrorInfo  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import OperationResponse  # type: ignore
-    from ._models import PartnerResponse  # type: ignore
+from ._models_py3 import Error
+from ._models_py3 import ExtendedErrorInfo
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationList
+from ._models_py3 import OperationResponse
+from ._models_py3 import PartnerResponse
+
 
 from ._ace_provisioning_management_partner_api_enums import (
     ErrorResponseCode,
