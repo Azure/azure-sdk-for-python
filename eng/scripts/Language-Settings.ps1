@@ -203,7 +203,7 @@ function DockerValidation{
     [Parameter(Mandatory=$false)]
     [string]$workingDirectory
   ) 
-  if ($PackageSourceOverride) {'
+  if ($PackageSourceOverride) {
     Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
     $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
        -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 
