@@ -2,6 +2,12 @@
 
 ## 1.0.0b2 (2022-01-06)
 
+### Features Added
+
+
+### Breaking Changes
+
+  - Removed models
 
 ## 1.0.0b1 (2021-03-03)
 * This is the initial release of Azure Device Update for IoT Hub library. 
