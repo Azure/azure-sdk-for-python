@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2022-01-06)
+
+
+
 ## 8.0.0 (2022-01-05)
 
 **Breaking changes**
