@@ -20,7 +20,11 @@ from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common._configuration import Configuration
 from .._common.auto_lock_renewer import AutoLockRenewer
 from .._common.utils import generate_dead_letter_entity_name, strip_protocol_from_uri
-from .._common.constants import ServiceBusSubQueue, NEXT_AVAILABLE_SESSION, ServiceBusReceiveMode
+from .._common.constants import (
+    ServiceBusSubQueue,
+    ServiceBusSessionFilter,
+    ServiceBusReceiveMode
+)
 from ._async_utils import create_authentication
 from .._retry import RetryMode
 
@@ -78,7 +82,9 @@ class ServiceBusClient(object):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         *,
         http_proxy: Optional[Dict[str, Any]] = None,
         user_agent: Optional[str] = None,
@@ -187,7 +193,7 @@ class ServiceBusClient(object):
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
             credential = ServiceBusSharedKeyCredential(policy, key)  # type: ignore
-        return cls( # type: ignore # for credential
+        return cls(  # type: ignore # for credential
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
             credential=credential,  # type: ignore
@@ -223,11 +229,7 @@ class ServiceBusClient(object):
         if self._connection_sharing and self._connection:
             await self._connection.destroy_async()
 
-    def get_queue_sender(
-        self,
-        queue_name: str,
-        **kwargs: Any
-    ) -> ServiceBusSender:
+    def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -273,9 +275,11 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
-        session_id: Union[str, NEXT_AVAILABLE_SESSION] = None,
+        session_id: Optional[Union[str, ServiceBusSessionFilter]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
-        receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional[AutoLockRenewer] = None,
         prefetch_count: int = 0,
@@ -421,7 +425,7 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
-        session_id: Union[str, NEXT_AVAILABLE_SESSION] = NEXT_AVAILABLE_SESSION,
+        session_id: Union[str, ServiceBusSessionFilter] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str

@@ -2,18 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Dict, Union, Optional
+from typing import Any, Dict, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 
 import uamqp
 from uamqp.constants import TransportType
 
-from azure.core.credentials import (
-    TokenCredential,
-    AzureSasCredential,
-    AzureNamedKeyCredential,
-)
 from ._base_handler import (
     _parse_conn_str,
     ServiceBusSharedKeyCredential,
@@ -30,10 +25,17 @@ from ._common.utils import (
 )
 from ._common.constants import (
     ServiceBusSubQueue,
-    NEXT_AVAILABLE_SESSION,
     ServiceBusReceiveMode,
+    ServiceBusSessionFilter
 )
 from ._retry import RetryMode
+
+if TYPE_CHECKING:
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -87,7 +89,9 @@ class ServiceBusClient(object):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
+        ],
         *,
         http_proxy: Optional[Dict[str, Any]] = None,
         user_agent: Optional[str] = None,
@@ -178,8 +182,8 @@ class ServiceBusClient(object):
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: int = 120,
         retry_mode: RetryMode = RetryMode.EXPONENTIAL,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
 
@@ -282,7 +286,7 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
-        session_id: Union[str, NEXT_AVAILABLE_SESSION] = None,
+        session_id: Optional[Union[str, ServiceBusSessionFilter]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -298,7 +302,7 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful queue, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
+        :paramtype session_id: Optional[Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]]
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
@@ -434,7 +438,7 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
-        session_id: Union[str, NEXT_AVAILABLE_SESSION] = NEXT_AVAILABLE_SESSION,
+        session_id: Optional[Union[str, ServiceBusSessionFilter]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -452,7 +456,7 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful subscription, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
+        :paramtype session_id: Optional[Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]]
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any

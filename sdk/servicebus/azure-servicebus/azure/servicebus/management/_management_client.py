@@ -8,7 +8,7 @@
 import functools
 import datetime
 from copy import deepcopy
-from typing import Any, Union, cast, Mapping, Optional, List
+from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.paging import ItemPaged
@@ -22,7 +22,6 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.credentials import TokenCredential
 
 from ._generated.models import (
     QueueDescriptionFeed,
@@ -91,6 +90,9 @@ from ._models import (
 )
 from ._handle_response_error import _handle_response_error
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
@@ -107,7 +109,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: TokenCredential,
+        credential: "TokenCredential",
         *,
         api_version: str = DEFAULT_VERSION,
         **kwargs: Any
@@ -302,11 +304,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return runtime_properties
 
-    def create_queue(
+    def create_queue(   # pylint: disable=too-many-locals
         self,
         queue_name: str,
         *,
-        authorization_rules: Optional[list[AuthorizationRule]] = None,
+        authorization_rules: Optional[List[AuthorizationRule]] = None,
         auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
@@ -1104,7 +1106,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription_name: str,
         rule_name: str,
         *,
-        filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(),
+        filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(), # pylint: disable=redefined-builtin
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:

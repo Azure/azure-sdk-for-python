@@ -216,8 +216,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         messages: MessageTypes,
         schedule_time_utc: datetime.datetime,
         *,
-        timeout: Optional[float] = None,
-        **kwargs: Any
+        timeout: Optional[float] = None
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -267,7 +266,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
     async def cancel_scheduled_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -307,7 +306,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def send_messages(
-        self, message: Union[MessageTypes, ServiceBusMessageBatch], *, timeout: Optional[float] = None, **kwargs: Any
+        self, message: Union[MessageTypes, ServiceBusMessageBatch], *, timeout: Optional[float] = None
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 

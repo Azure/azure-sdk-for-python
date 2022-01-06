@@ -7,19 +7,17 @@ import logging
 import functools
 import uuid
 import datetime
-from typing import Any, List, Optional, Dict, Iterator, Union
+from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING
 
 import six
 
 from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode, TransportType
 from uamqp.authentication.common import AMQPAuth
-from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 
 from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
-from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common.utils import (
     create_authentication,
     get_receive_links,
@@ -55,6 +53,13 @@ from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
 
+if TYPE_CHECKING:
+    from ._common.auto_lock_renewer import AutoLockRenewer
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -122,7 +127,7 @@ class ServiceBusReceiver(
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union["TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -135,7 +140,7 @@ class ServiceBusReceiver(
             ServiceBusReceiveMode, str
         ] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
-        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
@@ -669,7 +674,7 @@ class ServiceBusReceiver(
 
     def receive_deferred_messages(
         self,
-        sequence_numbers: Union[int,List[int]],
+        sequence_numbers: Union[int, List[int]],
         *,
         timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:

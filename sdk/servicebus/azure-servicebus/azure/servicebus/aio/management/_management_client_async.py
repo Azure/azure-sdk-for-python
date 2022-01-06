@@ -8,7 +8,7 @@
 import functools
 import datetime
 from copy import deepcopy
-from typing import Any, Union, cast, Mapping, Optional, List
+from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.async_paging import AsyncItemPaged
@@ -22,7 +22,6 @@ from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
 )
 from azure.core.pipeline.transport import AioHttpTransport
-from azure.core.credentials_async import AsyncTokenCredential
 
 from ...management._generated.models import (
     QueueDescriptionFeed,
@@ -90,7 +89,8 @@ from ...management._utils import (
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
 )
-
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
@@ -298,11 +298,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return runtime_properties
 
-    async def create_queue(
+    async def create_queue(     # pylint: disable=too-many-locals
         self,
         queue_name: str,
         *,
-        authorization_rules: Optional[list[AuthorizationRule]] = None,
+        authorization_rules: Optional[List[AuthorizationRule]] = None,
         auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
@@ -1109,7 +1109,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription_name: str,
         rule_name: str,
         *,
-        filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(),
+        filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(), # pylint: disable=redefined-builtin
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:

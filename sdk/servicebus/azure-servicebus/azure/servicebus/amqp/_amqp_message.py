@@ -116,12 +116,9 @@ class AmqpAnnotatedMessage(object):
     def __init__(
         self,
         *,
-        data_body: Optional[Union[str, bytes, List[Union[str, bytes]]]] = None,
-        sequence_body: Optional[List[Any]] = None,
-        value_body: Any = None,
-        header: Optional[AmqpMessageHeader] = None,
+        header: Optional["AmqpMessageHeader"] = None,
         footer: Optional[dict] = None,
-        properties: Optional[AmqpMessageProperties] = None,
+        properties: Optional["AmqpMessageProperties"] = None,
         application_properties: Optional[dict] = None,
         annotations: Optional[dict] = None,
         delivery_annotations: Optional[dict] = None,
@@ -136,7 +133,7 @@ class AmqpAnnotatedMessage(object):
             return
 
         # manually constructed AMQPAnnotatedMessage
-        input_count_validation = len([key for key in (data_body, sequence_body, value_body) if key])
+        input_count_validation = len([key for key in ("data_body", "sequence_body", "value_body") if key in kwargs])
         if input_count_validation != 1:
             raise ValueError(
                 "There should be one and only one of either data_body, sequence_body "
@@ -145,14 +142,14 @@ class AmqpAnnotatedMessage(object):
 
         self._body = None
         self._body_type = None
-        if data_body:
-            self._body = data_body
+        if "data_body" in kwargs:
+            self._body = kwargs.pop("data_body")
             self._body_type = uamqp.MessageBodyType.Data
-        elif sequence_body:
-            self._body = sequence_body
+        elif "sequence_body" in kwargs:
+            self._body = kwargs.pop("sequence_body")
             self._body_type = uamqp.MessageBodyType.Sequence
-        elif value_body:
-            self._body = value_body
+        elif "value_body" in kwargs:
+            self._body = kwargs.pop("value_body")
             self._body_type = uamqp.MessageBodyType.Value
 
         self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
@@ -498,6 +495,7 @@ class AmqpMessageHeader(DictMixin):
     """
     def __init__(
         self,
+        *,
         delivery_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
         durable: Optional[bool] = None,
@@ -590,6 +588,7 @@ class AmqpMessageProperties(DictMixin):
     """
     def __init__(
         self,
+        *,
         message_id: Optional[Union[str, bytes, uuid.UUID]] = None,
         user_id: Optional[Union[str, bytes]] = None,
         to: Optional[Union[str, bytes]] = None,

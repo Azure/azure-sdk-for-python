@@ -13,8 +13,6 @@ from uamqp import SendClient, types
 from uamqp.authentication.common import AMQPAuth
 from uamqp.constants import TransportType
 
-from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
-
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 from ._common.message import (
@@ -45,6 +43,11 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
@@ -153,7 +156,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union["TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -281,7 +284,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     def schedule_messages(
         self,
-        messages: MessageTypes,
+        messages: "MessageTypes",
         schedule_time_utc: datetime.datetime,
         *,
         timeout: Optional[float] = None
@@ -379,7 +382,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     def send_messages(
         self,
-        message: Union[MessageTypes, ServiceBusMessageBatch],
+        message: Union["MessageTypes", ServiceBusMessageBatch],
         *,
         timeout: Optional[float] = None
     ) -> None:

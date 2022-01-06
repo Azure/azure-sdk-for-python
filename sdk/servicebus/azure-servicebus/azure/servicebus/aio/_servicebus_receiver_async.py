@@ -7,19 +7,16 @@ import collections
 import datetime
 import functools
 import logging
-from typing import Any, List, Dict, Optional, AsyncIterator, Union, Callable
+from typing import Any, List, Dict, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING
 
 import six
 
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode, TransportType
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ..exceptions import ServiceBusError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
-from .._common.auto_lock_renewer import AutoLockRenewer
 from .._common.message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
@@ -55,6 +52,10 @@ from .._common.utils import (
 )
 from ._async_utils import create_authentication, get_running_loop
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+    from .._common.auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -120,7 +121,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -133,7 +134,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             ServiceBusReceiveMode, str
         ] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
-        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
