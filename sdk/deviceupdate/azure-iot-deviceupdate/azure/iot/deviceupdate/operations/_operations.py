@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import functools
 from json import loads as _loads
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,30 +21,27 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .._vendor import _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
-    T = TypeVar('T')
-    JSONType = Any
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_updates_import_update_request_initial(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    *,
+    action: str,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    action = kwargs.pop('action')  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates')
+    url = '/deviceupdate/{instanceId}/updates'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -67,22 +64,24 @@ def build_updates_import_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_updates_list_updates_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    *,
+    search: Optional[str] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    search = kwargs.pop('search', None)  # type: Optional[str]
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates')
+    url = '/deviceupdate/{instanceId}/updates'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -111,19 +110,19 @@ def build_updates_list_updates_request(
 
 
 def build_updates_get_update_request(
-    instance_id,  # type: str
-    provider,  # type: str
-    name,  # type: str
-    version,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    provider: str,
+    name: str,
+    version: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}')
+    url = '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "provider": _SERIALIZER.url("provider", provider, 'str'),
@@ -153,18 +152,17 @@ def build_updates_get_update_request(
 
 
 def build_updates_delete_update_request_initial(
-    instance_id,  # type: str
-    provider,  # type: str
-    name,  # type: str
-    version,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    provider: str,
+    name: str,
+    version: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}')
+    url = '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "provider": _SERIALIZER.url("provider", provider, 'str'),
@@ -192,15 +190,14 @@ def build_updates_delete_update_request_initial(
 
 
 def build_updates_list_providers_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers')
+    url = '/deviceupdate/{instanceId}/updates/providers'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -225,16 +222,15 @@ def build_updates_list_providers_request(
 
 
 def build_updates_list_names_request(
-    instance_id,  # type: str
-    provider,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    provider: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers/{provider}/names')
+    url = '/deviceupdate/{instanceId}/updates/providers/{provider}/names'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "provider": _SERIALIZER.url("provider", provider, 'str'),
@@ -260,18 +256,18 @@ def build_updates_list_names_request(
 
 
 def build_updates_list_versions_request(
-    instance_id,  # type: str
-    provider,  # type: str
-    name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    provider: str,
+    name: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions')
+    url = '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "provider": _SERIALIZER.url("provider", provider, 'str'),
@@ -300,18 +296,17 @@ def build_updates_list_versions_request(
 
 
 def build_updates_list_files_request(
-    instance_id,  # type: str
-    provider,  # type: str
-    name,  # type: str
-    version,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    provider: str,
+    name: str,
+    version: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}/files')
+    url = '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}/files'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "provider": _SERIALIZER.url("provider", provider, 'str'),
@@ -339,20 +334,20 @@ def build_updates_list_files_request(
 
 
 def build_updates_get_file_request(
-    instance_id,  # type: str
-    provider,  # type: str
-    name,  # type: str
-    version,  # type: str
-    file_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    provider: str,
+    name: str,
+    version: str,
+    file_id: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}/files/{fileId}')
+    url = '/deviceupdate/{instanceId}/updates/providers/{provider}/names/{name}/versions/{version}/files/{fileId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "provider": _SERIALIZER.url("provider", provider, 'str'),
@@ -383,17 +378,17 @@ def build_updates_get_file_request(
 
 
 def build_updates_list_operations_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/operations')
+    url = '/deviceupdate/{instanceId}/updates/operations'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -422,17 +417,17 @@ def build_updates_list_operations_request(
 
 
 def build_updates_get_operation_request(
-    instance_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    operation_id: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/updates/operations/{operationId}')
+    url = '/deviceupdate/{instanceId}/updates/operations/{operationId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
@@ -460,15 +455,14 @@ def build_updates_get_operation_request(
 
 
 def build_management_list_device_classes_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceclasses')
+    url = '/deviceupdate/{instanceId}/management/deviceclasses'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -493,16 +487,15 @@ def build_management_list_device_classes_request(
 
 
 def build_management_get_device_class_request(
-    instance_id,  # type: str
-    device_class_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    device_class_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceclasses/{deviceClassId}')
+    url = '/deviceupdate/{instanceId}/management/deviceclasses/{deviceClassId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "deviceClassId": _SERIALIZER.url("device_class_id", device_class_id, 'str'),
@@ -528,16 +521,15 @@ def build_management_get_device_class_request(
 
 
 def build_management_list_installable_updates_for_device_class_request(
-    instance_id,  # type: str
-    device_class_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    device_class_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceclasses/{deviceClassId}/installableupdates')
+    url = '/deviceupdate/{instanceId}/management/deviceclasses/{deviceClassId}/installableupdates'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "deviceClassId": _SERIALIZER.url("device_class_id", device_class_id, 'str'),
@@ -563,16 +555,16 @@ def build_management_list_installable_updates_for_device_class_request(
 
 
 def build_management_list_devices_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/devices')
+    url = '/deviceupdate/{instanceId}/management/devices'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -599,17 +591,19 @@ def build_management_list_devices_request(
 
 
 def build_management_import_devices_request_initial(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    *,
+    action: str,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    action = kwargs.pop('action')  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/devices')
+    url = '/deviceupdate/{instanceId}/management/devices'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -632,21 +626,22 @@ def build_management_import_devices_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_management_get_device_request(
-    instance_id,  # type: str
-    device_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    device_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/devices/{deviceId}')
+    url = '/deviceupdate/{instanceId}/management/devices/{deviceId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "deviceId": _SERIALIZER.url("device_id", device_id, 'str'),
@@ -672,17 +667,16 @@ def build_management_get_device_request(
 
 
 def build_management_get_device_module_request(
-    instance_id,  # type: str
-    device_id,  # type: str
-    module_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    device_id: str,
+    module_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/devices/{deviceId}/modules/{moduleId}')
+    url = '/deviceupdate/{instanceId}/management/devices/{deviceId}/modules/{moduleId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "deviceId": _SERIALIZER.url("device_id", device_id, 'str'),
@@ -709,15 +703,14 @@ def build_management_get_device_module_request(
 
 
 def build_management_get_update_compliance_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/updatecompliance')
+    url = '/deviceupdate/{instanceId}/management/updatecompliance'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -742,15 +735,14 @@ def build_management_get_update_compliance_request(
 
 
 def build_management_list_device_tags_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/devicetags')
+    url = '/deviceupdate/{instanceId}/management/devicetags'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -775,16 +767,15 @@ def build_management_list_device_tags_request(
 
 
 def build_management_get_device_tag_request(
-    instance_id,  # type: str
-    tag_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    tag_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/devicetags/{tagName}')
+    url = '/deviceupdate/{instanceId}/management/devicetags/{tagName}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "tagName": _SERIALIZER.url("tag_name", tag_name, 'str'),
@@ -810,15 +801,14 @@ def build_management_get_device_tag_request(
 
 
 def build_management_list_groups_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups')
+    url = '/deviceupdate/{instanceId}/management/groups'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -843,16 +833,15 @@ def build_management_list_groups_request(
 
 
 def build_management_get_group_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -878,17 +867,19 @@ def build_management_get_group_request(
 
 
 def build_management_create_or_update_group_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -911,21 +902,22 @@ def build_management_create_or_update_group_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_management_delete_group_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -951,16 +943,15 @@ def build_management_delete_group_request(
 
 
 def build_management_get_group_update_compliance_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/updateCompliance')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/updateCompliance'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -986,17 +977,17 @@ def build_management_get_group_update_compliance_request(
 
 
 def build_management_list_best_updates_for_group_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/bestUpdates')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/bestUpdates'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1024,17 +1015,17 @@ def build_management_list_best_updates_for_group_request(
 
 
 def build_management_list_deployments_for_group_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1062,17 +1053,16 @@ def build_management_list_deployments_for_group_request(
 
 
 def build_management_get_deployment_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    deployment_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    deployment_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1099,18 +1089,20 @@ def build_management_get_deployment_request(
 
 
 def build_management_create_or_update_deployment_request(
-    instance_id,  # type: str
-    deployment_id,  # type: str
-    group_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    deployment_id: str,
+    group_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "deploymentId": _SERIALIZER.url("deployment_id", deployment_id, 'str'),
@@ -1134,22 +1126,23 @@ def build_management_create_or_update_deployment_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_management_delete_deployment_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    deployment_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    deployment_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1176,17 +1169,16 @@ def build_management_delete_deployment_request(
 
 
 def build_management_get_deployment_status_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    deployment_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    deployment_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}/status')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}/status'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1213,18 +1205,18 @@ def build_management_get_deployment_status_request(
 
 
 def build_management_list_deployment_devices_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    deployment_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    deployment_id: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}/devicestates')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}/devicestates'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1253,17 +1245,17 @@ def build_management_list_deployment_devices_request(
 
 
 def build_management_get_operation_request(
-    instance_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    operation_id: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/operations/{operationId}')
+    url = '/deviceupdate/{instanceId}/management/operations/{operationId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
@@ -1291,17 +1283,17 @@ def build_management_get_operation_request(
 
 
 def build_management_list_operations_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/operations')
+    url = '/deviceupdate/{instanceId}/management/operations'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -1330,17 +1322,19 @@ def build_management_list_operations_request(
 
 
 def build_management_collect_logs_request(
-    instance_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    operation_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}')
+    url = '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
@@ -1363,21 +1357,22 @@ def build_management_collect_logs_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_management_get_log_collection_operation_request(
-    instance_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    operation_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}')
+    url = '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
@@ -1403,15 +1398,14 @@ def build_management_get_log_collection_operation_request(
 
 
 def build_management_list_log_collection_operations_request(
-    instance_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections')
+    url = '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
     }
@@ -1436,16 +1430,15 @@ def build_management_list_log_collection_operations_request(
 
 
 def build_management_get_log_collection_operation_detailed_status_request(
-    instance_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    operation_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}/detailedStatus')
+    url = '/deviceupdate/{instanceId}/management/deviceDiagnostics/logCollections/{operationId}/detailedStatus'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "operationId": _SERIALIZER.url("operation_id", operation_id, 'str', max_length=256, min_length=1),
@@ -1471,18 +1464,18 @@ def build_management_get_log_collection_operation_detailed_status_request(
 
 
 def build_management_stop_deployment_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    deployment_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    deployment_id: str,
+    *,
+    action: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    action = kwargs.pop('action')  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1510,18 +1503,18 @@ def build_management_stop_deployment_request(
 
 
 def build_management_retry_deployment_request(
-    instance_id,  # type: str
-    group_id,  # type: str
-    deployment_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    instance_id: str,
+    group_id: str,
+    deployment_id: str,
+    *,
+    action: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-    action = kwargs.pop('action')  # type: str
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}')
+    url = '/deviceupdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}'
     path_format_arguments = {
         "instanceId": _SERIALIZER.url("instance_id", instance_id, 'str', skip_quote=True),
         "groupId": _SERIALIZER.url("group_id", group_id, 'str'),
@@ -1547,7 +1540,6 @@ def build_management_retry_deployment_request(
         **kwargs
     )
 
-# fmt: on
 class UpdatesOperations(object):
     """UpdatesOperations operations.
 
@@ -1568,10 +1560,11 @@ class UpdatesOperations(object):
 
     def _import_update_initial(
         self,
-        update_to_import,  # type: List[JSONType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        update_to_import: List[JSONType],
+        *,
+        action: str,
+        **kwargs: Any
+    ) -> JSONType:
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1580,17 +1573,15 @@ class UpdatesOperations(object):
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        action = kwargs.pop('action')  # type: str
 
-        json = update_to_import
+        _json = update_to_import
 
         request = build_updates_import_update_request_initial(
             instance_id=self._config.instance_id,
             api_version=api_version,
             content_type=content_type,
             action=action,
-            json=json,
-            template_url=self._import_update_initial.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1623,10 +1614,11 @@ class UpdatesOperations(object):
     @distributed_trace
     def begin_import_update(
         self,
-        update_to_import,  # type: List[JSONType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[JSONType]
+        update_to_import: List[JSONType],
+        *,
+        action: str,
+        **kwargs: Any
+    ) -> LROPoller[JSONType]:
         """Import new update version.
 
         :param update_to_import: The update to be imported.
@@ -1721,7 +1713,6 @@ class UpdatesOperations(object):
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        action = kwargs.pop('action')  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         lro_delay = kwargs.pop(
@@ -1776,9 +1767,11 @@ class UpdatesOperations(object):
     @distributed_trace
     def list_updates(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        *,
+        search: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all updates that have been imported to Device Update for IoT Hub.
 
         :keyword search: Request updates matching a free-text search expression.
@@ -1850,8 +1843,6 @@ class UpdatesOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        search = kwargs.pop('search', None)  # type: Optional[str]
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -1866,7 +1857,6 @@ class UpdatesOperations(object):
                     api_version=api_version,
                     search=search,
                     filter=filter,
-                    template_url=self.list_updates.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1880,12 +1870,11 @@ class UpdatesOperations(object):
                     api_version=api_version,
                     search=search,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1921,12 +1910,13 @@ class UpdatesOperations(object):
     @distributed_trace
     def get_update(
         self,
-        provider,  # type: str
-        name,  # type: str
-        version,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional[JSONType]
+        provider: str,
+        name: str,
+        version: str,
+        *,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional[JSONType]:
         """Get a specific update version.
 
         :param provider: Update provider.
@@ -2004,7 +1994,6 @@ class UpdatesOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
         
         request = build_updates_get_update_request(
@@ -2014,7 +2003,6 @@ class UpdatesOperations(object):
             version=version,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_update.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2045,12 +2033,11 @@ class UpdatesOperations(object):
 
     def _delete_update_initial(
         self,
-        provider,  # type: str
-        name,  # type: str
-        version,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        provider: str,
+        name: str,
+        version: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2066,7 +2053,6 @@ class UpdatesOperations(object):
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self._delete_update_initial.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2093,12 +2079,11 @@ class UpdatesOperations(object):
     @distributed_trace
     def begin_delete_update(
         self,
-        provider,  # type: str
-        name,  # type: str
-        version,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        provider: str,
+        name: str,
+        version: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete a specific update version.
 
         :param provider: Update provider.
@@ -2167,9 +2152,8 @@ class UpdatesOperations(object):
     @distributed_trace
     def list_providers(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all update providers that have been imported to Device Update for IoT Hub.
 
         :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
@@ -2203,7 +2187,6 @@ class UpdatesOperations(object):
                 request = build_updates_list_providers_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_providers.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2215,12 +2198,11 @@ class UpdatesOperations(object):
                 request = build_updates_list_providers_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2256,10 +2238,9 @@ class UpdatesOperations(object):
     @distributed_trace
     def list_names(
         self,
-        provider,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        provider: str,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all update names that match the specified provider.
 
         :param provider: Update provider.
@@ -2296,7 +2277,6 @@ class UpdatesOperations(object):
                     instance_id=self._config.instance_id,
                     provider=provider,
                     api_version=api_version,
-                    template_url=self.list_names.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2309,12 +2289,11 @@ class UpdatesOperations(object):
                     instance_id=self._config.instance_id,
                     provider=provider,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2350,11 +2329,12 @@ class UpdatesOperations(object):
     @distributed_trace
     def list_versions(
         self,
-        provider,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        provider: str,
+        name: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all update versions that match the specified provider and name.
 
         :param provider: Update provider.
@@ -2382,7 +2362,6 @@ class UpdatesOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -2398,7 +2377,6 @@ class UpdatesOperations(object):
                     name=name,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_versions.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2413,12 +2391,11 @@ class UpdatesOperations(object):
                     name=name,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2454,12 +2431,11 @@ class UpdatesOperations(object):
     @distributed_trace
     def list_files(
         self,
-        provider,  # type: str
-        name,  # type: str
-        version,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        provider: str,
+        name: str,
+        version: str,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all update file identifiers for the specified version.
 
         :param provider: Update provider.
@@ -2502,7 +2478,6 @@ class UpdatesOperations(object):
                     name=name,
                     version=version,
                     api_version=api_version,
-                    template_url=self.list_files.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2517,12 +2492,11 @@ class UpdatesOperations(object):
                     name=name,
                     version=version,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2558,13 +2532,14 @@ class UpdatesOperations(object):
     @distributed_trace
     def get_file(
         self,
-        provider,  # type: str
-        name,  # type: str
-        version,  # type: str
-        file_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional[JSONType]
+        provider: str,
+        name: str,
+        version: str,
+        file_id: str,
+        *,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional[JSONType]:
         """Get a specific update file from the version.
 
         :param provider: Update provider.
@@ -2609,7 +2584,6 @@ class UpdatesOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
         
         request = build_updates_get_file_request(
@@ -2620,7 +2594,6 @@ class UpdatesOperations(object):
             file_id=file_id,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_file.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2652,9 +2625,11 @@ class UpdatesOperations(object):
     @distributed_trace
     def list_operations(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        *,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all import update operations. Completed operations are kept for 7 days before
         auto-deleted. Delete operations are not returned by this API version.
 
@@ -2712,8 +2687,6 @@ class UpdatesOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
-        top = kwargs.pop('top', None)  # type: Optional[int]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -2728,7 +2701,6 @@ class UpdatesOperations(object):
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=self.list_operations.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2742,12 +2714,11 @@ class UpdatesOperations(object):
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2783,10 +2754,11 @@ class UpdatesOperations(object):
     @distributed_trace
     def get_operation(
         self,
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional[JSONType]
+        operation_id: str,
+        *,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional[JSONType]:
         """Retrieve operation status.
 
         :param operation_id: Operation identifier.
@@ -2842,7 +2814,6 @@ class UpdatesOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
         
         request = build_updates_get_operation_request(
@@ -2850,7 +2821,6 @@ class UpdatesOperations(object):
             operation_id=operation_id,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_operation.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2902,9 +2872,8 @@ class ManagementOperations(object):
     @distributed_trace
     def list_device_classes(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of all device classes (unique combinations of device manufacturer and model) for
         all devices connected to Device Update for IoT Hub.
 
@@ -2949,7 +2918,6 @@ class ManagementOperations(object):
                 request = build_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_device_classes.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2961,12 +2929,11 @@ class ManagementOperations(object):
                 request = build_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3002,10 +2969,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_device_class(
         self,
-        device_class_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        device_class_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the properties of a device class.
 
         :param device_class_id: Device class identifier.
@@ -3046,7 +3012,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             device_class_id=device_class_id,
             api_version=api_version,
-            template_url=self.get_device_class.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3076,10 +3041,9 @@ class ManagementOperations(object):
     @distributed_trace
     def list_installable_updates_for_device_class(
         self,
-        device_class_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        device_class_id: str,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of installable updates for a device class.
 
         :param device_class_id: Device class identifier.
@@ -3120,7 +3084,6 @@ class ManagementOperations(object):
                     instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
-                    template_url=self.list_installable_updates_for_device_class.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3133,12 +3096,11 @@ class ManagementOperations(object):
                     instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3174,9 +3136,10 @@ class ManagementOperations(object):
     @distributed_trace
     def list_devices(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of devices connected to Device Update for IoT Hub.
 
         :keyword filter: Restricts the set of devices returned. You can filter on device GroupId or
@@ -3239,7 +3202,6 @@ class ManagementOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -3253,7 +3215,6 @@ class ManagementOperations(object):
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_devices.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3266,12 +3227,11 @@ class ManagementOperations(object):
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3306,10 +3266,11 @@ class ManagementOperations(object):
 
     def _import_devices_initial(
         self,
-        import_type,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        import_type: str,
+        *,
+        action: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3318,17 +3279,15 @@ class ManagementOperations(object):
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        action = kwargs.pop('action')  # type: str
 
-        json = import_type
+        _json = import_type
 
         request = build_management_import_devices_request_initial(
             instance_id=self._config.instance_id,
             api_version=api_version,
             content_type=content_type,
             action=action,
-            json=json,
-            template_url=self._import_devices_initial.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3355,10 +3314,11 @@ class ManagementOperations(object):
     @distributed_trace
     def begin_import_devices(
         self,
-        import_type,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        import_type: str,
+        *,
+        action: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Import existing devices from IoT Hub.
 
         :param import_type: The types of devices to import. Possible values are: "Devices", "Modules",
@@ -3382,7 +3342,6 @@ class ManagementOperations(object):
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        action = kwargs.pop('action')  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -3428,10 +3387,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_device(
         self,
-        device_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        device_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the device properties and latest deployment status for a device connected to Device Update
         for IoT Hub.
 
@@ -3501,7 +3459,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             device_id=device_id,
             api_version=api_version,
-            template_url=self.get_device.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3531,11 +3488,10 @@ class ManagementOperations(object):
     @distributed_trace
     def get_device_module(
         self,
-        device_id,  # type: str
-        module_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        device_id: str,
+        module_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the device module properties and latest deployment status for a device module connected to
         Device Update for IoT Hub.
 
@@ -3608,7 +3564,6 @@ class ManagementOperations(object):
             device_id=device_id,
             module_id=module_id,
             api_version=api_version,
-            template_url=self.get_device_module.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3638,9 +3593,8 @@ class ManagementOperations(object):
     @distributed_trace
     def get_update_compliance(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the breakdown of how many devices are on their latest update, have new updates available,
         or are in progress receiving new updates.
 
@@ -3674,7 +3628,6 @@ class ManagementOperations(object):
         request = build_management_get_update_compliance_request(
             instance_id=self._config.instance_id,
             api_version=api_version,
-            template_url=self.get_update_compliance.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3704,9 +3657,8 @@ class ManagementOperations(object):
     @distributed_trace
     def list_device_tags(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of available group device tags for all devices connected to Device Update for IoT
         Hub.
 
@@ -3744,7 +3696,6 @@ class ManagementOperations(object):
                 request = build_management_list_device_tags_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_device_tags.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3756,12 +3707,11 @@ class ManagementOperations(object):
                 request = build_management_list_device_tags_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3797,10 +3747,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_device_tag(
         self,
-        tag_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        tag_name: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets a count of how many devices have a device tag.
 
         :param tag_name: Tag name.
@@ -3834,7 +3783,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             tag_name=tag_name,
             api_version=api_version,
-            template_url=self.get_device_tag.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3864,9 +3812,8 @@ class ManagementOperations(object):
     @distributed_trace
     def list_groups(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of all device groups.
 
         :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
@@ -3910,7 +3857,6 @@ class ManagementOperations(object):
                 request = build_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_groups.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3922,12 +3868,11 @@ class ManagementOperations(object):
                 request = build_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3963,10 +3908,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_group(
         self,
-        group_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the properties of a group.
 
         :param group_id: Group identity.
@@ -4007,7 +3951,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
-            template_url=self.get_group.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4037,11 +3980,10 @@ class ManagementOperations(object):
     @distributed_trace
     def create_or_update_group(
         self,
-        group_id,  # type: str
-        group,  # type: JSONType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        group: JSONType,
+        **kwargs: Any
+    ) -> JSONType:
         """Create or update a device group.
 
         :param group_id: Group identity.
@@ -4093,15 +4035,14 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = group
+        _json = group
 
         request = build_management_create_or_update_group_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.create_or_update_group.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4131,10 +4072,9 @@ class ManagementOperations(object):
     @distributed_trace
     def delete_group(
         self,
-        group_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group_id: str,
+        **kwargs: Any
+    ) -> None:
         """Deletes a device group.
 
         :param group_id: Group identity.
@@ -4159,7 +4099,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
-            template_url=self.delete_group.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4182,10 +4121,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_group_update_compliance(
         self,
-        group_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Get group update compliance information such as how many devices are on their latest update,
         how many need new updates, and how many are in progress on receiving a new update.
 
@@ -4222,7 +4160,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
-            template_url=self.get_group_update_compliance.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4252,10 +4189,11 @@ class ManagementOperations(object):
     @distributed_trace
     def list_best_updates_for_group(
         self,
-        group_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        group_id: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get the best available updates for a group and a count of how many devices need each update.
 
         :param group_id: Group identity.
@@ -4289,7 +4227,6 @@ class ManagementOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -4304,7 +4241,6 @@ class ManagementOperations(object):
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_best_updates_for_group.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4318,12 +4254,11 @@ class ManagementOperations(object):
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4359,10 +4294,11 @@ class ManagementOperations(object):
     @distributed_trace
     def list_deployments_for_group(
         self,
-        group_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        group_id: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of deployments for a group.
 
         :param group_id: Group identity.
@@ -4400,7 +4336,6 @@ class ManagementOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -4415,7 +4350,6 @@ class ManagementOperations(object):
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_deployments_for_group.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4429,12 +4363,11 @@ class ManagementOperations(object):
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4470,11 +4403,10 @@ class ManagementOperations(object):
     @distributed_trace
     def get_deployment(
         self,
-        group_id,  # type: str
-        deployment_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        deployment_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the properties of a deployment.
 
         :param group_id: Group identity.
@@ -4519,7 +4451,6 @@ class ManagementOperations(object):
             group_id=group_id,
             deployment_id=deployment_id,
             api_version=api_version,
-            template_url=self.get_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4549,12 +4480,11 @@ class ManagementOperations(object):
     @distributed_trace
     def create_or_update_deployment(
         self,
-        deployment_id,  # type: str
-        group_id,  # type: str
-        deployment,  # type: JSONType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        deployment_id: str,
+        group_id: str,
+        deployment: JSONType,
+        **kwargs: Any
+    ) -> JSONType:
         """Creates or updates a deployment.
 
         :param deployment_id: Deployment identifier.
@@ -4610,7 +4540,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = deployment
+        _json = deployment
 
         request = build_management_create_or_update_deployment_request(
             instance_id=self._config.instance_id,
@@ -4618,8 +4548,7 @@ class ManagementOperations(object):
             group_id=group_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.create_or_update_deployment.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4649,11 +4578,10 @@ class ManagementOperations(object):
     @distributed_trace
     def delete_deployment(
         self,
-        group_id,  # type: str
-        deployment_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group_id: str,
+        deployment_id: str,
+        **kwargs: Any
+    ) -> None:
         """Deletes a deployment.
 
         :param group_id: Group identity.
@@ -4681,7 +4609,6 @@ class ManagementOperations(object):
             group_id=group_id,
             deployment_id=deployment_id,
             api_version=api_version,
-            template_url=self.delete_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4704,11 +4631,10 @@ class ManagementOperations(object):
     @distributed_trace
     def get_deployment_status(
         self,
-        group_id,  # type: str
-        deployment_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        deployment_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
@@ -4750,7 +4676,6 @@ class ManagementOperations(object):
             group_id=group_id,
             deployment_id=deployment_id,
             api_version=api_version,
-            template_url=self.get_deployment_status.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4780,11 +4705,12 @@ class ManagementOperations(object):
     @distributed_trace
     def list_deployment_devices(
         self,
-        group_id,  # type: str
-        deployment_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        group_id: str,
+        deployment_id: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Gets a list of devices in a deployment along with their state. Useful for getting a list of
         failed devices.
 
@@ -4820,7 +4746,6 @@ class ManagementOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -4836,7 +4761,6 @@ class ManagementOperations(object):
                     deployment_id=deployment_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_deployment_devices.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4851,12 +4775,11 @@ class ManagementOperations(object):
                     deployment_id=deployment_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4892,10 +4815,11 @@ class ManagementOperations(object):
     @distributed_trace
     def get_operation(
         self,
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional[JSONType]
+        operation_id: str,
+        *,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional[JSONType]:
         """Retrieve operation status.
 
         :param operation_id: Operation identifier.
@@ -4945,7 +4869,6 @@ class ManagementOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
         
         request = build_management_get_operation_request(
@@ -4953,7 +4876,6 @@ class ManagementOperations(object):
             operation_id=operation_id,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_operation.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4988,9 +4910,11 @@ class ManagementOperations(object):
     @distributed_trace
     def list_operations(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        *,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get a list of all device import operations. Completed operations are kept for 7 days before
         auto-deleted.
 
@@ -5042,8 +4966,6 @@ class ManagementOperations(object):
                 }
         """
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        filter = kwargs.pop('filter', None)  # type: Optional[str]
-        top = kwargs.pop('top', None)  # type: Optional[int]
 
         cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
         error_map = {
@@ -5058,7 +4980,6 @@ class ManagementOperations(object):
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=self.list_operations.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5072,12 +4993,11 @@ class ManagementOperations(object):
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5113,11 +5033,10 @@ class ManagementOperations(object):
     @distributed_trace
     def collect_logs(
         self,
-        operation_id,  # type: str
-        log_collection_request,  # type: JSONType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        operation_id: str,
+        log_collection_request: JSONType,
+        **kwargs: Any
+    ) -> JSONType:
         """Start the device diagnostics log collection operation on specified devices.
 
         :param operation_id: Operation identifier.
@@ -5173,15 +5092,14 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = log_collection_request
+        _json = log_collection_request
 
         request = build_management_collect_logs_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.collect_logs.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5211,10 +5129,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_log_collection_operation(
         self,
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        operation_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Get the device diagnostics log collection operation.
 
         :param operation_id: Operation identifier.
@@ -5257,7 +5174,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
-            template_url=self.get_log_collection_operation.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5287,9 +5203,8 @@ class ManagementOperations(object):
     @distributed_trace
     def list_log_collection_operations(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[JSONType]
+        **kwargs: Any
+    ) -> Iterable[JSONType]:
         """Get all device diagnostics log collection operations.
 
         :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
@@ -5335,7 +5250,6 @@ class ManagementOperations(object):
                 request = build_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_log_collection_operations.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5347,12 +5261,11 @@ class ManagementOperations(object):
                 request = build_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5388,10 +5301,9 @@ class ManagementOperations(object):
     @distributed_trace
     def get_log_collection_operation_detailed_status(
         self,
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        operation_id: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Get device diagnostics log collection operation with detailed status.
 
         :param operation_id: Operation identifier.
@@ -5438,7 +5350,6 @@ class ManagementOperations(object):
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
-            template_url=self.get_log_collection_operation_detailed_status.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5468,11 +5379,12 @@ class ManagementOperations(object):
     @distributed_trace
     def stop_deployment(
         self,
-        group_id,  # type: str
-        deployment_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        deployment_id: str,
+        *,
+        action: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Stops a deployment.
 
         :param group_id: Group identity.
@@ -5512,7 +5424,6 @@ class ManagementOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        action = kwargs.pop('action')  # type: str
 
         
         request = build_management_stop_deployment_request(
@@ -5521,7 +5432,6 @@ class ManagementOperations(object):
             deployment_id=deployment_id,
             api_version=api_version,
             action=action,
-            template_url=self.stop_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -5551,11 +5461,12 @@ class ManagementOperations(object):
     @distributed_trace
     def retry_deployment(
         self,
-        group_id,  # type: str
-        deployment_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        group_id: str,
+        deployment_id: str,
+        *,
+        action: str,
+        **kwargs: Any
+    ) -> JSONType:
         """Retries a deployment with failed devices.
 
         :param group_id: Group identity.
@@ -5595,7 +5506,6 @@ class ManagementOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
-        action = kwargs.pop('action')  # type: str
 
         
         request = build_management_retry_deployment_request(
@@ -5604,7 +5514,6 @@ class ManagementOperations(object):
             deployment_id=deployment_id,
             api_version=api_version,
             action=action,
-            template_url=self.retry_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),

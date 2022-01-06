@@ -59,15 +59,14 @@ class UpdatesOperations:
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = update_to_import
+        _json = update_to_import
 
         request = build_updates_import_update_request_initial(
             instance_id=self._config.instance_id,
             api_version=api_version,
             content_type=content_type,
             action=action,
-            json=json,
-            template_url=self._import_update_initial.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -343,7 +342,6 @@ class UpdatesOperations:
                     api_version=api_version,
                     search=search,
                     filter=filter,
-                    template_url=self.list_updates.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -357,12 +355,11 @@ class UpdatesOperations:
                     api_version=api_version,
                     search=search,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -491,7 +488,6 @@ class UpdatesOperations:
             version=version,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_update.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -542,7 +538,6 @@ class UpdatesOperations:
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self._delete_update_initial.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -677,7 +672,6 @@ class UpdatesOperations:
                 request = build_updates_list_providers_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_providers.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -689,12 +683,11 @@ class UpdatesOperations:
                 request = build_updates_list_providers_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -769,7 +762,6 @@ class UpdatesOperations:
                     instance_id=self._config.instance_id,
                     provider=provider,
                     api_version=api_version,
-                    template_url=self.list_names.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -782,12 +774,11 @@ class UpdatesOperations:
                     instance_id=self._config.instance_id,
                     provider=provider,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -871,7 +862,6 @@ class UpdatesOperations:
                     name=name,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_versions.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -886,12 +876,11 @@ class UpdatesOperations:
                     name=name,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -974,7 +963,6 @@ class UpdatesOperations:
                     name=name,
                     version=version,
                     api_version=api_version,
-                    template_url=self.list_files.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -989,12 +977,11 @@ class UpdatesOperations:
                     name=name,
                     version=version,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1092,7 +1079,6 @@ class UpdatesOperations:
             file_id=file_id,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_file.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1200,7 +1186,6 @@ class UpdatesOperations:
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=self.list_operations.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1214,12 +1199,11 @@ class UpdatesOperations:
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1322,7 +1306,6 @@ class UpdatesOperations:
             operation_id=operation_id,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_operation.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1420,7 +1403,6 @@ class ManagementOperations:
                 request = build_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_device_classes.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1432,12 +1414,11 @@ class ManagementOperations:
                 request = build_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1516,7 +1497,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             device_class_id=device_class_id,
             api_version=api_version,
-            template_url=self.get_device_class.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1589,7 +1569,6 @@ class ManagementOperations:
                     instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
-                    template_url=self.list_installable_updates_for_device_class.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1602,12 +1581,11 @@ class ManagementOperations:
                     instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1722,7 +1700,6 @@ class ManagementOperations:
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_devices.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1735,12 +1712,11 @@ class ManagementOperations:
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1789,15 +1765,14 @@ class ManagementOperations:
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = import_type
+        _json = import_type
 
         request = build_management_import_devices_request_initial(
             instance_id=self._config.instance_id,
             api_version=api_version,
             content_type=content_type,
             action=action,
-            json=json,
-            template_url=self._import_devices_initial.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1969,7 +1944,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             device_id=device_id,
             api_version=api_version,
-            template_url=self.get_device.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2075,7 +2049,6 @@ class ManagementOperations:
             device_id=device_id,
             module_id=module_id,
             api_version=api_version,
-            template_url=self.get_device_module.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2140,7 +2113,6 @@ class ManagementOperations:
         request = build_management_get_update_compliance_request(
             instance_id=self._config.instance_id,
             api_version=api_version,
-            template_url=self.get_update_compliance.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2209,7 +2181,6 @@ class ManagementOperations:
                 request = build_management_list_device_tags_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_device_tags.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2221,12 +2192,11 @@ class ManagementOperations:
                 request = build_management_list_device_tags_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2298,7 +2268,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             tag_name=tag_name,
             api_version=api_version,
-            template_url=self.get_device_tag.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2373,7 +2342,6 @@ class ManagementOperations:
                 request = build_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_groups.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2385,12 +2353,11 @@ class ManagementOperations:
                 request = build_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2469,7 +2436,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
-            template_url=self.get_group.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2554,15 +2520,14 @@ class ManagementOperations:
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = group
+        _json = group
 
         request = build_management_create_or_update_group_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.create_or_update_group.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2619,7 +2584,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
-            template_url=self.delete_group.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2681,7 +2645,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
-            template_url=self.get_group_update_compliance.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2763,7 +2726,6 @@ class ManagementOperations:
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_best_updates_for_group.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2777,12 +2739,11 @@ class ManagementOperations:
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2874,7 +2835,6 @@ class ManagementOperations:
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_deployments_for_group.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2888,12 +2848,11 @@ class ManagementOperations:
                     group_id=group_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -2977,7 +2936,6 @@ class ManagementOperations:
             group_id=group_id,
             deployment_id=deployment_id,
             api_version=api_version,
-            template_url=self.get_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3067,7 +3025,7 @@ class ManagementOperations:
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = deployment
+        _json = deployment
 
         request = build_management_create_or_update_deployment_request(
             instance_id=self._config.instance_id,
@@ -3075,8 +3033,7 @@ class ManagementOperations:
             group_id=group_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.create_or_update_deployment.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3137,7 +3094,6 @@ class ManagementOperations:
             group_id=group_id,
             deployment_id=deployment_id,
             api_version=api_version,
-            template_url=self.delete_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3205,7 +3161,6 @@ class ManagementOperations:
             group_id=group_id,
             deployment_id=deployment_id,
             api_version=api_version,
-            template_url=self.get_deployment_status.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3291,7 +3246,6 @@ class ManagementOperations:
                     deployment_id=deployment_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=self.list_deployment_devices.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3306,12 +3260,11 @@ class ManagementOperations:
                     deployment_id=deployment_id,
                     api_version=api_version,
                     filter=filter,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3408,7 +3361,6 @@ class ManagementOperations:
             operation_id=operation_id,
             api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_operation.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3513,7 +3465,6 @@ class ManagementOperations:
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=self.list_operations.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3527,12 +3478,11 @@ class ManagementOperations:
                     api_version=api_version,
                     filter=filter,
                     top=top,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3627,15 +3577,14 @@ class ManagementOperations:
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = log_collection_request
+        _json = log_collection_request
 
         request = build_management_collect_logs_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.collect_logs.metadata['url'],
+            json=_json,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3710,7 +3659,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
-            template_url=self.get_log_collection_operation.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3787,7 +3735,6 @@ class ManagementOperations:
                 request = build_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=self.list_log_collection_operations.metadata['url'],
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3799,12 +3746,11 @@ class ManagementOperations:
                 request = build_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
-                    template_url=next_link,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3889,7 +3835,6 @@ class ManagementOperations:
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
-            template_url=self.get_log_collection_operation_detailed_status.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -3972,7 +3917,6 @@ class ManagementOperations:
             deployment_id=deployment_id,
             api_version=api_version,
             action=action,
-            template_url=self.stop_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -4055,7 +3999,6 @@ class ManagementOperations:
             deployment_id=deployment_id,
             api_version=api_version,
             action=action,
-            template_url=self.retry_deployment.metadata['url'],
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
