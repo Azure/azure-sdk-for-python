@@ -3,6 +3,7 @@
 ## 4.4.0b3 (Unreleased)
 
 ### Features Added
+- Added `managed` property to SecretProperties
 
 ### Breaking Changes
 
