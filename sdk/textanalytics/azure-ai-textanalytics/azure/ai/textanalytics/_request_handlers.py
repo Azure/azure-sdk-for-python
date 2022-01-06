@@ -4,7 +4,6 @@
 # ------------------------------------
 
 
-import six
 from ._generated.models import (
     EntitiesTask,
     PiiTask,

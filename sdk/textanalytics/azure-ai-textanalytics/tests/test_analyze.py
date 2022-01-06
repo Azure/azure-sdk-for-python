@@ -11,11 +11,7 @@ import functools
 import itertools
 import datetime
 import json
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    from unittest import mock  # type: ignore
-
+from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
