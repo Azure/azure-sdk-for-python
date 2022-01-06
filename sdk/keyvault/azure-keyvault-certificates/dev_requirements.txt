@@ -4,5 +4,5 @@
 -e ../../identity/azure-identity
 -e ../azure-mgmt-keyvault
 ../../nspkg/azure-keyvault-nspkg
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 parameterized>=0.7.3
