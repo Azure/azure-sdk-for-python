@@ -126,7 +126,7 @@ the service documentation:
 - [Set up Azure Blob Storage containers][source_containers] with your documents
 - Optionally apply [glossaries][glossary] or a [custom model for translation][custom_model]
 - Allow access to your storage account with either of the following options:
-    - Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions] **or**
+    - Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
     - Create and use a [managed identity][managed_identity] to grant access to your storage account
 
 ### DocumentTranslationClient
