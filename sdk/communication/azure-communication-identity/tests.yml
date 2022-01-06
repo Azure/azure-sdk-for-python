@@ -8,6 +8,8 @@ stages:
       ServiceDirectory: communication
       MatrixReplace:
         - TestSamples=.*/true
+      MatrixFilters:
+        - PythonVersion=^(?!pypy3).*
       CloudConfig:
         Public:
           SubscriptionConfigurations:
