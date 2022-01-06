@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -34,7 +33,7 @@ if TYPE_CHECKING:
     from ._polling import DocumentTranslationLROPoller
 
 
-class DocumentTranslationClient(object):  # pylint: disable=r0205
+class DocumentTranslationClient:  # pylint: disable=r0205
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         """DocumentTranslationClient is your interface to the Document Translation service.

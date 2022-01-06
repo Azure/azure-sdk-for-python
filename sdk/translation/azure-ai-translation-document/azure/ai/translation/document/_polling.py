@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -87,7 +86,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
     def __init__(self, *args, **kwargs):
         self._cont_token_response = kwargs.pop("cont_token_response")
-        super(DocumentTranslationLROPollingMethod, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):

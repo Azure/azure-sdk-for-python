@@ -1,10 +1,8 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-# pylint: disable=unused-import
 from typing import Any, List
 from ._generated.models import (
     BatchRequest as _BatchRequest,
@@ -29,7 +27,7 @@ def convert_status(status, ll=False):
     return status
 
 
-class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
+class TranslationGlossary:
     """Glossary / translation memory to apply to the translation.
 
     :param str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
@@ -91,7 +89,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         )
 
 
-class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
+class TranslationTarget:
     """Destination for the finished translated documents.
 
     :param str target_url: Required. The target location for your translated documents.
@@ -162,8 +160,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         )
 
 
-class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheritance
-    # pylint: disable=C0301
+class DocumentTranslationInput:
     """Input for translation. This requires that you have your source document or
     documents in an Azure Blob Storage container. Provide a SAS URL to the source file or
     source container containing the documents for translation. The source document(s) are
@@ -255,9 +252,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         )
 
 
-class TranslationStatus(
-    object
-):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
+class TranslationStatus:  # pylint: disable=too-many-instance-attributes
     """Status information about the translation operation.
 
     :ivar str id: Id of the translation operation.
@@ -353,9 +348,7 @@ class TranslationStatus(
         )
 
 
-class DocumentStatus(
-    object
-):  # pylint: disable=useless-object-inheritance, R0903, R0902
+class DocumentStatus:
     """Status information about a particular document within a translation operation.
 
     :ivar str source_document_url: Location of the source document in the source
@@ -418,7 +411,6 @@ class DocumentStatus(
         )
 
     def __repr__(self):
-        # pylint: disable=line-too-long
         return (
             "DocumentStatus(id={}, source_document_url={}, "
             "translated_document_url={}, created_on={}, last_updated_on={}, "
@@ -438,9 +430,7 @@ class DocumentStatus(
         )
 
 
-class DocumentTranslationError(
-    object
-):  # pylint: disable=useless-object-inheritance, R0903
+class DocumentTranslationError:
     """This contains the error code, message, and target with descriptive details on why
     a translation operation or particular document failed.
 
@@ -477,7 +467,7 @@ class DocumentTranslationError(
         )[:1024]
 
 
-class DocumentTranslationFileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
+class DocumentTranslationFileFormat:
     """Possible file formats supported by the Document Translation service.
 
     :ivar file_format: Name of the format.
@@ -517,7 +507,6 @@ class DocumentTranslationFileFormat(object):  # pylint: disable=useless-object-i
         ]
 
     def __repr__(self):
-        # pylint: disable=line-too-long
         return (
             "DocumentTranslationFileFormat(file_format={}, file_extensions={}, "
             "content_types={}, format_versions={}, default_format_version={}".format(
