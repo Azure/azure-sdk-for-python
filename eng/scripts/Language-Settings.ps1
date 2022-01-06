@@ -223,7 +223,7 @@ function DockerValidation{
     FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
-    Write-Debug $commandLine
+    $commandLine | ForEach-Object { Write-Debug $_ }
     LogWarning "Package $packageName ref docs validation failed."
     return $false
   }
