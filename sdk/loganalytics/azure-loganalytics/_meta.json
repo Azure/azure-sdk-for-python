@@ -1,0 +1,8 @@
+{
+  "autorest": "V2",
+  "use": "@microsoft.azure/autorest.python@~4.0.71",
+  "commit": "bb66ab1b8f9f567b714a5143985a410beba07064",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest_command": "autorest specification/operationalinsights/data-plane/readme.md --keep-version-file --multiapi --no-async --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --use=@microsoft.azure/autorest.python@~4.0.71 --version=V2",
+  "readme": "specification/operationalinsights/data-plane/readme.md"
+}
