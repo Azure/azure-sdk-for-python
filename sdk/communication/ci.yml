@@ -31,7 +31,7 @@ extends:
   parameters:
     ServiceDirectory: communication
     MatrixFilters:
-        - PythonVersion=^(?!pypy3).*
+        - PythonVersion=^(?!pypy3|2.7|3.6).*
     Artifacts:
     - name: azure-communication-identity
       safeName: azurecommunicationidentity
