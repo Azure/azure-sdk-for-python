@@ -34,7 +34,7 @@ from devtools_testutils import (
 AZURE_ARM_ENDPOINT = "https://centraluseuap.management.azure.com"
 AZURE_LOCATION = 'eastus'
 EXISTING_BATCH_ACCOUNT = {'name': 'dawatroupp2acct', 'location': 'eastus'}
-EXPECTED_ACCOUNT_QUOTA = 1000
+EXPECTED_ACCOUNT_QUOTA = 3
 EXPECTED_DEDICATED_CORE_QUOTA = 500
 EXPECTED_LOW_PRIO_CORE_QUOTA = 500
 EXPECTED_POOL_QUOTA = 100
@@ -66,6 +66,8 @@ class RecordingRedactor(RecordingProcessor):
 
 
 class TestMgmtBatch(AzureMgmtRecordedTestCase):
+    scrubber = GeneralNameReplacer()
+    redactor = RecordingRedactor()
 
     def setup_method(self, method):
         self.mgmt_batch_client = self.create_mgmt_client(
@@ -225,7 +227,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
             auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
         )
         # account_name = self._get_account_name()
-        account_name = "batch"
+        account_name = "batch11"
         account_setup = self.mgmt_batch_client.batch_account.begin_create(
             resource_group.name,
             account_name,
