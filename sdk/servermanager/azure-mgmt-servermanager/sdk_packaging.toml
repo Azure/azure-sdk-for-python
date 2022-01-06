@@ -1,5 +1,5 @@
 [packaging]
 package_name = "azure-mgmt-servermanager"
 package_pprint_name = "Server Manager Management"
-package_doc_id = "server-manager"
+package_doc_id = ""
 is_stable = true
