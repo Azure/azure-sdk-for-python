@@ -6,7 +6,6 @@
 
 - Added support for fixed (linear) retry backoff:
   - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
-  - `RetryMode` enum has been added to `azure.servicebus`, with values `FIXED` and `EXPONENTIAL`.
 
 ### Breaking Changes
 
