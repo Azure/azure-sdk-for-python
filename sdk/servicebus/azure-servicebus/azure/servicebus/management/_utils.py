@@ -335,7 +335,7 @@ def _validate_topic_subscription_and_rule_types(
 def _normalize_entity_path_to_full_path_if_needed(
     entity_path, fully_qualified_namespace
 ):
-    # type: (Optional[str], str) -> str
+    # type: (Optional[str], str) -> Optional[str]
     if not entity_path:
         return entity_path
     parsed = urlparse.urlparse(entity_path)
