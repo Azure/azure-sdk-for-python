@@ -54,7 +54,8 @@ class EventHubProducerClient(ClientBase):
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-    :keyword retry_mode: 'fixed' or 'exponential' delay between attempts, default is 'exponential'.
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
     :paramtype retry_mode: str
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
@@ -201,7 +202,8 @@ class EventHubProducerClient(ClientBase):
          seconds. If the backoff_factor is 0.1, then the retry will sleep
          for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
         :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-        :keyword retry_mode: 'fixed' or 'exponential' delay between attempts, default is 'exponential'.
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
         :paramtype retry_mode: str
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
