@@ -23,11 +23,10 @@ pip install azure-iot-deviceupdate --pre
 
 ## Key concepts
 
-Device Update for IoT Hub is a managed service that enables you to deploy over-the-air updates for your IoT devices. The client library has one main component named **AzureDeviceUpdateServiceDataPlane**. The component allows you to access all three main client services:
+Device Update for IoT Hub is a managed service that enables you to deploy over-the-air updates for your IoT devices. The client library has one main component named **DeviceUpdateClient**. The component allows you to access all three main client services:
 
 - **UpdatesOperations**: update management (import, enumerate, delete, etc.)
-- **DevicesOperations**: device management (enumerate devices and retrieve device properties)
-- **DeploymentsOperations**: deployment management (start and monitor update deployments to a set of devices)
+- **ManagementOperations**: deployment management (manage devices and deployments)
 
 You can learn more about Device Update for IoT Hub by visiting [Device Update for IoT Hub](https://github.com/azure/iot-hub-device-update).
 
@@ -41,7 +40,7 @@ The Device Update for IoT Hub client will raise exceptions defined in [Azure Cor
 
 ## Next steps
 
-Get started with our [Device Update for IoT Hub samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/deviceupdate/azure-iot-deviceupdate/samples)
+Get started with our [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/deviceupdate/azure-iot-deviceupdate/samples).
 
 ## Contributing
 

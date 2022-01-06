@@ -1,4 +1,3 @@
-from azure.iot.deviceupdate.models import ImportUpdateInput, ImportManifestMetadata, FileImportMetadata
 from datetime import datetime, timedelta
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, PublicAccess, BlobSasPermissions
 from samples.consts import FILE_NAME
@@ -40,8 +39,13 @@ class ContentFactory:
                                         FILE_NAME, payload_url)
 
     def _create_adu_payload_file(self, filename, file_id):
-        content = {"Scenario": "DeviceUpdateClientSample",
-                   "Timestamp": datetime.utcnow().strftime("%m/%d/%Y, %H:%M:%S")}
+        content = {"name": "apt-update-test",
+                   "version": "1.0",
+                   "packages": [
+                       {
+                           "name": "libcurl4-doc"
+                       }
+                   ]}
         file_path = f"{tempfile.gettempdir()}\\{file_id}"
         file = open(file_path, "w+")
         file.write(json.dumps(content))
@@ -51,10 +55,13 @@ class ContentFactory:
     def _create_import_manifest(self, manufacturer, name, version, file_name, file_size, file_hash, compatibility_ids,
                                 file_id):
         content = {"UpdateId": {"Provider": manufacturer, "Name": name, "Version": version},
+                   "Compatibility": compatibility_ids,
+                   "UpdateType": "microsoft/apt:1",
+                   "InstalledCriteria": f"apt-update-test-{version}",
+                   "Files": [{"FileName": file_name, "SizeInBytes": file_size, "Hashes": {"SHA256": file_hash},
+                              "MimeType": "application/octet-stream"}],
                    "CreatedDateTime": f"{datetime.utcnow().isoformat()}Z",
-                   "Files": [{"FileName": file_name, "SizeInBytes": file_size, "Hashes": {"SHA256": file_hash}}],
-                   "Compatibility": compatibility_ids, "ManifestVersion": "2.0", "InstalledCriteria": "1.2.3.4",
-                   "UpdateType": "microsoft/swupdate:1"}
+                   "ManifestVersion": "3.0"}
         file_path = f"{tempfile.gettempdir()}\\{file_id}"
         file = open(file_path, "w+")
         file.write(json.dumps(content))
@@ -63,12 +70,15 @@ class ContentFactory:
 
     def _create_import_body(self, import_manifest_url, import_manifest_file_size, import_manifest_file_hash,
                             file_name, payload_url):
-        return ImportUpdateInput(
-            import_manifest=ImportManifestMetadata(
-                url=import_manifest_url,
-                size_in_bytes=import_manifest_file_size,
-                hashes={"SHA256": import_manifest_file_hash}),
-            files=[FileImportMetadata(filename=file_name, url=payload_url)])
+        return [{
+            "ImportManifest": {
+                "Url": import_manifest_url,
+                "SizeInBytes": import_manifest_file_size,
+                "Hashes": {"SHA256": import_manifest_file_hash}
+            },
+            "Files": [
+                { "FileName": file_name, "Url": payload_url }]
+        }]
 
 
     def _get_file_size(self, file_path):

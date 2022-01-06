@@ -11,8 +11,9 @@ import os.path
 from io import open
 from setuptools import find_packages, setup
 
+# Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-iot-deviceupdate"
-PACKAGE_PPRINT_NAME = "Device Update"
+PACKAGE_PPRINT_NAME = "Azure Device Update"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -50,14 +51,13 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + "\n\n" + changelog,
     long_description_content_type='text/markdown',
-    url='https://github.com/Azure/azure-sdk-for-python',
+    license='MIT License',
     author='Microsoft Corporation',
     author_email='adupmdevteam@microsoft.com',
-    license='MIT License',
-    zip_safe=False,
+    url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
@@ -68,20 +68,23 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
+    zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.iot',
+        'azure.purview',
     ]),
     install_requires=[
-        'msrest>=0.6.21',
-        'azure-common~=1.1',
-        'azure-core>=1.6.0,<2.0.0',
+        "azure-core<2.0.0,>=1.18.0",
+        "msrest>=0.6.21",
+        'six>=1.11.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-iot-nspkg'],
+        ":python_version<'3.5'": ['typing'],
     }
 )

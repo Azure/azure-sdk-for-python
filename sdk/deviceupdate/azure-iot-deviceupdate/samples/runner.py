@@ -1,7 +1,6 @@
 from azure.core.exceptions import HttpResponseError
 from azure.iot.deviceupdate import DeviceUpdateClient
-from azure.iot.deviceupdate.models import *
-from azure.identity import ClientSecretCredential
+from azure.identity import InteractiveBrowserCredential
 from datetime import datetime, timezone
 import json
 import time
@@ -10,23 +9,20 @@ from samples.consts import MANUFACTURER, MODEL, BLOB_CONTAINER, DEFAULT_RETRY_AF
 
 
 class SampleRunner:
-    def __init__(self, tenant_id, client_id, client_secret, account_endpoint, instance_id, storage_name, storage_key,
-                 device_id, device_tag, **kwargs):
+    def __init__(self, tenant_id, client_id, account_endpoint, instance_id, storage_name, storage_key, device_tag,
+                 **kwargs):
         self._tenant_id = tenant_id
         self._client_id = client_id
-        self._client_secret = client_secret
         self._storage_name = storage_name
         self._storage_key = storage_key
-        self._device_id = device_id
         self._device_tag = device_tag
         self._account_endpoint = account_endpoint
         self._instance_id = instance_id
         self._delete = kwargs.pop('delete', False)
 
-        credentials = ClientSecretCredential(
+        credentials = InteractiveBrowserCredential(
             tenant_id=tenant_id,
             client_id=client_id,
-            client_secret=client_secret
         )
         self._client = DeviceUpdateClient(credentials, account_endpoint, instance_id)
 

@@ -2,16 +2,14 @@ import os
 import sys
 from samples.runner import SampleRunner
 
-tenant_id = os.getenv("AZURE_TENANT_ID")
-client_id = os.getenv("AZURE_CLIENT_ID")
-client_secret = os.getenv("AZURE_CLIENT_SECRET")
+tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"  # os.getenv("AZURE_TENANT_ID")
+client_id = "1e5942b3-36f1-43eb-88d9-98c12d95000b"  # os.getenv("AZURE_CLIENT_ID")
 storage_name = os.getenv("AZURE_STORAGE_NAME")
 storage_key = os.getenv("AZURE_STORAGE_KEY")
 
-account_endpoint = os.getenv("AZURE_ACCOUNT_ENDPOINT")
-instance_id = os.getenv("AZURE_INSTANCE_ID")
-device_id = os.getenv("AZURE_DEVICE_ID")
-device_tag = device_id
+account_endpoint = "adu-sdk-testing.api.adu.microsoft.com"  # os.getenv("AZURE_ACCOUNT_ENDPOINT")
+instance_id = "sdkinstance"  # os.getenv("AZURE_INSTANCE_ID")
+device_tag = "joegroup"
 
 
 def sample_device_update(delete):
@@ -21,12 +19,10 @@ def sample_device_update(delete):
     runner = SampleRunner(
         tenant_id,
         client_id,
-        client_secret,
         account_endpoint,
         instance_id,
         storage_name,
         storage_key,
-        device_id,
         device_tag,
         delete=delete)
     runner.run()

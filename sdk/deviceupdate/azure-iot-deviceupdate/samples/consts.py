@@ -1,5 +1,5 @@
-MANUFACTURER = "Contoso"
-MODEL = "Virtual-Machine"
-FILE_NAME = "setup.exe"
+MANUFACTURER = "fabrikam"
+MODEL = "vacuum"
+FILE_NAME = "payload.json"
 BLOB_CONTAINER = "test"
 DEFAULT_RETRY_AFTER = 5
