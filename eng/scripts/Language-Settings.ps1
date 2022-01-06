@@ -218,7 +218,7 @@ function DockerValidation{
   # we should skip the validation and keep the packages. 
   
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
-    Write-Debug $commandLine
+    $commandLine | ForEach-Object { Write-Debug $_ }
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
     FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
