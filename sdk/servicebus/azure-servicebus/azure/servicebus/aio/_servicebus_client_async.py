@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Dict, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 
 import uamqp
+from uamqp.constants import TransportType
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from .._base_handler import _parse_conn_str
@@ -17,9 +18,11 @@ from ._base_handler_async import (
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common._configuration import Configuration
+from .._common.auto_lock_renewer import AutoLockRenewer
 from .._common.utils import generate_dead_letter_entity_name, strip_protocol_from_uri
-from .._common.constants import ServiceBusSubQueue
+from .._common.constants import ServiceBusSubQueue, NEXT_AVAILABLE_SESSION, ServiceBusReceiveMode
 from ._async_utils import create_authentication
+from .._retry import RetryMode
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -76,6 +79,15 @@ class ServiceBusClient(object):
         self,
         fully_qualified_namespace: str,
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        *,
+        http_proxy: Optional[Dict[str, Any]] = None,
+        user_agent: Optional[str] = None,
+        logging_enable: bool = False,
+        transport_type: TransportType = TransportType.Amqp,
+        retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: int = 120,
+        retry_mode=RetryMode.EXPONENTIAL,
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -83,7 +95,17 @@ class ServiceBusClient(object):
             fully_qualified_namespace.strip()
         )
         self._credential = credential
-        self._config = Configuration(**kwargs)
+        self._config = Configuration(
+            http_proxy=http_proxy,
+            user_agent=user_agent,
+            logging_enable=logging_enable,
+            transport_type=transport_type,
+            retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            **kwargs
+        )
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
@@ -111,7 +133,20 @@ class ServiceBusClient(object):
         )
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        http_proxy: Optional[Dict[str, Any]] = None,
+        user_agent: Optional[str] = None,
+        logging_enable: bool = False,
+        transport_type: TransportType = TransportType.Amqp,
+        retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: int = 120,
+        retry_mode=RetryMode.EXPONENTIAL,
+        **kwargs: Any
+    ) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
 
@@ -156,6 +191,14 @@ class ServiceBusClient(object):
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
             credential=credential,  # type: ignore
+            http_proxy=http_proxy,
+            user_agent=user_agent,
+            logging_enable=logging_enable,
+            transport_type=transport_type,
+            retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
             **kwargs
         )
 
@@ -180,7 +223,11 @@ class ServiceBusClient(object):
         if self._connection_sharing and self._connection:
             await self._connection.destroy_async()
 
-    def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
+    def get_queue_sender(
+        self,
+        queue_name: str,
+        **kwargs: Any
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -222,7 +269,18 @@ class ServiceBusClient(object):
         self._handlers.add(handler)
         return handler
 
-    def get_queue_receiver(self, queue_name: str, **kwargs: Any) -> ServiceBusReceiver:
+    def get_queue_receiver(
+        self,
+        queue_name: str,
+        *,
+        session_id: Union[str, NEXT_AVAILABLE_SESSION] = None,
+        sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
+        receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+        max_wait_time: Optional[float] = None,
+        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        prefetch_count: int = 0,
+        **kwargs: Any
+    ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -274,8 +332,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        sub_queue = kwargs.get("sub_queue", None)
-        if sub_queue and kwargs.get("session_id"):
+        if sub_queue and session_id:
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful queue, "
@@ -307,6 +364,12 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            session_id=session_id,
+            sub_queue=sub_queue,
+            receive_mode=receive_mode,
+            max_wait_time=max_wait_time,
+            auto_lock_renewer=auto_lock_renewer,
+            prefetch_count=prefetch_count,
             **kwargs
         )
         self._handlers.add(handler)
@@ -354,7 +417,19 @@ class ServiceBusClient(object):
         return handler
 
     def get_subscription_receiver(
-        self, topic_name: str, subscription_name: str, **kwargs: Any
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        session_id: Union[str, NEXT_AVAILABLE_SESSION] = NEXT_AVAILABLE_SESSION,
+        sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        max_wait_time: Optional[float] = None,
+        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        prefetch_count: int = 0,
+        **kwargs: Any
     ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
@@ -410,8 +485,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        sub_queue = kwargs.get("sub_queue", None)
-        if sub_queue and kwargs.get("session_id"):
+        if sub_queue and session_id:
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful subscription, "
@@ -439,6 +513,12 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                session_id=session_id,
+                sub_queue=sub_queue,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
                 **kwargs
             )
         except ValueError:
@@ -460,6 +540,12 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                session_id=session_id,
+                sub_queue=sub_queue,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
                 **kwargs
             )
         self._handlers.add(handler)

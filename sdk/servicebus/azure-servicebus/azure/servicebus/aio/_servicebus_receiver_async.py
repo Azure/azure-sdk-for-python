@@ -7,17 +7,19 @@ import collections
 import datetime
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator, Union, Callable
+from typing import Any, List, Dict, Optional, AsyncIterator, Union, Callable
 
 import six
 
 from uamqp import ReceiveClientAsync, types, Message
-from uamqp.constants import SenderSettleMode
+from uamqp.constants import SenderSettleMode, TransportType
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ..exceptions import ServiceBusError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
+from .._common.auto_lock_renewer import AutoLockRenewer
 from .._common.message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
@@ -53,8 +55,6 @@ from .._common.utils import (
 )
 from ._async_utils import create_authentication, get_running_loop
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -121,6 +121,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self,
         fully_qualified_namespace: str,
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        *,
+        queue_name: Optional[str] = None,
+        topic_name: Optional[str] = None,
+        subscription_name: Optional[str] = None,
+        http_proxy: Optional[Dict[str, Any]] = None,
+        user_agent: Optional[str] = None,
+        logging_enable: Optional[bool] = False,
+        transport_type: Optional[TransportType] = TransportType.Amqp,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        max_wait_time: Optional[float] = None,
+        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
         self._message_iter = (
@@ -130,12 +144,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
+                queue_name=queue_name,
+                topic_name=topic_name,
+                subscription_name=subscription_name,
+                http_proxy=http_proxy,
+                user_agent=user_agent,
+                logging_enable=logging_enable,
+                transport_type=transport_type,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
-            subscription_name = kwargs.get("subscription_name")
             if queue_name and topic_name:
                 raise ValueError(
                     "Queue/Topic name can not be specified simultaneously."
@@ -155,10 +177,34 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=str(entity_name),
+                queue_name=queue_name,
+                topic_name=topic_name,
+                subscription_name=subscription_name,
+                http_proxy=http_proxy,
+                user_agent=user_agent,
+                logging_enable=logging_enable,
+                transport_type=transport_type,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
                 **kwargs
             )
 
-        self._populate_attributes(**kwargs)
+        self._populate_attributes(
+            queue_name=queue_name,
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+            http_proxy=http_proxy,
+            user_agent=user_agent,
+            logging_enable=logging_enable,
+            transport_type=transport_type,
+            receive_mode=receive_mode,
+            max_wait_time=max_wait_time,
+            auto_lock_renewer=auto_lock_renewer,
+            prefetch_count=prefetch_count,
+            **kwargs
+        )
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
@@ -616,7 +662,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return messages
 
     async def receive_deferred_messages(
-        self, sequence_numbers: Union[int, List[int]], **kwargs: Any
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
@@ -640,7 +686,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
@@ -688,7 +733,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return messages
 
     async def peek_messages(
-        self, max_message_count: int = 1, **kwargs: Any
+        self, max_message_count: int = 1, *, sequence_number: int = 0, timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
@@ -712,8 +757,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Peek messages in the queue.
         """
         self._check_live()
-        sequence_number = kwargs.pop("sequence_number", 0)
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
@@ -845,8 +888,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             dead_letter_error_description=error_description,
         )
 
-    async def renew_message_lock(self, message, **kwargs):
-        # type: (ServiceBusReceivedMessage, Any) -> datetime.datetime
+    async def renew_message_lock(
+        self, message: ServiceBusReceivedMessage, *, timeout: Optional[float] = None
+    ) -> datetime.datetime:
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
 
@@ -894,7 +938,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 

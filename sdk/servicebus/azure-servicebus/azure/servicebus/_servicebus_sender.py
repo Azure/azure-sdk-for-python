@@ -5,11 +5,15 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
+import datetime
+from typing import Any, TYPE_CHECKING, Dict, Union, List, Optional, Mapping, cast
 
 import uamqp
 from uamqp import SendClient, types
 from uamqp.authentication.common import AMQPAuth
+from uamqp.constants import TransportType
+
+from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -41,9 +45,6 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
-    import datetime
-    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
-
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
@@ -149,8 +150,19 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
     """
 
-    def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+        *,
+        queue_name: Optional[str] = None,
+        topic_name: Optional[str] = None,
+        http_proxy: Optional[Dict[str, Any]] = None,
+        user_agent: Optional[str] = None,
+        logging_enable: bool = False,
+        transport_type: TransportType = TransportType.Amqp,
+        **kwargs
+    ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -158,8 +170,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError(
                     "Queue/Topic name can not be specified simultaneously."
@@ -172,7 +182,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                entity_name=entity_name,
+                entity_name=str(entity_name),
+                queue_name=queue_name,
+                topic_name=topic_name,
+                http_proxy=http_proxy,
+                user_agent=user_agent,
+                logging_enable=logging_enable,
+                transport_type=transport_type,
                 **kwargs
             )
 
@@ -263,8 +279,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         finally:  # reset the timeout of the handler back to the default value
             self._set_msg_timeout(default_timeout, None)
 
-    def schedule_messages(self, messages, schedule_time_utc, **kwargs):
-        # type: (MessageTypes, datetime.datetime, Any) -> List[int]
+    def schedule_messages(
+        self,
+        messages: MessageTypes,
+        schedule_time_utc: datetime.datetime,
+        *,
+        timeout: Optional[float] = None
+    ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
 
@@ -290,7 +311,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         self._check_live()
         obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
@@ -314,8 +334,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 timeout=timeout,
             )
 
-    def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int, List[int]], Any) -> None
+    def cancel_scheduled_messages(
+        self,
+        sequence_numbers: Union[int, List[int]],
+        *,
+        timeout: Optional[float] = None
+    ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
@@ -337,7 +361,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Cancelling messages scheduled to be sent in future
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
@@ -354,8 +377,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             timeout=timeout,
         )
 
-    def send_messages(self, message, **kwargs):
-        # type: (Union[MessageTypes, ServiceBusMessageBatch], Any) -> None
+    def send_messages(
+        self,
+        message: Union[MessageTypes, ServiceBusMessageBatch],
+        *,
+        timeout: Optional[float] = None
+    ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -387,7 +414,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
@@ -422,8 +448,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 require_last_exception=True,
             )
 
-    def create_message_batch(self, max_size_in_bytes=None):
-        # type: (Optional[int]) -> ServiceBusMessageBatch
+    def create_message_batch(
+        self,
+        max_size_in_bytes: Optional[int] = None
+    ) -> ServiceBusMessageBatch:
         """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
         max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
 
