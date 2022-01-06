@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -22,22 +22,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_check_availability_request(
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -65,17 +63,21 @@ def build_check_availability_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_create_or_update_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -105,17 +107,21 @@ def build_create_or_update_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_patch_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -145,17 +151,18 @@ def build_patch_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}')
@@ -180,12 +187,11 @@ def build_delete_request_initial(
 
 
 def build_get_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -216,13 +222,15 @@ def build_get_request(
 
 
 def build_create_or_update_authorization_rule_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -253,18 +261,19 @@ def build_create_or_update_authorization_rule_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_authorization_rule_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}')
@@ -290,13 +299,12 @@ def build_delete_authorization_rule_request(
 
 
 def build_get_authorization_rule_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -328,11 +336,10 @@ def build_get_authorization_rule_request(
 
 
 def build_list_request(
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -362,10 +369,9 @@ def build_list_request(
 
 
 def build_list_all_request(
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -394,12 +400,11 @@ def build_list_all_request(
 
 
 def build_list_authorization_rules_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -430,13 +435,12 @@ def build_list_authorization_rules_request(
 
 
 def build_list_keys_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -468,13 +472,15 @@ def build_list_keys_request(
 
 
 def build_regenerate_keys_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -505,10 +511,11 @@ def build_regenerate_keys_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class NamespacesOperations(object):
     """NamespacesOperations operations.
 
@@ -534,10 +541,9 @@ class NamespacesOperations(object):
     @distributed_trace
     def check_availability(
         self,
-        parameters,  # type: "_models.CheckAvailabilityParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CheckAvailabilityResult"
+        parameters: "_models.CheckAvailabilityParameters",
+        **kwargs: Any
+    ) -> "_models.CheckAvailabilityResult":
         """Checks the availability of the given service namespace across all Azure subscriptions. This is
         useful because the domain name is created based on the service namespace name.
 
@@ -587,12 +593,11 @@ class NamespacesOperations(object):
     @distributed_trace
     def create_or_update(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        parameters,  # type: "_models.NamespaceCreateOrUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NamespaceResource"
+        resource_group_name: str,
+        namespace_name: str,
+        parameters: "_models.NamespaceCreateOrUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.NamespaceResource":
         """Creates/Updates a service namespace. Once created, this namespace's resource manifest is
         immutable. This operation is idempotent.
 
@@ -652,12 +657,11 @@ class NamespacesOperations(object):
     @distributed_trace
     def patch(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        parameters,  # type: "_models.NamespacePatchParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NamespaceResource"
+        resource_group_name: str,
+        namespace_name: str,
+        parameters: "_models.NamespacePatchParameters",
+        **kwargs: Any
+    ) -> "_models.NamespaceResource":
         """Patches the existing namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -711,11 +715,10 @@ class NamespacesOperations(object):
 
     def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -748,11 +751,10 @@ class NamespacesOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes an existing namespace. This operation also removes all associated notificationHubs
         under the namespace.
 
@@ -811,11 +813,10 @@ class NamespacesOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NamespaceResource"
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs: Any
+    ) -> "_models.NamespaceResource":
         """Returns the description for the specified namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -863,13 +864,12 @@ class NamespacesOperations(object):
     @distributed_trace
     def create_or_update_authorization_rule(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        authorization_rule_name,  # type: str
-        parameters,  # type: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
+        resource_group_name: str,
+        namespace_name: str,
+        authorization_rule_name: str,
+        parameters: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Creates an authorization rule for a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -928,12 +928,11 @@ class NamespacesOperations(object):
     @distributed_trace
     def delete_authorization_rule(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        authorization_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        namespace_name: str,
+        authorization_rule_name: str,
+        **kwargs: Any
+    ) -> None:
         """Deletes a namespace authorization rule.
 
         :param resource_group_name: The name of the resource group.
@@ -980,12 +979,11 @@ class NamespacesOperations(object):
     @distributed_trace
     def get_authorization_rule(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        authorization_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
+        resource_group_name: str,
+        namespace_name: str,
+        authorization_rule_name: str,
+        **kwargs: Any
+    ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Gets an authorization rule for a namespace by name.
 
         :param resource_group_name: The name of the resource group.
@@ -1036,10 +1034,9 @@ class NamespacesOperations(object):
     @distributed_trace
     def list(
         self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.NamespaceListResult"]
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> Iterable["_models.NamespaceListResult"]:
         """Lists the available namespaces within a resourceGroup.
 
         :param resource_group_name: The name of the resource group. If resourceGroupName value is null
@@ -1106,9 +1103,8 @@ class NamespacesOperations(object):
     @distributed_trace
     def list_all(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.NamespaceListResult"]
+        **kwargs: Any
+    ) -> Iterable["_models.NamespaceListResult"]:
         """Lists all the available namespaces within the subscription irrespective of the resourceGroups.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1170,11 +1166,10 @@ class NamespacesOperations(object):
     @distributed_trace
     def list_authorization_rules(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.SharedAccessAuthorizationRuleListResult"]
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs: Any
+    ) -> Iterable["_models.SharedAccessAuthorizationRuleListResult"]:
         """Gets the authorization rules for a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -1246,12 +1241,11 @@ class NamespacesOperations(object):
     @distributed_trace
     def list_keys(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        authorization_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ResourceListKeys"
+        resource_group_name: str,
+        namespace_name: str,
+        authorization_rule_name: str,
+        **kwargs: Any
+    ) -> "_models.ResourceListKeys":
         """Gets the Primary and Secondary ConnectionStrings to the namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -1303,13 +1297,12 @@ class NamespacesOperations(object):
     @distributed_trace
     def regenerate_keys(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        authorization_rule_name,  # type: str
-        parameters,  # type: "_models.PolicykeyResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ResourceListKeys"
+        resource_group_name: str,
+        namespace_name: str,
+        authorization_rule_name: str,
+        parameters: "_models.PolicykeyResource",
+        **kwargs: Any
+    ) -> "_models.ResourceListKeys":
         """Regenerates the Primary/Secondary Keys to the Namespace Authorization Rule.
 
         :param resource_group_name: The name of the resource group.
