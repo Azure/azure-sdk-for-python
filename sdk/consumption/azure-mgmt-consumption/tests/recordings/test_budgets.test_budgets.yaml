@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"properties": {"category": "Cost", "amount": 100.0, "timeGrain": "Monthly",
-      "timePeriod": {"startDate": "2021-01-01T00:00:00.000Z", "endDate": "2021-10-31T00:00:00.000Z"}}}'
+      "timePeriod": {"startDate": "2022-01-01T00:00:00.000Z", "endDate": "2022-10-31T00:00:00.000Z"}}}'
     headers:
       Accept:
       - application/json
@@ -14,35 +14,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-consumption/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-consumption/9.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2021-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d6d808ae67d950\"","properties":{"timePeriod":{"startDate":"2021-01-01T00:00:00Z","endDate":"2021-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":null,"category":"Cost","notifications":{},"filter":{},"currencySetting":"None"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d802d572939f3d\"","properties":{"timePeriod":{"startDate":"2022-01-01T00:00:00Z","endDate":"2022-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":null,"category":"Cost","notifications":{},"filter":{}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '485'
+      - '465'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Dec 2020 02:18:04 GMT
+      - Thu, 06 Jan 2022 08:14:37 GMT
       expires:
       - '-1'
       location:
-      - https://costmanagement.trafficmanager.net/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2021-10-01
       pragma:
       - no-cache
       session-id:
-      - e5bb9096-eb68-481e-9708-f2dfcfd54488
+      - 91c8a692-9924-41bb-b43d-9e787d5b9333
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
       x-powered-by:
       - ASP.NET
     status:
@@ -58,27 +58,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-consumption/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-consumption/9.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2021-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d6d808ae67d950\"","properties":{"timePeriod":{"startDate":"2021-01-01T00:00:00Z","endDate":"2021-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":{"amount":0.0,"unit":null},"category":"Cost","notifications":{},"filter":{},"currencySetting":"None"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49","name":"budget85c60a49","type":"Microsoft.Consumption/budgets","eTag":"\"1d802d572939f3d\"","properties":{"timePeriod":{"startDate":"2022-01-01T00:00:00Z","endDate":"2022-10-31T00:00:00Z"},"timeGrain":"Monthly","amount":100.0,"currentSpend":{"amount":0.0,"unit":"USD"},"category":"Cost","notifications":{},"filter":{}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '507'
+      - '488'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Dec 2020 02:18:05 GMT
+      - Thu, 06 Jan 2022 08:14:39 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       session-id:
-      - 21854e3d-35e6-464e-8d08-66cc2bc618ea
+      - a52bd22c-d52e-4493-8537-9a46db2435aa
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -104,9 +104,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-consumption/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-consumption/9.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_budgets_test_budgets85c60a49/providers/Microsoft.Consumption/budgets/budget85c60a49?api-version=2021-10-01
   response:
     body:
       string: ''
@@ -116,13 +116,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 22 Dec 2020 02:18:06 GMT
+      - Thu, 06 Jan 2022 08:14:40 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       session-id:
-      - 2d17ef1a-1057-444b-8381-38725cbc6d8f
+      - eb82e90d-43ac-4961-a95a-1aa00de698d0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
