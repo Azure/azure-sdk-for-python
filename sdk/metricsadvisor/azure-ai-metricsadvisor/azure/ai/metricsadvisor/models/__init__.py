@@ -24,6 +24,25 @@
 #
 # --------------------------------------------------------------------------
 
+from .._generated.models import (
+    SnoozeScope,
+    AnomalySeverity,
+    DatasourceType,
+    DataFeedAccessMode,
+    DataFeedAutoRollupMethod,
+    DatasourceMissingDataPointFillType,
+    AnomalyDetectorDirection,
+    AnomalyIncidentStatus,
+    DataFeedGranularityType,
+    DataFeedStatus,
+    AnomalyValue,
+    ChangePointValue,
+    PeriodType,
+    FeedbackType,
+    AlertQueryTimeMode,
+    DatasourceCredentialType,
+    DatasourceAuthenticationType,
+)
 
 from .._generated.models import (
     FeedbackQueryTimeMode,
@@ -31,13 +50,11 @@ from .._generated.models import (
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
     EnrichmentStatus,
-    MetricSeriesItem as MetricSeriesDefinition,
-    IngestionStatus as DataFeedIngestionStatus,
+    MetricSeriesDefinition,
+    DataFeedIngestionStatus,
     SeriesIdentity,
     SeverityFilterCondition,
-)
-
-from ._models import (
+    MetricFeedback,
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
@@ -89,6 +106,8 @@ from ._models import (
     AnomalyAlert,
     AzureDataLakeStorageGen2DataFeedSource,
     AzureEventHubsDataFeedSource,
+    MetricAnomalyAlertScopeType,
+    DataFeedRollupType,
     IncidentRootCause,
     MetricEnrichedSeriesData,
     DatasourceSqlConnectionString,

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any
+from enum import Enum
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
@@ -23,227 +24,92 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ..models._models import (
-    AnomalyIncident,
-    DataPointAnomaly,
-    MetricSeriesData,
-    AnomalyAlert,
-    IncidentRootCause,
-    MetricEnrichedSeriesData,
-    AnomalyFeedback,
-    ChangePointFeedback,
-    CommentFeedback,
-    PeriodFeedback,
-)
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     import datetime
     from .models import (
         EnrichmentStatus,
-        MetricSeriesItem as MetricSeriesDefinition,
-        TimeMode as AlertQueryTimeMode,
     )
-    from ..models._models import MetricFeedback
     from azure.core.paging import ItemPaged
-
-FeedbackUnion = Union[
-    AnomalyFeedback,
-    ChangePointFeedback,
-    CommentFeedback,
-    PeriodFeedback,
-]
 
 from typing import Any, List, Union, cast, TYPE_CHECKING
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from .models import (
-    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
-    AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed as _AzureBlobDataFeed,
-    AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed as _AzureDataExplorerDataFeed,
-    AzureTableDataFeed as _AzureTableDataFeed,
-    AzureLogAnalyticsDataFeed as _AzureLogAnalyticsDataFeed,
-    InfluxDBDataFeed as _InfluxDBDataFeed,
-    MySqlDataFeed as _MySqlDataFeed,
-    PostgreSqlDataFeed as _PostgreSqlDataFeed,
-    MongoDBDataFeed as _MongoDBDataFeed,
-    SQLServerDataFeed as _SQLServerDataFeed,
-    AzureDataLakeStorageGen2DataFeed as _AzureDataLakeStorageGen2DataFeed,
-    AzureDataLakeStorageGen2DataFeedPatch as _AzureDataLakeStorageGen2DataFeedPatch,
-    AzureEventHubsDataFeed as _AzureEventHubsDataFeed,
-    AzureEventHubsDataFeedPatch as _AzureEventHubsDataFeedPatch,
-    AzureApplicationInsightsDataFeedPatch as _AzureApplicationInsightsDataFeedPatch,
-    AzureBlobDataFeedPatch as _AzureBlobDataFeedPatch,
-    AzureCosmosDBDataFeedPatch as _AzureCosmosDBDataFeedPatch,
-    AzureDataExplorerDataFeedPatch as _AzureDataExplorerDataFeedPatch,
-    AzureTableDataFeedPatch as _AzureTableDataFeedPatch,
-    AzureLogAnalyticsDataFeedPatch as _AzureLogAnalyticsDataFeedPatch,
-    InfluxDBDataFeedPatch as _InfluxDBDataFeedPatch,
-    MySqlDataFeedPatch as _MySqlDataFeedPatch,
-    PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
-    MongoDBDataFeedPatch as _MongoDBDataFeedPatch,
-    SQLServerDataFeedPatch as _SQLServerDataFeedPatch,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
-    IngestionProgressResetOptions as _IngestionProgressResetOptions,
-    IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
-)
+
 from .._version import SDK_MONIKER
-from ..models._models import (
-    DataFeed,
-    EmailNotificationHook,
-    WebNotificationHook,
-    AnomalyAlertConfiguration,
-    AnomalyDetectionConfiguration,
-    DataFeedIngestionProgress,
-    AzureApplicationInsightsDataFeedSource,
-    AzureBlobDataFeedSource,
-    AzureCosmosDbDataFeedSource,
-    AzureDataExplorerDataFeedSource,
-    AzureTableDataFeedSource,
-    AzureLogAnalyticsDataFeedSource,
-    InfluxDbDataFeedSource,
-    MySqlDataFeedSource,
-    PostgreSqlDataFeedSource,
-    SqlServerDataFeedSource,
-    MongoDbDataFeedSource,
-    AzureDataLakeStorageGen2DataFeedSource,
-    AzureEventHubsDataFeedSource,
-    DatasourceSqlConnectionString,
-    DatasourceDataLakeGen2SharedKey,
-    DatasourceServicePrincipal,
-    DatasourceServicePrincipalInKeyVault,
-    DatasourceCredential,
-)
 
-DataFeedSourceUnion = Union[
-    AzureApplicationInsightsDataFeedSource,
-    AzureBlobDataFeedSource,
-    AzureCosmosDbDataFeedSource,
-    AzureDataExplorerDataFeedSource,
-    AzureTableDataFeedSource,
-    AzureLogAnalyticsDataFeedSource,
-    InfluxDbDataFeedSource,
-    MySqlDataFeedSource,
-    PostgreSqlDataFeedSource,
-    SqlServerDataFeedSource,
-    MongoDbDataFeedSource,
-    AzureDataLakeStorageGen2DataFeedSource,
-    AzureEventHubsDataFeedSource,
-]
+def get_data_feed():
+    from .models import (
+        AzureApplicationInsightsDataFeed,
+        AzureBlobDataFeed,
+        AzureCosmosDBDataFeed,
+        AzureDataExplorerDataFeed,
+        AzureTableDataFeed,
+        AzureLogAnalyticsDataFeed,
+        InfluxDBDataFeed,
+        MySqlDataFeed,
+        PostgreSqlDataFeed,
+        MongoDBDataFeed,
+        SQLServerDataFeed,
+        AzureDataLakeStorageGen2DataFeed,
+        AzureEventHubsDataFeed,
 
-DatasourceCredentialUnion = Union[
-    DatasourceSqlConnectionString,
-    DatasourceDataLakeGen2SharedKey,
-    DatasourceServicePrincipal,
-    DatasourceServicePrincipalInKeyVault,
-]
+    )
+    return {
+        "SqlServer": SQLServerDataFeed,
+        "AzureApplicationInsights": AzureApplicationInsightsDataFeed,
+        "AzureBlob": AzureBlobDataFeed,
+        "AzureCosmosDB": AzureCosmosDBDataFeed,
+        "AzureDataExplorer": AzureDataExplorerDataFeed,
+        "AzureTable": AzureTableDataFeed,
+        "AzureLogAnalytics": AzureLogAnalyticsDataFeed,
+        "InfluxDB": InfluxDBDataFeed,
+        "MySql": MySqlDataFeed,
+        "PostgreSql": PostgreSqlDataFeed,
+        "MongoDB": MongoDBDataFeed,
+        "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeed,
+        "AzureEventHubs": AzureEventHubsDataFeed,
+    }
 
-DATA_FEED = {
-    "SqlServer": _SQLServerDataFeed,
-    "AzureApplicationInsights": _AzureApplicationInsightsDataFeed,
-    "AzureBlob": _AzureBlobDataFeed,
-    "AzureCosmosDB": _AzureCosmosDBDataFeed,
-    "AzureDataExplorer": _AzureDataExplorerDataFeed,
-    "AzureTable": _AzureTableDataFeed,
-    "AzureLogAnalytics": _AzureLogAnalyticsDataFeed,
-    "InfluxDB": _InfluxDBDataFeed,
-    "MySql": _MySqlDataFeed,
-    "PostgreSql": _PostgreSqlDataFeed,
-    "MongoDB": _MongoDBDataFeed,
-    "AzureDataLakeStorageGen2": _AzureDataLakeStorageGen2DataFeed,
-    "AzureEventHubs": _AzureEventHubsDataFeed,
-}
-
-
-DATA_FEED_PATCH = {
-    "SqlServer": _SQLServerDataFeedPatch,
-    "AzureApplicationInsights": _AzureApplicationInsightsDataFeedPatch,
-    "AzureBlob": _AzureBlobDataFeedPatch,
-    "AzureCosmosDB": _AzureCosmosDBDataFeedPatch,
-    "AzureDataExplorer": _AzureDataExplorerDataFeedPatch,
-    "AzureTable": _AzureTableDataFeedPatch,
-    "AzureEventHubs": _AzureEventHubsDataFeedPatch,
-    "InfluxDB": _InfluxDBDataFeedPatch,
-    "MySql": _MySqlDataFeedPatch,
-    "PostgreSql": _PostgreSqlDataFeedPatch,
-    "MongoDB": _MongoDBDataFeedPatch,
-    "AzureDataLakeStorageGen2": _AzureDataLakeStorageGen2DataFeedPatch,
-    "AzureLogAnalytics": _AzureLogAnalyticsDataFeedPatch,
-}
+def get_data_feed_patch():
+    from .models import (
+        AzureDataLakeStorageGen2DataFeedPatch,
+        AzureEventHubsDataFeedPatch,
+        AzureApplicationInsightsDataFeedPatch,
+        AzureBlobDataFeedPatch,
+        AzureCosmosDBDataFeedPatch,
+        AzureDataExplorerDataFeedPatch,
+        AzureTableDataFeedPatch,
+        AzureLogAnalyticsDataFeedPatch,
+        InfluxDBDataFeedPatch,
+        MySqlDataFeedPatch,
+        PostgreSqlDataFeedPatch,
+        MongoDBDataFeedPatch,
+        SQLServerDataFeedPatch,
+    )
+    return {
+        "SqlServer": SQLServerDataFeedPatch,
+        "AzureApplicationInsights": AzureApplicationInsightsDataFeedPatch,
+        "AzureBlob": AzureBlobDataFeedPatch,
+        "AzureCosmosDB": AzureCosmosDBDataFeedPatch,
+        "AzureDataExplorer": AzureDataExplorerDataFeedPatch,
+        "AzureTable": AzureTableDataFeedPatch,
+        "AzureEventHubs": AzureEventHubsDataFeedPatch,
+        "InfluxDB": InfluxDBDataFeedPatch,
+        "MySql": MySqlDataFeedPatch,
+        "PostgreSql": PostgreSqlDataFeedPatch,
+        "MongoDB": MongoDBDataFeedPatch,
+        "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeedPatch,
+        "AzureLogAnalytics": AzureLogAnalyticsDataFeedPatch,
+    }
 
 from typing import Union, TYPE_CHECKING
 import datetime
 import six
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
-from ..models import (
-    DataFeedGranularityType,
-    DataFeedGranularity,
-    DataFeedSchema,
-    DataFeedMetric,
-    DataFeedIngestionSettings,
-    AnomalyFeedback,
-    ChangePointFeedback,
-    CommentFeedback,
-    PeriodFeedback,
-    DataFeedRollupType,
-    DatasourceSqlConnectionString,
-    DatasourceDataLakeGen2SharedKey,
-    DatasourceServicePrincipal,
-    DatasourceServicePrincipalInKeyVault,
-)
-
-if TYPE_CHECKING:
-    from .models import MetricFeedback
-
-
-def construct_alert_config_dict(update_kwargs):
-
-    if "metricAlertingConfigurations" in update_kwargs:
-        update_kwargs["metricAlertingConfigurations"] = (
-            [
-                config._to_generated()
-                for config in update_kwargs["metricAlertingConfigurations"]
-            ]
-            if update_kwargs["metricAlertingConfigurations"]
-            else None
-        )
-
-    return update_kwargs
-
-
-def construct_detection_config_dict(update_kwargs):
-
-    if "wholeMetricConfiguration" in update_kwargs:
-        update_kwargs["wholeMetricConfiguration"] = (
-            update_kwargs["wholeMetricConfiguration"]._to_generated_patch()
-            if update_kwargs["wholeMetricConfiguration"]
-            else None
-        )
-    if "dimensionGroupOverrideConfigurations" in update_kwargs:
-        update_kwargs["dimensionGroupOverrideConfigurations"] = (
-            [
-                group._to_generated()
-                for group in update_kwargs["dimensionGroupOverrideConfigurations"]
-            ]
-            if update_kwargs["dimensionGroupOverrideConfigurations"]
-            else None
-        )
-    if "seriesOverrideConfigurations" in update_kwargs:
-        update_kwargs["seriesOverrideConfigurations"] = (
-            [
-                series._to_generated()
-                for series in update_kwargs["seriesOverrideConfigurations"]
-            ]
-            if update_kwargs["seriesOverrideConfigurations"]
-            else None
-        )
-
-    return update_kwargs
-
 
 def construct_hook_dict(update_kwargs, hook_type):
 
@@ -354,7 +220,7 @@ def convert_to_generated_data_feed_type(
         AzureEventHubsDataFeed]
     :return: The generated model for the data source type
     """
-
+    from .models import DataFeedGranularityType, DataFeedGranularity, DataFeedSchema, DataFeedMetric, DataFeedIngestionSettings, DataFeedRollupType
     if isinstance(granularity, (DataFeedGranularityType, six.string_types)):
         granularity = DataFeedGranularity(
             granularity_type=granularity,
@@ -371,16 +237,14 @@ def convert_to_generated_data_feed_type(
         )
 
     return generated_feed_type(
-        data_source_parameter=source._to_generated(),
+        data_source_parameter=source,
         authentication_type=source.authentication_type,
         credential_id=source.credential_id,
         data_feed_name=name,
         granularity_name=granularity.granularity_type,
         granularity_amount=granularity.custom_granularity_value,
-        metrics=[metric._to_generated() for metric in schema.metrics],
-        dimension=[dimension._to_generated() for dimension in schema.dimensions]
-        if schema.dimensions
-        else None,
+        metrics=schema.metrics,
+        dimension=schema.dimensions,
         timestamp_column=schema.timestamp_column,
         data_start_from=ingestion_settings.ingestion_begin_time,
         max_concurrency=ingestion_settings.data_source_request_concurrency,
@@ -388,9 +252,7 @@ def convert_to_generated_data_feed_type(
         start_offset_in_seconds=ingestion_settings.ingestion_start_offset,
         stop_retry_after_in_seconds=ingestion_settings.stop_retry_after,
         data_feed_description=data_feed_description,
-        need_rollup=DataFeedRollupType._to_generated(rollup_settings.rollup_type)
-        if rollup_settings
-        else None,
+        need_rollup=rollup_settings.rollup_type,
         roll_up_method=rollup_settings.rollup_method if rollup_settings else None,
         roll_up_columns=rollup_settings.auto_rollup_group_by_column_names
         if rollup_settings
@@ -409,20 +271,6 @@ def convert_to_generated_data_feed_type(
         admins=admins,
         action_link_template=action_link_template,
     )
-
-
-def convert_to_sub_feedback(feedback):
-    # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
-    if feedback.feedback_type == "Anomaly":
-        return AnomalyFeedback._from_generated(feedback)  # type: ignore
-    if feedback.feedback_type == "ChangePoint":
-        return ChangePointFeedback._from_generated(feedback)  # type: ignore
-    if feedback.feedback_type == "Comment":
-        return CommentFeedback._from_generated(feedback)  # type: ignore
-    if feedback.feedback_type == "Period":
-        return PeriodFeedback._from_generated(feedback)  # type: ignore
-    raise HttpResponseError("Invalid feedback type returned in the response.")
-
 
 def convert_datetime(date_time):
     # type: (Union[str, datetime.datetime]) -> datetime.datetime
@@ -452,17 +300,6 @@ def get_authentication_policy(credential):
         )
 
     return authentication_policy
-
-
-def convert_to_datasource_credential(datasource_credential):
-    if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
-        return DatasourceSqlConnectionString._from_generated(datasource_credential)
-    if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
-        return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
-    if datasource_credential.data_source_credential_type == "ServicePrincipal":
-        return DatasourceServicePrincipal._from_generated(datasource_credential)
-    return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
-
 
 class MetricsAdvisorKeyCredential(object):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
@@ -586,64 +423,6 @@ class MetricsAdvisorClientCustomization(object):
 class MetricsAdvisorClientOperationsMixinCustomization:
 
     @distributed_trace
-    def add_feedback(self, feedback, **kwargs):
-        # type: (FeedbackUnion, Any) -> None
-
-        """Create a new metric feedback.
-
-        :param feedback: metric feedback.
-        :type feedback: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
-            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
-            ~azure.ai.metricsadvisor.models.CommentFeedback or
-            ~azure.ai.metricsadvisor.models.PeriodFeedback
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START add_feedback]
-                :end-before: [END add_feedback]
-                :language: python
-                :dedent: 4
-                :caption: Add new feedback.
-        """
-
-        return super().add_feedback(
-            body=feedback._to_generated(), **kwargs
-        )
-    add_feedback.metadata = {'url': '/feedback/metric'}  # type: ignore
-
-    @distributed_trace
-    def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
-
-        """Get a metric feedback by its id.
-
-        :param str feedback_id: the id of the feedback.
-        :return: The feedback object
-        :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback or
-            ~azure.ai.metricsadvisor.models.AnomalyFeedback or
-            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
-            ~azure.ai.metricsadvisor.models.CommentFeedback or
-            ~azure.ai.metricsadvisor.models.PeriodFeedback
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START get_feedback]
-                :end-before: [END get_feedback]
-                :language: python
-                :dedent: 4
-                :caption: Get a metric feedback by its id.
-        """
-
-        return convert_to_sub_feedback(
-            super().get_feedback(feedback_id=feedback_id, **kwargs)
-        )
-    get_feedback.metadata = {'url': '/feedback/metric/{feedbackId}'}  # type: ignore
-
-    @distributed_trace
     def list_feedback(self, metric_id, **kwargs):
         # type: (str, Any) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]
 
@@ -701,9 +480,6 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         return super().list_feedback(  # type: ignore
             skip=skip,
             body=feedback_filter,
-            cls=kwargs.pop(
-                "cls", lambda result: [convert_to_sub_feedback(x) for x in result]
-            ),
             **kwargs
         )
     list_feedback.metadata = {'url': '/feedback/metric/query'}  # type: ignore
@@ -733,14 +509,9 @@ class MetricsAdvisorClientOperationsMixinCustomization:
                 :dedent: 4
                 :caption: Query incident root causes.
         """
-
         return super().list_incident_root_causes(  # type: ignore
             configuration_id=detection_configuration_id,
             incident_id=incident_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda result: [IncidentRootCause._from_generated(x) for x in result],
-            ),
             **kwargs
         )
     list_incident_root_causes.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause'}  # type: ignore
@@ -785,7 +556,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         series_list = cast(List[SeriesIdentity], series_list)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-        from .models import DetectionSeriesQuery
+        from .models import DetectionSeriesQuery, MetricEnrichedSeriesData
         detection_series_query = DetectionSeriesQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -795,12 +566,6 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         return super().list_metric_enriched_series_data(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
-            cls=kwargs.pop(
-                "cls",
-                lambda series: [
-                    MetricEnrichedSeriesData._from_generated(data) for data in series
-                ],
-            ),
             **kwargs
         )
     list_metric_enriched_series_data.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/series/query'}  # type: ignore
@@ -843,7 +608,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         skip = kwargs.pop("skip", None)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-        from .models import AlertingResultQuery
+        from .models import AlertingResultQuery, AnomalyAlert
         alerting_result_query = AlertingResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -854,12 +619,6 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             configuration_id=alert_configuration_id,
             skip=skip,
             body=alerting_result_query,
-            cls=kwargs.pop(
-                "cls",
-                lambda alerts: [
-                    AnomalyAlert._from_generated(alert) for alert in alerts
-                ],
-            ),
             **kwargs
         )
     list_alerts.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/query'}  # type: ignore
@@ -868,12 +627,10 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop("skip", None)
-
         return super().get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -884,7 +641,7 @@ class MetricsAdvisorClientOperationsMixinCustomization:
 
         skip = kwargs.pop("skip", None)
         condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
+        filter_condition = condition
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         from .models import DetectionAnomalyResultQuery
@@ -893,12 +650,11 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             end_time=converted_end_time,
             filter=filter_condition,
         )
-
+        from .models import DataPointAnomaly
         return super().get_anomalies_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=detection_anomaly_result_query,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1043,12 +799,11 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
 
         skip = kwargs.pop("skip", None)
-
+        from .models import AnomalyIncident
         return super().get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1056,9 +811,9 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         self, detection_configuration_id, start_time, end_time, **kwargs
     ):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
-
+        from .models import AnomalyIncident
         condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
+        filter_condition = condition
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         from .models import DetectionIncidentResultQuery
@@ -1071,7 +826,6 @@ class MetricsAdvisorClientOperationsMixinCustomization:
         return super().get_incidents_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_incident_result_query,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1254,16 +1008,10 @@ class MetricsAdvisorClientOperationsMixinCustomization:
             end_time=converted_end_time,
             series=series_keys,
         )
-
+        from .models import MetricSeriesData
         return super().list_metric_series_data(  # type: ignore
             metric_id=metric_id,
             body=metric_data_query_options,
-            cls=kwargs.pop(
-                "cls",
-                lambda result: [
-                    MetricSeriesData._from_generated(series) for series in result
-                ],
-            ),
             **kwargs
         )
     list_metric_series_data.metadata = {'url': '/metrics/{metricId}/data/query'}  # type: ignore
@@ -1513,12 +1261,11 @@ class MetricsAdvisorAdministrationClient(
         """
 
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
+        from .models import AnomalyAlertingConfiguration
         response_headers = super().create_alert_configuration(  # type: ignore
-            _AnomalyAlertingConfiguration(
+            AnomalyAlertingConfiguration(
                 name=name,
-                metric_alerting_configurations=[
-                    config._to_generated() for config in metric_alert_configurations
-                ],
+                metric_alerting_configurations=metric_alert_configurations,
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
                 description=kwargs.pop("description", None),
@@ -1593,7 +1340,7 @@ class MetricsAdvisorAdministrationClient(
         viewers = kwargs.pop("viewers", None)
         access_mode = kwargs.pop("access_mode", "Private")
         action_link_template = kwargs.pop("action_link_template", None)
-        data_feed_type = DATA_FEED[source.data_source_type]
+        data_feed_type = get_data_feed()[source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
             name=name,
@@ -1647,10 +1394,10 @@ class MetricsAdvisorAdministrationClient(
 
         hook_request = None
         if hook.hook_type == "Email":
-            hook_request = hook._to_generated()
+            hook_request = hook
 
         if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated()
+            hook_request = hook
 
         response_headers = super().create_hook(  # type: ignore
             hook_request,  # type: ignore
@@ -1701,21 +1448,14 @@ class MetricsAdvisorAdministrationClient(
             "series_group_detection_conditions", None
         )
         series_detection_conditions = kwargs.pop("series_detection_conditions", None)
-        config = _AnomalyDetectionConfiguration(
+        from .models import AnomalyDetectionConfiguration
+        config = AnomalyDetectionConfiguration(
             name=name,
             metric_id=metric_id,
             description=description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in series_group_detection_conditions
-            ]
-            if series_group_detection_conditions
-            else None,
-            series_override_configurations=[
-                series._to_generated() for series in series_detection_conditions
-            ]
-            if series_detection_conditions
-            else None,
+            whole_metric_configuration=whole_series_detection_condition,
+            dimension_group_override_configurations=series_group_detection_conditions,
+            series_override_configurations=series_detection_conditions,
         )
 
         response_headers = super().create_detection_configuration(  # type: ignore
@@ -1725,142 +1465,6 @@ class MetricsAdvisorAdministrationClient(
         )
         config_id = response_headers["Location"].split("configurations/")[1]
         return self.get_detection_configuration(config_id)
-
-    @distributed_trace
-    def get_data_feed(self, data_feed_id, **kwargs):
-        # type: (str, Any) -> DataFeed
-        """Get a data feed by its id.
-
-        :param data_feed_id: The data feed unique id.
-        :type data_feed_id: str
-        :return: DataFeed
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START get_data_feed]
-                :end-before: [END get_data_feed]
-                :language: python
-                :dedent: 4
-                :caption: Get a single data feed by its ID
-        """
-
-        data_feed = super().get_data_feed(data_feed_id, **kwargs)
-        return DataFeed._from_generated(data_feed)
-
-    @distributed_trace
-    def get_alert_configuration(self, alert_configuration_id, **kwargs):
-        # type: (str, Any) -> AnomalyAlertConfiguration
-        """Get a single anomaly alert configuration.
-
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
-        :return: AnomalyAlertConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START get_alert_config]
-                :end-before: [END get_alert_config]
-                :language: python
-                :dedent: 4
-                :caption: Get a single anomaly alert configuration by its ID
-        """
-
-        config = super().get_alert_configuration(
-            alert_configuration_id, **kwargs
-        )
-        return AnomalyAlertConfiguration._from_generated(config)
-
-    @distributed_trace
-    def get_detection_configuration(self, detection_configuration_id, **kwargs):
-        # type: (str, Any) -> AnomalyDetectionConfiguration
-        """Get a single anomaly detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :return: AnomalyDetectionConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START get_detection_config]
-                :end-before: [END get_detection_config]
-                :language: python
-                :dedent: 4
-                :caption: Get a single anomaly detection configuration by its ID
-        """
-
-        config = super().get_detection_configuration(
-            detection_configuration_id, **kwargs
-        )
-        return AnomalyDetectionConfiguration._from_generated(config)
-
-    @distributed_trace
-    def get_hook(
-        self,
-        hook_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
-        """Get a web or email hook by its id.
-
-        :param hook_id: Hook unique ID.
-        :type hook_id: str
-        :return: EmailNotificationHook or WebNotificationHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
-            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
-            ~azure.ai.metricsadvisor.models.WebNotificationHook]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_hooks.py
-                :start-after: [START get_hook]
-                :end-before: [END get_hook]
-                :language: python
-                :dedent: 4
-                :caption: Get a notification hook by its ID
-        """
-
-        hook = super().get_hook(hook_id, **kwargs)
-        if hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(hook)
-        return WebNotificationHook._from_generated(hook)
-
-    @distributed_trace
-    def get_data_feed_ingestion_progress(
-        self,
-        data_feed_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DataFeedIngestionProgress
-        """Get last successful data ingestion job timestamp by data feed.
-
-        :param data_feed_id: The data feed unique id.
-        :type data_feed_id: str
-        :return: DataFeedIngestionProgress, containing `latest_success_timestamp`
-            and `latest_active_timestamp`
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_ingestion.py
-                :start-after: [START get_data_feed_ingestion_progress]
-                :end-before: [END get_data_feed_ingestion_progress]
-                :language: python
-                :dedent: 4
-                :caption: Get the progress of data feed ingestion
-        """
-        ingestion_process = super().get_data_feed_ingestion_progress(data_feed_id, **kwargs)
-        return DataFeedIngestionProgress._from_generated(ingestion_process)
 
     @distributed_trace
     def refresh_data_feed_ingestion(
@@ -1894,6 +1498,7 @@ class MetricsAdvisorAdministrationClient(
         """
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
+        from .models import IngestionProgressResetOptions
         super().refresh_data_feed_ingestion(
             data_feed_id,
             body=_IngestionProgressResetOptions(
@@ -2109,14 +1714,11 @@ class MetricsAdvisorAdministrationClient(
 
         else:
             data_feed_id = data_feed.id
-            data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
+            data_feed_patch_type = get_data_feed_patch()[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(
                 data_feed_patch_type, update
             )
-
-        return DataFeed._from_generated(
-            super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
-        )
+        return super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
 
     @distributed_trace
     def update_alert_configuration(
@@ -2169,7 +1771,7 @@ class MetricsAdvisorAdministrationClient(
         update = {key: value for key, value in update_kwargs.items() if value != unset}
         if isinstance(alert_configuration, six.string_types):
             alert_configuration_id = alert_configuration
-            alert_configuration_patch = construct_alert_config_dict(update)
+            alert_configuration_patch = update
 
         else:
             alert_configuration_id = alert_configuration.id
@@ -2182,11 +1784,9 @@ class MetricsAdvisorAdministrationClient(
                 cross_metrics_operator=update.pop("crossMetricsOperator", None),
                 description=update.pop("description", None),
             )
-
-        return AnomalyAlertConfiguration._from_generated(
-            super().update_alert_configuration(
-                alert_configuration_id, alert_configuration_patch, **kwargs
-            )
+        from .models import AnomalyAlertConfiguration
+        return super().update_alert_configuration(
+            alert_configuration_id, alert_configuration_patch, **kwargs
         )
 
     @distributed_trace
@@ -2246,7 +1846,7 @@ class MetricsAdvisorAdministrationClient(
         update = {key: value for key, value in update_kwargs.items() if value != unset}
         if isinstance(detection_configuration, six.string_types):
             detection_configuration_id = detection_configuration
-            detection_config_patch = construct_detection_config_dict(update)
+            detection_config_patch = update
 
         else:
             detection_configuration_id = detection_configuration.id
@@ -2263,11 +1863,9 @@ class MetricsAdvisorAdministrationClient(
                     "seriesOverrideConfigurations", None
                 ),
             )
-
-        return AnomalyDetectionConfiguration._from_generated(
-            super().update_detection_configuration(
-                detection_configuration_id, detection_config_patch, **kwargs
-            )
+        from .models import AnomalyDetectionConfiguration
+        return super().update_detection_configuration(
+            detection_configuration_id, detection_config_patch, **kwargs
         )
 
     @distributed_trace
@@ -2327,6 +1925,7 @@ class MetricsAdvisorAdministrationClient(
         update_kwargs["certificatePassword"] = kwargs.pop("certificate_password", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
+        from .models import EmailNotificationHook, WebNotificationHook
         if isinstance(hook, six.string_types):
             hook_id = hook
             if hook_type is None:
@@ -2336,6 +1935,7 @@ class MetricsAdvisorAdministrationClient(
 
         else:
             hook_id = hook.id
+
             if hook.hook_type == "Email":
                 hook = cast(EmailNotificationHook, hook)
                 hook_patch = hook._to_generated_patch(
@@ -2358,11 +1958,7 @@ class MetricsAdvisorAdministrationClient(
                     certificate_password=update.pop("certificatePassword", None),
                 )
 
-        updated_hook = super().update_hook(hook_id, hook_patch, **kwargs)
-
-        if updated_hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(updated_hook)
-        return WebNotificationHook._from_generated(updated_hook)
+        return super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
     def list_hooks(
@@ -2389,18 +1985,9 @@ class MetricsAdvisorAdministrationClient(
         """
         hook_name = kwargs.pop("hook_name", None)
         skip = kwargs.pop("skip", None)
-
-        def _convert_to_hook_type(hook):
-            if hook.hook_type == "Email":
-                return EmailNotificationHook._from_generated(hook)
-            return WebNotificationHook._from_generated(hook)
-
         return super().list_hooks(  # type: ignore
             hook_name=hook_name,
             skip=skip,
-            cls=kwargs.pop(
-                "cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]
-            ),
             **kwargs
         )
 
@@ -2448,80 +2035,6 @@ class MetricsAdvisorAdministrationClient(
             status=status,
             creator=creator,
             skip=skip,
-            cls=kwargs.pop(
-                "cls", lambda feeds: [DataFeed._from_generated(feed) for feed in feeds]
-            ),
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_alert_configurations(
-        self,
-        detection_configuration_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[AnomalyAlertConfiguration]
-        """Query all anomaly alert configurations for specific anomaly detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :return: Pageable of AnomalyAlertConfiguration
-        :rtype: ~azure.core.paging.ItemPaged[AnomalyAlertConfiguration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_alert_configs]
-                :end-before: [END list_alert_configs]
-                :language: python
-                :dedent: 4
-                :caption: List all anomaly alert configurations for specific anomaly detection configuration
-        """
-        return super().list_alert_configurations(  # type: ignore
-            detection_configuration_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [
-                    AnomalyAlertConfiguration._from_generated(conf) for conf in confs
-                ],
-            ),
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_detection_configurations(
-        self,
-        metric_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[AnomalyDetectionConfiguration]
-        """Query all anomaly detection configurations for specific metric.
-
-        :param metric_id: metric unique id.
-        :type metric_id: str
-        :return: Pageable of AnomalyDetectionConfiguration
-        :rtype: ~azure.core.paging.ItemPaged[AnomalyDetectionConfiguration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START list_detection_configs]
-                :end-before: [END list_detection_configs]
-                :language: python
-                :dedent: 4
-                :caption: List all anomaly detection configurations for a specific metric
-        """
-        return super().list_detection_configurations(  # type: ignore
-            metric_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [
-                    AnomalyDetectionConfiguration._from_generated(conf)
-                    for conf in confs
-                ],
-            ),
             **kwargs
         )
 
@@ -2559,46 +2072,15 @@ class MetricsAdvisorAdministrationClient(
         skip = kwargs.pop("skip", None)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
-
+        from .models import IngestionStatusQueryOptions
         return super().list_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
-            body=_IngestionStatusQueryOptions(
+            body=IngestionStatusQueryOptions(
                 start_time=converted_start_time, end_time=converted_end_time
             ),
             skip=skip,
             **kwargs
         )
-
-    @distributed_trace
-    def get_datasource_credential(
-        self,
-        credential_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
-        """Get a datasource credential
-
-        :param str credential_id: Data source credential entity unique ID.
-        :return: The datasource credential
-        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
-            ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
-            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START get_datasource_credential]
-                :end-before: [END get_datasource_credential]
-                :language: python
-                :dedent: 4
-                :caption: Get a datasource credential by its ID
-        """
-
-        datasource_credential = super().get_datasource_credential(credential_id, **kwargs)
-        return convert_to_datasource_credential(datasource_credential)
 
     @distributed_trace
     def create_datasource_credential(
@@ -2638,7 +2120,7 @@ class MetricsAdvisorAdministrationClient(
             "ServicePrincipal",
             "ServicePrincipalInKV",
         ]:
-            datasource_credential_request = datasource_credential._to_generated()
+            datasource_credential_request = datasource_credential
 
         response_headers = super().create_datasource_credential(  # type: ignore
             datasource_credential_request,  # type: ignore
@@ -2647,90 +2129,6 @@ class MetricsAdvisorAdministrationClient(
         )
         credential_id = response_headers["Location"].split("credentials/")[1]
         return self.get_datasource_credential(credential_id)
-
-    @distributed_trace
-    def list_datasource_credentials(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[DatasourceCredential]
-        """List all credential entities.
-
-        :param skip: for paging, skipped number.
-        :type skip: int
-        :return: Pageable containing datasource credential
-        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
-            ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
-            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START list_datasource_credentials]
-                :end-before: [END list_datasource_credentials]
-                :language: python
-                :dedent: 4
-                :caption: List all of the datasource credentials under the account
-        """
-        return super().list_datasource_credentials(  # type: ignore
-            cls=kwargs.pop(
-                "cls",
-                lambda credentials: [
-                    convert_to_datasource_credential(credential)
-                    for credential in credentials
-                ],
-            ),
-            **kwargs
-        )
-
-    @distributed_trace
-    def update_datasource_credential(
-        self,
-        datasource_credential,  # type: DatasourceCredential
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredential
-        """Update a datasource credential.
-
-        :param datasource_credential: The new datasource credential object
-        :type datasource_credential: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
-            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
-        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
-            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
-            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START update_datasource_credential]
-                :end-before: [END update_datasource_credential]
-                :language: python
-                :dedent: 4
-                :caption: Update an existing datasource credential
-        """
-
-        datasource_credential_request = None
-        if datasource_credential.credential_type in [
-            "AzureSQLConnectionString",
-            "DataLakeGen2SharedKey",
-            "ServicePrincipal",
-            "ServicePrincipalInKV",
-        ]:
-            datasource_credential_request = datasource_credential._to_generated_patch()
-
-        updated_datasource_credential = super().update_datasource_credential(  # type: ignore
-            datasource_credential.id,
-            datasource_credential_request,  # type: ignore
-            **kwargs
-        )
-
-        return convert_to_datasource_credential(updated_datasource_credential)
 
     @distributed_trace
     def delete_datasource_credential(self, *credential_id, **kwargs):
@@ -2756,149 +2154,6 @@ class MetricsAdvisorAdministrationClient(
 
         super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
 
-
-##################### MODELS #####################
-
-
-
-class MetricFeedbackCustomization(dict):
-    """Feedback base class
-    Variables are only populated by the server, and will be ignored when sending a request.
-    All required parameters must be populated in order to send to Azure.
-    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
-    include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar str id: feedback unique id.
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :ivar str metric_id: Required. metric unique id.
-    :ivar dict[str, str] dimension_key: Required. metric dimension filter.
-    """
-
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-    }
-
-    def __init__(self, feedback_type, metric_id, dimension_key, **kwargs):
-        super().__init__(
-            metric_id=metric_id,
-            dimension_filter=dimension_key,
-            **kwargs
-        )
-        self.feedback_type = feedback_type  # type: str
-        self.id = kwargs.get("id", None)
-        self.created_time = kwargs.get("created_time", None)
-        self.user_principal = kwargs.get("user_principal", None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
-
-    def __repr__(self):
-        return (
-            "MetricFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, "
-            "dimension_key={})".format(
-                self.feedback_type,
-                self.id,
-                self.created_time,
-                self.user_principal,
-                self.metric_id,
-                self.dimension_key,
-            )[:1024]
-        )
-
-    # "AnomalyFeedback",
-    # "ChangePointFeedback",
-    # "CommentFeedback",
-    # "PeriodFeedback",
-    # "FeedbackQueryTimeMode",
-    # "RootCause",
-    # "AnomalyAlertConfiguration",
-    # "DetectionAnomalyFilterCondition",
-    # "DimensionGroupIdentity",
-    # "AnomalyIncident",
-    # "DetectionIncidentFilterCondition",
-    # "AnomalyDetectionConfiguration",
-    # "MetricAnomalyAlertConfigurationsOperator",
-    # "DataFeedStatus",
-    # "DataFeedGranularity",
-    # "DataFeedIngestionSettings",
-    # "DataFeedMissingDataPointFillSettings",
-    # "DataFeedRollupSettings",
-    # "DataFeedSchema",
-    # "DataFeedDimension",
-    # "DataFeedMetric",
-    # "DataFeed",
-    # "TopNGroupScope",
-    # "MetricAnomalyAlertScope",
-    # "MetricAlertConfiguration",
-    # "SnoozeScope",
-    # "AnomalySeverity",
-    # "MetricAnomalyAlertSnoozeCondition",
-    # "MetricBoundaryCondition",
-    # "AzureApplicationInsightsDataFeedSource",
-    # "AzureBlobDataFeedSource",
-    # "AzureCosmosDbDataFeedSource",
-    # "AzureTableDataFeedSource",
-    # "AzureLogAnalyticsDataFeedSource",
-    # "InfluxDbDataFeedSource",
-    # "SqlServerDataFeedSource",
-    # "MongoDbDataFeedSource",
-    # "MySqlDataFeedSource",
-    # "PostgreSqlDataFeedSource",
-    # "AzureDataExplorerDataFeedSource",
-    # "MetricDetectionCondition",
-    # "MetricSeriesGroupDetectionCondition",
-    # "MetricSingleSeriesDetectionCondition",
-    # "SeverityCondition",
-    # "DatasourceType",
-    # "AnomalyDetectorDirection",
-    # "NotificationHook",
-    # "EmailNotificationHook",
-    # "WebNotificationHook",
-    # "DataFeedIngestionProgress",
-    # "DetectionConditionOperator",
-    # "MetricAnomalyAlertConditions",
-    # "EnrichmentStatus",
-    # "DataFeedGranularityType",
-    # "DataPointAnomaly",
-    # "AnomalyIncidentStatus",
-    # "MetricSeriesData",
-    # "MetricSeriesDefinition",
-    # "AnomalyAlert",
-    # "DataFeedAccessMode",
-    # "DataFeedRollupType",
-    # "DataFeedAutoRollupMethod",
-    # "DatasourceMissingDataPointFillType",
-    # "DataFeedIngestionStatus",
-    # "SmartDetectionCondition",
-    # "SuppressCondition",
-    # "ChangeThresholdCondition",
-    # "HardThresholdCondition",
-    # "SeriesIdentity",
-    # "AzureDataLakeStorageGen2DataFeedSource",
-    # "AzureEventHubsDataFeedSource",
-    # "AnomalyValue",
-    # "ChangePointValue",
-    # "PeriodType",
-    # "FeedbackType",
-    # "AlertQueryTimeMode",
-    # "IncidentRootCause",
-    # "SeverityFilterCondition",
-    # "MetricEnrichedSeriesData",
-    # "DatasourceSqlConnectionString",
-    # "DatasourceDataLakeGen2SharedKey",
-    # "DatasourceServicePrincipal",
-    # "DatasourceServicePrincipalInKeyVault",
-    # "DatasourceCredentialType",
-    # "DatasourceAuthenticationType",
-    # "DatasourceCredential",
-    # "DataFeedSource",
 
 def patch_sdk():
     pass

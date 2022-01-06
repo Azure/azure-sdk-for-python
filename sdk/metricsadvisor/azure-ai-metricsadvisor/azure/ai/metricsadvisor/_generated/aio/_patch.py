@@ -102,7 +102,7 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     from ..models import (
         EnrichmentStatus,
-        MetricSeriesItem as MetricSeriesDefinition,
+        MetricSeriesDefinition as MetricSeriesDefinition,
     )
     from ...models._models import MetricFeedback
 
@@ -200,9 +200,7 @@ class MetricsAdvisorAdministrationClient(
         response_headers = await self._client.create_anomaly_alerting_configuration(
             _AnomalyAlertingConfiguration(
                 name=name,
-                metric_alerting_configurations=[
-                    config._to_generated() for config in metric_alert_configurations
-                ],
+                metric_alerting_configurations=metric_alert_configurations,
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
                 description=kwargs.pop("description", None),
@@ -330,10 +328,10 @@ class MetricsAdvisorAdministrationClient(
 
         hook_request = None
         if hook.hook_type == "Email":
-            hook_request = hook._to_generated()
+            hook_request = hook
 
         if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated()
+            hook_request = hook
 
         response_headers = await self._client.create_hook(
             hook_request,  # type: ignore
@@ -385,21 +383,14 @@ class MetricsAdvisorAdministrationClient(
             "series_group_detection_conditions", None
         )
         series_detection_conditions = kwargs.pop("series_detection_conditions", None)
-        config = _AnomalyDetectionConfiguration(
+        from ..models import AnomalyDetectionConfiguration
+        config = AnomalyDetectionConfiguration(
             name=name,
             metric_id=metric_id,
             description=description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in series_group_detection_conditions
-            ]
-            if series_group_detection_conditions
-            else None,
-            series_override_configurations=[
-                series._to_generated() for series in series_detection_conditions
-            ]
-            if series_detection_conditions
-            else None,
+            whole_metric_configuration=whole_series_detection_condition,
+            dimension_group_override_configurations=series_group_detection_conditions,
+            series_override_configurations=series_detection_conditions,
         )
 
         response_headers = await self._client.create_anomaly_detection_configuration(
@@ -410,139 +401,6 @@ class MetricsAdvisorAdministrationClient(
         response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
         return await self.get_detection_configuration(config_id)
-
-    @distributed_trace_async
-    async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
-        """Get a data feed by its id.
-
-        :param data_feed_id: The data feed unique id.
-        :type data_feed_id: str
-        :return: DataFeed
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_data_feeds_async.py
-                :start-after: [START get_data_feed_async]
-                :end-before: [END get_data_feed_async]
-                :language: python
-                :dedent: 4
-                :caption: Get a data feed by its ID
-        """
-
-        data_feed = await self._client.get_data_feed_by_id(data_feed_id, **kwargs)
-        return DataFeed._from_generated(data_feed)
-
-    @distributed_trace_async
-    async def get_alert_configuration(
-        self, alert_configuration_id: str, **kwargs: Any
-    ) -> AnomalyAlertConfiguration:
-        """Get a single anomaly alert configuration.
-
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
-        :return: AnomalyAlertConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
-                :start-after: [START get_alert_config_async]
-                :end-before: [END get_alert_config_async]
-                :language: python
-                :dedent: 4
-                :caption: Get a single anomaly alert configuration by its ID
-        """
-
-        config = await self._client.get_anomaly_alerting_configuration(
-            alert_configuration_id, **kwargs
-        )
-        return AnomalyAlertConfiguration._from_generated(config)
-
-    @distributed_trace_async
-    async def get_detection_configuration(
-        self, detection_configuration_id: str, **kwargs: Any
-    ) -> AnomalyDetectionConfiguration:
-        """Get a single anomaly detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :return: AnomalyDetectionConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
-                :start-after: [START get_detection_config_async]
-                :end-before: [END get_detection_config_async]
-                :language: python
-                :dedent: 4
-                :caption: Get a single anomaly detection configuration by its ID
-        """
-
-        config = await self._client.get_anomaly_detection_configuration(
-            detection_configuration_id, **kwargs
-        )
-        return AnomalyDetectionConfiguration._from_generated(config)
-
-    @distributed_trace_async
-    async def get_hook(
-        self, hook_id: str, **kwargs: Any
-    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
-        """Get a web or email hook by its id.
-
-        :param hook_id: Hook unique ID.
-        :type hook_id: str
-        :return: EmailNotificationHook or WebNotificationHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
-            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
-            ~azure.ai.metricsadvisor.models.WebNotificationHook]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_hooks_async.py
-                :start-after: [START get_hook_async]
-                :end-before: [END get_hook_async]
-                :language: python
-                :dedent: 4
-                :caption: Get a notification hook by its ID
-        """
-
-        hook = await self._client.get_hook(hook_id, **kwargs)
-        if hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(hook)
-        return WebNotificationHook._from_generated(hook)
-
-    @distributed_trace_async
-    async def get_data_feed_ingestion_progress(
-        self, data_feed_id: str, **kwargs: Any
-    ) -> DataFeedIngestionProgress:
-        """Get last successful data ingestion job timestamp by data feed.
-
-        :param data_feed_id: The data feed unique id.
-        :type data_feed_id: str
-        :return: DataFeedIngestionProgress, containing `latest_success_timestamp`
-            and `latest_active_timestamp`
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_ingestion_async.py
-                :start-after: [START get_data_feed_ingestion_progress_async]
-                :end-before: [END get_data_feed_ingestion_progress_async]
-                :language: python
-                :dedent: 4
-                :caption: Get the progress of data feed ingestion
-        """
-        ingestion_process = await self._client.get_ingestion_progress(
-            data_feed_id, **kwargs
-        )
-        return DataFeedIngestionProgress._from_generated(ingestion_process)
 
     @distributed_trace_async
     async def refresh_data_feed_ingestion(
@@ -793,10 +651,9 @@ class MetricsAdvisorAdministrationClient(
                 data_feed_patch_type, update
             )
 
-        data_feed_detail = await self._client.update_data_feed(
+        return await self._client.update_data_feed(
             data_feed_id, data_feed_patch, **kwargs
         )
-        return DataFeed._from_generated(data_feed_detail)
 
     @distributed_trace_async
     async def update_alert_configuration(
@@ -859,11 +716,9 @@ class MetricsAdvisorAdministrationClient(
                 cross_metrics_operator=update.pop("crossMetricsOperator", None),
                 description=update.pop("description", None),
             )
-        alerting_config = await self._client.update_anomaly_alerting_configuration(
+        return await self._client.update_anomaly_alerting_configuration(
             alert_configuration_id, alert_configuration_patch, **kwargs
         )
-
-        return AnomalyAlertConfiguration._from_generated(alerting_config)
 
     @distributed_trace_async
     async def update_detection_configuration(
@@ -939,11 +794,9 @@ class MetricsAdvisorAdministrationClient(
                     "seriesOverrideConfigurations", None
                 ),
             )
-        detection_config = await self._client.update_anomaly_detection_configuration(
+        return await self._client.update_anomaly_detection_configuration(
             detection_configuration_id, detection_config_patch, **kwargs
         )
-
-        return AnomalyDetectionConfiguration._from_generated(detection_config)
 
     @distributed_trace_async
     async def update_hook(
@@ -1032,10 +885,7 @@ class MetricsAdvisorAdministrationClient(
                     certificate_password=update.pop("certificatePassword", None),
                 )
 
-        updated_hook = await self._client.update_hook(hook_id, hook_patch, **kwargs)
-        if updated_hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(updated_hook)
-        return WebNotificationHook._from_generated(updated_hook)
+        return await self._client.update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
     def list_hooks(
@@ -1064,17 +914,9 @@ class MetricsAdvisorAdministrationClient(
         hook_name = kwargs.pop("hook_name", None)
         skip = kwargs.pop("skip", None)
 
-        def _convert_to_hook_type(hook):
-            if hook.hook_type == "Email":
-                return EmailNotificationHook._from_generated(hook)
-            return WebNotificationHook._from_generated(hook)
-
         return self._client.list_hooks(  # type: ignore
             hook_name=hook_name,
             skip=skip,
-            cls=kwargs.pop(
-                "cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]
-            ),
             **kwargs
         )
 
@@ -1119,9 +961,6 @@ class MetricsAdvisorAdministrationClient(
             status=status,
             creator=creator,
             skip=skip,
-            cls=kwargs.pop(
-                "cls", lambda feeds: [DataFeed._from_generated(feed) for feed in feeds]
-            ),
             **kwargs
         )
 
@@ -1148,12 +987,6 @@ class MetricsAdvisorAdministrationClient(
         """
         return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(  # type: ignore
             detection_configuration_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [
-                    AnomalyAlertConfiguration._from_generated(conf) for conf in confs
-                ],
-            ),
             **kwargs
         )
 
@@ -1180,13 +1013,6 @@ class MetricsAdvisorAdministrationClient(
         """
         return self._client.get_anomaly_detection_configurations_by_metric(  # type: ignore
             metric_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [
-                    AnomalyDetectionConfiguration._from_generated(conf)
-                    for conf in confs
-                ],
-            ),
             **kwargs
         )
 
@@ -1305,7 +1131,7 @@ class MetricsAdvisorAdministrationClient(
             "ServicePrincipal",
             "ServicePrincipalInKV",
         ]:
-            datasource_credential_request = datasource_credential._to_generated()
+            datasource_credential_request = datasource_credential
 
         response_headers = await self._client.create_credential(  # type: ignore
             datasource_credential_request,  # type: ignore
@@ -1476,33 +1302,6 @@ class MetricsAdvisorClient(object):
         await self._client.__aexit__()
 
     @distributed_trace_async
-    async def add_feedback(self, feedback, **kwargs):
-        # type: (FeedbackUnion, Any) -> None
-
-        """Create a new metric feedback.
-
-        :param feedback: metric feedback.
-        :type feedback: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
-            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
-            ~azure.ai.metricsadvisor.models.CommentFeedback or
-            ~azure.ai.metricsadvisor.models.PeriodFeedback
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_feedback_async.py
-                :start-after: [START add_feedback_async]
-                :end-before: [END add_feedback_async]
-                :language: python
-                :dedent: 4
-                :caption: Add new feedback.
-        """
-
-        return await self._client.create_metric_feedback(
-            body=feedback._to_generated(), **kwargs
-        )
-
-    @distributed_trace_async
     async def get_feedback(self, feedback_id, **kwargs):
         # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
 
@@ -1628,10 +1427,6 @@ class MetricsAdvisorClient(object):
         return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             incident_id=incident_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda result: [IncidentRootCause._from_generated(x) for x in result],
-            ),
             **kwargs
         )
 
@@ -1684,12 +1479,6 @@ class MetricsAdvisorClient(object):
         return self._client.get_series_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
-            cls=kwargs.pop(
-                "cls",
-                lambda series: [
-                    MetricEnrichedSeriesData._from_generated(data) for data in series
-                ],
-            ),
             **kwargs
         )
 
@@ -1741,12 +1530,6 @@ class MetricsAdvisorClient(object):
             configuration_id=alert_configuration_id,
             skip=skip,
             body=alerting_result_query,
-            cls=kwargs.pop(
-                "cls",
-                lambda alerts: [
-                    AnomalyAlert._from_generated(alert) for alert in alerts
-                ],
-            ),
             **kwargs
         )
 
@@ -1759,7 +1542,6 @@ class MetricsAdvisorClient(object):
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1774,7 +1556,7 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop("skip", None)
         condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
+        filter_condition = condition
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
@@ -1787,7 +1569,6 @@ class MetricsAdvisorClient(object):
             configuration_id=detection_configuration_id,
             skip=skip,
             body=detection_anomaly_result_query,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1929,7 +1710,6 @@ class MetricsAdvisorClient(object):
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1942,7 +1722,7 @@ class MetricsAdvisorClient(object):
     ) -> AsyncItemPaged[AnomalyIncident]:
 
         condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
+        filter_condition = condition
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
 
@@ -1955,7 +1735,6 @@ class MetricsAdvisorClient(object):
         return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_incident_result_query,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -2138,12 +1917,6 @@ class MetricsAdvisorClient(object):
         return self._client.get_metric_data(  # type: ignore
             metric_id=metric_id,
             body=metric_data_query_options,
-            cls=kwargs.pop(
-                "cls",
-                lambda result: [
-                    MetricSeriesData._from_generated(series) for series in result
-                ],
-            ),
             **kwargs
         )
 
