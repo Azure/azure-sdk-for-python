@@ -22,12 +22,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._account_backups_operations import build_delete_request_initial, build_get_request, build_list_request
+from ...operations._volume_groups_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_list_by_net_app_account_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AccountBackupsOperations:
-    """AccountBackupsOperations async operations.
+class VolumeGroupsOperations:
+    """VolumeGroupsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,26 +49,26 @@ class AccountBackupsOperations:
         self._config = config
 
     @distributed_trace
-    def list(
+    def list_by_net_app_account(
         self,
         resource_group_name: str,
         account_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BackupsList"]:
-        """List Backups for a Netapp Account.
+    ) -> AsyncIterable["_models.VolumeGroupList"]:
+        """Describe all volume groups.
 
-        List all Backups for a Netapp Account.
+        List all volume groups for given account.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BackupsList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.BackupsList]
+        :return: An iterator like instance of either VolumeGroupList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.VolumeGroupList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -76,18 +76,18 @@ class AccountBackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_net_app_account_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_net_app_account.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_net_app_account_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
@@ -99,7 +99,7 @@ class AccountBackupsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("BackupsList", pipeline_response)
+            deserialized = self._deserialize("VolumeGroupList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -121,32 +121,32 @@ class AccountBackupsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups'}  # type: ignore
+    list_by_net_app_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups'}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
         account_name: str,
-        backup_name: str,
+        volume_group_name: str,
         **kwargs: Any
-    ) -> "_models.Backup":
-        """Get Backup for a Netapp Account.
+    ) -> "_models.VolumeGroupDetails":
+        """Describe a Volume Group.
 
-        Gets the specified backup for a Netapp Account.
+        Get details of the specified volume group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param backup_name: The name of the backup.
-        :type backup_name: str
+        :param volume_group_name: The name of the volumeGroup.
+        :type volume_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Backup, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.Backup
+        :return: VolumeGroupDetails, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.VolumeGroupDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Backup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,7 +157,7 @@ class AccountBackupsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            backup_name=backup_name,
+            volume_group_name=volume_group_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -170,21 +170,147 @@ class AccountBackupsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Backup', pipeline_response)
+        deserialized = self._deserialize('VolumeGroupDetails', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups/{backupName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
+
+    async def _create_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        volume_group_name: str,
+        body: "_models.VolumeGroupDetails",
+        **kwargs: Any
+    ) -> "_models.VolumeGroupDetails":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupDetails"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'VolumeGroupDetails')
+
+        request = build_create_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            volume_group_name=volume_group_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self._create_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('VolumeGroupDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        volume_group_name: str,
+        body: "_models.VolumeGroupDetails",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.VolumeGroupDetails"]:
+        """Create the specified volume group and volumes. Creating volume group will create all the
+        volumes specified in request body implicitly. Once volumes are created using volume group,
+        those will be treated as regular volumes thereafter.
+
+        Create a volume group along with specified volumes.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account.
+        :type account_name: str
+        :param volume_group_name: The name of the volumeGroup.
+        :type volume_group_name: str
+        :param body: Volume Group object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either VolumeGroupDetails or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.VolumeGroupDetails]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeGroupDetails"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                volume_group_name=volume_group_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('VolumeGroupDetails', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        backup_name: str,
+        volume_group_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -198,7 +324,7 @@ class AccountBackupsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            backup_name=backup_name,
+            volume_group_name=volume_group_name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -214,7 +340,7 @@ class AccountBackupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups/{backupName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -222,19 +348,19 @@ class AccountBackupsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        backup_name: str,
+        volume_group_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete Backup for a Netapp Account.
+        """Delete a volume group.
 
-        Delete the specified Backup for a Netapp Account.
+        Delete the specified volume group only if there are no volumes under volume group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param backup_name: The name of the backup.
-        :type backup_name: str
+        :param volume_group_name: The name of the volumeGroup.
+        :type volume_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -258,7 +384,7 @@ class AccountBackupsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                backup_name=backup_name,
+                volume_group_name=volume_group_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -269,7 +395,7 @@ class AccountBackupsOperations:
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -282,4 +408,4 @@ class AccountBackupsOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups/{backupName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}'}  # type: ignore
