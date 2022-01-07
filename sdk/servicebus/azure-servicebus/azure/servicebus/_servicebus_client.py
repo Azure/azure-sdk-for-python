@@ -60,6 +60,9 @@ class ServiceBusClient(object):
     :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
      Default value is 0.8.
     :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
 
     .. admonition:: Example:
 
@@ -152,6 +155,9 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :rtype: ~azure.servicebus.ServiceBusClient
 
         .. admonition:: Example:
@@ -212,6 +218,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
@@ -303,6 +310,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
@@ -344,6 +352,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
@@ -433,6 +442,7 @@ class ServiceBusClient(object):
                 http_proxy=self._config.http_proxy,
                 connection=self._connection,
                 user_agent=self._config.user_agent,
+                retry_mode=self._config.retry_mode,
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
@@ -453,6 +463,7 @@ class ServiceBusClient(object):
                 http_proxy=self._config.http_proxy,
                 connection=self._connection,
                 user_agent=self._config.user_agent,
+                retry_mode=self._config.retry_mode,
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,

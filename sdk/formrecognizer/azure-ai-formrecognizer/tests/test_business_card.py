@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -18,9 +19,12 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestBusinessCard(FormRecognizerTest):
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
+        set_bodiless_matcher()
         with open(self.business_card_png, "rb") as fd:
             myfile = fd.read()
         poller = client.begin_recognize_business_cards(
@@ -34,7 +38,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
                 damaged_pdf
             )
@@ -43,7 +47,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
                 damaged_pdf
             )
@@ -53,7 +57,7 @@ class TestBusinessCard(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
                 myfile,
                 content_type="application/jpeg"
@@ -61,8 +65,9 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client):
-
+        set_bodiless_matcher()
         with open(self.business_card_multipage_pdf, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_recognize_business_cards(receipt, include_field_elements=True)
@@ -123,7 +128,9 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy
     def test_business_card_jpg_include_field_elements(self, client):
+        set_bodiless_matcher()
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         poller = client.begin_recognize_business_cards(business_card, include_field_elements=True)
@@ -175,6 +182,7 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_business_card_v2(self, client):
+        
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         with pytest.raises(ValueError) as e:

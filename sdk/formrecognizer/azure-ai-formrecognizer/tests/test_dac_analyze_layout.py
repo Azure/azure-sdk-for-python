@@ -4,7 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
@@ -20,6 +22,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_layout_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -54,6 +57,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_layout_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
@@ -88,6 +92,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_layout_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -120,8 +125,10 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_layout_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
             myfile = fd.read()
@@ -137,6 +144,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_layout_specify_pages(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
