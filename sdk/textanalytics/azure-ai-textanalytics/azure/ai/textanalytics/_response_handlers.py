@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -46,11 +45,11 @@ class CSODataV4Format(ODataV4Format):
     def __init__(self, odata_error):
         try:
             if odata_error["error"]["innererror"]:
-                super(CSODataV4Format, self).__init__(
+                super().__init__(
                     odata_error["error"]["innererror"]
                 )
         except KeyError:
-            super(CSODataV4Format, self).__init__(odata_error)
+            super().__init__(odata_error)
 
 
 def process_http_response_error(error):
@@ -367,14 +366,14 @@ def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-stateme
 def resolve_action_pointer(pointer):
     import re
     pointer_union = "|".join(value for value in ActionPointerKind)
-    found = re.search(r"#/tasks/({})/\d+".format(pointer_union), pointer)
+    found = re.search(fr"#/tasks/({pointer_union})/\d+", pointer)
     if found:
         index = int(pointer[-1])
         task = pointer.split("#/tasks/")[1].split("/")[0]
         property_name = get_task_from_pointer(task)
         return property_name, index
     raise ValueError(
-        "Unexpected response from service - action pointer '{}' is not a valid action pointer.".format(pointer)
+        f"Unexpected response from service - action pointer '{pointer}' is not a valid action pointer."
     )
 
 
@@ -382,7 +381,7 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
     # throw exception if error missing a target
     missing_target = any([error for error in tasks_obj.errors if error.target is None])
     if missing_target:
-        message = "".join(["({}) {}".format(err.code, err.message) for err in tasks_obj.errors])
+        message = "".join([f"({err.code}) {err.message}" for err in tasks_obj.errors])
         raise HttpResponseError(message=message)
 
     # create a DocumentError per input doc with the action error details

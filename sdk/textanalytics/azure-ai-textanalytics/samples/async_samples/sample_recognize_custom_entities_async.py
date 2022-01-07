@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -54,7 +52,7 @@ async def sample_recognize_custom_entities_async():
         credential=AzureKeyCredential(key),
     )
 
-    with open(path_to_sample_document, "r") as fd:
+    with open(path_to_sample_document) as fd:
         document = [fd.read()]
 
     async with text_analytics_client:

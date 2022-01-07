@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -333,7 +332,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_bad_request_on_empty_document(self, client):
-        docs = [u""]
+        docs = [""]
 
         with pytest.raises(HttpResponseError):
             async with client:
@@ -1333,7 +1332,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 "./mock_test_responses/action_error_no_target.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1399,7 +1398,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 "./mock_test_responses/action_error_with_targets.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1492,7 +1491,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 "./mock_test_responses/action_job_failure.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)

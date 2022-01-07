@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -61,8 +59,8 @@ async def sample_recognize_pii_entities_async():
         "I also want to comb through all of the entities that got redacted"
     )
     for idx, doc in enumerate(docs):
-        print("Document text: {}".format(documents[idx]))
-        print("Redacted document text: {}".format(doc.redacted_text))
+        print(f"Document text: {documents[idx]}")
+        print(f"Redacted document text: {doc.redacted_text}")
         for entity in doc.entities:
             print("...Entity '{}' with category '{}' got redacted".format(
                 entity.text, entity.category

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -93,10 +92,10 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @recorded_by_proxy
     def test_passing_only_string(self, client):
         docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant had really good food. I recommend you try it.",
-            u""
+            "Microsoft was founded by Bill Gates and Paul Allen.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant had really good food. I recommend you try it.",
+            ""
         ]
 
         response = client.analyze_sentiment(docs)
@@ -208,7 +207,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
+            "You cannot mix string input with the above inputs"
         ]
         with pytest.raises(TypeError):
             response = client.analyze_sentiment(docs)
@@ -258,7 +257,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_batch_size_over_limit(self, client):
-        docs = [u"hello world"] * 1050
+        docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = client.analyze_sentiment(docs)
 
@@ -272,9 +271,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = client.analyze_sentiment(docs, language="fr", raw_response_hook=callback)
@@ -289,9 +288,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = client.analyze_sentiment(docs, language="", raw_response_hook=callback)
@@ -572,7 +571,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @recorded_by_proxy
     def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
-        docs = [u"hello world"] * 1001
+        docs = ["hello world"] * 1001
         try:
             response = client.analyze_sentiment(docs)
         except HttpResponseError as err:
