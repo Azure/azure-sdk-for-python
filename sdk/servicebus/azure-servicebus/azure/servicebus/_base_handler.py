@@ -20,9 +20,9 @@ from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.pipeline.policies import RetryMode
 
 from ._common._configuration import Configuration
-from ._retry import RetryMode
 from .exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
@@ -154,7 +154,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
-    if retry_mode == RetryMode.FIXED:
+    if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
         backoff_value = backoff_factor * (2 ** retried_times)

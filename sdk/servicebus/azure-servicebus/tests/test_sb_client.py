@@ -13,8 +13,9 @@ from datetime import datetime, timedelta
 
 from azure.common import AzureHttpError, AzureConflictHttpError
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.pipeline.policies import RetryMode
 from azure.mgmt.servicebus.models import AccessRights
-from azure.servicebus import ServiceBusClient, ServiceBusSender, ServiceBusReceiver, RetryMode
+from azure.servicebus import ServiceBusClient, ServiceBusSender, ServiceBusReceiver
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceivedMessage
 from azure.servicebus.exceptions import (
@@ -424,7 +425,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient(
             'fake.host.com',
             'fake_eh',
-            retry_mode=RetryMode.FIXED
+            retry_mode='fixed'
         )
         # queue sender
         sender = client.get_queue_sender('fake_name')
@@ -433,7 +434,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         # exp = 0.8 * (2 ** 1) = 1.6
-        # time.sleep() in _backoff will take AT LEAST time 'exp' for RetryMode.EXPONENTIAL
+        # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
         # check that fixed is less than 'exp'
         assert sleep_time_fixed < backoff * (2 ** 1)
 
@@ -459,4 +460,20 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         start_time = time.time()
         receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        client = ServiceBusClient(
+            'fake.host.com',
+            'fake_eh',
+            retry_mode=RetryMode.Fixed
+        )
+        # queue sender
+        sender = client.get_queue_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        # exp = 0.8 * (2 ** 1) = 1.6
+        # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
+        # check that fixed is less than 'exp'
         assert sleep_time_fixed < backoff * (2 ** 1)

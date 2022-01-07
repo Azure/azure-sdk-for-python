@@ -60,8 +60,9 @@ class ServiceBusClient(object):
     :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
      Default value is 0.8.
     :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
-    :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
-    :paramtype retry_mode: ~azure.servicebus.RetryMode
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
 
     .. admonition:: Example:
 
@@ -154,8 +155,9 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
-        :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
-        :paramtype retry_mode: ~azure.servicebus.RetryMode
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :rtype: ~azure.servicebus.ServiceBusClient
 
         .. admonition:: Example:

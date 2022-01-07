@@ -5,7 +5,8 @@
 #--------------------------------------------------------------------------
 
 import time
-from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, TransportType, RetryMode
+from azure.core.pipeline.policies import RetryMode
+from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, TransportType
 
 
 def test_custom_endpoint():
@@ -136,13 +137,28 @@ def test_backoff_fixed_retry():
         'fake.host.com',
         'fake_eh',
         None,
-        retry_mode=RetryMode.FIXED
+        retry_mode='fixed'
     )
     backoff = client._config.backoff_factor
     start_time = time.time()
     client._backoff(retried_times=1, last_exception=Exception('fake'), timeout_time=None)
     sleep_time = time.time() - start_time
     # exp = 0.8 * (2 ** 1) = 1.6
-    # time.sleep() in _backoff will take AT LEAST time 'exp' for RetryMode.EXPONENTIAL
+    # time.sleep() in _backoff will take AT LEAST time 'exp' for 'exponential'
+    # check that fixed is less than 'exp'
+    assert sleep_time < backoff * (2 ** 1)
+
+    client = EventHubProducerClient(
+        'fake.host.com',
+        'fake_eh',
+        None,
+        retry_mode=RetryMode.Fixed
+    )
+    backoff = client._config.backoff_factor
+    start_time = time.time()
+    client._backoff(retried_times=1, last_exception=Exception('fake'), timeout_time=None)
+    sleep_time = time.time() - start_time
+    # exp = 0.8 * (2 ** 1) = 1.6
+    # time.sleep() in _backoff will take AT LEAST time 'exp' for 'exponential'
     # check that fixed is less than 'exp'
     assert sleep_time < backoff * (2 ** 1)
