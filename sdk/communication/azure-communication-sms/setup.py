@@ -65,6 +65,7 @@ setup(
         'msrest>=0.6.21',
         'six>=1.11.0'
     ],
+    python_requires=">=3.7",
     extras_require={
         ":python_version<'3.0'": ['azure-communication-nspkg'],
         ":python_version<'3.5'": ["typing"],
