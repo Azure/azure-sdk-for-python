@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscription_client import SubscriptionClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['SubscriptionClient']
 
-__version__ = VERSION
+class SubscriptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Subscription <azure.mgmt.subscription.models.Subscription>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Subscription]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SubscriptionPaged, self).__init__(*args, **kwargs)

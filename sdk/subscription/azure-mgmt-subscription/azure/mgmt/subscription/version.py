@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscription_client import SubscriptionClient
-from .version import VERSION
-
-__all__ = ['SubscriptionClient']
-
-__version__ = VERSION
+VERSION = "1.0.0b1"
 

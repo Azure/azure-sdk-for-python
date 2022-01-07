@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscription_client import SubscriptionClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['SubscriptionClient']
 
-__version__ = VERSION
+class SubscriptionName(Model):
+    """The new name of the subscription.
 
+    :param subscription_name: New subscription name
+    :type subscription_name: str
+    """
+
+    _attribute_map = {
+        'subscription_name': {'key': 'subscriptionName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubscriptionName, self).__init__(**kwargs)
+        self.subscription_name = kwargs.get('subscription_name', None)
