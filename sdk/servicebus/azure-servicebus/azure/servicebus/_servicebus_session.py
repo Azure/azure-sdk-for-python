@@ -88,7 +88,7 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    def get_state(self, timeout: Optional[float] = None) -> bytes:
+    def get_state(self, *, timeout: Optional[float] = None) -> bytes:
         # pylint: disable=protected-access
         """Get the session state.
 
@@ -119,7 +119,7 @@ class ServiceBusSession(BaseSession):
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         return session_state
 
-    def set_state(self, state: Union[str, bytes, bytearray], timeout: Optional[float] = None) -> None:
+    def set_state(self, *, state: Union[str, bytes, bytearray], timeout: Optional[float] = None) -> None:
         # pylint: disable=protected-access
         """Set the session state.
 
@@ -153,7 +153,7 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
 
-    def renew_lock(self, timeout: Optional[float] = None) -> datetime.datetime:
+    def renew_lock(self, *, timeout: Optional[float] = None) -> datetime.datetime:
         # pylint: disable=protected-access
         """Renew the session lock.
 

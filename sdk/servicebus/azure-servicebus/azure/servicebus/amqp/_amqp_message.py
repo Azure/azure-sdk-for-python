@@ -7,7 +7,7 @@
 import time
 import uuid
 from datetime import datetime
-from typing import Optional, Any, cast, Mapping, Union, List
+from typing import Optional, Any, cast, Mapping, Union, Dict
 
 from msrest.serialization import TZ_UTC
 import uamqp
@@ -117,11 +117,11 @@ class AmqpAnnotatedMessage(object):
         self,
         *,
         header: Optional["AmqpMessageHeader"] = None,
-        footer: Optional[dict] = None,
+        footer: Optional[Dict[str, Any]] = None,
         properties: Optional["AmqpMessageProperties"] = None,
-        application_properties: Optional[dict] = None,
-        annotations: Optional[dict] = None,
-        delivery_annotations: Optional[dict] = None,
+        application_properties: Optional[Dict[str, Any]] = None,
+        annotations: Optional[Dict[str, Any]] = None,
+        delivery_annotations: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         self._message = kwargs.pop("message", None)
@@ -143,13 +143,13 @@ class AmqpAnnotatedMessage(object):
         self._body = None
         self._body_type = None
         if "data_body" in kwargs:
-            self._body = kwargs.pop("data_body")
+            self._body = kwargs.get("data_body")
             self._body_type = uamqp.MessageBodyType.Data
         elif "sequence_body" in kwargs:
-            self._body = kwargs.pop("sequence_body")
+            self._body = kwargs.get("sequence_body")
             self._body_type = uamqp.MessageBodyType.Sequence
         elif "value_body" in kwargs:
-            self._body = kwargs.pop("value_body")
+            self._body = kwargs.get("value_body")
             self._body_type = uamqp.MessageBodyType.Value
 
         self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)

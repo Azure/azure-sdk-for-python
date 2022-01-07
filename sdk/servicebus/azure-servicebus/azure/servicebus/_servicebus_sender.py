@@ -6,12 +6,11 @@ import logging
 import time
 import uuid
 import datetime
-from typing import Any, TYPE_CHECKING, Dict, Union, List, Optional, Mapping, cast
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
 from uamqp import SendClient, types
 from uamqp.authentication.common import AMQPAuth
-from uamqp.constants import TransportType
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -160,11 +159,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
-        http_proxy: Optional[Dict[str, Any]] = None,
-        user_agent: Optional[str] = None,
-        logging_enable: bool = False,
-        transport_type: TransportType = TransportType.Amqp,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
@@ -188,10 +183,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 entity_name=str(entity_name),
                 queue_name=queue_name,
                 topic_name=topic_name,
-                http_proxy=http_proxy,
-                user_agent=user_agent,
-                logging_enable=logging_enable,
-                transport_type=transport_type,
                 **kwargs
             )
 

@@ -2,12 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Dict, Union, Optional, TYPE_CHECKING
+from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 
 import uamqp
-from uamqp.constants import TransportType
 
 from ._base_handler import (
     _parse_conn_str,
@@ -26,7 +25,6 @@ from ._common.utils import (
 from ._common.constants import (
     ServiceBusSubQueue,
     ServiceBusReceiveMode,
-    ServiceBusSessionFilter
 )
 from ._retry import RetryMode
 
@@ -93,10 +91,6 @@ class ServiceBusClient(object):
             "TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
         ],
         *,
-        http_proxy: Optional[Dict[str, Any]] = None,
-        user_agent: Optional[str] = None,
-        logging_enable: Optional[bool] = False,
-        transport_type: Optional[TransportType] = TransportType.Amqp,
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: int = 120,
@@ -110,10 +104,6 @@ class ServiceBusClient(object):
 
         self._credential = credential
         self._config = Configuration(
-            http_proxy=http_proxy,
-            user_agent=user_agent,
-            logging_enable=logging_enable,
-            transport_type=transport_type,
             retry_total=retry_total,
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,
@@ -174,10 +164,6 @@ class ServiceBusClient(object):
         cls,
         conn_str: str,
         *,
-        http_proxy: Optional[Dict[str, Any]] = None,
-        user_agent: Optional[str] = None,
-        logging_enable: bool = False,
-        transport_type: TransportType = TransportType.Amqp,
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: int = 120,
@@ -228,10 +214,6 @@ class ServiceBusClient(object):
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
             credential=credential,  # type: ignore
-            http_proxy=http_proxy,
-            user_agent=user_agent,
-            logging_enable=logging_enable,
-            transport_type=transport_type,
             retry_total=retry_total,
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,
@@ -286,7 +268,6 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
-        session_id: Optional[Union[str, ServiceBusSessionFilter]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -302,7 +283,7 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful queue, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Optional[Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]]
+        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
@@ -347,7 +328,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        if sub_queue and session_id:
+        if sub_queue and kwargs.get("session_id"):
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful queue, "
@@ -380,7 +361,6 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
-            session_id=session_id,
             sub_queue=sub_queue,
             receive_mode=receive_mode,
             max_wait_time=max_wait_time,
@@ -438,7 +418,6 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
-        session_id: Optional[Union[str, ServiceBusSessionFilter]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -456,7 +435,7 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful subscription, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Optional[Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]]
+        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
@@ -502,7 +481,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        if sub_queue and session_id:
+        if sub_queue and kwargs.get("session_id"):
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful subscription, "
@@ -530,7 +509,6 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
-                session_id=session_id,
                 sub_queue=sub_queue,
                 receive_mode=receive_mode,
                 max_wait_time=max_wait_time,
@@ -557,7 +535,6 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
-                session_id=session_id,
                 sub_queue=sub_queue,
                 receive_mode=receive_mode,
                 max_wait_time=max_wait_time,

@@ -7,12 +7,12 @@ import collections
 import datetime
 import functools
 import logging
-from typing import Any, List, Dict, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING
+from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING
 
 import six
 
 from uamqp import ReceiveClientAsync, types, Message
-from uamqp.constants import SenderSettleMode, TransportType
+from uamqp.constants import SenderSettleMode
 
 from ..exceptions import ServiceBusError
 from ._servicebus_session_async import ServiceBusSession
@@ -126,10 +126,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
         subscription_name: Optional[str] = None,
-        http_proxy: Optional[Dict[str, Any]] = None,
-        user_agent: Optional[str] = None,
-        logging_enable: Optional[bool] = False,
-        transport_type: Optional[TransportType] = TransportType.Amqp,
         receive_mode: Union[
             ServiceBusReceiveMode, str
         ] = ServiceBusReceiveMode.PEEK_LOCK,
@@ -148,10 +144,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 queue_name=queue_name,
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                http_proxy=http_proxy,
-                user_agent=user_agent,
-                logging_enable=logging_enable,
-                transport_type=transport_type,
                 receive_mode=receive_mode,
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
@@ -181,10 +173,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 queue_name=queue_name,
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                http_proxy=http_proxy,
-                user_agent=user_agent,
-                logging_enable=logging_enable,
-                transport_type=transport_type,
                 receive_mode=receive_mode,
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
@@ -196,10 +184,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             queue_name=queue_name,
             topic_name=topic_name,
             subscription_name=subscription_name,
-            http_proxy=http_proxy,
-            user_agent=user_agent,
-            logging_enable=logging_enable,
-            transport_type=transport_type,
             receive_mode=receive_mode,
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,

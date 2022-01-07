@@ -40,7 +40,7 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    async def get_state(self, timeout: Optional[float] = None) -> bytes:
+    async def get_state(self, *, timeout: Optional[float] = None) -> bytes:
         """Get the session state.
 
         Returns None if no state has been set.
@@ -71,7 +71,7 @@ class ServiceBusSession(BaseSession):
         return session_state
 
     async def set_state(
-        self, state: Union[str, bytes, bytearray], timeout: Optional[float] = None
+        self, state: Union[str, bytes, bytearray], *, timeout: Optional[float] = None
     ) -> None:
         """Set the session state.
 
@@ -106,7 +106,7 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
 
-    async def renew_lock(self, timeout: Optional[float] = None) -> datetime.datetime:
+    async def renew_lock(self, *, timeout: Optional[float] = None) -> datetime.datetime:
         """Renew the session lock.
 
         This operation must be performed periodically in order to retain a lock on the

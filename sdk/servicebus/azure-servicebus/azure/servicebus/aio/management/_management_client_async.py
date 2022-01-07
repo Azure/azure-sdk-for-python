@@ -89,8 +89,10 @@ from ...management._utils import (
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
 )
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
@@ -166,10 +168,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.entity.get(
-                    entity_name,
-                    enrich=enrich,
-                    api_version=self._api_version,
-                    **kwargs
+                    entity_name, enrich=enrich, api_version=self._api_version, **kwargs
                 ),
             )
         return element
@@ -298,7 +297,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return runtime_properties
 
-    async def create_queue(     # pylint: disable=too-many-locals
+    async def create_queue(  # pylint: disable=too-many-locals
         self,
         queue_name: str,
         *,
@@ -306,7 +305,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
-        duplicate_detection_history_time_window: Optional[Union[datetime.timedelta, str]] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
         enable_batched_operations: Optional[bool] = None,
         enable_express: Optional[bool] = None,
         enable_partitioning: Optional[bool] = None,
@@ -415,7 +416,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             forward_to=forward_to,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=user_metadata,
-            max_message_size_in_kilobytes=max_message_size_in_kilobytes
+            max_message_size_in_kilobytes=max_message_size_in_kilobytes,
         )
         to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
@@ -582,9 +583,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         topic_name: str,
         *,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
-        max_size_in_megabytes: Optional[float] = None, # TODO: said long? should it be float
+        max_size_in_megabytes: Optional[
+            int
+        ] = None,
         requires_duplicate_detection: Optional[bool] = None,
-        duplicate_detection_history_time_window: Optional[Union[datetime.timedelta, str]] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
         enable_batched_operations: Optional[bool] = None,
         size_in_bytes: Optional[int] = None,
         filtering_messages_before_publishing: Optional[bool] = None,
@@ -608,7 +613,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
-        :paramtype max_size_in_megabytes: long
+        :paramtype max_size_in_megabytes: int
         :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
          detection.
         :paramtype requires_duplicate_detection: bool
@@ -982,8 +987,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
         # we should not mutate the input, making a copy first for update
-        subscription = deepcopy(create_properties_from_dict_if_needed(subscription, SubscriptionProperties))
-        to_update = subscription._to_internal_entity(self.fully_qualified_namespace, kwargs)
+        subscription = deepcopy(
+            create_properties_from_dict_if_needed(subscription, SubscriptionProperties)
+        )
+        to_update = subscription._to_internal_entity(
+            self.fully_qualified_namespace, kwargs
+        )
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -1109,7 +1118,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription_name: str,
         rule_name: str,
         *,
-        filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(), # pylint: disable=redefined-builtin
+        filter: Union[
+            CorrelationRuleFilter, SqlRuleFilter
+        ] = TrueRuleFilter(),  # pylint: disable=redefined-builtin
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:

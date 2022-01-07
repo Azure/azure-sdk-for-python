@@ -94,7 +94,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
@@ -118,7 +117,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._api_version = api_version
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
-        self._config = ServiceBusManagementClientConfiguration(self._endpoint, api_version=api_version, **kwargs)
+        self._config = ServiceBusManagementClientConfiguration(
+            self._endpoint, api_version=api_version, **kwargs
+        )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
             endpoint=fully_qualified_namespace, pipeline=self._pipeline
@@ -239,11 +240,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_connection_string(
-        cls,
-        conn_str: str,
-        *,
-        api_version: str = DEFAULT_VERSION,
-        **kwargs: Any
+        cls, conn_str: str, *, api_version: str = DEFAULT_VERSION, **kwargs: Any
     ) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
@@ -269,11 +266,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             endpoint = endpoint[endpoint.index("//") + 2 :]
         return cls(endpoint, credential, api_version=api_version, **kwargs)
 
-    def get_queue(
-        self,
-        queue_name: str,
-        **kwargs: Any
-    ) -> QueueProperties:
+    def get_queue(self, queue_name: str, **kwargs: Any) -> QueueProperties:
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
@@ -304,7 +297,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return runtime_properties
 
-    def create_queue(   # pylint: disable=too-many-locals
+    def create_queue(  # pylint: disable=too-many-locals
         self,
         queue_name: str,
         *,
@@ -312,7 +305,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
-        duplicate_detection_history_time_window: Optional[Union[datetime.timedelta, str]] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
         enable_batched_operations: Optional[bool] = None,
         enable_express: Optional[bool] = None,
         enable_partitioning: Optional[bool] = None,
@@ -421,7 +416,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             forward_to=forward_to,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=user_metadata,
-            max_message_size_in_kilobytes=max_message_size_in_kilobytes
+            max_message_size_in_kilobytes=max_message_size_in_kilobytes,
         )
         to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
@@ -588,9 +583,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         topic_name: str,
         *,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
-        max_size_in_megabytes: Optional[float] = None, # TODO: said long? should it be float
+        max_size_in_megabytes: Optional[
+            int
+        ] = None,
         requires_duplicate_detection: Optional[bool] = None,
-        duplicate_detection_history_time_window: Optional[Union[datetime.timedelta, str]] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
         enable_batched_operations: Optional[bool] = None,
         size_in_bytes: Optional[int] = None,
         filtering_messages_before_publishing: Optional[bool] = None,
@@ -614,7 +613,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
-        :paramtype max_size_in_megabytes: long
+        :paramtype max_size_in_megabytes: int
         :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
          detection.
         :paramtype requires_duplicate_detection: bool
@@ -984,7 +983,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription = deepcopy(
             create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
         )
-        to_update = subscription._to_internal_entity(self.fully_qualified_namespace, kwargs)
+        to_update = subscription._to_internal_entity(
+            self.fully_qualified_namespace, kwargs
+        )
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -1106,7 +1107,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription_name: str,
         rule_name: str,
         *,
-        filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(), # pylint: disable=redefined-builtin
+        filter: Union[
+            CorrelationRuleFilter, SqlRuleFilter
+        ] = TrueRuleFilter(),  # pylint: disable=redefined-builtin
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:

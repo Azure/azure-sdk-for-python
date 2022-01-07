@@ -15,6 +15,7 @@ class ServiceBusConnectionStringProperties(DictMixin):
 
     def __init__(
         self,
+        *,
         fully_qualified_namespace: Optional[str] = None,
         endpoint: Optional[str] = None,
         entity_path: Optional[str] = None,

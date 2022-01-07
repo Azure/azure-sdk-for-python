@@ -9,7 +9,7 @@ import time
 import datetime
 import uuid
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
@@ -96,7 +96,7 @@ class ServiceBusMessage(
         self,
         body: Optional[Union[str, bytes]],
         *,
-        application_properties: Optional[dict] = None,
+        application_properties: Optional[Dict[str, Any]] = None,
         session_id: Optional[str] = None,
         message_id: Optional[str] = None,
         scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
