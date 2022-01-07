@@ -23,6 +23,7 @@ if sys.version_info < (3, 5):
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT", "https://fakeendpoint.cognitiveservices.azure.com")
+    service_endpoint = service_endpoint.rstrip("/")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY", "metrics_advisor_subscription_key")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY", "metrics_advisor_api_key")
     metrics_advisor_sql_server_connection_string = os.getenv("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING", "metrics_advisor_sql_server_connection_string")
