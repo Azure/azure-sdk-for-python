@@ -8,7 +8,6 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 
 - Added support for fixed (linear) retry backoff:
   - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
-  - `RetryMode` enum has been added to `azure.servicebus`, with values `FIXED` and `EXPONENTIAL`.
 
 ### Breaking Changes
 
