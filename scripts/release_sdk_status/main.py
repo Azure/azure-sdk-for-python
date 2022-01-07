@@ -10,9 +10,11 @@ from pathlib import Path
 from typing import List
 from github import Github
 from github.Repository import Repository
+import time
 
 SERVICE_TEST_PATH = {}
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
+PR_URL = 'https://github.com/Azure/azure-rest-api-specs/pull/'
 
 def my_print(cmd):
     print('== ' + cmd + ' ==\n')
@@ -408,11 +410,20 @@ def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
 def trigger_pipeline(readme_html: List[str]) -> None:
     g = Github(os.getenv('TOKEN'))  # please fill user_token
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
+    record = set()
     for item in readme_html:
         num = get_latest_pr_from_readme(rest_repo, item)
         pr = rest_repo.get_pull(num)
-        pr.create_issue_comment(body='/azp run')
-        my_print(f'get latest PR "{num}" from {item} and comment "/azp run" successfully')
+        # TODO: skip too old PR
+
+        # avoid duplicated trigger
+        if num not in record:
+            pr.create_issue_comment(body='/azp run')
+            record.add(num)
+            time.sleep(300)
+            my_print(f'get latest PR "{PR_URL}{num}" from {item} and comment "/azp run" successfully')
+        else:
+            my_print(f'get latest PR "{PR_URL}{num}" from {item} and but it is already triggered')
 
 
 def trigger_swagger_pipeline() -> None:
