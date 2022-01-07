@@ -35,6 +35,9 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'opentelemetry-api': '1.3.0'
 }
 
+
+MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}
+
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # This method identifies latest/ minimal version of dependent packages and installs them from pyPI
     # dependency type must either be latest or minimum
@@ -91,6 +94,12 @@ def process_requirement(req, dependency_type):
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
         versions = [v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
+
+    if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
+        versions = [
+            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
+        ]
+
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version
     # reverse the list to get latest version first
