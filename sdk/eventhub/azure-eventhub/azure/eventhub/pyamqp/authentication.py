@@ -6,13 +6,11 @@
 
 import time
 import urllib
-import hmac
-import hashlib
-import base64
 from collections import namedtuple
 from functools import partial
 
 from .sasl import SASLAnonymousCredential, SASLPlainCredential
+from .utils import generate_sas_token
 
 from .constants import (
     AUTH_DEFAULT_EXPIRATION_SECONDS,
@@ -31,15 +29,13 @@ except ImportError:
 AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
 
 
-def _generate_sas_token(auth_uri, sas_name, sas_key, expiry_in=AUTH_DEFAULT_EXPIRATION_SECONDS):
+def _generate_sas_access_token(auth_uri, sas_name, sas_key, expiry_in=AUTH_DEFAULT_EXPIRATION_SECONDS):
     auth_uri = urllib.parse.quote_plus(auth_uri)
     sas = sas_key.encode("utf-8")
     expires_on = int(time.time() + expiry_in)
-    string_to_sign = (auth_uri + '\n' + str(expires_on)).encode('utf-8')
-    signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
-    signature = urllib.parse.quote(base64.b64encode(signed_hmac_sha256.digest()))
+    token = generate_sas_token(auth_uri, sas_name, sas_key, expires_on)
     return AccessToken(
-        "SharedAccessSignature sr={}&sig={}&se={}&skn={}".format(auth_uri, signature, str(expires_on), sas_name),
+        token,
         expires_on
     )
 

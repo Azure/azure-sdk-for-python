@@ -12,6 +12,7 @@ from .management_link import ManagementLink
 from .message import Message, Properties
 from .error import (
     AuthenticationException,
+    ErrorCondition,
     TokenAuthFailure,
     TokenExpired
 )
@@ -165,8 +166,12 @@ class CBSAuthenticator(object):
         if self.state != CbsState.OPEN:
             return False
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
-            # TODO: raise proper error type
-            raise AuthenticationException("CBS authentication link is in broken status, please recreate the cbs link.")
+            # TODO: raise proper error type also should this be a ClientError?
+            #  Think how upper layer handle this exception + condition code
+            raise AuthenticationException(
+                condition=ErrorCondition.ClientError,
+                description="CBS authentication link is in broken status, please recreate the cbs link."
+            )
 
     def open(self):
         self.state = CbsState.OPENING
@@ -203,10 +208,20 @@ class CBSAuthenticator(object):
             self.update_token()
             return False
         elif self.auth_state == CbsAuthState.Failure:
-            raise AuthenticationException("Failed to open CBS authentication link.")
+            raise AuthenticationException(
+                condition=ErrorCondition.InternalError,
+                description="Failed to open CBS authentication link."
+            )
         elif self.auth_state == CbsAuthState.Error:
-            raise TokenAuthFailure(self._token_status_code, self._token_status_description, self._encoding)
+            raise TokenAuthFailure(
+                self._token_status_code,
+                self._token_status_description,
+                encoding=self._encoding  # TODO: drop off all the encodings
+            )
         elif self.auth_state == CbsAuthState.Timeout:
-            raise TimeoutError("Authentication attempt timed-out.")  # TODO: compat 2.7 timeout error?
+            raise TimeoutError("Authentication attempt timed-out.")
         elif self.auth_state == CbsAuthState.Expired:
-            raise TokenExpired("CBS Authentication Expired.")
+            raise TokenExpired(
+                condition=ErrorCondition.InternalError,
+                description="CBS Authentication Expired."
+            )
