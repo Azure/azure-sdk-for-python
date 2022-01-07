@@ -1107,9 +1107,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription_name: str,
         rule_name: str,
         *,
-        filter: Union[
+        filter: Union[  # pylint: disable=redefined-builtin
             CorrelationRuleFilter, SqlRuleFilter
-        ] = TrueRuleFilter(),  # pylint: disable=redefined-builtin
+        ] = TrueRuleFilter(),
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:
