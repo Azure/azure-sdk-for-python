@@ -7,6 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -23,26 +24,31 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    async def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ServiceRequestError):
+        with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_recognize_content(myfile)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    async def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_recognize_content(b"xxx", content_type="application/pdf")
                 result = await poller.result()
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
@@ -52,13 +58,15 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                 content_type=FormContentType.APPLICATION_PDF
             )
             result = await poller.result()
-        self.assertIsNotNone(result)
+        assert result is not None
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_recognize_content(
                     damaged_pdf,
@@ -70,7 +78,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_content(
                     myfile,
@@ -84,15 +92,17 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_content(
                     myfile
                 )
                 result = await poller.result()
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -116,8 +126,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             myform = fd.read()
@@ -141,8 +153,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_stream_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             myform = fd.read()
@@ -150,19 +164,21 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content(myform)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 4)
-        self.assertEqual(layout.tables[1].row_count, 4)
-        self.assertEqual(layout.tables[1].column_count, 2)
-        self.assertEqual(layout.tables[0].page_number, 1)
-        self.assertEqual(layout.tables[1].page_number, 1)
+        assert layout.tables[0].row_count == 5
+        assert layout.tables[0].column_count== 4
+        assert layout.tables[1].row_count == 4
+        assert layout.tables[1].column_count== 2
+        assert layout.tables[0].page_number == 1
+        assert layout.tables[1].page_number== 1
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_multipage(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             invoice = fd.read()
@@ -170,11 +186,13 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             poller = await client.begin_recognize_content(invoice)
             result = await poller.result()
 
-        self.assertEqual(len(result), 3)
+        assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -209,38 +227,42 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             cont_token = initial_poller.continuation_token()
             poller = await client.begin_recognize_content(None, continuation_token=cont_token)
             result = await poller.result()
-            self.assertIsNotNone(result)
+            assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
             myfile = fd.read()
         async with client:
             poller = await client.begin_recognize_content(myfile)
             result = await poller.result()
-        self.assertEqual(len(result), 2)
+        assert len(result) == 2
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertEqual(len(layout.tables), 2)
-        self.assertEqual(layout.tables[0].row_count, 29)
-        self.assertEqual(layout.tables[0].column_count, 4)
-        self.assertEqual(layout.tables[0].page_number, 1)
-        self.assertEqual(layout.tables[1].row_count, 6)
-        self.assertEqual(layout.tables[1].column_count, 5)
-        self.assertEqual(layout.tables[1].page_number, 1)
+        assert layout.page_number == 1
+        assert len(layout.tables) == 2
+        assert layout.tables[0].row_count == 29
+        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].page_number == 1
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count== 5
+        assert layout.tables[1].page_number== 1
         layout = result[1]
-        self.assertEqual(len(layout.tables), 1)
-        self.assertEqual(layout.page_number, 2)
-        self.assertEqual(layout.tables[0].row_count, 23)
-        self.assertEqual(layout.tables[0].column_count, 5)
-        self.assertEqual(layout.tables[0].page_number, 2)
+        assert len(layout.tables) == 1
+        assert layout.page_number == 2
+        assert layout.tables[0].row_count == 23
+        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_selection_marks(self, client):
         with open(self.selection_form_pdf, "rb") as fd:
             myform = fd.read()
@@ -248,13 +270,15 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content(myform)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @recorded_by_proxy_async
     async def test_content_selection_marks_v2(self, client):
         with open(self.selection_form_pdf, "rb") as fd:
             myform = fd.read()
@@ -262,13 +286,15 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content(myform)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_specify_pages(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -290,8 +316,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert len(result) == 3
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_reading_order(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myform = fd.read()
@@ -303,8 +331,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert result
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_language_specified(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()

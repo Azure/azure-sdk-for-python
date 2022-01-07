@@ -1,8 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-servicefabricmanagedclusters"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Servicefabricmanagedclusters Management"
+package_pprint_name = "Service Fabric Managed Clusters Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true

@@ -50,7 +50,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Track Updates to resource with parent.
 
@@ -80,7 +80,7 @@ class ApplyUpdatesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -129,7 +129,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Track Updates to resource.
 
@@ -155,7 +155,7 @@ class ApplyUpdatesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -203,7 +203,7 @@ class ApplyUpdatesOperations:
         resource_parent_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Apply Updates to resource with parent.
 
@@ -231,7 +231,7 @@ class ApplyUpdatesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -278,7 +278,7 @@ class ApplyUpdatesOperations:
         provider_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Apply Updates to resource.
 
@@ -302,7 +302,7 @@ class ApplyUpdatesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -343,7 +343,7 @@ class ApplyUpdatesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListApplyUpdate"]:
         """Get Configuration records within a subscription.
 
@@ -359,7 +359,7 @@ class ApplyUpdatesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01"
+        api_version = "2021-09-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

@@ -62,7 +62,7 @@ setup(
     ]),
     install_requires=[
         "msrest>=0.6.21",
-        'azure-core<2.0.0,>=1.19.1',
+        'azure-core<2.0.0,>=1.15.0',
     ],
     python_requires=">=3.7",
     extras_require={

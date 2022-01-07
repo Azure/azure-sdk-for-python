@@ -108,7 +108,7 @@ class EventData(object):
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
-        )  
+        )
         self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
@@ -171,6 +171,7 @@ class EventData(object):
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
         # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
+        # pylint:disable=protected-access
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
@@ -181,6 +182,7 @@ class EventData(object):
         """
         event_data = cls(body="")
         event_data.message = message
+        # pylint: disable=protected-access
         event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 

@@ -6,6 +6,8 @@
 
 import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -23,27 +25,33 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    async def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    @recorded_by_proxy_async
+    async def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+        set_bodiless_matcher()
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_url_pass_stream(self, client):
+        set_bodiless_matcher()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_recognize_content_from_url(receipt)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_url_transform_pdf(self, client):
+        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -65,30 +73,36 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_url_pdf(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 3)
-        self.assertEqual(layout.tables[0].column_count, 5)
-        self.assertEqual(layout.tables[0].page_number, 1)
+        assert layout.tables[0].row_count == 3
+        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].page_number == 1
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_multipage_url(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf)
             result = await poller.result()
-        self.assertEqual(len(result), 3)
+        assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_multipage_transform_url(self, client):
+        set_bodiless_matcher()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -118,58 +132,66 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
             poller = await client.begin_recognize_content_from_url(None, continuation_token=cont_token)
             result = await poller.result()
-            self.assertIsNotNone(result)
+            assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_multipage_table_span_pdf(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
             result = await poller.result()
-        self.assertEqual(len(result), 2)
+        assert len(result) == 2
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
-        self.assertEqual(len(layout.tables), 2)
-        self.assertEqual(layout.tables[0].row_count, 29)
-        self.assertEqual(layout.tables[0].column_count, 4)
-        self.assertEqual(layout.tables[0].page_number, 1)
-        self.assertEqual(layout.tables[1].row_count, 6)
-        self.assertEqual(layout.tables[1].column_count, 5)
-        self.assertEqual(layout.tables[1].page_number, 1)
+        assert layout.page_number == 1
+        assert len(layout.tables) == 2
+        assert layout.tables[0].row_count == 29
+        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].page_number == 1
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count== 5
+        assert layout.tables[1].page_number== 1
         layout = result[1]
-        self.assertEqual(len(layout.tables), 1)
-        self.assertEqual(layout.page_number, 2)
-        self.assertEqual(layout.tables[0].row_count, 23)
-        self.assertEqual(layout.tables[0].column_count, 5)
-        self.assertEqual(layout.tables[0].page_number, 2)
+        assert len(layout.tables) == 1
+        assert layout.page_number == 2
+        assert layout.tables[0].row_count == 23
+        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_selection_marks(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @recorded_by_proxy_async
     async def test_content_selection_marks_v2(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
             result = await poller.result()
-        self.assertEqual(len(result), 1)
+        assert len(result) == 1
         layout = result[0]
-        self.assertEqual(layout.page_number, 1)
+        assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_specify_pages(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
             result = await poller.result()
@@ -189,7 +211,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_reading_order(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
 
@@ -199,7 +223,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_language_specified(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
@@ -208,7 +234,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
+    @recorded_by_proxy_async
     async def test_content_language_error(self, client):
+        set_bodiless_matcher()
         async with client:
             with pytest.raises(HttpResponseError) as e:
                 await client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")

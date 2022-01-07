@@ -423,8 +423,8 @@ class ClusterPatch(msrest.serialization.Model):
 class ClusterSku(msrest.serialization.Model):
     """The cluster sku definition.
 
-    :param capacity: The capacity value.
-    :type capacity: long
+    :param capacity: The capacity value. Possible values include: 500, 1000, 2000, 5000.
+    :type capacity: str or ~azure.mgmt.loganalytics.models.Capacity
     :param name: The name of the SKU. Possible values include: "CapacityReservation".
     :type name: str or ~azure.mgmt.loganalytics.models.ClusterSkuNameEnum
     """
@@ -1738,16 +1738,25 @@ class Table(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param retention_in_days: The data table data retention in days, between 30 and 730. Setting
+    :param retention_in_days: The data table data retention in days, between 7 and 730. Setting
      this property to null will default to the workspace retention.
     :type retention_in_days: int
+    :ivar is_troubleshooting_allowed: Specifies if IsTroubleshootingEnabled property can be set for
+     this table.
+    :vartype is_troubleshooting_allowed: bool
+    :param is_troubleshoot_enabled: Enable or disable troubleshoot for this table.
+    :type is_troubleshoot_enabled: bool
+    :ivar last_troubleshoot_date: Last time when troubleshooting was set for this table.
+    :vartype last_troubleshoot_date: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
+        'retention_in_days': {'maximum': 730, 'minimum': 7},
+        'is_troubleshooting_allowed': {'readonly': True},
+        'last_troubleshoot_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1755,6 +1764,9 @@ class Table(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+        'is_troubleshooting_allowed': {'key': 'properties.isTroubleshootingAllowed', 'type': 'bool'},
+        'is_troubleshoot_enabled': {'key': 'properties.isTroubleshootEnabled', 'type': 'bool'},
+        'last_troubleshoot_date': {'key': 'properties.lastTroubleshootDate', 'type': 'str'},
     }
 
     def __init__(
@@ -1763,6 +1775,9 @@ class Table(ProxyResource):
     ):
         super(Table, self).__init__(**kwargs)
         self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.is_troubleshooting_allowed = None
+        self.is_troubleshoot_enabled = kwargs.get('is_troubleshoot_enabled', None)
+        self.last_troubleshoot_date = None
 
 
 class TablesListResult(msrest.serialization.Model):
@@ -2357,9 +2372,11 @@ class WorkspaceSku(msrest.serialization.Model):
     :param name: Required. The name of the SKU. Possible values include: "Free", "Standard",
      "Premium", "PerNode", "PerGB2018", "Standalone", "CapacityReservation", "LACluster".
     :type name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
-    :param capacity_reservation_level: The capacity reservation level for this workspace, when
-     CapacityReservation sku is selected.
-    :type capacity_reservation_level: int
+    :param capacity_reservation_level: The capacity reservation level in GB for this workspace,
+     when CapacityReservation sku is selected. Possible values include: 100, 200, 300, 400, 500,
+     1000, 2000, 5000.
+    :type capacity_reservation_level: str or
+     ~azure.mgmt.loganalytics.models.CapacityReservationLevel
     :ivar last_sku_update: The last time when the sku was updated.
     :vartype last_sku_update: str
     """

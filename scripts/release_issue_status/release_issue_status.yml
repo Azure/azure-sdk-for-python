@@ -7,13 +7,20 @@ trigger:
     exclude:
     - '*'
 
+schedules:
+  - cron: "0,30 1-9 * * *"
+    displayName: Daily release
+    branches:
+      include:
+      - main
+    always: true
 
 jobs:
 - job: ReleaseIssueStatus
   displayName: ReleaseIssueStatus Python 3.8
   timeoutInMinutes: 30
   strategy:
-    maxParallel: 3
+    maxParallel: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:

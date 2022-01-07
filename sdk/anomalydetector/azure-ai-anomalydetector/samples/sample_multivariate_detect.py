@@ -165,8 +165,15 @@ if __name__ == '__main__':
     assert result is not None
 
     print("Result ID:\t", result.result_id)
-    print("Result summary:\t", result.summary)
+    print("Result status:\t", result.summary.status)
     print("Result length:\t", len(result.results))
+
+    # See detailed inference result
+    for r in result.results:
+        print("timestamp: {}, is_anomaly: {:<5}, anomaly score: {:.4f}, severity: {:.4f}, contributor count: {:<4d}".format(r.timestamp, str(r.value.is_anomaly), r.value.score, r.value.severity, len(r.value.contributors) if r.value.is_anomaly else 0))
+        if r.value.contributors:
+            for contributor in r.value.contributors:
+                print("\tcontributor variable: {:<10}, contributor score: {:.4f}".format(contributor.variable, contributor.contribution_score))
 
     # Export model
     sample.export_model(model_id, "model.zip")
