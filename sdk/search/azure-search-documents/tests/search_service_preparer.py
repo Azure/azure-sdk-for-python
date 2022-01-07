@@ -29,7 +29,7 @@ TIME_TO_SLEEP = 3
 SearchPreparer = functools.partial(
     PowerShellPreparer,
     "search",
-    search_service_endpoint="fakesearchendpoint",
+    search_service_endpoint="https://fakesearchendpoint.search.windows.net",
     search_service_api_key="fakesearchapikey",
     search_query_api_key="fakequeryapikey",
     search_storage_connection_string="fakestoragecs",

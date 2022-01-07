@@ -4,24 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from os import environ
-from os.path import dirname, join, realpath
-import pytest
 import random
 import string
+from os import environ
+from os.path import dirname, join, realpath
 
-
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
-
+import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.search.documents.indexes.models import(
-    SearchIndex,
-    SearchIndexerDataSourceConnection,
-    SearchIndexer,
-    SearchIndexerDataContainer,
-)
-from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.indexes import (SearchIndexClient,
+                                            SearchIndexerClient)
+from azure.search.documents.indexes.models import (
+    SearchIndex, SearchIndexer, SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection)
+from devtools_testutils import (AzureRecordedTestCase, is_live,
+                                recorded_by_proxy)
+
 from tests.search_service_preparer import search_decorator
 
 
@@ -55,7 +53,7 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         return (search_endpoint, search_api_key, storage_cs, container_name)
 
     def _update_variables(self, variables, prefix_tag=""):
-        if is_live:
+        if self.is_live:
             variables["indexer_name{}".format(prefix_tag)] = self._random_tag(prefix="sample-indexer-")
             variables["datasource_name{}".format(prefix_tag)] = self._random_tag(prefix="sample-datasource-")
             variables["index_name{}".format(prefix_tag)] = self._random_tag("hotels-")
