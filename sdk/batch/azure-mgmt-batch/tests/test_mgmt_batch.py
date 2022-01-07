@@ -16,6 +16,7 @@ import unittest
 import pytest
 import requests
 import six
+import os
 
 import azure.mgmt.batch
 from azure.mgmt.batch import models
@@ -212,6 +213,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
         response = self.mgmt_batch_client.batch_account.begin_delete(resource_group.name, account_name)
         assert response.result() is None
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch', location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -318,6 +320,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
         response = self.mgmt_batch_client.batch_account.begin_delete(resource_group.name, account_name)
         assert response.result() is None
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @SimpleBatchPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -361,6 +364,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
         response = self.mgmt_batch_client.certificate.begin_delete(resource_group.name, batch_account.name, certificate)
         assert response.result() is None
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @SimpleBatchPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -467,6 +471,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
             resource_group.name, batch_account.name, iaas_pool)
         assert response.result() is None
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION, random_name_enabled=True)
     @recorded_by_proxy
     def test_mgmt_batch_account_advanced(self, resource_group, location):
