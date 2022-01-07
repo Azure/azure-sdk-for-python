@@ -860,8 +860,8 @@ class ServiceBusReceiver(
     def dead_letter_message(
         self,
         message: ServiceBusReceivedMessage,
-        reason: Optional[str]=None,
-        error_description: Optional[str]=None
+        reason: Optional[str] = None,
+        error_description: Optional[str] = None
     ) -> None:
         """Move the message to the Dead Letter queue.
 
