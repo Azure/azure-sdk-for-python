@@ -132,7 +132,7 @@
         },
         "glossaryFileName": {
             "type": "string",
-            "defaultValue": "glosario.tsv"
+            "defaultValue": "glossary.tsv"
         }
     },
     "variables": {
