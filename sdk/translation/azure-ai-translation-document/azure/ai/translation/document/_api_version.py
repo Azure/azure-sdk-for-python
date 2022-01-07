@@ -4,9 +4,10 @@
 # ------------------------------------
 
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DocumentTranslationApiVersion(str, Enum):
+class DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Document Translation API versions supported by this package"""
 
     #: This is the default version
