@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_rerun_trigger_instance_request(
@@ -292,12 +293,12 @@ class TriggerRunOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(filter_parameters, 'RunFilterParameters')
+        _json = self._serialize.body(filter_parameters, 'RunFilterParameters')
 
         request = build_query_trigger_runs_by_workspace_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.query_trigger_runs_by_workspace.metadata['url'],
         )
         request = _convert_request(request)

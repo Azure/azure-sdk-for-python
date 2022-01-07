@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_create_data_flow_debug_session_request_initial(
@@ -215,12 +216,12 @@ class DataFlowDebugSessionOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(request, 'CreateDataFlowDebugSessionRequest')
+        _json = self._serialize.body(request, 'CreateDataFlowDebugSessionRequest')
 
         request = build_create_data_flow_debug_session_request_initial(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._create_data_flow_debug_session_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -437,12 +438,12 @@ class DataFlowDebugSessionOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(request, 'DataFlowDebugPackage')
+        _json = self._serialize.body(request, 'DataFlowDebugPackage')
 
         request = build_add_data_flow_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.add_data_flow.metadata['url'],
         )
         request = _convert_request(request)
@@ -497,12 +498,12 @@ class DataFlowDebugSessionOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(request, 'DeleteDataFlowDebugSessionRequest')
+        _json = self._serialize.body(request, 'DeleteDataFlowDebugSessionRequest')
 
         request = build_delete_data_flow_debug_session_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.delete_data_flow_debug_session.metadata['url'],
         )
         request = _convert_request(request)
@@ -540,12 +541,12 @@ class DataFlowDebugSessionOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(request, 'DataFlowDebugCommandRequest')
+        _json = self._serialize.body(request, 'DataFlowDebugCommandRequest')
 
         request = build_execute_command_request_initial(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._execute_command_initial.metadata['url'],
         )
         request = _convert_request(request)

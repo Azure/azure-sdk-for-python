@@ -14,7 +14,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ArtifactsClientConfiguration
-from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
+from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -30,6 +30,8 @@ class ArtifactsClient(object):
     :vartype kql_scripts: azure.synapse.artifacts.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
     :vartype kql_script: azure.synapse.artifacts.operations.KqlScriptOperations
+    :ivar metastore: MetastoreOperations operations
+    :vartype metastore: azure.synapse.artifacts.operations.MetastoreOperations
     :ivar spark_configuration: SparkConfigurationOperations operations
     :vartype spark_configuration: azure.synapse.artifacts.operations.SparkConfigurationOperations
     :ivar big_data_pools: BigDataPoolsOperations operations
@@ -97,6 +99,7 @@ class ArtifactsClient(object):
         self._serialize.client_side_validation = False
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
         self.spark_configuration = SparkConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.big_data_pools = BigDataPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_flow = DataFlowOperations(self._client, self._config, self._serialize, self._deserialize)

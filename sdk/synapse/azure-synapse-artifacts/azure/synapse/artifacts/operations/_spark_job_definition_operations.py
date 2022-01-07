@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_spark_job_definitions_by_workspace_request(
@@ -387,13 +388,13 @@ class SparkJobDefinitionOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _spark_job_definition = _models.SparkJobDefinitionResource(properties=properties)
-        json = self._serialize.body(_spark_job_definition, 'SparkJobDefinitionResource')
+        _json = self._serialize.body(_spark_job_definition, 'SparkJobDefinitionResource')
 
         request = build_create_or_update_spark_job_definition_request_initial(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_spark_job_definition_initial.metadata['url'],
         )
@@ -811,13 +812,13 @@ class SparkJobDefinitionOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_spark_job_definition_request_initial(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_spark_job_definition_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -928,12 +929,12 @@ class SparkJobDefinitionOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _spark_job_definition_azure_resource = _models.SparkJobDefinitionResource(properties=properties)
-        json = self._serialize.body(_spark_job_definition_azure_resource, 'SparkJobDefinitionResource')
+        _json = self._serialize.body(_spark_job_definition_azure_resource, 'SparkJobDefinitionResource')
 
         request = build_debug_spark_job_definition_request_initial(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._debug_spark_job_definition_initial.metadata['url'],
         )
         request = _convert_request(request)

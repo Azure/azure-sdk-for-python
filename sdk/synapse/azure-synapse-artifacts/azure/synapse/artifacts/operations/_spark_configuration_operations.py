@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_spark_configurations_by_workspace_request(
@@ -324,13 +325,13 @@ class SparkConfigurationOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _spark_configuration = _models.SparkConfigurationResource(properties=properties)
-        json = self._serialize.body(_spark_configuration, 'SparkConfigurationResource')
+        _json = self._serialize.body(_spark_configuration, 'SparkConfigurationResource')
 
         request = build_create_or_update_spark_configuration_request_initial(
             spark_configuration_name=spark_configuration_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_spark_configuration_initial.metadata['url'],
         )
@@ -630,13 +631,13 @@ class SparkConfigurationOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_spark_configuration_request_initial(
             spark_configuration_name=spark_configuration_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_spark_configuration_initial.metadata['url'],
         )
         request = _convert_request(request)

@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_triggers_by_workspace_request(
@@ -451,13 +452,13 @@ class TriggerOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _trigger = _models.TriggerResource(properties=properties)
-        json = self._serialize.body(_trigger, 'TriggerResource')
+        _json = self._serialize.body(_trigger, 'TriggerResource')
 
         request = build_create_or_update_trigger_request_initial(
             trigger_name=trigger_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_trigger_initial.metadata['url'],
         )

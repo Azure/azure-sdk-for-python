@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_list_request(
@@ -882,14 +883,14 @@ class LibraryOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
 
-        content = content
+        _content = content
 
         request = build_append_request(
             library_name=library_name,
             comp=comp,
             api_version=api_version,
             content_type=content_type,
-            content=content,
+            content=_content,
             blob_condition_append_position=blob_condition_append_position,
             template_url=self.append.metadata['url'],
         )
