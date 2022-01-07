@@ -5,14 +5,14 @@
 from typing import Optional, Dict, Any
 
 from uamqp.constants import TransportType
-from .._retry import RetryMode
+from azure.core.pipeline.policies import RetryMode
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
-        self.retry_mode = kwargs.get("retry_mode", RetryMode.EXPONENTIAL)
+        self.retry_mode = RetryMode(kwargs.get("retry_mode", 'exponential'))
         self.retry_backoff_factor = kwargs.get(
             "retry_backoff_factor", 0.8
         )  # type: float
