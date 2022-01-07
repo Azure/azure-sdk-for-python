@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -20,21 +20,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._metrics_advisor_client_operations import build_add_feedback_request, build_create_alerting_configuration_request, build_create_data_feed_request, build_create_datasource_credential_request, build_create_detection_configuration_request, build_create_hook_request, build_delete_alert_configuration_request, build_delete_data_feed_request, build_delete_datasource_credential_request, build_delete_detection_configuration_request, build_delete_hook_request, build_get_active_series_count_request, build_get_alert_configuration_request, build_get_anomalies_by_anomaly_detection_configuration_request, build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request, build_get_anomaly_detection_configuration_request, build_get_data_feed_ingestion_progress_request, build_get_data_feed_request, build_get_datasource_credential_request, build_get_feedback_request, build_get_hook_request, build_get_incidents_by_anomaly_detection_configuration_next_pages_request, build_get_incidents_by_anomaly_detection_configuration_request, build_get_incidents_from_alert_by_anomaly_alerting_configuration_request, build_list_alert_configurations_request, build_list_alerts_request, build_list_anomaly_dimension_values_request, build_list_data_feed_ingestion_status_request, build_list_data_feeds_request, build_list_datasource_credentials_request, build_list_detection_configurations_request, build_list_feedback_request, build_list_hooks_request, build_list_incident_root_causes_request, build_list_metric_dimension_values_request, build_list_metric_enriched_series_data_request, build_list_metric_enrichment_status_request, build_list_metric_series_data_request, build_list_metric_series_definitions_request, build_refresh_data_feed_ingestion_request, build_update_alert_configuration_request, build_update_data_feed_request, build_update_datasource_credential_request, build_update_detection_configuration_request, build_update_hook_request
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from ..._patch import AlertResultListCustomization, AlertingResultQueryCustomization, AnomalyAlertingConfigurationCustomization, AnomalyAlertingConfigurationListCustomization, AnomalyAlertingConfigurationPatchCustomization, AnomalyDetectionConfigurationCustomization, AnomalyDetectionConfigurationListCustomization, AnomalyDetectionConfigurationPatchCustomization, AnomalyDimensionListCustomization, AnomalyDimensionQueryCustomization, AnomalyResultListCustomization, DataFeedDetailCustomization, DataFeedDetailPatchCustomization, DataFeedIngestionProgressCustomization, DataFeedListCustomization, DataSourceCredentialCustomization, DataSourceCredentialListCustomization, DataSourceCredentialPatchCustomization, DetectionAnomalyResultQueryCustomization, DetectionIncidentResultQueryCustomization, DetectionSeriesQueryCustomization, EnrichmentStatusListCustomization, EnrichmentStatusQueryOptionCustomization, HookInfoCustomization, HookInfoPatchCustomization, HookListCustomization, IncidentResultListCustomization, IngestionProgressResetOptionsCustomization, IngestionStatusListCustomization, IngestionStatusQueryOptionsCustomization, MetricDataListCustomization, MetricDataQueryOptionsCustomization, MetricDimensionListCustomization, MetricDimensionQueryOptionsCustomization, MetricFeedbackCustomization, MetricFeedbackFilterCustomization, MetricFeedbackListCustomization, MetricSeriesListCustomization, MetricSeriesQueryOptionsCustomization, RootCauseListCustomization, SeriesResultListCustomization, UsageStatsCustomization
-    from .._patch import MetricsAdvisorClientOperationsMixinCustomization
-else:
-    try:
-        from .._patch import MetricsAdvisorClientOperationsMixinCustomization
-    except ImportError:
-        class MetricsAdvisorClientOperationsMixinCustomization:
-            pass
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class _MetricsAdvisorClientOperationsMixinGenerated:
+class MetricsAdvisorClientOperationsMixinGenerated:
 
     @distributed_trace_async
     async def get_active_series_count(
@@ -89,7 +78,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         self,
         configuration_id: str,
         **kwargs: Any
-    ) -> "_models.AnomalyAlertingConfiguration":
+    ) -> "_models.AnomalyAlertConfiguration":
         """Query a single anomaly alerting configuration.
 
         Query a single anomaly alerting configuration.
@@ -97,11 +86,11 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param configuration_id: anomaly alerting configuration unique id.
         :type configuration_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnomalyAlertingConfiguration, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertingConfiguration
+        :return: AnomalyAlertConfiguration, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyAlertingConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,7 +115,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnomalyAlertingConfiguration', pipeline_response)
+        deserialized = self._deserialize('AnomalyAlertConfiguration', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -142,7 +131,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         configuration_id: str,
         body: "_models.AnomalyAlertingConfigurationPatch",
         **kwargs: Any
-    ) -> "_models.AnomalyAlertingConfiguration":
+    ) -> "_models.AnomalyAlertConfiguration":
         """Update anomaly alerting configuration.
 
         Update anomaly alerting configuration.
@@ -152,11 +141,11 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param body: anomaly alerting configuration.
         :type body: ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnomalyAlertingConfiguration, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertingConfiguration
+        :return: AnomalyAlertConfiguration, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyAlertingConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,7 +175,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnomalyAlertingConfiguration', pipeline_response)
+        deserialized = self._deserialize('AnomalyAlertConfiguration', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -247,7 +236,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
     @distributed_trace_async
     async def create_alerting_configuration(
         self,
-        body: "_models.AnomalyAlertingConfiguration",
+        body: "_models.AnomalyAlertConfiguration",
         **kwargs: Any
     ) -> None:
         """Create anomaly alerting configuration.
@@ -255,7 +244,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         Create anomaly alerting configuration.
 
         :param body: anomaly alerting configuration.
-        :type body: ~azure.ai.metricsadvisor.models.AnomalyAlertingConfiguration
+        :type body: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -269,7 +258,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'AnomalyAlertingConfiguration')
+        _json = self._serialize.body(body, 'AnomalyAlertConfiguration')
 
         request = build_create_alerting_configuration_request(
             content_type=content_type,
@@ -1769,8 +1758,8 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         self,
         data_feed_name: Optional[str] = None,
         data_source_type: Optional[Union[str, "_models.DataSourceType"]] = None,
-        granularity_name: Optional[Union[str, "_models.Granularity"]] = None,
-        status: Optional[Union[str, "_models.EntityStatus"]] = None,
+        granularity_name: Optional[Union[str, "_models.DataFeedGranularityType"]] = None,
+        status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
         creator: Optional[str] = None,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
@@ -1785,9 +1774,9 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param data_source_type: filter data feed by its source type.
         :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
         :param granularity_name: filter data feed by its granularity.
-        :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
+        :type granularity_name: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
         :param status: filter data feed by its status.
-        :type status: str or ~azure.ai.metricsadvisor.models.EntityStatus
+        :type status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :param creator: filter data feed by its creator.
         :type creator: str
         :param skip: for paging, skipped number.
@@ -1876,7 +1865,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
     @distributed_trace_async
     async def create_data_feed(
         self,
-        body: "_models.DataFeedDetail",
+        body: "_models.DataFeedSource",
         **kwargs: Any
     ) -> None:
         """Create a new data feed.
@@ -1884,7 +1873,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         Create a new data feed.
 
         :param body: parameters to create a data feed.
-        :type body: ~azure.ai.metricsadvisor.models.DataFeedDetail
+        :type body: ~azure.ai.metricsadvisor.models.DataFeedSource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1898,7 +1887,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'DataFeedDetail')
+        _json = self._serialize.body(body, 'DataFeedSource')
 
         request = build_create_data_feed_request(
             content_type=content_type,
@@ -1934,7 +1923,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         self,
         data_feed_id: str,
         **kwargs: Any
-    ) -> "_models.DataFeedDetail":
+    ) -> "_models.DataFeedSource":
         """Get a data feed by its id.
 
         Get a data feed by its id.
@@ -1942,11 +1931,11 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataFeedDetail, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeedDetail
+        :return: DataFeedSource, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeedSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedDetail"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedSource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1971,7 +1960,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataFeedDetail', pipeline_response)
+        deserialized = self._deserialize('DataFeedSource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1987,7 +1976,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         data_feed_id: str,
         body: "_models.DataFeedDetailPatch",
         **kwargs: Any
-    ) -> "_models.DataFeedDetail":
+    ) -> "_models.DataFeedSource":
         """Update a data feed.
 
         Update a data feed.
@@ -1997,11 +1986,11 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param body: parameters to update a data feed.
         :type body: ~azure.ai.metricsadvisor.models.DataFeedDetailPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataFeedDetail, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeedDetail
+        :return: DataFeedSource, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeedSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedDetail"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedSource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2031,7 +2020,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataFeedDetail', pipeline_response)
+        deserialized = self._deserialize('DataFeedSource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2385,7 +2374,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
     @distributed_trace_async
     async def create_hook(
         self,
-        body: "_models.HookInfo",
+        body: "_models.NotificationHook",
         **kwargs: Any
     ) -> None:
         """Create a new hook.
@@ -2393,7 +2382,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         Create a new hook.
 
         :param body: Create hook request.
-        :type body: ~azure.ai.metricsadvisor.models.HookInfo
+        :type body: ~azure.ai.metricsadvisor.models.NotificationHook
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -2407,7 +2396,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'HookInfo')
+        _json = self._serialize.body(body, 'NotificationHook')
 
         request = build_create_hook_request(
             content_type=content_type,
@@ -2443,7 +2432,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         self,
         hook_id: str,
         **kwargs: Any
-    ) -> "_models.HookInfo":
+    ) -> "_models.NotificationHook":
         """Get a hook by its id.
 
         Get a hook by its id.
@@ -2451,11 +2440,11 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param hook_id: Hook unique ID.
         :type hook_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HookInfo, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.HookInfo
+        :return: NotificationHook, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HookInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationHook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2480,7 +2469,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('HookInfo', pipeline_response)
+        deserialized = self._deserialize('NotificationHook', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2496,7 +2485,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         hook_id: str,
         body: "_models.HookInfoPatch",
         **kwargs: Any
-    ) -> "_models.HookInfo":
+    ) -> "_models.NotificationHook":
         """Update a hook.
 
         Update a hook.
@@ -2506,11 +2495,11 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
         :param body: Update hook request.
         :type body: ~azure.ai.metricsadvisor.models.HookInfoPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HookInfo, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.HookInfo
+        :return: NotificationHook, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HookInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationHook"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2540,7 +2529,7 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('HookInfo', pipeline_response)
+        deserialized = self._deserialize('NotificationHook', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -3291,6 +3280,3 @@ class _MetricsAdvisorClientOperationsMixinGenerated:
             get_next, extract_data
         )
     list_metric_enrichment_status.metadata = {'url': '/metrics/{metricId}/status/enrichment/anomalyDetection/query'}  # type: ignore
-
-class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinCustomization, _MetricsAdvisorClientOperationsMixinGenerated):
-    pass

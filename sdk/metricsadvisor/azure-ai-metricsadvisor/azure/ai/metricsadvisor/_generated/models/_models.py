@@ -6,17 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._metrics_advisor_client_enums import *
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from . import AnomalyAlert, AnomalyDetectionConfiguration, AnomalyFeedbackValue, AnomalyIncident, AnomalyProperty, AzureApplicationInsightsParameter, AzureApplicationInsightsParameterPatch, AzureBlobParameter, AzureBlobParameterPatch, AzureCosmosDBParameter, AzureCosmosDBParameterPatch, AzureDataLakeStorageGen2Parameter, AzureDataLakeStorageGen2ParameterPatch, AzureEventHubsParameter, AzureEventHubsParameterPatch, AzureLogAnalyticsParameter, AzureLogAnalyticsParameterPatch, AzureSQLConnectionStringParam, AzureSQLConnectionStringParamPatch, AzureTableParameter, AzureTableParameterPatch, ChangePointFeedbackValue, ChangeThresholdCondition, ChangeThresholdConditionPatch, CommentFeedbackValue, DataFeedDimension, DataFeedMetric, DataLakeGen2SharedKeyParam, DataLakeGen2SharedKeyParamPatch, DataPointAnomaly, DetectionAnomalyFilterCondition, DetectionIncidentFilterCondition, DimensionGroupIdentity, EmailHookParameter, EmailHookParameterPatch, FeedbackDimensionFilter, HardThresholdCondition, HardThresholdConditionPatch, IncidentProperty, IncidentRootCause, InfluxDBParameter, InfluxDBParameterPatch, MetricAlertConfiguration, MetricAnomalyAlertSnoozeCondition, MetricDetectionCondition, MetricEnrichedSeriesData, MetricSeriesDefinition, MetricSeriesGroupDetectionCondition, MetricSingleSeriesDetectionCondition, MongoDBParameter, MongoDBParameterPatch, PeriodFeedbackValue, SQLSourceParameterPatch, SeriesIdentity, ServicePrincipalInKVParam, ServicePrincipalInKVParamPatch, ServicePrincipalParam, ServicePrincipalParamPatch, SeverityCondition, SeverityFilterCondition, SmartDetectionCondition, SmartDetectionConditionPatch, SqlSourceParameter, SuppressCondition, SuppressConditionPatch, TopNGroupScope, ValueCondition, WebhookHookParameter, WebhookHookParameterPatch, WholeMetricConfigurationPatch
 
 
 class AlertingResultQueryGenerated(msrest.serialization.Model):
@@ -47,10 +38,6 @@ class AlertingResultQueryGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        time_mode: Union[str, "AlertQueryTimeMode"],
         **kwargs
     ):
         """
@@ -63,9 +50,9 @@ class AlertingResultQueryGenerated(msrest.serialization.Model):
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
         """
         super(AlertingResultQueryGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_mode = time_mode
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.time_mode = kwargs['time_mode']
 
 
 class AlertResultListGenerated(msrest.serialization.Model):
@@ -93,8 +80,6 @@ class AlertResultListGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["AnomalyAlert"],
         **kwargs
     ):
         """
@@ -103,7 +88,7 @@ class AlertResultListGenerated(msrest.serialization.Model):
         """
         super(AlertResultListGenerated, self).__init__(**kwargs)
         self.next_link = None
-        self.value = value
+        self.value = kwargs['value']
 
 
 class AnomalyAlertGenerated(msrest.serialization.Model):
@@ -196,13 +181,6 @@ class AnomalyAlertConfigurationGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: str,
-        hook_ids: List[str],
-        metric_alerting_configurations: List["MetricAlertConfiguration"],
-        description: Optional[str] = "",
-        cross_metrics_operator: Optional[Union[str, "AnomalyAlertingConfigurationLogicType"]] = None,
-        split_alert_by_dimensions: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -226,12 +204,12 @@ class AnomalyAlertConfigurationGenerated(msrest.serialization.Model):
         """
         super(AnomalyAlertConfigurationGenerated, self).__init__(**kwargs)
         self.anomaly_alerting_configuration_id = None
-        self.name = name
-        self.description = description
-        self.cross_metrics_operator = cross_metrics_operator
-        self.split_alert_by_dimensions = split_alert_by_dimensions
-        self.hook_ids = hook_ids
-        self.metric_alerting_configurations = metric_alerting_configurations
+        self.name = kwargs['name']
+        self.description = kwargs.get('description', "")
+        self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
+        self.split_alert_by_dimensions = kwargs.get('split_alert_by_dimensions', None)
+        self.hook_ids = kwargs['hook_ids']
+        self.metric_alerting_configurations = kwargs['metric_alerting_configurations']
 
 
 class AnomalyAlertingConfigurationListGenerated(msrest.serialization.Model):
@@ -303,13 +281,6 @@ class AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = "",
-        cross_metrics_operator: Optional[Union[str, "AnomalyAlertingConfigurationLogicType"]] = None,
-        split_alert_by_dimensions: Optional[List[str]] = None,
-        hook_ids: Optional[List[str]] = None,
-        metric_alerting_configurations: Optional[List["MetricAlertConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -330,12 +301,12 @@ class AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
          list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         """
         super(AnomalyAlertingConfigurationPatchGenerated, self).__init__(**kwargs)
-        self.name = name
-        self.description = description
-        self.cross_metrics_operator = cross_metrics_operator
-        self.split_alert_by_dimensions = split_alert_by_dimensions
-        self.hook_ids = hook_ids
-        self.metric_alerting_configurations = metric_alerting_configurations
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', "")
+        self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
+        self.split_alert_by_dimensions = kwargs.get('split_alert_by_dimensions', None)
+        self.hook_ids = kwargs.get('hook_ids', None)
+        self.metric_alerting_configurations = kwargs.get('metric_alerting_configurations', None)
 
 
 class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
@@ -384,13 +355,6 @@ class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: str,
-        metric_id: str,
-        whole_metric_configuration: "MetricDetectionCondition",
-        description: Optional[str] = "",
-        dimension_group_override_configurations: Optional[List["MetricSeriesGroupDetectionCondition"]] = None,
-        series_override_configurations: Optional[List["MetricSingleSeriesDetectionCondition"]] = None,
         **kwargs
     ):
         """
@@ -411,12 +375,12 @@ class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
         """
         super(AnomalyDetectionConfigurationGenerated, self).__init__(**kwargs)
         self.anomaly_detection_configuration_id = None
-        self.name = name
-        self.description = description
-        self.metric_id = metric_id
-        self.whole_metric_configuration = whole_metric_configuration
-        self.dimension_group_override_configurations = dimension_group_override_configurations
-        self.series_override_configurations = series_override_configurations
+        self.name = kwargs['name']
+        self.description = kwargs.get('description', "")
+        self.metric_id = kwargs['metric_id']
+        self.whole_metric_configuration = kwargs['whole_metric_configuration']
+        self.dimension_group_override_configurations = kwargs.get('dimension_group_override_configurations', None)
+        self.series_override_configurations = kwargs.get('series_override_configurations', None)
 
 
 class AnomalyDetectionConfigurationListGenerated(msrest.serialization.Model):
@@ -484,12 +448,6 @@ class AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = "",
-        whole_metric_configuration: Optional["WholeMetricConfigurationPatch"] = None,
-        dimension_group_override_configurations: Optional[List["MetricSeriesGroupDetectionCondition"]] = None,
-        series_override_configurations: Optional[List["MetricSingleSeriesDetectionCondition"]] = None,
         **kwargs
     ):
         """
@@ -508,11 +466,11 @@ class AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
          list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
         """
         super(AnomalyDetectionConfigurationPatchGenerated, self).__init__(**kwargs)
-        self.name = name
-        self.description = description
-        self.whole_metric_configuration = whole_metric_configuration
-        self.dimension_group_override_configurations = dimension_group_override_configurations
-        self.series_override_configurations = series_override_configurations
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', "")
+        self.whole_metric_configuration = kwargs.get('whole_metric_configuration', None)
+        self.dimension_group_override_configurations = kwargs.get('dimension_group_override_configurations', None)
+        self.series_override_configurations = kwargs.get('series_override_configurations', None)
 
 
 class AnomalyDimensionListGenerated(msrest.serialization.Model):
@@ -540,8 +498,6 @@ class AnomalyDimensionListGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List[str],
         **kwargs
     ):
         """
@@ -550,7 +506,7 @@ class AnomalyDimensionListGenerated(msrest.serialization.Model):
         """
         super(AnomalyDimensionListGenerated, self).__init__(**kwargs)
         self.next_link = None
-        self.value = value
+        self.value = kwargs['value']
 
 
 class AnomalyDimensionQueryGenerated(msrest.serialization.Model):
@@ -583,11 +539,6 @@ class AnomalyDimensionQueryGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        dimension_name: str,
-        dimension_filter: Optional["DimensionGroupIdentity"] = None,
         **kwargs
     ):
         """
@@ -601,10 +552,10 @@ class AnomalyDimensionQueryGenerated(msrest.serialization.Model):
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         """
         super(AnomalyDimensionQueryGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.dimension_name = dimension_name
-        self.dimension_filter = dimension_filter
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.dimension_name = kwargs['dimension_name']
+        self.dimension_filter = kwargs.get('dimension_filter', None)
 
 
 class MetricFeedbackGenerated(msrest.serialization.Model):
@@ -656,9 +607,6 @@ class MetricFeedbackGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
         **kwargs
     ):
         """
@@ -672,8 +620,8 @@ class MetricFeedbackGenerated(msrest.serialization.Model):
         self.feedback_id = None
         self.created_time = None
         self.user_principal = None
-        self.metric_id = metric_id
-        self.dimension_filter = dimension_filter
+        self.metric_id = kwargs['metric_id']
+        self.dimension_filter = kwargs['dimension_filter']
 
 
 class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
@@ -739,14 +687,6 @@ class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
 
     def __init__(
         self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        value: "AnomalyFeedbackValue",
-        anomaly_detection_configuration_id: Optional[str] = None,
-        anomaly_detection_configuration_snapshot: Optional["AnomalyDetectionConfiguration"] = None,
         **kwargs
     ):
         """
@@ -768,13 +708,13 @@ class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
         :paramtype anomaly_detection_configuration_snapshot:
          ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         """
-        super(AnomalyFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(AnomalyFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'Anomaly'  # type: str
-        self.start_time = start_time
-        self.end_time = end_time
-        self.value = value
-        self.anomaly_detection_configuration_id = anomaly_detection_configuration_id
-        self.anomaly_detection_configuration_snapshot = anomaly_detection_configuration_snapshot
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.value = kwargs['value']
+        self.anomaly_detection_configuration_id = kwargs.get('anomaly_detection_configuration_id', None)
+        self.anomaly_detection_configuration_snapshot = kwargs.get('anomaly_detection_configuration_snapshot', None)
 
 
 class AnomalyFeedbackValueGenerated(msrest.serialization.Model):
@@ -796,8 +736,6 @@ class AnomalyFeedbackValueGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        anomaly_value: Union[str, "AnomalyValue"],
         **kwargs
     ):
         """
@@ -806,7 +744,7 @@ class AnomalyFeedbackValueGenerated(msrest.serialization.Model):
         :paramtype anomaly_value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
         """
         super(AnomalyFeedbackValueGenerated, self).__init__(**kwargs)
-        self.anomaly_value = anomaly_value
+        self.anomaly_value = kwargs['anomaly_value']
 
 
 class AnomalyIncidentGenerated(msrest.serialization.Model):
@@ -864,12 +802,6 @@ class AnomalyIncidentGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        incident_id: str,
-        start_time: datetime.datetime,
-        last_time: datetime.datetime,
-        root_node: "SeriesIdentity",
-        property: "IncidentProperty",
         **kwargs
     ):
         """
@@ -888,11 +820,11 @@ class AnomalyIncidentGenerated(msrest.serialization.Model):
         self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
-        self.incident_id = incident_id
-        self.start_time = start_time
-        self.last_time = last_time
-        self.root_node = root_node
-        self.property = property
+        self.incident_id = kwargs['incident_id']
+        self.start_time = kwargs['start_time']
+        self.last_time = kwargs['last_time']
+        self.root_node = kwargs['root_node']
+        self.property = kwargs['property']
 
 
 class AnomalyPropertyGenerated(msrest.serialization.Model):
@@ -931,8 +863,6 @@ class AnomalyPropertyGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        anomaly_severity: Union[str, "AnomalySeverity"],
         **kwargs
     ):
         """
@@ -941,7 +871,7 @@ class AnomalyPropertyGenerated(msrest.serialization.Model):
         :paramtype anomaly_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
         super(AnomalyPropertyGenerated, self).__init__(**kwargs)
-        self.anomaly_severity = anomaly_severity
+        self.anomaly_severity = kwargs['anomaly_severity']
         self.anomaly_status = None
         self.value = None
         self.expected_value = None
@@ -972,8 +902,6 @@ class AnomalyResultListGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["DataPointAnomaly"],
         **kwargs
     ):
         """
@@ -982,7 +910,7 @@ class AnomalyResultListGenerated(msrest.serialization.Model):
         """
         super(AnomalyResultListGenerated, self).__init__(**kwargs)
         self.next_link = None
-        self.value = value
+        self.value = kwargs['value']
 
 
 class DataFeedDetailPatchGenerated(msrest.serialization.Model):
@@ -1092,28 +1020,6 @@ class DataFeedDetailPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1175,27 +1081,27 @@ class DataFeedDetailPatchGenerated(msrest.serialization.Model):
         """
         super(DataFeedDetailPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
-        self.data_feed_name = data_feed_name
-        self.data_feed_description = data_feed_description
-        self.timestamp_column = timestamp_column
-        self.data_start_from = data_start_from
-        self.start_offset_in_seconds = start_offset_in_seconds
-        self.max_concurrency = max_concurrency
-        self.min_retry_interval_in_seconds = min_retry_interval_in_seconds
-        self.stop_retry_after_in_seconds = stop_retry_after_in_seconds
-        self.need_rollup = need_rollup
-        self.roll_up_method = roll_up_method
-        self.roll_up_columns = roll_up_columns
-        self.all_up_identification = all_up_identification
-        self.fill_missing_point_type = fill_missing_point_type
-        self.fill_missing_point_value = fill_missing_point_value
-        self.view_mode = view_mode
-        self.admins = admins
-        self.viewers = viewers
-        self.status = status
-        self.action_link_template = action_link_template
-        self.authentication_type = authentication_type
-        self.credential_id = credential_id
+        self.data_feed_name = kwargs.get('data_feed_name', None)
+        self.data_feed_description = kwargs.get('data_feed_description', None)
+        self.timestamp_column = kwargs.get('timestamp_column', None)
+        self.data_start_from = kwargs.get('data_start_from', None)
+        self.start_offset_in_seconds = kwargs.get('start_offset_in_seconds', None)
+        self.max_concurrency = kwargs.get('max_concurrency', None)
+        self.min_retry_interval_in_seconds = kwargs.get('min_retry_interval_in_seconds', None)
+        self.stop_retry_after_in_seconds = kwargs.get('stop_retry_after_in_seconds', None)
+        self.need_rollup = kwargs.get('need_rollup', None)
+        self.roll_up_method = kwargs.get('roll_up_method', None)
+        self.roll_up_columns = kwargs.get('roll_up_columns', None)
+        self.all_up_identification = kwargs.get('all_up_identification', None)
+        self.fill_missing_point_type = kwargs.get('fill_missing_point_type', None)
+        self.fill_missing_point_value = kwargs.get('fill_missing_point_value', None)
+        self.view_mode = kwargs.get('view_mode', None)
+        self.admins = kwargs.get('admins', None)
+        self.viewers = kwargs.get('viewers', None)
+        self.status = kwargs.get('status', None)
+        self.action_link_template = kwargs.get('action_link_template', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.credential_id = kwargs.get('credential_id', None)
 
 
 class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -1302,29 +1208,6 @@ class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerate
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureApplicationInsightsParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -1387,9 +1270,9 @@ class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerate
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameterPatch
         """
-        super(AzureApplicationInsightsDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureApplicationInsightsDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureApplicationInsights'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class DataFeedSourceGenerated(msrest.serialization.Model):
@@ -1536,31 +1419,6 @@ class DataFeedSourceGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1630,34 +1488,34 @@ class DataFeedSourceGenerated(msrest.serialization.Model):
         super(DataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_id = None
-        self.data_feed_name = data_feed_name
-        self.data_feed_description = data_feed_description
-        self.granularity_name = granularity_name
-        self.granularity_amount = granularity_amount
-        self.metrics = metrics
-        self.dimension = dimension
-        self.timestamp_column = timestamp_column
-        self.data_start_from = data_start_from
-        self.start_offset_in_seconds = start_offset_in_seconds
-        self.max_concurrency = max_concurrency
-        self.min_retry_interval_in_seconds = min_retry_interval_in_seconds
-        self.stop_retry_after_in_seconds = stop_retry_after_in_seconds
-        self.need_rollup = need_rollup
-        self.roll_up_method = roll_up_method
-        self.roll_up_columns = roll_up_columns
-        self.all_up_identification = all_up_identification
-        self.fill_missing_point_type = fill_missing_point_type
-        self.fill_missing_point_value = fill_missing_point_value
-        self.view_mode = view_mode
-        self.admins = admins
-        self.viewers = viewers
+        self.data_feed_name = kwargs['data_feed_name']
+        self.data_feed_description = kwargs.get('data_feed_description', "")
+        self.granularity_name = kwargs['granularity_name']
+        self.granularity_amount = kwargs.get('granularity_amount', None)
+        self.metrics = kwargs['metrics']
+        self.dimension = kwargs.get('dimension', None)
+        self.timestamp_column = kwargs.get('timestamp_column', "")
+        self.data_start_from = kwargs['data_start_from']
+        self.start_offset_in_seconds = kwargs.get('start_offset_in_seconds', 0)
+        self.max_concurrency = kwargs.get('max_concurrency', -1)
+        self.min_retry_interval_in_seconds = kwargs.get('min_retry_interval_in_seconds', -1)
+        self.stop_retry_after_in_seconds = kwargs.get('stop_retry_after_in_seconds', -1)
+        self.need_rollup = kwargs.get('need_rollup', None)
+        self.roll_up_method = kwargs.get('roll_up_method', None)
+        self.roll_up_columns = kwargs.get('roll_up_columns', None)
+        self.all_up_identification = kwargs.get('all_up_identification', None)
+        self.fill_missing_point_type = kwargs.get('fill_missing_point_type', None)
+        self.fill_missing_point_value = kwargs.get('fill_missing_point_value', None)
+        self.view_mode = kwargs.get('view_mode', None)
+        self.admins = kwargs.get('admins', None)
+        self.viewers = kwargs.get('viewers', None)
         self.is_admin = None
         self.creator = None
         self.status = None
         self.created_time = None
-        self.action_link_template = action_link_template
-        self.authentication_type = authentication_type
-        self.credential_id = credential_id
+        self.action_link_template = kwargs.get('action_link_template', "")
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.credential_id = kwargs.get('credential_id', None)
 
 
 class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -1802,32 +1660,6 @@ class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureApplicationInsightsParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1897,9 +1729,9 @@ class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedSourceGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameter
         """
-        super(AzureApplicationInsightsDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureApplicationInsightsDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureApplicationInsights'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
@@ -1930,11 +1762,6 @@ class AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        query: str,
-        azure_cloud: Optional[str] = None,
-        application_id: Optional[str] = None,
-        api_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1948,10 +1775,10 @@ class AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(AzureApplicationInsightsParameterGenerated, self).__init__(**kwargs)
-        self.azure_cloud = azure_cloud
-        self.application_id = application_id
-        self.api_key = api_key
-        self.query = query
+        self.azure_cloud = kwargs.get('azure_cloud', None)
+        self.application_id = kwargs.get('application_id', None)
+        self.api_key = kwargs.get('api_key', None)
+        self.query = kwargs['query']
 
 
 class AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model):
@@ -1976,11 +1803,6 @@ class AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model
 
     def __init__(
         self,
-        *,
-        azure_cloud: Optional[str] = None,
-        application_id: Optional[str] = None,
-        api_key: Optional[str] = None,
-        query: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1994,10 +1816,10 @@ class AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model
         :paramtype query: str
         """
         super(AzureApplicationInsightsParameterPatchGenerated, self).__init__(**kwargs)
-        self.azure_cloud = azure_cloud
-        self.application_id = application_id
-        self.api_key = api_key
-        self.query = query
+        self.azure_cloud = kwargs.get('azure_cloud', None)
+        self.application_id = kwargs.get('application_id', None)
+        self.api_key = kwargs.get('api_key', None)
+        self.query = kwargs.get('query', None)
 
 
 class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -2103,29 +1925,6 @@ class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureBlobParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -2187,9 +1986,9 @@ class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameterPatch
         """
-        super(AzureBlobDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureBlobDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureBlob'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureBlobDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -2333,32 +2132,6 @@ class AzureBlobDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureBlobParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2427,9 +2200,9 @@ class AzureBlobDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameter
         """
-        super(AzureBlobDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureBlobDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureBlob'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureBlobParameterGenerated(msrest.serialization.Model):
@@ -2458,10 +2231,6 @@ class AzureBlobParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        container: str,
-        blob_template: str,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2473,9 +2242,9 @@ class AzureBlobParameterGenerated(msrest.serialization.Model):
         :paramtype blob_template: str
         """
         super(AzureBlobParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.container = container
-        self.blob_template = blob_template
+        self.connection_string = kwargs.get('connection_string', None)
+        self.container = kwargs['container']
+        self.blob_template = kwargs['blob_template']
 
 
 class AzureBlobParameterPatchGenerated(msrest.serialization.Model):
@@ -2497,10 +2266,6 @@ class AzureBlobParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        container: Optional[str] = None,
-        blob_template: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2512,9 +2277,9 @@ class AzureBlobParameterPatchGenerated(msrest.serialization.Model):
         :paramtype blob_template: str
         """
         super(AzureBlobParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.container = container
-        self.blob_template = blob_template
+        self.connection_string = kwargs.get('connection_string', None)
+        self.container = kwargs.get('container', None)
+        self.blob_template = kwargs.get('blob_template', None)
 
 
 class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -2620,29 +2385,6 @@ class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureCosmosDBParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -2704,9 +2446,9 @@ class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameterPatch
         """
-        super(AzureCosmosDBDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureCosmosDBDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureCosmosDB'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureCosmosDbDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -2850,32 +2592,6 @@ class AzureCosmosDbDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureCosmosDBParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2944,9 +2660,9 @@ class AzureCosmosDbDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameter
         """
-        super(AzureCosmosDbDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureCosmosDbDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureCosmosDB'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureCosmosDBParameterGenerated(msrest.serialization.Model):
@@ -2979,11 +2695,6 @@ class AzureCosmosDBParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        sql_query: str,
-        database: str,
-        collection_id: str,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2997,10 +2708,10 @@ class AzureCosmosDBParameterGenerated(msrest.serialization.Model):
         :paramtype collection_id: str
         """
         super(AzureCosmosDBParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.sql_query = sql_query
-        self.database = database
-        self.collection_id = collection_id
+        self.connection_string = kwargs.get('connection_string', None)
+        self.sql_query = kwargs['sql_query']
+        self.database = kwargs['database']
+        self.collection_id = kwargs['collection_id']
 
 
 class AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
@@ -3025,11 +2736,6 @@ class AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        sql_query: Optional[str] = None,
-        database: Optional[str] = None,
-        collection_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3043,10 +2749,10 @@ class AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
         :paramtype collection_id: str
         """
         super(AzureCosmosDBParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.sql_query = sql_query
-        self.database = database
-        self.collection_id = collection_id
+        self.connection_string = kwargs.get('connection_string', None)
+        self.sql_query = kwargs.get('sql_query', None)
+        self.database = kwargs.get('database', None)
+        self.collection_id = kwargs.get('collection_id', None)
 
 
 class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -3152,29 +2858,6 @@ class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["SQLSourceParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -3236,9 +2919,9 @@ class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(AzureDataExplorerDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureDataExplorerDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataExplorer'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureDataExplorerDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -3382,32 +3065,6 @@ class AzureDataExplorerDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "SqlSourceParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3476,9 +3133,9 @@ class AzureDataExplorerDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(AzureDataExplorerDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureDataExplorerDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataExplorer'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -3585,29 +3242,6 @@ class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerate
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureDataLakeStorageGen2ParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -3670,9 +3304,9 @@ class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerate
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2ParameterPatch
         """
-        super(AzureDataLakeStorageGen2DataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureDataLakeStorageGen2DataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -3817,32 +3451,6 @@ class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureDataLakeStorageGen2Parameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3912,9 +3520,9 @@ class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedSourceGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2Parameter
         """
-        super(AzureDataLakeStorageGen2DataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureDataLakeStorageGen2DataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
@@ -3950,12 +3558,6 @@ class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        file_system_name: str,
-        directory_template: str,
-        file_template: str,
-        account_name: Optional[str] = None,
-        account_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3971,11 +3573,11 @@ class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
         :paramtype file_template: str
         """
         super(AzureDataLakeStorageGen2ParameterGenerated, self).__init__(**kwargs)
-        self.account_name = account_name
-        self.account_key = account_key
-        self.file_system_name = file_system_name
-        self.directory_template = directory_template
-        self.file_template = file_template
+        self.account_name = kwargs.get('account_name', None)
+        self.account_key = kwargs.get('account_key', None)
+        self.file_system_name = kwargs['file_system_name']
+        self.directory_template = kwargs['directory_template']
+        self.file_template = kwargs['file_template']
 
 
 class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model):
@@ -4003,12 +3605,6 @@ class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model
 
     def __init__(
         self,
-        *,
-        account_name: Optional[str] = None,
-        account_key: Optional[str] = None,
-        file_system_name: Optional[str] = None,
-        directory_template: Optional[str] = None,
-        file_template: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4024,11 +3620,11 @@ class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model
         :paramtype file_template: str
         """
         super(AzureDataLakeStorageGen2ParameterPatchGenerated, self).__init__(**kwargs)
-        self.account_name = account_name
-        self.account_key = account_key
-        self.file_system_name = file_system_name
-        self.directory_template = directory_template
-        self.file_template = file_template
+        self.account_name = kwargs.get('account_name', None)
+        self.account_key = kwargs.get('account_key', None)
+        self.file_system_name = kwargs.get('file_system_name', None)
+        self.directory_template = kwargs.get('directory_template', None)
+        self.file_template = kwargs.get('file_template', None)
 
 
 class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -4134,29 +3730,6 @@ class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureEventHubsParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -4218,9 +3791,9 @@ class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameterPatch
         """
-        super(AzureEventHubsDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureEventHubsDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureEventHubs'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureEventHubsDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -4364,32 +3937,6 @@ class AzureEventHubsDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureEventHubsParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4458,9 +4005,9 @@ class AzureEventHubsDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameter
         """
-        super(AzureEventHubsDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureEventHubsDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureEventHubs'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureEventHubsParameterGenerated(msrest.serialization.Model):
@@ -4485,9 +4032,6 @@ class AzureEventHubsParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        consumer_group: str,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4497,8 +4041,8 @@ class AzureEventHubsParameterGenerated(msrest.serialization.Model):
         :paramtype consumer_group: str
         """
         super(AzureEventHubsParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.consumer_group = consumer_group
+        self.connection_string = kwargs.get('connection_string', None)
+        self.consumer_group = kwargs['consumer_group']
 
 
 class AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
@@ -4517,9 +4061,6 @@ class AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        consumer_group: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4529,8 +4070,8 @@ class AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
         :paramtype consumer_group: str
         """
         super(AzureEventHubsParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.consumer_group = consumer_group
+        self.connection_string = kwargs.get('connection_string', None)
+        self.consumer_group = kwargs.get('consumer_group', None)
 
 
 class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -4636,29 +4177,6 @@ class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureLogAnalyticsParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -4721,9 +4239,9 @@ class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameterPatch
         """
-        super(AzureLogAnalyticsDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureLogAnalyticsDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureLogAnalytics'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -4867,32 +4385,6 @@ class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureLogAnalyticsParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4961,9 +4453,9 @@ class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameter
         """
-        super(AzureLogAnalyticsDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureLogAnalyticsDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureLogAnalytics'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
@@ -5000,12 +4492,6 @@ class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        workspace_id: str,
-        query: str,
-        tenant_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5023,11 +4509,11 @@ class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(AzureLogAnalyticsParameterGenerated, self).__init__(**kwargs)
-        self.tenant_id = tenant_id
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.workspace_id = workspace_id
-        self.query = query
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.workspace_id = kwargs['workspace_id']
+        self.query = kwargs['query']
 
 
 class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
@@ -5056,12 +4542,6 @@ class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        tenant_id: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        workspace_id: Optional[str] = None,
-        query: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5078,11 +4558,11 @@ class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(AzureLogAnalyticsParameterPatchGenerated, self).__init__(**kwargs)
-        self.tenant_id = tenant_id
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.workspace_id = workspace_id
-        self.query = query
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.workspace_id = kwargs.get('workspace_id', None)
+        self.query = kwargs.get('query', None)
 
 
 class DataSourceCredentialPatchGenerated(msrest.serialization.Model):
@@ -5120,9 +4600,6 @@ class DataSourceCredentialPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5133,8 +4610,8 @@ class DataSourceCredentialPatchGenerated(msrest.serialization.Model):
         """
         super(DataSourceCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = None  # type: Optional[str]
-        self.data_source_credential_name = data_source_credential_name
-        self.data_source_credential_description = data_source_credential_description
+        self.data_source_credential_name = kwargs.get('data_source_credential_name', None)
+        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
 
 
 class AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
@@ -5168,10 +4645,6 @@ class AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatch
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["AzureSQLConnectionStringParamPatch"] = None,
         **kwargs
     ):
         """
@@ -5182,9 +4655,9 @@ class AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatch
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParamPatch
         """
-        super(AzureSQLConnectionStringCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(AzureSQLConnectionStringCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs.get('parameters', None)
 
 
 class AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
@@ -5200,8 +4673,6 @@ class AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5209,7 +4680,7 @@ class AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
         :paramtype connection_string: str
         """
         super(AzureSQLConnectionStringParamGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get('connection_string', None)
 
 
 class AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
@@ -5225,8 +4696,6 @@ class AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5234,7 +4703,7 @@ class AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
         :paramtype connection_string: str
         """
         super(AzureSQLConnectionStringParamPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
+        self.connection_string = kwargs.get('connection_string', None)
 
 
 class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -5340,29 +4809,6 @@ class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["AzureTableParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -5424,9 +4870,9 @@ class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameterPatch
         """
-        super(AzureTableDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureTableDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureTable'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class AzureTableDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -5570,32 +5016,6 @@ class AzureTableDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "AzureTableParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5664,9 +5084,9 @@ class AzureTableDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameter
         """
-        super(AzureTableDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(AzureTableDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'AzureTable'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class AzureTableParameterGenerated(msrest.serialization.Model):
@@ -5696,10 +5116,6 @@ class AzureTableParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        table: str,
-        query: str,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5712,9 +5128,9 @@ class AzureTableParameterGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(AzureTableParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.table = table
-        self.query = query
+        self.connection_string = kwargs.get('connection_string', None)
+        self.table = kwargs['table']
+        self.query = kwargs['query']
 
 
 class AzureTableParameterPatchGenerated(msrest.serialization.Model):
@@ -5737,10 +5153,6 @@ class AzureTableParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        table: Optional[str] = None,
-        query: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5753,9 +5165,9 @@ class AzureTableParameterPatchGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(AzureTableParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.table = table
-        self.query = query
+        self.connection_string = kwargs.get('connection_string', None)
+        self.table = kwargs.get('table', None)
+        self.query = kwargs.get('query', None)
 
 
 class ChangePointFeedbackGenerated(MetricFeedbackGenerated):
@@ -5813,12 +5225,6 @@ class ChangePointFeedbackGenerated(MetricFeedbackGenerated):
 
     def __init__(
         self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        value: "ChangePointFeedbackValue",
         **kwargs
     ):
         """
@@ -5834,11 +5240,11 @@ class ChangePointFeedbackGenerated(MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.ChangePointFeedbackValue
         """
-        super(ChangePointFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(ChangePointFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'ChangePoint'  # type: str
-        self.start_time = start_time
-        self.end_time = end_time
-        self.value = value
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.value = kwargs['value']
 
 
 class ChangePointFeedbackValueGenerated(msrest.serialization.Model):
@@ -5861,8 +5267,6 @@ class ChangePointFeedbackValueGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        change_point_value: Union[str, "ChangePointValue"],
         **kwargs
     ):
         """
@@ -5871,7 +5275,7 @@ class ChangePointFeedbackValueGenerated(msrest.serialization.Model):
         :paramtype change_point_value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
         """
         super(ChangePointFeedbackValueGenerated, self).__init__(**kwargs)
-        self.change_point_value = change_point_value
+        self.change_point_value = kwargs['change_point_value']
 
 
 class ChangeThresholdConditionGenerated(msrest.serialization.Model):
@@ -5913,12 +5317,6 @@ class ChangeThresholdConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        change_percentage: float,
-        shift_point: int,
-        within_range: bool,
-        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
-        suppress_condition: "SuppressCondition",
         **kwargs
     ):
         """
@@ -5938,11 +5336,11 @@ class ChangeThresholdConditionGenerated(msrest.serialization.Model):
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
         super(ChangeThresholdConditionGenerated, self).__init__(**kwargs)
-        self.change_percentage = change_percentage
-        self.shift_point = shift_point
-        self.within_range = within_range
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self.change_percentage = kwargs['change_percentage']
+        self.shift_point = kwargs['shift_point']
+        self.within_range = kwargs['within_range']
+        self.anomaly_detector_direction = kwargs['anomaly_detector_direction']
+        self.suppress_condition = kwargs['suppress_condition']
 
 
 class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
@@ -5974,12 +5372,6 @@ class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        change_percentage: Optional[float] = None,
-        shift_point: Optional[int] = None,
-        within_range: Optional[bool] = None,
-        anomaly_detector_direction: Optional[Union[str, "AnomalyDetectorDirection"]] = None,
-        suppress_condition: Optional["SuppressConditionPatch"] = None,
         **kwargs
     ):
         """
@@ -5999,11 +5391,11 @@ class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
         super(ChangeThresholdConditionPatchGenerated, self).__init__(**kwargs)
-        self.change_percentage = change_percentage
-        self.shift_point = shift_point
-        self.within_range = within_range
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self.change_percentage = kwargs.get('change_percentage', None)
+        self.shift_point = kwargs.get('shift_point', None)
+        self.within_range = kwargs.get('within_range', None)
+        self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
+        self.suppress_condition = kwargs.get('suppress_condition', None)
 
 
 class CommentFeedbackGenerated(MetricFeedbackGenerated):
@@ -6059,12 +5451,6 @@ class CommentFeedbackGenerated(MetricFeedbackGenerated):
 
     def __init__(
         self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
-        value: "CommentFeedbackValue",
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
@@ -6080,11 +5466,11 @@ class CommentFeedbackGenerated(MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.CommentFeedbackValue
         """
-        super(CommentFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(CommentFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'Comment'  # type: str
-        self.start_time = start_time
-        self.end_time = end_time
-        self.value = value
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.value = kwargs['value']
 
 
 class CommentFeedbackValueGenerated(msrest.serialization.Model):
@@ -6106,8 +5492,6 @@ class CommentFeedbackValueGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        comment_value: str,
         **kwargs
     ):
         """
@@ -6115,7 +5499,7 @@ class CommentFeedbackValueGenerated(msrest.serialization.Model):
         :paramtype comment_value: str
         """
         super(CommentFeedbackValueGenerated, self).__init__(**kwargs)
-        self.comment_value = comment_value
+        self.comment_value = kwargs['comment_value']
 
 
 class DataFeedDimensionGenerated(msrest.serialization.Model):
@@ -6141,9 +5525,6 @@ class DataFeedDimensionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension_name: str,
-        dimension_display_name: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6153,8 +5534,8 @@ class DataFeedDimensionGenerated(msrest.serialization.Model):
         :paramtype dimension_display_name: str
         """
         super(DataFeedDimensionGenerated, self).__init__(**kwargs)
-        self.dimension_name = dimension_name
-        self.dimension_display_name = dimension_display_name
+        self.dimension_name = kwargs['dimension_name']
+        self.dimension_display_name = kwargs.get('dimension_display_name', None)
 
 
 class DataFeedIngestionProgressGenerated(msrest.serialization.Model):
@@ -6293,10 +5674,6 @@ class DataFeedMetricGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        metric_name: str,
-        metric_display_name: Optional[str] = None,
-        metric_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6309,9 +5686,9 @@ class DataFeedMetricGenerated(msrest.serialization.Model):
         """
         super(DataFeedMetricGenerated, self).__init__(**kwargs)
         self.metric_id = None
-        self.metric_name = metric_name
-        self.metric_display_name = metric_display_name
-        self.metric_description = metric_description
+        self.metric_name = kwargs['metric_name']
+        self.metric_display_name = kwargs.get('metric_display_name', None)
+        self.metric_description = kwargs.get('metric_description', None)
 
 
 class DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
@@ -6345,10 +5722,6 @@ class DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatchGen
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["DataLakeGen2SharedKeyParamPatch"] = None,
         **kwargs
     ):
         """
@@ -6359,9 +5732,9 @@ class DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatchGen
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParamPatch
         """
-        super(DataLakeGen2SharedKeyCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(DataLakeGen2SharedKeyCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs.get('parameters', None)
 
 
 class DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
@@ -6377,8 +5750,6 @@ class DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        account_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6386,7 +5757,7 @@ class DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
         :paramtype account_key: str
         """
         super(DataLakeGen2SharedKeyParamGenerated, self).__init__(**kwargs)
-        self.account_key = account_key
+        self.account_key = kwargs.get('account_key', None)
 
 
 class DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
@@ -6402,8 +5773,6 @@ class DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        account_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6411,7 +5780,7 @@ class DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
         :paramtype account_key: str
         """
         super(DataLakeGen2SharedKeyParamPatchGenerated, self).__init__(**kwargs)
-        self.account_key = account_key
+        self.account_key = kwargs.get('account_key', None)
 
 
 class DataPointAnomalyGenerated(msrest.serialization.Model):
@@ -6473,10 +5842,6 @@ class DataPointAnomalyGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        timestamp: datetime.datetime,
-        dimension: Dict[str, str],
-        property: "AnomalyProperty",
         **kwargs
     ):
         """
@@ -6491,11 +5856,11 @@ class DataPointAnomalyGenerated(msrest.serialization.Model):
         self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
-        self.timestamp = timestamp
+        self.timestamp = kwargs['timestamp']
         self.created_time = None
         self.modified_time = None
-        self.dimension = dimension
-        self.property = property
+        self.dimension = kwargs['dimension']
+        self.property = kwargs['property']
 
 
 class DataSourceCredentialGenerated(msrest.serialization.Model):
@@ -6540,9 +5905,6 @@ class DataSourceCredentialGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: str,
-        data_source_credential_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6554,8 +5916,8 @@ class DataSourceCredentialGenerated(msrest.serialization.Model):
         super(DataSourceCredentialGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = None  # type: Optional[str]
         self.data_source_credential_id = None
-        self.data_source_credential_name = data_source_credential_name
-        self.data_source_credential_description = data_source_credential_description
+        self.data_source_credential_name = kwargs['data_source_credential_name']
+        self.data_source_credential_description = kwargs.get('data_source_credential_description', None)
 
 
 class DataSourceCredentialListGenerated(msrest.serialization.Model):
@@ -6629,10 +5991,6 @@ class DatasourceDataLakeGen2SharedKeyGenerated(DataSourceCredentialGenerated):
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: str,
-        parameters: "DataLakeGen2SharedKeyParam",
-        data_source_credential_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6643,9 +6001,9 @@ class DatasourceDataLakeGen2SharedKeyGenerated(DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParam
         """
-        super(DatasourceDataLakeGen2SharedKeyGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(DatasourceDataLakeGen2SharedKeyGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs['parameters']
 
 
 class DatasourceServicePrincipalGenerated(DataSourceCredentialGenerated):
@@ -6687,10 +6045,6 @@ class DatasourceServicePrincipalGenerated(DataSourceCredentialGenerated):
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: str,
-        parameters: "ServicePrincipalParam",
-        data_source_credential_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6701,9 +6055,9 @@ class DatasourceServicePrincipalGenerated(DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParam
         """
-        super(DatasourceServicePrincipalGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(DatasourceServicePrincipalGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs['parameters']
 
 
 class DatasourceServicePrincipalInKeyVaultGenerated(DataSourceCredentialGenerated):
@@ -6745,10 +6099,6 @@ class DatasourceServicePrincipalInKeyVaultGenerated(DataSourceCredentialGenerate
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: str,
-        parameters: "ServicePrincipalInKVParam",
-        data_source_credential_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6759,9 +6109,9 @@ class DatasourceServicePrincipalInKeyVaultGenerated(DataSourceCredentialGenerate
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParam
         """
-        super(DatasourceServicePrincipalInKeyVaultGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(DatasourceServicePrincipalInKeyVaultGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs['parameters']
 
 
 class DatasourceSqlConnectionStringGenerated(DataSourceCredentialGenerated):
@@ -6803,10 +6153,6 @@ class DatasourceSqlConnectionStringGenerated(DataSourceCredentialGenerated):
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: str,
-        parameters: "AzureSQLConnectionStringParam",
-        data_source_credential_description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6817,9 +6163,9 @@ class DatasourceSqlConnectionStringGenerated(DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParam
         """
-        super(DatasourceSqlConnectionStringGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(DatasourceSqlConnectionStringGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs['parameters']
 
 
 class DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
@@ -6842,9 +6188,6 @@ class DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension_filter: Optional[List["DimensionGroupIdentity"]] = None,
-        severity_filter: Optional["SeverityFilterCondition"] = None,
         **kwargs
     ):
         """
@@ -6854,8 +6197,8 @@ class DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
         :paramtype severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
         """
         super(DetectionAnomalyFilterConditionGenerated, self).__init__(**kwargs)
-        self.dimension_filter = dimension_filter
-        self.severity_filter = severity_filter
+        self.dimension_filter = kwargs.get('dimension_filter', None)
+        self.severity_filter = kwargs.get('severity_filter', None)
 
 
 class DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
@@ -6884,10 +6227,6 @@ class DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        filter: Optional["DetectionAnomalyFilterCondition"] = None,
         **kwargs
     ):
         """
@@ -6899,9 +6238,9 @@ class DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         """
         super(DetectionAnomalyResultQueryGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.filter = filter
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.filter = kwargs.get('filter', None)
 
 
 class DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
@@ -6921,8 +6260,6 @@ class DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension_filter: Optional[List["DimensionGroupIdentity"]] = None,
         **kwargs
     ):
         """
@@ -6930,7 +6267,7 @@ class DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
         :paramtype dimension_filter: list[~azure.ai.metricsadvisor.models.DimensionGroupIdentity]
         """
         super(DetectionIncidentFilterConditionGenerated, self).__init__(**kwargs)
-        self.dimension_filter = dimension_filter
+        self.dimension_filter = kwargs.get('dimension_filter', None)
 
 
 class DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
@@ -6959,10 +6296,6 @@ class DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        filter: Optional["DetectionIncidentFilterCondition"] = None,
         **kwargs
     ):
         """
@@ -6974,9 +6307,9 @@ class DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         """
         super(DetectionIncidentResultQueryGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.filter = filter
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.filter = kwargs.get('filter', None)
 
 
 class DetectionSeriesQueryGenerated(msrest.serialization.Model):
@@ -7009,10 +6342,6 @@ class DetectionSeriesQueryGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        series: List["SeriesIdentity"],
         **kwargs
     ):
         """
@@ -7027,9 +6356,9 @@ class DetectionSeriesQueryGenerated(msrest.serialization.Model):
         :paramtype series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
         """
         super(DetectionSeriesQueryGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.series = series
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.series = kwargs['series']
 
 
 class DimensionGroupIdentityGenerated(msrest.serialization.Model):
@@ -7051,8 +6380,6 @@ class DimensionGroupIdentityGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension: Dict[str, str],
         **kwargs
     ):
         """
@@ -7060,7 +6387,7 @@ class DimensionGroupIdentityGenerated(msrest.serialization.Model):
         :paramtype dimension: dict[str, str]
         """
         super(DimensionGroupIdentityGenerated, self).__init__(**kwargs)
-        self.dimension = dimension
+        self.dimension = kwargs['dimension']
 
 
 class HookInfoPatchGenerated(msrest.serialization.Model):
@@ -7103,11 +6430,6 @@ class HookInfoPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        hook_name: Optional[str] = None,
-        description: Optional[str] = None,
-        external_link: Optional[str] = None,
-        admins: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -7122,10 +6444,10 @@ class HookInfoPatchGenerated(msrest.serialization.Model):
         """
         super(HookInfoPatchGenerated, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
-        self.hook_name = hook_name
-        self.description = description
-        self.external_link = external_link
-        self.admins = admins
+        self.hook_name = kwargs.get('hook_name', None)
+        self.description = kwargs.get('description', None)
+        self.external_link = kwargs.get('external_link', None)
+        self.admins = kwargs.get('admins', None)
 
 
 class EmailHookInfoPatchGenerated(HookInfoPatchGenerated):
@@ -7164,12 +6486,6 @@ class EmailHookInfoPatchGenerated(HookInfoPatchGenerated):
 
     def __init__(
         self,
-        *,
-        hook_name: Optional[str] = None,
-        description: Optional[str] = None,
-        external_link: Optional[str] = None,
-        admins: Optional[List[str]] = None,
-        hook_parameter: Optional["EmailHookParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -7184,9 +6500,9 @@ class EmailHookInfoPatchGenerated(HookInfoPatchGenerated):
         :keyword hook_parameter:
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
         """
-        super(EmailHookInfoPatchGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
+        super(EmailHookInfoPatchGenerated, self).__init__(**kwargs)
         self.hook_type = 'Email'  # type: str
-        self.hook_parameter = hook_parameter
+        self.hook_parameter = kwargs.get('hook_parameter', None)
 
 
 class EmailHookParameterGenerated(msrest.serialization.Model):
@@ -7208,8 +6524,6 @@ class EmailHookParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        to_list: List[str],
         **kwargs
     ):
         """
@@ -7217,7 +6531,7 @@ class EmailHookParameterGenerated(msrest.serialization.Model):
         :paramtype to_list: list[str]
         """
         super(EmailHookParameterGenerated, self).__init__(**kwargs)
-        self.to_list = to_list
+        self.to_list = kwargs['to_list']
 
 
 class EmailHookParameterPatchGenerated(msrest.serialization.Model):
@@ -7237,8 +6551,6 @@ class EmailHookParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        to_list: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -7246,7 +6558,7 @@ class EmailHookParameterPatchGenerated(msrest.serialization.Model):
         :paramtype to_list: list[str]
         """
         super(EmailHookParameterPatchGenerated, self).__init__(**kwargs)
-        self.to_list = to_list
+        self.to_list = kwargs.get('to_list', None)
 
 
 class NotificationHookGenerated(msrest.serialization.Model):
@@ -7296,11 +6608,6 @@ class NotificationHookGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        hook_name: str,
-        description: Optional[str] = "",
-        external_link: Optional[str] = "",
-        admins: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -7316,10 +6623,10 @@ class NotificationHookGenerated(msrest.serialization.Model):
         super(NotificationHookGenerated, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
         self.hook_id = None
-        self.hook_name = hook_name
-        self.description = description
-        self.external_link = external_link
-        self.admins = admins
+        self.hook_name = kwargs['hook_name']
+        self.description = kwargs.get('description', "")
+        self.external_link = kwargs.get('external_link', "")
+        self.admins = kwargs.get('admins', None)
 
 
 class EmailNotificationHookGenerated(NotificationHookGenerated):
@@ -7366,12 +6673,6 @@ class EmailNotificationHookGenerated(NotificationHookGenerated):
 
     def __init__(
         self,
-        *,
-        hook_name: str,
-        hook_parameter: "EmailHookParameter",
-        description: Optional[str] = "",
-        external_link: Optional[str] = "",
-        admins: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -7386,9 +6687,9 @@ class EmailNotificationHookGenerated(NotificationHookGenerated):
         :keyword hook_parameter: Required.
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
         """
-        super(EmailNotificationHookGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
+        super(EmailNotificationHookGenerated, self).__init__(**kwargs)
         self.hook_type = 'Email'  # type: str
-        self.hook_parameter = hook_parameter
+        self.hook_parameter = kwargs['hook_parameter']
 
 
 class EnrichmentStatusGenerated(msrest.serialization.Model):
@@ -7483,9 +6784,6 @@ class EnrichmentStatusQueryOptionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
         **kwargs
     ):
         """
@@ -7495,8 +6793,8 @@ class EnrichmentStatusQueryOptionGenerated(msrest.serialization.Model):
         :paramtype end_time: ~datetime.datetime
         """
         super(EnrichmentStatusQueryOptionGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
 
 
 class ErrorCodeGenerated(msrest.serialization.Model):
@@ -7515,9 +6813,6 @@ class ErrorCodeGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        message: Optional[str] = None,
-        code: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7527,8 +6822,8 @@ class ErrorCodeGenerated(msrest.serialization.Model):
         :paramtype code: str
         """
         super(ErrorCodeGenerated, self).__init__(**kwargs)
-        self.message = message
-        self.code = code
+        self.message = kwargs.get('message', None)
+        self.code = kwargs.get('code', None)
 
 
 class FeedbackDimensionFilterGenerated(msrest.serialization.Model):
@@ -7550,8 +6845,6 @@ class FeedbackDimensionFilterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension: Dict[str, str],
         **kwargs
     ):
         """
@@ -7559,7 +6852,7 @@ class FeedbackDimensionFilterGenerated(msrest.serialization.Model):
         :paramtype dimension: dict[str, str]
         """
         super(FeedbackDimensionFilterGenerated, self).__init__(**kwargs)
-        self.dimension = dimension
+        self.dimension = kwargs['dimension']
 
 
 class HardThresholdConditionGenerated(msrest.serialization.Model):
@@ -7597,11 +6890,6 @@ class HardThresholdConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
-        suppress_condition: "SuppressCondition",
-        lower_bound: Optional[float] = None,
-        upper_bound: Optional[float] = None,
         **kwargs
     ):
         """
@@ -7621,10 +6909,10 @@ class HardThresholdConditionGenerated(msrest.serialization.Model):
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
         super(HardThresholdConditionGenerated, self).__init__(**kwargs)
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self.lower_bound = kwargs.get('lower_bound', None)
+        self.upper_bound = kwargs.get('upper_bound', None)
+        self.anomaly_detector_direction = kwargs['anomaly_detector_direction']
+        self.suppress_condition = kwargs['suppress_condition']
 
 
 class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
@@ -7655,11 +6943,6 @@ class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        lower_bound: Optional[float] = None,
-        upper_bound: Optional[float] = None,
-        anomaly_detector_direction: Optional[Union[str, "AnomalyDetectorDirection"]] = None,
-        suppress_condition: Optional["SuppressConditionPatch"] = None,
         **kwargs
     ):
         """
@@ -7679,10 +6962,10 @@ class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
         super(HardThresholdConditionPatchGenerated, self).__init__(**kwargs)
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self.lower_bound = kwargs.get('lower_bound', None)
+        self.upper_bound = kwargs.get('upper_bound', None)
+        self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
+        self.suppress_condition = kwargs.get('suppress_condition', None)
 
 
 class HookListGenerated(msrest.serialization.Model):
@@ -7753,8 +7036,6 @@ class IncidentPropertyGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        max_severity: Union[str, "AnomalySeverity"],
         **kwargs
     ):
         """
@@ -7763,7 +7044,7 @@ class IncidentPropertyGenerated(msrest.serialization.Model):
         :paramtype max_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
         super(IncidentPropertyGenerated, self).__init__(**kwargs)
-        self.max_severity = max_severity
+        self.max_severity = kwargs['max_severity']
         self.incident_status = None
         self.value_of_root_node = None
         self.expected_value_of_root_node = None
@@ -7794,8 +7075,6 @@ class IncidentResultListGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["AnomalyIncident"],
         **kwargs
     ):
         """
@@ -7804,7 +7083,7 @@ class IncidentResultListGenerated(msrest.serialization.Model):
         """
         super(IncidentResultListGenerated, self).__init__(**kwargs)
         self.next_link = None
-        self.value = value
+        self.value = kwargs['value']
 
 
 class IncidentRootCauseGenerated(msrest.serialization.Model):
@@ -7838,11 +7117,6 @@ class IncidentRootCauseGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        root_cause: "DimensionGroupIdentity",
-        path: List[str],
-        score: float,
-        description: str,
         **kwargs
     ):
         """
@@ -7856,10 +7130,10 @@ class IncidentRootCauseGenerated(msrest.serialization.Model):
         :paramtype description: str
         """
         super(IncidentRootCauseGenerated, self).__init__(**kwargs)
-        self.root_cause = root_cause
-        self.path = path
-        self.score = score
-        self.description = description
+        self.root_cause = kwargs['root_cause']
+        self.path = kwargs['path']
+        self.score = kwargs['score']
+        self.description = kwargs['description']
 
 
 class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -7965,29 +7239,6 @@ class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["InfluxDBParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -8049,9 +7300,9 @@ class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameterPatch
         """
-        super(InfluxDBDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(InfluxDBDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'InfluxDB'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class InfluxDbDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -8195,32 +7446,6 @@ class InfluxDbDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "InfluxDBParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -8289,9 +7514,9 @@ class InfluxDbDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameter
         """
-        super(InfluxDbDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(InfluxDbDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'InfluxDB'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class InfluxDBParameterGenerated(msrest.serialization.Model):
@@ -8325,12 +7550,6 @@ class InfluxDBParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        query: str,
-        connection_string: Optional[str] = None,
-        database: Optional[str] = None,
-        user_name: Optional[str] = None,
-        password: Optional[str] = None,
         **kwargs
     ):
         """
@@ -8346,11 +7565,11 @@ class InfluxDBParameterGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(InfluxDBParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.database = database
-        self.user_name = user_name
-        self.password = password
-        self.query = query
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.query = kwargs['query']
 
 
 class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
@@ -8378,12 +7597,6 @@ class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        database: Optional[str] = None,
-        user_name: Optional[str] = None,
-        password: Optional[str] = None,
-        query: Optional[str] = None,
         **kwargs
     ):
         """
@@ -8399,11 +7612,11 @@ class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(InfluxDBParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.database = database
-        self.user_name = user_name
-        self.password = password
-        self.query = query
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.query = kwargs.get('query', None)
 
 
 class IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
@@ -8429,9 +7642,6 @@ class IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
         **kwargs
     ):
         """
@@ -8441,8 +7651,8 @@ class IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
         :paramtype end_time: ~datetime.datetime
         """
         super(IngestionProgressResetOptionsGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
 
 
 class IngestionStatusListGenerated(msrest.serialization.Model):
@@ -8500,9 +7710,6 @@ class IngestionStatusQueryOptionsGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
         **kwargs
     ):
         """
@@ -8512,8 +7719,8 @@ class IngestionStatusQueryOptionsGenerated(msrest.serialization.Model):
         :paramtype end_time: ~datetime.datetime
         """
         super(IngestionStatusQueryOptionsGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
 
 
 class MetricAlertConfigurationGenerated(msrest.serialization.Model):
@@ -8558,15 +7765,6 @@ class MetricAlertConfigurationGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        anomaly_detection_configuration_id: str,
-        anomaly_scope_type: Union[str, "MetricAnomalyAlertScopeType"],
-        negation_operation: Optional[bool] = False,
-        dimension_anomaly_scope: Optional["DimensionGroupIdentity"] = None,
-        top_n_anomaly_scope: Optional["TopNGroupScope"] = None,
-        severity_filter: Optional["SeverityCondition"] = None,
-        snooze_filter: Optional["MetricAnomalyAlertSnoozeCondition"] = None,
-        value_filter: Optional["ValueCondition"] = None,
         **kwargs
     ):
         """
@@ -8591,14 +7789,14 @@ class MetricAlertConfigurationGenerated(msrest.serialization.Model):
         :paramtype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
         """
         super(MetricAlertConfigurationGenerated, self).__init__(**kwargs)
-        self.anomaly_detection_configuration_id = anomaly_detection_configuration_id
-        self.anomaly_scope_type = anomaly_scope_type
-        self.negation_operation = negation_operation
-        self.dimension_anomaly_scope = dimension_anomaly_scope
-        self.top_n_anomaly_scope = top_n_anomaly_scope
-        self.severity_filter = severity_filter
-        self.snooze_filter = snooze_filter
-        self.value_filter = value_filter
+        self.anomaly_detection_configuration_id = kwargs['anomaly_detection_configuration_id']
+        self.anomaly_scope_type = kwargs['anomaly_scope_type']
+        self.negation_operation = kwargs.get('negation_operation', False)
+        self.dimension_anomaly_scope = kwargs.get('dimension_anomaly_scope', None)
+        self.top_n_anomaly_scope = kwargs.get('top_n_anomaly_scope', None)
+        self.severity_filter = kwargs.get('severity_filter', None)
+        self.snooze_filter = kwargs.get('snooze_filter', None)
+        self.value_filter = kwargs.get('value_filter', None)
 
 
 class MetricAnomalyAlertSnoozeConditionGenerated(msrest.serialization.Model):
@@ -8628,10 +7826,6 @@ class MetricAnomalyAlertSnoozeConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        auto_snooze: int,
-        snooze_scope: Union[str, "SnoozeScope"],
-        only_for_successive: bool,
         **kwargs
     ):
         """
@@ -8643,9 +7837,9 @@ class MetricAnomalyAlertSnoozeConditionGenerated(msrest.serialization.Model):
         :paramtype only_for_successive: bool
         """
         super(MetricAnomalyAlertSnoozeConditionGenerated, self).__init__(**kwargs)
-        self.auto_snooze = auto_snooze
-        self.snooze_scope = snooze_scope
-        self.only_for_successive = only_for_successive
+        self.auto_snooze = kwargs['auto_snooze']
+        self.snooze_scope = kwargs['snooze_scope']
+        self.only_for_successive = kwargs['only_for_successive']
 
 
 class MetricDataItemGenerated(msrest.serialization.Model):
@@ -8674,8 +7868,6 @@ class MetricDataItemGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: Optional["MetricSeriesDefinition"] = None,
         **kwargs
     ):
         """
@@ -8683,7 +7875,7 @@ class MetricDataItemGenerated(msrest.serialization.Model):
         :paramtype id: ~azure.ai.metricsadvisor.models.MetricSeriesDefinition
         """
         super(MetricDataItemGenerated, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
         self.timestamp_list = None
         self.value_list = None
 
@@ -8744,10 +7936,6 @@ class MetricDataQueryOptionsGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        series: List[Dict[str, str]],
         **kwargs
     ):
         """
@@ -8761,9 +7949,9 @@ class MetricDataQueryOptionsGenerated(msrest.serialization.Model):
         :paramtype series: list[dict[str, str]]
         """
         super(MetricDataQueryOptionsGenerated, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.series = series
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.series = kwargs['series']
 
 
 class MetricDetectionConditionGenerated(msrest.serialization.Model):
@@ -8792,11 +7980,6 @@ class MetricDetectionConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        condition_operator: Optional[Union[str, "AnomalyDetectionConfigurationLogicType"]] = None,
-        smart_detection_condition: Optional["SmartDetectionCondition"] = None,
-        hard_threshold_condition: Optional["HardThresholdCondition"] = None,
-        change_threshold_condition: Optional["ChangeThresholdCondition"] = None,
         **kwargs
     ):
         """
@@ -8814,10 +7997,10 @@ class MetricDetectionConditionGenerated(msrest.serialization.Model):
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
         super(MetricDetectionConditionGenerated, self).__init__(**kwargs)
-        self.condition_operator = condition_operator
-        self.smart_detection_condition = smart_detection_condition
-        self.hard_threshold_condition = hard_threshold_condition
-        self.change_threshold_condition = change_threshold_condition
+        self.condition_operator = kwargs.get('condition_operator', None)
+        self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
+        self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
+        self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
 
 
 class MetricDimensionListGenerated(msrest.serialization.Model):
@@ -8874,9 +8057,6 @@ class MetricDimensionQueryOptionsGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension_name: str,
-        dimension_value_filter: Optional[str] = None,
         **kwargs
     ):
         """
@@ -8886,8 +8066,8 @@ class MetricDimensionQueryOptionsGenerated(msrest.serialization.Model):
         :paramtype dimension_value_filter: str
         """
         super(MetricDimensionQueryOptionsGenerated, self).__init__(**kwargs)
-        self.dimension_name = dimension_name
-        self.dimension_value_filter = dimension_value_filter
+        self.dimension_name = kwargs['dimension_name']
+        self.dimension_value_filter = kwargs.get('dimension_value_filter', None)
 
 
 class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
@@ -8937,15 +8117,6 @@ class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        series: "SeriesIdentity",
-        timestamp_list: List[datetime.datetime],
-        value_list: List[float],
-        is_anomaly_list: List[bool],
-        period_list: List[int],
-        expected_value_list: List[float],
-        lower_boundary_list: List[float],
-        upper_boundary_list: List[float],
         **kwargs
     ):
         """
@@ -8969,14 +8140,14 @@ class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
         :paramtype upper_boundary_list: list[float]
         """
         super(MetricEnrichedSeriesDataGenerated, self).__init__(**kwargs)
-        self.series = series
-        self.timestamp_list = timestamp_list
-        self.value_list = value_list
-        self.is_anomaly_list = is_anomaly_list
-        self.period_list = period_list
-        self.expected_value_list = expected_value_list
-        self.lower_boundary_list = lower_boundary_list
-        self.upper_boundary_list = upper_boundary_list
+        self.series = kwargs['series']
+        self.timestamp_list = kwargs['timestamp_list']
+        self.value_list = kwargs['value_list']
+        self.is_anomaly_list = kwargs['is_anomaly_list']
+        self.period_list = kwargs['period_list']
+        self.expected_value_list = kwargs['expected_value_list']
+        self.lower_boundary_list = kwargs['lower_boundary_list']
+        self.upper_boundary_list = kwargs['upper_boundary_list']
 
 
 class MetricFeedbackFilterGenerated(msrest.serialization.Model):
@@ -9015,13 +8186,6 @@ class MetricFeedbackFilterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        metric_id: str,
-        dimension_filter: Optional["FeedbackDimensionFilter"] = None,
-        feedback_type: Optional[Union[str, "FeedbackType"]] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        time_mode: Optional[Union[str, "FeedbackQueryTimeMode"]] = None,
         **kwargs
     ):
         """
@@ -9041,12 +8205,12 @@ class MetricFeedbackFilterGenerated(msrest.serialization.Model):
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         """
         super(MetricFeedbackFilterGenerated, self).__init__(**kwargs)
-        self.metric_id = metric_id
-        self.dimension_filter = dimension_filter
-        self.feedback_type = feedback_type
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_mode = time_mode
+        self.metric_id = kwargs['metric_id']
+        self.dimension_filter = kwargs.get('dimension_filter', None)
+        self.feedback_type = kwargs.get('feedback_type', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_mode = kwargs.get('time_mode', None)
 
 
 class MetricFeedbackListGenerated(msrest.serialization.Model):
@@ -9148,12 +8312,6 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        group: "DimensionGroupIdentity",
-        condition_operator: Optional[Union[str, "AnomalyDetectionConfigurationLogicType"]] = None,
-        smart_detection_condition: Optional["SmartDetectionCondition"] = None,
-        hard_threshold_condition: Optional["HardThresholdCondition"] = None,
-        change_threshold_condition: Optional["ChangeThresholdCondition"] = None,
         **kwargs
     ):
         """
@@ -9173,11 +8331,11 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
         super(MetricSeriesGroupDetectionConditionGenerated, self).__init__(**kwargs)
-        self.group = group
-        self.condition_operator = condition_operator
-        self.smart_detection_condition = smart_detection_condition
-        self.hard_threshold_condition = hard_threshold_condition
-        self.change_threshold_condition = change_threshold_condition
+        self.group = kwargs['group']
+        self.condition_operator = kwargs.get('condition_operator', None)
+        self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
+        self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
+        self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
 
 
 class MetricSeriesListGenerated(msrest.serialization.Model):
@@ -9235,9 +8393,6 @@ class MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        active_since: datetime.datetime,
-        dimension_filter: Optional[Dict[str, List[str]]] = None,
         **kwargs
     ):
         """
@@ -9248,8 +8403,8 @@ class MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
         :paramtype dimension_filter: dict[str, list[str]]
         """
         super(MetricSeriesQueryOptionsGenerated, self).__init__(**kwargs)
-        self.active_since = active_since
-        self.dimension_filter = dimension_filter
+        self.active_since = kwargs['active_since']
+        self.dimension_filter = kwargs.get('dimension_filter', None)
 
 
 class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
@@ -9287,12 +8442,6 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        series: "SeriesIdentity",
-        condition_operator: Optional[Union[str, "AnomalyDetectionConfigurationLogicType"]] = None,
-        smart_detection_condition: Optional["SmartDetectionCondition"] = None,
-        hard_threshold_condition: Optional["HardThresholdCondition"] = None,
-        change_threshold_condition: Optional["ChangeThresholdCondition"] = None,
         **kwargs
     ):
         """
@@ -9312,11 +8461,11 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
         super(MetricSingleSeriesDetectionConditionGenerated, self).__init__(**kwargs)
-        self.series = series
-        self.condition_operator = condition_operator
-        self.smart_detection_condition = smart_detection_condition
-        self.hard_threshold_condition = hard_threshold_condition
-        self.change_threshold_condition = change_threshold_condition
+        self.series = kwargs['series']
+        self.condition_operator = kwargs.get('condition_operator', None)
+        self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
+        self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
+        self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
 
 
 class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -9422,29 +8571,6 @@ class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["MongoDBParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -9506,9 +8632,9 @@ class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameterPatch
         """
-        super(MongoDBDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(MongoDBDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MongoDB'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class MongoDbDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -9652,32 +8778,6 @@ class MongoDbDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "MongoDBParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -9746,9 +8846,9 @@ class MongoDbDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameter
         """
-        super(MongoDbDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(MongoDbDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MongoDB'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class MongoDBParameterGenerated(msrest.serialization.Model):
@@ -9776,10 +8876,6 @@ class MongoDBParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        command: str,
-        connection_string: Optional[str] = None,
-        database: Optional[str] = None,
         **kwargs
     ):
         """
@@ -9791,9 +8887,9 @@ class MongoDBParameterGenerated(msrest.serialization.Model):
         :paramtype command: str
         """
         super(MongoDBParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.database = database
-        self.command = command
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.command = kwargs['command']
 
 
 class MongoDBParameterPatchGenerated(msrest.serialization.Model):
@@ -9815,10 +8911,6 @@ class MongoDBParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        database: Optional[str] = None,
-        command: Optional[str] = None,
         **kwargs
     ):
         """
@@ -9830,9 +8922,9 @@ class MongoDBParameterPatchGenerated(msrest.serialization.Model):
         :paramtype command: str
         """
         super(MongoDBParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.database = database
-        self.command = command
+        self.connection_string = kwargs.get('connection_string', None)
+        self.database = kwargs.get('database', None)
+        self.command = kwargs.get('command', None)
 
 
 class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -9938,29 +9030,6 @@ class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["SQLSourceParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -10022,9 +9091,9 @@ class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(MySqlDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(MySqlDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MySql'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class MySqlDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -10168,32 +9237,6 @@ class MySqlDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "SqlSourceParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -10262,9 +9305,9 @@ class MySqlDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(MySqlDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(MySqlDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'MySql'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class PeriodFeedbackGenerated(MetricFeedbackGenerated):
@@ -10313,10 +9356,6 @@ class PeriodFeedbackGenerated(MetricFeedbackGenerated):
 
     def __init__(
         self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
-        value: "PeriodFeedbackValue",
         **kwargs
     ):
         """
@@ -10327,9 +9366,9 @@ class PeriodFeedbackGenerated(MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.PeriodFeedbackValue
         """
-        super(PeriodFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(PeriodFeedbackGenerated, self).__init__(**kwargs)
         self.feedback_type = 'Period'  # type: str
-        self.value = value
+        self.value = kwargs['value']
 
 
 class PeriodFeedbackValueGenerated(msrest.serialization.Model):
@@ -10357,9 +9396,6 @@ class PeriodFeedbackValueGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        period_type: Union[str, "PeriodType"],
-        period_value: int,
         **kwargs
     ):
         """
@@ -10371,8 +9407,8 @@ class PeriodFeedbackValueGenerated(msrest.serialization.Model):
         :paramtype period_value: int
         """
         super(PeriodFeedbackValueGenerated, self).__init__(**kwargs)
-        self.period_type = period_type
-        self.period_value = period_value
+        self.period_type = kwargs['period_type']
+        self.period_value = kwargs['period_value']
 
 
 class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -10478,29 +9514,6 @@ class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["SQLSourceParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -10562,9 +9575,9 @@ class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(PostgreSqlDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(PostgreSqlDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'PostgreSql'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class PostgreSqlDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -10708,32 +9721,6 @@ class PostgreSqlDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "SqlSourceParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -10802,9 +9789,9 @@ class PostgreSqlDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(PostgreSqlDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(PostgreSqlDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'PostgreSql'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class RootCauseListGenerated(msrest.serialization.Model):
@@ -10826,8 +9813,6 @@ class RootCauseListGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["IncidentRootCause"],
         **kwargs
     ):
         """
@@ -10835,7 +9820,7 @@ class RootCauseListGenerated(msrest.serialization.Model):
         :paramtype value: list[~azure.ai.metricsadvisor.models.IncidentRootCause]
         """
         super(RootCauseListGenerated, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
 
 
 class SeriesIdentityGenerated(msrest.serialization.Model):
@@ -10857,8 +9842,6 @@ class SeriesIdentityGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        dimension: Dict[str, str],
         **kwargs
     ):
         """
@@ -10866,7 +9849,7 @@ class SeriesIdentityGenerated(msrest.serialization.Model):
         :paramtype dimension: dict[str, str]
         """
         super(SeriesIdentityGenerated, self).__init__(**kwargs)
-        self.dimension = dimension
+        self.dimension = kwargs['dimension']
 
 
 class SeriesResultListGenerated(msrest.serialization.Model):
@@ -10888,8 +9871,6 @@ class SeriesResultListGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["MetricEnrichedSeriesData"],
         **kwargs
     ):
         """
@@ -10897,7 +9878,7 @@ class SeriesResultListGenerated(msrest.serialization.Model):
         :paramtype value: list[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
         """
         super(SeriesResultListGenerated, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
 
 
 class ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
@@ -10931,10 +9912,6 @@ class ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatchGenerate
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["ServicePrincipalParamPatch"] = None,
         **kwargs
     ):
         """
@@ -10945,9 +9922,9 @@ class ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatchGenerate
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParamPatch
         """
-        super(ServicePrincipalCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(ServicePrincipalCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipal'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs.get('parameters', None)
 
 
 class ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
@@ -10981,10 +9958,6 @@ class ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatchGene
 
     def __init__(
         self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["ServicePrincipalInKVParamPatch"] = None,
         **kwargs
     ):
         """
@@ -10995,9 +9968,9 @@ class ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatchGene
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParamPatch
         """
-        super(ServicePrincipalInKVCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
+        super(ServicePrincipalInKVCredentialPatchGenerated, self).__init__(**kwargs)
         self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
-        self.parameters = parameters
+        self.parameters = kwargs.get('parameters', None)
 
 
 class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
@@ -11040,13 +10013,6 @@ class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        key_vault_endpoint: str,
-        key_vault_client_id: str,
-        service_principal_id_name_in_kv: str,
-        service_principal_secret_name_in_kv: str,
-        tenant_id: str,
-        key_vault_client_secret: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11067,12 +10033,12 @@ class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
         :paramtype tenant_id: str
         """
         super(ServicePrincipalInKVParamGenerated, self).__init__(**kwargs)
-        self.key_vault_endpoint = key_vault_endpoint
-        self.key_vault_client_id = key_vault_client_id
-        self.key_vault_client_secret = key_vault_client_secret
-        self.service_principal_id_name_in_kv = service_principal_id_name_in_kv
-        self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
-        self.tenant_id = tenant_id
+        self.key_vault_endpoint = kwargs['key_vault_endpoint']
+        self.key_vault_client_id = kwargs['key_vault_client_id']
+        self.key_vault_client_secret = kwargs.get('key_vault_client_secret', None)
+        self.service_principal_id_name_in_kv = kwargs['service_principal_id_name_in_kv']
+        self.service_principal_secret_name_in_kv = kwargs['service_principal_secret_name_in_kv']
+        self.tenant_id = kwargs['tenant_id']
 
 
 class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
@@ -11105,13 +10071,6 @@ class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        key_vault_endpoint: Optional[str] = None,
-        key_vault_client_id: Optional[str] = None,
-        key_vault_client_secret: Optional[str] = None,
-        service_principal_id_name_in_kv: Optional[str] = None,
-        service_principal_secret_name_in_kv: Optional[str] = None,
-        tenant_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11131,12 +10090,12 @@ class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
         :paramtype tenant_id: str
         """
         super(ServicePrincipalInKVParamPatchGenerated, self).__init__(**kwargs)
-        self.key_vault_endpoint = key_vault_endpoint
-        self.key_vault_client_id = key_vault_client_id
-        self.key_vault_client_secret = key_vault_client_secret
-        self.service_principal_id_name_in_kv = service_principal_id_name_in_kv
-        self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
-        self.tenant_id = tenant_id
+        self.key_vault_endpoint = kwargs.get('key_vault_endpoint', None)
+        self.key_vault_client_id = kwargs.get('key_vault_client_id', None)
+        self.key_vault_client_secret = kwargs.get('key_vault_client_secret', None)
+        self.service_principal_id_name_in_kv = kwargs.get('service_principal_id_name_in_kv', None)
+        self.service_principal_secret_name_in_kv = kwargs.get('service_principal_secret_name_in_kv', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
 
 
 class ServicePrincipalParamGenerated(msrest.serialization.Model):
@@ -11165,10 +10124,6 @@ class ServicePrincipalParamGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        client_id: str,
-        tenant_id: str,
-        client_secret: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11180,9 +10135,9 @@ class ServicePrincipalParamGenerated(msrest.serialization.Model):
         :paramtype tenant_id: str
         """
         super(ServicePrincipalParamGenerated, self).__init__(**kwargs)
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.tenant_id = tenant_id
+        self.client_id = kwargs['client_id']
+        self.client_secret = kwargs.get('client_secret', None)
+        self.tenant_id = kwargs['tenant_id']
 
 
 class ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
@@ -11204,10 +10159,6 @@ class ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        tenant_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11219,9 +10170,9 @@ class ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
         :paramtype tenant_id: str
         """
         super(ServicePrincipalParamPatchGenerated, self).__init__(**kwargs)
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.tenant_id = tenant_id
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
 
 
 class SeverityConditionGenerated(msrest.serialization.Model):
@@ -11249,9 +10200,6 @@ class SeverityConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        min_alert_severity: Union[str, "AnomalySeverity"],
-        max_alert_severity: Union[str, "AnomalySeverity"],
         **kwargs
     ):
         """
@@ -11263,8 +10211,8 @@ class SeverityConditionGenerated(msrest.serialization.Model):
         :paramtype max_alert_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
         super(SeverityConditionGenerated, self).__init__(**kwargs)
-        self.min_alert_severity = min_alert_severity
-        self.max_alert_severity = max_alert_severity
+        self.min_alert_severity = kwargs['min_alert_severity']
+        self.max_alert_severity = kwargs['max_alert_severity']
 
 
 class SeverityFilterConditionGenerated(msrest.serialization.Model):
@@ -11290,9 +10238,6 @@ class SeverityFilterConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        min: Union[str, "AnomalySeverity"],
-        max: Union[str, "AnomalySeverity"],
         **kwargs
     ):
         """
@@ -11302,8 +10247,8 @@ class SeverityFilterConditionGenerated(msrest.serialization.Model):
         :paramtype max: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
         super(SeverityFilterConditionGenerated, self).__init__(**kwargs)
-        self.min = min
-        self.max = max
+        self.min = kwargs['min']
+        self.max = kwargs['max']
 
 
 class SmartDetectionConditionGenerated(msrest.serialization.Model):
@@ -11335,10 +10280,6 @@ class SmartDetectionConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        sensitivity: float,
-        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
-        suppress_condition: "SuppressCondition",
         **kwargs
     ):
         """
@@ -11352,9 +10293,9 @@ class SmartDetectionConditionGenerated(msrest.serialization.Model):
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
         super(SmartDetectionConditionGenerated, self).__init__(**kwargs)
-        self.sensitivity = sensitivity
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self.sensitivity = kwargs['sensitivity']
+        self.anomaly_detector_direction = kwargs['anomaly_detector_direction']
+        self.suppress_condition = kwargs['suppress_condition']
 
 
 class SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
@@ -11378,10 +10319,6 @@ class SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        sensitivity: Optional[float] = None,
-        anomaly_detector_direction: Optional[Union[str, "AnomalyDetectorDirection"]] = None,
-        suppress_condition: Optional["SuppressConditionPatch"] = None,
         **kwargs
     ):
         """
@@ -11395,9 +10332,9 @@ class SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
         super(SmartDetectionConditionPatchGenerated, self).__init__(**kwargs)
-        self.sensitivity = sensitivity
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self.sensitivity = kwargs.get('sensitivity', None)
+        self.anomaly_detector_direction = kwargs.get('anomaly_detector_direction', None)
+        self.suppress_condition = kwargs.get('suppress_condition', None)
 
 
 class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
@@ -11503,29 +10440,6 @@ class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        data_source_parameter: Optional["SQLSourceParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -11587,9 +10501,9 @@ class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(SQLServerDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(SQLServerDataFeedPatchGenerated, self).__init__(**kwargs)
         self.data_source_type = 'SqlServer'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs.get('data_source_parameter', None)
 
 
 class SqlServerDataFeedSourceGenerated(DataFeedSourceGenerated):
@@ -11733,32 +10647,6 @@ class SqlServerDataFeedSourceGenerated(DataFeedSourceGenerated):
 
     def __init__(
         self,
-        *,
-        data_feed_name: str,
-        granularity_name: Union[str, "Granularity"],
-        metrics: List["DataFeedMetric"],
-        data_start_from: datetime.datetime,
-        data_source_parameter: "SqlSourceParameter",
-        data_feed_description: Optional[str] = "",
-        granularity_amount: Optional[int] = None,
-        dimension: Optional[List["DataFeedDimension"]] = None,
-        timestamp_column: Optional[str] = "",
-        start_offset_in_seconds: Optional[int] = 0,
-        max_concurrency: Optional[int] = -1,
-        min_retry_interval_in_seconds: Optional[int] = -1,
-        stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11827,9 +10715,9 @@ class SqlServerDataFeedSourceGenerated(DataFeedSourceGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(SqlServerDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
+        super(SqlServerDataFeedSourceGenerated, self).__init__(**kwargs)
         self.data_source_type = 'SqlServer'  # type: str
-        self.data_source_parameter = data_source_parameter
+        self.data_source_parameter = kwargs['data_source_parameter']
 
 
 class SqlSourceParameterGenerated(msrest.serialization.Model):
@@ -11854,9 +10742,6 @@ class SqlSourceParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        query: str,
-        connection_string: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11866,8 +10751,8 @@ class SqlSourceParameterGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(SqlSourceParameterGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.query = query
+        self.connection_string = kwargs.get('connection_string', None)
+        self.query = kwargs['query']
 
 
 class SQLSourceParameterPatchGenerated(msrest.serialization.Model):
@@ -11886,9 +10771,6 @@ class SQLSourceParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        connection_string: Optional[str] = None,
-        query: Optional[str] = None,
         **kwargs
     ):
         """
@@ -11898,8 +10780,8 @@ class SQLSourceParameterPatchGenerated(msrest.serialization.Model):
         :paramtype query: str
         """
         super(SQLSourceParameterPatchGenerated, self).__init__(**kwargs)
-        self.connection_string = connection_string
-        self.query = query
+        self.connection_string = kwargs.get('connection_string', None)
+        self.query = kwargs.get('query', None)
 
 
 class SuppressConditionGenerated(msrest.serialization.Model):
@@ -11925,9 +10807,6 @@ class SuppressConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        min_number: int,
-        min_ratio: float,
         **kwargs
     ):
         """
@@ -11937,8 +10816,8 @@ class SuppressConditionGenerated(msrest.serialization.Model):
         :paramtype min_ratio: float
         """
         super(SuppressConditionGenerated, self).__init__(**kwargs)
-        self.min_number = min_number
-        self.min_ratio = min_ratio
+        self.min_number = kwargs['min_number']
+        self.min_ratio = kwargs['min_ratio']
 
 
 class SuppressConditionPatchGenerated(msrest.serialization.Model):
@@ -11957,9 +10836,6 @@ class SuppressConditionPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        min_number: Optional[int] = None,
-        min_ratio: Optional[float] = None,
         **kwargs
     ):
         """
@@ -11969,8 +10845,8 @@ class SuppressConditionPatchGenerated(msrest.serialization.Model):
         :paramtype min_ratio: float
         """
         super(SuppressConditionPatchGenerated, self).__init__(**kwargs)
-        self.min_number = min_number
-        self.min_ratio = min_ratio
+        self.min_number = kwargs.get('min_number', None)
+        self.min_ratio = kwargs.get('min_ratio', None)
 
 
 class TopNGroupScopeGenerated(msrest.serialization.Model):
@@ -12002,10 +10878,6 @@ class TopNGroupScopeGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        top: int,
-        period: int,
-        min_top_count: int,
         **kwargs
     ):
         """
@@ -12019,9 +10891,9 @@ class TopNGroupScopeGenerated(msrest.serialization.Model):
         :paramtype min_top_count: int
         """
         super(TopNGroupScopeGenerated, self).__init__(**kwargs)
-        self.top = top
-        self.period = period
-        self.min_top_count = min_top_count
+        self.top = kwargs['top']
+        self.period = kwargs['period']
+        self.min_top_count = kwargs['min_top_count']
 
 
 class UsageStatsGenerated(msrest.serialization.Model):
@@ -12114,13 +10986,6 @@ class ValueConditionGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        direction: Union[str, "Direction"],
-        lower: Optional[float] = None,
-        upper: Optional[float] = None,
-        type: Optional[Union[str, "ValueType"]] = "Value",
-        metric_id: Optional[str] = None,
-        trigger_for_missing: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -12147,12 +11012,12 @@ class ValueConditionGenerated(msrest.serialization.Model):
         :paramtype trigger_for_missing: bool
         """
         super(ValueConditionGenerated, self).__init__(**kwargs)
-        self.lower = lower
-        self.upper = upper
-        self.direction = direction
-        self.type = type
-        self.metric_id = metric_id
-        self.trigger_for_missing = trigger_for_missing
+        self.lower = kwargs.get('lower', None)
+        self.upper = kwargs.get('upper', None)
+        self.direction = kwargs['direction']
+        self.type = kwargs.get('type', "Value")
+        self.metric_id = kwargs.get('metric_id', None)
+        self.trigger_for_missing = kwargs.get('trigger_for_missing', None)
 
 
 class WebhookHookInfoPatchGenerated(HookInfoPatchGenerated):
@@ -12191,12 +11056,6 @@ class WebhookHookInfoPatchGenerated(HookInfoPatchGenerated):
 
     def __init__(
         self,
-        *,
-        hook_name: Optional[str] = None,
-        description: Optional[str] = None,
-        external_link: Optional[str] = None,
-        admins: Optional[List[str]] = None,
-        hook_parameter: Optional["WebhookHookParameterPatch"] = None,
         **kwargs
     ):
         """
@@ -12211,9 +11070,9 @@ class WebhookHookInfoPatchGenerated(HookInfoPatchGenerated):
         :keyword hook_parameter:
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
         """
-        super(WebhookHookInfoPatchGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
+        super(WebhookHookInfoPatchGenerated, self).__init__(**kwargs)
         self.hook_type = 'Webhook'  # type: str
-        self.hook_parameter = hook_parameter
+        self.hook_parameter = kwargs.get('hook_parameter', None)
 
 
 class WebhookHookParameterGenerated(msrest.serialization.Model):
@@ -12253,13 +11112,6 @@ class WebhookHookParameterGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        endpoint: str,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
-        certificate_key: Optional[str] = None,
-        certificate_password: Optional[str] = None,
         **kwargs
     ):
         """
@@ -12280,12 +11132,12 @@ class WebhookHookParameterGenerated(msrest.serialization.Model):
         :paramtype certificate_password: str
         """
         super(WebhookHookParameterGenerated, self).__init__(**kwargs)
-        self.endpoint = endpoint
-        self.username = username
-        self.password = password
-        self.headers = headers
-        self.certificate_key = certificate_key
-        self.certificate_password = certificate_password
+        self.endpoint = kwargs['endpoint']
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.headers = kwargs.get('headers', None)
+        self.certificate_key = kwargs.get('certificate_key', None)
+        self.certificate_password = kwargs.get('certificate_password', None)
 
 
 class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
@@ -12317,13 +11169,6 @@ class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        endpoint: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
-        certificate_key: Optional[str] = None,
-        certificate_password: Optional[str] = None,
         **kwargs
     ):
         """
@@ -12342,12 +11187,12 @@ class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
         :paramtype certificate_password: str
         """
         super(WebhookHookParameterPatchGenerated, self).__init__(**kwargs)
-        self.endpoint = endpoint
-        self.username = username
-        self.password = password
-        self.headers = headers
-        self.certificate_key = certificate_key
-        self.certificate_password = certificate_password
+        self.endpoint = kwargs.get('endpoint', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.headers = kwargs.get('headers', None)
+        self.certificate_key = kwargs.get('certificate_key', None)
+        self.certificate_password = kwargs.get('certificate_password', None)
 
 
 class WebNotificationHookGenerated(NotificationHookGenerated):
@@ -12394,12 +11239,6 @@ class WebNotificationHookGenerated(NotificationHookGenerated):
 
     def __init__(
         self,
-        *,
-        hook_name: str,
-        hook_parameter: "WebhookHookParameter",
-        description: Optional[str] = "",
-        external_link: Optional[str] = "",
-        admins: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -12414,9 +11253,9 @@ class WebNotificationHookGenerated(NotificationHookGenerated):
         :keyword hook_parameter: Required.
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
         """
-        super(WebNotificationHookGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
+        super(WebNotificationHookGenerated, self).__init__(**kwargs)
         self.hook_type = 'Webhook'  # type: str
-        self.hook_parameter = hook_parameter
+        self.hook_parameter = kwargs['hook_parameter']
 
 
 class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
@@ -12447,11 +11286,6 @@ class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        condition_operator: Optional[Union[str, "AnomalyDetectionConfigurationLogicType"]] = None,
-        smart_detection_condition: Optional["SmartDetectionConditionPatch"] = None,
-        hard_threshold_condition: Optional["HardThresholdConditionPatch"] = None,
-        change_threshold_condition: Optional["ChangeThresholdConditionPatch"] = None,
         **kwargs
     ):
         """
@@ -12472,7 +11306,7 @@ class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
          ~azure.ai.metricsadvisor.models.ChangeThresholdConditionPatch
         """
         super(WholeMetricConfigurationPatchGenerated, self).__init__(**kwargs)
-        self.condition_operator = condition_operator
-        self.smart_detection_condition = smart_detection_condition
-        self.hard_threshold_condition = hard_threshold_condition
-        self.change_threshold_condition = change_threshold_condition
+        self.condition_operator = kwargs.get('condition_operator', None)
+        self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
+        self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
+        self.change_threshold_condition = kwargs.get('change_threshold_condition', None)

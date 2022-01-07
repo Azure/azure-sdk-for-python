@@ -21,15 +21,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-    from ._patch import MetricsAdvisorClientCustomization
-else:
-    try:
-        from ._patch import MetricsAdvisorClientCustomization
-    except ImportError:
-        class MetricsAdvisorClientCustomization:
-            pass
-
-class _MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
+class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -94,6 +86,3 @@ class _MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
 
     async def __aexit__(self, *exc_details) -> None:
         await self._client.__aexit__(*exc_details)
-
-class MetricsAdvisorClient(MetricsAdvisorClientCustomization, _MetricsAdvisorClientGenerated):
-    pass

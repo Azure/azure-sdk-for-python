@@ -23,15 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-    from ._patch import MetricsAdvisorClientCustomization
-else:
-    try:
-        from ._patch import MetricsAdvisorClientCustomization
-    except ImportError:
-        class MetricsAdvisorClientCustomization(object):
-            pass
-
-class _MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
+class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -101,6 +93,3 @@ class _MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
     def __exit__(self, *exc_details):
         # type: (Any) -> None
         self._client.__exit__(*exc_details)
-
-class MetricsAdvisorClient(MetricsAdvisorClientCustomization, _MetricsAdvisorClientGenerated):
-    pass

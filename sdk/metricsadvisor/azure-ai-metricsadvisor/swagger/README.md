@@ -34,7 +34,6 @@ package-version: 1.0.0
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 want-operation-metadata: false
-this operation id -> this instead
 ```
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
@@ -397,4 +396,484 @@ directive:
     where: $["definitions"]["MetricAlertingConfiguration"]
     transform: >
       $["x-ms-client-name"] = "MetricAlertConfiguration";
+```
+
+### Severity -> AnomalySeverity
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["SeverityCondition"]["properties"]["minAlertSeverity"]["x-ms-enum"]["name"] = "AnomalySeverity";
+      $["SeverityCondition"]["properties"]["maxAlertSeverity"]["x-ms-enum"]["name"] = "AnomalySeverity";
+      $["AnomalyProperty"]["properties"]["anomalySeverity"]["x-ms-enum"]["name"] = "AnomalySeverity";
+      $["IncidentProperty"]["properties"]["maxSeverity"]["x-ms-enum"]["name"] = "AnomalySeverity";
+      $["SeverityFilterCondition"]["properties"]["min"]["x-ms-enum"]["name"] = "AnomalySeverity";
+      $["SeverityFilterCondition"]["properties"]["max"]["x-ms-enum"]["name"] = "AnomalySeverity";
+```
+
+### DataSourceType -> DatasourceType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataFeedDetail"]["properties"]["dataSourceType"]["x-ms-enum"]["name"] = "DatasourceType";
+      $["DataFeedDetailPatch"]["properties"]["dataSourceType"]["x-ms-enum"]["name"] = "DatasourceType";
+```
+
+### ViewMode -> DataFeedAccessMode
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataFeedDetail"]["properties"]["viewMode"]["x-ms-enum"]["name"] = "DataFeedAccessMode";
+      $["DataFeedDetailPatch"]["properties"]["viewMode"]["x-ms-enum"]["name"] = "DataFeedAccessMode";
+```
+
+### RollUpMethod -> DataFeedAutoRollupMethod
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataFeedDetail"]["properties"]["rollUpMethod"]["x-ms-enum"]["name"] = "DataFeedAutoRollupMethod";
+      $["DataFeedDetailPatch"]["properties"]["rollUpMethod"]["x-ms-enum"]["name"] = "DataFeedAutoRollupMethod";
+```
+
+### FillMissingPointType -> DatasourceMissingDataPointFillType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataFeedDetail"]["properties"]["fillMissingPointType"]["x-ms-enum"]["name"] = "DatasourceMissingDataPointFillType";
+      $["DataFeedDetailPatch"]["properties"]["fillMissingPointType"]["x-ms-enum"]["name"] = "DatasourceMissingDataPointFillType";
+```
+
+### IncidentStatus -> AnomalyIncidentStatus
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["IncidentProperty"]["properties"]["incidentStatus"]["x-ms-enum"]
+    transform: >
+      $["name"] = "AnomalyIncidentStatus";
+```
+
+### Granularity -> DataFeedGranularityType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/dataFeeds"]["get"]["parameters"][2]["x-ms-enum"]
+    transform: >
+      $["name"] = "DataFeedGranularityType";
+```
+
+### EntityStatus -> DataFeedStatus
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]
+    transform: >
+      $["/dataFeeds"]["get"]["parameters"][3]["x-ms-enum"]["name"] = "DataFeedStatus";
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataFeedDetail"]["properties"]["status"]["x-ms-enum"]["name"] = "DataFeedStatus";
+      $["DataFeedDetailPatch"]["properties"]["status"]["x-ms-enum"]["name"] = "DataFeedStatus";
+```
+
+### TimeMode -> AlertQueryTimeMode
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AlertingResultQuery"]["properties"]["timeMode"]["x-ms-enum"]
+    transform: >
+      $["name"] = "AlertQueryTimeMode";
+```
+
+### DataSourceCredentialType -> DatasourceCredentialType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataSourceCredential"]["properties"]["dataSourceCredentialType"]["x-ms-enum"]["name"] = "DatasourceCredentialType";
+      $["DataSourceCredentialPatch"]["properties"]["dataSourceCredentialType"]["x-ms-enum"]["name"] = "DatasourceCredentialType";
+```
+
+### AuthenticationTypeEnum -> DatasourceAuthenticationType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataFeedDetail"]["properties"]["authenticationType"]["x-ms-enum"]["name"] = "DatasourceAuthenticationType";
+      $["DataFeedDetailPatch"]["properties"]["authenticationType"]["x-ms-enum"]["name"] = "DatasourceAuthenticationType";
+```
+
+### MetricSeriesItem -> MetricSeriesDefinition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricSeriesItem"]
+    transform: >
+      $["x-ms-client-name"] = "MetricSeriesDefinition";
+```
+
+### IngestionStatus -> DataFeedIngestionStatus
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["IngestionStatus"]
+    transform: >
+      $["x-ms-client-name"] = "DataFeedIngestionStatus";
+```
+
+### AlertSnoozeCondition -> MetricAnomalyAlertSnoozeCondition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AlertSnoozeCondition"]
+    transform: >
+      $["x-ms-client-name"] = "MetricAnomalyAlertSnoozeCondition";
+```
+
+### AnomalyAlertingConfiguration -> AnomalyAlertConfiguration
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AnomalyAlertingConfiguration"]
+    transform: >
+      $["x-ms-client-name"] = "AnomalyAlertConfiguration";
+```
+
+### DataFeedDetail -> DataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["DataFeedDetail"]
+    transform: >
+      $["x-ms-client-name"] = "DataFeedSource";
+```
+
+### AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureApplicationInsightsDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureApplicationInsightsDataFeedSource";
+```
+
+### AzureBlobDataFeed -> AzureBlobDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureBlobDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureBlobDataFeedSource";
+```
+
+### AzureBlobDataFeed -> AzureCosmosDbDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureCosmosDBDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureCosmosDbDataFeedSource";
+```
+
+### AzureDataExplorerDataFeed -> AzureDataExplorerDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureDataExplorerDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureDataExplorerDataFeedSource";
+```
+
+### AzureTableDataFeed -> AzureTableDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureTableDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureTableDataFeedSource";
+```
+
+### AzureEventHubsDataFeed -> AzureEventHubsDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureEventHubsDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureEventHubsDataFeedSource";
+```
+
+### InfluxDBDataFeed -> InfluxDbDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["InfluxDBDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "InfluxDbDataFeedSource";
+```
+
+### MySqlDataFeed -> MySqlDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MySqlDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "MySqlDataFeedSource";
+```
+
+### PostgreSqlDataFeed -> PostgreSqlDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["PostgreSqlDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "PostgreSqlDataFeedSource";
+```
+
+### SQLServerDataFeed -> SqlServerDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["SQLServerDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "SqlServerDataFeedSource";
+```
+
+### AzureDataLakeStorageGen2DataFeed -> AzureDataLakeStorageGen2DataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureDataLakeStorageGen2DataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureDataLakeStorageGen2DataFeedSource";
+```
+
+### AzureLogAnalyticsDataFeed -> AzureLogAnalyticsDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureLogAnalyticsDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "AzureLogAnalyticsDataFeedSource";
+```
+
+### MongoDBDataFeed -> MongoDbDataFeedSource
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MongoDBDataFeed"]
+    transform: >
+      $["x-ms-client-name"] = "MongoDbDataFeedSource";
+```
+
+### HookInfo -> NotificationHook
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["HookInfo"]
+    transform: >
+      $["x-ms-client-name"] = "NotificationHook";
+```
+
+### EmailHookInfo -> EmailNotificationHook
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["EmailHookInfo"]
+    transform: >
+      $["x-ms-client-name"] = "EmailNotificationHook";
+```
+
+### WebhookHookInfo -> WebNotificationHook
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["WebhookHookInfo"]
+    transform: >
+      $["x-ms-client-name"] = "WebNotificationHook";
+```
+
+### WholeMetricConfiguration -> MetricDetectionCondition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["WholeMetricConfiguration"]
+    transform: >
+      $["x-ms-client-name"] = "MetricDetectionCondition";
+```
+
+### DimensionGroupConfiguration -> MetricSeriesGroupDetectionCondition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["DimensionGroupConfiguration"]
+    transform: >
+      $["x-ms-client-name"] = "MetricSeriesGroupDetectionCondition";
+```
+
+### SeriesConfiguration -> MetricSingleSeriesDetectionCondition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["SeriesConfiguration"]
+    transform: >
+      $["x-ms-client-name"] = "MetricSingleSeriesDetectionCondition";
+```
+
+### Metric -> DataFeedMetric
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["Metric"]
+    transform: >
+      $["x-ms-client-name"] = "DataFeedMetric";
+```
+
+### Dimension -> DataFeedDimension
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["Dimension"]
+    transform: >
+      $["x-ms-client-name"] = "DataFeedDimension";
+```
+
+### SeriesResult -> MetricEnrichedSeriesData
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["SeriesResult"]
+    transform: >
+      $["x-ms-client-name"] = "MetricEnrichedSeriesData";
+```
+
+### AlertResult -> AnomalyAlert
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AlertResult"]
+    transform: >
+      $["x-ms-client-name"] = "AnomalyAlert";
+```
+
+### AnomalyResult -> DataPointAnomaly
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AnomalyResult"]
+    transform: >
+      $["x-ms-client-name"] = "DataPointAnomaly";
+```
+
+### IncidentResult -> AnomalyIncident
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["IncidentResult"]
+    transform: >
+      $["x-ms-client-name"] = "AnomalyIncident";
+```
+
+### RootCause -> IncidentRootCause
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["RootCause"]
+    transform: >
+      $["x-ms-client-name"] = "IncidentRootCause";
+```
+
+### AzureSQLConnectionStringCredential -> DatasourceSqlConnectionString
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AzureSQLConnectionStringCredential"]
+    transform: >
+      $["x-ms-client-name"] = "DatasourceSqlConnectionString";
+```
+
+### DataLakeGen2SharedKeyCredential -> DatasourceDataLakeGen2SharedKey
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["DataLakeGen2SharedKeyCredential"]
+    transform: >
+      $["x-ms-client-name"] = "DatasourceDataLakeGen2SharedKey";
+```
+
+### ServicePrincipalCredential -> DatasourceDataLakeGen2SharedKey
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["ServicePrincipalCredential"]
+    transform: >
+      $["x-ms-client-name"] = "DatasourceServicePrincipal";
+```
+
+### ServicePrincipalInKVCredential -> DatasourceServicePrincipalInKeyVault
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["ServicePrincipalInKVCredential"]
+    transform: >
+      $["x-ms-client-name"] = "DatasourceServicePrincipalInKeyVault";
 ```
