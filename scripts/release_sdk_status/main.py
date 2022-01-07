@@ -11,6 +11,7 @@ from typing import List
 from github import Github
 from github.Repository import Repository
 import time
+from packaging.version import parse as Version
 
 SERVICE_TEST_PATH = {}
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
@@ -33,6 +34,7 @@ def get_track1_track2_versions(versions: List[str]) -> (List[str], List[str]):
     for version in versions:
         if 'b' in version:
             first_track2_version = version
+            my_print(f'get first track2 version in {versions}')
             break
 
     if first_track2_version:
@@ -40,6 +42,12 @@ def get_track1_track2_versions(versions: List[str]) -> (List[str], List[str]):
         return versions[0:idx], versions[idx:]
     else:
         return versions, []
+
+
+def version_sort(versions: List[str])->List[str]:
+    versions_package = [Version(version) for version in versions]
+    versions.sort()
+    return [str(version) for version in versions_package]
 
 
 class PyPIClient:
@@ -146,8 +154,7 @@ class PyPIClient:
                      f'track2 versions {str(track2_versions)}')
 
     def version_handler(self, version_list):
-        versions = list(reversed(version_list))
-        my_print(str(versions))  # ===
+        versions = version_sort(version_list)
         track1_versions, track2_versions = get_track1_track2_versions(versions)
         self.find_track1_ga_version(track1_versions)
         self.find_track2_ga_version(track2_versions)
