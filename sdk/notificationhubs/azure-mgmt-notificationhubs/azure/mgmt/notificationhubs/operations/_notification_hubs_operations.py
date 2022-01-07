@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,24 +20,22 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_check_notification_hub_availability_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -67,18 +65,22 @@ def build_check_notification_hub_availability_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_create_or_update_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -109,18 +111,22 @@ def build_create_or_update_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_patch_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -151,18 +157,19 @@ def build_patch_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}')
@@ -188,13 +195,12 @@ def build_delete_request(
 
 
 def build_get_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -226,13 +232,15 @@ def build_get_request(
 
 
 def build_debug_send_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -263,19 +271,23 @@ def build_debug_send_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_create_or_update_authorization_rule_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -307,19 +319,20 @@ def build_create_or_update_authorization_rule_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_authorization_rule_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}')
@@ -346,14 +359,13 @@ def build_delete_authorization_rule_request(
 
 
 def build_get_authorization_rule_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -386,12 +398,11 @@ def build_get_authorization_rule_request(
 
 
 def build_list_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -422,13 +433,12 @@ def build_list_request(
 
 
 def build_list_authorization_rules_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -460,14 +470,13 @@ def build_list_authorization_rules_request(
 
 
 def build_list_keys_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -500,14 +509,16 @@ def build_list_keys_request(
 
 
 def build_regenerate_keys_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    authorization_rule_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    authorization_rule_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     api_version = "2017-04-01"
@@ -539,18 +550,19 @@ def build_regenerate_keys_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_pns_credentials_request(
-    resource_group_name,  # type: str
-    namespace_name,  # type: str
-    notification_hub_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    resource_group_name: str,
+    namespace_name: str,
+    notification_hub_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = "2017-04-01"
     accept = "application/json"
     # Construct URL
@@ -580,7 +592,6 @@ def build_get_pns_credentials_request(
         **kwargs
     )
 
-# fmt: on
 class NotificationHubsOperations(object):
     """NotificationHubsOperations operations.
 
@@ -606,12 +617,11 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def check_notification_hub_availability(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        parameters,  # type: "_models.CheckAvailabilityParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CheckAvailabilityResult"
+        resource_group_name: str,
+        namespace_name: str,
+        parameters: "_models.CheckAvailabilityParameters",
+        **kwargs: Any
+    ) -> "_models.CheckAvailabilityResult":
         """Checks the availability of the given notificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -666,13 +676,12 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def create_or_update(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        parameters,  # type: "_models.NotificationHubCreateOrUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NotificationHubResource"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        parameters: "_models.NotificationHubCreateOrUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.NotificationHubResource":
         """Creates/Update a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -734,13 +743,12 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def patch(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        parameters=None,  # type: Optional["_models.NotificationHubPatchParameters"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NotificationHubResource"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        parameters: Optional["_models.NotificationHubPatchParameters"] = None,
+        **kwargs: Any
+    ) -> "_models.NotificationHubResource":
         """Patch a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -801,12 +809,11 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def delete(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        **kwargs: Any
+    ) -> None:
         """Deletes a notification hub associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -853,12 +860,11 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NotificationHubResource"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        **kwargs: Any
+    ) -> "_models.NotificationHubResource":
         """Lists the notification hubs associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -909,13 +915,12 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def debug_send(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        parameters=None,  # type: Any
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DebugSendResponse"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        parameters: Any = None,
+        **kwargs: Any
+    ) -> "_models.DebugSendResponse":
         """test send a push notification.
 
         :param resource_group_name: The name of the resource group.
@@ -976,14 +981,13 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def create_or_update_authorization_rule(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        authorization_rule_name,  # type: str
-        parameters,  # type: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        authorization_rule_name: str,
+        parameters: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Creates/Updates an authorization rule for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -1045,13 +1049,12 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def delete_authorization_rule(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        authorization_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        authorization_rule_name: str,
+        **kwargs: Any
+    ) -> None:
         """Deletes a notificationHub authorization rule.
 
         :param resource_group_name: The name of the resource group.
@@ -1101,13 +1104,12 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def get_authorization_rule(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        authorization_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        authorization_rule_name: str,
+        **kwargs: Any
+    ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Gets an authorization rule for a NotificationHub by name.
 
         :param resource_group_name: The name of the resource group.
@@ -1161,11 +1163,10 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def list(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.NotificationHubListResult"]
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs: Any
+    ) -> Iterable["_models.NotificationHubListResult"]:
         """Lists the notification hubs associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -1237,12 +1238,11 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def list_authorization_rules(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.SharedAccessAuthorizationRuleListResult"]
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        **kwargs: Any
+    ) -> Iterable["_models.SharedAccessAuthorizationRuleListResult"]:
         """Gets the authorization rules for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -1318,13 +1318,12 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def list_keys(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        authorization_rule_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ResourceListKeys"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        authorization_rule_name: str,
+        **kwargs: Any
+    ) -> "_models.ResourceListKeys":
         """Gets the Primary and Secondary ConnectionStrings to the NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -1379,14 +1378,13 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def regenerate_keys(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        authorization_rule_name,  # type: str
-        parameters,  # type: "_models.PolicykeyResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ResourceListKeys"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        authorization_rule_name: str,
+        parameters: "_models.PolicykeyResource",
+        **kwargs: Any
+    ) -> "_models.ResourceListKeys":
         """Regenerates the Primary/Secondary Keys to the NotificationHub Authorization Rule.
 
         :param resource_group_name: The name of the resource group.
@@ -1449,12 +1447,11 @@ class NotificationHubsOperations(object):
     @distributed_trace
     def get_pns_credentials(
         self,
-        resource_group_name,  # type: str
-        namespace_name,  # type: str
-        notification_hub_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PnsCredentialsResource"
+        resource_group_name: str,
+        namespace_name: str,
+        notification_hub_name: str,
+        **kwargs: Any
+    ) -> "_models.PnsCredentialsResource":
         """Lists the PNS Credentials associated with a notification hub .
 
         :param resource_group_name: The name of the resource group.
