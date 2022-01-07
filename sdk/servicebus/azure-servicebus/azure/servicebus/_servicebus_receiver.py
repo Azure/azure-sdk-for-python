@@ -784,7 +784,7 @@ class ServiceBusReceiver(
         ):
             return messages
 
-    def complete_message(self, message):
+    def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
 
         This removes the message from the queue.
@@ -808,7 +808,7 @@ class ServiceBusReceiver(
         """
         self._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
-    def abandon_message(self, message):
+    def abandon_message(self, message: ServiceBusReceivedMessage) -> None:
         """Abandon the message.
 
         This message will be returned to the queue and made available to be received again.
@@ -832,7 +832,7 @@ class ServiceBusReceiver(
         """
         self._settle_message_with_retry(message, MESSAGE_ABANDON)
 
-    def defer_message(self, message):
+    def defer_message(self, message: ServiceBusReceivedMessage) -> None:
         """Defers the message.
 
         This message will remain in the queue but must be requested
@@ -857,7 +857,12 @@ class ServiceBusReceiver(
         """
         self._settle_message_with_retry(message, MESSAGE_DEFER)
 
-    def dead_letter_message(self, message, reason=None, error_description=None):
+    def dead_letter_message(
+        self,
+        message: ServiceBusReceivedMessage,
+        reason: Optional[str]=None,
+        error_description: Optional[str]=None
+    ) -> None:
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be

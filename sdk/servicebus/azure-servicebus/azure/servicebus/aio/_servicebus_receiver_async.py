@@ -767,7 +767,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         ):
             return messages
 
-    async def complete_message(self, message):
+    async def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
 
         This removes the message from the queue.
@@ -791,7 +791,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         """
         await self._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
-    async def abandon_message(self, message):
+    async def abandon_message(self, message: ServiceBusReceivedMessage) -> None:
         """Abandon the message.
 
         This message will be returned to the queue and made available to be received again.
@@ -815,7 +815,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         """
         await self._settle_message_with_retry(message, MESSAGE_ABANDON)
 
-    async def defer_message(self, message):
+    async def defer_message(self, message: ServiceBusReceivedMessage) -> None:
         """Defers the message.
 
         This message will remain in the queue but must be requested
@@ -840,7 +840,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         """
         await self._settle_message_with_retry(message, MESSAGE_DEFER)
 
-    async def dead_letter_message(self, message, reason=None, error_description=None):
+    async def dead_letter_message(
+        self,
+        message: ServiceBusReceivedMessage,
+        reason: Optional[str]=None,
+        error_description: Optional[str]=None
+    ) -> None:
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be

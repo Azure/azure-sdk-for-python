@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Optional
 from ..management._models import DictMixin
 from .._base_handler import _parse_conn_str
 
@@ -13,22 +12,13 @@ class ServiceBusConnectionStringProperties(DictMixin):
     Properties of a connection string.
     """
 
-    def __init__(
-        self,
-        *,
-        fully_qualified_namespace: Optional[str] = None,
-        endpoint: Optional[str] = None,
-        entity_path: Optional[str] = None,
-        shared_access_signature: Optional[str] = None,
-        shared_access_key_name: Optional[str] = None,
-        shared_access_key: Optional[str] = None,
-    ) -> None:
-        self._fully_qualified_namespace = fully_qualified_namespace
-        self._endpoint = endpoint
-        self._entity_path = entity_path
-        self._shared_access_signature = shared_access_signature
-        self._shared_access_key_name = shared_access_key_name
-        self._shared_access_key = shared_access_key
+    def __init__(self, **kwargs):
+        self._fully_qualified_namespace = kwargs.pop("fully_qualified_namespace", None)
+        self._endpoint = kwargs.pop("endpoint", None)
+        self._entity_path = kwargs.pop("entity_path", None)
+        self._shared_access_signature = kwargs.pop("shared_access_signature", None)
+        self._shared_access_key_name = kwargs.pop("shared_access_key_name", None)
+        self._shared_access_key = kwargs.pop("shared_access_key", None)
 
     @property
     def fully_qualified_namespace(self):

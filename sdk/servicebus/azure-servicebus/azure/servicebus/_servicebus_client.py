@@ -94,7 +94,7 @@ class ServiceBusClient(object):
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: int = 120,
-        retry_mode: str = 'exponential',
+        retry_mode: str = "exponential",
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -167,7 +167,7 @@ class ServiceBusClient(object):
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: int = 120,
-        retry_mode: str = 'exponential',
+        retry_mode: str = "exponential",
         **kwargs: Any
     ) -> "ServiceBusClient":
         """
@@ -269,6 +269,7 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
+        session_id: Optional[str] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -329,7 +330,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        if sub_queue and kwargs.get("session_id"):
+        if sub_queue and session_id:
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful queue, "
@@ -362,6 +363,7 @@ class ServiceBusClient(object):
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            session_id=session_id,
             sub_queue=sub_queue,
             receive_mode=receive_mode,
             max_wait_time=max_wait_time,
@@ -419,6 +421,7 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
+        session_id: Optional[str] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -482,7 +485,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        if sub_queue and kwargs.get("session_id"):
+        if sub_queue and session_id:
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful subscription, "
@@ -510,6 +513,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                session_id=session_id,
                 sub_queue=sub_queue,
                 receive_mode=receive_mode,
                 max_wait_time=max_wait_time,
@@ -536,6 +540,7 @@ class ServiceBusClient(object):
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                session_id=session_id,
                 sub_queue=sub_queue,
                 receive_mode=receive_mode,
                 max_wait_time=max_wait_time,
