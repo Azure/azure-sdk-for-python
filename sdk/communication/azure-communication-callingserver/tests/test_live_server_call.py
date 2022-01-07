@@ -122,7 +122,6 @@ class ServerCallTest(CommunicationTestCase):
 
         CallingServerLiveTestUtils.validate_group_call_connection(call_connections)
         CallingServerLiveTestUtils.wait_for_operation_completion()
-
         try:            
             OperationContext = str(uuid.uuid4())
             participant_to_add = CallingServerLiveTestUtils.get_fixed_user_id()
@@ -162,7 +161,6 @@ class ServerCallTest(CommunicationTestCase):
                 GroupCallLocator(group_id),
                 CommunicationUserIdentifier(participant_to_add)
                 )
-
         except Exception as ex:
             print(str(ex))
         finally:

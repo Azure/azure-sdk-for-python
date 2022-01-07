@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 22 Jun 2021 20:47:32 GMT
+      - Wed, 05 Jan 2022 09:54:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -26,13 +26,13 @@ interactions:
         an internal error."}}'
     headers:
       api-supported-versions:
-      - '2021-03-07'
+      - 2021-03-07, 2022-01-11-preview
       content-type:
       - application/json
       date:
-      - Tue, 22 Jun 2021 20:47:32 GMT
+      - Wed, 05 Jan 2022 09:54:23 GMT
       ms-cv:
-      - wOfynf2/VkWvUO9h7jk2Sg.0
+      - a/vMj1ttkUKnPNaxI+tqSA.0
       request-context:
       - appId=
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 448ms
+      - 86ms
     status:
       code: 404
       message: Not Found

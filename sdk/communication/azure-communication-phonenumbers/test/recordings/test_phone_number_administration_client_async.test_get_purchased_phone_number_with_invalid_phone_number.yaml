@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 22 Jun 2021 20:47:37 GMT
+      - Wed, 05 Jan 2022 10:01:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -17,14 +17,14 @@ interactions:
       string: '{"error": {"code": "NotFound", "message": "Input phoneNumber +14255550123
         cannot be found.", "target": "phonenumber"}}'
     headers:
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview
       content-type: application/json
-      date: Tue, 22 Jun 2021 20:47:38 GMT
-      ms-cv: 7+dgmadKM06K8sXhBnyRew.0
+      date: Wed, 05 Jan 2022 10:01:22 GMT
+      ms-cv: AyhyAhsxIUat2UgI5mNGHA.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 632ms
+      x-processing-time: 259ms
     status:
       code: 404
       message: Not Found
