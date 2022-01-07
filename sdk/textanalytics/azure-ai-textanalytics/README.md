@@ -262,12 +262,12 @@ response = text_analytics_client.analyze_sentiment(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
-    print("Overall sentiment: {}".format(doc.sentiment))
-    print("Scores: positive={}; neutral={}; negative={} \n".format(
-        doc.confidence_scores.positive,
-        doc.confidence_scores.neutral,
-        doc.confidence_scores.negative,
-    ))
+    print(f"Overall sentiment: {doc.sentiment}")
+    print(
+        f"Scores: positive={doc.confidence_scores.positive}; "
+        f"neutral={doc.confidence_scores.neutral}; "
+        f"negative={doc.confidence_scores.negative}\n"
+    )
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[AnalyzeSentimentResult][analyze_sentiment_result], [DocumentError][document_error]]
@@ -300,10 +300,10 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Confidence Score: {}".format(entity.confidence_score))
-        print("...Offset: {}".format(entity.offset))
+        print(f"Entity: {entity.text}")
+        print(f"...Category: {entity.category}")
+        print(f"...Confidence Score: {entity.confidence_score}")
+        print(f"...Offset: {entity.offset}")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -336,14 +336,14 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: {}".format(entity.name))
-        print("...URL: {}".format(entity.url))
-        print("...Data Source: {}".format(entity.data_source))
+        print(f"Entity: {entity.name}")
+        print(f"...URL: {entity.url}")
+        print(f"...Data Source: {entity.data_source}")
         print("...Entity matches:")
         for match in entity.matches:
-            print("......Entity match text: {}".format(match.text))
-            print("......Confidence Score: {}".format(match.confidence_score))
-            print("......Offset: {}".format(match.offset))
+            print(f"......Entity match text: {match.text}")
+            print(f"......Confidence Score: {match.confidence_score}")
+            print(f"......Offset: {match.offset}")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
@@ -374,13 +374,13 @@ documents = [
 response = text_analytics_client.recognize_pii_entities(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
 for idx, doc in enumerate(result):
-    print("Document text: {}".format(documents[idx]))
-    print("Redacted document text: {}".format(doc.redacted_text))
+    print(f"Document text: {documents[idx]}")
+    print(f"Redacted document text: {doc.redacted_text}")
     for entity in doc.entities:
-        print("...Entity: {}".format(entity.text))
-        print("......Category: {}".format(entity.category))
-        print("......Confidence Score: {}".format(entity.confidence_score))
-        print("......Offset: {}".format(entity.offset))
+        print(f"...Entity: {entity.text}")
+        print(f"......Category: {entity.category}")
+        print(f"......Confidence Score: {entity.confidence_score}")
+        print(f"......Offset: {entity.offset}")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
@@ -447,9 +447,9 @@ response = text_analytics_client.detect_language(documents)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
-    print("Language detected: {}".format(doc.primary_language.name))
-    print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-    print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
+    print(f"Language detected: {doc.primary_language.name}")
+    print(f"ISO6391 name: {doc.primary_language.iso6391_name}")
+    print(f"Confidence score: {doc.primary_language.confidence_score}\n")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]
@@ -480,26 +480,26 @@ docs = [doc for doc in result if not doc.is_error]
 print("Results of Healthcare Entities Analysis:")
 for idx, doc in enumerate(docs):
     for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Normalized Text: {}".format(entity.normalized_text))
-        print("...Category: {}".format(entity.category))
-        print("...Subcategory: {}".format(entity.subcategory))
-        print("...Offset: {}".format(entity.offset))
-        print("...Confidence score: {}".format(entity.confidence_score))
+        print(f"Entity: {entity.text}")
+        print(f"...Normalized Text: {entity.normalized_text}")
+        print(f"...Category: {entity.category}")
+        print(f"...Subcategory: {entity.subcategory}")
+        print(f"...Offset: {entity.offset}")
+        print(f"...Confidence score: {entity.confidence_score}")
         if entity.data_sources is not None:
             print("...Data Sources:")
             for data_source in entity.data_sources:
-                print("......Entity ID: {}".format(data_source.entity_id))
-                print("......Name: {}".format(data_source.name))
+                print(f"......Entity ID: {data_source.entity_id}")
+                print(f"......Name: {data_source.name}")
         if entity.assertion is not None:
             print("...Assertion:")
-            print("......Conditionality: {}".format(entity.assertion.conditionality))
-            print("......Certainty: {}".format(entity.assertion.certainty))
-            print("......Association: {}".format(entity.assertion.association))
+            print(f"......Conditionality: {entity.assertion.conditionality}")
+            print(f"......Certainty: {entity.assertion.certainty}")
+            print(f"......Association: {entity.assertion.association}")
     for relation in doc.entity_relations:
-        print("Relation of type: {} has the following roles".format(relation.relation_type))
+        print(f"Relation of type: {relation.relation_type} has the following roles")
         for role in relation.roles:
-            print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
+            print(f"...Role '{role.name}' with entity '{role.entity.text}'")
     print("------------------------------------------")
 ```
 
@@ -547,31 +547,27 @@ poller = text_analytics_client.begin_analyze_actions(
 document_results = poller.result()
 for doc, action_results in zip(documents, document_results):
     recognize_entities_result, analyze_sentiment_result = action_results
-    print("\nDocument text: {}".format(doc))
+    print(f"\nDocument text: {doc}")
     print("...Results of Recognize Entities Action:")
     if recognize_entities_result.is_error:
-        print("......Is an error with code '{}' and message '{}'".format(
-            recognize_entities_result.code, recognize_entities_result.message
-        ))
+        print(f"......Is an error with code '{recognize_entities_result.code}' "
+              f"and message '{recognize_entities_result.message}'")
     else:
         for entity in recognize_entities_result.entities:
-            print("......Entity: {}".format(entity.text))
-            print(".........Category: {}".format(entity.category))
-            print(".........Confidence Score: {}".format(entity.confidence_score))
-            print(".........Offset: {}".format(entity.offset))
+            print(f"......Entity: {entity.text}")
+            print(f".........Category: {entity.category}")
+            print(f".........Confidence Score: {entity.confidence_score}")
+            print(f".........Offset: {entity.offset}")
 
     print("...Results of Analyze Sentiment action:")
     if analyze_sentiment_result.is_error:
-        print("......Is an error with code '{}' and message '{}'".format(
-            analyze_sentiment_result.code, analyze_sentiment_result.message
-        ))
+        print(f"......Is an error with code '{analyze_sentiment_result.code}' "
+              f"and message '{analyze_sentiment_result.message}'")
     else:
-        print("......Overall sentiment: {}".format(analyze_sentiment_result.sentiment))
-        print("......Scores: positive={}; neutral={}; negative={} \n".format(
-            analyze_sentiment_result.confidence_scores.positive,
-            analyze_sentiment_result.confidence_scores.neutral,
-            analyze_sentiment_result.confidence_scores.negative,
-        ))
+        print(f"......Overall sentiment: {analyze_sentiment_result.sentiment}")
+        print(f"......Scores: positive={analyze_sentiment_result.confidence_scores.positive}; "
+              f"neutral={analyze_sentiment_result.confidence_scores.neutral}; "
+              f"negative={analyze_sentiment_result.confidence_scores.negative}\n")
     print("------------------------------------------")
 ```
 
