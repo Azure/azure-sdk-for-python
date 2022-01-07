@@ -17,6 +17,9 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 
 ### Other Changes
 
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.0.
+
 ## 5.6.1 (2021-10-06)
 
 ### Bugs Fixed
