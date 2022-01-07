@@ -4,9 +4,16 @@
     },
     "include": [
         {
-            "PythonVersion": "2.7",
-            "CoverageArg": "--disablecov"
-        }
+            "Config": {
+                "Ubuntu2004_py27": {
+                    "OSVmImage": "MMSUbuntu20.04",
+                    "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+                    "PythonVersion": "2.7",
+                    "CoverageArg": "--disablecov",
+                    "TestSamples": "false"
+                }
+            }
+        }   
     ]
-  }
+}
   
