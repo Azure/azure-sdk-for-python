@@ -4,8 +4,9 @@
 # ------------------------------------
 
 import json
-from typing import Any, TYPE_CHECKING, List, Union, overload
+from typing import Any, List, Union, TYPE_CHECKING, overload
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
 from ._generated import (
     BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
 )
@@ -17,7 +18,7 @@ from ._models import (
     convert_status
 )
 from ._user_agent import USER_AGENT
-from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod
+from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod, DocumentTranslationLROPoller
 from ._helpers import (
     get_http_logging_policy,
     convert_datetime,
@@ -26,16 +27,17 @@ from ._helpers import (
     get_translation_input,
     POLLING_INTERVAL,
 )
-
 if TYPE_CHECKING:
-    from azure.core.paging import ItemPaged
     from azure.core.credentials import TokenCredential, AzureKeyCredential
-    from ._polling import DocumentTranslationLROPoller
 
 
-class DocumentTranslationClient:  # pylint: disable=r0205
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+class DocumentTranslationClient:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union["AzureKeyCredential", "TokenCredential"],
+        **kwargs: Any
+    ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
         structure and text formatting.
@@ -79,36 +81,36 @@ class DocumentTranslationClient:  # pylint: disable=r0205
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            http_logging_policy=get_http_logging_policy(),
+            authentication_policy=kwargs.pop("authentication_policy", authentication_policy),
+            http_logging_policy=kwargs.pop("http_logging_policy", get_http_logging_policy()),
             polling_interval=polling_interval,
             **kwargs
         )
 
-    def __enter__(self):
-        # type: () -> DocumentTranslationClient
+    def __enter__(self) -> "DocumentTranslationClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
         return self._client.close()
 
-    @overload  # type: ignore
-    def begin_translation(self, source_url, target_url, target_language_code, **kwargs):  # type: ignore
-        # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
-        pass
+    @overload
+    def begin_translation(
+        self, source_url: str, target_url: str, target_language_code: str, **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
+        ...
 
-    @overload  # type: ignore
-    def begin_translation(self, inputs, **kwargs):  # type: ignore
-        # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
-        pass
+    @overload
+    def begin_translation(
+        self, inputs: List[DocumentTranslationInput], **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
+        ...
 
+    @distributed_trace
     def begin_translation(
         self, *args, **kwargs
     ):  # pylint: disable=client-method-missing-type-annotations
@@ -203,8 +205,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_translation_status(self, translation_id, **kwargs):
-        # type: (str, **Any) -> TranslationStatus
+    def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
@@ -224,8 +225,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def cancel_translation(self, translation_id, **kwargs):
-        # type: (str, **Any) -> None
+    def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
         """Cancel a currently processing or queued translation operation.
 
         A translation will not be canceled if it is already completed, failed, or canceling.
@@ -241,8 +241,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         self._client.document_translation.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
-    def list_translation_statuses(self, **kwargs):
-        # type: (**Any) -> ItemPaged[TranslationStatus]
+    def list_translation_statuses(self, **kwargs: Any) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
@@ -312,8 +311,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def list_document_statuses(self, translation_id, **kwargs):
-        # type: (str, **Any) -> ItemPaged[DocumentStatus]
+    def list_document_statuses(self, translation_id: str, **kwargs: Any) -> ItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
@@ -387,8 +385,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_document_status(self, translation_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatus
+    def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
         """Get the status of an individual document within a translation operation.
 
         :param str translation_id: The translation operation ID.
@@ -406,8 +403,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_supported_glossary_formats(self, **kwargs):
-        # type: (**Any) -> List[DocumentTranslationFileFormat]
+    def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the glossary formats supported by the Document Translation service.
 
         :return: A list of supported glossary formats.
@@ -423,8 +419,7 @@ class DocumentTranslationClient:  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_supported_document_formats(self, **kwargs):
-        # type: (**Any) -> List[DocumentTranslationFileFormat]
+    def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the document formats supported by the Document Translation service.
 
         :return: A list of supported document formats for translation.

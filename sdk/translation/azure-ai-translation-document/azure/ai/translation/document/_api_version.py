@@ -13,8 +13,7 @@ class DocumentTranslationApiVersion(str, Enum):
     V1_0 = "1.0"
 
 
-def validate_api_version(api_version):
-    # type: (str) -> None
+def validate_api_version(api_version: str) -> None:
     """Raise ValueError if api_version is invalid """
     if not api_version:
         return

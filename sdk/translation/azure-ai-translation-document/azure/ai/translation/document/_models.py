@@ -3,13 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, List
+from typing import Any, List, Optional, Union
 from ._generated.models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
     DocumentFilter as _DocumentFilter,
     TargetInput as _TargetInput,
     Glossary as _Glossary,
+    StorageInputType
 )
 
 
@@ -55,12 +56,18 @@ class TranslationGlossary:
         Currently only "AzureBlob" is supported.
     """
 
-    def __init__(self, glossary_url, file_format, **kwargs):
-        # type: (str, str, **Any) -> None
+    def __init__(
+        self,
+        glossary_url: str,
+        file_format: str,
+        *,
+        format_version: Optional[str] = None,
+        storage_source: Optional[str] = None
+    ) -> None:
         self.glossary_url = glossary_url
         self.file_format = file_format
-        self.format_version = kwargs.get("format_version", None)
-        self.storage_source = kwargs.get("storage_source", None)
+        self.format_version = format_version
+        self.storage_source = storage_source
 
     def _to_generated(self):
         return _Glossary(
@@ -119,13 +126,20 @@ class TranslationTarget:
         Currently only "AzureBlob" is supported.
     """
 
-    def __init__(self, target_url, language_code, **kwargs):
-        # type: (str, str, **Any) -> None
+    def __init__(
+        self,
+        target_url: str,
+        language_code: str,
+        *,
+        category_id: Optional[str] = None,
+        glossaries: Optional[List[TranslationGlossary]] = None,
+        storage_source: Optional[str] = None
+    ) -> None:
         self.target_url = target_url
         self.language_code = language_code
-        self.category_id = kwargs.get("category_id", None)
-        self.glossaries = kwargs.get("glossaries", None)
-        self.storage_source = kwargs.get("storage_source", None)
+        self.category_id = category_id
+        self.glossaries = glossaries
+        self.storage_source = storage_source
 
     def _to_generated(self):
         return _TargetInput(
@@ -205,15 +219,24 @@ class DocumentTranslationInput:
         Currently only "AzureBlob" is supported.
     """
 
-    def __init__(self, source_url, targets, **kwargs):
-        # type: (str, List[TranslationTarget], **Any) -> None
+    def __init__(
+        self,
+        source_url: str,
+        targets: List[TranslationTarget],
+        *,
+        source_language_code: Optional[str] = None,
+        storage_type: Optional[Union[str, StorageInputType]] = None,
+        storage_source: Optional[str] = None,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None
+    ) -> None:
         self.source_url = source_url
         self.targets = targets
-        self.source_language_code = kwargs.get("source_language_code", None)
-        self.storage_type = kwargs.get("storage_type", None)
-        self.storage_source = kwargs.get("storage_source", None)
-        self.prefix = kwargs.get("prefix", None)
-        self.suffix = kwargs.get("suffix", None)
+        self.source_language_code = source_language_code
+        self.storage_type = storage_type
+        self.storage_source = storage_source
+        self.prefix = prefix
+        self.suffix = suffix
 
     def _to_generated(self):
         return _BatchRequest(
@@ -282,8 +305,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
     :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get("id")
         self.created_on = kwargs.get("created_on")
         self.last_updated_on = kwargs.get("last_updated_on", None)
@@ -378,8 +400,7 @@ class DocumentStatus:
     :ivar int characters_charged: Characters charged for the document.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self.source_document_url = kwargs.get("source_document_url", None)
         self.translated_document_url = kwargs.get("translated_document_url", None)
         self.created_on = kwargs["created_on"]
@@ -442,8 +463,7 @@ class DocumentTranslationError:
         For example it would be "documents" or "document id" in case of invalid document.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self.code = kwargs.get("code", None)
         self.message = kwargs.get("message", None)
         self.target = kwargs.get("target", None)
@@ -482,8 +502,7 @@ class DocumentTranslationFileFormat:
     :vartype default_format_version: str
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self.file_format = kwargs.get("file_format", None)
         self.file_extensions = kwargs.get("file_extensions", None)
         self.content_types = kwargs.get("content_types", None)

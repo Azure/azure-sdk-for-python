@@ -88,8 +88,8 @@ class DocumentTranslationClient:
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            http_logging_policy=get_http_logging_policy(),
+            authentication_policy=kwargs.pop("authentication_policy", authentication_policy),
+            http_logging_policy=kwargs.pop("http_logging_policy", get_http_logging_policy()),
             polling_interval=polling_interval,
             **kwargs
         )
@@ -212,8 +212,7 @@ class DocumentTranslationClient:
         )
 
     @distributed_trace_async
-    async def get_translation_status(self, translation_id, **kwargs):
-        # type: (str, **Any) -> TranslationStatus
+    async def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
@@ -234,8 +233,7 @@ class DocumentTranslationClient:
         return TranslationStatus._from_generated(translation_status)
 
     @distributed_trace_async
-    async def cancel_translation(self, translation_id, **kwargs):
-        # type: (str, **Any) -> None
+    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:
         """Cancel a currently processing or queued translation operation.
 
         A translation will not be canceled if it is already completed, failed, or canceling.
@@ -253,8 +251,7 @@ class DocumentTranslationClient:
         )
 
     @distributed_trace
-    def list_translation_statuses(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[TranslationStatus]
+    def list_translation_statuses(self, **kwargs: Any) -> AsyncItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
@@ -321,8 +318,7 @@ class DocumentTranslationClient:
         )
 
     @distributed_trace
-    def list_document_statuses(self, translation_id, **kwargs):
-        # type: (str, **Any) -> AsyncItemPaged[DocumentStatus]
+    def list_document_statuses(self, translation_id: str, **kwargs: Any) -> AsyncItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
@@ -395,8 +391,7 @@ class DocumentTranslationClient:
         )
 
     @distributed_trace_async
-    async def get_document_status(self, translation_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatus
+    async def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> DocumentStatus:
         """Get the status of an individual document within a translation operation.
 
         :param str translation_id: The translation operation ID.
@@ -412,8 +407,7 @@ class DocumentTranslationClient:
         return DocumentStatus._from_generated(document_status)
 
     @distributed_trace_async
-    async def get_supported_glossary_formats(self, **kwargs):
-        # type: (**Any) -> List[DocumentTranslationFileFormat]
+    async def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the glossary formats supported by the Document Translation service.
 
         :return: A list of supported glossary formats.
@@ -429,8 +423,7 @@ class DocumentTranslationClient:
         return DocumentTranslationFileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace_async
-    async def get_supported_document_formats(self, **kwargs):
-        # type: (**Any) -> List[DocumentTranslationFileFormat]
+    async def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
         """Get the list of the document formats supported by the Document Translation service.
 
         :return: A list of supported document formats for translation.
