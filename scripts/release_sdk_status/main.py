@@ -179,7 +179,7 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
                 cli_version = cli_dependency[sdk_name]
             else:
                 cli_version = 'NA'
-            if sdk_name != 'azure-mgmt-network': # ===
+            if 'azure-mgmt-network' not in sdk_name: # ===
                 continue  # ===
             track_config = package[1].strip()
             readme_link = package[2].strip()
@@ -222,6 +222,7 @@ def get_test_result(txt_path):
 
 
 def run_playback_test(service_name):
+    return '-, -, -, -\n'  # ===
     # eg: coverage_path='$(pwd)/sdk-repo/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/'
     coverage_path = ''.join([os.getenv('SDK_REPO'), '/sdk/', SERVICE_TEST_PATH[service_name]])
     service_path = coverage_path.split('/azure/mgmt')[0]
@@ -256,12 +257,12 @@ def write_to_csv(sdk_status_list, csv_name):
     with open(csv_name, 'w') as file_out:
         file_out.write('package name,'
                        'pypi link,'
-                       'latest track1,'
-                       'release date,'
-                       'track1 GA,'
-                       'latest track2,'
-                       'track2 GA,'
-                       'release date,'
+                       'latest track1 version,'
+                       'latest track1 release date,'
+                       'track1 GA version,'
+                       'latest track2 version,'
+                       'latest track1 release date,'
+                       'track2 GA version,'
                        'cli dependency,'
                        'readme config,'
                        'bot advice,'
