@@ -1,0 +1,137 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "739",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "21ca68a8-5e0d-11ec-a969-6245b51668de"
+      },
+      "RequestBody": "{\u0022dataSourceType\u0022: \u0022AzureDataExplorer\u0022, \u0022dataFeedName\u0022: \u0022azuredataexplorera0117a57-ce21-4405-b4bb-da30fb357075\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-01-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022connectionString\u0022: \u0022azure_data_explorer_connection_string\u0022, \u0022query\u0022: \u0022let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime \u002B 1d; adsample | where Timestamp \u003E= StartDateTime and Timestamp \u003C EndDateTime\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "b3040178-657d-4800-a654-4da93b004dca",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:11:44 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/af5d0b8c-1394-4e0e-b73e-2ebb3d63b691",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "429",
+        "X-Request-ID": "b3040178-657d-4800-a654-4da93b004dca"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/af5d0b8c-1394-4e0e-b73e-2ebb3d63b691",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "2229a281-5e0d-11ec-aad7-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c84a6fa2-da5c-4788-9d6b-4b02826f6e94",
+        "Content-Length": "1351",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:11:44 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "117",
+        "X-Request-ID": "c84a6fa2-da5c-4788-9d6b-4b02826f6e94"
+      },
+      "ResponseBody": {
+        "dataFeedId": "af5d0b8c-1394-4e0e-b73e-2ebb3d63b691",
+        "dataFeedName": "azuredataexplorera0117a57-ce21-4405-b4bb-da30fb357075",
+        "metrics": [
+          {
+            "metricId": "35b5b273-272b-4ba6-83d1-00a14ff4bb5e",
+            "metricName": "cost",
+            "metricDisplayName": "cost",
+            "metricDescription": ""
+          },
+          {
+            "metricId": "19e76625-1218-4924-b9b3-9ced1cc63833",
+            "metricName": "revenue",
+            "metricDisplayName": "revenue",
+            "metricDescription": ""
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category",
+            "dimensionDisplayName": "category"
+          },
+          {
+            "dimensionName": "city",
+            "dimensionDisplayName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-01-01T00:00:00Z",
+        "dataSourceType": "AzureDataExplorer",
+        "timestampColumn": "",
+        "startOffsetInSeconds": 0,
+        "maxQueryPerMinute": 30.0,
+        "granularityName": "Daily",
+        "needRollup": "NoRollup",
+        "fillMissingPointType": "PreviousValue",
+        "fillMissingPointValue": 0.0,
+        "rollUpMethod": "None",
+        "dataFeedDescription": "",
+        "stopRetryAfterInSeconds": -1,
+        "minRetryIntervalInSeconds": -1,
+        "maxConcurrency": -1,
+        "viewMode": "Private",
+        "admins": [
+          "f850650c-1fcf-4489-b46f-71af2e30d360"
+        ],
+        "viewers": [],
+        "creator": "f850650c-1fcf-4489-b46f-71af2e30d360",
+        "status": "Active",
+        "createdTime": "2021-12-16T01:11:43Z",
+        "isAdmin": true,
+        "actionLinkTemplate": "",
+        "dataSourceParameter": {
+          "query": "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime \u002B 1d; adsample | where Timestamp \u003E= StartDateTime and Timestamp \u003C EndDateTime"
+        },
+        "authenticationType": "Basic"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/af5d0b8c-1394-4e0e-b73e-2ebb3d63b691",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "224214bb-5e0d-11ec-ad97-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "7ec89b74-543e-45df-83dd-9c241109e753",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:11:44 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "241",
+        "X-Request-ID": "7ec89b74-543e-45df-83dd-9c241109e753"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "data_feed_id": "af5d0b8c-1394-4e0e-b73e-2ebb3d63b691",
+    "data_feed_name": "azuredataexplorera0117a57-ce21-4405-b4bb-da30fb357075"
+  }
+}

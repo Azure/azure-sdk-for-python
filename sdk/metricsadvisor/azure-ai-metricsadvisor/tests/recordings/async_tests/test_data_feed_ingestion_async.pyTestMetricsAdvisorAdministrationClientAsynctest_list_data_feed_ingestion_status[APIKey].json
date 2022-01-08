@@ -1,0 +1,223 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/metrics_advisor_data_feed_id/ingestionStatus/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "80",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "13fad6c5-5e0d-11ec-a9b6-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-08-09T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-16T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e208eb1e-4dea-4f2d-9d76-1a63ab613e2f",
+        "Content-Length": "2878",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:11:19 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "226",
+        "X-Request-ID": "e208eb1e-4dea-4f2d-9d76-1a63ab613e2f"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "timestamp": "2021-09-15T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-14T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-13T00:00:00Z",
+            "status": "Error",
+            "message": "Duplicate metric values are found on the same dimension combination within one metric interval. Please use aggregation function to aggregate your metrics by its dimensions. "
+          },
+          {
+            "timestamp": "2021-09-12T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-11T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-10T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-09T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-19T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-18T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-17T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-14T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-13T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-12T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-11T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-10T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          },
+          {
+            "timestamp": "2021-08-09T00:00:00Z",
+            "status": "Succeeded",
+            "message": ""
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

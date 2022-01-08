@@ -80,6 +80,7 @@ class MetricsAdvisorClient(object):
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
+            endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
