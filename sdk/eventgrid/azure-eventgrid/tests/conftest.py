@@ -26,6 +26,7 @@
 import platform
 import sys
 import pytest
+from devtools_testutils import test_proxy
 from devtools_testutils.sanitizers import add_remove_header_sanitizer
 
 # Ignore async tests for Python < 3.5
@@ -35,5 +36,5 @@ if sys.version_info < (3, 5):
     collect_ignore_glob.append("test_cncf*")
 
 @pytest.fixture(scope="session", autouse=True)
-def add_aeg_sanitizer():
+def add_aeg_sanitizer(test_proxy):
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
