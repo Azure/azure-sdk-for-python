@@ -36,7 +36,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_data_dict(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -52,7 +52,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_data_as_list(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event1 = EventGridEvent(
@@ -73,7 +73,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_fails_without_full_url(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_fails_without_full_url(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         parsed_url = urlparse(eventgrid_topic_endpoint)
         client = EventGridPublisherClient(parsed_url.netloc, akc_credential)
@@ -90,7 +90,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_data_str(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -105,7 +105,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_data_bytes(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -121,7 +121,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_dict_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_dict_data_bytes(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = {
@@ -139,7 +139,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_dict(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -154,7 +154,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_str(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -168,7 +168,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_bytes(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -182,7 +182,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_as_list(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -197,7 +197,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_with_extensions(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_with_extensions(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -220,7 +220,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_dict(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event1 = {
@@ -236,7 +236,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_none(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_none(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -251,7 +251,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_cloud_event_data_NULL(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_cloud_event_data_NULL(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         cloud_event = CloudEvent(
@@ -269,7 +269,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_signature_credential(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         expiration_date_utc = dt.datetime.now(UTC()) + timedelta(hours=1)
         signature = generate_sas(eventgrid_topic_endpoint, eventgrid_topic_primary_key, expiration_date_utc)
         credential = AzureSasCredential(signature)
@@ -287,7 +287,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_custom_schema_event(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_custom_schema_event(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         custom_event = {
@@ -305,7 +305,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_custom_schema_event_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_custom_schema_event_as_list(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         custom_event1 = {
@@ -330,7 +330,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_and_close_async_session(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_and_close_async_session(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         async with client: # this throws if client can't close
@@ -343,7 +343,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
-    def test_send_NONE_credential_async(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    def test_send_NONE_credential_async(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
 
@@ -352,7 +352,7 @@ class TestEventGridPublisherClient(AzureMgmtRecordedTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_token_credential(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         credential = self.get_credential(EventGridPublisherClient)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(

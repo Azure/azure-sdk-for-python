@@ -41,7 +41,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy
-    def test_raise_on_auth_error(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    def test_raise_on_auth_error(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -56,7 +56,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy
-    def test_raise_on_bad_resource(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    def test_raise_on_bad_resource(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(
@@ -71,7 +71,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @recorded_by_proxy
-    def test_raise_on_large_payload(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    def test_raise_on_large_payload(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
 
