@@ -28,12 +28,14 @@ Pop-Location
 #If these succeed the smoke tests pass
 Push-Location $smoketestsDir
 Write-Host "Printing content of requirements-nightly.txt file:"
-Get-Content requirements-nightly.txt
+Get-Content requirements-release.txt
 Write-Host "Installing the packages in the file recursively"
-pip install -r requirements-nightly.txt
+vierualenv env
+source env/bin/activate
+pip install -r requirements-release.txt
 
 
 Pop-Location
 
 # Clean-up the directory created
-Remove-Item -Path $smoketestsDir -Recurse -Force
+#Remove-Item -Path $smoketestsDir -Recurse -Force
