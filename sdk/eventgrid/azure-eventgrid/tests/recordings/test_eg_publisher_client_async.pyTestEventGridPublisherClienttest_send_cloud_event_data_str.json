@@ -1,25 +1,25 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://cloudeventgridtestuvxcvm.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://cloudeventgridtest3ebt25.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "198",
         "Content-Type": "application/cloudevents-batch\u002Bjson; charset=utf-8",
-        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "ca1f629c-47e4-11ec-b5ba-2816a845e8c6"
+        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "a3ee66ba-70dd-11ec-ac61-2816a845e8c6"
       },
-      "RequestBody": "[{\u0022id\u0022: \u00223bb77cfa-dcaf-4d50-8323-5d44c9aa17e8\u0022, \u0022source\u0022: \u0022http://samplesource.dev\u0022, \u0022data\u0022: \u0022cloudevent\u0022, \u0022type\u0022: \u0022Sample.Cloud.Event\u0022, \u0022time\u0022: \u00222021-11-17T20:27:31.080284Z\u0022, \u0022specversion\u0022: \u00221.0\u0022}]",
+      "RequestBody": "[{\u0022id\u0022: \u00229b9eac77-c7d5-470d-b389-6b8cf8c8027e\u0022, \u0022source\u0022: \u0022http://samplesource.dev\u0022, \u0022data\u0022: \u0022cloudevent\u0022, \u0022type\u0022: \u0022Sample.Cloud.Event\u0022, \u0022time\u0022: \u00222022-01-08T23:49:38.202615Z\u0022, \u0022specversion\u0022: \u00221.0\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Wed, 17 Nov 2021 20:27:29 GMT",
+        "Date": "Sat, 08 Jan 2022 23:49:36 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "9bf34b66-b7cc-4c03-8087-23c6ce47691e"
+        "x-ms-request-id": "320c278e-99c5-4b58-b42e-e8de4afdd8a0"
       },
       "ResponseBody": null
     }

@@ -1,25 +1,25 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://eventgridtestbdhdbsm5vpt.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://eventgridtestepcdyihwtzn.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "402",
+        "Content-Length": "400",
         "Content-Type": "application/json; charset=utf-8",
-        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "c950b1cc-47e4-11ec-985d-2816a845e8c6"
+        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "a352c13e-70dd-11ec-b819-2816a845e8c6"
       },
-      "RequestBody": "[{\u0022id\u0022: \u002236a33e8f-d87e-4f03-8cf8-3cc7f591e1fe\u0022, \u0022subject\u0022: \u0022sample\u0022, \u0022data\u0022: \u0022eventgridevent\u0022, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222021-11-17T20:27:29.724686Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}, {\u0022id\u0022: \u00229e05e6c2-e8d7-4def-aacc-1613587ecfb0\u0022, \u0022subject\u0022: \u0022sample2\u0022, \u0022data\u0022: \u0022eventgridevent2\u0022, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222021-11-17T20:27:29.725714Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}]",
+      "RequestBody": "[{\u0022id\u0022: \u002205113007-d1b3-4ba6-b6b1-88d5571365ab\u0022, \u0022subject\u0022: \u0022sample\u0022, \u0022data\u0022: \u0022eventgridevent\u0022, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222022-01-08T23:49:37.18257Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}, {\u0022id\u0022: \u0022c4d33795-5cdb-4a72-99a5-7112bd6c0077\u0022, \u0022subject\u0022: \u0022sample2\u0022, \u0022data\u0022: \u0022eventgridevent2\u0022, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222022-01-08T23:49:37.18257Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Wed, 17 Nov 2021 20:27:27 GMT",
+        "Date": "Sat, 08 Jan 2022 23:49:36 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "50d14c17-6418-45e8-b7f8-3872ae7f9e36"
+        "x-ms-request-id": "863f7698-e99d-4264-99c6-f601b7c7a03c"
       },
       "ResponseBody": null
     }

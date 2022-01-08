@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://cloudeventgridtestuvxcvm.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://cloudeventgridtest3ebt25.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -9,18 +9,18 @@
         "Connection": "keep-alive",
         "Content-Length": "198",
         "Content-Type": "application/cloudevents-batch\u002Bjson; charset=utf-8",
-        "User-Agent": "azsdk-python-eventgrid/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "bf2a646c-47e4-11ec-8378-2816a845e8c6"
+        "User-Agent": "azsdk-python-eventgrid/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "98d09514-70dd-11ec-906b-2816a845e8c6"
       },
-      "RequestBody": "[{\u0022id\u0022: \u0022c369160f-4330-4663-8e55-92eddd941ac8\u0022, \u0022source\u0022: \u0022http://samplesource.dev\u0022, \u0022data\u0022: \u0022cloudevent\u0022, \u0022type\u0022: \u0022Sample.Cloud.Event\u0022, \u0022time\u0022: \u00222021-11-17T20:27:12.697481Z\u0022, \u0022specversion\u0022: \u00221.0\u0022}]",
+      "RequestBody": "[{\u0022id\u0022: \u002221554463-f8d0-4e88-8315-7d751712a232\u0022, \u0022source\u0022: \u0022http://samplesource.dev\u0022, \u0022data\u0022: \u0022cloudevent\u0022, \u0022type\u0022: \u0022Sample.Cloud.Event\u0022, \u0022time\u0022: \u00222022-01-08T23:49:19.552253Z\u0022, \u0022specversion\u0022: \u00221.0\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Wed, 17 Nov 2021 20:27:10 GMT",
+        "Date": "Sat, 08 Jan 2022 23:49:18 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "441132a2-5092-4d9f-8b50-c224d57c4159"
+        "x-ms-request-id": "e7bebf41-f597-4395-8b12-91c058049ed0"
       },
       "ResponseBody": null
     }

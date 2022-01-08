@@ -1,25 +1,25 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://cloudeventgridtestuvxcvm.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://cloudeventgridtest3ebt25.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "220",
         "Content-Type": "application/cloudevents-batch\u002Bjson; charset=utf-8",
-        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "b5045600-47e4-11ec-a68f-2816a845e8c6"
+        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "8edfec14-70dd-11ec-be74-2816a845e8c6"
       },
-      "RequestBody": "[{\u0022specversion\u0022: \u00221.0\u0022, \u0022id\u0022: \u002282817813-74b6-445c-9fdc-196231e26beb\u0022, \u0022source\u0022: \u0022https://example.com/event-producer\u0022, \u0022type\u0022: \u0022com.example.sampletype1\u0022, \u0022time\u0022: \u00222021-11-17T20:26:55.670885\u002B00:00\u0022, \u0022data\u0022: \u0022hello world\u0022}]",
+      "RequestBody": "[{\u0022specversion\u0022: \u00221.0\u0022, \u0022id\u0022: \u00228a45cb3c-daed-4408-9bc7-2c438fadad14\u0022, \u0022source\u0022: \u0022https://example.com/event-producer\u0022, \u0022type\u0022: \u0022com.example.sampletype1\u0022, \u0022time\u0022: \u00222022-01-08T23:49:02.875538\u002B00:00\u0022, \u0022data\u0022: \u0022hello world\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Wed, 17 Nov 2021 20:26:54 GMT",
+        "Date": "Sat, 08 Jan 2022 23:49:01 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "65687d63-41fe-48d0-bff0-fda161202d23"
+        "x-ms-request-id": "ca3405fa-d8f5-4c7e-aa99-dcbd70dd145f"
       },
       "ResponseBody": null
     }

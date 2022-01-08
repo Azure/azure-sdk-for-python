@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://cloudeventgridtestuvxcvm.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://cloudeventgridtest3ebt25.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -9,18 +9,18 @@
         "Connection": "keep-alive",
         "Content-Length": "127",
         "Content-Type": "application/cloudevents-batch\u002Bjson; charset=utf-8",
-        "User-Agent": "azsdk-python-eventgrid/4.7.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "bf72e8c6-47e4-11ec-9ab2-2816a845e8c6"
+        "User-Agent": "azsdk-python-eventgrid/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "991f1642-70dd-11ec-b2da-2816a845e8c6"
       },
       "RequestBody": "[{\u0022id\u0022: \u00221234\u0022, \u0022source\u0022: \u0022http://samplesource.dev\u0022, \u0022specversion\u0022: \u00221.0\u0022, \u0022data\u0022: \u0022cloudevent\u0022, \u0022type\u0022: \u0022Sample.Cloud.Event\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Wed, 17 Nov 2021 20:27:11 GMT",
+        "Date": "Sat, 08 Jan 2022 23:49:19 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "bb0edf57-4fda-4515-9c55-10b35f4542a4"
+        "x-ms-request-id": "b9e165e9-966d-49ed-8fe1-7c53337d3de3"
       },
       "ResponseBody": null
     }
