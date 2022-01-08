@@ -49,14 +49,14 @@ def test_send_with_long_interval_sync(live_eventhub, sleep):
         live_eventhub['event_hub'],
         live_eventhub['consumer_group'],
         test_partition)
-    receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, timeout=0, link_credit=500)
+    receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, link_credit=500)
     try:
         receiver.open()
         # receive_message_batch() returns immediately once it receives any messages before the max_batch_size
         # and timeout reach. Could be 1, 2, or any number between 1 and max_batch_size.
         # So call it twice to ensure the two events are received.
-        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
-        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5000)])
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5)])
+        received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(max_batch_size=1, timeout=5)])
     finally:
         receiver.close()
     assert len(received) == 2
@@ -92,7 +92,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
     retry = 0
     while retry < 3:
         try:
-            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10000)
+            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10)
             if messages:
                 received_ed1 = EventData._from_message(messages[0])
                 assert received_ed1.body_as_str() == 'data'
