@@ -91,6 +91,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         fully_qualified_namespace: str,
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        *,
+        queue_name: Optional[str] = None,
+        topic_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         if kwargs.get("entity_name"):
@@ -100,8 +103,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError(
                     "Queue/Topic name can not be specified simultaneously."
@@ -115,6 +116,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=str(entity_name),
+                queue_name=queue_name,
+                topic_name=topic_name,
                 **kwargs
             )
 
@@ -203,7 +206,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         messages: MessageTypes,
         schedule_time_utc: datetime.datetime,
-        **kwargs: Any
+        *,
+        timeout: Optional[float] = None
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -230,7 +234,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         self._check_live()
         obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
@@ -254,7 +257,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
     async def cancel_scheduled_messages(
-        self, sequence_numbers: Union[int, List[int]], **kwargs: Any
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -277,7 +280,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Cancelling messages scheduled to be sent in future
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
@@ -295,7 +297,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def send_messages(
-        self, message: Union[MessageTypes, ServiceBusMessageBatch], **kwargs: Any
+        self, message: Union[MessageTypes, ServiceBusMessageBatch], *, timeout: Optional[float] = None
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -329,7 +331,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
 
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
