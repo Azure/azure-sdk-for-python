@@ -128,3 +128,7 @@ def amqp_long_value(value):
 def amqp_uint_value(value):
     # A helper method to wrap a Python int as AMQP uint
     return {TYPE: AMQPTypes.uint, VALUE: value}
+
+
+def amqp_string_value(value):
+    return {TYPE: AMQPTypes.string, VALUE: value}

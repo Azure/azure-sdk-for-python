@@ -167,7 +167,7 @@ class RetryPolicy:
     def get_backoff_time(self, settings, error):
         try:
             return self.custom_condition_backoff[error.condition]
-        except KeyError:
+        except (KeyError, TypeError):
             pass
 
         consecutive_errors_len = len(settings['history'])
@@ -182,6 +182,7 @@ class RetryPolicy:
 
 
 AMQPError = namedtuple('error', ['condition', 'description', 'info'])
+AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields)
 AMQPError._code = 0x0000001d
 AMQPError._definition = (
     FIELD('condition', AMQPTypes.symbol, True, None, False),

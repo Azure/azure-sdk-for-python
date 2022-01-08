@@ -74,9 +74,9 @@ class AMQPClient(object):
     :param debug: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
     :type debug: bool
-    :param error_policy: A policy for parsing errors on link, connection and message
+    :param retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type error_policy: ~uamqp.errors.ErrorPolicy
+    :type retry_policy: ~uamqp.errors.RetryPolicy
     :param keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no
@@ -136,7 +136,7 @@ class AMQPClient(object):
         self._cbs_authenticator = None
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
-        self._error_policy = kwargs.pop("error_policy", RetryPolicy())
+        self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
@@ -183,7 +183,7 @@ class AMQPClient(object):
             self._link = None
 
     def _do_retryable_operation(self, operation, *args, **kwargs):
-        retry_settings = self._error_policy.configure_retries()
+        retry_settings = self._retry_policy.configure_retries()
         retry_active = True
         absolute_timeout = kwargs.pop("timeout", 0) or 0
         while retry_active:
@@ -193,17 +193,17 @@ class AMQPClient(object):
                     raise TimeoutError("Operation timed out.")
                 return operation(*args, timeout=absolute_timeout, **kwargs)
             except AMQPException as exc:
-                if not self._error_policy.is_retryable(exc):
+                if not self._retry_policy.is_retryable(exc):
                     raise
                 if absolute_timeout >= 0:
-                    retry_active = self._error_policy.increment(retry_settings, exc)
+                    retry_active = self._retry_policy.increment(retry_settings, exc)
                     if not retry_active:
                         break
-                    time.sleep(self._error_policy.get_backoff_time(retry_settings, exc))
+                    time.sleep(self._retry_policy.get_backoff_time(retry_settings, exc))
                     if exc.condition == ErrorCondition.LinkDetachForced:
                         self._close_link()  # if link level error, close and open a new link
                         # TODO: check if there's any other code that we want to close link?
-                    if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketFailure):
+                    if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketError):
                         # if connection detach or socket error, close and open a new connection
                         self.close()
                         # TODO: check if there's any other code we want to close connection
@@ -539,9 +539,9 @@ class ReceiveClient(AMQPClient):
      will determine whether the messages are pre-emptively settled during batching, or otherwise
      let to the user to be explicitly settled.
     :type auto_complete: bool
-    :param error_policy: A policy for parsing errors on link, connection and message
+    :param retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type error_policy: ~uamqp.errors.ErrorPolicy
+    :type retry_policy: ~uamqp.errors.RetryPolicy
     :param keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no

@@ -539,9 +539,10 @@ class Connection(object):
         now = time.time()
         if self._get_local_timeout(now) or self._get_remote_timeout(now):
             self.close(
+                # TODO: check error condition
                 error=AMQPError(
-                    condition=ErrorCondition.InternalError,
-                    description="No frame received for the idle timeout"
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="No frame received for the idle timeout."
                 ),
                 wait=False
             )
@@ -625,18 +626,20 @@ class Connection(object):
             if self.state not in _CLOSING_STATES:
                 now = time.time()
                 if self._get_local_timeout(now) or self._get_remote_timeout(now):
+                    # TODO: check error condition
                     self.close(
                         error=AMQPError(
-                            condition=ErrorCondition.InternalError.value,
-                            description="No frame received for the idle timeout"
+                            condition=ErrorCondition.ConnectionCloseForced,
+                            description="No frame received for the idle timeout."
                         ),
                         wait=False
                     )
                     return
             if self.state == ConnectionState.END:
+                # TODO: check error condition
                 self._error = AMQPConnectionError(
-                    condition=ErrorCondition.ClientError,
-                    description="Connection closed."
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Connection was already closed."
                 )
                 return
             for _ in range(batch):
@@ -720,6 +723,12 @@ class Connection(object):
             return
         try:
             self._outgoing_close(error=error)
+            if error:
+                self._error = AMQPConnectionError(
+                    condition=error.condition,
+                    description=error.descrption,
+                    info=error.info
+                )
             if self.state == ConnectionState.OPEN_PIPE:
                 self._set_state(ConnectionState.OC_PIPE)
             elif self.state == ConnectionState.OPEN_SENT:

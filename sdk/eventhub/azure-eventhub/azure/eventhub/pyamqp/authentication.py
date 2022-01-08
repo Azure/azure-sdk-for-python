@@ -30,8 +30,6 @@ AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
 
 
 def _generate_sas_access_token(auth_uri, sas_name, sas_key, expiry_in=AUTH_DEFAULT_EXPIRATION_SECONDS):
-    auth_uri = urllib.parse.quote_plus(auth_uri)
-    sas = sas_key.encode("utf-8")
     expires_on = int(time.time() + expiry_in)
     token = generate_sas_token(auth_uri, sas_name, sas_key, expires_on)
     return AccessToken(
@@ -173,7 +171,7 @@ class SASTokenAuth(_CBSAuth):
         expires_in = kwargs.pop("expires_in", AUTH_DEFAULT_EXPIRATION_SECONDS)
         expires_on = kwargs.pop("expires_on", None)
         expires_in, expires_on = self._set_expiry(expires_in, expires_on)
-        self.get_token = partial(_generate_sas_token, uri, username, password, expires_in)
+        self.get_token = partial(_generate_sas_access_token, uri, username, password, expires_in)
         super(SASTokenAuth, self).__init__(
             uri,
             audience,
