@@ -15,18 +15,15 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
 from ._configuration import QuestionAnsweringProjectsClientConfiguration
-from .operations import QuestionAnsweringRuntimeOperations
+from ._operations import QuestionAnsweringProjectsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class QuestionAnsweringProjectsClient:
+class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsMixin):
     """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
-    :ivar question_answering_runtime: QuestionAnsweringRuntimeOperations operations
-    :vartype question_answering_runtime:
-     azure.ai.language.questionanswering.projects.aio.operations.QuestionAnsweringRuntimeOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
@@ -35,6 +32,8 @@ class QuestionAnsweringProjectsClient:
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -50,7 +49,6 @@ class QuestionAnsweringProjectsClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.question_answering_runtime = QuestionAnsweringRuntimeOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(
