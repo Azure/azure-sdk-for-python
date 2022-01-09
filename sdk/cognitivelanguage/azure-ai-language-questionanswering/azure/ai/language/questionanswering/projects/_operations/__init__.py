@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import QuestionAnsweringRuntimeOperations
+from ._operations import QuestionAnsweringProjectsClientOperationsMixin
 
 __all__ = [
-    'QuestionAnsweringRuntimeOperations',
+    'QuestionAnsweringProjectsClientOperationsMixin',
 ]
