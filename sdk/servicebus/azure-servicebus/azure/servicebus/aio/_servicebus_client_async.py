@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Union, Optional, TYPE_CHECKING, Literal
+from typing import Any, Union, Optional, TYPE_CHECKING
+from typing_extensions import Literal
 import logging
 from weakref import WeakSet
 
@@ -29,7 +30,7 @@ from ._async_utils import create_authentication
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-NextAvailableSessionType = Literal[NEXT_AVAILABLE_SESSION]
+NextAvailableSessionType = Literal[NEXT_AVAILABLE_SESSION]  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
 
