@@ -7,9 +7,11 @@
 
 from testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer
 from azure.core.exceptions import ResourceNotFoundError
-
+import pytest
+import os
 
 class UpdatesClientTest(DeviceUpdateTest):
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @DeviceUpdatePowerShellPreparer()
     def test_get_names_not_found(
         self,
