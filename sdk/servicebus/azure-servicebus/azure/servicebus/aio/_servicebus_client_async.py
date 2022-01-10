@@ -278,7 +278,7 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful queue, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, Literal[~azure.servicebus.NEXT_AVAILABLE_SESSION]]
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE_SESSION
         :keyword sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
@@ -431,7 +431,7 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful subscription, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, Literal[~azure.servicebus.NEXT_AVAILABLE_SESSION]]
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE_SESSION
         :keyword sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any

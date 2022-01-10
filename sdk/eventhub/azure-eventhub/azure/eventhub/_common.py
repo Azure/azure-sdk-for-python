@@ -60,8 +60,7 @@ from .amqp import (
 if TYPE_CHECKING:
     import datetime
 
-PrimitiveTypes = Union[
-    None,
+PrimitiveTypes = Optional[Union[
     int,
     float,
     bytes,
@@ -69,7 +68,7 @@ PrimitiveTypes = Union[
     Dict,
     List,
     uuid.UUID,
-]
+]]
 
 _LOGGER = logging.getLogger(__name__)
 
