@@ -1,6 +1,6 @@
 # Release History
 
-## 11.2.1 (2022-01-5)
+## 11.2.1 (2022-01-10)
 
 Minor updates.
 
