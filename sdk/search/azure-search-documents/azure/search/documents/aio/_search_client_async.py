@@ -125,8 +125,8 @@ class SearchClient(HeadersMixin):
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
         :keyword str filter: The OData $filter expression to apply to the search query.
-        :keyword list[str] highlight_fields: The list of field names to use for hit highlights. Only searchable
-         fields can be used for hit highlighting.
+        :keyword list[str] highlight_fields: The comma-separated list of field names to use for hit highlights.
+         Only searchable fields can be used for hit highlighting.
         :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. Default is </em>.
         :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
