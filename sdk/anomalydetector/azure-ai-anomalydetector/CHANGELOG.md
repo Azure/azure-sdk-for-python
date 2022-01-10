@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b4 (2021-12-20)
+## 3.0.0b4 (2022-01-18)
 
   **Features**
   - Introduced the new API: `AnomalyDetectorClientOperationsMixin.last_detect_anomaly`.
