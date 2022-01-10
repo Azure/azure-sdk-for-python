@@ -11,7 +11,8 @@ from typing import List
 from github import Github
 from github.Repository import Repository
 import time
-from packaging.version import parse as Version
+from packaging.version import parse
+from pathlib import Path
 
 SERVICE_TEST_PATH = {}
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
@@ -34,7 +35,7 @@ def get_track1_track2_versions(versions: List[str]) -> (List[str], List[str]):
     for version in versions:
         if 'b' in version:
             first_track2_version = version
-            my_print(f'get first track2 version in {versions}')
+            my_print(f'get first track2 version {version} in {versions}')
             break
 
     if first_track2_version:
@@ -45,8 +46,8 @@ def get_track1_track2_versions(versions: List[str]) -> (List[str], List[str]):
 
 
 def version_sort(versions: List[str]) -> List[str]:
-    versions_package = [Version(version) for version in versions]
-    versions.sort(reverse=True)
+    versions_package = [parse(version) for version in versions]
+    versions_package.sort()
     return [str(version) for version in versions_package]
 
 
@@ -153,9 +154,9 @@ class PyPIClient:
             my_print(f'do not find cli_version {self.cli_version} in track1 versions {str(track1_versions)} and '
                      f'track2 versions {str(track2_versions)}')
 
-    def version_handler(self, version_list):
-        versions = version_sort(version_list)
-        track1_versions, track2_versions = get_track1_track2_versions(versions)
+    def version_handler(self, version_list: List[str]):
+        versions_sorted = version_sort(version_list)
+        track1_versions, track2_versions = get_track1_track2_versions(versions_sorted)
         self.find_track1_ga_version(track1_versions)
         self.find_track2_ga_version(track2_versions)
         self.handle_cli_version(track1_versions, track2_versions)
@@ -189,8 +190,6 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
                 cli_version = cli_dependency[sdk_name]
             else:
                 cli_version = 'NA'
-            if 'azure-mgmt-network' not in sdk_name: # ===
-                continue  # ===
             track_config = package[1].strip()
             readme_link = package[2].strip()
             rm_link = package[3].strip()
@@ -286,19 +285,27 @@ def write_to_csv(sdk_status_list, csv_name):
             [package for package in sorted(sdk_status_list, key=lambda x: x.split(',')[10], reverse=True)])
 
 
+def complement_version(version: str) -> str:
+    num = version.count('.')
+    if num == 0:
+        return f'{version}.0.0'
+    elif num == 1:
+        return f'{version}.0'
+    return version
+
+
 def get_cli_dependency():
-    CLI_URL = 'https://github.com/azure/azure-cli/blob/dev/src/azure-cli/setup.py'
-    cli_lines = project_html(CLI_URL).xpath('//table[@class="highlight tab-size js-file-line-container"]//text()')
+    g = Github(os.getenv('TOKEN'))  # please fill user_token
+    repo = g.get_repo('Azure/azure-cli')
+    cli_lines = repo.get_contents('src/azure-cli/setup.py').decoded_content.decode('UTF-8').split('\n')
     cli_dependency = {}
     for line in cli_lines:
         if 'azure-mgmt-' in line:
-            line = line[1:-1]
-            if '==' in line:
-                line = line.split('==')
-                cli_dependency[line[0]] = line[1]
-            elif '~=' in line:
-                line = line.split('~=')
-                cli_dependency[line[0]] = line[1]
+            name_pattern = re.compile(r'azure-mgmt-[a-zA-z\-]+')
+            version_pattern = re.compile(r'\d+[\.\da-z]+')
+            name = name_pattern.search(line).group(0)
+            version = version_pattern.search(line).group(0)
+            cli_dependency[name] = complement_version(version)
     return cli_dependency
 
 
@@ -321,13 +328,14 @@ def sdk_info_from_swagger():
     sdk_folder_re = re.compile('output-folder: \$\(python-sdks-folder\)/')
     resource_manager = []
     SWAGGER_FOLDER = os.getenv('SWAGGER_REPO')
-    readme_folders = glob.glob(f'{SWAGGER_FOLDER}/specification/*/resource-manager/readme.md')
+    target_file_pattern = str(Path(f'{SWAGGER_FOLDER}/specification/*/resource-manager/readme.md'))
+    readme_folders = glob.glob(target_file_pattern)
     my_print(f'total readme folders: {len(readme_folders)}')
-
     for folder in readme_folders:
         sdk_folder_path = False
         multi_api = ''
-        service_name = re.findall(r'specification/(.*?)/resource-manager/', folder)[0]
+        linux_folder = Path(folder).as_posix()
+        service_name = re.findall(r'specification/(.*?)/resource-manager/', linux_folder)[0]
         track_config = 0
         package_name = ''
         folder = folder.replace('readme.md', '')
@@ -361,6 +369,7 @@ def sdk_info_from_swagger():
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
         readme_html = folder.replace(SWAGGER_FOLDER, MAIN_REPO_SWAGGER)
+        readme_html = Path(readme_html).as_posix()
         if package_name != '':
             resource_manager.append('{},{},{},{},{}\n'.format(package_name,
                                                               track_config,
