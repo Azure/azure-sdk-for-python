@@ -30,21 +30,6 @@ def print_check(cmd, path=''):
         sp.check_call(cmd, shell=True)
 
 
-def get_track1_track2_versions(versions: List[str]) -> (List[str], List[str]):
-    first_track2_version = ''
-    for version in versions:
-        if 'b' in version:
-            first_track2_version = version
-            my_print(f'get first track2 version {version} in {versions}')
-            break
-
-    if first_track2_version:
-        idx = versions.index(first_track2_version)
-        return versions[0:idx], versions[idx:]
-    else:
-        return versions, []
-
-
 def version_sort(versions: List[str]) -> List[str]:
     versions_package = [parse(version) for version in versions]
     versions_package.sort()
@@ -154,15 +139,32 @@ class PyPIClient:
             my_print(f'do not find cli_version {self.cli_version} in track1 versions {str(track1_versions)} and '
                      f'track2 versions {str(track2_versions)}')
 
+    def get_track1_track2_versions(self, versions: List[str]) -> (List[str], List[str]):
+        first_track2_version = ''
+        for version in versions:
+            if 'b' in version:
+                first_track2_version = version
+                my_print(f'get first track2 version {version} in {versions}')
+                break
+
+        # azure-mgmt-streamanalytics doesn't have 1.0.0b1
+        if self.get_package_name() == 'azure-mgmt-streamanalytics':
+            first_track2_version = '1.0.0'
+
+        if first_track2_version:
+            idx = versions.index(first_track2_version)
+            return versions[0:idx], versions[idx:]
+        else:
+            return versions, []
+
     def version_handler(self, version_list: List[str]):
         versions_sorted = version_sort(version_list)
-        track1_versions, track2_versions = get_track1_track2_versions(versions_sorted)
+        track1_versions, track2_versions = self.get_track1_track2_versions(versions_sorted)
         self.find_track1_ga_version(track1_versions)
         self.find_track2_ga_version(track2_versions)
         self.handle_cli_version(track1_versions, track2_versions)
         self.track1_latest_version = self.track1_latest_version if len(track1_versions) == 0 else track1_versions[-1]
         self.track2_latest_version = self.track2_latest_version if len(track2_versions) == 0 else track2_versions[-1]
-
 
     def bot_analysis(self):
         # rule 1: readme.python.md must exist
