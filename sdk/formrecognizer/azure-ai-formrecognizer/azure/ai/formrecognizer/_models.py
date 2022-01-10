@@ -9,7 +9,7 @@
 from typing import Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
-from ._generated.v2021_09_30_preview.models import ModelInfo, Error
+from ._generated.v2022_01_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -3515,7 +3515,7 @@ class AnalyzeResult(object):
     """Document analysis result.
 
     :ivar api_version: API version used to produce this result. Possible values include:
-     "2021-09-30-preview".
+     "2022-01-30-preview".
     :vartype api_version: str
     :ivar model_id: Model ID used to produce this result.
     :vartype model_id: str

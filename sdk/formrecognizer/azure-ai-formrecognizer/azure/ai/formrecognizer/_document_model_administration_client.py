@@ -85,7 +85,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
         )
         super(DocumentModelAdministrationClient, self).__init__(
             endpoint=endpoint,
