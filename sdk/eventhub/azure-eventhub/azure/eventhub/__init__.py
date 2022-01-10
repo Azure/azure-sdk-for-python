@@ -25,7 +25,6 @@ __all__ = [
     "EventDataBatch",
     "EventHubProducerClient",
     "EventHubConsumerClient",
-    "TransportType",
     "EventHubSharedKeyCredential",
     "CheckpointStore",
     "CloseReason",
