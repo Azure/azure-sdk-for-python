@@ -150,7 +150,7 @@ class AmqpAnnotatedMessage(object):
             group_id=message.properties.group_id,
             group_sequence=message.properties.group_sequence,
             reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties and len(message.properties) > 0 else None
+        ) if message.properties else None
         self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
             time_to_live=message.header.ttl,
@@ -181,28 +181,14 @@ class AmqpAnnotatedMessage(object):
 
         return Message(**dict)
 
-        # amqp_body = self._message._body  # pylint: disable=protected-access
-        # if isinstance(amqp_body, uamqp.message.DataBody):
-        #     amqp_body_type = uamqp.MessageBodyType.Data
-        #     amqp_body = list(amqp_body.data)
-        # elif isinstance(amqp_body, uamqp.message.SequenceBody):
-        #     amqp_body_type = uamqp.MessageBodyType.Sequence
-        #     amqp_body = list(amqp_body.data)
-        # else:
-        #     # amqp_body is type of uamqp.message.ValueBody
-        #     amqp_body_type = uamqp.MessageBodyType.Value
-        #     amqp_body = amqp_body.data
-        #
-        # return uamqp.message.Message(
-        #     body=amqp_body,
-        #     body_type=amqp_body_type,
-        #     header=message_header,
-        #     properties=message_properties,
-        #     application_properties=self.application_properties,
-        #     annotations=self.annotations,
-        #     delivery_annotations=self.delivery_annotations,
-        #     footer=self.footer
-        # )
+        if self.body_type == AmqpMessageBodyType.DATA:
+            dict["data"] = self._body
+        elif self.body_type == AmqpMessageBodyType.SEQUENCE:
+            dict["sequence"] = self._body
+        else:
+            dict["value"] = self._body
+
+        return Message(**dict)
 
     @property
     def body(self) -> Any:

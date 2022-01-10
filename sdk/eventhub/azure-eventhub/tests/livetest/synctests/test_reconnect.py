@@ -21,6 +21,7 @@ from azure.eventhub._transport._uamqp_transport import UamqpTransport
 
 
 
+
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, timeout_factor):
     test_partition = "0"

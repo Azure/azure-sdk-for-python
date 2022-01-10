@@ -311,7 +311,6 @@ class Connection(object):
             return
         if channel > self.channel_max:
             _LOGGER.error("Invalid channel")
-
         await self._set_state(ConnectionState.CLOSE_RCVD)
         await self._outgoing_close()
         await self._disconnect()
@@ -415,7 +414,6 @@ class Connection(object):
             if time_since_last_sent > self.remote_idle_timeout_send_frame:
                 await self._outgoing_empty()
         return False
-
     async def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], ConnectionState) -> None
         if wait == True:

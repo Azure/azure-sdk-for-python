@@ -57,8 +57,8 @@ from ._transport._uamqp_transport import UamqpTransport
 from ._pyamqp import constants, utils as pyutils
 from ._pyamqp.message import BatchMessage, Message
 
-from .pyamqp import constants, utils as pyutils
-from .pyamqp.message import BatchMessage, Message
+from ._pyamqp import constants, utils as pyutils
+from ._pyamqp.message import BatchMessage, Message
 
 if TYPE_CHECKING:
     from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
@@ -128,7 +128,7 @@ class EventData(object):
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
-            data_body=[body], annotations={}, application_properties={}
+            data_body=body, annotations={}, application_properties={}
         )
         # amqp message to be reset right before sending
         self._message = UamqpTransport.to_outgoing_amqp_message(self._raw_amqp_message)
