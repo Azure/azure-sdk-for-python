@@ -4,7 +4,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import time
 import logging
+from functools import partial
 from collections import namedtuple
 
 from .sender import SenderLink
@@ -16,12 +18,16 @@ from .constants import (
     ReceiverSettleMode,
     ManagementExecuteOperationResult,
     ManagementOpenResult,
-    SEND_DISPOSITION_REJECT
+    SEND_DISPOSITION_ACCEPT,
+    SEND_DISPOSITION_REJECT,
+    MessageDeliveryState
 )
+from .error import ErrorResponse, AMQPException
+from .message import Message, Properties, _MessageDelivery
 
 _LOGGER = logging.getLogger(__name__)
 
-PendingMgmtOperation = namedtuple('PendingMgmtOperation', ['message', 'on_execute_operation_complete'])
+PendingManagementOperation = namedtuple('PendingManagementOperation', ['message', 'on_execute_operation_complete'])
 
 
 class ManagementLink(object):
@@ -49,8 +55,8 @@ class ManagementLink(object):
         self._on_amqp_management_error = kwargs.get('on_amqp_management_error')
         self._on_amqp_management_open_complete = kwargs.get('on_amqp_management_open_complete')
 
-        self._status_code_field = kwargs.pop('status_code_field', b'statusCode')
-        self._status_description_field = kwargs.pop('status_description_field', b'statusDescription')
+        self._status_code_field = kwargs.get('status_code_field', b'statusCode')
+        self._status_description_field = kwargs.get('status_description_field', b'statusDescription')
 
         self._sender_connected = False
         self._receiver_connected = False
@@ -58,7 +64,7 @@ class ManagementLink(object):
     def __enter__(self):
         self.open()
         return self
-    
+
     def __exit__(self, *args):
         self.close()
 
@@ -86,7 +92,7 @@ class ManagementLink(object):
         elif self.state == ManagementLinkState.ERROR:
             # All state transitions shall be ignored.
             return
-    
+
     def _on_receiver_state_change(self, previous_state, new_state):
         _LOGGER.info("Management link receiver state changed: %r -> %r", previous_state, new_state)
         if new_state == previous_state:
@@ -113,9 +119,9 @@ class ManagementLink(object):
             return
 
     def _on_message_received(self, message):
-        message_properties = message.get("properties")
+        message_properties = message.properties
         correlation_id = message_properties[5]
-        response_detail = message.get("application_properties")
+        response_detail = message.application_properties
 
         status_code = response_detail.get(self._status_code_field)
         status_description = response_detail.get(self._status_description_field)
@@ -137,16 +143,29 @@ class ManagementLink(object):
             )
             self._pending_operations.remove(to_remove_operation)
 
-    def _on_send_complete(self, message, reason, state):
-        if SEND_DISPOSITION_REJECT in state:  # either rejected or accepted
+    def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
+        if SEND_DISPOSITION_REJECT in state:
+            # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None
             for operation in self._pending_operations:
-                if message == operation.message:
+                if message_delivery.message == operation.message:
                     to_remove_operation = operation
                     break
             self._pending_operations.remove(to_remove_operation)
-            to_remove_operation.on_execute_operation_complete(
-                ManagementExecuteOperationResult.ERROR, None, None, message)
+            # TODO: better error handling
+            #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
+            #  or should there an error mapping which maps the condition to the error type
+            to_remove_operation.on_execute_operation_complete(  # The callback is defined in management_operation.py
+                ManagementExecuteOperationResult.ERROR,
+                None,
+                None,
+                message_delivery.message,
+                error=AMQPException(
+                    condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
+                    description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
+                    info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
+                )
+            )
 
     def open(self):
         if self.state != ManagementLinkState.IDLE:
@@ -156,26 +175,72 @@ class ManagementLink(object):
         self._request_link.attach()
 
     def execute_operation(
-            self,
-            message,
-            on_execute_operation_complete,
-            timeout=None,
-            operation=None,
-            type=None,
-            locales=None
+        self,
+        message,
+        on_execute_operation_complete,
+        **kwargs
     ):
+        """Execute a request and wait on a response.
+
+        :param message: The message to send in the management request.
+        :type message: ~uamqp.message.Message
+        :param on_execute_operation_complete: Callback to be called when the operation is complete.
+         The following value will be passed to the callback: operation_id, operation_result, status_code,
+         status_description, raw_message and error.
+        :type on_execute_operation_complete: Callable[[str, str, int, str, ~uamqp.message.Message, Exception], None]
+        :keyword operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :paramtype operation: bytes or str
+        :keyword type: The type on which to carry out the operation. This will
+         be specific to the entities of the service. This value will be added as
+         an application property on the message.
+        :paramtype type: bytes or str
+        :keyword str locales: A list of locales that the sending peer permits for incoming
+         informational text in response messages.
+        :keyword float timeout: Provide an optional timeout in seconds within which a response
+         to the management request must be received.
+        :rtype: None
+        """
+        timeout = kwargs.get("timeout")
+        message.application_properties["operation"] = kwargs.get("operation")
+        message.application_properties["type"] = kwargs.get("type")
+        message.application_properties["locales"] = kwargs.get("locales")
+        try:
+            # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
+            new_properties = message.properties._replace(message_id=self.next_message_id)
+        except AttributeError:
+            new_properties = Properties(message_id=self.next_message_id)
+        message = message._replace(properties=new_properties)
+        expire_time = (time.time() + timeout) if timeout else None
+        message_delivery = _MessageDelivery(
+            message,
+            MessageDeliveryState.WaitingToBeSent,
+            expire_time
+        )
+
+        on_send_complete = partial(self._on_send_complete, message_delivery)
 
         self._request_link.send_transfer(
             message,
-            on_send_complete=self._on_send_complete,
+            on_send_complete=on_send_complete,
             timeout=timeout
         )
-        self._pending_operations.append(PendingMgmtOperation(message, on_execute_operation_complete))
+        self.next_message_id += 1
+        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
 
     def close(self):
         if self.state != ManagementLinkState.IDLE:
             self.state = ManagementLinkState.CLOSING
             self._response_link.detach(close=True)
             self._request_link.detach(close=True)
+            for pending_operation in self._pending_operations:
+                pending_operation.on_execute_operation_complete(
+                    ManagementExecuteOperationResult.LINK_CLOSED,
+                    None,
+                    None,
+                    pending_operation.message,
+                    AMQPException(None, None, None, "Management link already closed.")
+                )
             self._pending_operations = []
         self.state = ManagementLinkState.IDLE

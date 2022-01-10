@@ -17,11 +17,10 @@ from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
+    NO_RETRY_ERRORS,
+    CUSTOM_CONDITION_BACKOFF,
 )
-try:
-    from urllib.parse import urlparse
-except:
-    from urlparse import urlparse
+
 if TYPE_CHECKING:
     from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message, types as uamqp_types
     from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
@@ -52,7 +51,7 @@ class EventHubConsumer(
     :param client: The parent EventHubConsumerClient.
     :type client: ~azure.eventhub.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
-    :type source: ~azure.eventhub.pyamqp.endpoints.Source
+    :type source: ~azure.eventhub._pyamqp.endpoints.Source
     :keyword event_position: The position from which to start receiving.
     :paramtype event_position: int, str, datetime.datetime
     :keyword int prefetch: The number of events to prefetch from the service
@@ -168,7 +167,6 @@ class EventHubConsumer(
         if not self.running:
             if self._handler:
                 self._handler.close()
-            # TODO: using JWTTokenAuth not working 
             auth = self._client._create_auth()
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
@@ -192,6 +190,9 @@ class EventHubConsumer(
             max_wait_time or 0
         )
         if len(self._message_buffer) < max_batch_size:
+            # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client.
+            #  Currently we create a new client with the latest received event's offset per retry.
+            #  Ideally we should reuse the same client reestablishing the connection/link with the latest offset.
             while retried_times <= max_retries:
                 try:
                     if self._open():

@@ -187,7 +187,7 @@ class EventHubSharedKeyCredential(object):
         if not scopes:
             raise ValueError("No token scope provided.")
 
-        return Py_generate_sas_token(scopes[0], self.policy, self.key)
+        return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
 
@@ -406,8 +406,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 response = self._amqp_transport.mgmt_client_request(
                     mgmt_client,
                     mgmt_msg,
-                    operation=READ_OPERATION,
-                    operation_type=op_type,
+                    operation=READ_OPERATION.decode(),
+                    operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )

@@ -9,15 +9,13 @@ import struct
 import uuid
 import logging
 import time
+from urllib.parse import urlparse
 from enum import Enum
 from io import BytesIO
-try:
-    from urllib.parse import urlparse
-except:
-    from urlparse import urlparse
 
-from .endpoints import Source, Target
-from .constants import (
+from ._anyio import create_task_group, sleep
+from ..endpoints import Source, Target
+from ..constants import (
     DEFAULT_LINK_CREDIT,
     SessionState,
     SessionTransferState,
@@ -27,7 +25,7 @@ from .constants import (
     SenderSettleMode,
     ReceiverSettleMode
 )
-from .performatives import (
+from ..performatives import (
     AttachFrame,
     DetachFrame,
     TransferFrame,
@@ -93,22 +91,22 @@ class Link(object):
         self._send_links = {}
         self._receive_links = {}
         self._pending_deliveries = {}
-        self._received_payload = b""
+        self._received_payload = bytearray()
         self._on_link_state_change = kwargs.get('on_link_state_change')
 
-    def __enter__(self):
-        self.attach()
+    async def __aenter__(self):
+        await self.attach()
         return self
 
-    def __exit__(self, *args):
-        self.detach(close=True)
+    async def __aexit__(self, *args):
+        await self.detach(close=True)
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
         # check link_create_from_endpoint in C lib
         raise NotImplementedError('Pending')  # TODO: Assuming we establish all links for now...
 
-    def _set_state(self, new_state):
+    async def _set_state(self, new_state):
         # type: (LinkState) -> None
         """Update the session state."""
         if new_state is None:
@@ -117,27 +115,28 @@ class Link(object):
         self.state = new_state
         _LOGGER.info("Link state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
         try:
-            self._on_link_state_change(previous_state, new_state)
+            await self._on_link_state_change(previous_state, new_state)
         except TypeError:
             pass
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
-    def _remove_pending_deliveries(self):  # TODO: move to sender
-        for delivery in self._pending_deliveries.values():
-            delivery.on_settled(LinkDeliverySettleReason.NotDelivered, None)
+    async def _remove_pending_deliveries(self):  # TODO: move to sender
+        async with create_task_group() as tg:
+            for delivery in self._pending_deliveries.values():
+                await tg.spawn(delivery.on_settled, LinkDeliverySettleReason.NotDelivered, None)
         self._pending_deliveries = {}
     
-    def _on_session_state_change(self):
+    async def _on_session_state_change(self):
         if self._session.state == SessionState.MAPPED:
             if not self._is_closed and self.state == LinkState.DETACHED:
-                self._outgoing_attach()
-                self._set_state(LinkState.ATTACH_SENT)
+                await self._outgoing_attach()
+                await self._set_state(LinkState.ATTACH_SENT)
         elif self._session.state == SessionState.DISCARDING:
-            self._remove_pending_deliveries()
-            self._set_state(LinkState.DETACHED)
+            await self._remove_pending_deliveries()
+            await self._set_state(LinkState.DETACHED)
 
-    def _outgoing_attach(self):
+    async def _outgoing_attach(self):
         self.delivery_count = self.initial_delivery_count
         attach_frame = AttachFrame(
             name=self.name,
@@ -157,31 +156,31 @@ class Link(object):
         )
         if self.network_trace:
             _LOGGER.info("-> %r", attach_frame, extra=self.network_trace_params)
-        self._session._outgoing_attach(attach_frame)
+        await self._session._outgoing_attach(attach_frame)
 
-    def _incoming_attach(self, frame):
+    async def _incoming_attach(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
-        elif not frame[5] or not frame[6]:  # TODO: not sure if we should source + target check here
+        elif not frame[5] or not frame[6]:  # TODO: not sure if we should check here
             _LOGGER.info("Cannot get source or target. Detaching link")
-            self._remove_pending_deliveries()
-            self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
+            await self._remove_pending_deliveries()
+            await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
             raise ValueError("Invalid link")
-        self.remote_handle = frame[1]  # handle
-        self.remote_max_message_size = frame[10]  # max_message_size
-        self.offered_capabilities = frame[11]  # offered_capabilities
+        self.remote_handle = frame[1]
+        self.remote_max_message_size = frame[10]
+        self.offered_capabilities = frame[11]
         if self.properties:
-            self.properties.update(frame[13])  # properties
+            self.properties.update(frame[13])
         else:
             self.properties = frame[13]
         if self.state == LinkState.DETACHED:
-            self._set_state(LinkState.ATTACH_RCVD)
+            await self._set_state(LinkState.ATTACH_RCVD)
         elif self.state == LinkState.ATTACH_SENT:
-            self._set_state(LinkState.ATTACHED)
-
-    def _outgoing_flow(self):
+            await self._set_state(LinkState.ATTACHED)
+    
+    async def _outgoing_flow(self):
         flow_frame = {
             'handle': self.handle,
             'delivery_count': self.delivery_count,
@@ -191,53 +190,50 @@ class Link(object):
             'echo': None,
             'properties': None
         }
-        self._session._outgoing_flow(flow_frame)
+        await self._session._outgoing_flow(flow_frame)
 
-    def _incoming_flow(self, frame):
-        pass
-    
-    def _incoming_disposition(self, frame):
+    async def _incoming_flow(self, frame):
         pass
 
-    def _outgoing_detach(self, close=False, error=None):
+    async def _outgoing_detach(self, close=False, error=None):
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.info("-> %r", detach_frame, extra=self.network_trace_params)
-        self._session._outgoing_detach(detach_frame)
+        await self._session._outgoing_detach(detach_frame)
         if close:
             self._is_closed = True
 
-    def _incoming_detach(self, frame):
+    async def _incoming_detach(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
         if self.state == LinkState.ATTACHED:
-            self._outgoing_detach(close=frame[1])  # closed
+            await self._outgoing_detach(close=frame[1])
         elif frame[1] and not self._is_closed and self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
             # Received a closing detach after we sent a non-closing detach.
             # In this case, we MUST signal that we closed by reattaching and then sending a closing detach.
-            self._outgoing_attach()
-            self._outgoing_detach(close=True)
-        self._remove_pending_deliveries()
+            await self._outgoing_attach()
+            await self._outgoing_detach(close=True)
+        await self._remove_pending_deliveries()
         # TODO: on_detach_hook
-        if frame[2]:  # error
-            self._set_state(LinkState.ERROR)
+        if frame[2]:
+            await self._set_state(LinkState.ERROR)
         else:
-            self._set_state(LinkState.DETACHED)
+            await self._set_state(LinkState.DETACHED)
 
-    def attach(self):
+    async def attach(self):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._outgoing_attach()
-        self._set_state(LinkState.ATTACH_SENT)
-        self._received_payload = b''
+        await self._outgoing_attach()
+        await self._set_state(LinkState.ATTACH_SENT)
+        self._received_payload = bytearray()
 
-    def detach(self, close=False, error=None):
+    async def detach(self, close=False, error=None):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._remove_pending_deliveries()  # TODO: Keep?
+        await self._remove_pending_deliveries()  # TODO: Keep?
         if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
-            self._outgoing_detach(close=close, error=error)
-            self._set_state(LinkState.DETACHED)
+            await self._outgoing_detach(close=close, error=error)
+            await self._set_state(LinkState.DETACHED)
         elif self.state == LinkState.ATTACHED:
-            self._outgoing_detach(close=close, error=error)
-            self._set_state(LinkState.DETACH_SENT)
+            await self._outgoing_detach(close=close, error=error)
+            await self._set_state(LinkState.DETACH_SENT)

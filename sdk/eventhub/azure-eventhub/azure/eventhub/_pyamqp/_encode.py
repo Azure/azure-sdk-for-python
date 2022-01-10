@@ -787,6 +787,7 @@ def encode_payload(output, payload):
 
 def encode_frame(frame, frame_type=_FRAME_TYPE):
     # type: (Performative) -> Tuple(bytes, bytes)
+    # TODO: allow passing type specific bytes manually, e.g. Empty Frame needs padding
     if frame is None:
         size = 8
         header = size.to_bytes(4, 'big') + _FRAME_OFFSET + frame_type
