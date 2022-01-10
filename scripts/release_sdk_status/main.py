@@ -147,9 +147,9 @@ class PyPIClient:
                 my_print(f'get first track2 version {version} in {versions}')
                 break
 
-        # azure-mgmt-streamanalytics doesn't have 1.0.0b1
+        # azure-mgmt-streamanalytics set 1.0.0rc1 as first track2 version
         if self.get_package_name() == 'azure-mgmt-streamanalytics':
-            first_track2_version = '1.0.0'
+            first_track2_version = '1.0.0rc1'
 
         if first_track2_version:
             idx = versions.index(first_track2_version)
