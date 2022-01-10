@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import struct
 import uuid
 import logging
 import time
@@ -26,6 +26,7 @@ from .performatives import (
     DispositionFrame,
     FlowFrame,
 )
+from .error import AMQPLinkError, ErrorCondition
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,8 +47,13 @@ class PendingDelivery(object):
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
             try:
-                self.on_delivery_settled(self.message, reason, state)
+                self.on_delivery_settled(reason, state)
             except Exception as e:
+                # TODO: this swallows every error in on_delivery_settled, which mean we
+                #  1. only handle errors we care about in the callback
+                #  2. ignore errors we don't care
+                #  We should revisit this:
+                #  -- "Errors should never pass silently." unless "Unless explicitly silenced."
                 _LOGGER.warning("Message 'on_send_complete' callback failed: %r", e)
 
 
@@ -86,7 +92,7 @@ class SenderLink(Link):
         delivery_count = self.delivery_count + 1
         delivery.frame = {
             'handle': self.handle,
-            'delivery_tag': bytes(delivery_count),
+            'delivery_tag': struct.pack('>I', abs(delivery_count)),
             'message_format': delivery.message._code,
             'settled': delivery.settled,
             'more': False,
@@ -144,10 +150,12 @@ class SenderLink(Link):
         self._unsent_messages = unsent
 
     def send_transfer(self, message, **kwargs):
-        if self._is_closed:
-            raise ValueError("Link already closed.")
+        self._check_if_closed()
         if self.state != LinkState.ATTACHED:
-            raise ValueError("Link is not attached.")
+            raise AMQPLinkError(  # TODO: should we introduce MessageHandler to indicate the handler is in wrong state
+                condition=ErrorCondition.ClientError,  # TODO: should this be a ClientError?
+                description="Link is not attached."
+            )
         settled = self.send_settle_mode == SenderSettleMode.Settled
         if self.send_settle_mode == SenderSettleMode.Mixed:
             settled = kwargs.pop('settled', True)

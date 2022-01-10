@@ -37,6 +37,8 @@ SASL_MINOR = 0  #: Minor protocol version.
 SASL_REV = 0  #: Protocol revision.
 SASL_HEADER_FRAME = b"AMQP\x03" + _AS_BYTES.pack(SASL_MAJOR) + _AS_BYTES.pack(SASL_MINOR) + _AS_BYTES.pack(SASL_REV)
 
+EMPTY_FRAME = b'\x00\x00\x00\x08\x02\x00\x00\x00'
+
 #: The lower bound for the agreed maximum frame size (in bytes). During the initial Connection negotiation, the
 #: two peers must agree upon a maximum frame size. This constant defines the minimum value to which the maximum
 #: frame size can be set. By defining this value, the peers can guarantee that they can send frames of up to this
@@ -177,9 +179,10 @@ class ManagementLinkState(Enum):
 
 class ManagementOpenResult(Enum):
 
-    OK = 0
-    ERROR = 1
-    CANCELLED = 2
+    OPENING = 0
+    OK = 1
+    ERROR = 2
+    CANCELLED = 3
 
 
 class ManagementExecuteOperationResult(Enum):
@@ -187,7 +190,7 @@ class ManagementExecuteOperationResult(Enum):
     OK = 0
     ERROR = 1
     FAILED_BAD_STATUS = 2
-    INSTANCE_CLOSED = 3
+    LINK_CLOSED = 3
 
 
 class CbsState(Enum):
