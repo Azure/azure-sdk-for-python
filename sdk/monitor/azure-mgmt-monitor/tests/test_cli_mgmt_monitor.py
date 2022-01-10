@@ -48,6 +48,7 @@ import unittest
 
 import azure.mgmt.monitor
 import azure.mgmt.monitor.models
+import pytest
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
@@ -911,6 +912,7 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
         # Delete an action group[delete]
         result = self.mgmt_client.action_groups.delete(resource_group.name, ACTION_GROUP_NAME)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_activity_log_alerts(self, resource_group):
@@ -1084,6 +1086,7 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
         # Delete an autoscale setting[delete]
         result = self.mgmt_client.autoscale_settings.delete(resource_group.name, AUTOSCALESETTING_NAME)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_scheduled_query_rules(self, resource_group):
