@@ -34,7 +34,7 @@ from ._constants import (
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
-    from .pyamqp.message import Message
+    from ._pyamqp.message import Message
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData

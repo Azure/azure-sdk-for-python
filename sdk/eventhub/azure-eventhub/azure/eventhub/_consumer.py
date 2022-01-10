@@ -34,7 +34,7 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from typing import Deque
-    from .pyamqp.authentication import JWTTokenAuth, SASTokenAuth
+    from ._pyamqp.authentication import JWTTokenAuth, SASTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
 
@@ -61,7 +61,7 @@ class EventHubConsumer(
     :param client: The parent EventHubConsumerClient.
     :type client: ~azure.eventhub.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
-    :type source: ~azure.eventhub.pyamqp.endpoints.Source
+    :type source: ~azure.eventhub._pyamqp.endpoints.Source
     :keyword event_position: The position from which to start receiving.
     :paramtype event_position: int, str, datetime.datetime
     :keyword int prefetch: The number of events to prefetch from the service
