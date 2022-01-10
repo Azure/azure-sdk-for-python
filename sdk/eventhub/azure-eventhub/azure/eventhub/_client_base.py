@@ -19,12 +19,10 @@ except ImportError:
     from urllib.parse import urlparse, quote_plus
 
 
-from .pyamqp.client import AMQPClient as PyAMQPClient
-from .pyamqp.authentication import _generate_sas_token as Py_generate_sas_token
-from .pyamqp.message import Message as PyMessage, Properties as PyMessageProperties
-from uamqp import authentication
-from .pyamqp import constants, error as errors, utils
-from .pyamqp.authentication import JWTTokenAuth as PyJWTTokenAuth
+from ._pyamqp.client import AMQPClient
+from ._pyamqp.message import Message, Properties
+from ._pyamqp import constants, error as errors, utils as pyamqp_utils
+from ._pyamqp.authentication import JWTTokenAuth
 
 
 import six
@@ -153,7 +151,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
 
     abs_expiry = int(time.time()) + expiry.seconds
 
-    token = utils.generate_sas_token(uri, policy, key, abs_expiry)
+    token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry)
     return _AccessToken(token=token, expires_on=abs_expiry)
 
 
@@ -194,7 +192,7 @@ class EventHubSharedKeyCredential(object):
         if not scopes:
             raise ValueError("No token scope provided.")
 
-        return Py_generate_sas_token(scopes[0], self.policy, self.key)
+        return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
 
@@ -333,8 +331,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            return PyJWTTokenAuth(self._auth_uri, self._auth_uri, functools.partial(self._credential.get_token, self._auth_uri))
-        return authentication.JWTTokenAuth(
+            return JWTTokenAuth(self._auth_uri, self._auth_uri, functools.partial(self._credential.get_token, self._auth_uri))
+        return JWTTokenAuth(
             self._auth_uri,
             self._auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
@@ -387,21 +385,18 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
-            mgmt_client = PyAMQPClient(
+            mgmt_client = AMQPClient(
                 self._address.hostname, auth=mgmt_auth, debug=self._config.network_tracing
             )
             try:
-                conn = self._conn_manager.get_connection(
-                    self._mgmt_target
-                )  # pylint:disable=assignment-from-none
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
                 mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token()
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
-                    operation=READ_OPERATION,
-                    operation_type=op_type,
+                    operation=READ_OPERATION.decode(),
+                    operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
@@ -414,35 +409,27 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 if status_code < 400:
                     return response
                 if status_code in [401]:
-                    raise errors.AMQPException(
-                        status_code,
-                        description,
-                        {}
+                    raise errors.AuthenticationException(
+                        errors.ErrorCodes.UnauthorizedAccess,
+                        description="Management authentication failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
                     )
-                    # TODO: FEATURE PARITY
-                    #raise errors.AuthenticationException(
-                    #    "Management authentication failed. Status code: {}, Description: {!r}".format(
-                    #        status_code,
-                    #        description
-                    #    )
-                    #)
                 if status_code in [404]:
-                    raise errors.AMQPException(
-                        status_code,
-                        description,
-                        {}
+                    raise errors.AMQPConnectionError(
+                        errors.ErrorCodes.NotFound,
+                        description="Management connection failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
                     )
-                    # TODO: FEATURE PARITY
-                    #raise ConnectError(
-                    #    "Management connection failed. Status code: {}, Description: {!r}".format(
-                    #        status_code,
-                    #        description
-                    #    )
-                    #)
                 raise errors.AMQPConnectionError(
-                    status_code,
-                    description,
-                    {}
+                    errors.ErrorCodes.UnknownError,
+                    description="Management operation failed. Status code: {}, Description: {!r}".format(
+                        status_code,
+                        description
+                    )
                 )
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = _handle_exception(exception, self)
@@ -466,23 +453,18 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        # TODO: amqp mgmt support missing
-        #mgmt_msg = Message(application_properties={"name": self.eventhub_name})
-        #response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
-        #output = {}
-        #eh_info = response.data  # type: Dict[bytes, Any]
-        #if eh_info:
-        #    output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-        #    output["created_at"] = utc_from_timestamp(
-        #        float(eh_info[b"created_at"]) / 1000
-        #    )
-        #    output["partition_ids"] = [
-        #        p.decode("utf-8") for p in eh_info[b"partition_ids"]
-        #    ]
-        output = {
-             # 32 is the max allowed partition count on azure portal
-            "partition_ids": [str(i) for i in range(32)]
-        }
+        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+        response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
+        output = {}
+        eh_info = response.value  # type: Dict[bytes, Any]
+        if eh_info:
+           output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
+           output["created_at"] = utc_from_timestamp(
+               float(eh_info[b"created_at"]) / 1000
+           )
+           output["partition_ids"] = [
+               p.decode("utf-8") for p in eh_info[b"partition_ids"]
+           ]
         return output
 
     def _get_partition_ids(self):
@@ -491,14 +473,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
-        mgmt_msg = PyMessage(
+        mgmt_msg = Message(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
             }
         )
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
-        partition_info = response.get_data()  # type: Dict[bytes, Any]
+        partition_info = response.value  # type: Dict[bytes, Any]
         output = {}
         if partition_info:
             output["eventhub_name"] = partition_info[b"name"].decode("utf-8")
@@ -549,11 +531,7 @@ class ConsumerProducerMixin(object):
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
-            self._handler.open(
-                # connection=self._client._conn_manager.get_connection(
-                #     self._client._address.hostname, auth
-                # )  # pylint: disable=protected-access
-            )
+            self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = (
@@ -572,8 +550,11 @@ class ConsumerProducerMixin(object):
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception):
-        #if not self.running and isinstance(exception, compat.TimeoutException):
-        #    exception = errors.AuthenticationException("Authorization timeout.")
+        if not self.running and isinstance(exception, TimeoutError):
+           exception = errors.AuthenticationException(
+               errors.ErrorCodes.InternalError,
+               description="Authorization timeout."
+           )
         return _handle_exception(exception, self)
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):

@@ -14,8 +14,7 @@ from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tu
 
 import six
 
-from uamqp import types
-from uamqp.message import MessageHeader
+from ._pyamqp.message import Header
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
@@ -23,7 +22,7 @@ from azure.core.tracing import SpanKind, Link
 from .amqp import AmqpAnnotatedMessage
 from ._version import VERSION
 from ._constants import (
-    PROP_PARTITION_KEY_AMQP_SYMBOL,
+    PROP_PARTITION_KEY,
     MAX_USER_AGENT_LENGTH,
     USER_AGENT_PREFIX,
     PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
@@ -35,7 +34,7 @@ from ._constants import (
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
-    from uamqp import Message
+    from ._pyamqp.message import Message
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -86,14 +85,14 @@ def create_properties(user_agent=None):
     :rtype: dict
     """
     properties = {}
-    properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
-    properties[types.AMQPSymbol("version")] = VERSION
+    properties["product"] = USER_AGENT_PREFIX
+    properties["version"] = VERSION
     framework = "Python/{}.{}.{}".format(
         sys.version_info[0], sys.version_info[1], sys.version_info[2]
     )
-    properties[types.AMQPSymbol("framework")] = framework
+    properties["framework"] = framework
     platform_str = platform.platform()
-    properties[types.AMQPSymbol("platform")] = platform_str
+    properties["platform"] = platform_str
 
     final_user_agent = "{}/{} {} ({})".format(
         USER_AGENT_PREFIX, VERSION, framework, platform_str
@@ -108,29 +107,33 @@ def create_properties(user_agent=None):
                 MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)
             )
         )
-    properties[types.AMQPSymbol("user-agent")] = final_user_agent
+    properties["user-agent"] = final_user_agent
     return properties
 
 
-def set_message_partition_key(message, partition_key):
-    # type: (Message, Optional[Union[bytes, str]]) -> None
+def set_message_partition_key(message, partition_key, **kwargs):
+    # type: (Message, Optional[Union[bytes, str]]) -> Message
     """Set the partition key as an annotation on a uamqp message.
 
     :param ~uamqp.Message message: The message to update.
     :param str partition_key: The partition key value.
     :rtype: None
     """
+    encoding = kwargs.pop("encoding", 'utf-8')
     if partition_key:
-        annotations = message.annotations
+        annotations = message.message_annotations
         if annotations is None:
             annotations = dict()
+        try:
+            partition_key = partition_key.decode(encoding)
+        except AttributeError:
+            pass
         annotations[
-            PROP_PARTITION_KEY_AMQP_SYMBOL
+            PROP_PARTITION_KEY
         ] = partition_key  # pylint:disable=protected-access
-        header = MessageHeader()
-        header.durable = True
-        message.annotations = annotations
-        message.header = header
+        header = Header(durable=True)
+        return message._replace(message_annotations=annotations, header=header)
+    return message
 
 
 @contextmanager

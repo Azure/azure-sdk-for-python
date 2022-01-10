@@ -7,24 +7,29 @@
 import uuid
 import logging
 import time
-try:
-    from urllib.parse import urlparse
-except:
-    from urlparse import urlparse
+from urllib.parse import urlparse
+import socket
+from ssl import SSLError
 
 from ._transport import Transport
 from .sasl import SASLTransport
 from .session import Session
 from .performatives import OpenFrame, CloseFrame
 from .constants import (
-    PORT, 
+    PORT,
     SECURE_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
-    ConnectionState
+    ConnectionState,
+    EMPTY_FRAME
 )
 
+from .error import (
+    ErrorCondition,
+    AMQPConnectionError,
+    AMQPError
+)
 
 _LOGGER = logging.getLogger(__name__)
 _CLOSING_STATES = (
@@ -108,6 +113,7 @@ class Connection(object):
             'session': None,
             'link': None
         }
+        self._error = None
         self._outgoing_endpoints = {}  # type: Dict[int, Session]
         self._incoming_endpoints = {}  # type: Dict[int, Session]
 
@@ -139,23 +145,32 @@ class Connection(object):
 
         :raises ValueError: If a reciprocating protocol header is not received during negotiation.
         """
-        if not self.state:
-            self._transport.connect()
-            self._set_state(ConnectionState.START)
-        self._transport.negotiate()
-        self._outgoing_header()
-        self._set_state(ConnectionState.HDR_SENT)
-        if not self._allow_pipelined_open:
-            self._process_incoming_frame(*self._read_frame(wait=True))
-            if self.state != ConnectionState.HDR_EXCH:
-                self._disconnect()
-                raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
-        else:
+        try:
+            if not self.state:
+                self._transport.connect()
+                self._set_state(ConnectionState.START)
+            self._transport.negotiate()
+            self._outgoing_header()
             self._set_state(ConnectionState.HDR_SENT)
+            if not self._allow_pipelined_open:
+                self._process_incoming_frame(*self._read_frame(wait=True))
+                if self.state != ConnectionState.HDR_EXCH:
+                    self._disconnect()
+                    raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
+            else:
+                self._set_state(ConnectionState.HDR_SENT)
+        except (OSError, IOError, SSLError, socket.error) as exc:
+            raise AMQPConnectionError(
+                ErrorCondition.SocketError,
+                description="Failed to initiate the connection due to exception: " + str(exc),
+                error=exc
+            )
+        except Exception:
+            raise
 
     def _disconnect(self):
         # type: () -> None
-        """Disonnect the transport and set state to END."""
+        """Disconnect the transport and set state to END."""
         if self.state == ConnectionState.END:
             return
         self._set_state(ConnectionState.END)
@@ -170,13 +185,13 @@ class Connection(object):
         # type: (bool, Any) -> Tuple[int, Optional[Tuple[int, NamedTuple]]]
         """Read an incoming frame from the transport.
 
-        :param Union[bool, flaot] wait: Whether to block on the socket while waiting for an incoming frame.
+        :param Union[bool, float] wait: Whether to block on the socket while waiting for an incoming frame.
          The default value is `False`, where the frame will block for the configured timeout only (0.1 seconds).
          If set to `True`, socket will block indefinitely. If set to a timeout value in seconds, the socket will
          block for at most that value.
         :rtype: Tuple[int, Optional[Tuple[int, NamedTuple]]]
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
-         desriptor and field values.
+         descriptor and field values.
         """
         if self._can_read():
             if wait == False:
@@ -203,12 +218,27 @@ class Connection(object):
         :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
         :rtype: None
         """
+        try:
+            raise self._error
+        except TypeError:
+            pass
+
         if self._can_write():
-            self._last_frame_sent_time = time.time()
-            if timeout:
-                with self._transport.block_with_timeout(timeout):
+            try:
+                self._last_frame_sent_time = time.time()
+                if timeout:
+                    with self._transport.block_with_timeout(timeout):
+                        self._transport.send_frame(channel, frame, **kwargs)
+                else:
                     self._transport.send_frame(channel, frame, **kwargs)
-            self._transport.send_frame(channel, frame, **kwargs)
+            except (OSError, IOError, SSLError, socket.error) as exc:
+                self._error = AMQPConnectionError(
+                    ErrorCondition.SocketError,
+                    description="Can not send frame out due to exception: " + str(exc),
+                    error=exc
+                )
+            except Exception:
+                raise
         else:
             _LOGGER.warning("Cannot write frame in current state: %r", self.state)
 
@@ -224,13 +254,28 @@ class Connection(object):
             raise ValueError("Maximum number of channels ({}) has been reached.".format(self._channel_max))
         next_channel = next(i for i in range(1, self._channel_max) if i not in self._outgoing_endpoints)
         return next_channel
-    
+
     def _outgoing_empty(self):
         # type: () -> None
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
         if self._network_trace:
-            _LOGGER.info("<- empty()", extra=self._network_trace_params)
-        self._send_frame(0, None)
+            _LOGGER.info("-> empty()", extra=self._network_trace_params)
+        try:
+            raise self._error
+        except TypeError:
+            pass
+        try:
+            if self._can_write():
+                self._transport.write(EMPTY_FRAME)
+                self._last_frame_sent_time = time.time()
+        except (OSError, IOError, SSLError, socket.error) as exc:
+            self._error = AMQPConnectionError(
+                ErrorCondition.SocketError,
+                description="Can not send empty frame due to exception: " + str(exc),
+                error=exc
+            )
+        except Exception:
+            raise
 
     def _outgoing_header(self):
         # type: () -> None
@@ -298,7 +343,12 @@ class Connection(object):
             _LOGGER.info("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
         if channel != 0:
             _LOGGER.error("OPEN frame received on a channel that is not 0.")
-            self.close(error=None)  # TODO: Add not-allowed error
+            self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.NotAllowed,
+                    description="OPEN frame received on a channel that is not 0."
+                )
+            )
             self._set_state(ConnectionState.END)
         if self.state == ConnectionState.OPENED:
             _LOGGER.error("OPEN frame received in the OPENED state.")
@@ -349,14 +399,24 @@ class Connection(object):
             self._disconnect()
             self._set_state(ConnectionState.END)
             return
+
+        close_error = None
         if channel > self._channel_max:
             _LOGGER.error("Invalid channel")
-        if frame[0]:
-            _LOGGER.error("Connection error: {}".format(frame[0]))
+            close_error = AMQPError(condition=ErrorCondition.InvalidField, description="Invalid channel", info=None)
+
         self._set_state(ConnectionState.CLOSE_RCVD)
-        self._outgoing_close()
+        self._outgoing_close(error=close_error)
         self._disconnect()
         self._set_state(ConnectionState.END)
+
+        if frame[0]:
+            self._error = AMQPConnectionError(
+                condition=frame[0][0],
+                description=frame[0][1],
+                info=frame[0][2]
+            )
+            _LOGGER.error("Connection error: {}".format(frame[0]))
 
     def _incoming_begin(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
@@ -467,7 +527,7 @@ class Connection(object):
     def _process_outgoing_frame(self, channel, frame):
         # type: (int, NamedTuple) -> None
         """Send an outgoing frame if the connection is in a legal state.
-        
+
         :raises ValueError: If the connection is not open or not in a valid state.
         """
         if self._network_trace:
@@ -476,6 +536,17 @@ class Connection(object):
             raise ValueError("Connection not configured to allow pipeline send.")
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
             raise ValueError("Connection not open.")
+        now = time.time()
+        if self._get_local_timeout(now) or self._get_remote_timeout(now):
+            self.close(
+                # TODO: check error condition
+                error=AMQPError(
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="No frame received for the idle timeout."
+                ),
+                wait=False
+            )
+            return
         self._send_frame(channel, frame)
 
     def _get_local_timeout(self, now):
@@ -543,22 +614,46 @@ class Connection(object):
          timeout (by default 0.1 seconds).
         :type wait: int or float or bool
         :param int batch: The number of frames to attempt to read and process before returning. The default value
-         is 1, i.e. process frames one-at-a-time. A higer value should only be used when a receiver is established
+         is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established
          and is processing incoming Transfer frames.
         :rtype: None
         """
-        if self.state == ConnectionState.END:
-            raise ValueError("Connection closed.")
-        for _ in range(batch):
-            new_frame = self._read_frame(wait=wait, **kwargs)
-            if not new_frame:
-                raise ValueError("Connection closed.")
-            if self._process_incoming_frame(*new_frame):
-                break
-        if self.state not in _CLOSING_STATES:
-            now = time.time()
-            if self._get_local_timeout(now) or self._get_remote_timeout(now):
-                self.close(error=None, wait=False)
+        try:
+            raise self._error
+        except TypeError:
+            pass
+        try:
+            if self.state not in _CLOSING_STATES:
+                now = time.time()
+                if self._get_local_timeout(now) or self._get_remote_timeout(now):
+                    # TODO: check error condition
+                    self.close(
+                        error=AMQPError(
+                            condition=ErrorCondition.ConnectionCloseForced,
+                            description="No frame received for the idle timeout."
+                        ),
+                        wait=False
+                    )
+                    return
+            if self.state == ConnectionState.END:
+                # TODO: check error condition
+                self._error = AMQPConnectionError(
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Connection was already closed."
+                )
+                return
+            for _ in range(batch):
+                new_frame = self._read_frame(wait=wait, **kwargs)
+                if self._process_incoming_frame(*new_frame):
+                    break
+        except (OSError, IOError, SSLError, socket.error) as exc:
+            self._error = AMQPConnectionError(
+                ErrorCondition.SocketError,
+                description="Can not send frame out due to exception: " + str(exc),
+                error=exc
+            )
+        except Exception:
+            raise
 
     def create_session(self, **kwargs):
         # type: (Any) -> Session
@@ -624,16 +719,28 @@ class Connection(object):
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        if self.state in [ConnectionState.END, ConnectionState.CLOSE_SENT]:
+        if self.state in [ConnectionState.END, ConnectionState.CLOSE_SENT, ConnectionState.DISCARDING]:
             return
-        self._outgoing_close(error=error)
-        if self.state == ConnectionState.OPEN_PIPE:
-            self._set_state(ConnectionState.OC_PIPE)
-        elif self.state == ConnectionState.OPEN_SENT:
-            self._set_state(ConnectionState.CLOSE_PIPE)
-        elif error:
-            self._set_state(ConnectionState.DISCARDING)
-        else:
-            self._set_state(ConnectionState.CLOSE_SENT)
-        self._wait_for_response(wait, ConnectionState.END)
-        self._disconnect()
+        try:
+            self._outgoing_close(error=error)
+            if error:
+                self._error = AMQPConnectionError(
+                    condition=error.condition,
+                    description=error.descrption,
+                    info=error.info
+                )
+            if self.state == ConnectionState.OPEN_PIPE:
+                self._set_state(ConnectionState.OC_PIPE)
+            elif self.state == ConnectionState.OPEN_SENT:
+                self._set_state(ConnectionState.CLOSE_PIPE)
+            elif error:
+                self._set_state(ConnectionState.DISCARDING)
+            else:
+                self._set_state(ConnectionState.CLOSE_SENT)
+            self._wait_for_response(wait, ConnectionState.END)
+        except Exception as exc:
+            # If error happened during closing, ignore the error and set state to END
+            _LOGGER.info("An error occurred when closing the connection: %r", exc)
+            self._set_state(ConnectionState.END)
+        finally:
+            self._disconnect()

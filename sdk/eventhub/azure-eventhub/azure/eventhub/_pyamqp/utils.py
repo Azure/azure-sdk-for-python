@@ -9,16 +9,11 @@ import datetime
 from base64 import b64encode
 from hashlib import sha256
 from hmac import HMAC
-
-try:
-    from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
+from urllib.parse import urlencode, quote_plus
 import time
 
+from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
-from .message import BatchMessage
 
 
 class UTC(datetime.tzinfo):
@@ -80,7 +75,8 @@ def generate_sas_token(audience, policy, key, expiry=None):
     result = {
         'sr': audience,
         'sig': signature,
-        'se': str(ttl)}
+        'se': str(ttl)
+    }
     if policy:
         result['skn'] = encoded_policy
     return 'SharedAccessSignature ' + urlencode(result)
@@ -93,7 +89,46 @@ def add_batch(batch, message):
     batch.data.append(output)
 
 
+def encode_str(data, encoding='utf-8'):
+    try:
+        return data.encode(encoding)
+    except AttributeError:
+        return data
+
+
+def normalized_data_body(data, **kwargs):
+    # A helper method to normalize input into AMQP Data Body format
+    encoding = kwargs.get("encoding", "utf-8")
+    if isinstance(data, list):
+        return [encode_str(item, encoding) for item in data]
+    else:
+        return [encode_str(data, encoding)]
+
+
+def normalized_sequence_body(sequence):
+    # A helper method to normalize input into AMQP Sequence Body format
+    if isinstance(sequence, list) and all([isinstance(b, list) for b in sequence]):
+        return sequence
+    elif isinstance(sequence, list):
+        return [sequence]
+
+
 def get_message_encoded_size(message):
     output = bytearray()
     encode_payload(output, message)
     return len(output)
+
+
+def amqp_long_value(value):
+    # A helper method to wrap a Python int as AMQP long
+    # TODO: wrapping one line in a function is expensive, find if there's a better way to do it
+    return {TYPE: AMQPTypes.long, VALUE: value}
+
+
+def amqp_uint_value(value):
+    # A helper method to wrap a Python int as AMQP uint
+    return {TYPE: AMQPTypes.uint, VALUE: value}
+
+
+def amqp_string_value(value):
+    return {TYPE: AMQPTypes.string, VALUE: value}

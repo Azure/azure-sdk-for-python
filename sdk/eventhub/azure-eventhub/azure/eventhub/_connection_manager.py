@@ -5,7 +5,7 @@
 
 from typing import TYPE_CHECKING
 
-from .pyamqp._connection import Connection, _CLOSING_STATES
+from ._pyamqp._connection import Connection, _CLOSING_STATES
 from ._constants import TransportType
 
 if TYPE_CHECKING:
