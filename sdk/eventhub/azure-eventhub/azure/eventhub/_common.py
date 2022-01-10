@@ -30,7 +30,6 @@ from ._constants import (
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
     PROP_PARTITION_KEY,
-    PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP,
     PROP_ABSOLUTE_EXPIRY_TIME,
     PROP_CONTENT_ENCODING,
@@ -53,8 +52,8 @@ from .amqp import (
     AmqpMessageProperties,
 )
 
-from .pyamqp import constants, utils as pyutils
-from .pyamqp.message import BatchMessage, Message
+from ._pyamqp import constants, utils as pyutils
+from ._pyamqp.message import BatchMessage, Message
 
 if TYPE_CHECKING:
     import datetime
@@ -107,7 +106,7 @@ class EventData(object):
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
-            data_body=[body], annotations={}, application_properties={}
+            data_body=body, annotations={}, application_properties={}
         )
         self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
@@ -193,13 +192,13 @@ class EventData(object):
     def _decode_non_data_body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         # pylint: disable=protected-access
-        body = self.raw_amqp_message._message._body
+        body = self.raw_amqp_message.body
         if self.body_type == AmqpMessageBodyType.VALUE:
-            if not body.data:
+            if not body:
                 return ""
-            return str(decode_with_recurse(body.data, encoding))
+            return str(decode_with_recurse(body, encoding))
 
-        seq_list = [d for seq_section in body.data for d in seq_section]
+        seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
 
     def _to_outgoing_message(self):
@@ -254,7 +253,7 @@ class EventData(object):
         :rtype: bytes
         """
         try:
-            return self._raw_amqp_message.annotations[PROP_PARTITION_KEY_AMQP_SYMBOL]
+            return self._raw_amqp_message.annotations[PROP_PARTITION_KEY]
         except KeyError:
             return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
@@ -486,9 +485,7 @@ class EventDataBatch(object):
         self.message = BatchMessage(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
-        # TODO: test whether we need to set partition key of a batch message, or setting each single message if enough
-        #  this is performance related
-        #set_message_partition_key(self.message, self._partition_key)
+        self.message = set_message_partition_key(self.message, self._partition_key)
         self._size = pyutils.get_message_encoded_size(self.message)
         self._count = 0
 
@@ -557,7 +554,7 @@ class EventDataBatch(object):
                     "The partition key of event_data does not match the partition key of this batch."
                 )
             if not outgoing_event_data.partition_key:
-                set_message_partition_key(
+                outgoing_event_data.message = set_message_partition_key(
                     outgoing_event_data.message, self._partition_key
                 )
 

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from threading import Lock
 from enum import Enum
 
-from .pyamqp._connection import Connection, _CLOSING_STATES
+from ._pyamqp._connection import Connection, _CLOSING_STATES
 from ._constants import TransportType
 
 if TYPE_CHECKING:

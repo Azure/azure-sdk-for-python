@@ -18,12 +18,9 @@ from typing import (
     TYPE_CHECKING,
 )  # pylint: disable=unused-import
 
-from uamqp import types, constants, errors
-from uamqp import SendClient
-
 from azure.core.tracing import AbstractSpan
 
-from .exceptions import _error_handler, OperationTimeoutError
+from .exceptions import OperationTimeoutError
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
 from ._utils import (
@@ -33,8 +30,16 @@ from ._utils import (
     send_context_manager,
     transform_outbound_single_message,
 )
-from ._constants import TIMEOUT_SYMBOL
-from .pyamqp import SendClient as PySendClient
+from ._constants import (
+    TIMEOUT_SYMBOL,
+    NO_RETRY_ERRORS,
+    CUSTOM_CONDITION_BACKOFF
+)
+from ._pyamqp import (
+    error,
+    utils as pyamqp_utils,
+    SendClient
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,12 +103,14 @@ class EventHubProducer(
         self._target = target
         self._partition = partition
         self._timeout = send_timeout
-        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
+        self._idle_timeout = idle_timeout if idle_timeout else None
         self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint: disable=protected-access
+        self._retry_policy = error.RetryPolicy(
+            retry_total=self._client._config.max_retries,  # pylint: disable=protected-access
+            no_retry_condition=NO_RETRY_ERRORS,
+            custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -112,71 +119,40 @@ class EventHubProducer(
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
         self._handler = None  # type: Optional[SendClient]
-        self._outcome = None  # type: Optional[constants.MessageSendResult]
         self._condition = None  # type: Optional[Exception]
         self._lock = threading.Lock()
-        self._link_properties = {
-            types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
-        }
+        self._link_properties = {TIMEOUT_SYMBOL: pyamqp_utils.amqp_long_value(int(self._timeout * 1000))}
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
-        self._handler = PySendClient(
+        self._handler = SendClient(
             self._client._address.hostname,
             self._target,
             auth=auth,
-            idle_timeout=10,
-            network_trace=self._client._config.network_tracing
+            idle_timeout=self._idle_timeout,
+            network_trace=self._client._config.network_tracing,
+            retry_policy=self._retry_policy,
+            keep_alive_interval=self._keep_alive,
+            client_name=self._name,
+            link_properties=self._link_properties,
+            properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
         )
 
     def _open_with_retry(self):
         # type: () -> None
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _set_msg_timeout(self, timeout_time, last_exception):
-        # type: (Optional[float], Optional[Exception]) -> None
-        if not timeout_time:
-            return
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError("Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
-
     def _send_event_data(self, timeout_time=None, last_exception=None):
         # type: (Optional[float], Optional[Exception]) -> None
         if self._unsent_events:
             self._open()
-            self._set_msg_timeout(timeout_time, last_exception)
-            self._handler.send_message(self._unsent_events[0])
+            timeout = timeout_time - time.time() if timeout_time else 0
+            self._handler.send_message(self._unsent_events[0], timeout=timeout)
             self._unsent_events = None
-            # self._unsent_events = self._handler.pending_messages  # type: ignore
-            # if self._outcome != constants.MessageSendResult.Ok:
-            #     if self._outcome == constants.MessageSendResult.Timeout:
-            #         self._condition = OperationTimeoutError("Send operation timed out")
-            #     if self._condition:
-            #         raise self._condition
 
     def _send_event_data_with_retry(self, timeout=None):
         # type: (Optional[float]) -> None
         return self._do_retryable_operation(self._send_event_data, timeout=timeout)
-
-    def _on_outcome(self, outcome, condition):
-        # type: (constants.MessageSendResult, Optional[Exception]) -> None
-        """
-        Called when the outcome is received for a delivery.
-
-        :param outcome: The outcome of the message delivery - success or failure.
-        :type outcome: ~uamqp.constants.MessageSendResult
-        :param condition: Detail information of the outcome.
-
-        """
-        self._outcome = outcome
-        self._condition = condition
 
     def _wrap_eventdata(
         self,
@@ -210,7 +186,6 @@ class EventHubProducer(
                     event_data = _set_partition_key(event_data, partition_key)
                 event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
-        wrapper_event_data.message.on_send_complete = self._on_outcome
         return wrapper_event_data
 
     def send(
@@ -248,14 +223,18 @@ class EventHubProducer(
             with send_context_manager() as child:
                 self._check_closed()
                 wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-                self._unsent_events = [wrapper_event_data.message]
-
                 if child:
                     self._client._add_span_request_attributes(  # pylint: disable=protected-access
                         child
                     )
 
-                self._send_event_data_with_retry(timeout=timeout)
+                try:
+                    self._open()
+                    self._handler.send_message(wrapper_event_data.message, timeout=timeout)
+                except TimeoutError as exception:
+                    raise OperationTimeoutError(message=str(exception), details=exception)
+                except Exception as exception:  # pylint:disable=broad-except
+                    raise self._handle_exception(exception)
 
     def close(self):
         # type:() -> None
