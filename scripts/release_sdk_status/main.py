@@ -44,9 +44,9 @@ def get_track1_track2_versions(versions: List[str]) -> (List[str], List[str]):
         return versions, []
 
 
-def version_sort(versions: List[str])->List[str]:
+def version_sort(versions: List[str]) -> List[str]:
     versions_package = [Version(version) for version in versions]
-    versions.sort()
+    versions.sort(reverse=True)
     return [str(version) for version in versions_package]
 
 
@@ -159,6 +159,9 @@ class PyPIClient:
         self.find_track1_ga_version(track1_versions)
         self.find_track2_ga_version(track2_versions)
         self.handle_cli_version(track1_versions, track2_versions)
+        self.track1_latest_version = self.track1_latest_version if len(track1_versions) == 0 else track1_versions[-1]
+        self.track2_latest_version = self.track2_latest_version if len(track2_versions) == 0 else track2_versions[-1]
+
 
     def bot_analysis(self):
         # rule 1: readme.python.md must exist
@@ -268,7 +271,7 @@ def write_to_csv(sdk_status_list, csv_name):
                        'latest track1 release date,'
                        'track1 GA version,'
                        'latest track2 version,'
-                       'latest track1 release date,'
+                       'latest track2 release date,'
                        'track2 GA version,'
                        'cli dependency,'
                        'readme config,'
