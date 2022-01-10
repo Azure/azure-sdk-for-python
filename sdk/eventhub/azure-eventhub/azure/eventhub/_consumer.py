@@ -190,7 +190,6 @@ class EventHubConsumer(
         if not self.running:
             if self._handler:
                 self._handler.close()
-            # TODO: using JWTTokenAuth not working 
             auth = self._client._create_auth()
             self._create_handler(auth)
             self._handler.open()
@@ -210,10 +209,8 @@ class EventHubConsumer(
         deadline = self._receive_start_time + (max_wait_time or 0)  # max_wait_time can be None
         if len(self._message_buffer) < max_batch_size:
             # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client.
-            #  besides, the retry will create a new AMQPClient + new link properties (offset)
-            #  so we need to create new amqp client or update the link properties of existing one
-            #  I'd like to add more optional steps into the retry policy of amqp lib
-            #  to allow updating existing properties for recreation of a client if link/connection error happens
+            #  Currently we create a new client with the latest received event's offset per retry.
+            #  Ideally we should reuse the same client reestablishing the connection/link with the latest offset.
             while retried_times <= max_retries:
                 try:
                     if self._open():
