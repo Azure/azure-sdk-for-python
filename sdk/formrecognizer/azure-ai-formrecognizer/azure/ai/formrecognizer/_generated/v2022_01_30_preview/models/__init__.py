@@ -17,6 +17,7 @@ try:
     from ._models_py3 import ComponentModelInfo
     from ._models_py3 import ComposeDocumentModelRequest
     from ._models_py3 import CopyAuthorization
+    from ._models_py3 import CurrencyValue
     from ._models_py3 import CustomDocumentModelsInfo
     from ._models_py3 import DocTypeInfo
     from ._models_py3 import Document
@@ -54,6 +55,7 @@ except (SyntaxError, ImportError):
     from ._models import ComponentModelInfo  # type: ignore
     from ._models import ComposeDocumentModelRequest  # type: ignore
     from ._models import CopyAuthorization  # type: ignore
+    from ._models import CurrencyValue  # type: ignore
     from ._models import CustomDocumentModelsInfo  # type: ignore
     from ._models import DocTypeInfo  # type: ignore
     from ._models import Document  # type: ignore
@@ -85,6 +87,7 @@ from ._form_recognizer_client_enums import (
     AnalyzeResultOperationStatus,
     ApiVersion,
     ContentType,
+    DocumentBuildMode,
     DocumentFieldType,
     DocumentSignatureType,
     DocumentTableCellKind,
@@ -106,6 +109,7 @@ __all__ = [
     'ComponentModelInfo',
     'ComposeDocumentModelRequest',
     'CopyAuthorization',
+    'CurrencyValue',
     'CustomDocumentModelsInfo',
     'DocTypeInfo',
     'Document',
@@ -135,6 +139,7 @@ __all__ = [
     'AnalyzeResultOperationStatus',
     'ApiVersion',
     'ContentType',
+    'DocumentBuildMode',
     'DocumentFieldType',
     'DocumentSignatureType',
     'DocumentTableCellKind',
