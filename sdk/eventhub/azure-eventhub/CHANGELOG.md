@@ -1,5 +1,19 @@
 # Release History
 
+## 5.8.0a1 (Unreleased)
+
+Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
+``
+### Breaking changes
+
+- The following features have been temporarily pulled out and will be added back in the future:
+  - Async is not supported.
+  - Setting `transport_type` `http_proxy`, `custom_endpoint_address` and `connection_verify` of the client are not supported.
+
+### Other Changes
+
+- uAMQP dependency is removed.
+
 ## 5.6.0 (Unreleased)
 
 ### Features Added
