@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Any, Union, Optional, TYPE_CHECKING
-from typing_extensions import Literal
 import logging
 from weakref import WeakSet
+from typing_extensions import Literal
 
 import uamqp
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
