@@ -110,7 +110,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_create_ad_config_with_series_and_group_conds(self, client, variables):
+    async def test_create_ad_conf_series_and_group_cond(self, client, variables):
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -213,7 +213,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True)
     @recorded_by_proxy_async
-    async def test_create_ad_config_multiple_series_and_group_conds(self, client, variables):
+    async def test_create_ad_conf_series_and_group_conds(self, client, variables):
         detection_config_name = self.create_random_name("testdetectionconfig")
         if self.is_live:
             variables["detection_config_name"] = detection_config_name
@@ -660,7 +660,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
-    async def test_update_detection_config_with_model_and_kwargs(self, client, variables):
+    async def test_update_ad_conf_model_and_kwargs(self, client, variables):
         async with client:
             try:
                 detection_config = await client.get_detection_configuration(variables["detection_config_id"])
@@ -778,7 +778,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
     @recorded_by_proxy_async
-    async def test_update_detection_config_by_resetting_properties(self, client, variables):
+    async def test_update_ad_conf_by_reset_props(self, client, variables):
         async with client:
             try:
                 update_name = "update" + str(uuid.uuid4())
