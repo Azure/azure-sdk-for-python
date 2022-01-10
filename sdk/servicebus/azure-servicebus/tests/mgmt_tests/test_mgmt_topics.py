@@ -13,7 +13,7 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     ServiceBusNamespacePreparer
@@ -24,10 +24,11 @@ from mgmt_test_utilities import clear_topics
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
+class ServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_create_by_name(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
@@ -43,7 +44,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_create_with_topic_description(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_create_with_topic_description(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "iweidk"
@@ -103,7 +105,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest', sku='Premium')
-    def test_mgmt_topic_premium_create_with_topic_description(self, servicebus_namespace_connection_string, **kwargs):
+    def test_mgmt_topic_premium_create_with_topic_description(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "iweidk"
@@ -176,7 +178,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_create_duplicate(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
@@ -189,7 +192,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_update_success(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_update_success(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
@@ -268,7 +272,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_update_invalid(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dfjfj"
@@ -305,6 +310,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy
     def test_mgmt_topic_delete(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
@@ -330,7 +336,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_list(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_list(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topics = list(mgmt_service.list_topics())
@@ -348,7 +355,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_list_runtime_properties(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_list_runtime_properties(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topics = list(mgmt_service.list_topics())
@@ -380,6 +388,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy
     def test_mgmt_topic_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
@@ -402,7 +411,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_update_dict_success(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
@@ -474,7 +484,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_topic_update_dict_error(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dfjdfj"
@@ -489,7 +500,8 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_topic_basic_v2017_04(self, servicebus_namespace_connection_string, servicebus_namespace,
+    @recorded_by_proxy
+    def test_mgmt_topic_basic_v2017_04(self, variables, servicebus_namespace_connection_string, servicebus_namespace,
                                     servicebus_namespace_key_name, servicebus_namespace_primary_key):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string, api_version=ApiVersion.V2017_04)
         clear_topics(mgmt_service)

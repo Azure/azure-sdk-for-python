@@ -7,13 +7,15 @@ import pytest
 
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 from servicebus_preparer import CachedServiceBusNamespacePreparer
 
 
-class ServiceBusManagementClientNamespaceAsyncTests(AzureMgmtTestCase):
+class ServiceBusManagementClientNamespaceAsyncTests(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_async_mgmt_namespace_get_properties(self, servicebus_namespace_connection_string,
                                                         servicebus_namespace, servicebus_namespace_key_name,
                                                         servicebus_namespace_primary_key):

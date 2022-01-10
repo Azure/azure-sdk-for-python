@@ -12,7 +12,7 @@ from azure.servicebus.management import ServiceBusAdministrationClient, Subscrip
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     ServiceBusNamespacePreparer
@@ -23,10 +23,11 @@ from mgmt_test_utilities import clear_topics
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
+class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_create_by_name(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
@@ -45,7 +46,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_create_with_subscription_description(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_create_with_subscription_description(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "iweidk"
@@ -101,7 +103,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_create_with_forward_to(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_create_with_forward_to(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "iweidkforward"
@@ -130,7 +133,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_create_duplicate(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
@@ -146,7 +150,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_update_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_update_success(self, variables, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
@@ -250,7 +255,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_update_invalid(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dfjfj"
@@ -290,6 +296,7 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy
     def test_mgmt_subscription_delete(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
@@ -320,7 +327,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_list(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_list(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = 'lkoqxc'
@@ -344,7 +352,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_list_runtime_properties(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_list_runtime_properties(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = 'dkoamv'
@@ -383,6 +392,7 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy
     def test_mgmt_subscription_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
@@ -413,7 +423,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_update_dict_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_update_dict_success(self, variables, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
@@ -491,7 +502,8 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_update_dict_error(self, variables, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dfjdfj"

@@ -15,7 +15,8 @@ from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     ServiceBusNamespacePreparer
@@ -25,9 +26,10 @@ from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 
 _logger = get_logger(logging.DEBUG)
 
-class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
+class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_async_mgmt_rule_create(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -100,6 +102,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_async_mgmt_rule_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -120,6 +123,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_async_mgmt_rule_update_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -171,6 +175,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_async_mgmt_rule_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -213,6 +218,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_async_mgmt_rule_list_and_delete(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -263,6 +269,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_mgmt_rule_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -315,6 +322,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @recorded_by_proxy_async
     async def test_mgmt_rule_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)

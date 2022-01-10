@@ -7,14 +7,15 @@ import pytest
 
 from azure.servicebus.management import ServiceBusAdministrationClient
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
 from servicebus_preparer import CachedServiceBusNamespacePreparer
 
 
-class ServiceBusManagementClientNamespaceTests(AzureMgmtTestCase):
+class ServiceBusManagementClientNamespaceTests(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_namespace_get_properties(self, servicebus_namespace_connection_string,
+    @recorded_by_proxy
+    def test_mgmt_namespace_get_properties(self, variables, servicebus_namespace_connection_string,
                                            servicebus_namespace, servicebus_namespace_key_name,
                                            servicebus_namespace_primary_key):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
