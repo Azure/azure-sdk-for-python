@@ -37,7 +37,7 @@ class CommunicationRelayClient(object):
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: TokenCredential
+             credential, # type: TokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -86,6 +86,7 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
+            *,
             user=None, # type: CommunicationUserIdentifier
             route_type=None, # type: Optional[Union[str, "RouteType"]]
             **kwargs # type: Any

@@ -110,7 +110,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
 
         async with networkTraversalClient:
             print('Getting relay config with nearest type:\n')
-            config = await networkTraversalClient.get_relay_configuration(user, RouteType.NEAREST)
+            config = await networkTraversalClient.get_relay_configuration(user=user, route_type=RouteType.NEAREST)
         
         print('Ice Servers Async:\n')
         for iceServer in config.ice_servers:
@@ -145,7 +145,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
 
         async with networkTraversalClient:
             print('Getting relay config with nearest type:\n')
-            config = await networkTraversalClient.get_relay_configuration(user, RouteType.ANY)
+            config = await networkTraversalClient.get_relay_configuration(user= user, route_type=RouteType.ANY)
         
         print('Ice Servers Async:\n')
         for iceServer in config.ice_servers:
