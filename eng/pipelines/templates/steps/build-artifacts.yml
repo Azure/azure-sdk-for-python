@@ -108,7 +108,7 @@ steps:
 
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Upload Documentation SBOM'
-    condition: and(succeeded(), ${{ parameters.CustomCondition }})
+    condition: and(succeeded(), ${{ parameters.BuildDocs }})
     inputs:
       BuildDropPath: $(Build.SourcesDirectory)/_docs
 
