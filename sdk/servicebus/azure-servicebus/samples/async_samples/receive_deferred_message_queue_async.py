@@ -50,6 +50,6 @@ async def main():
             else:
                 print("No messages received.")
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+
+asyncio.run(main())
 print("Receive is done.")

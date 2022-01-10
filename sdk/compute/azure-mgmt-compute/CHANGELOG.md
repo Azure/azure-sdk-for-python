@@ -1,5 +1,24 @@
 # Release History
 
+## 24.0.0 (2022-01-06)
+
+**Features**
+
+  - Model AccessUri has a new parameter security_data_access_sas
+  - Model CreationData has a new parameter security_data_uri
+  - Model DiskRestorePoint has a new parameter replication_state
+  - Model DiskRestorePoint has a new parameter source_resource_location
+  - Model DiskSecurityProfile has a new parameter secure_vm_disk_encryption_set_id
+  - Model GrantAccessData has a new parameter get_secure_vm_guest_state_sas
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model RestorePoint has a new parameter time_created
+  - Model Snapshot has a new parameter security_profile
+  - Model SnapshotUpdate has a new parameter supported_capabilities
+
+**Breaking changes**
+
+  - Model RestorePoint no longer has parameter provisioning_details
+
 ## 23.1.0 (2021-10-12)
 
 **Features**
