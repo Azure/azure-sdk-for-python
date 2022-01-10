@@ -23,14 +23,14 @@ from .._common.utils import generate_dead_letter_entity_name, strip_protocol_fro
 from .._common.constants import (
     ServiceBusSubQueue,
     ServiceBusReceiveMode,
-    NEXT_AVAILABLE_SESSION,
+    ServiceBusSessionFilter,
 )
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-NextAvailableSessionType = Literal[NEXT_AVAILABLE_SESSION]  # type: ignore
+NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -27,7 +27,7 @@ from ._common.utils import (
 from ._common.constants import (
     ServiceBusSubQueue,
     ServiceBusReceiveMode,
-    NEXT_AVAILABLE_SESSION,
+    ServiceBusSessionFilter,
 )
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
         AzureNamedKeyCredential,
     )
 
-NextAvailableSessionType = Literal[NEXT_AVAILABLE_SESSION]  # type: ignore
+NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
 
 _LOGGER = logging.getLogger(__name__)
