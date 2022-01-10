@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +13,7 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
     def __init__(self, **kwargs):
         self._response_callback = kwargs.get("raw_response_hook")
         self._is_lro = None
-        super(TextAnalyticsResponseHookPolicy, self).__init__()
+        super().__init__()
 
     def on_request(self, request):
         self._response_callback = request.context.options.pop(

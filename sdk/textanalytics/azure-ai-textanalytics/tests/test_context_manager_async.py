@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,7 +6,7 @@
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
-    import mock  # type: ignore
+    from unittest import mock  # type: ignore
 import asyncio
 import sys
 
