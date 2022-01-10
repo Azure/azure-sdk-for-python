@@ -112,7 +112,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     def __init__(  # type: ignore
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         **kwargs: Any,
     ) -> None:
         super().__init__(
@@ -877,7 +877,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 SingleCategoryClassifyAction,
                 MultiCategoryClassifyAction,
             ]
-        ],  # pylint: disable=line-too-long
+        ],
         **kwargs: Any,
     ) -> AsyncAnalyzeActionsLROPoller[
         AsyncItemPaged[
@@ -896,7 +896,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ]
             ]
         ]
-    ]:  # pylint: disable=line-too-long
+    ]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or

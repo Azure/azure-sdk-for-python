@@ -6,7 +6,7 @@
 import json
 import functools
 from collections import defaultdict
-from six.moves.urllib.parse import urlparse, parse_qsl
+from urllib.parse import urlparse, parse_qsl
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,

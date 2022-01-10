@@ -181,11 +181,10 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
     @classmethod
     def from_continuation_token(  # type: ignore
         cls,
-        polling_method,  # type: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
-        continuation_token,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncAnalyzeHealthcareEntitiesLROPoller
+        polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
@@ -402,8 +401,12 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         return self.polling_method().id
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
-        # type: (AsyncAnalyzeActionsLROPollingMethod, str, Any) -> AsyncAnalyzeActionsLROPoller
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method: AsyncAnalyzeActionsLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )

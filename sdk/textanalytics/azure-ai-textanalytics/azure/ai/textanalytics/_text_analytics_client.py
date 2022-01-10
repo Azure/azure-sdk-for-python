@@ -9,12 +9,13 @@ from typing import (
     Any,
     List,
     Dict,
-    TYPE_CHECKING,
+    TYPE_CHECKING
 )
 from functools import partial
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AzureKeyCredential
 from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
 from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
 from ._request_handlers import (
@@ -42,34 +43,33 @@ from ._lro import (
     AnalyzeActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
 )
-
+from ._models import (
+    DetectLanguageInput,
+    TextDocumentInput,
+    DetectLanguageResult,
+    RecognizeEntitiesResult,
+    RecognizeLinkedEntitiesResult,
+    ExtractKeyPhrasesResult,
+    AnalyzeSentimentResult,
+    DocumentError,
+    RecognizePiiEntitiesResult,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    RecognizeLinkedEntitiesAction,
+    ExtractKeyPhrasesAction,
+    AnalyzeSentimentAction,
+    AnalyzeHealthcareEntitiesResult,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    RecognizeCustomEntitiesAction,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
+)
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureKeyCredential
-    from ._models import (
-        DetectLanguageInput,
-        TextDocumentInput,
-        DetectLanguageResult,
-        RecognizeEntitiesResult,
-        RecognizeLinkedEntitiesResult,
-        ExtractKeyPhrasesResult,
-        AnalyzeSentimentResult,
-        DocumentError,
-        RecognizePiiEntitiesResult,
-        RecognizeEntitiesAction,
-        RecognizePiiEntitiesAction,
-        RecognizeLinkedEntitiesAction,
-        ExtractKeyPhrasesAction,
-        AnalyzeSentimentAction,
-        AnalyzeHealthcareEntitiesResult,
-        ExtractSummaryAction,
-        ExtractSummaryResult,
-        RecognizeCustomEntitiesAction,
-        RecognizeCustomEntitiesResult,
-        SingleCategoryClassifyAction,
-        SingleCategoryClassifyResult,
-        MultiCategoryClassifyAction,
-        MultiCategoryClassifyResult,
-    )
+    from azure.core.credentials import TokenCredential
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -115,8 +115,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any
+    ) -> None:
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
@@ -130,10 +134,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def detect_language(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
+        documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detect language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
@@ -213,10 +216,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Recognize entities for a batch of documents.
 
         Identifies and categorizes entities in your text as people, places,
@@ -305,10 +307,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_pii_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
 
         Returns a list of personal information entities ("SSN",
@@ -419,10 +420,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_linked_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
         Identifies and disambiguates the identity of each entity found in text (for example,
@@ -528,9 +528,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def begin_analyze_healthcare_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]  # pylint: disable=line-too-long
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -666,10 +666,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def extract_key_phrases(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract key phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
@@ -748,10 +747,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def analyze_sentiment(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
 
         Returns a sentiment prediction, as well as sentiment scores for
@@ -874,10 +872,39 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def begin_analyze_actions(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction, RecognizeCustomEntitiesAction, SingleCategoryClassifyAction, MultiCategoryClassifyAction]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, RecognizeCustomEntitiesResult, SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]  # pylint: disable=line-too-long
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        actions: List[
+            Union[
+                RecognizeEntitiesAction,
+                RecognizeLinkedEntitiesAction,
+                RecognizePiiEntitiesAction,
+                ExtractKeyPhrasesAction,
+                AnalyzeSentimentAction,
+                ExtractSummaryAction,
+                RecognizeCustomEntitiesAction,
+                SingleCategoryClassifyAction,
+                MultiCategoryClassifyAction,
+            ]
+        ],
+        **kwargs: Any,
+    ) -> AnalyzeActionsLROPoller[
+        ItemPaged[
+            List[
+                Union[
+                    RecognizeEntitiesResult,
+                    RecognizeLinkedEntitiesResult,
+                    RecognizePiiEntitiesResult,
+                    ExtractKeyPhrasesResult,
+                    AnalyzeSentimentResult,
+                    ExtractSummaryResult,
+                    RecognizeCustomEntitiesResult,
+                    SingleCategoryClassifyResult,
+                    MultiCategoryClassifyResult,
+                    DocumentError
+                ]
+            ]
+        ]
+    ]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
