@@ -390,14 +390,6 @@ def commit_to_github():
     print_check('git push -f origin HEAD')
 
 
-def upload_to_azure(out_file):
-    # upload to storage account(it is created in advance)
-    blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-                                             blob_name=out_file)
-    with open(out_file, 'rb') as data:
-        blob.upload_blob(data, overwrite=True)
-
-
 def count_sdk_status():
     cli_dependency = get_cli_dependency()
     sdk_info = sdk_info_from_swagger()
@@ -406,7 +398,6 @@ def count_sdk_status():
     out_file = 'release_sdk_status.csv'
     write_to_csv(all_sdk_status, out_file)
     commit_to_github()
-    upload_to_azure(out_file)
 
 
 def get_all_readme_html() -> List[str]:
