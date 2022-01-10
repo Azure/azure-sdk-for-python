@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- `ContentDecodePolicy` can now correctly JSON deserialize `application/merge-patch+json` bodies #22410
+
 ### Other Changes
 
 ## 1.21.1 (2021-12-06)
