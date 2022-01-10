@@ -347,3 +347,6 @@ def test_raw_deserializer(http_request, http_response, requests_transport_respon
     assert result == u"é"
     assert response.context["response_encoding"] == "utf-8-sig"
     del request.context['response_encoding']
+
+def test_json_merge_patch():
+    assert ContentDecodePolicy.deserialize_from_text('{"hello": "world"}', mime_type="application/merge-patch+json") == {"hello": "world"}
