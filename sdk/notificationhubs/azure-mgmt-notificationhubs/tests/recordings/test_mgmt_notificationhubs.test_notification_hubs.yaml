@@ -13,7 +13,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-notificationhubs/0.0.0 Python/3.8.12 (Linux-5.11.0-1022-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz?api-version=2017-04-01
   response:
@@ -31,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Dec 2021 04:58:48 GMT
+      - Thu, 06 Jan 2022 07:19:30 GMT
       expires:
       - '-1'
       location:
@@ -43,11 +44,11 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       trackingid:
-      - 61c08b4f-0702-4d5f-a250-35e3d935b39a
+      - 9298108f-ae67-4d0d-a263-22a4d69bc51e
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -61,24 +62,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-notificationhubs/0.0.0 Python/3.8.12 (Linux-5.11.0-1022-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz?api-version=2017-04-01
   response:
     body:
-      string: '{"sku":{"name":"Free"},"properties":{"provisioningState":"Succeeded","status":"Active","createdAt":"2021-12-20T04:58:49.1470000Z","updatedAt":"2021-12-20T04:58:49.1600000Z","serviceBusEndpoint":"https://namespacexxz.servicebus.windows.net:443/","enabled":true,"critical":false,"zoneRedundant":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz","name":"namespacexxz","type":"Microsoft.NotificationHubs/namespaces","location":"East
-        US","tags":{}}'
+      string: '{"properties":{"provisioningState":"InProgress","status":"Provisioning","zoneRedundant":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz","name":"namespacexxz","type":"Microsoft.NotificationHubs/namespaces"}'
     headers:
       api-supported-versions:
       - 2014-09-01, 2016-03-01, 2017-04-01, 2020-01-01-preview
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/operations/Q3JlYXRlTmFtZXNwYWNlLTBiMWY2NDcxLTFiZjAtNGRkYS1hZWMzLWNiOTI3MmYwOTU5MC1uYW1lc3BhY2V4eHo7bmhwcm9kYmwyMDAxLTItZmFicmlj?api-version=2017-04-01
       cache-control:
       - no-cache
       content-length:
-      - '598'
+      - '362'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Dec 2021 04:58:48 GMT
+      - Thu, 06 Jan 2022 07:19:31 GMT
       expires:
       - '-1'
       pragma:
@@ -88,7 +91,7 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       trackingid:
-      - 268281eb-bafa-4677-9902-55aaf403ef00
+      - 988ca325-f666-44b1-b2e2-dfbad557d055
       transfer-encoding:
       - chunked
       vary:
@@ -112,7 +115,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-notificationhubs/0.0.0 Python/3.8.12 (Linux-5.11.0-1022-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/notificationHubs/notificationhubxxzx?api-version=2017-04-01
   response:
@@ -129,7 +133,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Dec 2021 04:58:53 GMT
+      - Thu, 06 Jan 2022 07:19:33 GMT
       expires:
       - '-1'
       pragma:
@@ -139,11 +143,11 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       trackingid:
-      - 7051bc01-fa72-4ca2-bd32-8b87db8af518
+      - a3c63d5f-0e78-450c-acc3-140b9ab3075d
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -157,7 +161,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-notificationhubs/0.0.0 Python/3.8.12 (Linux-5.11.0-1022-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/notificationHubs/notificationhubxxzx?api-version=2017-04-01
   response:
@@ -174,7 +179,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 20 Dec 2021 04:58:53 GMT
+      - Thu, 06 Jan 2022 07:19:33 GMT
       expires:
       - '-1'
       pragma:
@@ -184,7 +189,7 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       trackingid:
-      - 9fb7ffe6-17e9-46f7-ae2c-bb47a604b637
+      - 3c3051fa-d3ff-4c65-91ed-bbf283ff0505
       transfer-encoding:
       - chunked
       vary:
@@ -206,7 +211,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.6.9 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-notificationhubs/0.0.0 Python/3.8.12 (Linux-5.11.0-1022-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/notificationHubs/notificationhubxxzx?api-version=2017-04-01
   response:
@@ -220,7 +226,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 20 Dec 2021 04:58:57 GMT
+      - Thu, 06 Jan 2022 07:19:34 GMT
       expires:
       - '-1'
       pragma:
@@ -230,11 +236,11 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       trackingid:
-      - 30b4852f-04ac-4cda-9850-e83fda655268
+      - 42f0bcff-9543-4a7e-896f-8429f2586ae9
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK

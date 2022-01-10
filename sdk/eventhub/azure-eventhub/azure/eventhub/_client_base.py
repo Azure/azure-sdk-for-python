@@ -26,11 +26,11 @@ from azure.core.credentials import (
     AzureNamedKeyCredential,
 )
 from azure.core.utils import parse_connection_string as core_parse_connection_string
+from azure.core.pipeline.policies import RetryMode
 
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
-from ._retry import RetryMode
 from ._utils import utc_from_timestamp, parse_sas_credential
 from ._connection_manager import get_connection_manager
 from ._constants import (
@@ -164,7 +164,7 @@ def _build_uri(address, entity):
 
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
-    if retry_mode == RetryMode.FIXED:
+    if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
         backoff_value = backoff_factor * (2 ** retried_times)
@@ -341,6 +341,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify,
+            refresh_window=300,
         )
 
     def _close_connection(self):

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -116,7 +115,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any,
     ) -> None:
-        super(TextAnalyticsClient, self).__init__(
+        super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)

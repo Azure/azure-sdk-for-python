@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_linked_services_by_workspace_request(
@@ -323,13 +324,13 @@ class LinkedServiceOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _linked_service = _models.LinkedServiceResource(properties=properties)
-        json = self._serialize.body(_linked_service, 'LinkedServiceResource')
+        _json = self._serialize.body(_linked_service, 'LinkedServiceResource')
 
         request = build_create_or_update_linked_service_request_initial(
             linked_service_name=linked_service_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_linked_service_initial.metadata['url'],
         )
@@ -628,13 +629,13 @@ class LinkedServiceOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_linked_service_request_initial(
             linked_service_name=linked_service_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_linked_service_initial.metadata['url'],
         )
         request = _convert_request(request)

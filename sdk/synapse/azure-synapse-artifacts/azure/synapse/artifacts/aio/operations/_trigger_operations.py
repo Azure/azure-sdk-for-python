@@ -144,13 +144,13 @@ class TriggerOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _trigger = _models.TriggerResource(properties=properties)
-        json = self._serialize.body(_trigger, 'TriggerResource')
+        _json = self._serialize.body(_trigger, 'TriggerResource')
 
         request = build_create_or_update_trigger_request_initial(
             trigger_name=trigger_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_trigger_initial.metadata['url'],
         )
