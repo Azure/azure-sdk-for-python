@@ -124,7 +124,7 @@ class PyPIClient:
 
     def find_track2_ga_version(self, versions: List[str]) -> None:
         for version in versions:
-            if 'b' not in version:
+            if re.search(r'[a-zA-z]', version) is None:
                 self.track2_ga_version = version
                 break
 
