@@ -47,7 +47,7 @@ class ServiceBusSession(BaseSession):
 
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: str
+        :rtype: bytes
 
         .. admonition:: Example:
 
