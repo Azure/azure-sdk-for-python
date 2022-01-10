@@ -35,7 +35,7 @@ from ._constants import (
     NO_RETRY_ERRORS,
     CUSTOM_CONDITION_BACKOFF
 )
-from .pyamqp import (
+from ._pyamqp import (
     error,
     utils as pyamqp_utils,
     SendClient

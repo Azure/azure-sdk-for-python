@@ -6,7 +6,7 @@ import logging
 import six
 
 from ._constants import NO_RETRY_ERRORS
-from .pyamqp import error as errors
+from ._pyamqp import error as errors
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tu
 
 import six
 
-from .pyamqp.message import Header
+from ._pyamqp.message import Header
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link

@@ -11,15 +11,15 @@ from collections import deque
 from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
 from urllib.parse import urlparse
 
-from .pyamqp import (
+from ._pyamqp import (
     ReceiveClient,
     types,
     utils as pyamqp_utils,
     error,
     constants as pyamqp_constants
 )
-from .pyamqp.endpoints import Source, ApacheFilters
-from .pyamqp.message import Message
+from ._pyamqp.endpoints import Source, ApacheFilters
+from ._pyamqp.message import Message
 
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin

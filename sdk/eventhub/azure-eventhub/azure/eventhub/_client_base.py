@@ -19,10 +19,10 @@ except ImportError:
     from urllib.parse import urlparse, quote_plus
 
 
-from .pyamqp.client import AMQPClient
-from .pyamqp.message import Message, Properties
-from .pyamqp import constants, error as errors, utils as pyamqp_utils
-from .pyamqp.authentication import JWTTokenAuth
+from ._pyamqp.client import AMQPClient
+from ._pyamqp.message import Message, Properties
+from ._pyamqp import constants, error as errors, utils as pyamqp_utils
+from ._pyamqp.authentication import JWTTokenAuth
 
 
 import six

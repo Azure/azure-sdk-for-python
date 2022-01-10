@@ -7,8 +7,8 @@
 from typing import Optional, Any, cast, Mapping
 
 from ._constants import AmqpMessageBodyType
-from ..pyamqp.message import Message, Header, Properties
-from ..pyamqp import utils as pyamqp_utils
+from .._pyamqp.message import Message, Header, Properties
+from .._pyamqp import utils as pyamqp_utils
 
 
 class DictMixin(object):

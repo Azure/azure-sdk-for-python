@@ -7,9 +7,9 @@
 import time
 import pytest
 
-from azure.eventhub.pyamqp.authentication import SASTokenAuth
-from azure.eventhub.pyamqp.client import ReceiveClient
-from azure.eventhub.pyamqp import error, constants
+from azure.eventhub._pyamqp.authentication import SASTokenAuth
+from azure.eventhub._pyamqp.client import ReceiveClient
+from azure.eventhub._pyamqp import error, constants
 
 
 from azure.eventhub import (

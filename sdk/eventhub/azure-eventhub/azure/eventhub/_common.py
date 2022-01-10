@@ -52,8 +52,8 @@ from .amqp import (
     AmqpMessageProperties,
 )
 
-from .pyamqp import constants, utils as pyutils
-from .pyamqp.message import BatchMessage, Message
+from ._pyamqp import constants, utils as pyutils
+from ._pyamqp.message import BatchMessage, Message
 
 if TYPE_CHECKING:
     import datetime

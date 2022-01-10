@@ -16,8 +16,8 @@ from azure.identity import EnvironmentCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
-from azure.eventhub.pyamqp import ReceiveClient
-from azure.eventhub.pyamqp.authentication import SASTokenAuth
+from azure.eventhub._pyamqp import ReceiveClient
+from azure.eventhub._pyamqp.authentication import SASTokenAuth
 
 from devtools_testutils import get_region_override
 
