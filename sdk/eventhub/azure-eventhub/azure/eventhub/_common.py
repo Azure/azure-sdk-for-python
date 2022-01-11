@@ -64,6 +64,7 @@ PrimitiveTypes = Optional[Union[
     int,
     float,
     bytes,
+    bool,
     str,
     Dict,
     List,
@@ -339,7 +340,7 @@ class EventData(object):
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
         the body could be any type.
 
-        :rtype: int or float or bytes or str or Dict or List or uuid.UUID
+        :rtype: int or bool or float or bytes or str or Dict or List or uuid.UUID
         """
         try:
             return self._raw_amqp_message.body
