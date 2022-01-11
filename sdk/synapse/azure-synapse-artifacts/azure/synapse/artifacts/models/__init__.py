@@ -381,6 +381,11 @@ try:
     from ._models_py3 import MarketoLinkedService
     from ._models_py3 import MarketoObjectDataset
     from ._models_py3 import MarketoSource
+    from ._models_py3 import MetastoreRegisterObject
+    from ._models_py3 import MetastoreRegistrationResponse
+    from ._models_py3 import MetastoreRequestSuccessResponse
+    from ._models_py3 import MetastoreUpdateObject
+    from ._models_py3 import MetastoreUpdationResponse
     from ._models_py3 import MicrosoftAccessLinkedService
     from ._models_py3 import MicrosoftAccessSink
     from ._models_py3 import MicrosoftAccessSource
@@ -411,6 +416,7 @@ try:
     from ._models_py3 import NotebookLanguageInfo
     from ._models_py3 import NotebookListResponse
     from ._models_py3 import NotebookMetadata
+    from ._models_py3 import NotebookParameter
     from ._models_py3 import NotebookResource
     from ._models_py3 import NotebookSessionProperties
     from ._models_py3 import ODataLinkedService
@@ -1056,6 +1062,11 @@ except (SyntaxError, ImportError):
     from ._models import MarketoLinkedService  # type: ignore
     from ._models import MarketoObjectDataset  # type: ignore
     from ._models import MarketoSource  # type: ignore
+    from ._models import MetastoreRegisterObject  # type: ignore
+    from ._models import MetastoreRegistrationResponse  # type: ignore
+    from ._models import MetastoreRequestSuccessResponse  # type: ignore
+    from ._models import MetastoreUpdateObject  # type: ignore
+    from ._models import MetastoreUpdationResponse  # type: ignore
     from ._models import MicrosoftAccessLinkedService  # type: ignore
     from ._models import MicrosoftAccessSink  # type: ignore
     from ._models import MicrosoftAccessSource  # type: ignore
@@ -1086,6 +1097,7 @@ except (SyntaxError, ImportError):
     from ._models import NotebookLanguageInfo  # type: ignore
     from ._models import NotebookListResponse  # type: ignore
     from ._models import NotebookMetadata  # type: ignore
+    from ._models import NotebookParameter  # type: ignore
     from ._models import NotebookResource  # type: ignore
     from ._models import NotebookSessionProperties  # type: ignore
     from ._models import ODataLinkedService  # type: ignore
@@ -1408,6 +1420,7 @@ from ._artifacts_client_enums import (
     NetezzaPartitionOption,
     NodeSize,
     NodeSizeFamily,
+    NotebookParameterType,
     NotebookReferenceType,
     ODataAadServicePrincipalCredentialType,
     ODataAuthenticationType,
@@ -1421,7 +1434,9 @@ from ._artifacts_client_enums import (
     PolybaseSettingsRejectType,
     PrestoAuthenticationType,
     RecurrenceFrequency,
+    RequestStatus,
     ResourceIdentityType,
+    ResourceStatus,
     RestServiceAuthenticationType,
     RunQueryFilterOperand,
     RunQueryFilterOperator,
@@ -1839,6 +1854,11 @@ __all__ = [
     'MarketoLinkedService',
     'MarketoObjectDataset',
     'MarketoSource',
+    'MetastoreRegisterObject',
+    'MetastoreRegistrationResponse',
+    'MetastoreRequestSuccessResponse',
+    'MetastoreUpdateObject',
+    'MetastoreUpdationResponse',
     'MicrosoftAccessLinkedService',
     'MicrosoftAccessSink',
     'MicrosoftAccessSource',
@@ -1869,6 +1889,7 @@ __all__ = [
     'NotebookLanguageInfo',
     'NotebookListResponse',
     'NotebookMetadata',
+    'NotebookParameter',
     'NotebookResource',
     'NotebookSessionProperties',
     'ODataLinkedService',
@@ -2189,6 +2210,7 @@ __all__ = [
     'NetezzaPartitionOption',
     'NodeSize',
     'NodeSizeFamily',
+    'NotebookParameterType',
     'NotebookReferenceType',
     'ODataAadServicePrincipalCredentialType',
     'ODataAuthenticationType',
@@ -2202,7 +2224,9 @@ __all__ = [
     'PolybaseSettingsRejectType',
     'PrestoAuthenticationType',
     'RecurrenceFrequency',
+    'RequestStatus',
     'ResourceIdentityType',
+    'ResourceStatus',
     'RestServiceAuthenticationType',
     'RunQueryFilterOperand',
     'RunQueryFilterOperator',
