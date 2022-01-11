@@ -14,7 +14,7 @@ urlFragment: servicebus-samples
 > which has different APIs than the older version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of version 0.50 of this library.
 
 These are code samples that show common scenario operations with the Azure Service Bus client library.
-Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided, async samples require Python 3.7 or later.
+Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided.
 
 - [send_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/send_queue_async.py)) - Examples to send messages to a service bus queue:
     - From a connection string
