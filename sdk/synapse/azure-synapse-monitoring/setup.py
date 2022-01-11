@@ -65,7 +65,7 @@ setup(
         'azure',
         'azure.synapse',
     ]),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
