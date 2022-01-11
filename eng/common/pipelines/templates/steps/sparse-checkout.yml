@@ -38,8 +38,8 @@ steps:
               $hasInitialized = $true
               Write-Host "Repository $($repository.Name) has already been initialized. Skipping this step."
             } else {
-              Write-Host "Repository $($repository.Name) is being initialized."
-              git clone --no-checkout --filter=tree:0 git://github.com/$($repository.Name) .
+              Write-Host "git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) ."
+              git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) .
               git sparse-checkout init
               git sparse-checkout set eng
             }
