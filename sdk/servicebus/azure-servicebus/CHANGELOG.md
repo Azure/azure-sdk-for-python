@@ -9,8 +9,6 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 - Added support for fixed (linear) retry backoff:
   - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed bug that when setting `ServiceBusMessage.time_to_live` with value being `datetime.timedelta`, `total_seconds` should be respected (PR #21869, thanks @jyggen).
@@ -18,7 +16,7 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 ### Other Changes
 
 - Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
-- Updated uAMQP dependency to 1.5.0.
+- Updated uAMQP dependency to 1.5.1.
 
 ## 7.4.0 (2021-11-09)
 
