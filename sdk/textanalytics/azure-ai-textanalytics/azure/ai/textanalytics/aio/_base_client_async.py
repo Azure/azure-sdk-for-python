@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -28,7 +27,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class AsyncTextAnalyticsClientBase(object):
+class AsyncTextAnalyticsClientBase:
     def __init__(self, endpoint, credential, **kwargs):
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(

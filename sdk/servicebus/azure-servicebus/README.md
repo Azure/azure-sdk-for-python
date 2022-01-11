@@ -18,7 +18,7 @@ of this package please look at our [migration guide to move from Service Bus V0.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -34,7 +34,7 @@ pip install azure-servicebus
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Service Bus - [Namespace and management credentials][service_bus_namespace]
-* Python 2.7, 3.6 or later - [Install Python][python]
+* Python 3.7 or later - [Install Python][python]
 
 
 If you need an Azure service bus namespace, you can create it via the [Azure Portal][azure_namespace_creation].
@@ -61,7 +61,7 @@ protocol. There are implementations of the `TokenCredential` protocol available 
 [azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
 - To use the credential types provided by `azure-identity`, please install the package:
 ```pip install azure-identity```
-- Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+- Additionally, to use the async API, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
 ```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
 Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,

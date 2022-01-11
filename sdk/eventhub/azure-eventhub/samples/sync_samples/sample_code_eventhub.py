@@ -221,6 +221,6 @@ def example_eventhub_consumer_receive_and_close():
 
 
 if __name__ == '__main__':
+    example_eventhub_producer_send_and_close()
+    example_eventhub_consumer_receive_and_close()
     example_eventhub_sync_send_and_receive()
-    # example_eventhub_producer_send_and_close()
-    # example_eventhub_consumer_receive_and_close()

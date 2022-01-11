@@ -9,7 +9,7 @@ The Azure Identity library provides [Azure Active Directory (AAD)](https://docs.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -24,7 +24,7 @@ pip install azure-identity
 ### Prerequisites
 
 - an [Azure subscription](https://azure.microsoft.com/free/)
-- Python 2.7 or a recent version of Python 3 (this library doesn't support
+- Python 3.7 or a recent version of Python 3 (this library doesn't support
   end-of-life versions)
 
 ### Authenticate during local development
@@ -185,7 +185,7 @@ client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
 
 ### Async credentials
 
-This library includes an async API supported on Python 3. To use the async
+This library includes a set of async APIs. To use the async
 credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation][azure_core_transport_doc] for more information.
