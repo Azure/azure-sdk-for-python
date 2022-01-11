@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+- Added async user agent for async client
 
 ### 4.3.0b1 (2021-12-14)
 **New features**
