@@ -125,7 +125,8 @@ class _QueryExecutionContextBase(object):
                 (fetched_items, response_headers) = await fetch_function(new_options)
             except exceptions.CosmosHttpResponseError as e:
                 if e.status_code == http_constants.StatusCodes.GONE:
-                    print("410 found in base_execution_context")  # This one gets called after the fetch_fn in doc prod
+                    # error comes here from fetch function in document producer
+                    # raise error to rebuild context within multi_execution_aggregator on partition split
                     raise
                 (fetched_items, response_headers) = await fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation

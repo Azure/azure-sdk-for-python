@@ -26,7 +26,7 @@ database service.
 import numbers
 from collections import deque
 
-from azure.cosmos import _base, exceptions
+from azure.cosmos import _base, exceptions, http_constants
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 
 
@@ -59,15 +59,11 @@ class _DocumentProducer(object):
 
         async def fetch_fn(options):
             try:
-                # partition key target range might be stale, should always get the target partition key range from cache
-                # other way - instead of not using from cache, initialize a new document producer using the cache
                 return await self._client.QueryFeed(path, collection_id, query, options,
                                                     partition_key_target_range["id"])
             except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == 410:
-                    print("410 found in doc prod fetch function")
-                    # works, actually gets caught here, however since it is a fetch function that is passed forward
-                    # it's not exactly within this context, goes first in 410 stack trace
+                if e.status_code == http_constants.StatusCodes.GONE:
+                    # 410 within fetch function, raise to properly handle within execution context
                     raise
                 return await self._client.QueryFeed(path, collection_id, query, options,
                                                     partition_key_target_range["id"])
@@ -115,7 +111,7 @@ class _DocumentProducer(object):
                 self._cur_item = await self._ex_context.__anext__()
             except exceptions.CosmosHttpResponseError as e:
                 if partition_range_is_gone(e):
-                    print("410 found in doc_prod peek()")
+                    # raising within document producer peek in order to properly handle within execution context
                     raise
 
         return self._cur_item
@@ -128,8 +124,10 @@ def _compare_helper(a, b):
 
 
 def partition_range_is_gone(e):
-    if e.status_code == 410 and e.sub_status == 1002:
+    if (e.status_code == http_constants.StatusCodes.GONE
+            and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True
+    return False
 
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
