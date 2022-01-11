@@ -17,6 +17,7 @@
 # ----------------------
 
 import unittest
+import pytest
 
 import azure.mgmt.keyvault.aio
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
@@ -31,7 +32,8 @@ class TestMgmtKeyVault(AzureMgmtAsyncTestCase):
         self.mgmt_client = self.create_mgmt_aio_client(
             azure.mgmt.keyvault.aio.KeyVaultManagementClient
         )
-    
+
+    @pytest.mark.skip('skip aio test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_keyvault(self, resource_group):
