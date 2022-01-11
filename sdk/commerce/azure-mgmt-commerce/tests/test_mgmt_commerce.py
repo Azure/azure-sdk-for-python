@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 import unittest
+import pytest
 
 import azure.mgmt.commerce
 from datetime import date, timedelta
@@ -18,6 +19,7 @@ class TestMgmtCommerce(AzureMgmtRecordedTestCase):
             azure.mgmt.commerce.UsageManagementClient
         )
 
+    @pytest.mark.skip('serialization error for text/plain')
     @recorded_by_proxy
     def test_commerce(self):
         # Test not recorded for privacy concerns
