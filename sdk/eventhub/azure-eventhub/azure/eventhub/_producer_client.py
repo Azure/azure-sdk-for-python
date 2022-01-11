@@ -7,8 +7,6 @@ import threading
 
 from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 
-from uamqp import constants
-
 from .exceptions import ConnectError, EventHubError
 from .amqp import AmqpAnnotatedMessage
 from ._client_base import ClientBase

@@ -8,7 +8,7 @@ import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
 from urllib.parse import urlparse
 
 from ._pyamqp import (
@@ -33,8 +33,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from typing import Deque
-    from ._pyamqp.authentication import JWTTokenAuth, SASTokenAuth
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
 

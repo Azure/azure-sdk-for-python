@@ -15,7 +15,7 @@ Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library
 
 - uAMQP dependency is removed.
 
-## 5.7.0 (Unreleased)
+## 5.7.0 (2022-01-11)
 
 This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
 
