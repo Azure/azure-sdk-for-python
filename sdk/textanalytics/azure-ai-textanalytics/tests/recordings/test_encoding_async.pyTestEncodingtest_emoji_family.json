@@ -1,0 +1,30 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "141",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1f5ac72d-5d11-11ec-89b2-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022\\ud83d\\udc69\\u200d\\ud83d\\udc69\\u200d\\ud83d\\udc67\\u200d\\ud83d\\udc67 SSN: 859-98-0987\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b41ec475-75d7-43f0-8b1b-389048bb8615",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Tue, 14 Dec 2021 19:07:46 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "30"
+      },
+      "ResponseBody": "{\u0022documents\u0022:[{\u0022redactedText\u0022:\u0022\uD83D\uDC69\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC67 SSN: ***********\u0022,\u0022id\u0022:\u00220\u0022,\u0022entities\u0022:[{\u0022text\u0022:\u0022859-98-0987\u0022,\u0022category\u0022:\u0022USSocialSecurityNumber\u0022,\u0022offset\u0022:13,\u0022length\u0022:11,\u0022confidenceScore\u0022:0.65}],\u0022warnings\u0022:[]}],\u0022errors\u0022:[],\u0022modelVersion\u0022:\u00222021-01-15\u0022}"
+    }
+  ],
+  "Variables": {}
+}

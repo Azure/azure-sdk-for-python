@@ -1,4 +1,4 @@
-# coding=utf-8  pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1199,7 +1199,7 @@ class DocumentError(DictMixin):
                 )
             )
         raise AttributeError(
-            "'DocumentError' object has no attribute '{}'".format(attr)
+            f"'DocumentError' object has no attribute '{attr}'"
         )
 
     @classmethod
@@ -1239,7 +1239,7 @@ class DetectLanguageInput(LanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(DetectLanguageInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.country_hint = kwargs.get("country_hint", None)
@@ -1390,7 +1390,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(TextDocumentInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.language = kwargs.get("language", None)
@@ -1799,9 +1799,9 @@ class RecognizeEntitiesAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
+        self.model_version = kwargs.get("model_version", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return "RecognizeEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
@@ -1872,10 +1872,10 @@ class AnalyzeSentimentAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
-        self.show_opinion_mining = kwargs.get("show_opinion_mining", False)
-        self.string_index_type = kwargs.get("string_index_type", None)
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.model_version = kwargs.get("model_version", None)
+        self.show_opinion_mining = kwargs.get("show_opinion_mining", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -1953,11 +1953,11 @@ class RecognizePiiEntitiesAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
+        self.model_version = kwargs.get("model_version", None)
         self.domain_filter = kwargs.get("domain_filter", None)
         self.categories_filter = kwargs.get("categories_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", True)
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -2017,8 +2017,8 @@ class ExtractKeyPhrasesAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.model_version = kwargs.get("model_version", None)
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -2078,9 +2078,9 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
+        self.model_version = kwargs.get("model_version", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -2143,11 +2143,11 @@ class ExtractSummaryAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
+        self.model_version = kwargs.get("model_version", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", False)
-        self.max_sentence_count = kwargs.get("max_sentence_count", 3)
-        self.order_by = kwargs.get("order_by", "Offset")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+        self.max_sentence_count = kwargs.get("max_sentence_count", None)
+        self.order_by = kwargs.get("order_by", None)
 
     def __repr__(self):
         return (
@@ -2312,7 +2312,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
-        self.string_index_type = kwargs.get('string_index_type', None)
+        self.string_index_type = kwargs.get('string_index_type', "UnicodeCodePoint")
 
     def __repr__(self):
         return "RecognizeCustomEntitiesAction(project_name={}, deployment_name={}, disable_service_logs={}, " \

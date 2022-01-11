@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -49,10 +47,10 @@ def sample_alternative_document_input():
 
     for idx, doc in enumerate(result):
         if not doc.is_error:
-            print("Document text: {}".format(documents[idx]))
-            print("Language detected: {}".format(doc.primary_language.name))
-            print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-            print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
+            print(f"Document text: {documents[idx]}")
+            print(f"Language detected: {doc.primary_language.name}")
+            print(f"ISO6391 name: {doc.primary_language.iso6391_name}")
+            print(f"Confidence score: {doc.primary_language.confidence_score}\n")
         if doc.is_error:
             print(doc.id, doc.error)
 
