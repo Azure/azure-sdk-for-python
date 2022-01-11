@@ -2,6 +2,12 @@
 
 ## 12.2.0b1 (Unreleased)
 
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+
+### Features Added
+
+### Bugs Fixed
+
 ## 12.1.6 (2021-04-20)
 **Fixes**
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
