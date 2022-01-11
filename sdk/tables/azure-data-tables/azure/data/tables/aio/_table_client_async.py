@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -22,7 +22,7 @@ from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import TableAccessPolicy, TableItem
-from .._serialize import serialize_iso, _parameter_filter_substitution
+from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
     _process_table_error,
@@ -346,8 +346,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )
@@ -448,28 +448,28 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.REPLACE:
+            if mode == UpdateMode.REPLACE:
                 metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.MERGE:
+            elif mode == UpdateMode.MERGE:
                 metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     table_entity_properties=entity,  # type: ignore
                     **kwargs
                 )
             else:
-                raise ValueError("Mode type is not supported")
+                raise ValueError("Mode type '{}' is not supported.".format(mode))
         except HttpResponseError as error:
             _process_table_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
@@ -588,8 +588,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
@@ -632,20 +632,20 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.MERGE:
+            if mode == UpdateMode.MERGE:
                 metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.REPLACE:
+            elif mode == UpdateMode.REPLACE:
                 metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -664,17 +664,24 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def submit_transaction(
         self,
-        operations: Iterable[TransactionOperationType],
+        operations: Union[
+            Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]
+        ],
         **kwargs
     ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
 
-        :param operations: The list of operations to commit in a transaction. This should be a list of
-         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
-         kwargs for that operation.
-        :type operations: Iterable[Tuple[str, EntityType]]
+        :param operations: The list of operations to commit in a transaction. This should be an iterable
+         (or async iterable) of tuples containing an operation name, the entity on which to operate,
+         and optionally, a dict of additional kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations:
+         Union[Iterable[Tuple[str, Entity, Mapping[str, Any]]],AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises ~azure.data.tables.TableTransactionError:
@@ -697,13 +704,17 @@ class TableClient(AsyncTablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
-        for operation in operations:
+        try:
+            for operation in operations:  # type: ignore
+                batched_requests.add_operation(operation)
+        except TypeError:
             try:
-                operation_kwargs = operation[2]  # type: ignore
-            except IndexError:
-                operation_kwargs = {}
-            try:
-                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
-            except AttributeError:
-                raise ValueError("Unrecognized operation: {}".format(operation))
+                async for operation in operations:  # type: ignore
+                    batched_requests.add_operation(operation)
+            except TypeError:
+                raise TypeError(
+                  "The value of 'operations' must be an iterator or async iterator "
+                  "of Tuples. Please check documentation for correct Tuple format."
+                )
+
         return await self._batch_send(*batched_requests.requests, **kwargs)

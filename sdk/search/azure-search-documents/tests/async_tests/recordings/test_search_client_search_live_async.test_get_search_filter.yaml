@@ -10,36 +10,33 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR79nkWT2dj5tpVdMnu+Odvb37B/sPRx/NqzYvX2QL+vSj03erOm+a9FVVLZqPRh/N
-        8mZaF6u2qJb07cs6b9vr9KKqZim/RS2mWZtfVPU1ff1kPbvI249+yejWvU2rZfW6za4JTtjTT+b1
-        dbqqVusyq6WrtFimbXW1pKa36nJvfO/g3t6De5+GXZ5U62VbXzfFLE+/jc8JXtj16+wyT9cr6iy9
-        v/O7p9X5edrW2azA11kpyDTjNH1W53n63eJZMUov6jxr07IixKhRuiRE0hnhCnxH6fm6LNO3RTud
-        5/TXVdbM8zr9hemsvs7rUbq3f/dB2qxXq6puR+mkuiqL5UWalWV+Ta8W7RLTMc2XLb2ULWfpgkY3
-        JqSpr5uJMED3k2pxfp2+LLNpTpDC4R8vqxYI3jTJ3/8l/w87XRrPXgIAAA==
+      string: '{"value":[{"@search.score":1.0225849,"hotelName":"Express Rooms","description":"Pretty
+        good hotel","category":"Budget"},{"@search.score":1.0225849,"hotelName":"EconoStay","description":"Very
+        popular hotel in town","category":"Budget"},{"@search.score":2.3832736,"hotelName":"Countryside
+        Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
+        location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
+        alley, fitness center and more.","category":"Budget"},{"@search.score":1.0225849,"hotelName":"Comfy
+        Place","description":"Another good hotel","category":"Budget"}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '442'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:26:50 GMT
-      elapsed-time: '75'
+      date: Tue, 31 Aug 2021 17:30:14 GMT
+      elapsed-time: '333'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 5ee70187-afc6-11eb-b408-a0481ca055a9
+      request-id: 1b66ba12-0a81-11ec-bbeb-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    url: https://searchd523181c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
 version: 1

@@ -45,7 +45,7 @@ class IntelligencePacksOperations:
         resource_group_name: str,
         workspace_name: str,
         intelligence_pack_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Disables an intelligence pack for a given workspace.
 
@@ -70,7 +70,7 @@ class IntelligencePacksOperations:
         # Construct URL
         url = self.disable.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'intelligencePackName': self._serialize.url("intelligence_pack_name", intelligence_pack_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -102,7 +102,7 @@ class IntelligencePacksOperations:
         resource_group_name: str,
         workspace_name: str,
         intelligence_pack_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Enables an intelligence pack for a given workspace.
 
@@ -127,7 +127,7 @@ class IntelligencePacksOperations:
         # Construct URL
         url = self.enable.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'intelligencePackName': self._serialize.url("intelligence_pack_name", intelligence_pack_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -158,7 +158,7 @@ class IntelligencePacksOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.IntelligencePack"]:
         """Lists all the intelligence packs possible and whether they are enabled or disabled for a given
         workspace.
@@ -183,7 +183,7 @@ class IntelligencePacksOperations:
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }

@@ -45,7 +45,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerFrontendIPConfigurationListResult"]:
         """Gets all the load balancer frontend IP configurations.
 
@@ -120,7 +120,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         resource_group_name: str,
         load_balancer_name: str,
         frontend_ip_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FrontendIPConfiguration":
         """Gets load balancer frontend IP configuration.
 

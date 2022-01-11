@@ -1,6 +1,8 @@
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
+
+# THE VALUES IN THE ENUM ARE AUTO-GENERATED. DO NOT EDIT THIS MANUALLY.
 # --------------------------------------------------------------------------------------------
 from enum import Enum
 
@@ -51,6 +53,16 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
+    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
     # backward compat names end here.
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
@@ -90,21 +102,51 @@ class SystemEventNames(str, Enum):
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
 
+    AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
+
+    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.ApiCreated'
+
+    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.ApiDeleted'
+
+    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.ApiReleaseCreated'
+
+    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.ApiReleaseDeleted'
+
+    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
+
+    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
+
+    ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
+
+    ApiManagementProductDeletedEventName = 'Microsoft.ApiManagement.ProductDeleted'
+
+    ApiManagementProductUpdatedEventName = 'Microsoft.ApiManagement.ProductUpdated'
+
+    ApiManagementSubscriptionCreatedEventName = 'Microsoft.ApiManagement.SubscriptionCreated'
+
+    ApiManagementSubscriptionDeletedEventName = 'Microsoft.ApiManagement.SubscriptionDeleted'
+
+    ApiManagementSubscriptionUpdatedEventName = 'Microsoft.ApiManagement.SubscriptionUpdated'
+
+    ApiManagementUserCreatedEventName = 'Microsoft.ApiManagement.UserCreated'
+
+    ApiManagementUserDeletedEventName = 'Microsoft.ApiManagement.UserDeleted'
+
+    ApiManagementUserUpdatedEventName = 'Microsoft.ApiManagement.UserUpdated'
+
     AppConfigurationKeyValueDeletedEventName = 'Microsoft.AppConfiguration.KeyValueDeleted'
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
-
     ContainerRegistryImageDeletedEventName = 'Microsoft.ContainerRegistry.ImageDeleted'
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
+
+    ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
@@ -117,8 +159,6 @@ class SystemEventNames(str, Enum):
     IotHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
 
     IotHubDeviceTelemetryEventName = 'Microsoft.Devices.DeviceTelemetry'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     KeyVaultCertificateExpiredEventName = 'Microsoft.KeyVault.CertificateExpired'
 
@@ -137,6 +177,8 @@ class SystemEventNames(str, Enum):
     KeyVaultSecretNearExpiryEventName = 'Microsoft.KeyVault.SecretNearExpiry'
 
     KeyVaultSecretNewVersionCreatedEventName = 'Microsoft.KeyVault.SecretNewVersionCreated'
+
+    KeyVaultVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     MachineLearningServicesDatasetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
 
@@ -183,6 +225,8 @@ class SystemEventNames(str, Enum):
     MediaJobScheduledEventName = 'Microsoft.Media.JobScheduled'
 
     MediaJobStateChangeEventName = 'Microsoft.Media.JobStateChange'
+
+    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat'
 
     MediaLiveEventConnectionRejectedEventName = 'Microsoft.Media.LiveEventConnectionRejected'
 
@@ -265,10 +309,6 @@ class SystemEventNames(str, Enum):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
-
-    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
-
-    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
 
     WebAppServicePlanUpdatedEventName = 'Microsoft.Web.AppServicePlanUpdated'
 

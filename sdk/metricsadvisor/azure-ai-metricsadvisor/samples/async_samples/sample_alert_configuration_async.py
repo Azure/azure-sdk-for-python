@@ -255,7 +255,7 @@ async def sample_update_alert_config_async(alert_config):
         detection_configuration_id=detection_configuration_id,
         alert_scope=MetricAnomalyAlertScope(
             scope_type="SeriesGroup",
-            series_group_in_scope={'city': 'Shenzhen'}
+            series_group_in_scope={'region': 'Shenzhen'}
         ),
         alert_conditions=MetricAnomalyAlertConditions(
             metric_boundary_condition=MetricBoundaryCondition(
@@ -325,5 +325,4 @@ async def main():
     await sample_delete_alert_config_async(alert_config.id)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

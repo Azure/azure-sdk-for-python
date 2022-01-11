@@ -47,7 +47,7 @@ class CustomDomainsOperations:
         service_name: str,
         app_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainResource":
         """Get the custom domain of one lifecycle application.
 
@@ -115,7 +115,7 @@ class CustomDomainsOperations:
         app_name: str,
         domain_name: str,
         domain_resource: "_models.CustomDomainResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainResource":
         """Create or update custom domain of one lifecycle application.
 
@@ -189,7 +189,7 @@ class CustomDomainsOperations:
         service_name: str,
         app_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the custom domain of one lifecycle application.
 
@@ -254,7 +254,7 @@ class CustomDomainsOperations:
         app_name: str,
         domain_name: str,
         domain_resource: "_models.CustomDomainResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainResource":
         """Update custom domain of one lifecycle application.
 
@@ -327,7 +327,7 @@ class CustomDomainsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomDomainResourceCollection"]:
         """List the custom domains of one lifecycle application.
 
@@ -407,7 +407,7 @@ class CustomDomainsOperations:
         service_name: str,
         app_name: str,
         validate_payload: "_models.CustomDomainValidatePayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainValidateResult":
         """Check the resource name is valid as well as not in use.
 

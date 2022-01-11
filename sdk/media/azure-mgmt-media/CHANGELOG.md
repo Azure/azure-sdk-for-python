@@ -1,5 +1,25 @@
 # Release History
 
+## 8.0.0 (2021-07-15)
+
+**Features**
+
+  - Model JobOutput has a new parameter preset_override
+  - Model BuiltInStandardEncoderPreset has a new parameter configurations
+  - Model MediaServiceIdentity has a new parameter user_assigned_identities
+  - Model JobOutputAsset has a new parameter preset_override
+  - Model MediaService has a new parameter public_network_access
+  - Model MediaServiceUpdate has a new parameter public_network_access
+  - Model StorageAccount has a new parameter status
+  - Model StorageAccount has a new parameter identity
+  - Model AccountEncryption has a new parameter status
+  - Model AccountEncryption has a new parameter identity
+  - Model LiveOutput has a new parameter system_data
+
+**Breaking changes**
+
+  - Model OperationCollection no longer has parameter odata_next_link
+
 ## 7.0.0 (2021-06-03)
 
 **Features**

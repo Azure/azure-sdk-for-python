@@ -47,7 +47,7 @@ class SparkClient(object):
         livy_api_version: str = "2019-11-01-preview",
         **kwargs: Any
     ) -> None:
-        base_url = '{endpoint}/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}'
+        base_url = '{endpoint}'
         self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 

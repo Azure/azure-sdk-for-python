@@ -5,52 +5,30 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
+    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns6z83sPd8/v7Y/lz/FVsZxVV814mbd3f7dF3mZ4+8fp
-        w/xd3tz93fJlW7TXH40MWGpwQTB/34923h08fbi7e/rweP/Z3un+8cPf9yNqtcwWOX09qy9+UX7e
-        XNAns/w8W5ft62lVF8uLl3V1XpTUZLkuy9FH50VezpqPHn3vF5s351Wbl2czerG9XuGD09li/LrF
-        u/SZ4JxNAOE8K5scIMo2r+Wjtl7TJ3VOzfNL/6Omqlv/7/NsSgPxPnibX5tfeejHy6y8/kFeG0Sl
-        4+6nWefvZVUvsrLwPmmul9XyevFFtsIov/9LRuFAX+D3m4cqiH3oSJVgPFT9/Yc01lneTOti1RbV
-        kkb2/qNVbDcOV9v8LIz3o3w5LtfTfImp+prDflbTu/+fG/h5/fUGPs3a/KKqoTbef8zyycYhy9/e
-        iOWDDx6w/P0+IyVt2NCIdJQnVVnmU8z3lhvwHfpeOvZxfc8R66j+3zDkVVa/pWGdLaflepZ3NPWT
-        qirzDFIuHQuuiuB7jln+/n/DkJtFhSEfl2V1lf+8GHGZNe2rfFldZuDmpyTPNEBv1PjkTbHIvzw/
-        b/KWvhMUBGtF9f+zg69p0KyovAGfLdt7e/SR9CYIKlb/nx1nWZGipumlYXkj/TyvLupsNb9+WRXL
-        n6WpVTA/B2POZrM6bzydjSGfVItVmb97g08Iz55T2rR1nrfHsVdFx9NngqoMT8frEUkHuZFK2ub/
-        FWSaitP//gOVTzaOU/72hikf/ByMsmlJjVFIclksp5j5/58Pd1qtl+3PB69sVdHMlifV7P+3k+qP
-        tq6qhaeVOk6op9vgifaVmxel0PcKBG/eklo63I3k0jYevfSTDybYj4Kz9x04D/TrjFc+ec/hSosP
-        Hq38/T7DnGRN/orUOw3LG+rTag206EXuUHBUxP4/PNZ89iVzsqcGMNr/X05sU+b5qjmBLaOReaP9
-        5lx089b/G0b7Qwo9zVv/Lxjyz5ucCv1HHwaJcXxhCbGkfvIGXH6+XjIJji8u6vxCgjbijfWCvpMs
-        v/Rg2gkYtvWcYg5iPYrq8npVlfI3fVWgI/pCKT4ryHsSh3hSkSf10aO98Q7BJlzmSwRA2tkiu1gW
-        LeWAzAf2xUe/+KM6P8/rnP7gKPJlVhMa1C2BX1wTLgY2jfypfWt3Z2e880sIDywxAKRQiAjUGPXG
-        HxPR1hcXRJm8pk9ooEovXm+QyfkCvh9Fezwn1MnZ8rx490XWTuf0B1pV63qaPwOBAML3Buhbl5tn
-        BARKzp3Rn25i9YO2epsvu38/Y2bUT4hP6+ADokx9zd39XuA2HVWxKMqsRuhFFNQFF52UH/+imNZV
-        U5234+MfrOt8/JrHOX7yxd791+494t5dA24iv/ySX/L/ALTM9e0UGgAA
+      string: '{"@odata.context":"https://searchaf391f34.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96CA46A9E0A71\"","name":"drgqefsg","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"hotelName","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"description","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"en.lucene","normalizer":null,"synonymMaps":[]},{"name":"descriptionFr","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"fr.lucene","normalizer":null,"synonymMaps":[]},{"name":"category","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"tags","type":"Collection(Edm.String)","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"parkingIncluded","type":"Edm.Boolean","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"smokingAllowed","type":"Edm.Boolean","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"lastRenovationDate","type":"Edm.DateTimeOffset","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"rating","type":"Edm.Int32","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"location","type":"Edm.GeographyPoint","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"address","type":"Edm.ComplexType","fields":[{"name":"streetAddress","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"city","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"stateProvince","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"country","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"postalCode","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}]},{"name":"rooms","type":"Collection(Edm.ComplexType)","fields":[{"name":"description","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"en.lucene","normalizer":null,"synonymMaps":[]},{"name":"descriptionFr","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"fr.lucene","normalizer":null,"synonymMaps":[]},{"name":"type","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"bedOptions","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"sleepsCount","type":"Edm.Int32","searchable":false,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"smokingAllowed","type":"Edm.Boolean","searchable":false,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"tags","type":"Collection(Edm.String)","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}]}],"scoringProfiles":[{"name":"nearest","functionAggregation":"sum","text":null,"functions":[{"fieldName":"location","interpolation":"linear","type":"distance","boost":2.0,"freshness":null,"magnitude":null,"distance":{"referencePointParameter":"myloc","boostingDistance":100.0},"tag":null}]}],"corsOptions":null,"suggesters":[{"name":"sg","searchMode":"analyzingInfixMatching","sourceFields":["description","hotelName"]}],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '1182'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:22:28 GMT
-      elapsed-time: '27'
-      etag: W/"0x8D911E9A4F2E4A9"
+      date: Tue, 31 Aug 2021 17:26:10 GMT
+      elapsed-time: '31'
+      etag: W/"0x8D96CA46A9E0A71"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c271d975-afc5-11eb-90bb-a0481ca055a9
+      request-id: 89b47dcb-0a80-11ec-b1f1-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
+    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
 - request:
     body: '{"value": [{"hotelId": "1000", "rating": 1, "@search.action": "mergeOrUpload"},
       {"hotelId": "4", "rating": 2, "@search.action": "mergeOrUpload"}]}'
@@ -62,138 +40,115 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
+    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR2/z6o0cf7e7s7Hw0+qhps3bdfPSordf56KO8rqv6i7xpsgtqu1yXpWlxUs3ok72d
-        3V8yMhD2v8brO7/k+7/k/wEPTdPMjAAAAA==
+      string: '{"value":[{"key":"1000","status":true,"errorMessage":null,"statusCode":201},{"key":"4","status":true,"errorMessage":null,"statusCode":200}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '196'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:22:28 GMT
-      elapsed-time: '25'
+      date: Tue, 31 Aug 2021 17:26:10 GMT
+      elapsed-time: '139'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c29f7ea4-afc5-11eb-8250-a0481ca055a9
+      request-id: 89d25e31-0a80-11ec-aca6-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
+    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
+    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Iv7Hv/cf
-        3N39fwAt0FT/BQAAAA==
+      string: "\uFEFF11"
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Sat, 08 May 2021 06:22:31 GMT
-      elapsed-time: '103'
+      date: Tue, 31 Aug 2021 17:26:14 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c493d7e1-afc5-11eb-ad86-a0481ca055a9
+      request-id: 8bcb7942-0a80-11ec-9670-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
+    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
+    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtrd2dn5aCQfvMgW+UePluuyHH00y5tpXazaolpGPnpWmw+nWZtfVPW1+bvNLpqPHn3v
-        +6OPVln9tlhenC2n5XqWU1/SoFlU+Pi4LKsr92mZNe2rfFldZgD/lICab2r6ZHnx0aNdalRRb/S1
-        +Sqbzeq8oe7kz7qqFvTH977/S/4fw9rB6OEAAAA=
+      string: '{"hotelId":"1000","hotelName":null,"description":null,"descriptionFr":null,"category":null,"tags":[],"parkingIncluded":null,"smokingAllowed":null,"lastRenovationDate":null,"rating":1,"location":null,"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '257'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:22:31 GMT
-      elapsed-time: '7'
+      date: Tue, 31 Aug 2021 17:26:14 GMT
+      elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c4cc9ef3-afc5-11eb-928f-a0481ca055a9
+      request-id: 8be3401f-0a80-11ec-863f-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
+    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
+    uri: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtr/aCR/vcgWOf19+m5V502TvqqqRUPfzfJmWhertqiW9O3LOm/b6/SiqmYpvxW2eFZT
-        m+OmyX+QTqplOv991zs75/vSbJq1+UVVX1OLJ+vZRd7SZ2120Xz06HsfXRXnBf05kc+/P/poldVv
-        i+XF2XJarmc54dnW63z0UbOo8PFxWVZX+PQ8Kxv6uMya9lW+rC4zIPGUOqJOdh8+vL+982B7Z/fN
-        zs4j/t9PUR81tVlefPRoj16rCCd64aNHv/ij9nqFl15WxRKITauqnhVLggT8tnf39sa793bvP3gw
-        2j8Yf/rg4P7BLmE5relb++4SBCTU62qV122BN3+xfEhUffn680f79/Y+/eiX/JJfMvoom81A5I8e
-        LddlSTgxrR997/u/5P8Bin7yTJoBAAA=
+      string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
+        hotel","descriptionFr":"Assez bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":2,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:22:31 GMT
-      elapsed-time: '7'
+      date: Tue, 31 Aug 2021 17:26:14 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c4d89e68-afc5-11eb-aadd-a0481ca055a9
+      request-id: 8beaff76-0a80-11ec-a22c-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
+    url: https://searchaf391f34.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
 version: 1

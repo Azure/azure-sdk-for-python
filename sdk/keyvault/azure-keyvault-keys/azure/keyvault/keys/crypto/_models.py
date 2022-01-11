@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-    from typing import Any
+    from typing import Any, Optional
 
 
 class DecryptResult:
@@ -19,7 +19,7 @@ class DecryptResult:
     """
 
     def __init__(self, key_id, algorithm, plaintext):
-        # type: (str, EncryptionAlgorithm, bytes) -> None
+        # type: (Optional[str], EncryptionAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.plaintext = plaintext
@@ -40,7 +40,7 @@ class EncryptResult:
     """
 
     def __init__(self, key_id, algorithm, ciphertext, **kwargs):
-        # type: (str, EncryptionAlgorithm, bytes, **Any) -> None
+        # type: (Optional[str], EncryptionAlgorithm, bytes, **Any) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.ciphertext = ciphertext
@@ -59,7 +59,7 @@ class SignResult:
     """
 
     def __init__(self, key_id, algorithm, signature):
-        # type: (str, SignatureAlgorithm, bytes) -> None
+        # type: (Optional[str], SignatureAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.signature = signature
@@ -75,7 +75,7 @@ class VerifyResult:
     """
 
     def __init__(self, key_id, is_valid, algorithm):
-        # type: (str, bool, SignatureAlgorithm) -> None
+        # type: (Optional[str], bool, SignatureAlgorithm) -> None
         self.key_id = key_id
         self.is_valid = is_valid
         self.algorithm = algorithm
@@ -91,7 +91,7 @@ class UnwrapResult:
     """
 
     def __init__(self, key_id, algorithm, key):
-        # type: (str, KeyWrapAlgorithm, bytes) -> None
+        # type: (Optional[str], KeyWrapAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.key = key
@@ -107,7 +107,7 @@ class WrapResult:
     """
 
     def __init__(self, key_id, algorithm, encrypted_key):
-        # type: (str, KeyWrapAlgorithm, bytes) -> None
+        # type: (Optional[str], KeyWrapAlgorithm, bytes) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key

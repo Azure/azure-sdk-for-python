@@ -1,5 +1,49 @@
 # Release History
 
+## 2.0.0 (2021-09-02)
+
+**Features**
+
+  - Model NodeTypeDescription has a new parameter multiple_availability_zones
+  - Model NodeTypeDescription has a new parameter is_stateless
+  - Model ApplicationResource has a new parameter system_data
+  - Model ApplicationResourceUpdate has a new parameter system_data
+  - Model Cluster has a new parameter wave_upgrade_paused
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter upgrade_pause_end_timestamp_utc
+  - Model Cluster has a new parameter notifications
+  - Model Cluster has a new parameter sf_zonal_upgrade_mode
+  - Model Cluster has a new parameter vmss_zonal_upgrade_mode
+  - Model Cluster has a new parameter upgrade_pause_start_timestamp_utc
+  - Model Cluster has a new parameter upgrade_wave
+  - Model Cluster has a new parameter infrastructure_service_manager
+  - Model ProxyResource has a new parameter system_data
+  - Model OperationResult has a new parameter is_data_action
+  - Model ApplicationTypeVersionResource has a new parameter system_data
+  - Model ServiceResourceUpdate has a new parameter system_data
+  - Model ClusterUpdateParameters has a new parameter wave_upgrade_paused
+  - Model ClusterUpdateParameters has a new parameter upgrade_pause_end_timestamp_utc
+  - Model ClusterUpdateParameters has a new parameter notifications
+  - Model ClusterUpdateParameters has a new parameter sf_zonal_upgrade_mode
+  - Model ClusterUpdateParameters has a new parameter vmss_zonal_upgrade_mode
+  - Model ClusterUpdateParameters has a new parameter upgrade_pause_start_timestamp_utc
+  - Model ClusterUpdateParameters has a new parameter upgrade_wave
+  - Model ClusterUpdateParameters has a new parameter infrastructure_service_manager
+  - Model ApplicationTypeResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model ServiceResource has a new parameter system_data
+  - Model ApplicationUpgradePolicy has a new parameter recreate_application
+  - Added operation ClustersOperations.list_upgradable_versions
+
+**Breaking changes**
+
+  - Removed operation group ManagedClusterVersionsOperations
+  - Removed operation group ManagedclusterOperations
+  - Removed operation group ManagedClustersOperations
+  - Removed operation group ApplicationOperations
+  - Removed operation group NodeTypesOperations
+  - Removed operation group NodetypeOperations
+
 ## 1.0.0 (2021-06-03)
 
 **Features**

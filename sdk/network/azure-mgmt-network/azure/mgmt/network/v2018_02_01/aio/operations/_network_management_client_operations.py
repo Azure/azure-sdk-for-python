@@ -24,7 +24,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         location: str,
         domain_name_label: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DnsNameAvailabilityResult":
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 

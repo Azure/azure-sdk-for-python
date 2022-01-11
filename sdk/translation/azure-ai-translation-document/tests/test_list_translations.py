@@ -26,7 +26,7 @@ class TestListTranslations(DocumentTranslationTest):
         self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
 
         # list translations
-        submitted_translations = list(client.list_all_translation_statuses())
+        submitted_translations = list(client.list_translation_statuses())
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -46,7 +46,7 @@ class TestListTranslations(DocumentTranslationTest):
         self._begin_multiple_translations(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
 
         # list translations
-        submitted_translations_pages = client.list_all_translation_statuses(results_per_page=results_per_page).by_page()
+        submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
         self.assertIsNotNone(submitted_translations_pages)
 
         # iterate by page
@@ -69,8 +69,8 @@ class TestListTranslations(DocumentTranslationTest):
         self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # assert
-        all_translations = list(client.list_all_translation_statuses())
-        translations_with_skip = list(client.list_all_translation_statuses(skip=skip))
+        all_translations = list(client.list_translation_statuses())
+        translations_with_skip = list(client.list_translation_statuses(skip=skip))
         assert len(all_translations) - len(translations_with_skip) == skip
 
 
@@ -83,15 +83,15 @@ class TestListTranslations(DocumentTranslationTest):
         # create some translations with the status 'Succeeded'
         completed_translation_ids = self._begin_multiple_translations(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
-        # create some translations with the status 'Cancelled'
+        # create some translations with the status 'Canceled'
         translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
         for id in translation_ids:
             client.cancel_translation(id)
-        self.wait(10) # wait for cancelled to propagate
+        self.wait(10) # wait for canceled to propagate
 
         # list translations with status filter
-        statuses = ["Cancelled"]
-        submitted_translations = list(client.list_all_translation_statuses(statuses=statuses))
+        statuses = ["Canceled"]
+        submitted_translations = list(client.list_translation_statuses(statuses=statuses))
 
         # check statuses
         for translation in submitted_translations:
@@ -109,7 +109,7 @@ class TestListTranslations(DocumentTranslationTest):
         translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = list(client.list_all_translation_statuses(translation_ids=translation_ids))
+        submitted_translations = list(client.list_translation_statuses(translation_ids=translation_ids))
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -130,7 +130,7 @@ class TestListTranslations(DocumentTranslationTest):
         translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = list(client.list_all_translation_statuses(created_after=start))
+        submitted_translations = list(client.list_translation_statuses(created_after=start))
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -156,7 +156,7 @@ class TestListTranslations(DocumentTranslationTest):
         translation_ids = self._begin_multiple_translations(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = list(client.list_all_translation_statuses(created_before=end))
+        submitted_translations = list(client.list_translation_statuses(created_before=end))
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -175,7 +175,7 @@ class TestListTranslations(DocumentTranslationTest):
         self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = list(client.list_all_translation_statuses(order_by=["createdDateTimeUtc asc"]))
+        submitted_translations = list(client.list_translation_statuses(order_by=["created_on asc"]))
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -195,7 +195,7 @@ class TestListTranslations(DocumentTranslationTest):
         self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = list(client.list_all_translation_statuses(order_by=["createdDateTimeUtc desc"]))
+        submitted_translations = list(client.list_translation_statuses(order_by=["created_on desc"]))
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -204,35 +204,30 @@ class TestListTranslations(DocumentTranslationTest):
             assert(translation.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = translation.created_on
 
-
-    @pytest.mark.skip(reason="not working! - list returned is empty")
+    @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_translations_mixed_filters(self, client):
         # create some translations
-        operations_count = 10
+        operations_count = 4
         docs_per_operation = 1
         results_per_page = 2
-        statuses = ["Cancelled"]
-        skip = 2
+        statuses = ["Succeeded"]
+        skip = 1
 
         # create some translations
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
         successful_translation_ids = self._begin_multiple_translations(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
-        cancelled_translation_ids = self._begin_multiple_translations(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
-        for translation_id in cancelled_translation_ids:
-            client.cancel_translation(translation_id)
-        self.wait(10) # wait for status to propagate
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(
+        submitted_translations = client.list_translation_statuses(
             # filters
             statuses=statuses,
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["createdDateTimeUtc asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
             results_per_page=results_per_page
@@ -244,9 +239,7 @@ class TestListTranslations(DocumentTranslationTest):
             page_translations = list(page)
             self.assertLessEqual(len(page_translations), results_per_page) # assert paging
             for translation in page_translations:
-                assert id
-                self.assertIn(translation.id, cancelled_translation_ids)
-                self.assertNotIn(translation.id, successful_translation_ids)
+                self.assertIn(translation.id, successful_translation_ids)
                 # assert ordering
                 assert(translation.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = translation.created_on

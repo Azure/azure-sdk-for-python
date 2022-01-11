@@ -9,6 +9,7 @@ from typing import Any, Dict, Union
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob.aio import BlobClient
+from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
 from .._models import DirectoryProperties, AccessControlChangeResult, AccessControlChangeFailure, \
@@ -53,6 +54,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                                                                file_system=file_system_name,
                                                                                path=path_name,
                                                                                pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):

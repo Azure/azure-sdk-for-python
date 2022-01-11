@@ -1,0 +1,18 @@
+- request: !!python/object:vcr.request.Request
+    body: null
+    headers: !!python/object/apply:__builtin__.frozenset
+    - - !!python/tuple [accept-encoding, 'gzip, deflate, compress']
+      - !!python/tuple [user-agent, python-requests/2.2.1 CPython/2.6.1 Darwin/10.8.0]
+      - !!python/tuple [accept, '*/*']
+    host: httpbin.org
+    method: GET
+    path: /ip
+    port: 80
+    protocol: http
+  response:
+    body: {string: !!python/unicode "{\n  \"origin\": \"217.122.164.194\"\n}"}
+    headers: [!!python/unicode "access-control-allow-origin: *\r\n", !!python/unicode "content-type:
+        application/json\r\n", !!python/unicode "date: Mon, 21 Apr 2014 23:06:09 GMT\r\n",
+      !!python/unicode "server: gunicorn/0.17.4\r\n", !!python/unicode "content-length:
+        32\r\n", !!python/unicode "connection: keep-alive\r\n"]
+    status: {code: 200, message: OK}

@@ -5,50 +5,28 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchc3d147b.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
+    uri: https://searchc3d147b.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns6n92a7+w8mY/lrfFUsZ9VVM17m7d3fbZG3GV7+cfow
-        f5c3d3+3fNkW7fVHIwOVGlwQyN/3o513B08f7u6eHj87efbg/unp09/3I2q1zBY5fT2rL35Rft5c
-        0Cez/Dxbl+3raVUXy4uXdXVelNRkuS7L0UfnRV7Omo8efe8XmzfnVZuXZzN6sb1e4YPT2WL8usW7
-        9JngnE0A4Twrmxwgyjav5aO2XtMndU7N80v/o6aqW//v82xKA/E+eJtfm1956MfLrLz+QV4bRKXj
-        7qdZ5+9lVS+ysvA+aa6X1fJ68UW2wii//0tG4UBf4PebhyqIfehIlWA8VP39hzTWWd5M62LVFtWS
-        Rvb+o1VsNw5X2/wsjPejfDku19N8ian6msN+VtO7/58b+Hn99QY+zdr8oqqhNt5/zPLJxiHL396I
-        5YMPHrD8/T4jJW3Y0Ih0lCdVWeZTzPeWG/Ad+l469nF9zxHrqP7fMORVVr+lYZ0tp+V6lnc09ZOq
-        KvMMUi4dC66K4HuOWf7+f8OQm0WFIR+XZXWV/7wYcZk17at8WV1m4OanJM80QG/U+ORNsci/PD9v
-        8pa+ExQEa0X1/7ODr2nQrKi8AZ8t23t79JH0JggqVv+fHWdZkaKm6aVheSP9PK8u6mw1v35ZFcuf
-        palVMD8HY85mszpvPJ2NIZ9Ui1WZv3uDTwjPnlPatHWet8exV0XH02eCqgxPx+sRSQe5kUra5v8V
-        ZJqK0//+A5VPNo5T/vaGKR/8HIyyaUmNUUhyWSynmPn/nw93Wq2X7c8Hr2xV0cyWJ9Xs/7eT6o+2
-        rqqFp5U6Tqin2+CJ9pWbF6XQ9woEb96SWjrcjeTSNh699JMPJtiPgrP3HTgP9OuMVz55z+FKiw8e
-        rfz9PsOcZE3+itQ7Dcsb6tNqDbToRe5QcFTE/j881nz2JXOypwYw2v9fTmxT5vmqOYEto5F5o/3m
-        XHTz1v8bRvtDCj3NW/8vGPLPm5wK/UcfBolxfGEJsaR+8gZcfr5eMgmOLy7q/EKCNuKN9YK+kyS/
-        9GDaCRi29ZxiDmI9iuryelWV8jd9VaAj+kIpPivIexKHeFKRJ/XRo73xDsEmXOZLBEDa2SK7WBYt
-        5YDMB/bFR7/4ozo/z+uc/uAo8mVWExrULYFfXBMuBjaN/Kl9a3dnZ7zzSwgPLDEApFCICNQY9cYf
-        E9HWFxdEmbymT2igSi9eb5DJ+QK+H0V7PCfUydnyvHj3RdZO5/QHWlXrepo/A4EAwvcG6FuXm2cE
-        BErOndGfbmL1g7Z6my+7fz9jZtRPiE/r4AOiTH3N3f1e4DYdVbEoyqxG6EUU1AUXnZQf/6KY1lVT
-        nbfj4x+s63z8msc5fvLF3v3X7j3i3l0DbiK//JJf8v8Ag3yZcRMaAAA=
+      string: '{"@odata.context":"https://searchc3d147b.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96CA5992B5FF8\"","name":"drgqefsg","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"hotelName","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"description","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"en.lucene","normalizer":null,"synonymMaps":[]},{"name":"descriptionFr","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"fr.lucene","normalizer":null,"synonymMaps":[]},{"name":"category","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"tags","type":"Collection(Edm.String)","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"parkingIncluded","type":"Edm.Boolean","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"smokingAllowed","type":"Edm.Boolean","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"lastRenovationDate","type":"Edm.DateTimeOffset","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"rating","type":"Edm.Int32","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"location","type":"Edm.GeographyPoint","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"address","type":"Edm.ComplexType","fields":[{"name":"streetAddress","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"city","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"stateProvince","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"country","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"postalCode","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}]},{"name":"rooms","type":"Collection(Edm.ComplexType)","fields":[{"name":"description","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"en.lucene","normalizer":null,"synonymMaps":[]},{"name":"descriptionFr","type":"Edm.String","searchable":true,"filterable":false,"retrievable":true,"sortable":false,"facetable":false,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":"fr.lucene","normalizer":null,"synonymMaps":[]},{"name":"type","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"bedOptions","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"sleepsCount","type":"Edm.Int32","searchable":false,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"smokingAllowed","type":"Edm.Boolean","searchable":false,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]},{"name":"tags","type":"Collection(Edm.String)","searchable":true,"filterable":true,"retrievable":true,"sortable":false,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}]}],"scoringProfiles":[{"name":"nearest","functionAggregation":"sum","text":null,"functions":[{"fieldName":"location","interpolation":"linear","type":"distance","boost":2.0,"freshness":null,"magnitude":null,"distance":{"referencePointParameter":"myloc","boostingDistance":100.0},"tag":null}]}],"corsOptions":null,"suggesters":[{"name":"sg","searchMode":"analyzingInfixMatching","sourceFields":["description","hotelName"]}],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '1181'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:32:05 GMT
-      elapsed-time: '25'
-      etag: W/"0x8D911EAFCF75EED"
+      date: Tue, 31 Aug 2021 17:34:38 GMT
+      elapsed-time: '41'
+      etag: W/"0x8D96CA5992B5FF8"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 1a7509aa-afc7-11eb-b1b2-a0481ca055a9
+      request-id: b8218a60-0a81-11ec-b405-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchc3d147b.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
+    url: https://searchc3d147b.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
 version: 1

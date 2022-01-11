@@ -3,12 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING
+from typing import cast, List, TYPE_CHECKING, Union
 import time
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
+from ._utils_async import get_async_authentication_policy
 from .._utils import is_retryable_status_code
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from .._generated.aio import SearchClient as SearchIndexClient
@@ -21,7 +23,7 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixin):
@@ -32,7 +34,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :param index_name: The name of the index to connect to
     :type index_name: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
         when auto_flush is on. Default to 60 seconds.
     :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
@@ -48,22 +50,40 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
     """
+
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, endpoint, index_name, credential, **kwargs):
-        # type: (str, str, AzureKeyCredential, **Any) -> None
+    def __init__(
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs
+    ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
-            endpoint=endpoint,
-            index_name=index_name,
-            credential=credential,
-            **kwargs)
+            endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
+        )
         self._index_documents_batch = IndexDocumentsBatch()
-        self._client = SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            sdk_moniker=SDK_MONIKER,
-            api_version=self._api_version, **kwargs
-        )  # type: SearchIndexClient
+        if isinstance(credential, AzureKeyCredential):
+            self._aad = False
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version,
+                **kwargs
+            )  # type: SearchIndexClient
+        else:
+            self._aad = True
+            authentication_policy = get_async_authentication_policy(credential)
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                authentication_policy=authentication_policy,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version,
+                **kwargs
+            )  # type: SearchIndexClient
         self._reset_timer()
 
     async def _cleanup(self, flush=True):
@@ -100,7 +120,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         return await self._client.close()
 
     @distributed_trace_async
-    async def flush(self, timeout=86400, **kwargs):    # pylint:disable=unused-argument
+    async def flush(self, timeout=86400, **kwargs):  # pylint:disable=unused-argument
         # type: (bool) -> bool
         """Flush the batch.
         :param int timeout: time out setting. Default is 86400s (one day)
@@ -127,6 +147,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def _process(self, timeout=86400, **kwargs):
         # type: (int) -> bool
         from ..indexes.aio import SearchIndexClient as SearchServiceClient
+
         raise_error = kwargs.pop("raise_error", True)
         actions = await self._index_documents_batch.dequeue_actions()
         has_error = False
@@ -145,10 +166,16 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self._reset_timer()
 
         try:
-            results = await self._index_documents_actions(actions=actions, timeout=timeout)
+            results = await self._index_documents_actions(
+                actions=actions, timeout=timeout
+            )
             for result in results:
                 try:
-                    action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
+                    action = next(
+                        x
+                        for x in actions
+                        if x.additional_properties.get(self._index_key) == result.key
+                    )
                     if result.succeeded:
                         await self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
@@ -171,10 +198,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
     async def _process_if_needed(self):
         # type: () -> bool
-        """ Every time when a new action is queued, this method
-            will be triggered. It checks the actions already queued and flushes them if:
-            1. Auto_flush is on
-            2. There are self._batch_action_count actions queued
+        """Every time when a new action is queued, this method
+        will be triggered. It checks the actions already queued and flushes them if:
+        1. Auto_flush is on
+        2. There are self._batch_action_count actions queued
         """
         if not self._auto_flush:
             return
@@ -194,7 +221,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._timer = Timer(self._auto_flush_interval, self._process)
 
     @distributed_trace_async
-    async def upload_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def upload_documents(
+        self, documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
@@ -205,7 +234,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def delete_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def delete_documents(
+        self, documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue delete documents actions
         :param documents: A list of documents to delete.
@@ -216,7 +247,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def merge_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def merge_documents(
+        self, documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents actions
         :param documents: A list of documents to merge.
@@ -227,13 +260,17 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def merge_or_upload_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def merge_or_upload_documents(
+        self, documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.
         :type documents: List[dict]
         """
-        actions = await self._index_documents_batch.add_merge_or_upload_actions(documents)
+        actions = await self._index_documents_batch.add_merge_or_upload_actions(
+            documents
+        )
         await self._callback_new(actions)
         await self._process_if_needed()
 
@@ -253,11 +290,13 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         # type: (List[IndexAction], **Any) -> List[IndexingResult]
         error_map = {413: RequestEntityTooLargeError}
 
-        timeout = kwargs.pop('timeout', 86400)
+        timeout = kwargs.pop("timeout", 86400)
         begin_time = int(time.time())
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
-            batch_response = await self._client.documents.index(actions=actions, error_map=error_map, **kwargs)
+            batch_response = await self._client.documents.index(
+                actions=actions, error_map=error_map, **kwargs
+            )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
@@ -270,12 +309,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out")
             batch_response_first_half = await self._index_documents_actions(
-                actions=actions[:pos],
-                error_map=error_map,
-                **kwargs
+                actions=actions[:pos], error_map=error_map, **kwargs
             )
             if len(batch_response_first_half) > 0:
-                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+                result_first_half = cast(
+                    List[IndexingResult], batch_response_first_half.results
+                )
             else:
                 result_first_half = []
             now = int(time.time())
@@ -283,12 +322,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out")
             batch_response_second_half = await self._index_documents_actions(
-                actions=actions[pos:],
-                error_map=error_map,
-                **kwargs
+                actions=actions[pos:], error_map=error_map, **kwargs
             )
             if len(batch_response_second_half) > 0:
-                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+                result_second_half = cast(
+                    List[IndexingResult], batch_response_second_half.results
+                )
             else:
                 result_second_half = []
             return result_first_half.extend(result_second_half)

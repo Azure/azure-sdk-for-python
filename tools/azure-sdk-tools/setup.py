@@ -20,7 +20,7 @@ DEPENDENCIES = [
     "azure-storage-common<1.4.1",
     "pyopenssl",
     "azure-mgmt-resource",
-    "azure-mgmt-storage>=17.0.0",
+    "azure-mgmt-storage",
     "azure-mgmt-keyvault",
     "python-dotenv",
 ]

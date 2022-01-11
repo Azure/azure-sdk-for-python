@@ -14,7 +14,6 @@ try:
     from ._models_py3 import AgentPoolUpgradeProfile
     from ._models_py3 import AgentPoolUpgradeProfilePropertiesUpgradesItem
     from ._models_py3 import AgentPoolUpgradeSettings
-    from ._models_py3 import CloudError
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import Components1Q1Og48SchemasManagedclusterAllof1
     from ._models_py3 import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties
@@ -54,6 +53,8 @@ try:
     from ._models_py3 import ManagedClusterPodIdentity
     from ._models_py3 import ManagedClusterPodIdentityException
     from ._models_py3 import ManagedClusterPodIdentityProfile
+    from ._models_py3 import ManagedClusterPodIdentityProvisioningError
+    from ._models_py3 import ManagedClusterPodIdentityProvisioningErrorBody
     from ._models_py3 import ManagedClusterPodIdentityProvisioningInfo
     from ._models_py3 import ManagedClusterPoolUpgradeProfile
     from ._models_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
@@ -94,7 +95,6 @@ except (SyntaxError, ImportError):
     from ._models import AgentPoolUpgradeProfile  # type: ignore
     from ._models import AgentPoolUpgradeProfilePropertiesUpgradesItem  # type: ignore
     from ._models import AgentPoolUpgradeSettings  # type: ignore
-    from ._models import CloudError  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import Components1Q1Og48SchemasManagedclusterAllof1  # type: ignore
     from ._models import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
@@ -134,6 +134,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedClusterPodIdentity  # type: ignore
     from ._models import ManagedClusterPodIdentityException  # type: ignore
     from ._models import ManagedClusterPodIdentityProfile  # type: ignore
+    from ._models import ManagedClusterPodIdentityProvisioningError  # type: ignore
+    from ._models import ManagedClusterPodIdentityProvisioningErrorBody  # type: ignore
     from ._models import ManagedClusterPodIdentityProvisioningInfo  # type: ignore
     from ._models import ManagedClusterPoolUpgradeProfile  # type: ignore
     from ._models import ManagedClusterPoolUpgradeProfileUpgradesItem  # type: ignore
@@ -208,7 +210,6 @@ __all__ = [
     'AgentPoolUpgradeProfile',
     'AgentPoolUpgradeProfilePropertiesUpgradesItem',
     'AgentPoolUpgradeSettings',
-    'CloudError',
     'CloudErrorBody',
     'Components1Q1Og48SchemasManagedclusterAllof1',
     'Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties',
@@ -248,6 +249,8 @@ __all__ = [
     'ManagedClusterPodIdentity',
     'ManagedClusterPodIdentityException',
     'ManagedClusterPodIdentityProfile',
+    'ManagedClusterPodIdentityProvisioningError',
+    'ManagedClusterPodIdentityProvisioningErrorBody',
     'ManagedClusterPodIdentityProvisioningInfo',
     'ManagedClusterPoolUpgradeProfile',
     'ManagedClusterPoolUpgradeProfileUpgradesItem',

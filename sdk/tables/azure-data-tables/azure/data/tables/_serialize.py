@@ -32,6 +32,11 @@ def _get_match_headers(etag, match_condition):
     raise ValueError("Unsupported match condition: {}".format(match_condition))
 
 
+def _prepare_key(keyvalue):
+    """Duplicate the single quote char to escape."""
+    return keyvalue.replace("'", "''")
+
+
 def _parameter_filter_substitution(parameters, query_filter):
     # type: (Dict[str, str], str) -> str
     """Replace user defined parameter in filter
@@ -62,7 +67,7 @@ def _parameter_filter_substitution(parameters, query_filter):
                         v = v[2:-1]
                     filter_strings[index] = "X'{}'".format(v)
                 else:
-                    filter_strings[index] = "'{}'".format(val.replace("'", "''"))
+                    filter_strings[index] = "'{}'".format(_prepare_key(val))
         return ' '.join(filter_strings)
     return query_filter
 

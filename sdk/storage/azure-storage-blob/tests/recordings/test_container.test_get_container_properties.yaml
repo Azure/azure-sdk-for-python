@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/container9840123e?restype=container
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       etag:
-      - '"0x8D75974FAB94E4D"'
+      - '"0x8D926F235BE42FB"'
       last-modified:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -41,7 +41,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -49,15 +49,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
       - '42'
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/container9840123e?restype=container&comp=metadata
   response:
@@ -67,15 +67,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       etag:
-      - '"0x8D75974FAC24A4E"'
+      - '"0x8D926F235CCC105"'
       last-modified:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     status:
       code: 200
       message: OK
@@ -83,17 +83,17 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/container9840123e?restype=container
   response:
@@ -103,11 +103,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       etag:
-      - '"0x8D75974FAC24A4E"'
+      - '"0x8D926F235CCC105"'
       last-modified:
-      - Fri, 25 Oct 2019 17:58:45 GMT
+      - Fri, 04 Jun 2021 00:46:37 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope:
@@ -118,6 +118,8 @@ interactions:
       - 'false'
       x-ms-has-legal-hold:
       - 'false'
+      x-ms-immutable-storage-with-versioning-enabled:
+      - 'false'
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -127,7 +129,7 @@ interactions:
       x-ms-meta-number:
       - '42'
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     status:
       code: 200
       message: OK

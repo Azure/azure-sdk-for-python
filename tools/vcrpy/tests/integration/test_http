@@ -1,0 +1,22 @@
+interactions:
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: https://httpbin.org/get?ham=spam
+  response:
+    body: {string: "{\n  \"args\": {\n    \"ham\": \"spam\"\n  }, \n  \"headers\"\
+        : {\n    \"Accept\": \"*/*\", \n    \"Accept-Encoding\": \"gzip, deflate\"\
+        , \n    \"Connection\": \"close\", \n    \"Host\": \"httpbin.org\", \n   \
+        \ \"User-Agent\": \"Python/3.5 aiohttp/2.0.1\"\n  }, \n  \"origin\": \"213.86.221.35\"\
+        , \n  \"url\": \"https://httpbin.org/get?ham=spam\"\n}\n"}
+    headers: {Access-Control-Allow-Credentials: 'true', Access-Control-Allow-Origin: '*',
+      Connection: keep-alive, Content-Length: '299', Content-Type: application/json,
+      Date: 'Wed, 22 Mar 2017 20:08:29 GMT', Server: gunicorn/19.7.1, Via: 1.1 vegur}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, httpbin.org, /get, ham=spam,
+        '']
+      - false
+version: 1

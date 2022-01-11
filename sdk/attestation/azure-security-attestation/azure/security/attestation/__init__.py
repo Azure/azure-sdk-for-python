@@ -6,48 +6,39 @@
 
 from ._client import AttestationClient
 from ._administration_client import AttestationAdministrationClient
-from ._models import (AttestationResponse,
+from ._models import (
     AttestationSigner,
-    AttestationToken, 
-    AttestationSigningKey, 
-    AttestationData, 
-    PolicyResult, 
-    AttestationResult, 
-    TpmAttestationResponse, 
-    TpmAttestationRequest, 
+    AttestationToken,
+    AttestationPolicyResult,
+    AttestationResult,
     AttestationTokenValidationException,
-    PolicyCertificatesModificationResult,
-    AttestationType,
+    AttestationPolicyCertificateResult,
     PolicyModification,
-    StoredAttestationPolicy,
-    CertificateModification)
-from ._configuration import TokenValidationOptions
+    CertificateModification,
+    AttestationPolicyToken,
+)
+from ._generated.models import AttestationType
 from ._version import VERSION
 
 __version__ = VERSION
 __all__ = [
-    'AttestationClient',
-    'AttestationAdministrationClient',
-    'AttestationType',
-    'AttestationToken',
-    'AttestationSigner',
-    'AttestationResponse',
-    'AttestationResult',
-    'AttestationData',
-    'TokenValidationOptions',
-    'StoredAttestationPolicy',
-    'PolicyResult',
-    'CertificateModification',
-    'AttestationSigningKey',
-    'TpmAttestationRequest',
-    'TpmAttestationResponse',
-    'PolicyModification',
-    'PolicyCertificatesModificationResult',
-    'AttestationTokenValidationException',
+    "AttestationClient",
+    "AttestationAdministrationClient",
+    "AttestationType",
+    "AttestationToken",
+    "AttestationSigner",
+    "AttestationPolicyResult",
+    "AttestationPolicyCertificateResult",
+    "AttestationResult",
+    "CertificateModification",
+    "PolicyModification",
+    "AttestationTokenValidationException",
+    "AttestationPolicyToken",
 ]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

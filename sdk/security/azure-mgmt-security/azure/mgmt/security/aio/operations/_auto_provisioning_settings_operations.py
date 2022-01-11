@@ -43,7 +43,7 @@ class AutoProvisioningSettingsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutoProvisioningSettingList"]:
         """Exposes the auto provisioning settings of the subscriptions.
 
@@ -110,7 +110,7 @@ class AutoProvisioningSettingsOperations:
     async def get(
         self,
         setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutoProvisioningSetting":
         """Details of a specific setting.
 
@@ -165,7 +165,7 @@ class AutoProvisioningSettingsOperations:
         self,
         setting_name: str,
         setting: "_models.AutoProvisioningSetting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutoProvisioningSetting":
         """Details of a specific setting.
 

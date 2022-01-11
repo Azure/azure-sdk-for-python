@@ -31,5 +31,5 @@ __all__ = [
     "LoadBalancingStrategy",
     "PartitionContext",
     "parse_connection_string",
-    "EventHubConnectionStringProperties"
+    "EventHubConnectionStringProperties",
 ]

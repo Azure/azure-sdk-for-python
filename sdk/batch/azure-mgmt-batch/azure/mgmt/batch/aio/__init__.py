@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._batch_management import BatchManagement
-__all__ = ['BatchManagement']
+from ._batch_management_client import BatchManagementClient
+__all__ = ['BatchManagementClient']

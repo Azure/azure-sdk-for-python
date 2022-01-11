@@ -8,8 +8,9 @@
 from flask import (
     Response,
     Blueprint,
-    request
+    request,
 )
+from .helpers import jsonify, get_dict
 
 basic_api = Blueprint('basic_api', __name__)
 
@@ -64,3 +65,30 @@ def complicated_json():
     assert request.json["None"] == None
 
     return Response(status=200)
+
+@basic_api.route("/headers", methods=['GET'])
+def headers():
+    return Response(
+        status=200,
+        headers={
+            "lowercase-header": "lowercase",
+            "ALLCAPS-HEADER": "ALLCAPS",
+            "CamelCase-Header": "camelCase",
+        }
+    )
+
+@basic_api.route("/anything", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "TRACE"])
+def anything():
+    return jsonify(
+        get_dict(
+            "url",
+            "args",
+            "headers",
+            "origin",
+            "method",
+            "form",
+            "data",
+            "files",
+            "json",
+        )
+    )

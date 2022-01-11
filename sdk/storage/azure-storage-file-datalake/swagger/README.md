@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.StorageDataLake/stable/2020-06-12/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.StorageDataLake/preview/2020-10-02/DataLakeStorage.json
 output-folder: ../azure/storage/filedatalake/_generated
 namespace: azure.storage.filedatalake
 no-namespace-folders: true
@@ -33,6 +33,35 @@ Currently breaking the latest version of autorest.python
 directive:
 - from: swagger-document
   where: $["x-ms-paths"]["/{filesystem}?restype=container&comp=list&hierarchy"].get
+  transform: >
+    delete $["x-ms-pageable"];
+```
+
+### Remove Filesystem and PathName from parameter list since they are not needed
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        if (property.includes('/{filesystem}/{path}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/FileSystem") && false == param['$ref'].endsWith("#/parameters/Path"))});
+        } 
+        else if (property.includes('/{filesystem}'))
+        {
+            $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/FileSystem"))});
+        }
+    }
+```
+
+### Remove x-ms-pageable
+Currently breaking the latest version of autorest.python
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]["/{filesystem}?resource=filesystem"].get
   transform: >
     delete $["x-ms-pageable"];
 ```

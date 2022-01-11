@@ -45,7 +45,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, "_models.ManagementPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccountManagementPolicies":
         """Gets the data policy rules associated with the specified storage account.
 
@@ -112,7 +112,7 @@ class ManagementPoliciesOperations:
         account_name: str,
         management_policy_name: Union[str, "_models.ManagementPolicyName"],
         properties: "_models.ManagementPoliciesRulesSetParameter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccountManagementPolicies":
         """Sets the data policy rules associated with the specified storage account.
 
@@ -185,7 +185,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, "_models.ManagementPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the data policy rules associated with the specified storage account.
 

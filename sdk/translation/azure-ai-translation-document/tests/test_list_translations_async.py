@@ -28,7 +28,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses()
+        submitted_translations = client.list_translation_statuses()
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -48,7 +48,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
 
         # list translations
-        submitted_translations_pages = client.list_all_translation_statuses(results_per_page=results_per_page).by_page()
+        submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
         self.assertIsNotNone(submitted_translations_pages)
 
         # iterate by page
@@ -73,12 +73,12 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations - unable to assert skip!!
-        all_translations = client.list_all_translation_statuses()
+        all_translations = client.list_translation_statuses()
         all_operations_count = 0
         async for translation in all_translations:
             all_operations_count += 1
 
-        translations_with_skip = client.list_all_translation_statuses(skip=skip)
+        translations_with_skip = client.list_translation_statuses(skip=skip)
         translations_with_skip_count = 0
         async for translation in translations_with_skip:
             translations_with_skip_count += 1
@@ -95,15 +95,15 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         # create some translations with the status 'Succeeded'
         completed_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
-        # create some translations with the status 'Cancelled'
+        # create some translations with the status 'Canceled'
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
         for id in translation_ids:
             await client.cancel_translation(id)
-        self.wait(10) # wait for 'cancelled' to propagate
+        self.wait(10) # wait for 'canceled' to propagate
 
         # list translations with status filter
-        statuses = ["Cancelled"]
-        submitted_translations = client.list_all_translation_statuses(statuses=statuses)
+        statuses = ["Canceled"]
+        submitted_translations = client.list_translation_statuses(statuses=statuses)
 
         # check statuses
         async for translation in submitted_translations:
@@ -121,7 +121,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(translation_ids=translation_ids)
+        submitted_translations = client.list_translation_statuses(translation_ids=translation_ids)
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -142,7 +142,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(created_after=start)
+        submitted_translations = client.list_translation_statuses(created_after=start)
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -168,7 +168,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(created_before=end)
+        submitted_translations = client.list_translation_statuses(created_before=end)
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -187,7 +187,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["createdDateTimeUtc asc"])
+        submitted_translations = client.list_translation_statuses(order_by=["created_on asc"])
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -207,7 +207,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["createdDateTimeUtc desc"])
+        submitted_translations = client.list_translation_statuses(order_by=["created_on desc"])
         self.assertIsNotNone(submitted_translations)
 
         # check statuses
@@ -216,35 +216,30 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             assert(translation.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = translation.created_on
 
-
-    @pytest.mark.skip(reason="not working! - list returned is empty")
+    @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_translations_mixed_filters(self, client):
         # create some translations
-        operations_count = 15
+        operations_count = 4
         docs_per_operation = 1
         results_per_page = 2
-        statuses = ["Cancelled"]
-        skip = 2
+        statuses = ["Succeeded"]
+        skip = 1
 
         # create some translations
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
         successful_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
-        cancelled_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
-        for translation_id in cancelled_translation_ids:
-            await client.cancel_translation(translation_id)
-        self.wait(15) # wait for status to propagate
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(
+        submitted_translations = client.list_translation_statuses(
             # filters
             statuses=statuses,
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["createdDateTimeUtc asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
             results_per_page=results_per_page
@@ -257,8 +252,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             async for translation in page:
                 counter += 1
                 # assert id
-                self.assertIn(translation.id, cancelled_translation_ids)
-                self.assertNotIn(translation.id, successful_translation_ids)
+                self.assertIn(translation.id, successful_translation_ids)
                 # assert ordering
                 assert(translation.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = translation.created_on

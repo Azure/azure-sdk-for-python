@@ -1,15 +1,47 @@
 # Release History
 
-## 4.3.1 (Unreleased)
+## 4.7.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+### Bugs Fixed
 
-### Fixed
+### Other Changes
 
+## 4.7.1 (2021-11-18)
+
+### Bugs Fixed
+
+- The `send` API will raise on exceptions.
+
+## 4.7.0 (2021-11-09)
+
+### Features Added
+
+- Added support for publishing native CNCF cloudevents (https://pypi.org/project/cloudevents/).
+
+## 4.6.0 (2021-10-05)
+
+### Features Added
+
+- Added new enum values to `SystemEvents`.
+
+## 4.5.0 (2021-08-10)
+
+### Features Added
+
+- Added a new enum value `Microsoft.ContainerService.NewKubernetesVersionAvailable` to `SystemEvents`.
+- Added a `from_json` method which now accepts storage QueueMessage, eventhub's EventData or ServiceBusMessage or simply json bytes to return an `EventGridEvent`
+
+## 4.4.0 (2021-07-19)
+
+- Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
+
+### Features Added
+
+- `EventGridPublisherClient` now supports Azure Active Directory (AAD) for authentication.
 
 ## 4.3.0 (2021-06-09)
 

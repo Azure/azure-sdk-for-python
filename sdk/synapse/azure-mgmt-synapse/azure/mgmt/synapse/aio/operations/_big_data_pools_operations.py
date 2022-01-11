@@ -48,7 +48,7 @@ class BigDataPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         big_data_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BigDataPoolResourceInfo":
         """Get Big Data pool.
 
@@ -70,14 +70,14 @@ class BigDataPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'bigDataPoolName': self._serialize.url("big_data_pool_name", big_data_pool_name, 'str'),
         }
@@ -114,7 +114,7 @@ class BigDataPoolsOperations:
         workspace_name: str,
         big_data_pool_name: str,
         big_data_pool_patch_info: "_models.BigDataPoolPatchInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BigDataPoolResourceInfo":
         """Update a Big Data pool.
 
@@ -138,7 +138,7 @@ class BigDataPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -146,7 +146,7 @@ class BigDataPoolsOperations:
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'bigDataPoolName': self._serialize.url("big_data_pool_name", big_data_pool_name, 'str'),
         }
@@ -188,14 +188,14 @@ class BigDataPoolsOperations:
         big_data_pool_name: str,
         big_data_pool_info: "_models.BigDataPoolResourceInfo",
         force: Optional[bool] = False,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BigDataPoolResourceInfo":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BigDataPoolResourceInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -203,7 +203,7 @@ class BigDataPoolsOperations:
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'bigDataPoolName': self._serialize.url("big_data_pool_name", big_data_pool_name, 'str'),
         }
@@ -251,7 +251,7 @@ class BigDataPoolsOperations:
         big_data_pool_name: str,
         big_data_pool_info: "_models.BigDataPoolResourceInfo",
         force: Optional[bool] = False,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BigDataPoolResourceInfo"]:
         """Create a Big Data pool.
 
@@ -269,8 +269,8 @@ class BigDataPoolsOperations:
         :type force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BigDataPoolResourceInfo or the result of cls(response)
@@ -307,7 +307,7 @@ class BigDataPoolsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'bigDataPoolName': self._serialize.url("big_data_pool_name", big_data_pool_name, 'str'),
         }
@@ -331,21 +331,21 @@ class BigDataPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         big_data_pool_name: str,
-        **kwargs
-    ) -> Optional[object]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[object]]
+        **kwargs: Any
+    ) -> Optional[Any]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'bigDataPoolName': self._serialize.url("big_data_pool_name", big_data_pool_name, 'str'),
         }
@@ -386,8 +386,8 @@ class BigDataPoolsOperations:
         resource_group_name: str,
         workspace_name: str,
         big_data_pool_name: str,
-        **kwargs
-    ) -> AsyncLROPoller[object]:
+        **kwargs: Any
+    ) -> AsyncLROPoller[Any]:
         """Delete a Big Data pool.
 
         Delete a Big Data pool from the workspace.
@@ -400,16 +400,16 @@ class BigDataPoolsOperations:
         :type big_data_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either object or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[object]
+        :return: An instance of AsyncLROPoller that returns either any or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -436,7 +436,7 @@ class BigDataPoolsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'bigDataPoolName': self._serialize.url("big_data_pool_name", big_data_pool_name, 'str'),
         }
@@ -459,7 +459,7 @@ class BigDataPoolsOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BigDataPoolResourceInfoListResult"]:
         """List the Big Data pools in a workspace.
 
@@ -479,7 +479,7 @@ class BigDataPoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -492,7 +492,7 @@ class BigDataPoolsOperations:
                 url = self.list_by_workspace.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)

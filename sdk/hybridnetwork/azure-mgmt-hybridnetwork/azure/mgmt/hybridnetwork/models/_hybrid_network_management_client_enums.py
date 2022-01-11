@@ -26,6 +26,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class DeviceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the device.
     """
@@ -61,6 +70,14 @@ class NetworkFunctionRoleConfigurationType(with_metaclass(_CaseInsensitiveEnumMe
 
     UNKNOWN = "Unknown"
     VIRTUAL_MACHINE = "VirtualMachine"
+
+class NetworkFunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The network function type.
+    """
+
+    UNKNOWN = "Unknown"
+    VIRTUAL_NETWORK_FUNCTION = "VirtualNetworkFunction"
+    CONTAINERIZED_NETWORK_FUNCTION = "ContainerizedNetworkFunction"
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The OS type.

@@ -23,6 +23,7 @@ USAGE:
 from datetime import datetime, timedelta
 from dotenv import find_dotenv, load_dotenv
 import os
+from uuid import uuid4
 
 
 class TableEntitySamples(object):
@@ -48,10 +49,14 @@ class TableEntitySamples(object):
 
             my_entity = {
                 u"PartitionKey": u"color",
-                u"RowKey": u"crayola",
-                u"text": u"Marker",
-                u"color": u"Purple",
-                u"price": u"5",
+                u"RowKey": u"brand",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 4.99,
+                "last_updated": datetime.today(),
+                "product_id": uuid4(),
+                "inventory_count": 42,
+                "barcode": b"135aefg8oj0ld58"
             }
             try:
                 # [START create_entity]
@@ -81,16 +86,20 @@ class TableEntitySamples(object):
             entity = {
                 u"PartitionKey": u"color2",
                 u"RowKey": u"sharpie",
-                u"text": u"Marker",
-                u"color": u"Purple",
-                u"price": u"5",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 5.99,
+                "inventory": 42,
+                "product_id": uuid4(),
             }
             entity1 = {
                 u"PartitionKey": u"color2",
                 u"RowKey": u"crayola",
-                u"text": u"Marker",
-                u"color": u"Red",
-                u"price": u"3",
+                "text": "Marker",
+                "color": "Red",
+                "price": 3.99,
+                "inventory": 42,
+                "product_id": uuid4(),
             }
 
             try:
@@ -122,16 +131,20 @@ class TableEntitySamples(object):
             entity = {
                 u"PartitionKey": u"color2",
                 u"RowKey": u"sharpie",
-                u"text": u"Marker",
-                u"color": u"Purple",
-                u"price": u"5",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 5.99,
+                "inventory": 42,
+                "product_id": uuid4(),
             }
             entity1 = {
                 u"PartitionKey": u"color2",
                 u"RowKey": u"crayola",
-                u"text": u"Marker",
-                u"color": u"Red",
-                u"price": u"3",
+                "text": "Marker",
+                "color": "Red",
+                "price": 3.99,
+                "inventory": 42,
+                "product_id": uuid4(),
             }
 
             try:
@@ -144,14 +157,14 @@ class TableEntitySamples(object):
                 insert_entity = table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
                 print("Inserted entity: {}".format(insert_entity))
 
-                created[u"text"] = u"NewMarker"
+                created["text"] = "NewMarker"
                 merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print("Merged entity: {}".format(merged_entity))
                 # [END upsert_entity]
 
                 # [START update_entity]
                 # Update the entity
-                created[u"text"] = u"NewMarker"
+                created["text"] = "NewMarker"
                 table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
@@ -159,7 +172,7 @@ class TableEntitySamples(object):
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
-                replaced[u"color"] = u"Blue"
+                replaced["color"] = "Blue"
                 table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity

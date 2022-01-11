@@ -25,7 +25,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         maxresults: Optional[int] = None,
         include_pending: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CertificateListResult"]:
         """List certificates in a specified key vault.
 
@@ -113,7 +113,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedCertificateBundle":
         """Deletes a certificate from a specified key vault.
 
@@ -175,7 +175,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         contacts: "_models.Contacts",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Contacts":
         """Sets the certificate contacts for the specified key vault.
 
@@ -239,7 +239,7 @@ class KeyVaultClientOperationsMixin:
     async def get_certificate_contacts(
         self,
         vault_base_url: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Contacts":
         """Lists the certificate contacts for a specified key vault.
 
@@ -296,7 +296,7 @@ class KeyVaultClientOperationsMixin:
     async def delete_certificate_contacts(
         self,
         vault_base_url: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Contacts":
         """Deletes the certificate contacts for a specified key vault.
 
@@ -354,7 +354,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CertificateIssuerListResult"]:
         """List certificate issuers for a specified key vault.
 
@@ -439,7 +439,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         issuer_name: str,
         parameter: "_models.CertificateIssuerSetParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssuerBundle":
         """Sets the specified certificate issuer.
 
@@ -508,7 +508,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         issuer_name: str,
         parameter: "_models.CertificateIssuerUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssuerBundle":
         """Updates the specified certificate issuer.
 
@@ -576,7 +576,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         issuer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssuerBundle":
         """Lists the specified certificate issuer.
 
@@ -638,7 +638,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         issuer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssuerBundle":
         """Deletes the specified certificate issuer.
 
@@ -700,7 +700,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         parameters: "_models.CertificateCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateOperation":
         """Creates a new certificate.
 
@@ -769,7 +769,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         parameters: "_models.CertificateImportParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateBundle":
         """Imports a certificate into a specified key vault.
 
@@ -840,7 +840,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CertificateListResult"]:
         """List the versions of a certificate.
 
@@ -927,7 +927,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificatePolicy":
         """Lists the policy for a certificate.
 
@@ -989,7 +989,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         certificate_policy: "_models.CertificatePolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificatePolicy":
         """Updates the policy for a certificate.
 
@@ -1059,7 +1059,7 @@ class KeyVaultClientOperationsMixin:
         certificate_name: str,
         certificate_version: str,
         parameters: "_models.CertificateUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateBundle":
         """Updates the specified attributes associated with the given certificate.
 
@@ -1132,7 +1132,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         certificate_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateBundle":
         """Gets information about a certificate.
 
@@ -1198,7 +1198,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         certificate_operation: "_models.CertificateOperationUpdateParameter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateOperation":
         """Updates a certificate operation.
 
@@ -1266,7 +1266,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateOperation":
         """Gets the creation operation of a certificate.
 
@@ -1327,7 +1327,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateOperation":
         """Deletes the creation operation for a specific certificate.
 
@@ -1390,7 +1390,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         certificate_name: str,
         parameters: "_models.CertificateMergeParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateBundle":
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -1459,7 +1459,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupCertificateResult":
         """Backs up the specified certificate.
 
@@ -1521,7 +1521,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         parameters: "_models.CertificateRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateBundle":
         """Restores a backed up certificate to a vault.
 
@@ -1587,7 +1587,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         maxresults: Optional[int] = None,
         include_pending: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedCertificateListResult"]:
         """Lists the deleted certificates in the specified vault currently available for recovery.
 
@@ -1677,7 +1677,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedCertificateBundle":
         """Retrieves information about the specified deleted certificate.
 
@@ -1739,7 +1739,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Permanently deletes the specified deleted certificate.
 
@@ -1798,7 +1798,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateBundle":
         """Recovers the deleted certificate back to its current version under /certificates.
 

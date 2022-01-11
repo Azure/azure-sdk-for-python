@@ -44,7 +44,7 @@ class LocationBasedCapabilitiesOperations:
     def list(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CapabilitiesListResult"]:
         """Get capabilities at specified location in a given subscription.
 
@@ -60,7 +60,7 @@ class LocationBasedCapabilitiesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -109,4 +109,4 @@ class LocationBasedCapabilitiesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMySql/locations/{locationName}/capabilities'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/capabilities'}  # type: ignore

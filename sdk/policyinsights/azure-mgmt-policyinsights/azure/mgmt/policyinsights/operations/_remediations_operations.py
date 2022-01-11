@@ -76,7 +76,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             _top = query_options.top
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -120,7 +120,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -155,7 +155,7 @@ class RemediationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -181,7 +181,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -222,7 +222,7 @@ class RemediationsOperations(object):
             _top = query_options.top
             _filter = query_options.filter
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -267,7 +267,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -305,7 +305,7 @@ class RemediationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -336,7 +336,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -375,7 +375,7 @@ class RemediationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -401,7 +401,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -436,7 +436,7 @@ class RemediationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         management_groups_namespace = "Microsoft.Management"
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -462,7 +462,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -502,7 +502,7 @@ class RemediationsOperations(object):
         _top = None
         if query_options is not None:
             _top = query_options.top
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -545,7 +545,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -576,7 +576,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -601,7 +601,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -638,7 +638,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             _top = query_options.top
             _filter = query_options.filter
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -682,7 +682,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -716,7 +716,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -746,7 +746,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -781,7 +781,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -806,7 +806,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -837,7 +837,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -862,7 +862,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -905,7 +905,7 @@ class RemediationsOperations(object):
         _top = None
         if query_options is not None:
             _top = query_options.top
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -949,7 +949,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -983,7 +983,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1009,7 +1009,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1049,7 +1049,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             _top = query_options.top
             _filter = query_options.filter
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1094,7 +1094,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1131,7 +1131,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1162,7 +1162,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1200,7 +1200,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1226,7 +1226,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1260,7 +1260,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1286,7 +1286,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1329,7 +1329,7 @@ class RemediationsOperations(object):
         _top = None
         if query_options is not None:
             _top = query_options.top
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1372,7 +1372,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1406,7 +1406,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1431,7 +1431,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1471,7 +1471,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             _top = query_options.top
             _filter = query_options.filter
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1515,7 +1515,7 @@ class RemediationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1552,7 +1552,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1582,7 +1582,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1620,7 +1620,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1645,7 +1645,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Remediation', pipeline_response)
@@ -1679,7 +1679,7 @@ class RemediationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-01"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -1704,7 +1704,7 @@ class RemediationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None

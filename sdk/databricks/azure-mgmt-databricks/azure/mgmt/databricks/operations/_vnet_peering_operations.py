@@ -32,7 +32,7 @@ class VNetPeeringOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databricks.models
+    :type models: ~azure_databricks_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -65,7 +65,7 @@ class VNetPeeringOperations(object):
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkPeering, or the result of cls(response)
-        :rtype: ~azure.mgmt.databricks.models.VirtualNetworkPeering or None
+        :rtype: ~azure_databricks_management_client.models.VirtualNetworkPeering or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VirtualNetworkPeering"]]
@@ -100,7 +100,7 @@ class VNetPeeringOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -153,7 +153,7 @@ class VNetPeeringOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -179,8 +179,8 @@ class VNetPeeringOperations(object):
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -277,7 +277,7 @@ class VNetPeeringOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -311,15 +311,15 @@ class VNetPeeringOperations(object):
         :type peering_name: str
         :param virtual_network_peering_parameters: Parameters supplied to the create workspace vNet
          Peering.
-        :type virtual_network_peering_parameters: ~azure.mgmt.databricks.models.VirtualNetworkPeering
+        :type virtual_network_peering_parameters: ~azure_databricks_management_client.models.VirtualNetworkPeering
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either VirtualNetworkPeering or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databricks.models.VirtualNetworkPeering]
+        :rtype: ~azure.core.polling.LROPoller[~azure_databricks_management_client.models.VirtualNetworkPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -385,7 +385,7 @@ class VNetPeeringOperations(object):
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkPeeringList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databricks.models.VirtualNetworkPeeringList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure_databricks_management_client.models.VirtualNetworkPeeringList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkPeeringList"]
@@ -435,7 +435,7 @@ class VNetPeeringOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

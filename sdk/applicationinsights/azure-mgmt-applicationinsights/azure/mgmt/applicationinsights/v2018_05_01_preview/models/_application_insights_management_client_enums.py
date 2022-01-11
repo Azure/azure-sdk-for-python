@@ -54,8 +54,10 @@ class PublicNetworkAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     Enabled
     """
 
-    ENABLED = "Enabled"  #: Enables connectivity to Application Insights through public DNS.
-    DISABLED = "Disabled"  #: Disables public connectivity to Application Insights through public DNS.
+    #: Enables connectivity to Application Insights through public DNS.
+    ENABLED = "Enabled"
+    #: Disables public connectivity to Application Insights through public DNS.
+    DISABLED = "Disabled"
 
 class PurgeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the operation represented by the requested Id.
@@ -70,3 +72,19 @@ class RequestSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     REST = "rest"
+
+class WebTestKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of WebTest that this web test watches. Choices are ping and multistep.
+    """
+
+    PING = "ping"
+    MULTISTEP = "multistep"
+
+class WebTestKindEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of web test this is, valid choices are ping, multistep, basic, and standard.
+    """
+
+    PING = "ping"
+    MULTISTEP = "multistep"
+    BASIC = "basic"
+    STANDARD = "standard"

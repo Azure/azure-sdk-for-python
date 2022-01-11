@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
+import logging
 import os
 
 from . import AzureMgmtPreparer
-from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 from dotenv import load_dotenv, find_dotenv
+from .sanitizers import add_general_regex_sanitizer
+
 
 class PowerShellPreparer(AzureMgmtPreparer):
     def __init__(
@@ -66,9 +67,23 @@ class PowerShellPreparer(AzureMgmtPreparer):
                     scrubbed_value = self.fake_values[key]
                     if scrubbed_value:
                         self.real_values[key.lower()] = os.environ[key.upper()]
-                        self.test_class_instance.scrubber.register_name_pair(
-                            self.real_values[key.lower()], scrubbed_value
-                        )
+
+                        # vcrpy-based tests have a scrubber to register fake values
+                        if hasattr(self.test_class_instance, "scrubber"):
+                            self.test_class_instance.scrubber.register_name_pair(
+                                self.real_values[key.lower()], scrubbed_value
+                            )
+                        # test proxy tests have no scrubber, and instead register sanitizers using fake values
+                        else:
+                            try:
+                                add_general_regex_sanitizer(value=scrubbed_value, regex=self.real_values[key.lower()])
+                            except:
+                                logger = logging.getLogger()
+                                logger.info(
+                                    "This test class instance has no scrubber and a sanitizer could not be registered "
+                                    "with the test proxy, so the PowerShellPreparer will not scrub the value of {} in "
+                                    "recordings.".format(key)
+                                )
                     else:
                         template = 'To pass a live ID you must provide the scrubbed value for recordings to \
                             prevent secrets from being written to files. {} was not given. For example: \

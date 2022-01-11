@@ -10,31 +10,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
+    uri: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searche98a1ca9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D911EBB3C82243\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://searche98a1ca9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96CA63A48880F\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '274'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:37:08 GMT
-      elapsed-time: '56'
-      etag: W/"0x8D911EBB3C82243"
+      date: Tue, 31 Aug 2021 17:39:04 GMT
+      elapsed-time: '44'
+      etag: W/"0x8D96CA63A48880F"
       expires: '-1'
-      location: https://searche98a1ca9.search.windows.net/synonymmaps('test-syn-map-1')?api-version=2020-06-30-Preview
+      location: https://searche98a1ca9.search.windows.net/synonymmaps('test-syn-map-1')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: ceecd554-afc7-11eb-be06-a0481ca055a9
+      request-id: 571b35ea-0a82-11ec-8127-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
+    url: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "test-syn-map-2", "format": "solr", "synonyms": "Washington, Wash.
       => WA"}'
@@ -46,66 +46,60 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
+    uri: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searche98a1ca9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D911EBB3DCBF72\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
+      string: '{"@odata.context":"https://searche98a1ca9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96CA63A564714\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
         Wash. => WA","encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '228'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:37:08 GMT
-      elapsed-time: '47'
-      etag: W/"0x8D911EBB3DCBF72"
+      date: Tue, 31 Aug 2021 17:39:04 GMT
+      elapsed-time: '23'
+      etag: W/"0x8D96CA63A564714"
       expires: '-1'
-      location: https://searche98a1ca9.search.windows.net/synonymmaps('test-syn-map-2')?api-version=2020-06-30-Preview
+      location: https://searche98a1ca9.search.windows.net/synonymmaps('test-syn-map-2')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: cf1f133d-afc7-11eb-8616-a0481ca055a9
+      request-id: 57434cdb-0a82-11ec-badc-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
+    url: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
+    uri: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns7zhwfZ7jR7OJY/x1fFclZdNeNl3t793RZ5m+HtH2+u
-        l9XyerHIVs1Ho48us3Kdf/ToexY4NbsgyL/vRzvvDp4+3N09ffLk3snB3t7+vd/3I2q/zBbU/KM2
-        b9ptgrRNYLZ36fPzql5kQKmpypr+pu/QS0OffPX6eJR+tSzafJa+bjN6tfNnWp2nx4u8LqbZ77v8
-        btbMi+VFWy1HKX4fp58dpd89JpD5clpfr9qiWv5e+fVHj5brsvwlo414Pz158uzB3iDee/T5BrzR
-        ++0x+f4v+X8Ad1yM1KABAAA=
+      string: '{"@odata.context":"https://searche98a1ca9.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D96CA63A48880F\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null},{"@odata.etag":"\"0x8D96CA63A564714\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
+        Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '359'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:37:08 GMT
-      elapsed-time: '22'
+      date: Tue, 31 Aug 2021 17:39:04 GMT
+      elapsed-time: '23'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: cf328239-afc7-11eb-ae48-a0481ca055a9
+      request-id: 574df866-0a82-11ec-b01b-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
+    url: https://searche98a1ca9.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
 version: 1

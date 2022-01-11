@@ -15,7 +15,11 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
     from typing import (  # pylint: disable=ungrouped-imports
         Any,
         Union,
@@ -72,6 +76,16 @@ class EventHubConsumerClient(ClientBase):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay).
+     In fixed mode, retry policy will always sleep for {backoff factor}.
+     In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+     seconds. If the backoff_factor is 0.1, then the retry will sleep
+     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
@@ -126,10 +140,15 @@ class EventHubConsumerClient(ClientBase):
             "partition_ownership_expiration_interval", None
         )
         if self._partition_ownership_expiration_interval is None:
-            self._partition_ownership_expiration_interval = 6 * self._load_balancing_interval
+            self._partition_ownership_expiration_interval = (
+                6 * self._load_balancing_interval
+            )
         load_balancing_strategy = kwargs.pop("load_balancing_strategy", None)
-        self._load_balancing_strategy = LoadBalancingStrategy(load_balancing_strategy) if load_balancing_strategy \
+        self._load_balancing_strategy = (
+            LoadBalancingStrategy(load_balancing_strategy)
+            if load_balancing_strategy
             else LoadBalancingStrategy.GREEDY
+        )
         self._consumer_group = consumer_group
         network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
@@ -200,6 +219,16 @@ class EventHubConsumerClient(ClientBase):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+         (most errors are resolved immediately by a second try without a delay).
+         In fixed mode, retry policy will always sleep for {backoff factor}.
+         In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+         seconds. If the backoff_factor is 0.1, then the retry will sleep
+         for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+        :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no furthur activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.

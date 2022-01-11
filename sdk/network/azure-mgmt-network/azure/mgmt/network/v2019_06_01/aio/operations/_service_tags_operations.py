@@ -43,7 +43,7 @@ class ServiceTagsOperations:
     async def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceTagsListResult":
         """Gets a list of service tag information resources.
 

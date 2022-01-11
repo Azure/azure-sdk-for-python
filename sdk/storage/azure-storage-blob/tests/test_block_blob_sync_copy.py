@@ -20,7 +20,8 @@ from azure.storage.blob import (
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob._shared.policies import StorageContentValidation
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -30,8 +31,8 @@ SOURCE_BLOB_SIZE = 8 * 1024
 
 class StorageBlockBlobTest(StorageTestCase):
 
-    def _setup(self, storage_account, key):
-        account_url = self.account_url(storage_account, "blob")
+    def _setup(self, storage_account_name, key, container_prefix='utcontainer'):
+        account_url = self.account_url(storage_account_name, "blob")
         if not isinstance(account_url, str):
             account_url = account_url.encode('utf-8')
             key = key.encode('utf-8')
@@ -42,7 +43,7 @@ class StorageBlockBlobTest(StorageTestCase):
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024)
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name(container_prefix)
 
         # create source blob to be copied from
         self.source_blob_name = self.get_resource_name('srcblob')
@@ -78,13 +79,57 @@ class StorageBlockBlobTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
+        self.source_blob_url_without_sas = blob.url
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
         self.source_blob_url_with_special_chars = BlobClient.from_blob_url(
             blob_with_special_chars.url, credential=sas_token_for_special_chars).url
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_put_block_from_url_with_oauth(self, storage_account_name, storage_account_key):
+        # Arrange
+        self._setup(storage_account_name, storage_account_key, container_prefix="container1")
+        split = 4 * 1024
+        destination_blob_name = self.get_resource_name('destblob')
+        destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            destination_blob_client.stage_block_from_url(
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split)
+        # Assert it passes after passing an oauth credential
+        destination_blob_client.stage_block_from_url(
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split,
+                source_authorization=token)
+        destination_blob_client.stage_block_from_url(
+            block_id=2,
+            source_url=self.source_blob_url_without_sas,
+            source_offset=split,
+            source_length=split,
+            source_authorization=token)
+
+        committed, uncommitted = destination_blob_client.get_block_list('all')
+        self.assertEqual(len(uncommitted), 2)
+        self.assertEqual(len(committed), 0)
+
+        # Act part 2: commit the blocks
+        destination_blob_client.commit_block_list(['1', '2'])
+
+        # Assert destination blob has right content
+        destination_blob_data = destination_blob_client.download_blob().readall()
+        self.assertEqual(len(destination_blob_data), 8 * 1024)
+        self.assertEqual(destination_blob_data, self.source_blob_data)
+        self.assertEqual(self.source_blob_data, destination_blob_data)
+
+    @BlobPreparer()
+    def test_put_block_from_url_and_commit(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -138,9 +183,9 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_with_special_chars_data)
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_put_block_from_url_and_validate_content_md5(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
         src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
@@ -174,9 +219,9 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(len(uncommitted), 1)
         self.assertEqual(len(committed), 0)
 
-    @GlobalStorageAccountPreparer()
-    def test_copy_blob_sync(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_copy_blob_sync(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -204,9 +249,9 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(self.source_blob_with_special_chars_data, content)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_sync_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_sync_copy_blob_returns_vid(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 

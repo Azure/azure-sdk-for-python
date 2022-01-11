@@ -28,7 +28,7 @@ USAGE:
 
 
 def sample_document_status_checks():
-    # [START list_all_document_statuses]
+    # [START list_document_statuses]
     import os
     import time
     from azure.core.credentials import AzureKeyCredential
@@ -47,7 +47,7 @@ def sample_document_status_checks():
     while not poller.done():
         time.sleep(30)
 
-        doc_statuses = client.list_all_document_statuses(poller.id)
+        doc_statuses = client.list_document_statuses(poller.id)
         for document in doc_statuses:
             if document.id not in completed_docs:
                 if document.status == "Succeeded":
@@ -66,7 +66,7 @@ def sample_document_status_checks():
                     ))
 
     print("\nTranslation completed.")
-    # [END list_all_document_statuses]
+    # [END list_document_statuses]
 
 
 if __name__ == '__main__':

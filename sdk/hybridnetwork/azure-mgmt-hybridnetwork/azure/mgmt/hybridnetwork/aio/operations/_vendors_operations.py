@@ -46,14 +46,14 @@ class VendorsOperations:
     async def _delete_initial(
         self,
         vendor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -89,7 +89,7 @@ class VendorsOperations:
     async def begin_delete(
         self,
         vendor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified vendor.
 
@@ -97,8 +97,8 @@ class VendorsOperations:
         :type vendor_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -148,7 +148,7 @@ class VendorsOperations:
     async def get(
         self,
         vendor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Vendor":
         """Gets information about the specified vendor.
 
@@ -164,7 +164,7 @@ class VendorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -204,14 +204,14 @@ class VendorsOperations:
         self,
         vendor_name: str,
         parameters: Optional["_models.Vendor"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Vendor":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vendor"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -263,7 +263,7 @@ class VendorsOperations:
         self,
         vendor_name: str,
         parameters: Optional["_models.Vendor"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Vendor"]:
         """Creates or updates a vendor.
 
@@ -273,8 +273,8 @@ class VendorsOperations:
         :type parameters: ~hybrid_network_management_client.models.Vendor
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Vendor or the result of cls(response)
@@ -327,7 +327,7 @@ class VendorsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VendorListResult"]:
         """Lists all the vendors in a subscription.
 
@@ -341,7 +341,7 @@ class VendorsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

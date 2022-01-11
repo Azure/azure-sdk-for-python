@@ -102,4 +102,4 @@ class CheckNameAvailabilityOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMySQL/checkNameAvailability'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/checkNameAvailability'}  # type: ignore

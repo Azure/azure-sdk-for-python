@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._batch_management import BatchManagement
+from ._batch_management_client import BatchManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['BatchManagement']
+__all__ = ['BatchManagementClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

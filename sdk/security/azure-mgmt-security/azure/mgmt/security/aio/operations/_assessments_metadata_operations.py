@@ -43,7 +43,7 @@ class AssessmentsMetadataOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityAssessmentMetadataList"]:
         """Get metadata information on all assessment types.
 
@@ -106,7 +106,7 @@ class AssessmentsMetadataOperations:
     async def get(
         self,
         assessment_metadata_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityAssessmentMetadata":
         """Get metadata information on an assessment type.
 
@@ -158,7 +158,7 @@ class AssessmentsMetadataOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityAssessmentMetadataList"]:
         """Get metadata information on all assessment types in a specific subscription.
 
@@ -225,7 +225,7 @@ class AssessmentsMetadataOperations:
     async def get_in_subscription(
         self,
         assessment_metadata_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityAssessmentMetadata":
         """Get metadata information on an assessment type in a specific subscription.
 
@@ -280,7 +280,7 @@ class AssessmentsMetadataOperations:
         self,
         assessment_metadata_name: str,
         assessment_metadata: "_models.SecurityAssessmentMetadata",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityAssessmentMetadata":
         """Create metadata information on an assessment type in a specific subscription.
 
@@ -341,7 +341,7 @@ class AssessmentsMetadataOperations:
     async def delete_in_subscription(
         self,
         assessment_metadata_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete metadata information on an assessment type in a specific subscription, will cause the
         deletion of all the assessments of that type in that subscription.

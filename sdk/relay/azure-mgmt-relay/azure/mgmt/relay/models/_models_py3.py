@@ -737,15 +737,15 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of this SKU. Default value: "Standard".
+    :ivar name: Name of this SKU. Has constant value: "Standard".
     :vartype name: str
-    :ivar tier: The tier of this SKU. Default value: "Standard".
-    :vartype tier: str
+    :param tier: The tier of this SKU. The only acceptable values to pass in are None and
+     "Standard". The default value is None.
+    :type tier: str
     """
 
     _validation = {
         'name': {'required': True, 'constant': True},
-        'tier': {'constant': True},
     }
 
     _attribute_map = {
@@ -754,13 +754,15 @@ class Sku(msrest.serialization.Model):
     }
 
     name = "Standard"
-    tier = "Standard"
 
     def __init__(
         self,
+        *,
+        tier: Optional[str] = None,
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
+        self.tier = tier
 
 
 class WcfRelay(Resource):

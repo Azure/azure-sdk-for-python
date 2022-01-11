@@ -1,6 +1,48 @@
 # Release History
 
-## 5.1.0 (Unreleased)
+## 5.2.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
+
+### Other Changes
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
+## 5.2.0b2 (2021-11-02)
+
+This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.2`.
+
+### Features Added
+- Added support for Custom Entities Recognition through the `begin_analyze_actions` API with the `RecognizeCustomEntitiesAction` and `RecognizeCustomEntitiesResult` types.
+- Added support for Custom Single Classification through the `begin_analyze_actions` API with the `SingleCategoryClassifyAction` and `SingleCategoryClassifyActionResult` types.
+- Added support for Custom Multi Classification through the `begin_analyze_actions` API with the `MultiCategoryClassifyAction` and `MultiCategoryClassifyActionResult` types.
+- Multiple of the same action type is now supported with `begin_analyze_actions`.
+
+### Bugs Fixed
+- Restarting a long-running operation from a saved state is now supported for the `begin_analyze_actions` and `begin_recognize_healthcare_entities` methods.
+- In the event of an action level error, available partial results are now returned for any successful actions in `begin_analyze_actions`.
+
+### Other Changes
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.19.1 or greater
+
+## 5.2.0b1 (2021-08-09)
+
+This version of the SDK defaults to the latest supported API version, which currently is `v3.2-preview.1`.
+
+### Features Added
+- Added support for Extractive Summarization actions through the `ExtractSummaryAction` type.
+
+### Bugs Fixed
+- `RecognizePiiEntitiesAction` option `disable_service_logs` now correctly defaults to `True`.
+
+### Other Changes
+- Python 3.5 is no longer supported.
+
+## 5.1.0 (2021-07-07)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
 Includes all changes from `5.1.0b1` to `5.1.0b7`.
@@ -11,10 +53,12 @@ Note: this version will be the last to officially support Python 3.5, future ver
 
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
 - Added `HealthcareEntityCategory`
+- Added AAD support for the `begin_analyze_healthcare_entities` methods.
 
 ### Breaking Changes
 
 - Changed: the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed.
+- Changed: `begin_analyze_actions` now accepts a single action per type. A `ValueError` is raised if duplicate actions are passed.
 - Removed: `AnalyzeActionsType`
 - Removed: `AnalyzeActionsResult`
 - Removed: `AnalyzeActionsError`

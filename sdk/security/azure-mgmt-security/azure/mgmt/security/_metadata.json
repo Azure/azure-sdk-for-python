@@ -1,0 +1,159 @@
+{
+    "chosen_version": "",
+    "total_api_version_list": ["2015-06-01-preview", "2017-08-01", "2017-08-01-preview", "2018-06-01", "2019-01-01", "2019-01-01-preview", "2019-08-01", "2020-01-01", "2020-01-01-preview", "2020-07-01-preview", "2021-01-01", "2021-01-15-preview", "2021-05-01-preview", "2021-07-01"],
+    "client": {
+        "name": "SecurityCenter",
+        "filename": "_security_center",
+        "description": "API spec for Microsoft.Security (Azure Security Center) resource provider.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SecurityCenterConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SecurityCenterConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "Azure subscription ID.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "asc_location": {
+                "signature": "asc_location,  # type: str",
+                "description": "The location where ASC stores the data of the subscription. can be retrieved from Get locations.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "Azure subscription ID.",
+                "docstring_type": "str",
+                "required": true
+            },
+            "asc_location": {
+                "signature": "asc_location: str,",
+                "description": "The location where ASC stores the data of the subscription. can be retrieved from Get locations.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id, asc_location",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=None,  # type: Optional[str]",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: Optional[str] = None,",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "compliance_results": "ComplianceResultsOperations",
+        "pricings": "PricingsOperations",
+        "advanced_threat_protection": "AdvancedThreatProtectionOperations",
+        "device_security_groups": "DeviceSecurityGroupsOperations",
+        "iot_security_solution": "IotSecuritySolutionOperations",
+        "iot_security_solution_analytics": "IotSecuritySolutionAnalyticsOperations",
+        "iot_security_solutions_analytics_aggregated_alert": "IotSecuritySolutionsAnalyticsAggregatedAlertOperations",
+        "iot_security_solutions_analytics_recommendation": "IotSecuritySolutionsAnalyticsRecommendationOperations",
+        "locations": "LocationsOperations",
+        "operations": "Operations",
+        "tasks": "TasksOperations",
+        "auto_provisioning_settings": "AutoProvisioningSettingsOperations",
+        "compliances": "CompliancesOperations",
+        "information_protection_policies": "InformationProtectionPoliciesOperations",
+        "security_contacts": "SecurityContactsOperations",
+        "workspace_settings": "WorkspaceSettingsOperations",
+        "regulatory_compliance_standards": "RegulatoryComplianceStandardsOperations",
+        "regulatory_compliance_controls": "RegulatoryComplianceControlsOperations",
+        "regulatory_compliance_assessments": "RegulatoryComplianceAssessmentsOperations",
+        "sub_assessments": "SubAssessmentsOperations",
+        "automations": "AutomationsOperations",
+        "alerts_suppression_rules": "AlertsSuppressionRulesOperations",
+        "server_vulnerability_assessment": "ServerVulnerabilityAssessmentOperations",
+        "assessments_metadata": "AssessmentsMetadataOperations",
+        "assessments": "AssessmentsOperations",
+        "adaptive_application_controls": "AdaptiveApplicationControlsOperations",
+        "adaptive_network_hardenings": "AdaptiveNetworkHardeningsOperations",
+        "allowed_connections": "AllowedConnectionsOperations",
+        "topology": "TopologyOperations",
+        "jit_network_access_policies": "JitNetworkAccessPoliciesOperations",
+        "discovered_security_solutions": "DiscoveredSecuritySolutionsOperations",
+        "security_solutions_reference_data": "SecuritySolutionsReferenceDataOperations",
+        "external_security_solutions": "ExternalSecuritySolutionsOperations",
+        "secure_scores": "SecureScoresOperations",
+        "secure_score_controls": "SecureScoreControlsOperations",
+        "secure_score_control_definitions": "SecureScoreControlDefinitionsOperations",
+        "security_solutions": "SecuritySolutionsOperations",
+        "connectors": "ConnectorsOperations",
+        "sql_vulnerability_assessment_scans": "SqlVulnerabilityAssessmentScansOperations",
+        "sql_vulnerability_assessment_scan_results": "SqlVulnerabilityAssessmentScanResultsOperations",
+        "sql_vulnerability_assessment_baseline_rules": "SqlVulnerabilityAssessmentBaselineRulesOperations",
+        "alerts": "AlertsOperations",
+        "settings": "SettingsOperations",
+        "ingestion_settings": "IngestionSettingsOperations",
+        "software_inventories": "SoftwareInventoriesOperations"
+    }
+}

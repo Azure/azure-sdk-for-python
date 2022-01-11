@@ -46,7 +46,7 @@ class SqlPoolGeoBackupPoliciesOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GeoBackupPolicyListResult"]:
         """List SQL pool geo backup policies.
 
@@ -68,7 +68,7 @@ class SqlPoolGeoBackupPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -81,7 +81,7 @@ class SqlPoolGeoBackupPoliciesOperations:
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                 }
@@ -129,7 +129,7 @@ class SqlPoolGeoBackupPoliciesOperations:
         sql_pool_name: str,
         geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
         parameters: "_models.GeoBackupPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GeoBackupPolicy":
         """Updates a SQL Pool geo backup policy.
 
@@ -153,7 +153,7 @@ class SqlPoolGeoBackupPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -161,7 +161,7 @@ class SqlPoolGeoBackupPoliciesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'geoBackupPolicyName': self._serialize.url("geo_backup_policy_name", geo_backup_policy_name, 'str'),
@@ -207,7 +207,7 @@ class SqlPoolGeoBackupPoliciesOperations:
         workspace_name: str,
         sql_pool_name: str,
         geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GeoBackupPolicy":
         """Get a SQL pool geo backup policy.
 
@@ -231,14 +231,14 @@ class SqlPoolGeoBackupPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'geoBackupPolicyName': self._serialize.url("geo_backup_policy_name", geo_backup_policy_name, 'str'),

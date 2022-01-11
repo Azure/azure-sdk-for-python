@@ -50,7 +50,7 @@ class ApiOperationOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         tags: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationCollection"]:
         """Lists a collection of the operations for the specified API.
 
@@ -137,7 +137,7 @@ class ApiOperationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -154,7 +154,7 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the API operation specified by its identifier.
 
@@ -206,7 +206,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -224,7 +224,7 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationContract":
         """Gets the details of the API Operation specified by its identifier.
 
@@ -276,7 +276,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -297,7 +297,7 @@ class ApiOperationOperations:
         operation_id: str,
         parameters: "_models.OperationContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationContract":
         """Creates a new operation in the API or updates an existing one.
 
@@ -361,7 +361,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -387,7 +387,7 @@ class ApiOperationOperations:
         operation_id: str,
         if_match: str,
         parameters: "_models.OperationUpdateContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationContract":
         """Updates the details of the operation in the API specified by its identifier.
 
@@ -450,7 +450,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -470,7 +470,7 @@ class ApiOperationOperations:
         api_id: str,
         operation_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified operation in the API.
 
@@ -526,7 +526,7 @@ class ApiOperationOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

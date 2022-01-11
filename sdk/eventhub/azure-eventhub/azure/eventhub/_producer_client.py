@@ -17,7 +17,11 @@ from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -43,6 +47,16 @@ class EventHubProducerClient(ClientBase):
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
+    :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay).
+     In fixed mode, retry policy will always sleep for {backoff factor}.
+     In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+     seconds. If the backoff_factor is 0.1, then the retry will sleep
+     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
@@ -127,7 +141,10 @@ class EventHubProducerClient(ClientBase):
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=partition_id, send_timeout=send_timeout
+                    partition_id=(
+                        None if partition_id == ALL_PARTITIONS else partition_id
+                    ),
+                    send_timeout=send_timeout,
                 )
 
     def _create_producer(self, partition_id=None, send_timeout=None):
@@ -159,6 +176,16 @@ class EventHubProducerClient(ClientBase):
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+         (most errors are resolved immediately by a second try without a delay).
+         In fixed mode, retry policy will always sleep for {backoff factor}.
+         In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+         seconds. If the backoff_factor is 0.1, then the retry will sleep
+         for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+        :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
@@ -229,14 +256,21 @@ class EventHubProducerClient(ClientBase):
 
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
-                raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
-                                "because type EventDataBatch itself may have partition_id or partition_key")
+                raise TypeError(
+                    "partition_id and partition_key should be None when sending an EventDataBatch "
+                    "because type EventDataBatch itself may have partition_id or partition_key"
+                )
             to_send_batch = event_data_batch
         else:
-            to_send_batch = self.create_batch(partition_id=partition_id, partition_key=partition_key)
-            to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+            to_send_batch = self.create_batch(
+                partition_id=partition_id, partition_key=partition_key
+            )
+            to_send_batch._load_events(  # pylint:disable=protected-access
+                event_data_batch
+            )
         partition_id = (
-            to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+            to_send_batch._partition_id  # pylint:disable=protected-access
+            or ALL_PARTITIONS
         )
 
         if len(to_send_batch) == 0:
@@ -368,8 +402,8 @@ class EventHubProducerClient(ClientBase):
 
         """
         with self._lock:
-            for producer in self._producers.values():
-                if producer:
-                    producer.close()
-            self._producers = {}
+            for pid in self._producers:
+                if self._producers[pid]:
+                    self._producers[pid].close()  # type: ignore
+                self._producers[pid] = None
         super(EventHubProducerClient, self)._close()

@@ -54,7 +54,9 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
-    def add_delete_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
+    def add_delete_actions(
+        self, *documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to delete to the Azure search index.
 
@@ -75,7 +77,9 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
-    def add_merge_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
+    def add_merge_actions(
+        self, *documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to merge in to existing documets in the Azure search
         index.
@@ -93,7 +97,9 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "merge")
 
-    def add_merge_or_upload_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
+    def add_merge_or_upload_actions(
+        self, *documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to merge in to existing documets in the Azure search
         index, or upload if they do not yet exist.
@@ -133,8 +139,7 @@ class IndexDocumentsBatch(object):
 
     def enqueue_actions(self, new_actions, **kwargs):  # pylint: disable=unused-argument
         # type: (Union[IndexAction, List[IndexAction]]) -> None
-        """Enqueue a list of index actions to index.
-        """
+        """Enqueue a list of index actions to index."""
         if isinstance(new_actions, IndexAction):
             with self._lock:
                 self._actions.append(new_actions)

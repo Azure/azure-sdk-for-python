@@ -73,7 +73,7 @@ class DefaultAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01-preview"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -97,7 +97,7 @@ class DefaultAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponseModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DefaultAccountPayload', pipeline_response)
@@ -116,7 +116,7 @@ class DefaultAccountsOperations(object):
         # type: (...) -> "_models.DefaultAccountPayload"
         """Sets the default account for the scope.
 
-        Set the default account for the scope.
+        Sets the default account for the scope.
 
         :param default_account_payload: The payload containing the default account information and the
          scope.
@@ -131,7 +131,7 @@ class DefaultAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01-preview"
+        api_version = "2021-07-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -156,7 +156,7 @@ class DefaultAccountsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponseModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DefaultAccountPayload', pipeline_response)
@@ -177,7 +177,7 @@ class DefaultAccountsOperations(object):
         # type: (...) -> None
         """Removes the default account from the scope.
 
-        Remove the default account from the scope.
+        Removes the default account from the scope.
 
         :param scope_tenant_id: The tenant ID.
         :type scope_tenant_id: str
@@ -196,7 +196,7 @@ class DefaultAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01-preview"
+        api_version = "2021-07-01"
         accept = "application/json"
 
         # Construct URL
@@ -220,7 +220,7 @@ class DefaultAccountsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponseModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

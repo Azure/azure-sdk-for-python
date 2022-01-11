@@ -17,6 +17,11 @@ try:
     from ._models_py3 import DimensionProperties
     from ._models_py3 import Error
     from ._models_py3 import IPRule
+    from ._models_py3 import Key
+    from ._models_py3 import KeyAttributes
+    from ._models_py3 import KeyCreateParameters
+    from ._models_py3 import KeyListResult
+    from ._models_py3 import KeyProperties
     from ._models_py3 import LogSpecification
     from ._models_py3 import ManagedHsm
     from ._models_py3 import ManagedHsmError
@@ -69,6 +74,11 @@ except (SyntaxError, ImportError):
     from ._models import DimensionProperties  # type: ignore
     from ._models import Error  # type: ignore
     from ._models import IPRule  # type: ignore
+    from ._models import Key  # type: ignore
+    from ._models import KeyAttributes  # type: ignore
+    from ._models import KeyCreateParameters  # type: ignore
+    from ._models import KeyListResult  # type: ignore
+    from ._models import KeyProperties  # type: ignore
     from ._models import LogSpecification  # type: ignore
     from ._models import ManagedHsm  # type: ignore
     from ._models import ManagedHsmError  # type: ignore
@@ -116,7 +126,11 @@ from ._key_vault_management_client_enums import (
     ActionsRequired,
     CertificatePermissions,
     CreateMode,
+    DeletionRecoveryLevel,
     IdentityType,
+    JsonWebKeyCurveName,
+    JsonWebKeyOperation,
+    JsonWebKeyType,
     KeyPermissions,
     ManagedHsmSkuFamily,
     ManagedHsmSkuName,
@@ -144,6 +158,11 @@ __all__ = [
     'DimensionProperties',
     'Error',
     'IPRule',
+    'Key',
+    'KeyAttributes',
+    'KeyCreateParameters',
+    'KeyListResult',
+    'KeyProperties',
     'LogSpecification',
     'ManagedHsm',
     'ManagedHsmError',
@@ -189,7 +208,11 @@ __all__ = [
     'ActionsRequired',
     'CertificatePermissions',
     'CreateMode',
+    'DeletionRecoveryLevel',
     'IdentityType',
+    'JsonWebKeyCurveName',
+    'JsonWebKeyOperation',
+    'JsonWebKeyType',
     'KeyPermissions',
     'ManagedHsmSkuFamily',
     'ManagedHsmSkuName',

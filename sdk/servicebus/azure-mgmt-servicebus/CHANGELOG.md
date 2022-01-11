@@ -1,5 +1,55 @@
 # Release History
 
+## 7.1.0 (2021-09-23)
+
+**Features**
+
+  - Model NetworkRuleSet has a new parameter public_network_access
+  - Model NetworkRuleSet has a new parameter trusted_service_access_enabled
+  - Model SBQueue has a new parameter max_message_size_in_kilobytes
+  - Model SBTopic has a new parameter max_message_size_in_kilobytes
+  - Model SBNamespace has a new parameter status
+  - Model SBNamespace has a new parameter disable_local_auth
+  - Model SBSubscription has a new parameter is_client_affine
+  - Model SBSubscription has a new parameter client_affine_properties
+  - Model SBNamespaceUpdateParameters has a new parameter status
+  - Model SBNamespaceUpdateParameters has a new parameter disable_local_auth
+
+## 7.0.0 (2021-08-19)
+
+**Features**
+
+  - Model Rule has a new parameter system_data
+  - Model SBNamespaceUpdateParameters has a new parameter private_endpoint_connections
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model SBTopic has a new parameter system_data
+  - Model Identity has a new parameter user_assigned_identities
+  - Model SBNamespace has a new parameter system_data
+  - Model SBNamespace has a new parameter private_endpoint_connections
+  - Model Encryption has a new parameter require_infrastructure_encryption
+  - Model SBAuthorizationRule has a new parameter system_data
+  - Model SBSubscription has a new parameter system_data
+  - Model KeyVaultProperties has a new parameter key_version
+  - Model KeyVaultProperties has a new parameter identity
+  - Model ArmDisasterRecovery has a new parameter system_data
+  - Model NetworkRuleSet has a new parameter system_data
+  - Model SBQueue has a new parameter system_data
+  - Model MigrationConfigProperties has a new parameter system_data
+  - Added operation NamespacesOperations.list_network_rule_sets
+
+**Breaking changes**
+
+  - Parameter id of model Subnet is now required
+  - Removed operation NamespacesOperations.list_virtual_network_rules
+  - Removed operation NamespacesOperations.migrate
+  - Removed operation NamespacesOperations.delete_ip_filter_rule
+  - Removed operation NamespacesOperations.get_virtual_network_rule
+  - Removed operation NamespacesOperations.create_or_update_ip_filter_rule
+  - Removed operation NamespacesOperations.delete_virtual_network_rule
+  - Removed operation NamespacesOperations.get_ip_filter_rule
+  - Removed operation NamespacesOperations.list_ip_filter_rules
+  - Removed operation NamespacesOperations.create_or_update_virtual_network_rule
+
 ## 6.0.0 (2020-11-23)
 
 **Features**

@@ -14,29 +14,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search8001902.search.windows.net/datasources?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D911E8C21ED21B\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96CBA1C34B154\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '390'
+      - '406'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:03 GMT
+      - Tue, 31 Aug 2021 20:01:24 GMT
       elapsed-time:
-      - '68'
+      - '47'
       etag:
-      - W/"0x8D911E8C21ED21B"
+      - W/"0x8D96CBA1C34B154"
       expires:
       - '-1'
       location:
-      - https://search8001902.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
+      - https://search8001902.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -44,7 +44,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - dd2390d3-afc4-11eb-b80b-a0481ca055a9
+      - 391b488f-0a96-11ec-852c-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -65,12 +65,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search8001902.search.windows.net/indexes?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D911E8C2ED6B36\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96CBA1CACB563\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control:
       - no-cache
@@ -79,15 +79,15 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:05 GMT
+      - Tue, 31 Aug 2021 20:01:25 GMT
       elapsed-time:
-      - '894'
+      - '587'
       etag:
-      - W/"0x8D911E8C2ED6B36"
+      - W/"0x8D96CBA1CACB563"
       expires:
       - '-1'
       location:
-      - https://search8001902.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
+      - https://search8001902.search.windows.net/indexes('hotels')?api-version=2021-04-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -95,7 +95,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - dd760bec-afc4-11eb-b63e-a0481ca055a9
+      - 394d20e3-0a96-11ec-b908-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -116,12 +116,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search8001902.search.windows.net/indexers?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/indexers?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D911E8CD34602D\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D96CBA1D1EC4FF\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
@@ -130,15 +130,15 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:22 GMT
+      - Tue, 31 Aug 2021 20:01:25 GMT
       elapsed-time:
-      - '16932'
+      - '629'
       etag:
-      - W/"0x8D911E8CD34602D"
+      - W/"0x8D96CBA1D1EC4FF"
       expires:
       - '-1'
       location:
-      - https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30-Preview
+      - https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -146,7 +146,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - de445016-afc4-11eb-8401-a0481ca055a9
+      - 39c58cb0-0a96-11ec-9961-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -162,12 +162,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search8001902.search.windows.net/indexers?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/indexers?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D911E8CD34602D\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D96CBA1D1EC4FF\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}]}'
     headers:
       cache-control:
       - no-cache
@@ -176,9 +176,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:22 GMT
+      - Tue, 31 Aug 2021 20:01:25 GMT
       elapsed-time:
-      - '17'
+      - '23'
       expires:
       - '-1'
       odata-version:
@@ -188,7 +188,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e8a22391-afc4-11eb-8520-a0481ca055a9
+      - 3a49193f-0a96-11ec-8993-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -213,12 +213,12 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D911E8CDA697AE\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D96CBA1D700066\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
@@ -227,11 +227,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:22 GMT
+      - Tue, 31 Aug 2021 20:01:26 GMT
       elapsed-time:
-      - '304'
+      - '291'
       etag:
-      - W/"0x8D911E8CDA697AE"
+      - W/"0x8D96CBA1D700066"
       expires:
       - '-1'
       odata-version:
@@ -241,7 +241,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e8bb9d98-afc4-11eb-921f-a0481ca055a9
+      - 3a5460d0-0a96-11ec-ab83-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -259,12 +259,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search8001902.search.windows.net/indexers?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/indexers?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D911E8CDA697AE\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D96CBA1D700066\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}]}'
     headers:
       cache-control:
       - no-cache
@@ -273,9 +273,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:22 GMT
+      - Tue, 31 Aug 2021 20:01:26 GMT
       elapsed-time:
-      - '22'
+      - '45'
       expires:
       - '-1'
       odata-version:
@@ -285,7 +285,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e8fd2978-afc4-11eb-9203-a0481ca055a9
+      - 3a8acbff-0a96-11ec-9c75-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -303,12 +303,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30-Preview
+    uri: https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D911E8CDA697AE\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search8001902.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D96CBA1D700066\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
@@ -317,11 +317,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:16:22 GMT
+      - Tue, 31 Aug 2021 20:01:26 GMT
       elapsed-time:
-      - '6'
+      - '8'
       etag:
-      - W/"0x8D911E8CDA697AE"
+      - W/"0x8D96CBA1D700066"
       expires:
       - '-1'
       odata-version:
@@ -331,7 +331,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e9151d9d-afc4-11eb-83a1-a0481ca055a9
+      - 3a9d8b9a-0a96-11ec-85ab-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

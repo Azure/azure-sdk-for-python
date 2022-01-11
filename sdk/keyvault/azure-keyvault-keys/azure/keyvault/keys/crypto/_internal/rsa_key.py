@@ -53,7 +53,7 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
 
     @property
     def p(self):
-        return _int_to_bytes(self._public_key_material().p) if self.is_private_key() else None
+        return _int_to_bytes(self._private_key_material().p) if self.is_private_key() else None
 
     @property
     def q(self):

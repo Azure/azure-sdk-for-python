@@ -8,76 +8,44 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import (
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    HTTPPolicy,
-    UserAgentPolicy,
-    NetworkTraceLoggingPolicy,
-)
+from azure.core.pipeline.policies import HTTPPolicy
 
-from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .._internal.managed_identity_client import ManagedIdentityClient, _get_configuration
-from .._internal.get_token_mixin import GetTokenMixin
-from .._internal.user_agent import USER_AGENT
+from .._internal.managed_identity_base import ManagedIdentityBase
+from .._internal.managed_identity_client import ManagedIdentityClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List, Optional, Union
-    from azure.core.configuration import Configuration
-    from azure.core.credentials import AccessToken
+    from typing import Any, Optional
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from azure.core.pipeline.policies import SansIOHTTPPolicy
-
-    PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
 
 
-class AzureArcCredential(GetTokenMixin):
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        super(AzureArcCredential, self).__init__()
-
+class AzureArcCredential(ManagedIdentityBase):
+    def get_client(self, **kwargs):
+        # type: (**Any) -> Optional[ManagedIdentityClient]
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
-        self._available = url and imds
-        if self._available:
-            config = _get_configuration()
-
-            self._client = ManagedIdentityClient(
-                policies=_get_policies(config),
+        if url and imds:
+            return ManagedIdentityClient(
+                _per_retry_policies=[ArcChallengeAuthPolicy()],
                 request_factory=functools.partial(_get_request, url),
                 **kwargs
             )
+        return None
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        if not self._available:
-            raise CredentialUnavailableError(
-                message="Azure Arc managed identity configuration not found in environment"
-            )
-        return super(AzureArcCredential, self).get_token(*scopes, **kwargs)
+    def __enter__(self):
+        self._client.__enter__()
+        return self
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
-        return self._client.get_cached_token(*scopes)
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
 
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        return self._client.request_token(*scopes, **kwargs)
+    def close(self):
+        self.__exit__()
 
-
-def _get_policies(config, **kwargs):
-    # type: (Configuration, **Any) -> List[PolicyType]
-    return [
-        UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
-        config.proxy_policy,
-        config.retry_policy,
-        ArcChallengeAuthPolicy(),
-        NetworkTraceLoggingPolicy(**kwargs),
-        DistributedTracingPolicy(**kwargs),
-        HttpLoggingPolicy(**kwargs),
-    ]
+    def get_unavailable_message(self):
+        # type: () -> str
+        return "Azure Arc managed identity configuration not found in environment"
 
 
 def _get_request(url, scope, identity_config):

@@ -9,8 +9,8 @@ import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from _shared.asynctestcase import AsyncStorageTestCase
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
 from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobServiceClient
 
@@ -28,7 +28,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageObjectReplicationTest(StorageTestCase):
+class StorageObjectReplicationTest(AsyncStorageTestCase):
     SRC_CONTAINER = "test1"
     DST_CONTAINER = "test2"
     BLOB_NAME = "bla.txt"
@@ -38,12 +38,12 @@ class StorageObjectReplicationTest(StorageTestCase):
     # TODO use generated account and set OR policy dynamically
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_ors_source(self, resource_group, location, storage_account, storage_account_key):
+    async def test_ors_source(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             transport=AiohttpTestTransport(connection_data_block_size=1024))
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
@@ -69,12 +69,12 @@ class StorageObjectReplicationTest(StorageTestCase):
                          props.object_replication_source_properties)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_ors_destination(self, resource_group, location, storage_account, storage_account_key):
+    async def test_ors_destination(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             transport=AiohttpTestTransport(connection_data_block_size=1024))
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)

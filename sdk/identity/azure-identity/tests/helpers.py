@@ -14,6 +14,9 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 
+FAKE_CLIENT_ID = "fake-client-id"
+
+
 def build_id_token(
     iss="issuer",
     sub="subject",
@@ -153,8 +156,14 @@ def mock_response(status_code=200, headers=None, json_payload=None):
 
 
 def get_discovery_response(endpoint="https://a/b"):
+    """Get a mock response containing the values MSAL requires from tenant and instance discovery.
+
+    The response is incomplete and its values aren't necessarily valid, particularly for instance discovery, but it's
+    sufficient. MSAL will send token requests to "{endpoint}/oauth2/v2.0/token_endpoint" after receiving a tenant
+    discovery response created by this method.
+    """
     aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
-    payload = {name: endpoint for name in aad_metadata_endpoint_names}
+    payload = {name: endpoint + "/oauth2/v2.0/" + name for name in aad_metadata_endpoint_names}
     payload["metadata"] = ""
     return mock_response(json_payload=payload)
 

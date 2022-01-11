@@ -362,9 +362,8 @@ In V7 of this library, we simplified this as below:
 
 ### Working with Administration Client
 
-In v0.50, you could create/get/update/delete/list Service Bus queues/topics/subscriptions/rules using the `control_client`.
-In v7, this is replaced by the `ServiceBusAdministrationClient`.
-The following code snippets show how to manage queues, similar methods are provided on the `ServiceBusAdministrationClient` to manage topics, subscriptions and rules.
+In v0.50, you could create/get/update/delete/list Service Bus queues/topics/subscriptions/rules using the `control_client`. You were also able to retrieve associated metadata, like `message_count`.
+In v7, this is replaced by the `ServiceBusAdministrationClient`. The property `total_message_count` on `QueueRuntimeProperties` has now replaced `message_count` on `Queue`. More specific properties about message counts - `active_message_count`, `scheduled_message_count` and `dead_letter_message_count` - are also available. Similar methods are provided on the `ServiceBusAdministrationClient` to manage topics, subscriptions and rules. The following code snippets show how to manage queues and retrieve associated metadata.
 
 In V0.50:
 ```python
@@ -374,6 +373,10 @@ queue = service_bus_service.get_queue(queue_name)
 service_bus_service.create_queue(queue_name)
 service_bus_service.delete_queue(queue_name)
 queues = service_bus_service.list_queues()
+
+# get message count info
+for queue in queues:
+    print(queue.message_count)
 ```
 
 In V7:
@@ -384,6 +387,14 @@ queue = service_bus_administration_client.get_queue(queue_name)
 service_bus_administration_client.create_queue(queue_name)
 service_bus_administration_client.delete_queue(queue_name)
 queues = service_bus_administration_client.list_queues()
+
+# get total, active, scheduled, dead-letter message count info
+for queue in queues:
+    queue_runtime_properties = service_bus_administration_client.get_queue_runtime_properties(queue.name)
+    print(queue_runtime_properties.total_message_count)
+    print(queue_runtime_properties.active_message_count)
+    print(queue_runtime_properties.scheduled_message_count)
+    print(queue_runtime_properties.dead_letter_message_count)
 ```
 
 ### Migration samples

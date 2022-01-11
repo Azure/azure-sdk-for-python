@@ -45,9 +45,12 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
-          Studio Code
+            Studio Code
         """
         if self._unavailable_reason:
             raise CredentialUnavailableError(message=self._unavailable_reason)
@@ -56,9 +59,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes)
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         refresh_token = self._get_refresh_token()

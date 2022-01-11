@@ -35,11 +35,14 @@ try:
     from ._models_py3 import DistanceScoringFunction
     from ._models_py3 import DistanceScoringParameters
     from ._models_py3 import DocumentExtractionSkill
+    from ._models_py3 import DocumentKeysOrIds
     from ._models_py3 import EdgeNGramTokenFilter
     from ._models_py3 import EdgeNGramTokenFilterV2
     from ._models_py3 import EdgeNGramTokenizer
     from ._models_py3 import ElisionTokenFilter
+    from ._models_py3 import EntityLinkingSkill
     from ._models_py3 import EntityRecognitionSkill
+    from ._models_py3 import EntityRecognitionSkillV3
     from ._models_py3 import FieldMapping
     from ._models_py3 import FieldMappingFunction
     from ._models_py3 import FreshnessScoringFunction
@@ -47,6 +50,7 @@ try:
     from ._models_py3 import GetIndexStatisticsResult
     from ._models_py3 import HighWaterMarkChangeDetectionPolicy
     from ._models_py3 import ImageAnalysisSkill
+    from ._models_py3 import IndexerCurrentState
     from ._models_py3 import IndexerExecutionResult
     from ._models_py3 import IndexingParameters
     from ._models_py3 import IndexingParametersConfiguration
@@ -82,6 +86,7 @@ try:
     from ._models_py3 import NGramTokenizer
     from ._models_py3 import OcrSkill
     from ._models_py3 import OutputFieldMappingEntry
+    from ._models_py3 import PIIDetectionSkill
     from ._models_py3 import PathHierarchyTokenizerV2
     from ._models_py3 import PatternAnalyzer
     from ._models_py3 import PatternCaptureTokenFilter
@@ -89,6 +94,7 @@ try:
     from ._models_py3 import PatternReplaceTokenFilter
     from ._models_py3 import PatternTokenizer
     from ._models_py3 import PhoneticTokenFilter
+    from ._models_py3 import PrioritizedFields
     from ._models_py3 import RequestOptions
     from ._models_py3 import ResourceCounter
     from ._models_py3 import ScoringFunction
@@ -97,8 +103,12 @@ try:
     from ._models_py3 import SearchField
     from ._models_py3 import SearchIndex
     from ._models_py3 import SearchIndexer
+    from ._models_py3 import SearchIndexerCache
     from ._models_py3 import SearchIndexerDataContainer
+    from ._models_py3 import SearchIndexerDataIdentity
+    from ._models_py3 import SearchIndexerDataNoneIdentity
     from ._models_py3 import SearchIndexerDataSource
+    from ._models_py3 import SearchIndexerDataUserAssignedIdentity
     from ._models_py3 import SearchIndexerError
     from ._models_py3 import SearchIndexerKnowledgeStore
     from ._models_py3 import SearchIndexerKnowledgeStoreBlobProjectionSelector
@@ -113,13 +123,18 @@ try:
     from ._models_py3 import SearchIndexerStatus
     from ._models_py3 import SearchIndexerWarning
     from ._models_py3 import SearchResourceEncryptionKey
+    from ._models_py3 import SemanticConfiguration
+    from ._models_py3 import SemanticField
+    from ._models_py3 import SemanticSettings
     from ._models_py3 import SentimentSkill
+    from ._models_py3 import SentimentSkillV3
     from ._models_py3 import ServiceCounters
     from ._models_py3 import ServiceLimits
     from ._models_py3 import ServiceStatistics
     from ._models_py3 import ShaperSkill
     from ._models_py3 import ShingleTokenFilter
     from ._models_py3 import Similarity
+    from ._models_py3 import SkillNames
     from ._models_py3 import SnowballTokenFilter
     from ._models_py3 import SoftDeleteColumnDeletionDetectionPolicy
     from ._models_py3 import SplitSkill
@@ -170,11 +185,14 @@ except (SyntaxError, ImportError):
     from ._models import DistanceScoringFunction  # type: ignore
     from ._models import DistanceScoringParameters  # type: ignore
     from ._models import DocumentExtractionSkill  # type: ignore
+    from ._models import DocumentKeysOrIds  # type: ignore
     from ._models import EdgeNGramTokenFilter  # type: ignore
     from ._models import EdgeNGramTokenFilterV2  # type: ignore
     from ._models import EdgeNGramTokenizer  # type: ignore
     from ._models import ElisionTokenFilter  # type: ignore
+    from ._models import EntityLinkingSkill  # type: ignore
     from ._models import EntityRecognitionSkill  # type: ignore
+    from ._models import EntityRecognitionSkillV3  # type: ignore
     from ._models import FieldMapping  # type: ignore
     from ._models import FieldMappingFunction  # type: ignore
     from ._models import FreshnessScoringFunction  # type: ignore
@@ -182,6 +200,7 @@ except (SyntaxError, ImportError):
     from ._models import GetIndexStatisticsResult  # type: ignore
     from ._models import HighWaterMarkChangeDetectionPolicy  # type: ignore
     from ._models import ImageAnalysisSkill  # type: ignore
+    from ._models import IndexerCurrentState  # type: ignore
     from ._models import IndexerExecutionResult  # type: ignore
     from ._models import IndexingParameters  # type: ignore
     from ._models import IndexingParametersConfiguration  # type: ignore
@@ -217,6 +236,7 @@ except (SyntaxError, ImportError):
     from ._models import NGramTokenizer  # type: ignore
     from ._models import OcrSkill  # type: ignore
     from ._models import OutputFieldMappingEntry  # type: ignore
+    from ._models import PIIDetectionSkill  # type: ignore
     from ._models import PathHierarchyTokenizerV2  # type: ignore
     from ._models import PatternAnalyzer  # type: ignore
     from ._models import PatternCaptureTokenFilter  # type: ignore
@@ -224,6 +244,7 @@ except (SyntaxError, ImportError):
     from ._models import PatternReplaceTokenFilter  # type: ignore
     from ._models import PatternTokenizer  # type: ignore
     from ._models import PhoneticTokenFilter  # type: ignore
+    from ._models import PrioritizedFields  # type: ignore
     from ._models import RequestOptions  # type: ignore
     from ._models import ResourceCounter  # type: ignore
     from ._models import ScoringFunction  # type: ignore
@@ -232,8 +253,12 @@ except (SyntaxError, ImportError):
     from ._models import SearchField  # type: ignore
     from ._models import SearchIndex  # type: ignore
     from ._models import SearchIndexer  # type: ignore
+    from ._models import SearchIndexerCache  # type: ignore
     from ._models import SearchIndexerDataContainer  # type: ignore
+    from ._models import SearchIndexerDataIdentity  # type: ignore
+    from ._models import SearchIndexerDataNoneIdentity  # type: ignore
     from ._models import SearchIndexerDataSource  # type: ignore
+    from ._models import SearchIndexerDataUserAssignedIdentity  # type: ignore
     from ._models import SearchIndexerError  # type: ignore
     from ._models import SearchIndexerKnowledgeStore  # type: ignore
     from ._models import SearchIndexerKnowledgeStoreBlobProjectionSelector  # type: ignore
@@ -248,13 +273,18 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerStatus  # type: ignore
     from ._models import SearchIndexerWarning  # type: ignore
     from ._models import SearchResourceEncryptionKey  # type: ignore
+    from ._models import SemanticConfiguration  # type: ignore
+    from ._models import SemanticField  # type: ignore
+    from ._models import SemanticSettings  # type: ignore
     from ._models import SentimentSkill  # type: ignore
+    from ._models import SentimentSkillV3  # type: ignore
     from ._models import ServiceCounters  # type: ignore
     from ._models import ServiceLimits  # type: ignore
     from ._models import ServiceStatistics  # type: ignore
     from ._models import ShaperSkill  # type: ignore
     from ._models import ShingleTokenFilter  # type: ignore
     from ._models import Similarity  # type: ignore
+    from ._models import SkillNames  # type: ignore
     from ._models import SnowballTokenFilter  # type: ignore
     from ._models import SoftDeleteColumnDeletionDetectionPolicy  # type: ignore
     from ._models import SplitSkill  # type: ignore
@@ -292,14 +322,18 @@ from ._search_client_enums import (
     ImageDetail,
     IndexerExecutionEnvironment,
     IndexerExecutionStatus,
+    IndexerExecutionStatusDetail,
     IndexerStatus,
+    IndexingMode,
     KeyPhraseExtractionSkillLanguage,
     LexicalAnalyzerName,
     LexicalNormalizerName,
     LexicalTokenizerName,
+    LineEnding,
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
     OcrSkillLanguage,
+    PIIDetectionSkillMaskingMode,
     PhoneticEncoder,
     RegexFlags,
     ScoringFunctionAggregation,
@@ -347,11 +381,14 @@ __all__ = [
     'DistanceScoringFunction',
     'DistanceScoringParameters',
     'DocumentExtractionSkill',
+    'DocumentKeysOrIds',
     'EdgeNGramTokenFilter',
     'EdgeNGramTokenFilterV2',
     'EdgeNGramTokenizer',
     'ElisionTokenFilter',
+    'EntityLinkingSkill',
     'EntityRecognitionSkill',
+    'EntityRecognitionSkillV3',
     'FieldMapping',
     'FieldMappingFunction',
     'FreshnessScoringFunction',
@@ -359,6 +396,7 @@ __all__ = [
     'GetIndexStatisticsResult',
     'HighWaterMarkChangeDetectionPolicy',
     'ImageAnalysisSkill',
+    'IndexerCurrentState',
     'IndexerExecutionResult',
     'IndexingParameters',
     'IndexingParametersConfiguration',
@@ -394,6 +432,7 @@ __all__ = [
     'NGramTokenizer',
     'OcrSkill',
     'OutputFieldMappingEntry',
+    'PIIDetectionSkill',
     'PathHierarchyTokenizerV2',
     'PatternAnalyzer',
     'PatternCaptureTokenFilter',
@@ -401,6 +440,7 @@ __all__ = [
     'PatternReplaceTokenFilter',
     'PatternTokenizer',
     'PhoneticTokenFilter',
+    'PrioritizedFields',
     'RequestOptions',
     'ResourceCounter',
     'ScoringFunction',
@@ -409,8 +449,12 @@ __all__ = [
     'SearchField',
     'SearchIndex',
     'SearchIndexer',
+    'SearchIndexerCache',
     'SearchIndexerDataContainer',
+    'SearchIndexerDataIdentity',
+    'SearchIndexerDataNoneIdentity',
     'SearchIndexerDataSource',
+    'SearchIndexerDataUserAssignedIdentity',
     'SearchIndexerError',
     'SearchIndexerKnowledgeStore',
     'SearchIndexerKnowledgeStoreBlobProjectionSelector',
@@ -425,13 +469,18 @@ __all__ = [
     'SearchIndexerStatus',
     'SearchIndexerWarning',
     'SearchResourceEncryptionKey',
+    'SemanticConfiguration',
+    'SemanticField',
+    'SemanticSettings',
     'SentimentSkill',
+    'SentimentSkillV3',
     'ServiceCounters',
     'ServiceLimits',
     'ServiceStatistics',
     'ShaperSkill',
     'ShingleTokenFilter',
     'Similarity',
+    'SkillNames',
     'SnowballTokenFilter',
     'SoftDeleteColumnDeletionDetectionPolicy',
     'SplitSkill',
@@ -467,14 +516,18 @@ __all__ = [
     'ImageDetail',
     'IndexerExecutionEnvironment',
     'IndexerExecutionStatus',
+    'IndexerExecutionStatusDetail',
     'IndexerStatus',
+    'IndexingMode',
     'KeyPhraseExtractionSkillLanguage',
     'LexicalAnalyzerName',
     'LexicalNormalizerName',
     'LexicalTokenizerName',
+    'LineEnding',
     'MicrosoftStemmingTokenizerLanguage',
     'MicrosoftTokenizerLanguage',
     'OcrSkillLanguage',
+    'PIIDetectionSkillMaskingMode',
     'PhoneticEncoder',
     'RegexFlags',
     'ScoringFunctionAggregation',

@@ -47,7 +47,7 @@ class KeysOperations:
         vault_name: str,
         key_name: str,
         parameters: "_models.KeyCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Key":
         """Creates the first version of a new key if it does not exist. If it already exists, then the
         existing key is returned without any write operations being performed. This API does not create
@@ -119,7 +119,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Key":
         """Gets the current version of the specified key from the specified key vault.
 
@@ -181,7 +181,7 @@ class KeysOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyListResult"]:
         """Lists the keys in the specified key vault.
 
@@ -258,7 +258,7 @@ class KeysOperations:
         vault_name: str,
         key_name: str,
         key_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Key":
         """Gets the specified version of the specified key in the specified key vault.
 
@@ -324,7 +324,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyListResult"]:
         """Lists the versions of the specified key in the specified key vault.
 

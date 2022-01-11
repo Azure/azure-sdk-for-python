@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -70,26 +68,26 @@ async def sample_analyze_healthcare_entities_async():
     print("Let's first visualize the outputted healthcare result:")
     for idx, doc in enumerate(docs):
         for entity in doc.entities:
-            print("Entity: {}".format(entity.text))
-            print("...Normalized Text: {}".format(entity.normalized_text))
-            print("...Category: {}".format(entity.category))
-            print("...Subcategory: {}".format(entity.subcategory))
-            print("...Offset: {}".format(entity.offset))
-            print("...Confidence score: {}".format(entity.confidence_score))
+            print(f"Entity: {entity.text}")
+            print(f"...Normalized Text: {entity.normalized_text}")
+            print(f"...Category: {entity.category}")
+            print(f"...Subcategory: {entity.subcategory}")
+            print(f"...Offset: {entity.offset}")
+            print(f"...Confidence score: {entity.confidence_score}")
             if entity.data_sources is not None:
                 print("...Data Sources:")
                 for data_source in entity.data_sources:
-                    print("......Entity ID: {}".format(data_source.entity_id))
-                    print("......Name: {}".format(data_source.name))
+                    print(f"......Entity ID: {data_source.entity_id}")
+                    print(f"......Name: {data_source.name}")
             if entity.assertion is not None:
                 print("...Assertion:")
-                print("......Conditionality: {}".format(entity.assertion.conditionality))
-                print("......Certainty: {}".format(entity.assertion.certainty))
-                print("......Association: {}".format(entity.assertion.association))
+                print(f"......Conditionality: {entity.assertion.conditionality}")
+                print(f"......Certainty: {entity.assertion.certainty}")
+                print(f"......Association: {entity.assertion.association}")
         for relation in doc.entity_relations:
-            print("Relation of type: {} has the following roles".format(relation.relation_type))
+            print(f"Relation of type: {relation.relation_type} has the following roles")
             for role in relation.roles:
-                print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
+                print(f"...Role '{role.name}' with entity '{role.entity.text}'")
         print("------------------------------------------")
 
     print("Now, let's get all of medication dosage relations from the documents")
@@ -136,5 +134,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

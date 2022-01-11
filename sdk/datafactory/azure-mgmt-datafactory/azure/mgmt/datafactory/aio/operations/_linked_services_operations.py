@@ -45,7 +45,7 @@ class LinkedServicesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LinkedServiceListResponse"]:
         """Lists linked services.
 
@@ -122,7 +122,7 @@ class LinkedServicesOperations:
         linked_service_name: str,
         linked_service: "_models.LinkedServiceResource",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LinkedServiceResource":
         """Creates or updates a linked service.
 
@@ -197,7 +197,7 @@ class LinkedServicesOperations:
         factory_name: str,
         linked_service_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LinkedServiceResource"]:
         """Gets a linked service.
 
@@ -267,7 +267,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         factory_name: str,
         linked_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a linked service.
 

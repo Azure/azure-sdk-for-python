@@ -22,12 +22,8 @@ from azure.storage.fileshare import (
     ShareSmbSettings,
 )
 from azure.storage.fileshare.aio import ShareServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import (
-    LogCaptured,
-    GlobalStorageAccountPreparer
-)
-from _shared.asynctestcase import AsyncStorageTestCase
+from settings.testcase import FileSharePreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
 # ------------------------------------------------------------------------------
@@ -43,8 +39,8 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class FileServicePropertiesTest(AsyncStorageTestCase):
-    def _setup(self, storage_account, storage_account_key):
-        url = self.account_url(storage_account, "file")
+    def _setup(self, storage_account_name, storage_account_key):
+        url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
@@ -87,10 +83,10 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
 
     # --Test cases per service ---------------------------------------
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def test_file_service_properties_async(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         protocol_properties1 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=False)))
         protocol_properties2 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=True)))
 
@@ -120,10 +116,10 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self.assertEqual(props['protocol'].smb.multichannel.enabled, True)
 
     # --Test cases per feature ---------------------------------------
-    @GlobalStorageAccountPreparer()
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def test_set_hour_metrics_async(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -133,10 +129,10 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @GlobalStorageAccountPreparer()
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def test_set_minute_metrics_async(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -147,10 +143,10 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @GlobalStorageAccountPreparer()
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def test_set_cors_async(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -177,10 +173,10 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
     # --Test cases for errors ---------------------------------------
 
 
-    @GlobalStorageAccountPreparer()
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def test_too_many_cors_rules_async(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))

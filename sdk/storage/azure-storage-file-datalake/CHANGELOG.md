@@ -1,5 +1,39 @@
 # Release History
 
+## 12.6.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12.
+- Added support for listing system file systems with list_file_systems().
+
+### Bugs Fixed
+- Connection string SAS now works as expected.
+
+## 12.6.0b1 (2021-11-08)
+**New features**
+- Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+**Fixes**
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- Datalake Client Typing annotation issues have been resolved (#19906)
+
+## 12.5.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for quick query parquet
+
+## 12.5.0b1 (2021-07-27)
+**New features**
+- Added support for quick query parquet
+
+**Fixes**
+- Fixed PathProperties class init issue (#18490)
+
+**Notes**
+- Deprecated new_name in for undelete filesystem operation
+
 ## 12.4.0 (2021-06-09)
 **New features**
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`

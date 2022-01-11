@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:57 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,84 +27,89 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
+    url: https://yallacrtests.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05?api-version=2021-07-01
 - request:
     body:
       access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.PostContentSchemaGrantType
+      - access_token
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
   response:
     body:
       string: '{"refresh_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:58 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
+      x-ms-ratelimit-remaining-calls-per-second: '165.75'
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
+    url: https://yallacrtests.azurecr.io/oauth2/exchange?api-version=2021-07-01
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo7bda1b05:metadata_read
-      service: fake_url.azurecr.io
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:58 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.116667'
+      x-ms-ratelimit-remaining-calls-per-second: '165.733333'
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/oauth2/token
+    url: https://yallacrtests.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05?api-version=2021-07-01
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo7bda1b05", "tag":
-        {"name": "tag7bda1b05", "digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
-        "createdTime": "2021-05-19T19:12:49.3903848Z", "lastUpdateTime": "2021-05-19T19:12:49.3903848Z",
+      string: '{"registry": "yallacrtests.azurecr.io", "imageName": "repo7bda1b05",
+        "tag": {"name": "tag7bda1b05", "digest": "sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685",
+        "createdTime": "2021-11-18T21:46:36.9112843Z", "lastUpdateTime": "2021-11-18T21:46:36.9112843Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '386'
+      content-length: '390'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:59 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -112,16 +117,16 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05
+    url: https://yallacrtests.azurecr.io/acr/v1/repo7bda1b05/_tags/tag7bda1b05?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -132,7 +137,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:59 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -141,68 +146,102 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
+    url: https://yallacrtests.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685?api-version=2021-07-01
+- request:
+    body:
+      access_token: REDACTED
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.PostContentSchemaGrantType
+      - access_token
+      service: yallacrtests.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Nov 2021 21:46:58 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '165.716667'
+    status:
+      code: 200
+      message: OK
+    url: https://yallacrtests.azurecr.io/oauth2/exchange?api-version=2021-07-01
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo7bda1b05:metadata_read
-      service: fake_url.azurecr.io
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:59 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.1'
+      x-ms-ratelimit-remaining-calls-per-second: '165.7'
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/oauth2/token
+    url: https://yallacrtests.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
+    uri: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685?api-version=2021-07-01
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo7bda1b05", "manifest":
-        {"digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
-        "imageSize": 5325, "createdTime": "2021-05-19T19:12:49.3154017Z", "lastUpdateTime":
-        "2021-05-19T19:12:49.3154017Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+      string: '{"registry": "yallacrtests.azurecr.io", "imageName": "repo7bda1b05",
+        "manifest": {"digest": "sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685",
+        "imageSize": 61630, "createdTime": "2021-11-18T21:46:37.0033531Z", "lastUpdateTime":
+        "2021-11-18T21:46:37.0033531Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
         "tags": ["tag7bda1b05"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}, "references": [{"digest":
-        "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "architecture": "amd64", "os": "linux"}, {"digest": "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9",
-        "architecture": "arm", "os": "linux"}, {"digest": "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
-        "architecture": "arm", "os": "linux"}, {"digest": "sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343",
-        "architecture": "arm64", "os": "linux"}, {"digest": "sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98",
-        "architecture": "386", "os": "linux"}, {"digest": "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
-        "architecture": "mips64le", "os": "linux"}, {"digest": "sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d",
-        "architecture": "ppc64le", "os": "linux"}, {"digest": "sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf",
-        "architecture": "s390x", "os": "linux"}, {"digest": "sha256:7fed95756fe4ebeb6eb1d82c2176e0800a02807cc66fe48beb179e57c54ddcf1",
+        "sha256:f54a58bc1aac5ea1a25d796ae155dc228b3f0e11d046ae276b39c4bf2f13d8c4",
+        "architecture": "amd64", "os": "linux"}, {"digest": "sha256:7b8b7289d0536a08eabdf71c20246e23f7116641db7e1d278592236ea4dcb30c",
+        "architecture": "arm", "os": "linux"}, {"digest": "sha256:f130bd2d67e6e9280ac6d0a6c83857bfaf70234e8ef4236876eccfbd30973b1c",
+        "architecture": "arm", "os": "linux"}, {"digest": "sha256:01433e86a06b752f228e3c17394169a5e21a0995f153268a9b36a16d4f2b2184",
+        "architecture": "arm64", "os": "linux"}, {"digest": "sha256:251bb7a536c7cce3437758971aab3a31c6da52fb43ff0654cff5b167c4486409",
+        "architecture": "386", "os": "linux"}, {"digest": "sha256:c2f204d26b4ea353651385001bb6bc371d8c4edcd9daf61d00ad365d927e00c0",
+        "architecture": "mips64le", "os": "linux"}, {"digest": "sha256:b836bb24a270b9cc935962d8228517fde0f16990e88893d935efcb1b14c0017a",
+        "architecture": "ppc64le", "os": "linux"}, {"digest": "sha256:98c9722322be649df94780d3fbe594fce7996234b259f27eac9428b84050c849",
+        "architecture": "riscv64", "os": "linux"}, {"digest": "sha256:c7b6944911848ce39b44ed660d95fb54d69bbd531de724c7ce6fc9f743c0b861",
+        "architecture": "s390x", "os": "linux"}, {"digest": "sha256:cb76c852a47032c7c42335ca57deeb72b0ff077557b61e3c99e0677ecdeec575",
+        "architecture": "amd64", "os": "windows"}, {"digest": "sha256:96ebeec770e1af26469c98913277e1c3b40933202ca398cefc16177c3f26cc75",
         "architecture": "amd64", "os": "windows"}]}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '1572'
+      content-length: '1823'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:09:59 GMT
+      date: Thu, 18 Nov 2021 21:46:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -210,5 +249,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://fake_url.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c
+    url: https://yallacrtests.azurecr.io/acr/v1/repo7bda1b05/_manifests/sha256:cc15c5b292d8525effc0f89cb299f1804f3a725c8d05e158653a563f15e4f685?api-version=2021-07-01
 version: 1

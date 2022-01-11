@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?n=2
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:29 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,42 +27,44 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?n=2
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?n=2
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.65'
+      x-ms-ratelimit-remaining-calls-per-second: '166.55'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?n=2
   response:
@@ -73,7 +75,7 @@ interactions:
       connection: keep-alive
       content-length: '54'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=>; rel="next"
       server: openresty
@@ -82,14 +84,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?n=2
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?n=2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
   response:
@@ -102,7 +104,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -111,137 +113,55 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["library/hello-world", "repo13cf14de"]}'
+      string: '{"repositories": ["library/hello-world", "repo26ab150f"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '56'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo13cf14de&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo13cf14de&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo13cf14de&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo13cf14de&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repo25ce0f5d", "repo26ab150f"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/_catalog?last=repo26ab150f&n=2&orderby=>; rel="next"
       server: openresty
@@ -250,14 +170,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo13cf14de&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=library/busybox&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
   response:
@@ -270,7 +190,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -279,447 +199,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:30 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.6'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repo27331535", "repo28471541"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo28471541&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repo2915152d", "repo2c591564"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo2c591564&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo28471541&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo2c591564&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo2c591564&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.566667'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo2c591564&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repo34ab0fa1", "repo3c82158b"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo3c82158b&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo2c591564&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3c82158b&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo3c82158b&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:31 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.55'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3c82158b&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repo3db51597", "repo3dc21571"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo3dc21571&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo3c82158b&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3dc21571&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo3dc21571&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.533333'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo3dc21571&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repo3e8d15a3", "repo41a21dd2"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo41a21dd2&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo3dc21571&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo41a21dd2&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo41a21dd2&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -727,43 +229,43 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo41a21dd2&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repo6969166d", "repo6a411679"]}'
+      string: '{"repositories": ["repo27741d6f", "repo2b381dc2"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
+      date: Fri, 12 Nov 2021 21:35:20 GMT
       docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo6a411679&n=2&orderby=>; rel="next"
+      link: </acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo41a21dd2&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo6a411679&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -774,7 +276,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -783,27 +285,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo6a411679&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:32 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -811,43 +315,43 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo6a411679&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repo7bda1b05", "repo7cee1b11"]}'
+      string: '{"repositories": ["repo2bef19cb", "repo45431dd7"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo7cee1b11&n=2&orderby=>; rel="next"
+      link: </acr/v1/_catalog?last=repo45431dd7&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo6a411679&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo7cee1b11&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo45431dd7&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -858,7 +362,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -867,27 +371,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo7cee1b11&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo45431dd7&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -895,43 +401,43 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo7cee1b11&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo45431dd7&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repo80c61ece", "repo8b5a11da"]}'
+      string: '{"repositories": ["repo60eb1a9e", "repo63d41ad4"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=>; rel="next"
+      link: </acr/v1/_catalog?last=repo63d41ad4&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo7cee1b11&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo45431dd7&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo63d41ad4&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -942,7 +448,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -951,27 +457,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo63d41ad4&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -979,43 +487,43 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo63d41ad4&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repo93d41b55", "repo99be175b"]}'
+      string: '{"repositories": ["repo6969166d", "repo80c61ece"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repo99be175b&n=2&orderby=>; rel="next"
+      link: </acr/v1/_catalog?last=repo80c61ece&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo8b5a11da&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo63d41ad4&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo99be175b&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo80c61ece&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -1026,7 +534,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:33 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -1035,27 +543,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo99be175b&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo80c61ece&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:34 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -1063,43 +573,43 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo99be175b&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo80c61ece&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repo9cb4121e", "repoaf17178c"]}'
+      string: '{"repositories": ["repo816516e9", "repo93d41b55"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:34 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repoaf17178c&n=2&orderby=>; rel="next"
+      link: </acr/v1/_catalog?last=repo93d41b55&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repo99be175b&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo80c61ece&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf17178c&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo93d41b55&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -1110,7 +620,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:34 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -1119,27 +629,29 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoaf17178c&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo93d41b55&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:34 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -1147,193 +659,25 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf17178c&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo93d41b55&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repoaf8812b0", "repoaf9517b2"]}'
+      string: '{"repositories": ["repoaf8317b0", "repoc1b812f4"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:35 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoaf17178c&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:35 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:35 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.416667'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repob0a917be", "repob22512e7"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:35 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repob22512e7&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoaf9517b2&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:35 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:35 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.4'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repoc1b5131a", "repoc1b812f4"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       link: </acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=>; rel="next"
       server: openresty
@@ -1342,14 +686,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repob22512e7&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repo93d41b55&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=
   response:
@@ -1362,7 +706,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -1371,71 +715,73 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.383333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.416667'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repoc28d1326", "repoc7611808"]}'
+      string: '{"repositories": ["repodf771888", "repoec051cb9"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '49'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repoc7611808&n=2&orderby=>; rel="next"
+      link: </acr/v1/_catalog?last=repoec051cb9&n=2&orderby=>; rel="next"
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repoc1b812f4&n=2&orderby=
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc7611808&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoec051cb9&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -1446,7 +792,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -1455,212 +801,46 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoc7611808&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repoec051cb9&n=2&orderby=
 - request:
     body:
       grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
       - password
       scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
+      service: yallacrtestsanon.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.366667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.4'
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
+    url: https://yallacrtestsanon.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoc7611808&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repodf771888", "repoe08b1894"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:36 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repoe08b1894&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoc7611808&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoe08b1894&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:37 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoe08b1894&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:37 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.35'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoe08b1894&n=2&orderby=
-  response:
-    body:
-      string: '{"repositories": ["repof94c18ea", "repofa2418f6"]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '49'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:37 GMT
-      docker-distribution-api-version: registry/2.0
-      link: </acr/v1/_catalog?last=repofa2418f6&n=2&orderby=>; rel="next"
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repoe08b1894&n=2&orderby=
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repofa2418f6&n=2&orderby=
-  response:
-    body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
-    headers:
-      access-control-expose-headers: X-Ms-Correlation-Request-Id
-      connection: keep-alive
-      content-length: '196'
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:37 GMT
-      docker-distribution-api-version: registry/2.0
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
-      x-content-type-options: nosniff
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repofa2418f6&n=2&orderby=
-- request:
-    body:
-      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.TokenGrantType
-      - password
-      scope: registry:catalog:*
-      service: seankaneanon.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:37 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.333333'
-    status:
-      code: 200
-      message: OK
-    url: https://seankaneanon.azurecr.io/oauth2/token
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repofa2418f6&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repoec051cb9&n=2&orderby=
   response:
     body:
       string: '{"repositories": ["to_be_deleted"]}'
@@ -1669,7 +849,7 @@ interactions:
       connection: keep-alive
       content-length: '35'
       content-type: application/json; charset=utf-8
-      date: Wed, 19 May 2021 21:19:37 GMT
+      date: Fri, 12 Nov 2021 21:35:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -1677,5 +857,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=repofa2418f6&n=2&orderby=
+    url: https://yallacrtestsanon.azurecr.io/acr/v1/_catalog?last=repoec051cb9&n=2&orderby=
 version: 1

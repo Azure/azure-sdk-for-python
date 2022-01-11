@@ -46,7 +46,7 @@ class BlobInventoryPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         blob_inventory_policy_name: Union[str, "_models.BlobInventoryPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobInventoryPolicy":
         """Gets the blob inventory policy associated with the specified storage account.
 
@@ -114,7 +114,7 @@ class BlobInventoryPoliciesOperations:
         account_name: str,
         blob_inventory_policy_name: Union[str, "_models.BlobInventoryPolicyName"],
         properties: "_models.BlobInventoryPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobInventoryPolicy":
         """Sets the blob inventory policy to the specified storage account.
 
@@ -188,7 +188,7 @@ class BlobInventoryPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         blob_inventory_policy_name: Union[str, "_models.BlobInventoryPolicyName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the blob inventory policy associated with the specified storage account.
 
@@ -251,7 +251,7 @@ class BlobInventoryPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListBlobInventoryPolicy"]:
         """Gets the blob inventory policy associated with the specified storage account.
 

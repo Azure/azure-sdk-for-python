@@ -31,8 +31,9 @@ except (SyntaxError, ImportError):
 
 from ._monitor_management_client_enums import (
     AggregationType,
+    MetricClass,
+    MetricUnit,
     ResultType,
-    Unit,
 )
 
 __all__ = [
@@ -47,6 +48,7 @@ __all__ = [
     'Response',
     'TimeSeriesElement',
     'AggregationType',
+    'MetricClass',
+    'MetricUnit',
     'ResultType',
-    'Unit',
 ]

@@ -44,7 +44,7 @@ class FileServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileServiceItems":
         """List all file services in storage accounts.
 
@@ -106,7 +106,7 @@ class FileServicesOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.FileServiceProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileServiceProperties":
         """Sets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
         Sharing) rules.
@@ -178,7 +178,7 @@ class FileServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileServiceProperties":
         """Gets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
         Sharing) rules.

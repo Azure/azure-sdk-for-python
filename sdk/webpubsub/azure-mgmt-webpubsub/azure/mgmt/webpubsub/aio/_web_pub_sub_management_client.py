@@ -20,6 +20,7 @@ from ._configuration import WebPubSubManagementClientConfiguration
 from .operations import Operations
 from .operations import WebPubSubOperations
 from .operations import UsagesOperations
+from .operations import WebPubSubHubsOperations
 from .operations import WebPubSubPrivateEndpointConnectionsOperations
 from .operations import WebPubSubPrivateLinkResourcesOperations
 from .operations import WebPubSubSharedPrivateLinkResourcesOperations
@@ -35,6 +36,8 @@ class WebPubSubManagementClient(object):
     :vartype web_pub_sub: azure.mgmt.webpubsub.aio.operations.WebPubSubOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.webpubsub.aio.operations.UsagesOperations
+    :ivar web_pub_sub_hubs: WebPubSubHubsOperations operations
+    :vartype web_pub_sub_hubs: azure.mgmt.webpubsub.aio.operations.WebPubSubHubsOperations
     :ivar web_pub_sub_private_endpoint_connections: WebPubSubPrivateEndpointConnectionsOperations operations
     :vartype web_pub_sub_private_endpoint_connections: azure.mgmt.webpubsub.aio.operations.WebPubSubPrivateEndpointConnectionsOperations
     :ivar web_pub_sub_private_link_resources: WebPubSubPrivateLinkResourcesOperations operations
@@ -71,6 +74,8 @@ class WebPubSubManagementClient(object):
         self.web_pub_sub = WebPubSubOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.web_pub_sub_hubs = WebPubSubHubsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.web_pub_sub_private_endpoint_connections = WebPubSubPrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)

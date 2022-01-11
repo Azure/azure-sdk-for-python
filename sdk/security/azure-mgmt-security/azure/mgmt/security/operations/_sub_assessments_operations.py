@@ -53,8 +53,8 @@ class SubAssessmentsOperations(object):
         # type: (...) -> Iterable["_models.SecuritySubAssessmentList"]
         """Get security sub-assessments on all your scanned resources inside a subscription scope.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -126,8 +126,8 @@ class SubAssessmentsOperations(object):
         # type: (...) -> Iterable["_models.SecuritySubAssessmentList"]
         """Get security sub-assessments on all your scanned resources inside a scope.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param assessment_name: The Assessment Key - Unique key for the assessment type.
@@ -203,8 +203,8 @@ class SubAssessmentsOperations(object):
         # type: (...) -> "_models.SecuritySubAssessment"
         """Get a security sub-assessment on your scanned resource.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param assessment_name: The Assessment Key - Unique key for the assessment type.

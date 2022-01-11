@@ -49,7 +49,7 @@ class CustomDomainsOperations:
         service_name: str,
         app_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainResource":
         """Get the custom domain of one lifecycle application.
 
@@ -117,7 +117,7 @@ class CustomDomainsOperations:
         app_name: str,
         domain_name: str,
         domain_resource: "_models.CustomDomainResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomainResource"]
         error_map = {
@@ -181,7 +181,7 @@ class CustomDomainsOperations:
         app_name: str,
         domain_name: str,
         domain_resource: "_models.CustomDomainResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CustomDomainResource"]:
         """Create or update custom domain of one lifecycle application.
 
@@ -198,8 +198,8 @@ class CustomDomainsOperations:
         :type domain_resource: ~azure.mgmt.appplatform.v2020_07_01.models.CustomDomainResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CustomDomainResource or the result of cls(response)
@@ -262,7 +262,7 @@ class CustomDomainsOperations:
         service_name: str,
         app_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -310,7 +310,7 @@ class CustomDomainsOperations:
         service_name: str,
         app_name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete the custom domain of one lifecycle application.
 
@@ -325,8 +325,8 @@ class CustomDomainsOperations:
         :type domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -386,7 +386,7 @@ class CustomDomainsOperations:
         app_name: str,
         domain_name: str,
         domain_resource: "_models.CustomDomainResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomDomainResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomainResource"]
         error_map = {
@@ -447,7 +447,7 @@ class CustomDomainsOperations:
         app_name: str,
         domain_name: str,
         domain_resource: "_models.CustomDomainResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CustomDomainResource"]:
         """Update custom domain of one lifecycle application.
 
@@ -464,8 +464,8 @@ class CustomDomainsOperations:
         :type domain_resource: ~azure.mgmt.appplatform.v2020_07_01.models.CustomDomainResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CustomDomainResource or the result of cls(response)
@@ -527,7 +527,7 @@ class CustomDomainsOperations:
         resource_group_name: str,
         service_name: str,
         app_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomDomainResourceCollection"]:
         """List the custom domains of one lifecycle application.
 

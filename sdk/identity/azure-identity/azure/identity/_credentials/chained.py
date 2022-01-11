@@ -7,6 +7,7 @@ import logging
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
+from .._internal import within_credential_chain
 
 try:
     from typing import TYPE_CHECKING
@@ -52,6 +53,20 @@ class ChainedTokenCredential(object):
         self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
+    def __enter__(self):
+        for credential in self.credentials:
+            credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        for credential in self.credentials:
+            credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the transport session of each credential in the chain."""
+        self.__exit__()
+
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request a token from each chained credential, in order, returning the first token received.
@@ -61,6 +76,7 @@ class ChainedTokenCredential(object):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
+        within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
             try:
@@ -71,20 +87,22 @@ class ChainedTokenCredential(object):
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
-                _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
             except Exception as ex:  # pylint: disable=broad-except
                 # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
-                _LOGGER.warning(
+                _LOGGER.debug(
                     '%s.get_token failed: %s raised unexpected error "%s"',
                     self.__class__.__name__,
                     credential.__class__.__name__,
                     ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                    exc_info=True,
                 )
                 break
 
+        within_credential_chain.set(False)
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
+        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts \
+                  + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at " \
+                    "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
         _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)

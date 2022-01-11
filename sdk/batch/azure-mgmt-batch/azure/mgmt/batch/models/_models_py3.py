@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
-from ._batch_management_enums import *
+from ._batch_management_client_enums import *
 
 
 class ActivateApplicationPackageParameters(msrest.serialization.Model):
@@ -352,6 +352,13 @@ class AutoStorageBaseProperties(msrest.serialization.Model):
     :param storage_account_id: Required. The resource ID of the storage account to be used for
      auto-storage account.
     :type storage_account_id: str
+    :param authentication_mode: The authentication mode which the Batch service will use to manage
+     the auto-storage account. Possible values include: "StorageKeys",
+     "BatchAccountManagedIdentity". Default value: "StorageKeys".
+    :type authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
+    :param node_identity_reference: The identity referenced here must be assigned to pools which
+     have compute nodes that need access to auto-storage.
+    :type node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _validation = {
@@ -360,16 +367,22 @@ class AutoStorageBaseProperties(msrest.serialization.Model):
 
     _attribute_map = {
         'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        'authentication_mode': {'key': 'authenticationMode', 'type': 'str'},
+        'node_identity_reference': {'key': 'nodeIdentityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
     def __init__(
         self,
         *,
         storage_account_id: str,
+        authentication_mode: Optional[Union[str, "AutoStorageAuthenticationMode"]] = "StorageKeys",
+        node_identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
         super(AutoStorageBaseProperties, self).__init__(**kwargs)
         self.storage_account_id = storage_account_id
+        self.authentication_mode = authentication_mode
+        self.node_identity_reference = node_identity_reference
 
 
 class AutoStorageProperties(AutoStorageBaseProperties):
@@ -380,6 +393,13 @@ class AutoStorageProperties(AutoStorageBaseProperties):
     :param storage_account_id: Required. The resource ID of the storage account to be used for
      auto-storage account.
     :type storage_account_id: str
+    :param authentication_mode: The authentication mode which the Batch service will use to manage
+     the auto-storage account. Possible values include: "StorageKeys",
+     "BatchAccountManagedIdentity". Default value: "StorageKeys".
+    :type authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
+    :param node_identity_reference: The identity referenced here must be assigned to pools which
+     have compute nodes that need access to auto-storage.
+    :type node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     :param last_key_sync: Required. The UTC time at which storage keys were last synchronized with
      the Batch account.
     :type last_key_sync: ~datetime.datetime
@@ -392,6 +412,8 @@ class AutoStorageProperties(AutoStorageBaseProperties):
 
     _attribute_map = {
         'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        'authentication_mode': {'key': 'authenticationMode', 'type': 'str'},
+        'node_identity_reference': {'key': 'nodeIdentityReference', 'type': 'ComputeNodeIdentityReference'},
         'last_key_sync': {'key': 'lastKeySync', 'type': 'iso-8601'},
     }
 
@@ -400,9 +422,11 @@ class AutoStorageProperties(AutoStorageBaseProperties):
         *,
         storage_account_id: str,
         last_key_sync: datetime.datetime,
+        authentication_mode: Optional[Union[str, "AutoStorageAuthenticationMode"]] = "StorageKeys",
+        node_identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
-        super(AutoStorageProperties, self).__init__(storage_account_id=storage_account_id, **kwargs)
+        super(AutoStorageProperties, self).__init__(storage_account_id=storage_account_id, authentication_mode=authentication_mode, node_identity_reference=node_identity_reference, **kwargs)
         self.last_key_sync = last_key_sync
 
 
@@ -446,15 +470,20 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
     :type account_name: str
     :param container_name: Required. The Azure Blob Storage Container name.
     :type container_name: str
-    :param account_key: This property is mutually exclusive with sasKey and one must be specified.
+    :param account_key: This property is mutually exclusive with both sasKey and identity; exactly
+     one must be specified.
     :type account_key: str
-    :param sas_key: This property is mutually exclusive with accountKey and one must be specified.
+    :param sas_key: This property is mutually exclusive with both accountKey and identity; exactly
+     one must be specified.
     :type sas_key: str
     :param blobfuse_options: These are 'net use' options in Windows and 'mount' options in Linux.
     :type blobfuse_options: str
     :param relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
      directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
+    :param identity_reference: This property is mutually exclusive with both accountKey and sasKey;
+     exactly one must be specified.
+    :type identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _validation = {
@@ -470,6 +499,7 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         'sas_key': {'key': 'sasKey', 'type': 'str'},
         'blobfuse_options': {'key': 'blobfuseOptions', 'type': 'str'},
         'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
     def __init__(
@@ -481,6 +511,7 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         account_key: Optional[str] = None,
         sas_key: Optional[str] = None,
         blobfuse_options: Optional[str] = None,
+        identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
         super(AzureBlobFileSystemConfiguration, self).__init__(**kwargs)
@@ -490,6 +521,7 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         self.sas_key = sas_key
         self.blobfuse_options = blobfuse_options
         self.relative_mount_path = relative_mount_path
+        self.identity_reference = identity_reference
 
 
 class AzureFileShareConfiguration(msrest.serialization.Model):
@@ -653,6 +685,10 @@ class BatchAccount(Resource):
     :ivar active_job_and_job_schedule_quota: The active job and job schedule quota for the Batch
      account.
     :vartype active_job_and_job_schedule_quota: int
+    :ivar allowed_authentication_modes: List of allowed authentication modes for the Batch account
+     that can be used to authenticate with the data plane. This does not affect authentication with
+     the control plane.
+    :vartype allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
     """
 
     _validation = {
@@ -675,6 +711,7 @@ class BatchAccount(Resource):
         'dedicated_core_quota_per_vm_family_enforced': {'readonly': True},
         'pool_quota': {'readonly': True},
         'active_job_and_job_schedule_quota': {'readonly': True},
+        'allowed_authentication_modes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -698,6 +735,7 @@ class BatchAccount(Resource):
         'dedicated_core_quota_per_vm_family_enforced': {'key': 'properties.dedicatedCoreQuotaPerVMFamilyEnforced', 'type': 'bool'},
         'pool_quota': {'key': 'properties.poolQuota', 'type': 'int'},
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
+        'allowed_authentication_modes': {'key': 'properties.allowedAuthenticationModes', 'type': '[str]'},
     }
 
     def __init__(
@@ -722,6 +760,7 @@ class BatchAccount(Resource):
         self.dedicated_core_quota_per_vm_family_enforced = None
         self.pool_quota = None
         self.active_job_and_job_schedule_quota = None
+        self.allowed_authentication_modes = None
 
 
 class BatchAccountCreateParameters(msrest.serialization.Model):
@@ -753,6 +792,10 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
      default, accounts are encrypted using a Microsoft managed key. For additional control, a
      customer-managed key can be used instead.
     :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :param allowed_authentication_modes: List of allowed authentication modes for the Batch account
+     that can be used to authenticate with the data plane. This does not affect authentication with
+     the control plane.
+    :type allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
     """
 
     _validation = {
@@ -768,6 +811,7 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'allowed_authentication_modes': {'key': 'properties.allowedAuthenticationModes', 'type': '[str]'},
     }
 
     def __init__(
@@ -781,6 +825,7 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         key_vault_reference: Optional["KeyVaultReference"] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         encryption: Optional["EncryptionProperties"] = None,
+        allowed_authentication_modes: Optional[List[Union[str, "AuthenticationMode"]]] = None,
         **kwargs
     ):
         super(BatchAccountCreateParameters, self).__init__(**kwargs)
@@ -792,10 +837,11 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         self.key_vault_reference = key_vault_reference
         self.public_network_access = public_network_access
         self.encryption = encryption
+        self.allowed_authentication_modes = allowed_authentication_modes
 
 
 class BatchAccountIdentity(msrest.serialization.Model):
-    """The identity of the Batch account, if configured. This is only used when the user specifies 'Microsoft.KeyVault' as their Batch account encryption configuration.
+    """The identity of the Batch account, if configured. This is used when the user specifies 'Microsoft.KeyVault' as their Batch account encryption configuration or when ``ManagedIdentity`` is selected as the auto-storage authentication mode.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -811,10 +857,7 @@ class BatchAccountIdentity(msrest.serialization.Model):
      include: "SystemAssigned", "UserAssigned", "None".
     :type type: str or ~azure.mgmt.batch.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the Batch account.
-     The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str,
-     ~azure.mgmt.batch.models.Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties]
+    :type user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
     """
 
     _validation = {
@@ -827,14 +870,14 @@ class BatchAccountIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentities}'},
     }
 
     def __init__(
         self,
         *,
         type: Union[str, "ResourceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentities"]] = None,
         **kwargs
     ):
         super(BatchAccountIdentity, self).__init__(**kwargs)
@@ -946,6 +989,10 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
      default, accounts are encrypted using a Microsoft managed key. For additional control, a
      customer-managed key can be used instead.
     :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :param allowed_authentication_modes: List of allowed authentication modes for the Batch account
+     that can be used to authenticate with the data plane. This does not affect authentication with
+     the control plane.
+    :type allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
     """
 
     _attribute_map = {
@@ -953,6 +1000,7 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'allowed_authentication_modes': {'key': 'properties.allowedAuthenticationModes', 'type': '[str]'},
     }
 
     def __init__(
@@ -962,6 +1010,7 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         identity: Optional["BatchAccountIdentity"] = None,
         auto_storage: Optional["AutoStorageBaseProperties"] = None,
         encryption: Optional["EncryptionProperties"] = None,
+        allowed_authentication_modes: Optional[List[Union[str, "AuthenticationMode"]]] = None,
         **kwargs
     ):
         super(BatchAccountUpdateParameters, self).__init__(**kwargs)
@@ -969,6 +1018,7 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         self.identity = identity
         self.auto_storage = auto_storage
         self.encryption = encryption
+        self.allowed_authentication_modes = allowed_authentication_modes
 
 
 class BatchLocationQuota(msrest.serialization.Model):
@@ -1006,10 +1056,7 @@ class BatchPoolIdentity(msrest.serialization.Model):
      "UserAssigned", "None".
     :type type: str or ~azure.mgmt.batch.models.PoolIdentityType
     :param user_assigned_identities: The list of user identities associated with the Batch pool.
-     The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str,
-     ~azure.mgmt.batch.models.Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties]
+    :type user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
     """
 
     _validation = {
@@ -1018,14 +1065,14 @@ class BatchPoolIdentity(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentities}'},
     }
 
     def __init__(
         self,
         *,
         type: Union[str, "PoolIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentities"]] = None,
         **kwargs
     ):
         super(BatchPoolIdentity, self).__init__(**kwargs)
@@ -1123,7 +1170,7 @@ class Certificate(ProxyResource):
 
 
 class CertificateBaseProperties(msrest.serialization.Model):
-    """CertificateBaseProperties.
+    """Base certificate properties.
 
     :param thumbprint_algorithm: This must match the first portion of the certificate name.
      Currently required to be 'SHA1'.
@@ -1399,7 +1446,7 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The name to check for availability.
     :type name: str
-    :ivar type: Required. The resource type. Default value: "Microsoft.Batch/batchAccounts".
+    :ivar type: The resource type. Has constant value: "Microsoft.Batch/batchAccounts".
     :vartype type: str
     """
 
@@ -1563,8 +1610,7 @@ class CloudServiceConfiguration(msrest.serialization.Model):
      2008 R2 SP1. 3 - OS Family 3, equivalent to Windows Server 2012. 4 - OS Family 4, equivalent to
      Windows Server 2012 R2. 5 - OS Family 5, equivalent to Windows Server 2016. 6 - OS Family 6,
      equivalent to Windows Server 2019. For more information, see Azure Guest OS Releases
-     (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-
-     matrix/#releases).
+     (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
     :param os_version: The default value is * which specifies the latest operating system version
      for the specified OS family.
@@ -1592,64 +1638,25 @@ class CloudServiceConfiguration(msrest.serialization.Model):
         self.os_version = os_version
 
 
-class Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties.
+class ComputeNodeIdentityReference(msrest.serialization.Model):
+    """The reference to a user assigned identity associated with the Batch pool which a compute node will use.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
+    :param resource_id: The ARM resource id of the user assigned identity.
+    :type resource_id: str
     """
 
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        super(ComputeNodeIdentityReference, self).__init__(**kwargs)
+        self.resource_id = resource_id
 
 
 class ContainerConfiguration(msrest.serialization.Model):
@@ -1659,7 +1666,7 @@ class ContainerConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The container technology to be used. Default value: "DockerCompatible".
+    :ivar type: The container technology to be used. Has constant value: "DockerCompatible".
     :vartype type: str
     :param container_image_names: This is the full image reference, as would be specified to
      "docker pull". An image will be sourced from the default Docker registry unless the image is
@@ -1697,39 +1704,38 @@ class ContainerConfiguration(msrest.serialization.Model):
 class ContainerRegistry(msrest.serialization.Model):
     """A private container registry.
 
-    All required parameters must be populated in order to send to Azure.
-
+    :param user_name: The user name to log into the registry server.
+    :type user_name: str
+    :param password: The password to log into the registry server.
+    :type password: str
     :param registry_server: If omitted, the default is "docker.io".
     :type registry_server: str
-    :param user_name: Required. The user name to log into the registry server.
-    :type user_name: str
-    :param password: Required. The password to log into the registry server.
-    :type password: str
+    :param identity_reference: The reference to a user assigned identity associated with the Batch
+     pool which a compute node will use.
+    :type identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
-    _validation = {
-        'user_name': {'required': True},
-        'password': {'required': True},
-    }
-
     _attribute_map = {
-        'registry_server': {'key': 'registryServer', 'type': 'str'},
         'user_name': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
+        'registry_server': {'key': 'registryServer', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
     def __init__(
         self,
         *,
-        user_name: str,
-        password: str,
+        user_name: Optional[str] = None,
+        password: Optional[str] = None,
         registry_server: Optional[str] = None,
+        identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
         super(ContainerRegistry, self).__init__(**kwargs)
-        self.registry_server = registry_server
         self.user_name = user_name
         self.password = password
+        self.registry_server = registry_server
+        self.identity_reference = identity_reference
 
 
 class DataDisk(msrest.serialization.Model):
@@ -1747,8 +1753,8 @@ class DataDisk(msrest.serialization.Model):
       readWrite - The caching mode for the disk is read and write.
     
       The default value for caching is none. For information about the caching options see:
-     https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-
-     disks-and-images/. Possible values include: "None", "ReadOnly", "ReadWrite".
+     https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
+     Possible values include: "None", "ReadOnly", "ReadWrite".
     :type caching: str or ~azure.mgmt.batch.models.CachingType
     :param disk_size_gb: Required. The initial disk size in GB when creating new data disk.
     :type disk_size_gb: int
@@ -1863,6 +1869,34 @@ class DeploymentConfiguration(msrest.serialization.Model):
         self.virtual_machine_configuration = virtual_machine_configuration
 
 
+class DiffDiskSettings(msrest.serialization.Model):
+    """Specifies the ephemeral Disk Settings for the operating system disk used by the virtual machine.
+
+    :param placement: This property can be used by user in the request to choose which location the
+     operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning. For
+     more information on Ephemeral OS disk size requirements, please refer to Ephemeral OS disk size
+     requirements for Windows VMs at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+     and Linux VMs at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
+     The only acceptable values to pass in are None and "CacheDisk". The default value is None.
+    :type placement: str
+    """
+
+    _attribute_map = {
+        'placement': {'key': 'placement', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        placement: Optional[str] = None,
+        **kwargs
+    ):
+        super(DiffDiskSettings, self).__init__(**kwargs)
+        self.placement = placement
+
+
 class DiskEncryptionConfiguration(msrest.serialization.Model):
     """The disk encryption configuration applied on compute nodes in the pool. Disk encryption configuration is not supported on Linux pool created with Virtual Machine Image or Shared Image Gallery Image.
 
@@ -1910,6 +1944,68 @@ class EncryptionProperties(msrest.serialization.Model):
         super(EncryptionProperties, self).__init__(**kwargs)
         self.key_source = key_source
         self.key_vault_properties = key_vault_properties
+
+
+class EndpointDependency(msrest.serialization.Model):
+    """A domain name and connection details used to access a dependency.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar domain_name: The domain name of the dependency. Domain names may be fully qualified or
+     may contain a * wildcard.
+    :vartype domain_name: str
+    :ivar description: Human-readable supplemental information about the dependency and when it is
+     applicable.
+    :vartype description: str
+    :ivar endpoint_details: The list of connection details for this endpoint.
+    :vartype endpoint_details: list[~azure.mgmt.batch.models.EndpointDetail]
+    """
+
+    _validation = {
+        'domain_name': {'readonly': True},
+        'description': {'readonly': True},
+        'endpoint_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'endpoint_details': {'key': 'endpointDetails', 'type': '[EndpointDetail]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EndpointDependency, self).__init__(**kwargs)
+        self.domain_name = None
+        self.description = None
+        self.endpoint_details = None
+
+
+class EndpointDetail(msrest.serialization.Model):
+    """Details about the connection between the Batch service and the endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar port: The port an endpoint is connected to.
+    :vartype port: int
+    """
+
+    _validation = {
+        'port': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EndpointDetail, self).__init__(**kwargs)
+        self.port = None
 
 
 class EnvironmentSetting(msrest.serialization.Model):
@@ -2001,8 +2097,7 @@ class ImageReference(msrest.serialization.Model):
     :param id: This property is mutually exclusive with other properties. The Shared Image Gallery
      image must have replicas in the same region as the Azure Batch account. For information about
      the firewall settings for the Batch node agent to communicate with the Batch service see
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-
-     firewall-configuration.
+     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type id: str
     """
 
@@ -2447,8 +2542,8 @@ class NetworkConfiguration(msrest.serialization.Model):
      29876 and 29877, as well as port 22 for Linux and port 3389 for Windows. For pools created with
      a cloud service configuration, enable ports 10100, 20100, and 30100. Also enable outbound
      connections to Azure Storage on port 443. For cloudServiceConfiguration pools, only 'classic'
-     VNETs are supported. For more details see: https://docs.microsoft.com/en-us/azure/batch/batch-
-     api-basics#virtual-network-vnet-and-firewall-configuration.
+     VNETs are supported. For more details see:
+     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type subnet_id: str
     :param endpoint_configuration: Pool endpoint configuration is only supported on pools with the
      virtualMachineConfiguration property.
@@ -2598,16 +2693,19 @@ class Operation(msrest.serialization.Model):
 
     :param name: This is of the format {provider}/{resource}/{operation}.
     :type name: str
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
     :param display: The object that describes the operation.
     :type display: ~azure.mgmt.batch.models.OperationDisplay
     :param origin: The intended executor of the operation.
     :type origin: str
     :param properties: Any object.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
@@ -2617,13 +2715,15 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
         display: Optional["OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
         self.properties = properties
@@ -2691,6 +2791,91 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
+class OSDisk(msrest.serialization.Model):
+    """Settings for the operating system disk of the virtual machine.
+
+    :param ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
+     system disk used by the virtual machine.
+    :type ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+    """
+
+    _attribute_map = {
+        'ephemeral_os_disk_settings': {'key': 'ephemeralOSDiskSettings', 'type': 'DiffDiskSettings'},
+    }
+
+    def __init__(
+        self,
+        *,
+        ephemeral_os_disk_settings: Optional["DiffDiskSettings"] = None,
+        **kwargs
+    ):
+        super(OSDisk, self).__init__(**kwargs)
+        self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
+
+
+class OutboundEnvironmentEndpoint(msrest.serialization.Model):
+    """A collection of related endpoints from the same service for which the Batch service requires outbound access.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar category: The type of service that the Batch service connects to.
+    :vartype category: str
+    :ivar endpoints: The endpoints for this service to which the Batch service makes outbound
+     calls.
+    :vartype endpoints: list[~azure.mgmt.batch.models.EndpointDependency]
+    """
+
+    _validation = {
+        'category': {'readonly': True},
+        'endpoints': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'category': {'key': 'category', 'type': 'str'},
+        'endpoints': {'key': 'endpoints', 'type': '[EndpointDependency]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OutboundEnvironmentEndpoint, self).__init__(**kwargs)
+        self.category = None
+        self.endpoints = None
+
+
+class OutboundEnvironmentEndpointCollection(msrest.serialization.Model):
+    """Values returned by the List operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The collection of outbound network dependency endpoints returned by the listing
+     operation.
+    :vartype value: list[~azure.mgmt.batch.models.OutboundEnvironmentEndpoint]
+    :param next_link: The continuation token.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[OutboundEnvironmentEndpoint]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(OutboundEnvironmentEndpointCollection, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = next_link
+
+
 class Pool(ProxyResource):
     """Contains information about a pool.
 
@@ -2733,9 +2918,10 @@ class Pool(ProxyResource):
      sizes for pools using images from the Virtual Machines Marketplace (pools created with
      virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
      (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/) or Sizes for
-     Virtual Machines (Windows) (https://azure.microsoft.com/documentation/articles/virtual-
-     machines-windows-sizes/). Batch supports all Azure VM sizes except STANDARD_A0 and those with
-     premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
+     Virtual Machines (Windows)
+     (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/). Batch
+     supports all Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS,
+     STANDARD_DS, and STANDARD_DSV2 series).
     :type vm_size: str
     :param deployment_configuration: Using CloudServiceConfiguration specifies that the nodes
      should be creating using Azure Cloud Services (PaaS), while VirtualMachineConfiguration uses
@@ -2743,7 +2929,7 @@ class Pool(ProxyResource):
     :type deployment_configuration: ~azure.mgmt.batch.models.DeploymentConfiguration
     :ivar current_dedicated_nodes: The number of compute nodes currently in the pool.
     :vartype current_dedicated_nodes: int
-    :ivar current_low_priority_nodes: The number of low priority compute nodes currently in the
+    :ivar current_low_priority_nodes: The number of low-priority compute nodes currently in the
      pool.
     :vartype current_low_priority_nodes: int
     :param scale_settings: Defines the desired size of the pool. This can either be 'fixedScale'
@@ -3177,7 +3363,7 @@ class ResizeOperationStatus(msrest.serialization.Model):
 
     :param target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low priority compute nodes in the pool.
+    :param target_low_priority_nodes: The desired number of low-priority compute nodes in the pool.
     :type target_low_priority_nodes: int
     :param resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
      specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
@@ -3230,17 +3416,17 @@ class ResourceFile(msrest.serialization.Model):
     :type auto_storage_container_name: str
     :param storage_container_url: The autoStorageContainerName, storageContainerUrl and httpUrl
      properties are mutually exclusive and one of them must be specified. This URL must be readable
-     and listable using anonymous access; that is, the Batch service does not present any
-     credentials when downloading the blob. There are two ways to get such a URL for a blob in Azure
-     storage: include a Shared Access Signature (SAS) granting read and list permissions on the
-     blob, or set the ACL for the blob or its container to allow public access.
+     and listable from compute nodes. There are three ways to get such a URL for a container in
+     Azure storage: include a Shared Access Signature (SAS) granting read and list permissions on
+     the container, use a managed identity with read and list permissions, or set the ACL for the
+     container to allow public access.
     :type storage_container_url: str
     :param http_url: The autoStorageContainerName, storageContainerUrl and httpUrl properties are
-     mutually exclusive and one of them must be specified. If the URL is Azure Blob Storage, it must
-     be readable using anonymous access; that is, the Batch service does not present any credentials
-     when downloading the blob. There are two ways to get such a URL for a blob in Azure storage:
-     include a Shared Access Signature (SAS) granting read permissions on the blob, or set the ACL
-     for the blob or its container to allow public access.
+     mutually exclusive and one of them must be specified. If the URL points to Azure Blob Storage,
+     it must be readable from compute nodes. There are three ways to get such a URL for a blob in
+     Azure storage: include a Shared Access Signature (SAS) granting read permissions on the blob,
+     use a managed identity with read permission, or set the ACL for the blob or its container to
+     allow public access.
     :type http_url: str
     :param blob_prefix: The property is valid only when autoStorageContainerName or
      storageContainerUrl is used. This prefix can be a partial filename or a subdirectory. If a
@@ -3259,6 +3445,9 @@ class ResourceFile(msrest.serialization.Model):
      node. If this property is not specified for a Linux node, then a default value of 0770 is
      applied to the file.
     :type file_mode: str
+    :param identity_reference: The reference to a user assigned identity associated with the Batch
+     pool which a compute node will use.
+    :type identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _attribute_map = {
@@ -3268,6 +3457,7 @@ class ResourceFile(msrest.serialization.Model):
         'blob_prefix': {'key': 'blobPrefix', 'type': 'str'},
         'file_path': {'key': 'filePath', 'type': 'str'},
         'file_mode': {'key': 'fileMode', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
     def __init__(
@@ -3279,6 +3469,7 @@ class ResourceFile(msrest.serialization.Model):
         blob_prefix: Optional[str] = None,
         file_path: Optional[str] = None,
         file_mode: Optional[str] = None,
+        identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
         super(ResourceFile, self).__init__(**kwargs)
@@ -3288,6 +3479,7 @@ class ResourceFile(msrest.serialization.Model):
         self.blob_prefix = blob_prefix
         self.file_path = file_path
         self.file_mode = file_mode
+        self.identity_reference = identity_reference
 
 
 class ScaleSettings(msrest.serialization.Model):
@@ -3316,6 +3508,36 @@ class ScaleSettings(msrest.serialization.Model):
         super(ScaleSettings, self).__init__(**kwargs)
         self.fixed_scale = fixed_scale
         self.auto_scale = auto_scale
+
+
+class SkuCapability(msrest.serialization.Model):
+    """A SKU capability, such as the number of cores.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the feature.
+    :vartype name: str
+    :ivar value: The value of the feature.
+    :vartype value: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuCapability, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
 
 
 class StartTask(msrest.serialization.Model):
@@ -3388,6 +3610,75 @@ class StartTask(msrest.serialization.Model):
         self.max_task_retry_count = max_task_retry_count
         self.wait_for_success = wait_for_success
         self.container_settings = container_settings
+
+
+class SupportedSku(msrest.serialization.Model):
+    """Describes a Batch supported SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the SKU.
+    :vartype name: str
+    :ivar family_name: The family name of the SKU.
+    :vartype family_name: str
+    :ivar capabilities: A collection of capabilities which this SKU supports.
+    :vartype capabilities: list[~azure.mgmt.batch.models.SkuCapability]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'family_name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'family_name': {'key': 'familyName', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[SkuCapability]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SupportedSku, self).__init__(**kwargs)
+        self.name = None
+        self.family_name = None
+        self.capabilities = None
+
+
+class SupportedSkusResult(msrest.serialization.Model):
+    """The Batch List supported SKUs operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The list of SKUs available for the Batch service in the location.
+    :type value: list[~azure.mgmt.batch.models.SupportedSku]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SupportedSku]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["SupportedSku"],
+        **kwargs
+    ):
+        super(SupportedSkusResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
 
 
 class TaskContainerSettings(msrest.serialization.Model):
@@ -3517,6 +3808,36 @@ class UserAccount(msrest.serialization.Model):
         self.windows_user_configuration = windows_user_configuration
 
 
+class UserAssignedIdentities(msrest.serialization.Model):
+    """The list of associated user identities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentities, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class UserIdentity(msrest.serialization.Model):
     """Specify either the userName or autoUser property, but not both.
 
@@ -3587,6 +3908,8 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
     :param extensions: If specified, the extensions mentioned in this configuration will be
      installed on each node.
     :type extensions: list[~azure.mgmt.batch.models.VMExtension]
+    :param os_disk: Contains configuration for ephemeral OSDisk settings.
+    :type os_disk: ~azure.mgmt.batch.models.OSDisk
     """
 
     _validation = {
@@ -3604,6 +3927,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
         'node_placement_configuration': {'key': 'nodePlacementConfiguration', 'type': 'NodePlacementConfiguration'},
         'extensions': {'key': 'extensions', 'type': '[VMExtension]'},
+        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
     }
 
     def __init__(
@@ -3618,6 +3942,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         disk_encryption_configuration: Optional["DiskEncryptionConfiguration"] = None,
         node_placement_configuration: Optional["NodePlacementConfiguration"] = None,
         extensions: Optional[List["VMExtension"]] = None,
+        os_disk: Optional["OSDisk"] = None,
         **kwargs
     ):
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
@@ -3630,6 +3955,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         self.disk_encryption_configuration = disk_encryption_configuration
         self.node_placement_configuration = node_placement_configuration
         self.extensions = extensions
+        self.os_disk = os_disk
 
 
 class VirtualMachineFamilyCoreQuota(msrest.serialization.Model):
@@ -3680,10 +4006,10 @@ class VMExtension(msrest.serialization.Model):
      upgrade minor versions unless redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
     :param settings: Any object.
-    :type settings: object
+    :type settings: any
     :param protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: object
+    :type protected_settings: any
     :param provision_after_extensions: Collection of extension names after which this extension
      needs to be provisioned.
     :type provision_after_extensions: list[str]
@@ -3714,8 +4040,8 @@ class VMExtension(msrest.serialization.Model):
         type: str,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[object] = None,
-        protected_settings: Optional[object] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         provision_after_extensions: Optional[List[str]] = None,
         **kwargs
     ):

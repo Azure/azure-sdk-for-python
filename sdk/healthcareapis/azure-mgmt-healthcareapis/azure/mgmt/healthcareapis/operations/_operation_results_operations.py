@@ -17,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -50,7 +50,7 @@ class OperationResultsOperations(object):
         operation_result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union["_models.OperationResultsDescription", "_models.ErrorDetails"]
+        # type: (...) -> "_models.OperationResultsDescription"
         """Get the operation result for a long running operation.
 
         :param location_name: The location of the operation.
@@ -58,16 +58,16 @@ class OperationResultsOperations(object):
         :param operation_result_id: The ID of the operation result to get.
         :type operation_result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationResultsDescription or ErrorDetails, or the result of cls(response)
-        :rtype: ~azure.mgmt.healthcareapis.models.OperationResultsDescription or ~azure.mgmt.healthcareapis.models.ErrorDetails
+        :return: OperationResultsDescription, or the result of cls(response)
+        :rtype: ~azure.mgmt.healthcareapis.models.OperationResultsDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.OperationResultsDescription", "_models.ErrorDetails"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResultsDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-11"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -91,16 +91,12 @@ class OperationResultsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('OperationResultsDescription', pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorDetails', pipeline_response)
+        deserialized = self._deserialize('OperationResultsDescription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

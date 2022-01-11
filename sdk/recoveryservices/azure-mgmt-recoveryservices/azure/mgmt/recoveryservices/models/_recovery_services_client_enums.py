@@ -36,6 +36,22 @@ class AuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCESS_CONTROL_SERVICE = "AccessControlService"
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class InfrastructureEncryptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enabling/Disabling the Double Encryption state
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class PrivateEndpointConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the status.
     """
@@ -55,11 +71,15 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PENDING = "Pending"
 
 class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type.
+    """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
+    implicitly created identity and a set of user-assigned identities. The type 'None' will remove
+    any identities.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
 class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The Sku name.

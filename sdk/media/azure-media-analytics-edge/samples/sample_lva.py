@@ -6,9 +6,9 @@ from azure.iot.hub import IoTHubRegistryManager #run pip install azure-iot-hub t
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
 
-device_id = "lva-sample-device"
-module_d = "mediaedge"
-connection_string = "HostName=lvasamplehubcx5a4jgbixyvg.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=/53Qw6ifN0ka4so72a1gVEhmyiz5fLb9iw+oWoyoQxk="
+device_id = "device-id"
+module_d = "module-id"
+connection_string = "connection-string"
 graph_instance_name = "graphInstance1"
 graph_topology_name = "graphTopology1"
 graph_url = "rtsp://sample-url-from-camera"

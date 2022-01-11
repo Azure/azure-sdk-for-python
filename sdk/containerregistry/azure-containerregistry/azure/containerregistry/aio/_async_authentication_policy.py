@@ -67,3 +67,10 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         access_token = await self._exchange_client.get_acr_access_token(challenge)
         request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
+
+    async def __aenter__(self):
+        await self._exchange_client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self._exchange_client.__aexit__()

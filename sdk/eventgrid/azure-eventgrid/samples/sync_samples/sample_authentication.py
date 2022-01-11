@@ -38,3 +38,12 @@ endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 credential = AzureSasCredential(signature)
 client = EventGridPublisherClient(endpoint, credential)
 # [END client_auth_with_sas_cred]
+
+# [START client_auth_with_token_cred]
+from azure.identity import DefaultAzureCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+
+credential = DefaultAzureCredential()
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+client = EventGridPublisherClient(endpoint, credential)
+# [END client_auth_with_token_cred]

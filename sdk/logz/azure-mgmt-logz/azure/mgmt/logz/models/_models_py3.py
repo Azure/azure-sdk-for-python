@@ -693,11 +693,11 @@ class MonitorProperties(msrest.serialization.Model):
      "Canceled", "Deleted", "NotSpecified".
     :vartype provisioning_state: str or ~microsoft_logz.models.ProvisioningState
     :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled".
+     Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type monitoring_status: str or ~microsoft_logz.models.MonitoringStatus
     :param marketplace_subscription_status: Flag specifying the Marketplace Subscription Status of
      the resource. If payment is not made in time, the resource will go in Suspended state. Possible
-     values include: "Active", "Suspended".
+     values include: "Active", "Suspended". Default value: "Active".
     :type marketplace_subscription_status: str or
      ~microsoft_logz.models.MarketplaceSubscriptionStatus
     :param logz_organization_properties:
@@ -732,8 +732,8 @@ class MonitorProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = None,
-        marketplace_subscription_status: Optional[Union[str, "MarketplaceSubscriptionStatus"]] = None,
+        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = "Enabled",
+        marketplace_subscription_status: Optional[Union[str, "MarketplaceSubscriptionStatus"]] = "Active",
         logz_organization_properties: Optional["LogzOrganizationProperties"] = None,
         user_info: Optional["UserInfo"] = None,
         plan_data: Optional["PlanData"] = None,
@@ -754,7 +754,7 @@ class MonitorUpdateProperties(msrest.serialization.Model):
     """The set of properties that can be update in a PATCH request to a monitor resource.
 
     :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled".
+     Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type monitoring_status: str or ~microsoft_logz.models.MonitoringStatus
     """
 
@@ -765,7 +765,7 @@ class MonitorUpdateProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = None,
+        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = "Enabled",
         **kwargs
     ):
         super(MonitorUpdateProperties, self).__init__(**kwargs)

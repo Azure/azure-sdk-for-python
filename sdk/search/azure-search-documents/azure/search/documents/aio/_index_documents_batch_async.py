@@ -133,8 +133,7 @@ class IndexDocumentsBatch(object):
 
     async def enqueue_actions(self, new_actions):
         # type: (Union[IndexAction, List[IndexAction]]) -> None
-        """Enqueue a list of index actions to index.
-        """
+        """Enqueue a list of index actions to index."""
         if isinstance(new_actions, IndexAction):
             async with self._lock:
                 self._actions.append(new_actions)

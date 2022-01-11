@@ -71,7 +71,6 @@ class CommunicationTestCase(AzureTestCase):
 
     def setUp(self):
         super(CommunicationTestCase, self).setUp()
-
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
         else:

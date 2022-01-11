@@ -43,7 +43,7 @@ class FactoriesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FactoryListResponse"]:
         """Lists factories under the specified subscription.
 
@@ -111,7 +111,7 @@ class FactoriesOperations:
         self,
         location_id: str,
         factory_repo_update: "_models.FactoryRepoUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Factory":
         """Updates a factory's repo information.
 
@@ -172,7 +172,7 @@ class FactoriesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FactoryListResponse"]:
         """Lists factories.
 
@@ -245,7 +245,7 @@ class FactoriesOperations:
         factory_name: str,
         factory: "_models.Factory",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Factory":
         """Creates or updates a factory.
 
@@ -316,7 +316,7 @@ class FactoriesOperations:
         resource_group_name: str,
         factory_name: str,
         factory_update_parameters: "_models.FactoryUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Factory":
         """Updates a factory.
 
@@ -382,7 +382,7 @@ class FactoriesOperations:
         resource_group_name: str,
         factory_name: str,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Factory"]:
         """Gets a factory.
 
@@ -447,7 +447,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a factory.
 
@@ -503,7 +503,7 @@ class FactoriesOperations:
         resource_group_name: str,
         factory_name: str,
         git_hub_access_token_request: "_models.GitHubAccessTokenRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GitHubAccessTokenResponse":
         """Get GitHub Access Token.
 
@@ -569,7 +569,7 @@ class FactoriesOperations:
         resource_group_name: str,
         factory_name: str,
         policy: "_models.UserAccessPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessPolicyResponse":
         """Get Data Plane access.
 

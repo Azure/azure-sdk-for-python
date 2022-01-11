@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search4943159f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://search4943159f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"value":[{"@search.score":1.0225849,"hotelName":"Express Rooms","description":"Pretty
@@ -34,9 +34,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Sat, 08 May 2021 06:03:39 GMT
+      - Tue, 31 Aug 2021 17:11:47 GMT
       elapsed-time:
-      - '114'
+      - '113'
       expires:
       - '-1'
       odata-version:
@@ -46,7 +46,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 2195a04a-afc3-11eb-9054-a0481ca055a9
+      - 86e6e201-0a7e-11ec-8bfd-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

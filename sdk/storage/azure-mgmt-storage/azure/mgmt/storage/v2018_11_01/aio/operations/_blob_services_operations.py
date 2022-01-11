@@ -45,7 +45,7 @@ class BlobServicesOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.BlobServiceProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobServiceProperties":
         """Sets the properties of a storage account’s Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -117,7 +117,7 @@ class BlobServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobServiceProperties":
         """Gets the properties of a storage account’s Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.

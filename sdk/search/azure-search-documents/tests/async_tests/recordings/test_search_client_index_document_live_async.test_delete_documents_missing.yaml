@@ -10,115 +10,106 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
+    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR2/z6o0cf7e7s7Hw0+qhps3bdfPSordf56KO8rqv6i7xpsgtqu1yXpWlxUs3ok72d
-        nV8yMhD2v9br3/8l/w9XqZJBjAAAAA==
+      string: '{"value":[{"key":"1000","status":true,"errorMessage":null,"statusCode":200},{"key":"4","status":true,"errorMessage":null,"statusCode":200}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '193'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:23:44 GMT
-      elapsed-time: '145'
+      date: Tue, 31 Aug 2021 17:27:19 GMT
+      elapsed-time: '129'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f019a293-afc5-11eb-b54c-a0481ca055a9
+      request-id: b2e24ca8-0a80-11ec-825e-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
+    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
+    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Iv7Hv/cf
-        fPj/APylC1oEAAAA
+      string: "\uFEFF9"
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '126'
       content-type: text/plain
-      date: Sat, 08 May 2021 06:23:47 GMT
-      elapsed-time: '4'
+      date: Tue, 31 Aug 2021 17:27:22 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f2262245-afc5-11eb-9a03-a0481ca055a9
+      request-id: b4e69876-0a80-11ec-83a8-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
+    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
+    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2021-04-30-Preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Sat, 08 May 2021 06:23:47 GMT
+      date: Tue, 31 Aug 2021 17:27:22 GMT
+      elapsed-time: '5'
+      expires: '-1'
+      pragma: no-cache
+      request-id: b4ed279e-0a80-11ec-b5ae-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 404
+      message: Not Found
+    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Tue, 31 Aug 2021 17:27:22 GMT
       elapsed-time: '4'
       expires: '-1'
       pragma: no-cache
-      request-id: f231fd5d-afc5-11eb-967f-a0481ca055a9
+      request-id: b4f38c4d-0a80-11ec-86a2-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404
       message: Not Found
-    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control: no-cache
-      content-length: '0'
-      date: Sat, 08 May 2021 06:23:47 GMT
-      elapsed-time: '3'
-      expires: '-1'
-      pragma: no-cache
-      request-id: f23d40ea-afc5-11eb-afcf-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-    status:
-      code: 404
-      message: Not Found
-    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
+    url: https://search75f51e7f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
 version: 1

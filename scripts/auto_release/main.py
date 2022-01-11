@@ -4,6 +4,7 @@ import subprocess as sp
 import time
 import argparse
 import logging
+from ghapi.all import GhApi
 
 
 SERVICE_NAME = 'servicename'
@@ -157,6 +158,12 @@ def edit_version(add_content):
     if TRACK == '1' and VERSION_LAST_RELEASE[0] == '0':
         num = VERSION_LAST_RELEASE.split('.')
         VERSION_NEW = f'{num[0]}.{int(num[1]) + 1}.0'
+    # '0.0.0' means there must be abnormal situation
+    if VERSION_NEW == '0.0.0':
+        api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('UPDATE_TOKEN'))
+        link = os.getenv('ISSUE_LINK')
+        issue_number = link.split('/')[-1]
+        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
 
 def edit_changelog(add_content):
@@ -178,26 +185,31 @@ def print_changelog(add_content):
         _LOG.info('[CHANGELOG] ' + line)
 
 
-def edit_file_setup():
-    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
-    with open(f'{path}/setup.py', 'r') as file_in:
-        list_in = file_in.readlines()
-    for i in range(0, len(list_in)):
-        list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.2.0,<2.0.0')
-        list_in[i] = list_in[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
-    with open(f'{path}/setup.py', 'w') as file_out:
-        file_out.writelines(list_in)
-
-    # avoid pipeline check fail
+def edit_dependency_check_file(dependency):
     with open(f'shared_requirements.txt', 'r') as file_in:
         list_in = file_in.readlines()
-    new_line = f'#override azure-mgmt-{SERVICE_NAME} msrest>=0.6.21'
+    new_line = f'#override azure-mgmt-{SERVICE_NAME} {dependency}'
     for i in range(0, len(list_in)):
         if list_in[i].find(f'{new_line}') > -1:
             return
     list_in.append(f'{new_line}\n')
     with open(f'shared_requirements.txt', 'w') as file_out:
         file_out.writelines(list_in)
+
+def edit_file_setup():
+    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
+    with open(f'{path}/setup.py', 'r') as file_in:
+        list_in = file_in.readlines()
+    for i in range(0, len(list_in)):
+        list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
+        list_in[i] = list_in[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
+        list_in[i] = list_in[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
+    with open(f'{path}/setup.py', 'w') as file_out:
+        file_out.writelines(list_in)
+
+    # avoid pipeline check fail
+    edit_dependency_check_file('msrest>=0.6.21')
+    edit_dependency_check_file('azure-mgmt-core>=1.3.0,<2.0.0')
 
 
 def edit_file_readme():
@@ -459,4 +471,5 @@ if __name__ == '__main__':
         my_print(e)
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
-            file_out.writelines([f'{NEW_BRANCH}\n', "main" if TRACK == '2' else 'release/v3'])
+            file_out.writelines([f'{NEW_BRANCH}\n', "main\n" if TRACK == '2' else 'release/v3\n'])
+

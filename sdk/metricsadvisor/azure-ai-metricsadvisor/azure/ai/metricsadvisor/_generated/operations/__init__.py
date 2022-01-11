@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._metrics_advisor_operations import MetricsAdvisorOperationsMixin
 
 __all__ = [
-    'MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin',
+    'MetricsAdvisorOperationsMixin',
 ]

@@ -97,6 +97,10 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     error_dict = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        try:
+            error_body = error_body or storage_error.response.reason
+        except AttributeError:
+            error_body = ''
         # If it is an XML response
         if isinstance(error_body, Element):
             error_dict = {
@@ -108,7 +112,7 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
             error_dict = error_body.get('error', {})
         elif not error_code:
             _LOGGER.warning(
-                'Unexpected return type % from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
+                'Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
             error_dict = {'message': str(error_body)}
 
         # If we extracted from a Json or XML response

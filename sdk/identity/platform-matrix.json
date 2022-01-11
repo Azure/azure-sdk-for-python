@@ -13,7 +13,8 @@
           "Pool": "azsdk-pool-mms-ubuntu-1804-general",
           "PythonVersion": "3.7",
           "CoverageArg": "--disablecov",
-          "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev"
+          "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev",
+          "UnsupportedToxEnvironments": "mindependency,latestdependency"
         }
       }
     }

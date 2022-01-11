@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -12,7 +10,7 @@ FILE: sample_analyze_sentiment_with_opinion_mining.py
 DESCRIPTION:
     This sample demonstrates how to analyze sentiment on a more granular level, mining individual
     opinions from reviews (also known as aspect-based sentiment analysis).
-    This feature is only available for clients with api version v3.1-preview and up.
+    This feature is only available for clients with api version v3.1 and up.
 
     In this sample, we will be a hotel owner looking for complaints users have about our hotel,
     in the hopes that we can improve people's experiences.

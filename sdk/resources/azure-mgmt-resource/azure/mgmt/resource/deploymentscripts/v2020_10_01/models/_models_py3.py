@@ -205,7 +205,6 @@ class AzureCliScript(DeploymentScript):
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'outputs': {'readonly': True},
-        'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
         'az_cli_version': {'required': True},
     }
@@ -305,7 +304,6 @@ class ScriptConfigurationBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
     }
 
@@ -457,7 +455,6 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     """
 
     _validation = {
-        'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
@@ -602,7 +599,6 @@ class AzurePowerShellScript(DeploymentScript):
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'outputs': {'readonly': True},
-        'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
         'az_power_shell_version': {'required': True},
     }
@@ -726,7 +722,6 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     """
 
     _validation = {
-        'script_content': {'max_length': 32000, 'min_length': 0},
         'retention_interval': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},

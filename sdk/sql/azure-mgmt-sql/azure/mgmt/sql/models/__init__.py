@@ -32,6 +32,7 @@ try:
     from ._models_py3 import DatabaseColumn
     from ._models_py3 import DatabaseColumnListResult
     from ._models_py3 import DatabaseExtensions
+    from ._models_py3 import DatabaseIdentity
     from ._models_py3 import DatabaseListResult
     from ._models_py3 import DatabaseOperation
     from ._models_py3 import DatabaseOperationListResult
@@ -44,11 +45,13 @@ try:
     from ._models_py3 import DatabaseUpdate
     from ._models_py3 import DatabaseUsage
     from ._models_py3 import DatabaseUsageListResult
+    from ._models_py3 import DatabaseUserIdentity
     from ._models_py3 import DatabaseVulnerabilityAssessment
     from ._models_py3 import DatabaseVulnerabilityAssessmentListResult
     from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
     from ._models_py3 import DatabaseVulnerabilityAssessmentScansExport
+    from ._models_py3 import Delegation
     from ._models_py3 import DeletedServer
     from ._models_py3 import DeletedServerListResult
     from ._models_py3 import EditionCapability
@@ -124,6 +127,8 @@ try:
     from ._models_py3 import LicenseTypeCapability
     from ._models_py3 import LocationCapabilities
     from ._models_py3 import LogSizeCapability
+    from ._models_py3 import LogicalDatabaseTransparentDataEncryption
+    from ._models_py3 import LogicalDatabaseTransparentDataEncryptionListResult
     from ._models_py3 import LogicalServerSecurityAlertPolicyListResult
     from ._models_py3 import LongTermRetentionBackup
     from ._models_py3 import LongTermRetentionBackupListResult
@@ -240,7 +245,6 @@ try:
     from ._models_py3 import ReplicationLinkListResult
     from ._models_py3 import Resource
     from ._models_py3 import ResourceIdentity
-    from ._models_py3 import ResourceIdentityWithUserAssignedIdentities
     from ._models_py3 import ResourceMoveDefinition
     from ._models_py3 import ResourceWithWritableName
     from ._models_py3 import RestorableDroppedDatabase
@@ -266,6 +270,7 @@ try:
     from ._models_py3 import ServerCommunicationLink
     from ._models_py3 import ServerCommunicationLinkListResult
     from ._models_py3 import ServerConnectionPolicy
+    from ._models_py3 import ServerConnectionPolicyListResult
     from ._models_py3 import ServerDevOpsAuditSettingsListResult
     from ._models_py3 import ServerDevOpsAuditingSettings
     from ._models_py3 import ServerDnsAlias
@@ -291,6 +296,7 @@ try:
     from ._models_py3 import ServiceObjective
     from ._models_py3 import ServiceObjectiveCapability
     from ._models_py3 import ServiceObjectiveListResult
+    from ._models_py3 import ServicePrincipal
     from ._models_py3 import Sku
     from ._models_py3 import SloUsageMetric
     from ._models_py3 import SqlAgentConfiguration
@@ -324,9 +330,6 @@ try:
     from ._models_py3 import TopQueries
     from ._models_py3 import TopQueriesListResult
     from ._models_py3 import TrackedResource
-    from ._models_py3 import TransparentDataEncryption
-    from ._models_py3 import TransparentDataEncryptionActivity
-    from ._models_py3 import TransparentDataEncryptionActivityListResult
     from ._models_py3 import UnlinkParameters
     from ._models_py3 import UpdateLongTermRetentionBackupParameters
     from ._models_py3 import UpdateManagedInstanceDnsServersOperation
@@ -374,6 +377,7 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseColumn  # type: ignore
     from ._models import DatabaseColumnListResult  # type: ignore
     from ._models import DatabaseExtensions  # type: ignore
+    from ._models import DatabaseIdentity  # type: ignore
     from ._models import DatabaseListResult  # type: ignore
     from ._models import DatabaseOperation  # type: ignore
     from ._models import DatabaseOperationListResult  # type: ignore
@@ -386,11 +390,13 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseUpdate  # type: ignore
     from ._models import DatabaseUsage  # type: ignore
     from ._models import DatabaseUsageListResult  # type: ignore
+    from ._models import DatabaseUserIdentity  # type: ignore
     from ._models import DatabaseVulnerabilityAssessment  # type: ignore
     from ._models import DatabaseVulnerabilityAssessmentListResult  # type: ignore
     from ._models import DatabaseVulnerabilityAssessmentRuleBaseline  # type: ignore
     from ._models import DatabaseVulnerabilityAssessmentRuleBaselineItem  # type: ignore
     from ._models import DatabaseVulnerabilityAssessmentScansExport  # type: ignore
+    from ._models import Delegation  # type: ignore
     from ._models import DeletedServer  # type: ignore
     from ._models import DeletedServerListResult  # type: ignore
     from ._models import EditionCapability  # type: ignore
@@ -466,6 +472,8 @@ except (SyntaxError, ImportError):
     from ._models import LicenseTypeCapability  # type: ignore
     from ._models import LocationCapabilities  # type: ignore
     from ._models import LogSizeCapability  # type: ignore
+    from ._models import LogicalDatabaseTransparentDataEncryption  # type: ignore
+    from ._models import LogicalDatabaseTransparentDataEncryptionListResult  # type: ignore
     from ._models import LogicalServerSecurityAlertPolicyListResult  # type: ignore
     from ._models import LongTermRetentionBackup  # type: ignore
     from ._models import LongTermRetentionBackupListResult  # type: ignore
@@ -582,7 +590,6 @@ except (SyntaxError, ImportError):
     from ._models import ReplicationLinkListResult  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceIdentity  # type: ignore
-    from ._models import ResourceIdentityWithUserAssignedIdentities  # type: ignore
     from ._models import ResourceMoveDefinition  # type: ignore
     from ._models import ResourceWithWritableName  # type: ignore
     from ._models import RestorableDroppedDatabase  # type: ignore
@@ -608,6 +615,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerCommunicationLink  # type: ignore
     from ._models import ServerCommunicationLinkListResult  # type: ignore
     from ._models import ServerConnectionPolicy  # type: ignore
+    from ._models import ServerConnectionPolicyListResult  # type: ignore
     from ._models import ServerDevOpsAuditSettingsListResult  # type: ignore
     from ._models import ServerDevOpsAuditingSettings  # type: ignore
     from ._models import ServerDnsAlias  # type: ignore
@@ -633,6 +641,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceObjective  # type: ignore
     from ._models import ServiceObjectiveCapability  # type: ignore
     from ._models import ServiceObjectiveListResult  # type: ignore
+    from ._models import ServicePrincipal  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import SloUsageMetric  # type: ignore
     from ._models import SqlAgentConfiguration  # type: ignore
@@ -666,9 +675,6 @@ except (SyntaxError, ImportError):
     from ._models import TopQueries  # type: ignore
     from ._models import TopQueriesListResult  # type: ignore
     from ._models import TrackedResource  # type: ignore
-    from ._models import TransparentDataEncryption  # type: ignore
-    from ._models import TransparentDataEncryptionActivity  # type: ignore
-    from ._models import TransparentDataEncryptionActivityListResult  # type: ignore
     from ._models import UnlinkParameters  # type: ignore
     from ._models import UpdateLongTermRetentionBackupParameters  # type: ignore
     from ._models import UpdateManagedInstanceDnsServersOperation  # type: ignore
@@ -715,11 +721,11 @@ from ._sql_management_client_enums import (
     ConnectionPolicyName,
     CreateMode,
     CreatedByType,
-    CurrentBackupStorageRedundancy,
     DataMaskingFunction,
     DataMaskingRuleState,
     DataMaskingState,
     DataWarehouseUserActivityName,
+    DatabaseIdentityType,
     DatabaseLicenseType,
     DatabaseReadScale,
     DatabaseState,
@@ -730,7 +736,7 @@ from ._sql_management_client_enums import (
     ElasticPoolLicenseType,
     ElasticPoolState,
     EncryptionProtectorName,
-    Enum77,
+    Enum60,
     FailoverGroupReplicationRole,
     GeoBackupPolicyName,
     GeoBackupPolicyState,
@@ -784,14 +790,11 @@ from ._sql_management_client_enums import (
     ReplicationLinkType,
     ReplicationRole,
     ReplicationState,
-    RequestedBackupStorageRedundancy,
-    RestorableDroppedDatabasePropertiesBackupStorageRedundancy,
     RestoreDetailsName,
     RestorePointType,
     SampleName,
     SecondaryType,
     SecurityAlertPolicyName,
-    SecurityAlertPolicyNameAutoGenerated,
     SecurityAlertPolicyState,
     SecurityAlertsPolicyState,
     SecurityEventType,
@@ -804,9 +807,9 @@ from ._sql_management_client_enums import (
     ServerTrustGroupPropertiesTrustScopesItem,
     ServerWorkspaceFeature,
     ServiceObjectiveName,
+    ServicePrincipalType,
     ShortTermRetentionPolicyName,
     SqlAgentConfigurationPropertiesState,
-    StorageAccountType,
     StorageCapabilityStorageAccountType,
     StorageKeyType,
     SyncAgentState,
@@ -817,11 +820,8 @@ from ._sql_management_client_enums import (
     SyncMemberDbType,
     SyncMemberState,
     TableTemporalType,
-    TargetBackupStorageRedundancy,
-    TransparentDataEncryptionActivityStatus,
     TransparentDataEncryptionName,
     TransparentDataEncryptionState,
-    TransparentDataEncryptionStatus,
     UnitDefinitionType,
     UnitType,
     UpsertManagedServerOperationStepStatus,
@@ -858,6 +858,7 @@ __all__ = [
     'DatabaseColumn',
     'DatabaseColumnListResult',
     'DatabaseExtensions',
+    'DatabaseIdentity',
     'DatabaseListResult',
     'DatabaseOperation',
     'DatabaseOperationListResult',
@@ -870,11 +871,13 @@ __all__ = [
     'DatabaseUpdate',
     'DatabaseUsage',
     'DatabaseUsageListResult',
+    'DatabaseUserIdentity',
     'DatabaseVulnerabilityAssessment',
     'DatabaseVulnerabilityAssessmentListResult',
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'DatabaseVulnerabilityAssessmentRuleBaselineItem',
     'DatabaseVulnerabilityAssessmentScansExport',
+    'Delegation',
     'DeletedServer',
     'DeletedServerListResult',
     'EditionCapability',
@@ -950,6 +953,8 @@ __all__ = [
     'LicenseTypeCapability',
     'LocationCapabilities',
     'LogSizeCapability',
+    'LogicalDatabaseTransparentDataEncryption',
+    'LogicalDatabaseTransparentDataEncryptionListResult',
     'LogicalServerSecurityAlertPolicyListResult',
     'LongTermRetentionBackup',
     'LongTermRetentionBackupListResult',
@@ -1066,7 +1071,6 @@ __all__ = [
     'ReplicationLinkListResult',
     'Resource',
     'ResourceIdentity',
-    'ResourceIdentityWithUserAssignedIdentities',
     'ResourceMoveDefinition',
     'ResourceWithWritableName',
     'RestorableDroppedDatabase',
@@ -1092,6 +1096,7 @@ __all__ = [
     'ServerCommunicationLink',
     'ServerCommunicationLinkListResult',
     'ServerConnectionPolicy',
+    'ServerConnectionPolicyListResult',
     'ServerDevOpsAuditSettingsListResult',
     'ServerDevOpsAuditingSettings',
     'ServerDnsAlias',
@@ -1117,6 +1122,7 @@ __all__ = [
     'ServiceObjective',
     'ServiceObjectiveCapability',
     'ServiceObjectiveListResult',
+    'ServicePrincipal',
     'Sku',
     'SloUsageMetric',
     'SqlAgentConfiguration',
@@ -1150,9 +1156,6 @@ __all__ = [
     'TopQueries',
     'TopQueriesListResult',
     'TrackedResource',
-    'TransparentDataEncryption',
-    'TransparentDataEncryptionActivity',
-    'TransparentDataEncryptionActivityListResult',
     'UnlinkParameters',
     'UpdateLongTermRetentionBackupParameters',
     'UpdateManagedInstanceDnsServersOperation',
@@ -1197,11 +1200,11 @@ __all__ = [
     'ConnectionPolicyName',
     'CreateMode',
     'CreatedByType',
-    'CurrentBackupStorageRedundancy',
     'DataMaskingFunction',
     'DataMaskingRuleState',
     'DataMaskingState',
     'DataWarehouseUserActivityName',
+    'DatabaseIdentityType',
     'DatabaseLicenseType',
     'DatabaseReadScale',
     'DatabaseState',
@@ -1212,7 +1215,7 @@ __all__ = [
     'ElasticPoolLicenseType',
     'ElasticPoolState',
     'EncryptionProtectorName',
-    'Enum77',
+    'Enum60',
     'FailoverGroupReplicationRole',
     'GeoBackupPolicyName',
     'GeoBackupPolicyState',
@@ -1266,14 +1269,11 @@ __all__ = [
     'ReplicationLinkType',
     'ReplicationRole',
     'ReplicationState',
-    'RequestedBackupStorageRedundancy',
-    'RestorableDroppedDatabasePropertiesBackupStorageRedundancy',
     'RestoreDetailsName',
     'RestorePointType',
     'SampleName',
     'SecondaryType',
     'SecurityAlertPolicyName',
-    'SecurityAlertPolicyNameAutoGenerated',
     'SecurityAlertPolicyState',
     'SecurityAlertsPolicyState',
     'SecurityEventType',
@@ -1286,9 +1286,9 @@ __all__ = [
     'ServerTrustGroupPropertiesTrustScopesItem',
     'ServerWorkspaceFeature',
     'ServiceObjectiveName',
+    'ServicePrincipalType',
     'ShortTermRetentionPolicyName',
     'SqlAgentConfigurationPropertiesState',
-    'StorageAccountType',
     'StorageCapabilityStorageAccountType',
     'StorageKeyType',
     'SyncAgentState',
@@ -1299,11 +1299,8 @@ __all__ = [
     'SyncMemberDbType',
     'SyncMemberState',
     'TableTemporalType',
-    'TargetBackupStorageRedundancy',
-    'TransparentDataEncryptionActivityStatus',
     'TransparentDataEncryptionName',
     'TransparentDataEncryptionState',
-    'TransparentDataEncryptionStatus',
     'UnitDefinitionType',
     'UnitType',
     'UpsertManagedServerOperationStepStatus',

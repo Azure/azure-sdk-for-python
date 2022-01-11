@@ -47,7 +47,7 @@ class StorageInsightConfigsOperations:
         workspace_name: str,
         storage_insight_name: str,
         parameters: "_models.StorageInsight",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageInsight":
         """Create or update a storage insight.
 
@@ -76,7 +76,7 @@ class StorageInsightConfigsOperations:
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'storageInsightName': self._serialize.url("storage_insight_name", storage_insight_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -120,7 +120,7 @@ class StorageInsightConfigsOperations:
         resource_group_name: str,
         workspace_name: str,
         storage_insight_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageInsight":
         """Gets a storage insight instance.
 
@@ -146,7 +146,7 @@ class StorageInsightConfigsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'storageInsightName': self._serialize.url("storage_insight_name", storage_insight_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -182,7 +182,7 @@ class StorageInsightConfigsOperations:
         resource_group_name: str,
         workspace_name: str,
         storage_insight_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a storageInsightsConfigs resource.
 
@@ -207,7 +207,7 @@ class StorageInsightConfigsOperations:
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'storageInsightName': self._serialize.url("storage_insight_name", storage_insight_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -238,7 +238,7 @@ class StorageInsightConfigsOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StorageInsightListResult"]:
         """Lists the storage insight instances within a workspace.
 
@@ -268,7 +268,7 @@ class StorageInsightConfigsOperations:
                 # Construct URL
                 url = self.list_by_workspace.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }

@@ -70,6 +70,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
 
         return subnet_info
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_redis(self, resource_group):
 

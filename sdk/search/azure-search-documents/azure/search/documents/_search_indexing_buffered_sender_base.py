@@ -14,8 +14,10 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AzureKeyCredential
 
+
 class SearchIndexingBufferedSenderBase(HeadersMixin):
     """Base of search indexing buffered sender"""
+
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
     _DEFAULT_INITIAL_BATCH_ACTION_COUNT = 512
@@ -25,18 +27,24 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._auto_flush = kwargs.pop('auto_flush', True)
-        self._batch_action_count = kwargs.pop('initial_batch_action_count', self._DEFAULT_INITIAL_BATCH_ACTION_COUNT)
-        self._auto_flush_interval = kwargs.pop('auto_flush_interval', self._DEFAULT_AUTO_FLUSH_INTERVAL)
+        self._auto_flush = kwargs.pop("auto_flush", True)
+        self._batch_action_count = kwargs.pop(
+            "initial_batch_action_count", self._DEFAULT_INITIAL_BATCH_ACTION_COUNT
+        )
+        self._auto_flush_interval = kwargs.pop(
+            "auto_flush_interval", self._DEFAULT_AUTO_FLUSH_INTERVAL
+        )
         if self._auto_flush_interval <= 0:
             raise ValueError("auto_flush_interval must be a positive number.")
-        self._max_retries_per_action = kwargs.pop('max_retries_per_action ', self._DEFAULT_MAX_RETRIES)
+        self._max_retries_per_action = kwargs.pop(
+            "max_retries_per_action ", self._DEFAULT_MAX_RETRIES
+        )
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._index_key = None
-        self._credential = credential  # type: AzureKeyCredential
-        self._on_new = kwargs.pop('on_new', None)
-        self._on_progress = kwargs.pop('on_progress', None)
-        self._on_error = kwargs.pop('on_error', None)
-        self._on_remove = kwargs.pop('on_remove', None)
+        self._credential = credential
+        self._on_new = kwargs.pop("on_new", None)
+        self._on_progress = kwargs.pop("on_progress", None)
+        self._on_error = kwargs.pop("on_error", None)
+        self._on_remove = kwargs.pop("on_remove", None)
         self._retry_counter = {}

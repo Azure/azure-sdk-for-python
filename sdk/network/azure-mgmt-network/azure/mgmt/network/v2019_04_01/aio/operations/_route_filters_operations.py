@@ -47,7 +47,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified route filter.
 
@@ -99,8 +99,8 @@ class RouteFiltersOperations:
         :type route_filter_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -154,7 +154,7 @@ class RouteFiltersOperations:
         resource_group_name: str,
         route_filter_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteFilter":
         """Gets the specified route filter.
 
@@ -217,7 +217,7 @@ class RouteFiltersOperations:
         resource_group_name: str,
         route_filter_name: str,
         route_filter_parameters: "_models.RouteFilter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteFilter":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilter"]
         error_map = {
@@ -274,7 +274,7 @@ class RouteFiltersOperations:
         resource_group_name: str,
         route_filter_name: str,
         route_filter_parameters: "_models.RouteFilter",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RouteFilter"]:
         """Creates or updates a route filter in a specified resource group.
 
@@ -287,8 +287,8 @@ class RouteFiltersOperations:
         :type route_filter_parameters: ~azure.mgmt.network.v2019_04_01.models.RouteFilter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteFilter or the result of cls(response)
@@ -346,7 +346,7 @@ class RouteFiltersOperations:
         resource_group_name: str,
         route_filter_name: str,
         route_filter_parameters: "_models.PatchRouteFilter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RouteFilter":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilter"]
         error_map = {
@@ -399,7 +399,7 @@ class RouteFiltersOperations:
         resource_group_name: str,
         route_filter_name: str,
         route_filter_parameters: "_models.PatchRouteFilter",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RouteFilter"]:
         """Updates a route filter in a specified resource group.
 
@@ -411,8 +411,8 @@ class RouteFiltersOperations:
         :type route_filter_parameters: ~azure.mgmt.network.v2019_04_01.models.PatchRouteFilter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteFilter or the result of cls(response)
@@ -468,7 +468,7 @@ class RouteFiltersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RouteFilterListResult"]:
         """Gets all route filters in a resource group.
 
@@ -537,7 +537,7 @@ class RouteFiltersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RouteFilterListResult"]:
         """Gets all route filters in a subscription.
 

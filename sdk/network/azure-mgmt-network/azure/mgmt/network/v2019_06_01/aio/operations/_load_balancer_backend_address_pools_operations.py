@@ -45,7 +45,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerBackendAddressPoolListResult"]:
         """Gets all the load balancer backed address pools.
 
@@ -120,7 +120,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         resource_group_name: str,
         load_balancer_name: str,
         backend_address_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackendAddressPool":
         """Gets load balancer backend address pool.
 

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,7 +10,7 @@ from ._lro_async import (
 )
 
 __all__ = [
-    'TextAnalyticsClient',
-    'AsyncAnalyzeHealthcareEntitiesLROPoller',
-    'AsyncAnalyzeActionsLROPoller',
+    "TextAnalyticsClient",
+    "AsyncAnalyzeHealthcareEntitiesLROPoller",
+    "AsyncAnalyzeActionsLROPoller",
 ]

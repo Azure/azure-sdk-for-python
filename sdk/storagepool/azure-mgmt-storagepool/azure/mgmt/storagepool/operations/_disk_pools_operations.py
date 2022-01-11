@@ -64,7 +64,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -135,7 +135,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -200,7 +200,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -254,7 +254,8 @@ class DiskPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.DiskPool"]
-        """Create or Update Disk pool.
+        """Create or Update Disk pool. This create or update operation can take 15 minutes to complete.
+        This is expected service behavior.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -331,7 +332,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -459,7 +460,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         # Construct URL
@@ -500,7 +501,8 @@ class DiskPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete a Disk pool.
+        """Delete a Disk pool; attached disks are not affected. This delete operation can take 10 minutes
+        to complete. This is expected service behavior.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -581,7 +583,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         # Construct URL
@@ -641,7 +643,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -706,7 +708,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         # Construct URL
@@ -747,7 +749,8 @@ class DiskPoolsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """The operation to start a Disk Pool.
+        """The operation to start a Disk Pool. This start operation can take 10 minutes to complete. This
+        is expected service behavior.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -817,7 +820,7 @@ class DiskPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-08-01"
         accept = "application/json"
 
         # Construct URL
@@ -859,7 +862,8 @@ class DiskPoolsOperations(object):
     ):
         # type: (...) -> LROPoller[None]
         """Shuts down the Disk Pool and releases the compute resources. You are not billed for the compute
-        resources that this Disk Pool uses.
+        resources that this Disk Pool uses. This operation can take 10 minutes to complete. This is
+        expected service behavior.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -916,3 +920,115 @@ class DiskPoolsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_deallocate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StoragePool/diskPools/{diskPoolName}/deallocate'}  # type: ignore
+
+    def _upgrade_initial(
+        self,
+        resource_group_name,  # type: str
+        disk_pool_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-08-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self._upgrade_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]*[0-9A-Za-z]$'),
+            'diskPoolName': self._serialize.url("disk_pool_name", disk_pool_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _upgrade_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StoragePool/diskPools/{diskPoolName}/upgrade'}  # type: ignore
+
+    def begin_upgrade(
+        self,
+        resource_group_name,  # type: str
+        disk_pool_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Upgrade replaces the underlying virtual machine hosts one at a time. This operation can take
+        10-15 minutes to complete. This is expected service behavior.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param disk_pool_name: The name of the Disk Pool.
+        :type disk_pool_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._upgrade_initial(
+                resource_group_name=resource_group_name,
+                disk_pool_name=disk_pool_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]*[0-9A-Za-z]$'),
+            'diskPoolName': self._serialize.url("disk_pool_name", disk_pool_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StoragePool/diskPools/{diskPoolName}/upgrade'}  # type: ignore

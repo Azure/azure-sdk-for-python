@@ -48,7 +48,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceBackupRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiManagementServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiManagementServiceResource"]]
         error_map = {
@@ -86,7 +86,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -104,7 +104,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceBackupRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiManagementServiceResource"]:
         """Restores a backup of an API Management service created using the ApiManagementService_Backup
         operation on the current service. This is a long running operation and could take several
@@ -119,8 +119,8 @@ class ApiManagementServiceOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceBackupRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApiManagementServiceResource or the result of cls(response)
@@ -178,7 +178,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceBackupRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiManagementServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiManagementServiceResource"]]
         error_map = {
@@ -216,7 +216,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -234,7 +234,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceBackupRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiManagementServiceResource"]:
         """Creates a backup of the API Management service to the given Azure Storage Account. This is long
         running operation and could take several minutes to complete.
@@ -247,8 +247,8 @@ class ApiManagementServiceOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceBackupRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApiManagementServiceResource or the result of cls(response)
@@ -306,7 +306,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiManagementServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiManagementServiceResource"]]
         error_map = {
@@ -344,7 +344,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -365,7 +365,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiManagementServiceResource"]:
         """Creates or updates an API Management service. This is long running operation and could take
         several minutes to complete.
@@ -378,8 +378,8 @@ class ApiManagementServiceOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApiManagementServiceResource or the result of cls(response)
@@ -437,7 +437,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiManagementServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiManagementServiceResource"]]
         error_map = {
@@ -475,7 +475,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -493,7 +493,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: "_models.ApiManagementServiceUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiManagementServiceResource"]:
         """Updates an existing API Management service.
 
@@ -505,8 +505,8 @@ class ApiManagementServiceOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApiManagementServiceResource or the result of cls(response)
@@ -563,7 +563,7 @@ class ApiManagementServiceOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiManagementServiceResource":
         """Gets an API Management service resource description.
 
@@ -607,7 +607,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApiManagementServiceResource', pipeline_response)
@@ -622,7 +622,7 @@ class ApiManagementServiceOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiManagementServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiManagementServiceResource"]]
         error_map = {
@@ -655,7 +655,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -672,7 +672,7 @@ class ApiManagementServiceOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiManagementServiceResource"]:
         """Deletes an existing API Management service.
 
@@ -682,8 +682,8 @@ class ApiManagementServiceOperations:
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -738,7 +738,7 @@ class ApiManagementServiceOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApiManagementServiceListResult"]:
         """List all API Management services within a resource group.
 
@@ -795,7 +795,7 @@ class ApiManagementServiceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -808,7 +808,7 @@ class ApiManagementServiceOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApiManagementServiceListResult"]:
         """Lists all API Management services within an Azure subscription.
 
@@ -862,7 +862,7 @@ class ApiManagementServiceOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -877,7 +877,7 @@ class ApiManagementServiceOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiManagementServiceGetSsoTokenResult":
         """Gets the Single-Sign-On token for the API Management Service which is valid for 5 Minutes.
 
@@ -921,7 +921,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApiManagementServiceGetSsoTokenResult', pipeline_response)
@@ -935,7 +935,7 @@ class ApiManagementServiceOperations:
     async def check_name_availability(
         self,
         parameters: "_models.ApiManagementServiceCheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiManagementServiceNameAvailabilityResult":
         """Checks availability and correctness of a name for an API Management service.
 
@@ -980,7 +980,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApiManagementServiceNameAvailabilityResult', pipeline_response)
@@ -993,7 +993,7 @@ class ApiManagementServiceOperations:
 
     async def get_domain_ownership_identifier(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiManagementServiceGetDomainOwnershipIdentifierResult":
         """Get the custom domain ownership identifier for an API Management service.
 
@@ -1031,7 +1031,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApiManagementServiceGetDomainOwnershipIdentifierResult', pipeline_response)
@@ -1047,7 +1047,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: Optional["_models.ApiManagementServiceApplyNetworkConfigurationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiManagementServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiManagementServiceResource"]]
         error_map = {
@@ -1088,7 +1088,7 @@ class ApiManagementServiceOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1106,7 +1106,7 @@ class ApiManagementServiceOperations:
         resource_group_name: str,
         service_name: str,
         parameters: Optional["_models.ApiManagementServiceApplyNetworkConfigurationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiManagementServiceResource"]:
         """Updates the Microsoft.ApiManagement resource running in the Virtual network to pick the updated
         DNS changes.
@@ -1121,8 +1121,8 @@ class ApiManagementServiceOperations:
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceApplyNetworkConfigurationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApiManagementServiceResource or the result of cls(response)

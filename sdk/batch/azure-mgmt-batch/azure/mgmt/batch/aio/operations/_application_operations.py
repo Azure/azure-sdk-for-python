@@ -47,7 +47,7 @@ class ApplicationOperations:
         account_name: str,
         application_name: str,
         parameters: Optional["_models.Application"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Adds an application to the specified Batch account.
 
@@ -69,7 +69,7 @@ class ApplicationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -119,7 +119,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an application.
 
@@ -139,7 +139,7 @@ class ApplicationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -178,7 +178,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Gets information about the specified application.
 
@@ -198,7 +198,7 @@ class ApplicationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -241,7 +241,7 @@ class ApplicationOperations:
         account_name: str,
         application_name: str,
         parameters: "_models.Application",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Updates settings for the specified application.
 
@@ -263,7 +263,7 @@ class ApplicationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -310,7 +310,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListApplicationsResult"]:
         """Lists all of the applications in the specified account.
 
@@ -330,7 +330,7 @@ class ApplicationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

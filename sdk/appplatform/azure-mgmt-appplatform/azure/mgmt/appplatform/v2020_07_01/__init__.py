@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._app_platform_management_client import AppPlatformManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['AppPlatformManagementClient']
 
 try:

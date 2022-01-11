@@ -39,16 +39,12 @@ class _QueryBase(object):
 
     @property
     def request(self):
-        """The service request for this operation.
-
-        """
+        """The service request for this operation."""
         return self._request
 
 
 class AutocompleteQuery(_QueryBase):
-    """Represent an autocomplete query again an Azure Search index.
-
-    """
+    """Represent an autocomplete query again an Azure Search index."""
 
     _request_type = AutocompleteRequest
 
@@ -56,9 +52,7 @@ class AutocompleteQuery(_QueryBase):
 
 
 class SearchQuery(_QueryBase):
-    """Represent a rich search query again an Azure Search index.
-
-    """
+    """Represent a rich search query again an Azure Search index."""
 
     _request_type = SearchRequest
 
@@ -97,9 +91,7 @@ class SearchQuery(_QueryBase):
 
 
 class SuggestQuery(_QueryBase):
-    """Represent a search suggestion query again an Azure Search index.
-
-    """
+    """Represent a search suggestion query again an Azure Search index."""
 
     _request_type = SuggestRequest
 

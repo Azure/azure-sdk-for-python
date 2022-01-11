@@ -52,23 +52,24 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
@@ -286,23 +287,24 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -463,33 +465,34 @@ class BlobOperations:
         blob_delete_type: Optional[str] = "Permanent",
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
         permanently removed from the storage account. If the storage account's soft delete feature is
         enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
         immediately. However, the blob service retains the blob or snapshot for the number of days
-        specified by the DeleteRetentionPolicy section of [Storage service properties] (Set-Blob-
-        Service-Properties.md). After the specified number of days has passed, the blob's data is
-        permanently removed from the storage account. Note that you continue to be charged for the
-        soft-deleted blob's storage until it is permanently removed. Use the List Blobs API and specify
-        the "include=deleted" query parameter to discover which blobs and snapshots have been soft
-        deleted. You can then use the Undelete Blob API to restore a soft-deleted blob. All other
+        specified by the DeleteRetentionPolicy section of [Storage service properties]
+        (Set-Blob-Service-Properties.md). After the specified number of days has passed, the blob's
+        data is permanently removed from the storage account. Note that you continue to be charged for
+        the soft-deleted blob's storage until it is permanently removed. Use the List Blobs API and
+        specify the "include=deleted" query parameter to discover which blobs and snapshots have been
+        soft deleted. You can then use the Undelete Blob API to restore a soft-deleted blob. All other
         operations on a soft-deleted blob or snapshot causes the service to return an HTTP status code
         of 404 (ResourceNotFound).
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param delete_snapshots: Required if the blob has associated snapshots. Specify one of the
          following two options: include: Delete the base blob and all of its snapshots. only: Delete
@@ -591,441 +594,18 @@ class BlobOperations:
 
     delete.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    async def set_access_control(
-        self,
-        timeout: Optional[int] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        posix_permissions: Optional[str] = None,
-        posix_acl: Optional[str] = None,
-        request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
-    ) -> None:
-        """Set the owner, group, permissions, or access control list for a blob.
-
-        :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
-        :type timeout: int
-        :param owner: Optional. The owner of the blob or directory.
-        :type owner: str
-        :param group: Optional. The owning group of the blob or directory.
-        :type group: str
-        :param posix_permissions: Optional and only valid if Hierarchical Namespace is enabled for the
-         account. Sets POSIX access permissions for the file owner, the file owning group, and others.
-         Each class may be granted read, write, or execute permission.  The sticky bit is also
-         supported.  Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
-        :type posix_permissions: str
-        :param posix_acl: Sets POSIX access control rights on files and directories. The value is a
-         comma-separated list of access control entries. Each access control entry (ACE) consists of a
-         scope, a type, a user or group identifier, and permissions in the format
-         "[scope:][type]:[id]:[permissions]".
-        :type posix_acl: str
-        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
-        :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
-        :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
-        :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        
-        _lease_id = None
-        _if_match = None
-        _if_none_match = None
-        _if_modified_since = None
-        _if_unmodified_since = None
-        if lease_access_conditions is not None:
-            _lease_id = lease_access_conditions.lease_id
-        if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
-            _if_none_match = modified_access_conditions.if_none_match
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
-        action = "setAccessControl"
-        accept = "application/xml"
-
-        # Construct URL
-        url = self.set_access_control.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['action'] = self._serialize.query("action", action, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
-        if owner is not None:
-            header_parameters['x-ms-owner'] = self._serialize.header("owner", owner, 'str')
-        if group is not None:
-            header_parameters['x-ms-group'] = self._serialize.header("group", group, 'str')
-        if posix_permissions is not None:
-            header_parameters['x-ms-permissions'] = self._serialize.header("posix_permissions", posix_permissions, 'str')
-        if posix_acl is not None:
-            header_parameters['x-ms-acl'] = self._serialize.header("posix_acl", posix_acl, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
-        if _if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
-        if _if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.patch(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DataLakeStorageError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_access_control.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
-
-    async def get_access_control(
-        self,
-        timeout: Optional[int] = None,
-        upn: Optional[bool] = None,
-        request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
-    ) -> None:
-        """Get the owner, group, permissions, or access control list for a blob.
-
-        :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
-        :type timeout: int
-        :param upn: Optional. Valid only when Hierarchical Namespace is enabled for the account. If
-         "true", the identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response
-         headers will be transformed from Azure Active Directory Object IDs to User Principal Names.  If
-         "false", the values will be returned as Azure Active Directory Object IDs. The default value is
-         false.
-        :type upn: bool
-        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
-        :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
-        :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
-        :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        
-        _lease_id = None
-        _if_match = None
-        _if_none_match = None
-        _if_modified_since = None
-        _if_unmodified_since = None
-        if lease_access_conditions is not None:
-            _lease_id = lease_access_conditions.lease_id
-        if modified_access_conditions is not None:
-            _if_match = modified_access_conditions.if_match
-            _if_none_match = modified_access_conditions.if_none_match
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
-        action = "getAccessControl"
-        accept = "application/xml"
-
-        # Construct URL
-        url = self.get_access_control.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['action'] = self._serialize.query("action", action, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if upn is not None:
-            query_parameters['upn'] = self._serialize.query("upn", upn, 'bool')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
-        if _if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
-        if _if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DataLakeStorageError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-owner']=self._deserialize('str', response.headers.get('x-ms-owner'))
-        response_headers['x-ms-group']=self._deserialize('str', response.headers.get('x-ms-group'))
-        response_headers['x-ms-permissions']=self._deserialize('str', response.headers.get('x-ms-permissions'))
-        response_headers['x-ms-acl']=self._deserialize('str', response.headers.get('x-ms-acl'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_access_control.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
-
-    async def rename(
-        self,
-        rename_source: str,
-        timeout: Optional[int] = None,
-        path_rename_mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
-        directory_properties: Optional[str] = None,
-        posix_permissions: Optional[str] = None,
-        posix_umask: Optional[str] = None,
-        source_lease_id: Optional[str] = None,
-        request_id_parameter: Optional[str] = None,
-        directory_http_headers: Optional["_models.DirectoryHttpHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        **kwargs
-    ) -> None:
-        """Rename a blob/file.  By default, the destination is overwritten and if the destination already
-        exists and has a lease the lease is broken.  This operation supports conditional HTTP requests.
-        For more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-
-        blob-service-operations>`_.  To fail if the destination already exists, use a conditional
-        request with If-None-Match: "*".
-
-        :param rename_source: The file or directory to be renamed. The value must have the following
-         format: "/{filesysystem}/{path}".  If "x-ms-properties" is specified, the properties will
-         overwrite the existing properties; otherwise, the existing properties will be preserved.
-        :type rename_source: str
-        :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
-        :type timeout: int
-        :param path_rename_mode: Determines the behavior of the rename operation.
-        :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
-        :param directory_properties: Optional.  User-defined properties to be stored with the file or
-         directory, in the format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...",
-         where each value is base64 encoded.
-        :type directory_properties: str
-        :param posix_permissions: Optional and only valid if Hierarchical Namespace is enabled for the
-         account. Sets POSIX access permissions for the file owner, the file owning group, and others.
-         Each class may be granted read, write, or execute permission.  The sticky bit is also
-         supported.  Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
-        :type posix_permissions: str
-        :param posix_umask: Only valid if Hierarchical Namespace is enabled for the account. This umask
-         restricts permission settings for file and directory, and will only be applied when default Acl
-         does not exist in parent directory. If the umask bit has set, it means that the corresponding
-         permission will be disabled. Otherwise the corresponding permission will be determined by the
-         permission. A 4-digit octal notation (e.g. 0022) is supported here. If no umask was specified,
-         a default umask - 0027 will be used.
-        :type posix_umask: str
-        :param source_lease_id: A lease ID for the source path. If specified, the source path must have
-         an active lease and the lease ID must match.
-        :type source_lease_id: str
-        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
-        :type request_id_parameter: str
-        :param directory_http_headers: Parameter group.
-        :type directory_http_headers: ~azure.storage.blob.models.DirectoryHttpHeaders
-        :param lease_access_conditions: Parameter group.
-        :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
-        :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :param source_modified_access_conditions: Parameter group.
-        :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        
-        _cache_control = None
-        _content_type = None
-        _content_encoding = None
-        _content_language = None
-        _content_disposition = None
-        _lease_id = None
-        _if_modified_since = None
-        _if_unmodified_since = None
-        _if_match = None
-        _if_none_match = None
-        _source_if_modified_since = None
-        _source_if_unmodified_since = None
-        _source_if_match = None
-        _source_if_none_match = None
-        if directory_http_headers is not None:
-            _cache_control = directory_http_headers.cache_control
-            _content_type = directory_http_headers.content_type
-            _content_encoding = directory_http_headers.content_encoding
-            _content_language = directory_http_headers.content_language
-            _content_disposition = directory_http_headers.content_disposition
-        if lease_access_conditions is not None:
-            _lease_id = lease_access_conditions.lease_id
-        if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
-            _if_match = modified_access_conditions.if_match
-            _if_none_match = modified_access_conditions.if_none_match
-        if source_modified_access_conditions is not None:
-            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
-            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
-            _source_if_match = source_modified_access_conditions.source_if_match
-            _source_if_none_match = source_modified_access_conditions.source_if_none_match
-        accept = "application/xml"
-
-        # Construct URL
-        url = self.rename.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if path_rename_mode is not None:
-            query_parameters['mode'] = self._serialize.query("path_rename_mode", path_rename_mode, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-rename-source'] = self._serialize.header("rename_source", rename_source, 'str')
-        if directory_properties is not None:
-            header_parameters['x-ms-properties'] = self._serialize.header("directory_properties", directory_properties, 'str')
-        if posix_permissions is not None:
-            header_parameters['x-ms-permissions'] = self._serialize.header("posix_permissions", posix_permissions, 'str')
-        if posix_umask is not None:
-            header_parameters['x-ms-umask'] = self._serialize.header("posix_umask", posix_umask, 'str')
-        if _cache_control is not None:
-            header_parameters['x-ms-cache-control'] = self._serialize.header("cache_control", _cache_control, 'str')
-        if _content_type is not None:
-            header_parameters['x-ms-content-type'] = self._serialize.header("content_type", _content_type, 'str')
-        if _content_encoding is not None:
-            header_parameters['x-ms-content-encoding'] = self._serialize.header("content_encoding", _content_encoding, 'str')
-        if _content_language is not None:
-            header_parameters['x-ms-content-language'] = self._serialize.header("content_language", _content_language, 'str')
-        if _content_disposition is not None:
-            header_parameters['x-ms-content-disposition'] = self._serialize.header("content_disposition", _content_disposition, 'str')
-        if _lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
-        if source_lease_id is not None:
-            header_parameters['x-ms-source-lease-id'] = self._serialize.header("source_lease_id", source_lease_id, 'str')
-        if _if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
-        if _if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
-        if _source_if_modified_since is not None:
-            header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", _source_if_modified_since, 'rfc-1123')
-        if _source_if_unmodified_since is not None:
-            header_parameters['x-ms-source-if-unmodified-since'] = self._serialize.header("source_if_unmodified_since", _source_if_unmodified_since, 'rfc-1123')
-        if _source_if_match is not None:
-            header_parameters['x-ms-source-if-match'] = self._serialize.header("source_if_match", _source_if_match, 'str')
-        if _source_if_none_match is not None:
-            header_parameters['x-ms-source-if-none-match'] = self._serialize.header("source_if_none_match", _source_if_none_match, 'str')
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DataLakeStorageError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    rename.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
-
     async def undelete(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Undelete a blob that was previously soft deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1089,15 +669,16 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         expires_on: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time.
         :type expiry_options: str or ~azure.storage.blob.models.BlobExpiryOptions
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1169,13 +750,14 @@ class BlobOperations:
         blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set HTTP Headers operation sets system properties on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1301,13 +883,14 @@ class BlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1388,13 +971,14 @@ class BlobOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1457,15 +1041,16 @@ class BlobOperations:
         legal_hold: bool,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         :param legal_hold: Specified if a legal hold should be set on the blob.
         :type legal_hold: bool
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1534,14 +1119,15 @@ class BlobOperations:
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
         more name-value pairs.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -1675,14 +1261,15 @@ class BlobOperations:
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
@@ -1787,7 +1374,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
@@ -1795,8 +1382,9 @@ class BlobOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1889,7 +1477,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
@@ -1897,8 +1485,9 @@ class BlobOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1993,7 +1582,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
@@ -2005,8 +1594,9 @@ class BlobOperations:
          Constructor (String) for a list of valid GUID string formats.
         :type proposed_lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -2101,22 +1691,23 @@ class BlobOperations:
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
          than the time remaining on the lease. If longer, the time remaining on the lease is used. A new
          lease will not be available before the break period has expired, but the lease may be held for
-         longer than the break period. If this header does not appear with a break operation, a fixed-
-         duration lease breaks after the remaining lease period elapses, and an infinite lease breaks
-         immediately.
+         longer than the break period. If this header does not appear with a break operation, a
+         fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
+         breaks immediately.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -2214,13 +1805,14 @@ class BlobOperations:
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2362,7 +1954,7 @@ class BlobOperations:
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
 
@@ -2372,8 +1964,9 @@ class BlobOperations:
          via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2542,10 +2135,12 @@ class BlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
+        copy_source_authorization: Optional[str] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        **kwargs: Any
     ) -> None:
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
         return a response until the copy is complete.
@@ -2556,8 +2151,9 @@ class BlobOperations:
          via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2584,12 +2180,17 @@ class BlobOperations:
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob.
         :type legal_hold: bool
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
         :param modified_access_conditions: Parameter group.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_scope_info: Parameter group.
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -2611,6 +2212,9 @@ class BlobOperations:
         _if_none_match = None
         _if_tags = None
         _lease_id = None
+        _encryption_scope = None
+        if cpk_scope_info is not None:
+            _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -2680,6 +2284,10 @@ class BlobOperations:
             header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
         if legal_hold is not None:
             header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
+        if _encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -2703,6 +2311,7 @@ class BlobOperations:
         response_headers['x-ms-copy-status']=self._deserialize('str', response.headers.get('x-ms-copy-status'))
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
+        response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -2715,7 +2324,7 @@ class BlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
         destination blob with zero length and full metadata.
@@ -2724,8 +2333,9 @@ class BlobOperations:
          Blob operation.
         :type copy_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -2804,7 +2414,7 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a
         premium storage account and on a block blob in a blob storage account (locally redundant
@@ -2816,16 +2426,17 @@ class BlobOperations:
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
          blob.
@@ -2915,7 +2526,7 @@ class BlobOperations:
 
     async def get_account_info(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns the sku name and account kind.
 
@@ -2981,20 +2592,21 @@ class BlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -3185,22 +2797,23 @@ class BlobOperations:
         version_id: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlobTags":
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
@@ -3289,13 +2902,14 @@ class BlobOperations:
         tags: Optional["_models.BlobTags"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.

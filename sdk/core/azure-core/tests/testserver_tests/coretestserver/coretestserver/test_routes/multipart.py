@@ -86,3 +86,34 @@ def non_seekable_filelike():
     else:
         return Response(status=400)
     return Response(status=200)
+
+@multipart_api.route('/request', methods=["POST"])
+def multipart_request():
+    body_as_str = (
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
+        "Content-Type: application/http\r\n"
+        "Content-ID: 0\r\n"
+        "\r\n"
+        "HTTP/1.1 202 Accepted\r\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n"
+        "x-ms-version: 2018-11-09\r\n"
+        "\r\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
+        "Content-Type: application/http\r\n"
+        "Content-ID: 2\r\n"
+        "\r\n"
+        "HTTP/1.1 404 The specified blob does not exist.\r\n"
+        "x-ms-error-code: BlobNotFound\r\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e2852\r\n"
+        "x-ms-version: 2018-11-09\r\n"
+        "Content-Length: 216\r\n"
+        "Content-Type: application/xml\r\n"
+        "\r\n"
+        '<?xml version="1.0" encoding="utf-8"?>\r\n'
+        "<Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\r\n"
+        "RequestId:778fdc83-801e-0000-62ff-0334671e2852\r\n"
+        "Time:2018-06-14T16:46:54.6040685Z</Message></Error>\r\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
+    )
+    return Response(body_as_str.encode('ascii'), content_type="multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed")
+

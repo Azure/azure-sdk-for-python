@@ -16,6 +16,10 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 [Package (PyPI)][pypi_package_administration] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 ### Install packages
 Install [azure-keyvault-administration][pypi_package_administration] and
@@ -28,7 +32,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+* Python 3.7 or later
 * A [managed HSM][managed_hsm]. If you need to create one, see the final two steps in the next section for details on creating the managed HSM with the Azure CLI.
 
 ### Authenticate the client
@@ -158,7 +162,7 @@ A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
 
 ## Examples
-This section conntains code snippets covering common tasks:
+This section contains code snippets covering common tasks:
 * Access Control
     * [List all role definitions](#list-all-role-definitions "List all role definitions")
     * [Set, Get, and Delete a role definition](#set-get-and-delete-a-role-defintion "Set, Get, and Delete a role definition")
@@ -392,7 +396,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/
 [pip]: https://pypi.org/project/pip/
-[pypi_package_administration]: https://aka.ms/azsdk/python/keyvault-administration/pypi
+[pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 
 

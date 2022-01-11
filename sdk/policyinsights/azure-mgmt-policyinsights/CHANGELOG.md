@@ -1,5 +1,22 @@
 # Release History
 
+## 1.1.0b2 (2021-12-04)
+
+**Features**
+
+  - Model Remediation has a new parameter failure_threshold
+  - Model Remediation has a new parameter parallel_deployments
+  - Model Remediation has a new parameter status_message
+  - Model Remediation has a new parameter system_data
+  - Model Remediation has a new parameter correlation_id
+  - Model Remediation has a new parameter resource_count
+
+## 1.1.0b1 (2021-08-23)
+
+**Features**
+
+  - Added operation group AttestationsOperations
+
 ## 1.0.0 (2020-12-22)
 
 **Features**

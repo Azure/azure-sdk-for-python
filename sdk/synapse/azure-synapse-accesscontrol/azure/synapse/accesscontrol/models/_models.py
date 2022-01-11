@@ -81,7 +81,7 @@ class CheckPrincipalAccessResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access_decisions': {'key': 'AccessDecisions', 'type': '[CheckAccessDecision]'},
+        'access_decisions': {'key': 'accessDecisions', 'type': '[CheckAccessDecision]'},
     }
 
     def __init__(
@@ -90,6 +90,36 @@ class CheckPrincipalAccessResponse(msrest.serialization.Model):
     ):
         super(CheckPrincipalAccessResponse, self).__init__(**kwargs)
         self.access_decisions = kwargs.get('access_decisions', None)
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
 
 
 class ErrorContract(msrest.serialization.Model):
@@ -111,65 +141,37 @@ class ErrorContract(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
-class ErrorDetail(msrest.serialization.Model):
-    """ErrorDetail.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required.
-    :type code: str
-    :param message: Required.
-    :type message: str
-    :param target:
-    :type target: str
-    """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-
-
 class ErrorResponse(msrest.serialization.Model):
-    """ErrorResponse.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param code: Required.
-    :type code: str
-    :param message: Required.
-    :type message: str
-    :param target:
-    :type target: str
-    :param details:
-    :type details: list[~azure.synapse.accesscontrol.models.ErrorDetail]
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.synapse.accesscontrol.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.synapse.accesscontrol.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
     def __init__(
@@ -177,10 +179,11 @@ class ErrorResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class RequiredAction(msrest.serialization.Model):

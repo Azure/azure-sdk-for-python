@@ -45,7 +45,7 @@ class SavedSearchesOperations:
         resource_group_name: str,
         workspace_name: str,
         saved_search_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified saved search in a given workspace.
 
@@ -71,7 +71,7 @@ class SavedSearchesOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'savedSearchId': self._serialize.url("saved_search_id", saved_search_id, 'str'),
         }
@@ -103,7 +103,7 @@ class SavedSearchesOperations:
         workspace_name: str,
         saved_search_id: str,
         parameters: "_models.SavedSearch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SavedSearch":
         """Creates or updates a saved search for a given workspace.
 
@@ -133,7 +133,7 @@ class SavedSearchesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'savedSearchId': self._serialize.url("saved_search_id", saved_search_id, 'str'),
         }
@@ -172,7 +172,7 @@ class SavedSearchesOperations:
         resource_group_name: str,
         workspace_name: str,
         saved_search_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SavedSearch":
         """Gets the specified saved search for a given workspace.
 
@@ -199,7 +199,7 @@ class SavedSearchesOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'savedSearchId': self._serialize.url("saved_search_id", saved_search_id, 'str'),
         }
@@ -233,7 +233,7 @@ class SavedSearchesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SavedSearchesListResult":
         """Gets the saved searches for a given Log Analytics Workspace.
 
@@ -257,7 +257,7 @@ class SavedSearchesOperations:
         # Construct URL
         url = self.list_by_workspace.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }

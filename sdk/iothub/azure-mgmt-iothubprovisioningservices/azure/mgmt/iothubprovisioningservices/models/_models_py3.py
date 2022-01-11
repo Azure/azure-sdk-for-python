@@ -46,20 +46,26 @@ class CertificateBodyDescription(msrest.serialization.Model):
     :param certificate: Base-64 representation of the X509 leaf certificate .cer file or just .pem
      file content.
     :type certificate: str
+    :param is_verified: True indicates that the certificate will be created in verified state and
+     proof of possession will not be required.
+    :type is_verified: bool
     """
 
     _attribute_map = {
         'certificate': {'key': 'certificate', 'type': 'str'},
+        'is_verified': {'key': 'isVerified', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
         certificate: Optional[str] = None,
+        is_verified: Optional[bool] = None,
         **kwargs
     ):
         super(CertificateBodyDescription, self).__init__(**kwargs)
         self.certificate = certificate
+        self.is_verified = is_verified
 
 
 class CertificateListDescription(msrest.serialization.Model):

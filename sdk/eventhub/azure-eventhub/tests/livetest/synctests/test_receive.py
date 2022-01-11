@@ -21,6 +21,12 @@ def test_receive_end_of_stream(connstr_senders):
             assert event.body_as_str() == "Receiving only a single event"
             assert list(event.body)[0] == b"Receiving only a single event"
             on_event.called = True
+            assert event.partition_key == b'0'
+            event_str = str(event)
+            assert ", offset: " in event_str
+            assert ", sequence_number: " in event_str
+            assert ", enqueued_time: " in event_str
+            assert ", partition_key: 0" in event_str
     on_event.called = False
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
@@ -31,7 +37,7 @@ def test_receive_end_of_stream(connstr_senders):
         thread.start()
         time.sleep(10)
         assert on_event.called is False
-        senders[0].send(EventData(b"Receiving only a single event"))
+        senders[0].send(EventData(b"Receiving only a single event"), partition_key='0')
         time.sleep(10)
         assert on_event.called is True
     thread.join()
@@ -86,6 +92,7 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
         thread.start()
         time.sleep(10)
         assert on_event.event.body_as_str() == expected_result
+
     thread.join()
 
 

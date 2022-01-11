@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -52,8 +52,9 @@ class SparkBatchJob(msrest.serialization.Model):
     :type app_id: str
     :param app_info: The detailed application info.
     :type app_info: dict[str, str]
-    :param state: The batch state.
-    :type state: str
+    :param state: The batch state. Possible values include: "not_started", "starting", "idle",
+     "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
+    :type state: str or ~azure.synapse.spark.models.LivyStates
     :param log_lines: The log lines.
     :type log_lines: list[str]
     """
@@ -102,7 +103,7 @@ class SparkBatchJob(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         app_id: Optional[str] = None,
         app_info: Optional[Dict[str, str]] = None,
-        state: Optional[str] = None,
+        state: Optional[Union[str, "LivyStates"]] = None,
         log_lines: Optional[List[str]] = None,
         **kwargs
     ):
@@ -561,7 +562,7 @@ class SparkSession(msrest.serialization.Model):
     :type scheduler: ~azure.synapse.spark.models.SparkScheduler
     :param plugin:
     :type plugin: ~azure.synapse.spark.models.SparkServicePlugin
-    :param errors: The error information.
+    :param errors:
     :type errors: list[~azure.synapse.spark.models.SparkServiceError]
     :param tags: A set of tags. Dictionary of :code:`<string>`.
     :type tags: dict[str, str]
@@ -571,8 +572,9 @@ class SparkSession(msrest.serialization.Model):
     :type app_id: str
     :param app_info: Dictionary of :code:`<string>`.
     :type app_info: dict[str, str]
-    :param state:
-    :type state: str
+    :param state: The session state. Possible values include: "not_started", "starting", "idle",
+     "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
+    :type state: str or ~azure.synapse.spark.models.LivyStates
     :param log_lines:
     :type log_lines: list[str]
     """
@@ -621,7 +623,7 @@ class SparkSession(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         app_id: Optional[str] = None,
         app_info: Optional[Dict[str, str]] = None,
-        state: Optional[str] = None,
+        state: Optional[Union[str, "LivyStates"]] = None,
         log_lines: Optional[List[str]] = None,
         **kwargs
     ):
@@ -799,7 +801,7 @@ class SparkSessionState(msrest.serialization.Model):
     :type dead_at: ~datetime.datetime
     :param shutting_down_at:
     :type shutting_down_at: ~datetime.datetime
-    :param terminated_at: the time that at which "killed" livy state was first seen.
+    :param terminated_at:
     :type terminated_at: ~datetime.datetime
     :param recovering_at:
     :type recovering_at: ~datetime.datetime
@@ -866,8 +868,9 @@ class SparkStatement(msrest.serialization.Model):
     :type id: int
     :param code:
     :type code: str
-    :param state:
-    :type state: str
+    :param state:  Possible values include: "waiting", "running", "available", "error",
+     "cancelling", "cancelled".
+    :type state: str or ~azure.synapse.spark.models.LivyStatementStates
     :param output:
     :type output: ~azure.synapse.spark.models.SparkStatementOutput
     """
@@ -888,7 +891,7 @@ class SparkStatement(msrest.serialization.Model):
         *,
         id: int,
         code: Optional[str] = None,
-        state: Optional[str] = None,
+        state: Optional[Union[str, "LivyStatementStates"]] = None,
         output: Optional["SparkStatementOutput"] = None,
         **kwargs
     ):
@@ -988,7 +991,7 @@ class SparkStatementOutput(msrest.serialization.Model):
     :param execution_count: Required.
     :type execution_count: int
     :param data: Any object.
-    :type data: object
+    :type data: any
     :param error_name:
     :type error_name: str
     :param error_value:
@@ -1015,7 +1018,7 @@ class SparkStatementOutput(msrest.serialization.Model):
         *,
         execution_count: int,
         status: Optional[str] = None,
-        data: Optional[object] = None,
+        data: Optional[Any] = None,
         error_name: Optional[str] = None,
         error_value: Optional[str] = None,
         traceback: Optional[List[str]] = None,

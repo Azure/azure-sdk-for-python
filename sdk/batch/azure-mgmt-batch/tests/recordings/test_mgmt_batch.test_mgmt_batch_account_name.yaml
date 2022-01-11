@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/eastus/checkNameAvailability?api-version=2021-06-01
   response:
     body:
       string: '{"nameAvailable":false,"reason":"Invalid","message":"Account name must
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 07:50:53 GMT
+      - Sat, 17 Jul 2021 22:24:30 GMT
       expires:
       - '-1'
       pragma:
@@ -44,12 +44,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"name": "sdktest2", "type": "Microsoft.Batch/batchAccounts"}'
+    body: '{"name": "dawatroupp2acct", "type": "Microsoft.Batch/batchAccounts"}'
     headers:
       Accept:
       - application/json
@@ -58,26 +58,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '61'
+      - '68'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/eastus/checkNameAvailability?api-version=2021-06-01
   response:
     body:
       string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"An account
-        named ''sdktest2'' is already in use."}'
+        named ''dawatroupp2acct'' is already in use."}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '107'
+      - '114'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 07:50:53 GMT
+      - Sat, 17 Jul 2021 22:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +93,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -111,9 +111,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/eastus/checkNameAvailability?api-version=2021-06-01
   response:
     body:
       string: '{"nameAvailable":true}'
@@ -125,7 +125,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 07:50:53 GMT
+      - Sat, 17 Jul 2021 22:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -141,7 +141,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1195'
     status:
       code: 200
       message: OK

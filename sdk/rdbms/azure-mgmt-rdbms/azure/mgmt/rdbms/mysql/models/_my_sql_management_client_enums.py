@@ -55,8 +55,10 @@ class InfrastructureEncryption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     'Enabled'.
     """
 
-    ENABLED = "Enabled"  #: Default value for single layer of encryption for data at rest.
-    DISABLED = "Disabled"  #: Additional (2nd) layer of encryption for data at rest.
+    #: Default value for single layer of encryption for data at rest.
+    ENABLED = "Enabled"
+    #: Additional (2nd) layer of encryption for data at rest.
+    DISABLED = "Disabled"
 
 class MinimalTlsVersionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enforce a minimal Tls version for the server.

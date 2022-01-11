@@ -1,5 +1,41 @@
 # Release History
 
+## 20.0.0 (2021-09-03)
+
+**Features**
+
+  - Model PolicyAssignment has a new parameter system_data
+  - Model PolicyDefinition has a new parameter system_data
+  - Model Location has a new parameter type
+  - Model PolicySetDefinition has a new parameter system_data
+  - Model LocationMetadata has a new parameter home_location
+  - Model TenantIdDescription has a new parameter tenant_branding_logo_url
+  - Model TenantIdDescription has a new parameter tenant_type
+  - Model TenantIdDescription has a new parameter default_domain
+  - Added operation PolicyAssignmentsOperations.update_by_id
+  - Added operation PolicyAssignmentsOperations.update
+
+**Breaking changes**
+
+  - Operation ProvidersOperations.list_at_tenant_scope has a new signature
+  - Operation ProvidersOperations.list has a new signature
+  - Operation SubscriptionsOperations.list_locations has a new signature
+
+## 19.0.0 (2021-07-19)
+
+**Breaking changes**
+
+  - Operation SubscriptionFeatureRegistrationsOperations.create_or_update has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.delete has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.get has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.list_by_subscription has a new signature
+
+## 18.1.0 (2021-07-13)
+
+**Features**
+
+  - Added operation group SubscriptionFeatureRegistrationsOperations
+
 ## 18.0.0 (2021-05-19)
 
 **Breaking changes**

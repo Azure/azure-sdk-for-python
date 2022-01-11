@@ -48,7 +48,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -94,7 +94,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified peering from the specified express route circuit.
 
@@ -106,8 +106,8 @@ class ExpressRouteCircuitPeeringsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -163,7 +163,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCircuitPeering":
         """Gets the specified peering for the express route circuit.
 
@@ -226,7 +226,7 @@ class ExpressRouteCircuitPeeringsOperations:
         circuit_name: str,
         peering_name: str,
         peering_parameters: "_models.ExpressRouteCircuitPeering",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteCircuitPeering":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitPeering"]
         error_map = {
@@ -285,7 +285,7 @@ class ExpressRouteCircuitPeeringsOperations:
         circuit_name: str,
         peering_name: str,
         peering_parameters: "_models.ExpressRouteCircuitPeering",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRouteCircuitPeering"]:
         """Creates or updates a peering in the specified express route circuits.
 
@@ -300,8 +300,8 @@ class ExpressRouteCircuitPeeringsOperations:
         :type peering_parameters: ~azure.mgmt.network.v2019_12_01.models.ExpressRouteCircuitPeering
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuitPeering or the result of cls(response)
@@ -360,7 +360,7 @@ class ExpressRouteCircuitPeeringsOperations:
         self,
         resource_group_name: str,
         circuit_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRouteCircuitPeeringListResult"]:
         """Gets all peerings in a specified express route circuit.
 

@@ -48,7 +48,7 @@ class OpenIdConnectProviderOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OpenIdConnectProviderCollection"]:
         """Lists of all the OpenId Connect Providers.
 
@@ -124,7 +124,7 @@ class OpenIdConnectProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -140,7 +140,7 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the openIdConnectProvider specified by its identifier.
 
@@ -187,7 +187,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -204,7 +204,7 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OpenidConnectProviderContract":
         """Gets specific OpenID Connect Provider without secrets.
 
@@ -251,7 +251,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -271,7 +271,7 @@ class OpenIdConnectProviderOperations:
         opid: str,
         parameters: "_models.OpenidConnectProviderContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OpenidConnectProviderContract":
         """Creates or updates the OpenID Connect Provider.
 
@@ -330,7 +330,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -355,7 +355,7 @@ class OpenIdConnectProviderOperations:
         opid: str,
         if_match: str,
         parameters: "_models.OpenidConnectProviderUpdateContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OpenidConnectProviderContract":
         """Updates the specific OpenID Connect Provider.
 
@@ -413,7 +413,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -432,7 +432,7 @@ class OpenIdConnectProviderOperations:
         service_name: str,
         opid: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specific OpenID Connect Provider of the API Management service instance.
 
@@ -483,7 +483,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -496,7 +496,7 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClientSecretContract":
         """Gets the client secret details of the OpenID Connect Provider.
 
@@ -543,7 +543,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

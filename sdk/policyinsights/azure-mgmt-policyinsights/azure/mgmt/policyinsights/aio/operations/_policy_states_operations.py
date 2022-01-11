@@ -49,7 +49,7 @@ class PolicyStatesOperations:
         policy_states_resource: Union[str, "_models.PolicyStatesResource"],
         management_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the resources under the management group.
 
@@ -129,9 +129,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -148,7 +157,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -163,7 +172,7 @@ class PolicyStatesOperations:
         self,
         management_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the resources under the management group.
 
@@ -227,7 +236,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -243,7 +252,7 @@ class PolicyStatesOperations:
         policy_states_resource: Union[str, "_models.PolicyStatesResource"],
         subscription_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the resources under the subscription.
 
@@ -321,9 +330,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -340,7 +358,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -355,7 +373,7 @@ class PolicyStatesOperations:
         self,
         subscription_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the resources under the subscription.
 
@@ -417,7 +435,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -434,7 +452,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         resource_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the resources under the resource group.
 
@@ -515,9 +533,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -534,7 +561,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -550,7 +577,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         resource_group_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the resources under the resource group.
 
@@ -615,7 +642,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -631,7 +658,7 @@ class PolicyStatesOperations:
         policy_states_resource: Union[str, "_models.PolicyStatesResource"],
         resource_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the resource.
 
@@ -713,9 +740,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -732,7 +768,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -747,7 +783,7 @@ class PolicyStatesOperations:
         self,
         resource_id: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the resource.
 
@@ -809,7 +845,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -823,7 +859,7 @@ class PolicyStatesOperations:
     async def _trigger_subscription_evaluation_initial(
         self,
         subscription_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -854,7 +890,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -865,7 +901,7 @@ class PolicyStatesOperations:
     async def begin_trigger_subscription_evaluation(
         self,
         subscription_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers a policy evaluation scan for all the resources under the subscription.
 
@@ -873,8 +909,8 @@ class PolicyStatesOperations:
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -924,7 +960,7 @@ class PolicyStatesOperations:
         self,
         subscription_id: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -956,7 +992,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -968,7 +1004,7 @@ class PolicyStatesOperations:
         self,
         subscription_id: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers a policy evaluation scan for all the resources under the resource group.
 
@@ -978,8 +1014,8 @@ class PolicyStatesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1033,7 +1069,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         policy_set_definition_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the subscription level policy set definition.
 
@@ -1116,9 +1152,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1135,7 +1180,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1151,7 +1196,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         policy_set_definition_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the subscription level policy set definition.
 
@@ -1218,7 +1263,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -1235,7 +1280,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         policy_definition_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the subscription level policy definition.
 
@@ -1318,9 +1363,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1337,7 +1391,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1353,7 +1407,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         policy_definition_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the subscription level policy definition.
 
@@ -1420,7 +1474,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -1437,7 +1491,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         policy_assignment_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the subscription level policy assignment.
 
@@ -1520,9 +1574,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1539,7 +1602,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1555,7 +1618,7 @@ class PolicyStatesOperations:
         subscription_id: str,
         policy_assignment_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the subscription level policy assignment.
 
@@ -1622,7 +1685,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)
@@ -1640,7 +1703,7 @@ class PolicyStatesOperations:
         resource_group_name: str,
         policy_assignment_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyStatesQueryResults"]:
         """Queries policy states for the resource group level policy assignment.
 
@@ -1726,9 +1789,18 @@ class PolicyStatesOperations:
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
-                url = next_link
+                url = '{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if _skip_token is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skip_token", _skip_token, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1745,7 +1817,7 @@ class PolicyStatesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.QueryFailure, response)
+                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1762,7 +1834,7 @@ class PolicyStatesOperations:
         resource_group_name: str,
         policy_assignment_name: str,
         query_options: Optional["_models.QueryOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SummarizeResults":
         """Summarizes policy states for the resource group level policy assignment.
 
@@ -1832,7 +1904,7 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SummarizeResults', pipeline_response)

@@ -43,7 +43,7 @@ class ServiceOperations:
         self,
         storage_service_properties: "_models.StorageServiceProperties",
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets properties for a storage account's File service endpoint, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
@@ -51,9 +51,9 @@ class ServiceOperations:
         :param storage_service_properties: The StorageService properties.
         :type storage_service_properties: ~azure.storage.fileshare.models.StorageServiceProperties
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -99,7 +99,7 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -114,15 +114,15 @@ class ServiceOperations:
     async def get_properties(
         self,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageServiceProperties":
         """Gets the properties of a storage account's File service, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceProperties, or the result of cls(response)
@@ -163,7 +163,7 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -184,7 +184,7 @@ class ServiceOperations:
         maxresults: Optional[int] = None,
         include: Optional[List[Union[str, "_models.ListSharesIncludeType"]]] = None,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListSharesResponse":
         """The List Shares Segment operation returns a list of the shares and share snapshots under the
         specified account.
@@ -205,9 +205,9 @@ class ServiceOperations:
          response.
         :type include: list[str or ~azure.storage.fileshare.models.ListSharesIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListSharesResponse, or the result of cls(response)
@@ -254,7 +254,7 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

@@ -23,41 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import AsyncIterator
 import asyncio
-from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
-from . import AsyncHttpResponse
-from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
+from ._http_response_impl_async import AsyncHttpResponseImpl
+from ._requests_basic import _RestRequestsTransportResponseBase
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
-class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
     """
 
-    async def iter_raw(self) -> AsyncIterator[bytes]:
-        """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-
-        async for part in iter_raw_helper(AsyncioStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
-        """Asynchronously iterates over the response's bytes. Will decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_bytes_helper(
-            AsyncioStreamDownloadGenerator,
-            self,
-            content=self.content if _has_content(self) else None
-        ):
-            yield part
-        await self.close()
+    def __init__(self, **kwargs):
+        super().__init__(
+            stream_download_generator=AsyncioStreamDownloadGenerator,
+            **kwargs
+        )
 
     async def close(self) -> None:
         """Close the response.
@@ -65,19 +44,7 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTrans
         :return: None
         :rtype: None
         """
-        self.is_closed = True
-        self._internal_response.close()
-        await asyncio.sleep(0)
-
-    async def read(self) -> bytes:
-        """Read the response's bytes into memory.
-
-        :return: The response's bytes
-        :rtype: bytes
-        """
-        if not _has_content(self):
-            parts = []
-            async for part in self.iter_bytes():  # type: ignore
-                parts.append(part)
-            self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
-        return self.content
+        if not self.is_closed:
+            self._is_closed = True
+            self._internal_response.close()
+            await asyncio.sleep(0)

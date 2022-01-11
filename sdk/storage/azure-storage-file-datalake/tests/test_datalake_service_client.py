@@ -11,9 +11,9 @@ from azure.core.exceptions import HttpResponseError
 
 
 from azure.storage.filedatalake import DataLakeServiceClient
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
+
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, \
@@ -24,7 +24,7 @@ from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, Retent
 
 class DatalakeServiceTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, account_key)
         self.config = self.dsc._config
 

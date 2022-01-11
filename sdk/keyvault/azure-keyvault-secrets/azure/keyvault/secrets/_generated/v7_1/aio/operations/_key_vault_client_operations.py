@@ -25,7 +25,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         parameters: "_models.SecretSetParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecretBundle":
         """Sets a secret in a specified key vault.
 
@@ -94,7 +94,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         secret_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedSecretBundle":
         """Deletes a secret from a specified key vault.
 
@@ -157,7 +157,7 @@ class KeyVaultClientOperationsMixin:
         secret_name: str,
         secret_version: str,
         parameters: "_models.SecretUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecretBundle":
         """Updates the attributes associated with a specified secret in a given key vault.
 
@@ -230,7 +230,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         secret_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecretBundle":
         """Get a specified secret from a given key vault.
 
@@ -295,7 +295,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecretListResult"]:
         """List secrets in a specified key vault.
 
@@ -380,7 +380,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         secret_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecretListResult"]:
         """List all versions of the specified secret.
 
@@ -467,7 +467,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedSecretListResult"]:
         """Lists deleted secrets for the specified vault.
 
@@ -550,7 +550,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         secret_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeletedSecretBundle":
         """Gets the specified deleted secret.
 
@@ -611,7 +611,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         secret_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Permanently deletes the specified secret.
 
@@ -670,7 +670,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         secret_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecretBundle":
         """Recovers the deleted secret to the latest version.
 
@@ -731,7 +731,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         secret_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupSecretResult":
         """Backs up the specified secret.
 
@@ -792,7 +792,7 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         parameters: "_models.SecretRestoreParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecretBundle":
         """Restores a backed up secret to a vault.
 

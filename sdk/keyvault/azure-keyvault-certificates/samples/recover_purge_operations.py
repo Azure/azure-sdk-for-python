@@ -37,63 +37,56 @@ from azure.core.exceptions import HttpResponseError
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
-try:
-    # Let's create certificates holding storage and bank accounts credentials. If the certificate
-    # already exists in the Key Vault, then a new version of the certificate is created.
-    print("\n.. Create Certificates")
 
-    bank_cert_name = "BankRecoverCertificate"
-    storage_cert_name = "ServerRecoverCertificate"
+# Let's create certificates holding storage and bank accounts credentials. If the certificate
+# already exists in the Key Vault, then a new version of the certificate is created.
+print("\n.. Create Certificates")
 
-    bank_certificate_poller = client.begin_create_certificate(
-        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
+bank_cert_name = "BankRecoverCertificate"
+storage_cert_name = "ServerRecoverCertificate"
+
+bank_certificate_poller = client.begin_create_certificate(
+    certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
+)
+storage_certificate_poller = client.begin_create_certificate(
+    certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
+)
+
+bank_certificate = bank_certificate_poller.result()
+storage_certificate = storage_certificate_poller.result()
+print("Certificate with name '{0}' was created.".format(bank_certificate.name))
+print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+
+# The storage account was closed, need to delete its credentials from the Key Vault.
+print("\n.. Delete a Certificate")
+deleted_bank_poller = client.begin_delete_certificate(bank_cert_name)
+deleted_bank_certificate = deleted_bank_poller.result()
+# To ensure certificate is deleted on the server side.
+deleted_bank_poller.wait()
+
+print(
+    "Certificate with name '{0}' was deleted on date {1}.".format(
+        deleted_bank_certificate.name, deleted_bank_certificate.deleted_on
     )
-    storage_certificate_poller = client.begin_create_certificate(
-        certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
-    )
+)
 
-    bank_certificate = bank_certificate_poller.result()
-    storage_certificate = storage_certificate_poller.result()
-    print("Certificate with name '{0}' was created.".format(bank_certificate.name))
-    print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+# We accidentally deleted the bank account certificate. Let's recover it.
+# A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
+print("\n.. Recover Deleted Certificate")
+recovered_bank_poller = client.begin_recover_deleted_certificate(deleted_bank_certificate.name)
+recovered_bank_certificate = recovered_bank_poller.result()
+# To ensure certificate is recovered on the server side.
+recovered_bank_poller.wait()
+print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
-    # The storage account was closed, need to delete its credentials from the Key Vault.
-    print("\n.. Delete a Certificate")
-    deleted_bank_poller = client.begin_delete_certificate(bank_cert_name)
-    deleted_bank_certificate = deleted_bank_poller.result()
-    # To ensure certificate is deleted on the server side.
-    deleted_bank_poller.wait()
+# Let's delete the storage certificate now.
+# If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
+client.begin_delete_certificate(storage_cert_name).wait()
 
-    print(
-        "Certificate with name '{0}' was deleted on date {1}.".format(
-            deleted_bank_certificate.name, deleted_bank_certificate.deleted_on
-        )
-    )
+# Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_certificate` immediately
+# purges.
+print("\n.. Purge Deleted Certificate")
+client.purge_deleted_certificate(storage_cert_name)
+print("Certificate has been permanently deleted.")
 
-    # We accidentally deleted the bank account certificate. Let's recover it.
-    # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
-    print("\n.. Recover Deleted Certificate")
-    recovered_bank_poller = client.begin_recover_deleted_certificate(deleted_bank_certificate.name)
-    recovered_bank_certificate = recovered_bank_poller.result()
-    # To ensure certificate is recovered on the server side.
-    recovered_bank_poller.wait()
-    print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
-
-    # Let's delete the storage certificate now.
-    # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
-    client.begin_delete_certificate(storage_cert_name).wait()
-
-    # Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_certificate` immediately
-    # purges.
-    print("\n.. Purge Deleted Certificate")
-    client.purge_deleted_certificate(storage_cert_name)
-    print("Certificate has been permanently deleted.")
-
-except HttpResponseError as e:
-    if "(NotSupported)" in e.message:
-        print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
-    else:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
-
-finally:
-    print("\nrun_sample done")
+print("\nrun_sample done")

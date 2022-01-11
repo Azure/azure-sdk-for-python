@@ -52,6 +52,7 @@ try:
     from ._models_py3 import UsageModel
     from ._models_py3 import UsageModelDisplay
     from ._models_py3 import UsageModelsResult
+    from ._models_py3 import UserAssignedIdentitiesValue
 except (SyntaxError, ImportError):
     from ._models import ApiOperation  # type: ignore
     from ._models import ApiOperationDisplay  # type: ignore
@@ -98,6 +99,7 @@ except (SyntaxError, ImportError):
     from ._models import UsageModel  # type: ignore
     from ._models import UsageModelDisplay  # type: ignore
     from ._models import UsageModelsResult  # type: ignore
+    from ._models import UserAssignedIdentitiesValue  # type: ignore
 
 from ._storage_cache_management_client_enums import (
     CacheIdentityType,
@@ -108,6 +110,7 @@ from ._storage_cache_management_client_enums import (
     MetricAggregationType,
     NfsAccessRuleAccess,
     NfsAccessRuleScope,
+    OperationalStateType,
     ProvisioningStateType,
     ReasonCode,
     StorageTargetType,
@@ -161,6 +164,7 @@ __all__ = [
     'UsageModel',
     'UsageModelDisplay',
     'UsageModelsResult',
+    'UserAssignedIdentitiesValue',
     'CacheIdentityType',
     'CreatedByType',
     'DomainJoinedType',
@@ -169,6 +173,7 @@ __all__ = [
     'MetricAggregationType',
     'NfsAccessRuleAccess',
     'NfsAccessRuleScope',
+    'OperationalStateType',
     'ProvisioningStateType',
     'ReasonCode',
     'StorageTargetType',

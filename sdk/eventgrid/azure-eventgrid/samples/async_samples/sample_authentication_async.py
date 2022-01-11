@@ -38,3 +38,20 @@ endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 credential = AzureSasCredential(signature)
 client = EventGridPublisherClient(endpoint, credential)
 # [END client_auth_with_sas_cred_async]
+
+# [START client_auth_with_token_cred_async]
+from azure.identity.aio import DefaultAzureCredential
+from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid import EventGridEvent
+
+event = EventGridEvent(
+    data={"team": "azure-sdk"},
+    subject="Door1",
+    event_type="Azure.Sdk.Demo",
+    data_version="2.0"
+)
+
+credential = DefaultAzureCredential()
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+client = EventGridPublisherClient(endpoint, credential)
+# [END client_auth_with_token_cred_async]
