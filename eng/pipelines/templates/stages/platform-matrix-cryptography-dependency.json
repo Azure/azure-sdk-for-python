@@ -6,24 +6,10 @@
     "Agent": {
       "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" }
     },
-    "PythonVersion": [ "pypy3", "3.6", "3.7", "3.8", "3.9" ],
+    "PythonVersion": [ "pypy3", "3.7", "3.8", "3.9" ],
     "CoverageArg": "--disablecov"
   },
   "include": [
-    {
-      "Agent": {
-        "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
-      },
-      "PythonVersion": "2.7",
-      "CoverageArg": "--disablecov"
-    },
-    {
-      "Agent": {
-        "windows-2019": { "OSVmImage": "MMS2019", "Pool": "azsdk-pool-mms-win-2019-general" }
-      },
-      "PythonVersion": "3.6",
-      "CoverageArg": "--disablecov"
-    },
     {
       "Config": {
         "Ubuntu2004_310": {

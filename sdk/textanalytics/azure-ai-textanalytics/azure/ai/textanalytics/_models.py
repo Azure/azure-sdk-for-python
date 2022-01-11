@@ -1,4 +1,4 @@
-# coding=utf-8  pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1199,7 +1199,7 @@ class DocumentError(DictMixin):
                 )
             )
         raise AttributeError(
-            "'DocumentError' object has no attribute '{}'".format(attr)
+            f"'DocumentError' object has no attribute '{attr}'"
         )
 
     @classmethod
@@ -1239,7 +1239,7 @@ class DetectLanguageInput(LanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(DetectLanguageInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.country_hint = kwargs.get("country_hint", None)
@@ -1390,7 +1390,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(TextDocumentInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.language = kwargs.get("language", None)
