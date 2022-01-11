@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
 
+
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
