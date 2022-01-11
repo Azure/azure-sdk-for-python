@@ -46,7 +46,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPoolBlobAuditingPolicy":
         """Get a SQL pool's blob auditing policy.
 
@@ -68,7 +68,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         blob_auditing_policy_name = "default"
         accept = "application/json"
 
@@ -76,7 +76,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'blobAuditingPolicyName': self._serialize.url("blob_auditing_policy_name", blob_auditing_policy_name, 'str'),
@@ -113,7 +113,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
         workspace_name: str,
         sql_pool_name: str,
         parameters: "_models.SqlPoolBlobAuditingPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlPoolBlobAuditingPolicy":
         """Creates or updates a SQL pool's blob auditing policy.
 
@@ -137,7 +137,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         blob_auditing_policy_name = "default"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -146,7 +146,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
             'blobAuditingPolicyName': self._serialize.url("blob_auditing_policy_name", blob_auditing_policy_name, 'str'),
@@ -190,7 +190,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
         resource_group_name: str,
         workspace_name: str,
         sql_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SqlPoolBlobAuditingPolicyListResult"]:
         """Lists auditing settings of a Sql pool.
 
@@ -210,7 +210,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -223,7 +223,7 @@ class SqlPoolBlobAuditingPoliciesOperations:
                 url = self.list_by_sql_pool.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
                     'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
                 }

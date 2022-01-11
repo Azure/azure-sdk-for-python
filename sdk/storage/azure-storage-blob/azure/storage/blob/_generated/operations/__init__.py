@@ -8,7 +8,6 @@
 
 from ._service_operations import ServiceOperations
 from ._container_operations import ContainerOperations
-from ._directory_operations import DirectoryOperations
 from ._blob_operations import BlobOperations
 from ._page_blob_operations import PageBlobOperations
 from ._append_blob_operations import AppendBlobOperations
@@ -17,7 +16,6 @@ from ._block_blob_operations import BlockBlobOperations
 __all__ = [
     'ServiceOperations',
     'ContainerOperations',
-    'DirectoryOperations',
     'BlobOperations',
     'PageBlobOperations',
     'AppendBlobOperations',

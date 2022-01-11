@@ -42,7 +42,7 @@ class ResourceProviderCommonOperations:
 
     async def get_subscription_quota(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserSubscriptionQuotaListResult":
         """Get the number of iot hubs in the subscription.
 

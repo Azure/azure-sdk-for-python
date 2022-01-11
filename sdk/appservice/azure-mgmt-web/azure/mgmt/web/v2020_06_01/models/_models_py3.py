@@ -9909,8 +9909,9 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar method:  Default value: "ClientSecretPost".
-    :vartype method: str
+    :param method:  The only acceptable values to pass in are None and "ClientSecretPost". The
+     default value is None.
+    :type method: str
     :param client_secret_setting_name:
     :type client_secret_setting_name: str
     """
@@ -9919,7 +9920,6 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'method': {'constant': True},
     }
 
     _attribute_map = {
@@ -9931,16 +9931,16 @@ class OpenIdConnectClientCredential(ProxyOnlyResource):
         'client_secret_setting_name': {'key': 'properties.clientSecretSettingName', 'type': 'str'},
     }
 
-    method = "ClientSecretPost"
-
     def __init__(
         self,
         *,
         kind: Optional[str] = None,
+        method: Optional[str] = None,
         client_secret_setting_name: Optional[str] = None,
         **kwargs
     ):
         super(OpenIdConnectClientCredential, self).__init__(kind=kind, **kwargs)
+        self.method = method
         self.client_secret_setting_name = client_secret_setting_name
 
 

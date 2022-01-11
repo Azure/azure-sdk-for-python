@@ -45,7 +45,7 @@ class CachesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CachesListResult"]:
         """Returns all Caches the user has access to under a subscription.
 
@@ -59,7 +59,7 @@ class CachesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -112,7 +112,7 @@ class CachesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CachesListResult"]:
         """Returns all Caches the user has access to under a resource group.
 
@@ -128,7 +128,7 @@ class CachesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -183,14 +183,14 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -227,7 +227,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Schedules a Cache for deletion.
 
@@ -238,8 +238,8 @@ class CachesOperations:
         :type cache_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -292,7 +292,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Cache":
         """Returns a Cache.
 
@@ -311,7 +311,7 @@ class CachesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -352,14 +352,14 @@ class CachesOperations:
         resource_group_name: str,
         cache_name: str,
         cache: Optional["_models.Cache"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Cache"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Cache"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -413,7 +413,7 @@ class CachesOperations:
         resource_group_name: str,
         cache_name: str,
         cache: Optional["_models.Cache"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Cache"]:
         """Create or update a Cache.
 
@@ -427,8 +427,8 @@ class CachesOperations:
         :type cache: ~storage_cache_management_client.models.Cache
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Cache or the result of cls(response)
@@ -486,7 +486,7 @@ class CachesOperations:
         resource_group_name: str,
         cache_name: str,
         cache: Optional["_models.Cache"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Cache":
         """Update a Cache instance.
 
@@ -508,7 +508,7 @@ class CachesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -556,14 +556,14 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -600,7 +600,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Tells a Cache to write generate debug info for support to process.
 
@@ -611,8 +611,8 @@ class CachesOperations:
         :type cache_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -665,14 +665,14 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -709,7 +709,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Tells a Cache to write all dirty data to the Storage Target(s). During the flush, clients will
         see errors returned until the flush is complete.
@@ -721,8 +721,8 @@ class CachesOperations:
         :type cache_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -775,14 +775,14 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -819,7 +819,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Tells a Stopped state Cache to transition to Active state.
 
@@ -830,8 +830,8 @@ class CachesOperations:
         :type cache_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -884,14 +884,14 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -928,7 +928,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Tells an Active Cache to transition to Stopped state.
 
@@ -939,8 +939,8 @@ class CachesOperations:
         :type cache_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -993,14 +993,14 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -1037,7 +1037,7 @@ class CachesOperations:
         self,
         resource_group_name: str,
         cache_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Upgrade a Cache's firmware if a new version is available. Otherwise, this operation has no
         effect.
@@ -1049,8 +1049,8 @@ class CachesOperations:
         :type cache_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

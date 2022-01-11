@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._my_sql_management_client import MySQLManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['MySQLManagementClient']
 
 try:

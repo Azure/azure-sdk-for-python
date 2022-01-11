@@ -1,5 +1,25 @@
 # Release History
 
+## 1.1.0b1 (2021-08-02)
+
+**Features**
+
+  - Model WorkspaceCustomParameters has a new parameter load_balancer_backend_pool_name
+  - Model WorkspaceCustomParameters has a new parameter load_balancer_id
+  - Model WorkspaceCustomParameters has a new parameter public_ip_name
+  - Model WorkspaceCustomParameters has a new parameter vnet_address_prefix
+  - Model WorkspaceCustomParameters has a new parameter storage_account_sku_name
+  - Model WorkspaceCustomParameters has a new parameter nat_gateway_name
+  - Model WorkspaceCustomParameters has a new parameter storage_account_name
+  - Model WorkspaceCustomParameters has a new parameter resource_tags
+  - Model Workspace has a new parameter required_nsg_rules
+  - Model Workspace has a new parameter private_endpoint_connections
+  - Model Workspace has a new parameter public_network_access
+  - Model Workspace has a new parameter system_data
+  - Model Workspace has a new parameter encryption
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+
 ## 1.0.0 (2021-03-19)
 
 - GA release

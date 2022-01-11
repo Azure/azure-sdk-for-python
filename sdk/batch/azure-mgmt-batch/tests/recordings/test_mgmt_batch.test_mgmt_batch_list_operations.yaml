@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/16.0.0 Python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit)
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2021-01-01
+    uri: https://centraluseuap.management.azure.com/providers/Microsoft.Batch/operations?api-version=2021-06-01
   response:
     body:
       string: '{"value":[{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
@@ -171,7 +171,13 @@ interactions:
         Batch","resource":"Pools","operation":"Disable Pool AutoScale","description":"Disables
         automatic scaling for a Batch account pool"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/poolOperationResults/read","display":{"provider":"Microsoft
         Batch","resource":"Pools","operation":"Get Pool Operation Results","description":"Gets
-        the results of a long running pool operation on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateLinkResources/read","display":{"provider":"Microsoft
+        the results of a long running pool operation on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/locations/virtualMachineSkus/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Supported Skus","operation":"List Supported Batch
+        Virtual Machine VM","description":"Lists available Batch supported Virtual
+        Machine VM sizes at the given location"},"isDataAction":false},{"name":"Microsoft.Batch/locations/cloudServiceSkus/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Supported Skus","operation":"List Supported Batch
+        Cloud Service VM","description":"Lists available Batch supported Cloud Service
+        VM sizes at the given location"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateLinkResources/read","display":{"provider":"Microsoft
         Batch","resource":"PrivateLinkResources","operation":"Get or List Private
         link resources","description":"Gets the properties of a Private link resource
         or Lists Private link resources on a Batch account"},"isDataAction":false},{"name":"Microsoft.Batch/batchAccounts/privateEndpointConnections/write","display":{"provider":"Microsoft
@@ -199,16 +205,19 @@ interactions:
         Batch","resource":"PrivateEndpointConnectionProxies","operation":"Get Batch
         account private endpoint connection proxy operation results","description":"Gets
         the results of a long running Batch account private endpoint connection proxy
-        operation"},"isDataAction":false,"origin":"system"}]}'
+        operation"},"isDataAction":false,"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/outboundNetworkDependenciesEndpoints/read","display":{"provider":"Microsoft
+        Batch","resource":"Outbound Network Dependencies Endpoints","operation":"List
+        Outbound Network Dependency Endpoints","description":"Lists the outbound network
+        dependency endpoints for a Batch account"},"isDataAction":false,"origin":"user,system"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '27226'
+      - '28194'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 28 Jan 2021 07:52:02 GMT
+      - Sat, 17 Jul 2021 22:14:14 GMT
       expires:
       - '-1'
       pragma:

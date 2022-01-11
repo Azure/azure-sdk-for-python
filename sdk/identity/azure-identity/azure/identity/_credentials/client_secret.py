@@ -14,15 +14,15 @@ if TYPE_CHECKING:
 class ClientSecretCredential(ClientCredentialBase):
     """Authenticates as a service principal using a client secret.
 
-    :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
+    :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
     :param str client_id: the service principal's client ID
     :param str client_secret: one of the service principal's client secrets
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds.
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
-          will cache tokens in memory.
+        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 

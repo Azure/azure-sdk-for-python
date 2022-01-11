@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, ResponseCallback
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -16,10 +16,7 @@ from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
 from azure.data.tables import TableServiceClient
 
-from _shared.testcase import (
-    TableTestCase,
-    ResponseCallback,
-)
+from _shared.testcase import TableTestCase
 
 from preparers import tables_decorator
 
@@ -36,8 +33,7 @@ class RetryRequestTransport(RequestsTransport):
         return response
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTest(AzureTestCase, TableTestCase):
-
+class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
         self.table_name = self.get_resource_name('uttable')
         self.ts = TableServiceClient(
@@ -73,6 +69,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
     # --Test Cases --------------------------------------------
     @tables_decorator
+    @recorded_by_proxy
     def test_retry_on_server_error(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -88,6 +85,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @tables_decorator
+    @recorded_by_proxy
     def test_retry_on_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(
             tables_storage_account_name,
@@ -123,9 +121,10 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
         # 3 retries + 1 original == 4
         assert retry_transport.count == 4
         # This call should succeed on the server side, but fail on the client side due to socket timeout
-        self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
+        assert 'read timeout' in str(error.value), 'Expected socket timeout but got different exception.'
 
     @tables_decorator
+    @recorded_by_proxy
     def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 

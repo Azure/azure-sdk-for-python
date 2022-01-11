@@ -68,7 +68,7 @@ class ActionGroupPatchBody(msrest.serialization.Model):
         self.enabled = enabled
 
 
-class Resource(msrest.serialization.Model):
+class AzureResource(msrest.serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -81,6 +81,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :ivar kind: Azure resource kind.
+    :vartype kind: str
+    :ivar identity: Azure resource identity.
+    :vartype identity: str
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
@@ -91,6 +95,8 @@ class Resource(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'identity': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -98,6 +104,8 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -109,15 +117,17 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
+        super(AzureResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
+        self.kind = None
+        self.identity = None
         self.location = location
         self.tags = tags
 
 
-class ActionGroupResource(Resource):
+class ActionGroupResource(AzureResource):
     """An action group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -130,6 +140,10 @@ class ActionGroupResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :ivar kind: Azure resource kind.
+    :vartype kind: str
+    :ivar identity: Azure resource identity.
+    :vartype identity: str
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
@@ -149,20 +163,20 @@ class ActionGroupResource(Resource):
     :type itsm_receivers: list[~$(python-base-namespace).v2019_03_01.models.ItsmReceiver]
     :param azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
      action group.
-    :type azure_app_push_receivers: list[~$(python-base-
-     namespace).v2019_03_01.models.AzureAppPushReceiver]
+    :type azure_app_push_receivers:
+     list[~$(python-base-namespace).v2019_03_01.models.AzureAppPushReceiver]
     :param automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
-    :type automation_runbook_receivers: list[~$(python-base-
-     namespace).v2019_03_01.models.AutomationRunbookReceiver]
+    :type automation_runbook_receivers:
+     list[~$(python-base-namespace).v2019_03_01.models.AutomationRunbookReceiver]
     :param voice_receivers: The list of voice receivers that are part of this action group.
     :type voice_receivers: list[~$(python-base-namespace).v2019_03_01.models.VoiceReceiver]
     :param logic_app_receivers: The list of logic app receivers that are part of this action group.
     :type logic_app_receivers: list[~$(python-base-namespace).v2019_03_01.models.LogicAppReceiver]
     :param azure_function_receivers: The list of azure function receivers that are part of this
      action group.
-    :type azure_function_receivers: list[~$(python-base-
-     namespace).v2019_03_01.models.AzureFunctionReceiver]
+    :type azure_function_receivers:
+     list[~$(python-base-namespace).v2019_03_01.models.AzureFunctionReceiver]
     :param arm_role_receivers: The list of ARM role receivers that are part of this action group.
      Roles are Azure RBAC roles and only built-in roles are supported.
     :type arm_role_receivers: list[~$(python-base-namespace).v2019_03_01.models.ArmRoleReceiver]
@@ -172,6 +186,8 @@ class ActionGroupResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'identity': {'readonly': True},
         'location': {'required': True},
         'group_short_name': {'max_length': 12, 'min_length': 0},
     }
@@ -180,6 +196,8 @@ class ActionGroupResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'group_short_name': {'key': 'properties.groupShortName', 'type': 'str'},
@@ -240,14 +258,13 @@ class ArmRoleReceiver(msrest.serialization.Model):
     :type name: str
     :param role_id: Required. The arm role id.
     :type role_id: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
+    :param use_common_alert_schema: Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'role_id': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -261,7 +278,7 @@ class ArmRoleReceiver(msrest.serialization.Model):
         *,
         name: str,
         role_id: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
         super(ArmRoleReceiver, self).__init__(**kwargs)
@@ -288,7 +305,7 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
     :type name: str
     :param service_uri: The URI where webhooks should be sent.
     :type service_uri: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
+    :param use_common_alert_schema: Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
     """
 
@@ -297,7 +314,6 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         'runbook_name': {'required': True},
         'webhook_resource_id': {'required': True},
         'is_global_runbook': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -317,9 +333,9 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         runbook_name: str,
         webhook_resource_id: str,
         is_global_runbook: bool,
-        use_common_alert_schema: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
         super(AutomationRunbookReceiver, self).__init__(**kwargs)
@@ -380,7 +396,7 @@ class AzureFunctionReceiver(msrest.serialization.Model):
     :type function_name: str
     :param http_trigger_url: Required. The http trigger url where http request sent to.
     :type http_trigger_url: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
+    :param use_common_alert_schema: Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
     """
 
@@ -389,7 +405,6 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         'function_app_resource_id': {'required': True},
         'function_name': {'required': True},
         'http_trigger_url': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -407,7 +422,7 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         function_app_resource_id: str,
         function_name: str,
         http_trigger_url: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
         super(AzureFunctionReceiver, self).__init__(**kwargs)
@@ -463,7 +478,7 @@ class EmailReceiver(msrest.serialization.Model):
     :type name: str
     :param email_address: Required. The email address of this receiver.
     :type email_address: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
+    :param use_common_alert_schema: Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
     :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
      "Enabled", "Disabled".
@@ -473,7 +488,6 @@ class EmailReceiver(msrest.serialization.Model):
     _validation = {
         'name': {'required': True},
         'email_address': {'required': True},
-        'use_common_alert_schema': {'required': True},
         'status': {'readonly': True},
     }
 
@@ -489,7 +503,7 @@ class EmailReceiver(msrest.serialization.Model):
         *,
         name: str,
         email_address: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
         super(EmailReceiver, self).__init__(**kwargs)
@@ -619,7 +633,7 @@ class LogicAppReceiver(msrest.serialization.Model):
     :type resource_id: str
     :param callback_url: Required. The callback url where http request sent to.
     :type callback_url: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
+    :param use_common_alert_schema: Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
     """
 
@@ -627,7 +641,6 @@ class LogicAppReceiver(msrest.serialization.Model):
         'name': {'required': True},
         'resource_id': {'required': True},
         'callback_url': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -643,7 +656,7 @@ class LogicAppReceiver(msrest.serialization.Model):
         name: str,
         resource_id: str,
         callback_url: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
         super(LogicAppReceiver, self).__init__(**kwargs)
@@ -874,8 +887,8 @@ class TimeSeriesBaseline(msrest.serialization.Model):
     :type timestamps: list[~datetime.datetime]
     :param data: Required. The baseline values for each sensitivity.
     :type data: list[~$(python-base-namespace).v2019_03_01.models.SingleBaseline]
-    :param metadata: The baseline metadata values.
-    :type metadata: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
+    :param metadata_values: The baseline metadata values.
+    :type metadata_values: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
     """
 
     _validation = {
@@ -889,7 +902,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         'dimensions': {'key': 'dimensions', 'type': '[MetricSingleDimension]'},
         'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
         'data': {'key': 'data', 'type': '[SingleBaseline]'},
-        'metadata': {'key': 'metadata', 'type': '[BaselineMetadata]'},
+        'metadata_values': {'key': 'metadataValues', 'type': '[BaselineMetadata]'},
     }
 
     def __init__(
@@ -899,7 +912,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         timestamps: List[datetime.datetime],
         data: List["SingleBaseline"],
         dimensions: Optional[List["MetricSingleDimension"]] = None,
-        metadata: Optional[List["BaselineMetadata"]] = None,
+        metadata_values: Optional[List["BaselineMetadata"]] = None,
         **kwargs
     ):
         super(TimeSeriesBaseline, self).__init__(**kwargs)
@@ -907,7 +920,7 @@ class TimeSeriesBaseline(msrest.serialization.Model):
         self.dimensions = dimensions
         self.timestamps = timestamps
         self.data = data
-        self.metadata = metadata
+        self.metadata_values = metadata_values
 
 
 class VoiceReceiver(msrest.serialization.Model):
@@ -960,14 +973,13 @@ class WebhookReceiver(msrest.serialization.Model):
     :type name: str
     :param service_uri: Required. The URI where webhooks should be sent.
     :type service_uri: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
+    :param use_common_alert_schema: Indicates whether to use common alert schema.
     :type use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'service_uri': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -981,7 +993,7 @@ class WebhookReceiver(msrest.serialization.Model):
         *,
         name: str,
         service_uri: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
         super(WebhookReceiver, self).__init__(**kwargs)

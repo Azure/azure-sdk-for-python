@@ -15,11 +15,12 @@ import time
 import pytest
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpTransport, HttpRequest
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from tracing_common import FakeSpan
+from utils import HTTP_REQUESTS
 
 
 @pytest.fixture(scope="module")
@@ -29,9 +30,9 @@ def fake_span():
 
 class MockClient:
     @distributed_trace
-    def __init__(self, policies=None, assert_current_span=False):
+    def __init__(self, http_request, policies=None, assert_current_span=False):
         time.sleep(0.001)
-        self.request = HttpRequest("GET", "https://bing.com")
+        self.request = http_request("GET", "http://localhost")
         if policies is None:
             policies = []
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))
@@ -88,9 +89,10 @@ class MockClient:
 class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
-    async def test_decorator_tracing_attr(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_decorator_tracing_attr(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             await client.tracing_attr()
 
         assert len(parent.children) == 2
@@ -100,9 +102,10 @@ class TestAsyncDecorator(object):
 
 
     @pytest.mark.asyncio
-    async def test_decorator_has_different_name(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_decorator_has_different_name(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             await client.check_name_is_different()
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
@@ -110,9 +113,10 @@ class TestAsyncDecorator(object):
 
 
     @pytest.mark.asyncio
-    async def test_used(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_used(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(policies=[])
+            client = MockClient(http_request, policies=[])
             await client.get_foo(parent_span=parent)
             await client.get_foo()
 
@@ -126,9 +130,10 @@ class TestAsyncDecorator(object):
 
 
     @pytest.mark.asyncio
-    async def test_span_merge_span(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_span_merge_span(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             await client.merge_span_method()
             await client.no_merge_span_method()
 
@@ -142,9 +147,10 @@ class TestAsyncDecorator(object):
 
 
     @pytest.mark.asyncio
-    async def test_span_complicated(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_span_complicated(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             await client.make_request(2)
             with parent.span("child") as child:
                 time.sleep(0.001)
@@ -163,11 +169,12 @@ class TestAsyncDecorator(object):
         assert not parent.children[3].children
 
     @pytest.mark.asyncio
-    async def test_span_with_exception(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_span_with_exception(self, http_request):
         """Assert that if an exception is raised, the next sibling method is actually a sibling span.
         """
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             try:
                 await client.raising_exception()
             except:

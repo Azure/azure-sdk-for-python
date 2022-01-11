@@ -47,7 +47,7 @@ class NotificationOperations:
         service_name: str,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NotificationCollection"]:
         """Lists a collection of properties defined within a service instance.
 
@@ -115,7 +115,7 @@ class NotificationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -131,7 +131,7 @@ class NotificationOperations:
         resource_group_name: str,
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationContract":
         """Gets the details of the Notification specified by its identifier.
 
@@ -178,7 +178,7 @@ class NotificationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotificationContract', pipeline_response)
@@ -195,7 +195,7 @@ class NotificationOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationContract":
         """Create or Update API Management publisher notification.
 
@@ -247,7 +247,7 @@ class NotificationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotificationContract', pipeline_response)

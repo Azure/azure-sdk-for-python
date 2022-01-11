@@ -19,26 +19,59 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import VideoAnalyzerConfiguration
+from .operations import EdgeModulesOperations
+from .operations import PipelineTopologiesOperations
+from .operations import LivePipelinesOperations
+from .operations import PipelineJobsOperations
+from .operations import LivePipelineOperationStatusesOperations
+from .operations import PipelineJobOperationStatusesOperations
 from .operations import Operations
 from .operations import VideoAnalyzersOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import OperationStatusesOperations
+from .operations import OperationResultsOperations
+from .operations import VideoAnalyzerOperationStatusesOperations
+from .operations import VideoAnalyzerOperationResultsOperations
 from .operations import LocationsOperations
-from .operations import EdgeModulesOperations
 from .operations import VideosOperations
 from .operations import AccessPoliciesOperations
 from . import models
 
 
 class VideoAnalyzer(object):
-    """Azure Video Analyzer ARM Client.
+    """Azure Video Analyzer provides a platform for you to build intelligent video applications that span the edge and the cloud.
 
+    :ivar edge_modules: EdgeModulesOperations operations
+    :vartype edge_modules: video_analyzer.operations.EdgeModulesOperations
+    :ivar pipeline_topologies: PipelineTopologiesOperations operations
+    :vartype pipeline_topologies: video_analyzer.operations.PipelineTopologiesOperations
+    :ivar live_pipelines: LivePipelinesOperations operations
+    :vartype live_pipelines: video_analyzer.operations.LivePipelinesOperations
+    :ivar pipeline_jobs: PipelineJobsOperations operations
+    :vartype pipeline_jobs: video_analyzer.operations.PipelineJobsOperations
+    :ivar live_pipeline_operation_statuses: LivePipelineOperationStatusesOperations operations
+    :vartype live_pipeline_operation_statuses: video_analyzer.operations.LivePipelineOperationStatusesOperations
+    :ivar pipeline_job_operation_statuses: PipelineJobOperationStatusesOperations operations
+    :vartype pipeline_job_operation_statuses: video_analyzer.operations.PipelineJobOperationStatusesOperations
     :ivar operations: Operations operations
     :vartype operations: video_analyzer.operations.Operations
     :ivar video_analyzers: VideoAnalyzersOperations operations
     :vartype video_analyzers: video_analyzer.operations.VideoAnalyzersOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: video_analyzer.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: video_analyzer.operations.PrivateEndpointConnectionsOperations
+    :ivar operation_statuses: OperationStatusesOperations operations
+    :vartype operation_statuses: video_analyzer.operations.OperationStatusesOperations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results: video_analyzer.operations.OperationResultsOperations
+    :ivar video_analyzer_operation_statuses: VideoAnalyzerOperationStatusesOperations operations
+    :vartype video_analyzer_operation_statuses: video_analyzer.operations.VideoAnalyzerOperationStatusesOperations
+    :ivar video_analyzer_operation_results: VideoAnalyzerOperationResultsOperations operations
+    :vartype video_analyzer_operation_results: video_analyzer.operations.VideoAnalyzerOperationResultsOperations
     :ivar locations: LocationsOperations operations
     :vartype locations: video_analyzer.operations.LocationsOperations
-    :ivar edge_modules: EdgeModulesOperations operations
-    :vartype edge_modules: video_analyzer.operations.EdgeModulesOperations
     :ivar videos: VideosOperations operations
     :vartype videos: video_analyzer.operations.VideosOperations
     :ivar access_policies: AccessPoliciesOperations operations
@@ -48,6 +81,7 @@ class VideoAnalyzer(object):
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -68,13 +102,35 @@ class VideoAnalyzer(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.edge_modules = EdgeModulesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline_topologies = PipelineTopologiesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.live_pipelines = LivePipelinesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline_jobs = PipelineJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.live_pipeline_operation_statuses = LivePipelineOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline_job_operation_statuses = PipelineJobOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.video_analyzers = VideoAnalyzersOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.edge_modules = EdgeModulesOperations(
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operation_statuses = OperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.video_analyzer_operation_statuses = VideoAnalyzerOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.video_analyzer_operation_results = VideoAnalyzerOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.videos = VideosOperations(
             self._client, self._config, self._serialize, self._deserialize)

@@ -46,7 +46,7 @@ class QueryTextsOperations:
         resource_group_name: str,
         server_name: str,
         query_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QueryText":
         """Retrieve the Query-Store query texts for the queryId.
 
@@ -73,7 +73,7 @@ class QueryTextsOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'queryId': self._serialize.url("query_id", query_id, 'str'),
         }
@@ -108,7 +108,7 @@ class QueryTextsOperations:
         resource_group_name: str,
         server_name: str,
         query_ids: List[str],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.QueryTextsResultList"]:
         """Retrieve the Query-Store query texts for specified queryIds.
 
@@ -141,7 +141,7 @@ class QueryTextsOperations:
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)

@@ -1,2 +1,3 @@
 azure-identity
 python-dotenv==0.15.0
+ghapi

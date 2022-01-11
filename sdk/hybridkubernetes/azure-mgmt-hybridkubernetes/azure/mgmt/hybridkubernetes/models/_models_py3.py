@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -302,24 +302,85 @@ class ConnectedClusterPatch(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param properties: Describes the connected cluster resource properties that can be updated
      during PATCH operation.
-    :type properties: str
+    :type properties: any
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional[str] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(ConnectedClusterPatch, self).__init__(**kwargs)
         self.tags = tags
         self.properties = properties
+
+
+class CredentialResult(msrest.serialization.Model):
+    """The credential result response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the credential.
+    :vartype name: str
+    :ivar value: Base64-encoded Kubernetes configuration file.
+    :vartype value: bytearray
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'bytearray'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CredentialResult, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
+
+
+class CredentialResults(msrest.serialization.Model):
+    """The list of credential result response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar hybrid_connection_config: Contains the REP (rendezvous endpoint) and “Sender” access
+     token.
+    :vartype hybrid_connection_config: ~connected_kubernetes_client.models.HybridConnectionConfig
+    :ivar kubeconfigs: Base64-encoded Kubernetes configuration file.
+    :vartype kubeconfigs: list[~connected_kubernetes_client.models.CredentialResult]
+    """
+
+    _validation = {
+        'hybrid_connection_config': {'readonly': True},
+        'kubeconfigs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'hybrid_connection_config': {'key': 'hybridConnectionConfig', 'type': 'HybridConnectionConfig'},
+        'kubeconfigs': {'key': 'kubeconfigs', 'type': '[CredentialResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CredentialResults, self).__init__(**kwargs)
+        self.hybrid_connection_config = None
+        self.kubeconfigs = None
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -330,7 +391,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -340,7 +401,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -416,6 +477,81 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
+
+
+class HybridConnectionConfig(msrest.serialization.Model):
+    """Contains the REP (rendezvous endpoint) and “Sender” access token.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar expiration_time: Timestamp when this token will be expired.
+    :vartype expiration_time: long
+    :ivar hybrid_connection_name: Name of the connection.
+    :vartype hybrid_connection_name: str
+    :ivar relay: Name of the relay.
+    :vartype relay: str
+    :ivar token: Sender access token.
+    :vartype token: str
+    """
+
+    _validation = {
+        'expiration_time': {'readonly': True},
+        'hybrid_connection_name': {'readonly': True},
+        'relay': {'readonly': True},
+        'token': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'expiration_time': {'key': 'expirationTime', 'type': 'long'},
+        'hybrid_connection_name': {'key': 'hybridConnectionName', 'type': 'str'},
+        'relay': {'key': 'relay', 'type': 'str'},
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HybridConnectionConfig, self).__init__(**kwargs)
+        self.expiration_time = None
+        self.hybrid_connection_name = None
+        self.relay = None
+        self.token = None
+
+
+class ListClusterUserCredentialProperties(msrest.serialization.Model):
+    """ListClusterUserCredentialProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authentication_method: Required. The mode of client authentication. Possible values
+     include: "Token", "AAD".
+    :type authentication_method: str or ~connected_kubernetes_client.models.AuthenticationMethod
+    :param client_proxy: Required. Boolean value to indicate whether the request is for client side
+     proxy or not.
+    :type client_proxy: bool
+    """
+
+    _validation = {
+        'authentication_method': {'required': True},
+        'client_proxy': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'client_proxy': {'key': 'clientProxy', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        authentication_method: Union[str, "AuthenticationMethod"],
+        client_proxy: bool,
+        **kwargs
+    ):
+        super(ListClusterUserCredentialProperties, self).__init__(**kwargs)
+        self.authentication_method = authentication_method
+        self.client_proxy = client_proxy
 
 
 class Operation(msrest.serialization.Model):

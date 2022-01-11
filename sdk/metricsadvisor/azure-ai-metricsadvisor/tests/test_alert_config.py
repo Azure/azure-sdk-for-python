@@ -6,8 +6,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import uuid
+import functools
 from azure.core.exceptions import ResourceNotFoundError
-
+from devtools_testutils import recorded_by_proxy
+from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
@@ -17,21 +20,26 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase import TestMetricsAdvisorAdministrationClientBase
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    def test_create_alert_config_top_n_alert_direction_both(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_top_n_alert_direction_both(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -43,7 +51,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -52,47 +60,48 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period, 10)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top, 5)
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
+            if self.is_live:
+                variables["alert_config_id"] = alert_config.id
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
-            self.admin_client.delete_alert_configuration(alert_config.id)
+            self.clean_up(client.delete_alert_configuration, variables, key="alert_config_id")
 
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            with pytest.raises(ResourceNotFoundError):
+                client.get_alert_configuration(variables["alert_config_id"])
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_detection_configuration, variables, key="detection_config_id")
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_top_n_alert_direction_down(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_top_n_alert_direction_down(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -104,7 +113,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Down",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                             )
                         )
@@ -112,47 +121,40 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period, 10)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top, 5)
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Down")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertIsNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper)
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Down"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_top_n_alert_direction_up(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_top_n_alert_direction_up(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -164,7 +166,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Up",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 upper=5.0,
                             )
                         )
@@ -172,47 +174,40 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period, 10)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top, 5)
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Up")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertIsNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower)
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Up"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_top_n_severity_condition(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_top_n_severity_condition(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -231,41 +226,37 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period, 10)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top, 5)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_snooze_condition(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_snooze_condition(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -283,49 +274,45 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period, 10)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top, 5)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_snooze_condition.auto_snooze, 5)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope, "Metric")
-            self.assertTrue(
-                alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive)
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.auto_snooze == 5
+            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.snooze_scope == "Metric"
+            assert alert_config.metric_alert_configurations[0].alert_snooze_condition.only_for_successive
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_whole_series_alert_direction_both(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_conf_whole_series_dir_both(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries",
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -334,50 +321,44 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_whole_series_alert_direction_down(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_conf_whole_series_dir_down(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries"
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Down",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                             )
                         )
@@ -385,50 +366,44 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Down")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertIsNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper)
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Down"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_whole_series_alert_direction_up(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_whole_series_alert_direction_up(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries"
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Up",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 upper=5.0,
                             )
                         )
@@ -436,43 +411,37 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Up")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertIsNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower)
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Up"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_whole_series_severity_condition(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_whole_series_sev_cond(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries"
                         ),
@@ -486,45 +455,42 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_series_group_alert_direction_both(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_conf_series_group_dir_both(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -533,52 +499,46 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_series_group_alert_direction_down(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_conf_series_group_dir_down(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Down",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                             )
                         )
@@ -586,52 +546,46 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Down")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertIsNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper)
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Down"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper is None
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_series_group_alert_direction_up(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_series_group_alert_direction_up(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Up",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 upper=5.0,
                             )
                         )
@@ -639,47 +593,41 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Up")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertIsNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower)
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Up"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower is None
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_series_group_severity_condition(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_conf_series_group_sev_cond(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("seriesgroupsev")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -691,39 +639,36 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertIsNone(alert_config.cross_metrics_operator)
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 1)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator is None
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 1
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope == {'region': 'Shenzhen'}
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_create_alert_config_multiple_configurations(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True)
+    @recorded_by_proxy
+    def test_create_alert_config_multiple_configurations(self, client, variables):
+        alert_config_name = self.create_random_name("alertconfig")
+        if self.is_live:
+            variables["alert_config_name"] = alert_config_name
 
-        detection_config, data_feed = self._create_data_feed_and_detection_config("multiple")
-        alert_config_name = self.create_random_name("testalert")
         try:
-            alert_config = self.admin_client.create_alert_configuration(
-                name=alert_config_name,
+            alert_config = client.create_alert_configuration(
+                name=variables["alert_config_name"],
                 cross_metrics_operator="AND",
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -735,17 +680,17 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                                 upper=5.0
                             )
                         )
                     ),
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -755,7 +700,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         )
                     ),
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries"
                         ),
@@ -769,59 +714,53 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ],
                 hook_ids=[]
             )
-            self.assertEqual(alert_config.cross_metrics_operator, "AND")
-            self.assertIsNotNone(alert_config.id)
-            self.assertIsNotNone(alert_config.name)
-            self.assertEqual(len(alert_config.metric_alert_configurations), 3)
-            self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period, 10)
-            self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top, 5)
-            self.assertIsNotNone(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper, 5.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower, 1.0)
-            self.assertEqual(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertFalse(
-                alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing)
-            self.assertEqual(alert_config.metric_alert_configurations[1].alert_scope.scope_type, "SeriesGroup")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.max_alert_severity, "High")
-            self.assertEqual(alert_config.metric_alert_configurations[2].alert_scope.scope_type, "WholeSeries")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(
-                alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity, "High")
-
-            self.admin_client.delete_alert_configuration(alert_config.id)
-
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_alert_configuration(alert_config.id)
+            assert alert_config.cross_metrics_operator == "AND"
+            assert alert_config.id is not None
+            assert alert_config.name is not None
+            assert len(alert_config.metric_alert_configurations) == 3
+            assert alert_config.metric_alert_configurations[0].detection_configuration_id is not None
+            assert not alert_config.metric_alert_configurations[0].negation_operation
+            assert alert_config.metric_alert_configurations[0].alert_scope.scope_type == "TopN"
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count == 9
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.period == 10
+            assert alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.top == 5
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id is not None
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.upper == 5.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.lower == 1.0
+            assert alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert not alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.trigger_for_missing
+            assert alert_config.metric_alert_configurations[1].alert_scope.scope_type == "SeriesGroup"
+            assert alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[1].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert alert_config.metric_alert_configurations[2].alert_scope.scope_type == "WholeSeries"
+            assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert alert_config.metric_alert_configurations[2].alert_conditions.severity_condition.max_alert_severity == "High"
 
         finally:
-            self.admin_client.delete_detection_configuration(detection_config.id)
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_list_alert_configs(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_alert_configs(self, client):
 
-        configs = self.admin_client.list_alert_configurations(
+        configs = client.list_alert_configurations(
             detection_configuration_id=self.anomaly_detection_configuration_id
         )
         assert len(list(configs)) > 0
 
-    def test_update_alert_config_with_model(self):
-        try:
-            alert_config, data_feed, _ = self._create_alert_config_for_update("alertupdate")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy
+    def test_update_alert_config_with_model(self, client, variables):
 
-            alert_config.name = "update"
+        alert_config = client.get_alert_configuration(variables["alert_config_id"])
+        try:
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
+            alert_config.name = variables["alert_config_updated_name"]
             alert_config.description = "update description"
             alert_config.cross_metrics_operator = "OR"
             alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = \
@@ -839,35 +778,42 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     lower=1
                 )
 
-            self.admin_client.update_alert_configuration(alert_config)
-            updated = self.admin_client.get_alert_configuration(alert_config.id)
+            client.update_alert_configuration(alert_config)
+            updated = client.get_alert_configuration(variables["alert_config_id"])
 
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update description")
-            self.assertEqual(updated.cross_metrics_operator, "OR")
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper, 5)
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower, 1)
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper, 5)
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower, 1)
+            assert updated.name == variables["alert_config_updated_name"]
+            assert updated.description == "update description"
+            assert updated.cross_metrics_operator == "OR"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower == 1
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_update_alert_config_with_kwargs(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy
+    def test_update_alert_config_with_kwargs(self, client, variables):
+
         try:
-            alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-            self.admin_client.update_alert_configuration(
-                alert_config.id,
-                name="update",
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
+            client.update_alert_configuration(
+                variables["alert_config_id"],
+                name=variables["alert_config_updated_name"],
                 description="update description",
                 cross_metrics_operator="OR",
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -879,7 +825,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                                 upper=5.0
                             ),
@@ -887,10 +833,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         )
                     ),
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -905,7 +851,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         )
                     ),
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries"
                         ),
@@ -923,39 +869,46 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-            updated = self.admin_client.get_alert_configuration(alert_config.id)
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update description")
-            self.assertEqual(updated.cross_metrics_operator, "OR")
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper, 5)
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower, 1)
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper, 5)
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower, 1)
+            updated = client.get_alert_configuration(variables["alert_config_id"])
+            assert updated.name == variables["alert_config_updated_name"]
+            assert updated.description == "update description"
+            assert updated.cross_metrics_operator == "OR"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower == 1
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_update_alert_config_with_model_and_kwargs(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy
+    def test_update_alert_config_with_model_and_kwargs(self, client, variables):
+        alert_config = client.get_alert_configuration(variables["alert_config_id"])
+
         try:
-            alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-
-            alert_config.name = "updateMe"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
+            alert_config.name = variables["alert_config_updated_name"]
             alert_config.description = "updateMe"
             alert_config.cross_metrics_operator = "don't update me"
             alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = None
             alert_config.metric_alert_configurations[1].alert_conditions.metric_boundary_condition = None
             alert_config.metric_alert_configurations[2].alert_conditions.metric_boundary_condition = None
 
-            self.admin_client.update_alert_configuration(
+            client.update_alert_configuration(
                 alert_config,
                 cross_metrics_operator="OR",
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -967,7 +920,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids['cost'],
+                                companion_metric_id=variables["data_feed_metric_id"],
                                 lower=1.0,
                                 upper=5.0
                             ),
@@ -975,10 +928,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         )
                     ),
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
+                            series_group_in_scope={'region': 'Shenzhen'}
                         ),
                         alert_conditions=MetricAnomalyAlertConditions(
                             severity_condition=SeverityCondition(
@@ -993,7 +946,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         )
                     ),
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="WholeSeries"
                         ),
@@ -1011,32 +964,39 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-            updated = self.admin_client.get_alert_configuration(alert_config.id)
-            self.assertEqual(updated.name, "updateMe")
-            self.assertEqual(updated.description, "updateMe")
-            self.assertEqual(updated.cross_metrics_operator, "OR")
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper, 5)
-            self.assertEqual(updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower, 1)
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction, "Both")
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper, 5)
-            self.assertEqual(updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower, 1)
+            updated = client.get_alert_configuration(variables["alert_config_id"])
+            assert updated.name == variables["alert_config_updated_name"]
+            assert updated.description == "updateMe"
+            assert updated.cross_metrics_operator == "OR"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity == "High"
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity == "Low"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[1].alert_conditions.metric_boundary_condition.lower == 1
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.direction == "Both"
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.upper == 5
+            assert updated.metric_alert_configurations[2].alert_conditions.metric_boundary_condition.lower == 1
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables
 
-    def test_update_anomaly_alert_by_resetting_properties(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True, detection_config=True, alert_config=True)
+    @recorded_by_proxy
+    def test_update_anomaly_alert_by_resetting_properties(self, client, variables):
+
         try:
-            alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-            self.admin_client.update_alert_configuration(
-                alert_config.id,
-                name="reset",
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["alert_config_updated_name"] = update_name
+            client.update_alert_configuration(
+                variables["alert_config_id"],
+                name=variables["alert_config_updated_name"],
                 description="",  # can't pass None currently, bug says description is required
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
+                        detection_configuration_id=variables["detection_config_id"],
                         alert_scope=MetricAnomalyAlertScope(
                             scope_type="TopN",
                             top_n_group_in_scope=TopNGroupScope(
@@ -1049,13 +1009,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-            updated = self.admin_client.get_alert_configuration(alert_config.id)
-            self.assertEqual(updated.name, "reset")
-            self.assertEqual(updated.description, "")
-            self.assertEqual(updated.cross_metrics_operator, None)
-            self.assertEqual(len(updated.metric_alert_configurations), 1)
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition, None)
-            self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition, None)
+            updated = client.get_alert_configuration(variables["alert_config_id"])
+            assert updated.name == variables["alert_config_updated_name"]
+            assert updated.description == ""
+            assert updated.cross_metrics_operator is None
+            assert len(updated.metric_alert_configurations) == 1
+            assert updated.metric_alert_configurations[0].alert_conditions.severity_condition is None
+            assert updated.metric_alert_configurations[0].alert_conditions.metric_boundary_condition is None
 
         finally:
-            self.admin_client.delete_data_feed(data_feed.id)
+            self.clean_up(client.delete_data_feed, variables)
+        return variables

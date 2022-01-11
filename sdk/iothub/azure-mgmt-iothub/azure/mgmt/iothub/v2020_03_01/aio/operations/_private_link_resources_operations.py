@@ -44,7 +44,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResources":
         """List private link resources.
 
@@ -106,7 +106,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GroupIdInformation":
         """Get the specified private link resource.
 

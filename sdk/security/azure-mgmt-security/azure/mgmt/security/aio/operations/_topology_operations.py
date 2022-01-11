@@ -43,7 +43,7 @@ class TopologyOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TopologyList"]:
         """Gets a list that allows to build a topology view of a subscription.
 
@@ -109,7 +109,7 @@ class TopologyOperations:
 
     def list_by_home_region(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TopologyList"]:
         """Gets a list that allows to build a topology view of a subscription and location.
 
@@ -178,7 +178,7 @@ class TopologyOperations:
         self,
         resource_group_name: str,
         topology_resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TopologyResource":
         """Gets a specific topology component.
 

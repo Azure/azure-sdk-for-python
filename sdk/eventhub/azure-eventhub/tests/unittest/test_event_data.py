@@ -2,6 +2,7 @@ import platform
 import pytest
 import uamqp
 from packaging import version
+from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 
 pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
@@ -105,3 +106,23 @@ def test_event_data_batch():
         assert batch.size_in_bytes == 93 and len(batch) == 1
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
+
+def test_event_data_from_message():
+    message = uamqp.Message('A')
+    event = EventData._from_message(message)
+    assert event.content_type is None
+    assert event.correlation_id is None
+    assert event.message_id is None
+
+    event.content_type = 'content_type'
+    event.correlation_id =  'correlation_id'
+    event.message_id = 'message_id'
+    assert event.content_type == 'content_type'
+    assert event.correlation_id ==  'correlation_id'
+    assert event.message_id == 'message_id'
+
+def test_amqp_message_str_repr():
+    data_body = b'A'
+    message = AmqpAnnotatedMessage(data_body=data_body)
+    assert str(message) == 'A'
+    assert 'AmqpAnnotatedMessage(body=A, body_type=data' in repr(message)

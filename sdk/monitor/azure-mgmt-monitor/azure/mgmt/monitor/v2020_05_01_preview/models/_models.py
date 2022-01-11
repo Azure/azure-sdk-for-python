@@ -42,8 +42,8 @@ class Condition(msrest.serialization.Model):
     :type query: str
     :param time_aggregation: Required. Aggregation type. Possible values include: "Count",
      "Average", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-
-     namespace).v2020_05_01_preview.models.TimeAggregation
+    :type time_aggregation: str or
+     ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
     :param metric_measure_column: The column containing the metric measure number.
     :type metric_measure_column: str
     :param resource_id_column: The column containing the resource id. The content of the column
@@ -58,8 +58,8 @@ class Condition(msrest.serialization.Model):
     :type threshold: float
     :param failing_periods: The minimum number of violations required within the selected lookback
      time window required to raise an alert.
-    :type failing_periods: ~$(python-base-
-     namespace).v2020_05_01_preview.models.ConditionFailingPeriods
+    :type failing_periods:
+     ~$(python-base-namespace).v2020_05_01_preview.models.ConditionFailingPeriods
     """
 
     _validation = {
@@ -164,7 +164,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -219,8 +219,8 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar details: The error details.
     :vartype details: list[~$(python-base-namespace).v2020_05_01_preview.models.ErrorResponse]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~$(python-base-
-     namespace).v2020_05_01_preview.models.ErrorAdditionalInfo]
+    :vartype additional_info:
+     list[~$(python-base-namespace).v2020_05_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -371,8 +371,24 @@ class ScheduledQueryRuleResource(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
+     resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+     the resource provider must validate and persist this value.
+    :vartype kind: str
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
+    :ivar created_with_api_version: The api-version used when creating this alert rule.
+    :vartype created_with_api_version: str
+    :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
+    :vartype is_legacy_log_analytics_rule: bool
     :param description: The description of the scheduled query rule.
     :type description: str
+    :param display_name: The display name of the alert rule.
+    :type display_name: str
     :param severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Possible values include: 0, 1, 2, 3, 4.
     :type severity: str or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
@@ -387,6 +403,9 @@ class ScheduledQueryRuleResource(TrackedResource):
     :param window_size: The period of time (in ISO 8601 duration format) on which the Alert query
      will be executed (bin size).
     :type window_size: ~datetime.timedelta
+    :param override_query_time_range: If specified then overrides the query time range (default is
+     WindowSize*NumberOfEvaluationPeriods).
+    :type override_query_time_range: ~datetime.timedelta
     :param target_resource_types: List of resource type of the target resource(s) on which the
      alert is created/updated. For example if the scope is a resource group and targetResourceTypes
      is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
@@ -406,6 +425,10 @@ class ScheduledQueryRuleResource(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
+        'etag': {'readonly': True},
+        'created_with_api_version': {'readonly': True},
+        'is_legacy_log_analytics_rule': {'readonly': True},
     }
 
     _attribute_map = {
@@ -414,12 +437,18 @@ class ScheduledQueryRuleResource(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'created_with_api_version': {'key': 'properties.createdWithApiVersion', 'type': 'str'},
+        'is_legacy_log_analytics_rule': {'key': 'properties.isLegacyLogAnalyticsRule', 'type': 'bool'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'float'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
+        'override_query_time_range': {'key': 'properties.overrideQueryTimeRange', 'type': 'duration'},
         'target_resource_types': {'key': 'properties.targetResourceTypes', 'type': '[str]'},
         'criteria': {'key': 'properties.criteria', 'type': 'ScheduledQueryRuleCriteria'},
         'mute_actions_duration': {'key': 'properties.muteActionsDuration', 'type': 'duration'},
@@ -431,12 +460,18 @@ class ScheduledQueryRuleResource(TrackedResource):
         **kwargs
     ):
         super(ScheduledQueryRuleResource, self).__init__(**kwargs)
+        self.kind = None
+        self.etag = None
+        self.created_with_api_version = None
+        self.is_legacy_log_analytics_rule = None
         self.description = kwargs.get('description', None)
+        self.display_name = kwargs.get('display_name', None)
         self.severity = kwargs.get('severity', None)
         self.enabled = kwargs.get('enabled', None)
         self.scopes = kwargs.get('scopes', None)
         self.evaluation_frequency = kwargs.get('evaluation_frequency', None)
         self.window_size = kwargs.get('window_size', None)
+        self.override_query_time_range = kwargs.get('override_query_time_range', None)
         self.target_resource_types = kwargs.get('target_resource_types', None)
         self.criteria = kwargs.get('criteria', None)
         self.mute_actions_duration = kwargs.get('mute_actions_duration', None)
@@ -447,8 +482,8 @@ class ScheduledQueryRuleResourceCollection(msrest.serialization.Model):
     """Represents a collection of scheduled query rule resources.
 
     :param value: The values for the scheduled query rule resources.
-    :type value: list[~$(python-base-
-     namespace).v2020_05_01_preview.models.ScheduledQueryRuleResource]
+    :type value:
+     list[~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleResource]
     """
 
     _attribute_map = {
@@ -466,10 +501,18 @@ class ScheduledQueryRuleResourceCollection(msrest.serialization.Model):
 class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     """The scheduled query rule resource for patch operations.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :ivar created_with_api_version: The api-version used when creating this alert rule.
+    :vartype created_with_api_version: str
+    :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
+    :vartype is_legacy_log_analytics_rule: bool
     :param description: The description of the scheduled query rule.
     :type description: str
+    :param display_name: The display name of the alert rule.
+    :type display_name: str
     :param severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Possible values include: 0, 1, 2, 3, 4.
     :type severity: str or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
@@ -484,6 +527,9 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     :param window_size: The period of time (in ISO 8601 duration format) on which the Alert query
      will be executed (bin size).
     :type window_size: ~datetime.timedelta
+    :param override_query_time_range: If specified then overrides the query time range (default is
+     WindowSize*NumberOfEvaluationPeriods).
+    :type override_query_time_range: ~datetime.timedelta
     :param target_resource_types: List of resource type of the target resource(s) on which the
      alert is created/updated. For example if the scope is a resource group and targetResourceTypes
      is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
@@ -498,14 +544,23 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     :type actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
     """
 
+    _validation = {
+        'created_with_api_version': {'readonly': True},
+        'is_legacy_log_analytics_rule': {'readonly': True},
+    }
+
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'created_with_api_version': {'key': 'properties.createdWithApiVersion', 'type': 'str'},
+        'is_legacy_log_analytics_rule': {'key': 'properties.isLegacyLogAnalyticsRule', 'type': 'bool'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'float'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
+        'override_query_time_range': {'key': 'properties.overrideQueryTimeRange', 'type': 'duration'},
         'target_resource_types': {'key': 'properties.targetResourceTypes', 'type': '[str]'},
         'criteria': {'key': 'properties.criteria', 'type': 'ScheduledQueryRuleCriteria'},
         'mute_actions_duration': {'key': 'properties.muteActionsDuration', 'type': 'duration'},
@@ -518,12 +573,16 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     ):
         super(ScheduledQueryRuleResourcePatch, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.created_with_api_version = None
+        self.is_legacy_log_analytics_rule = None
         self.description = kwargs.get('description', None)
+        self.display_name = kwargs.get('display_name', None)
         self.severity = kwargs.get('severity', None)
         self.enabled = kwargs.get('enabled', None)
         self.scopes = kwargs.get('scopes', None)
         self.evaluation_frequency = kwargs.get('evaluation_frequency', None)
         self.window_size = kwargs.get('window_size', None)
+        self.override_query_time_range = kwargs.get('override_query_time_range', None)
         self.target_resource_types = kwargs.get('target_resource_types', None)
         self.criteria = kwargs.get('criteria', None)
         self.mute_actions_duration = kwargs.get('mute_actions_duration', None)

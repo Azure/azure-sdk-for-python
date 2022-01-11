@@ -58,7 +58,7 @@ class PageBlobOperations:
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Create operation creates a new page blob.
 
@@ -68,8 +68,9 @@ class PageBlobOperations:
          TB. The page blob size must be aligned to a 512-byte boundary.
         :type blob_content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param tier: Optional. Indicates the tier to be set on the page blob.
         :type tier: str or ~azure.storage.blob.models.PremiumPageBlobAccessTier
@@ -267,7 +268,7 @@ class PageBlobOperations:
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob.
 
@@ -282,8 +283,9 @@ class PageBlobOperations:
          validated by the service.
         :type transactional_content_crc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
@@ -443,15 +445,16 @@ class PageBlobOperations:
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request.
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
@@ -599,13 +602,14 @@ class PageBlobOperations:
         source_contentcrc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        copy_source_authorization: Optional[str] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
@@ -627,12 +631,16 @@ class PageBlobOperations:
          read from the copy source.
         :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param cpk_info: Parameter group.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group.
@@ -761,6 +769,8 @@ class PageBlobOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -798,20 +808,21 @@ class PageBlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PageList":
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param range: Return only the bytes of the blob in the specified range.
         :type range: str
@@ -921,20 +932,21 @@ class PageBlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PageList":
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param prevsnapshot: Optional in version 2015-07-08 and newer. The prevsnapshot parameter is a
          DateTime value that specifies that the response will contain only pages that were changed
@@ -1059,7 +1071,7 @@ class PageBlobOperations:
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resize the Blob.
 
@@ -1067,8 +1079,9 @@ class PageBlobOperations:
          TB. The page blob size must be aligned to a 512-byte boundary.
         :type blob_content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1191,7 +1204,7 @@ class PageBlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update the sequence number of the blob.
 
@@ -1200,8 +1213,9 @@ class PageBlobOperations:
          should modify the blob's sequence number.
         :type sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
@@ -1306,7 +1320,7 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
         blob. The snapshot is copied such that only the differential changes between the previously
@@ -1320,8 +1334,9 @@ class PageBlobOperations:
          via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.

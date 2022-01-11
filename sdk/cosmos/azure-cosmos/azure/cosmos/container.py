@@ -160,7 +160,7 @@ class ContainerProxy(object):
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, str]
+        # type: (...) -> Dict[str, Any]
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
@@ -376,7 +376,7 @@ class ContainerProxy(object):
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, str]
+        # type: (...) -> Dict[str, Any]
         """Replaces the specified item if it exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -424,7 +424,7 @@ class ContainerProxy(object):
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, str]
+        # type: (...) -> Dict[str, Any]
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If the item
@@ -474,7 +474,7 @@ class ContainerProxy(object):
         indexing_directive=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, str]
+        # type: (...) -> Dict[str, Any]
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -695,7 +695,7 @@ class ContainerProxy(object):
 
     @distributed_trace
     def get_conflict(self, conflict, partition_key, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, Any]
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.

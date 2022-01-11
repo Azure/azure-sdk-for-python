@@ -8,6 +8,10 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 
 [Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs] | [Samples][samples_readme]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Install the package
@@ -15,12 +19,12 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 Install the Azure Metrics Advisor client library for Python with pip:
 
 ```commandline
-pip install azure-ai-metricsadvisor --pre
+pip install azure-ai-metricsadvisor
 ```
 
 ### Prerequisites
 
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Metrics Advisor serivce][ma_service] to use this package.
 
 ### Authenticate the client
@@ -153,7 +157,7 @@ data_feed = client.create_data_feed(
         ],
         dimensions=[
             DataFeedDimension(name="category", display_name="Category"),
-            DataFeedDimension(name="city", display_name="City")
+            DataFeedDimension(name="region", display_name="region")
         ],
         timestamp_column="Timestamp"
     ),
@@ -460,7 +464,7 @@ hook = client.create_hook(
 
 ### Async APIs
 
-This library includes a complete async API supported on Python 3.6+. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation][azure_core_docs]

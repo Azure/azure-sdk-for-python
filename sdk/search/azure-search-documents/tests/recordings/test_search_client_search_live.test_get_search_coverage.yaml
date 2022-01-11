@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search75b81665.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://search75b81665.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"value":[{"@search.score":1.8955941,"hotelId":"10","hotelName":"Countryside
@@ -74,9 +74,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Sat, 08 May 2021 06:02:53 GMT
+      - Tue, 31 Aug 2021 17:11:03 GMT
       elapsed-time:
-      - '177'
+      - '298'
       expires:
       - '-1'
       odata-version:
@@ -86,7 +86,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 05f87449-afc3-11eb-b405-a0481ca055a9
+      - 6d1a5ac5-0a7e-11ec-a45c-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -108,9 +108,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search75b81665.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://search75b81665.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"@search.coverage":100.0,"value":[{"@search.score":1.8955941,"hotelId":"10","hotelName":"Countryside
@@ -169,9 +169,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Sat, 08 May 2021 06:02:53 GMT
+      - Tue, 31 Aug 2021 17:11:03 GMT
       elapsed-time:
-      - '7'
+      - '9'
       expires:
       - '-1'
       odata-version:
@@ -181,7 +181,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 065f0b33-afc3-11eb-b92a-a0481ca055a9
+      - 6d6eb962-0a7e-11ec-97c9-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link
+from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -26,15 +26,18 @@ if TYPE_CHECKING:
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, *, audience, **kwargs: Any) -> None:
         """Create a ContainerRegistryClient from an endpoint and a credential
 
         :param endpoint: An ACR endpoint
         :type endpoint: str
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
-        :keyword authentication_scope: URL for credential authentication if different from the default
-        :paramtype authentication_scope: str
+        :keyword audience: URL to use for credential authentication with AAD. Its value could be
+        "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
+        "https://management.usgovcloudapi.net"
+        :paramtype audience: ~azure.containerregistry.ContainerRegistryAudience or str
         :returns: None
         :raises: None
 
@@ -47,11 +50,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
         """
+        api_version = kwargs.get("api_version", None)
+        if api_version and api_version not in SUPPORTED_API_VERSIONS:
+            supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
+            raise ValueError(
+                "Unsupported API version '{}'. Please select from:\n{}".format(
+                    api_version, supported_versions
+                )
+            )
+        defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super(ContainerRegistryClient, self).__init__(
+            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)
@@ -333,8 +346,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, DefaultAzureCredential())
             await client.delete_manifest("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
@@ -359,8 +372,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_tag_properties():
                 await client.delete_tag("my_repository", tag.name)
         """
@@ -383,8 +396,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_manifest_properties():
                 properties = await client.get_manifest_properties("my_repository", artifact.digest)
         """
@@ -413,8 +426,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tag_properties():
                 tag_properties = await client.get_tag_properties("my_repository", tag.name)
         """
@@ -442,8 +455,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             async for tag in client.list_tag_properties():
                 tag_properties = await client.get_tag_properties(tag.name)
         """
@@ -589,11 +602,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_list = kwargs.pop("can_list", properties.can_list)
         properties.can_read = kwargs.pop("can_read", properties.can_read)
         properties.can_write = kwargs.pop("can_write", properties.can_write)
-        properties.teleport_enabled = kwargs.pop("teleport_enabled", None)
 
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.set_properties(
-                repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+            await self._client.container_registry.update_properties(
+                repository, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 
@@ -630,8 +642,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_manifest_properties():
                 received_properties = await client.update_manifest_properties(
                     "my_repository",
@@ -700,8 +712,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = await client.update_tag_properties(
                 "my_repository",

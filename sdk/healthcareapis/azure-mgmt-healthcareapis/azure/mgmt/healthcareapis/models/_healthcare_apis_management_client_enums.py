@@ -26,6 +26,12 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
+    """
+
+    INTERNAL = "Internal"
+
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
@@ -34,6 +40,20 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+class FhirServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of the service.
+    """
+
+    FHIR_STU3 = "fhir-Stu3"
+    FHIR_R4 = "fhir-R4"
+
+class IotIdentityResolutionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of IoT identity resolution to use with the destination.
+    """
+
+    CREATE = "Create"
+    LOOKUP = "Lookup"
 
 class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the service.
@@ -90,6 +110,10 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
     DEPROVISIONED = "Deprovisioned"
+    MOVING = "Moving"
+    SUSPENDED = "Suspended"
+    WARNED = "Warned"
+    SYSTEM_MAINTENANCE = "SystemMaintenance"
 
 class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Control permission for data plane traffic coming from public networks while private endpoint is

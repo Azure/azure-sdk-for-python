@@ -4,7 +4,6 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
-      DeployArmTemplate: true
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
       MatrixReplace:

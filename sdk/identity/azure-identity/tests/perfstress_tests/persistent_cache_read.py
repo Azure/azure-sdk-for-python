@@ -22,11 +22,10 @@ class PersistentCacheRead(PerfStressTest):
         client_id = self.get_from_env("AZURE_CLIENT_ID")
         tenant_id = self.get_from_env("AZURE_TENANT_ID")
         secret = self.get_from_env("AZURE_CLIENT_SECRET")
-        self.credential = ClientSecretCredential(
-            tenant_id, client_id, secret, cache_persistence_options=TokenCachePersistenceOptions()
-        )
+        cache_options = TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+        self.credential = ClientSecretCredential(tenant_id, client_id, secret, cache_persistence_options=cache_options)
         self.async_credential = AsyncClientSecretCredential(
-            tenant_id, client_id, secret, cache_persistence_options=TokenCachePersistenceOptions()
+            tenant_id, client_id, secret, cache_persistence_options=cache_options
         )
         self.scope = "https://vault.azure.net/.default"
 

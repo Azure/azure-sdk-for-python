@@ -46,7 +46,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations:
         resource_group_name: str,
         solution_name: str,
         aggregated_recommendation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecurityAggregatedRecommendation":
         """Use this method to get the aggregated security analytics recommendation of yours IoT Security
         solution. This aggregation is performed by recommendation name.
@@ -110,7 +110,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations:
         resource_group_name: str,
         solution_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IoTSecurityAggregatedRecommendationList"]:
         """Use this method to get the list of aggregated security analytics recommendations of yours IoT
         Security solution.

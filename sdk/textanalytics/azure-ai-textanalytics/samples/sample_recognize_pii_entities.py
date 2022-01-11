@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -11,7 +9,7 @@ FILE: sample_recognize_pii_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize personally identifiable information in a batch of documents.
-    The endpoint recognize_pii_entities is only available for API version v3.1-preview and up.
+    The endpoint recognize_pii_entities is only available for API version v3.1 and up.
 
     In this sample, we will be working for a company that handles loan payments. To follow privacy guidelines,
     we need to redact all of our information before we make it public.
@@ -58,8 +56,8 @@ def sample_recognize_pii_entities():
         "I also want to comb through all of the entities that got redacted"
     )
     for idx, doc in enumerate(docs):
-        print("Document text: {}".format(documents[idx]))
-        print("Redacted document text: {}".format(doc.redacted_text))
+        print(f"Document text: {documents[idx]}")
+        print(f"Redacted document text: {doc.redacted_text}")
         for entity in doc.entities:
             print("...Entity '{}' with category '{}' got redacted".format(
                 entity.text, entity.category

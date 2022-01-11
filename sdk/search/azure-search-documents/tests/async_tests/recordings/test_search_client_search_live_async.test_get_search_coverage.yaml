@@ -9,72 +9,72 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        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
+      string: '{"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
+        Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
+        location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
+        alley, fitness center and more.","descriptionFr":"\u00c9conomisez jusqu''\u00e0
+        50% sur les h\u00f4tels traditionnels.  WiFi gratuit, tr\u00e8s bien situ\u00e9
+        pr\u00e8s du centre-ville, cuisine compl\u00e8te, laveuse & s\u00e9cheuse,
+        support 24/7, bowling, centre de fitness et plus encore.","category":"Budget","tags":["24-hour
+        front desk service","coffee in lobby","restaurant"],"parkingIncluded":false,"smokingAllowed":true,"lastRenovationDate":"1999-09-06T00:00:00Z","rating":3,"location":{"type":"Point","coordinates":[-78.940483,35.90416],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":{"streetAddress":"6910
+        Fayetteville Rd","city":"Durham","stateProvince":"NC","country":"USA","postalCode":"27713"},"rooms":[{"description":"Suite,
+        1 King Bed (Amenities)","descriptionFr":"Suite, 1 tr\u00e8s grand lit (Services)","type":"Suite","baseRate":2.44,"bedOptions":"1
+        King Bed","sleepsCount":2,"smokingAllowed":true,"tags":["coffee maker"]},{"description":"Budget
+        Room, 1 Queen Bed (Amenities)","descriptionFr":"Chambre \u00c9conomique, 1
+        grand lit (Services)","type":"Budget Room","baseRate":7.69,"bedOptions":"1
+        Queen Bed","sleepsCount":2,"smokingAllowed":false,"tags":["coffee maker"]}]},{"@search.score":1.778081,"hotelId":"3","hotelName":"EconoStay","description":"Very
+        popular hotel in town","descriptionFr":"H\u00f4tel le plus populaire en ville","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,46.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.778081,"hotelId":"4","hotelName":"Express
+        Rooms","description":"Pretty good hotel","descriptionFr":"Assez bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.778081,"hotelId":"5","hotelName":"Comfy
+        Place","description":"Another good hotel","descriptionFr":"Un autre bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"2012-08-12T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.5749159,"hotelId":"2","hotelName":"Roach
+        Motel","description":"Cheapest hotel in town. Infact, a motel.","descriptionFr":"H\u00f4tel
+        le moins cher en ville. Infact, un motel.","category":"Budget","tags":["motel","budget"],"parkingIncluded":true,"smokingAllowed":true,"lastRenovationDate":"1982-04-28T00:00:00Z","rating":1,"location":{"type":"Point","coordinates":[-122.131577,49.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.4634744,"hotelId":"1","hotelName":"Fancy
+        Stay","description":"Best hotel in town if you like luxury hotels. They have
+        an amazing infinity pool, a spa, and a really helpful concierge. The location
+        is perfect -- right downtown, close to all the tourist attractions. We highly
+        recommend this hotel.","descriptionFr":"Meilleur h\u00f4tel en ville si vous
+        aimez les h\u00f4tels de luxe. Ils ont une magnifique piscine \u00e0 d\u00e9bordement,
+        un spa et un concierge tr\u00e8s utile. L''emplacement est parfait \u2013
+        en plein centre, \u00e0 proximit\u00e9 de toutes les attractions touristiques.
+        Nous recommandons fortement cet h\u00f4tel.","category":"Luxury","tags":["pool","view","wifi","concierge"],"parkingIncluded":false,"smokingAllowed":false,"lastRenovationDate":"2010-06-27T00:00:00Z","rating":5,"location":{"type":"Point","coordinates":[-122.131577,47.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":0.5496142,"hotelId":"9","hotelName":"Secret
+        Point Motel","description":"The hotel is ideally located on the main commercial
+        artery of the city in the heart of New York. A few minutes away is Time''s
+        Square and the historic centre of the city, as well as other places of interest
+        that make New York one of America''s most attractive and cosmopolitan cities.","descriptionFr":"L''h\u00f4tel
+        est id\u00e9alement situ\u00e9 sur la principale art\u00e8re commerciale de
+        la ville en plein c\u0153ur de New York. A quelques minutes se trouve la place
+        du temps et le centre historique de la ville, ainsi que d''autres lieux d''int\u00e9r\u00eat
+        qui font de New York l''une des villes les plus attractives et cosmopolites
+        de l''Am\u00e9rique.","category":"Boutique","tags":["pool","air conditioning","concierge"],"parkingIncluded":false,"smokingAllowed":true,"lastRenovationDate":"1970-01-18T05:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-73.975403,40.760586],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":{"streetAddress":"677
+        5th Ave","city":"New York","stateProvince":"NY","country":"USA","postalCode":"10022"},"rooms":[{"description":"Budget
+        Room, 1 Queen Bed (Cityside)","descriptionFr":"Chambre \u00c9conomique, 1
+        grand lit (c\u00f4t\u00e9 ville)","type":"Budget Room","baseRate":9.69,"bedOptions":"1
+        Queen Bed","sleepsCount":2,"smokingAllowed":true,"tags":["vcr/dvd"]},{"description":"Budget
+        Room, 1 King Bed (Mountain View)","descriptionFr":"Chambre \u00c9conomique,
+        1 tr\u00e8s grand lit (Mountain View)","type":"Budget Room","baseRate":8.09,"bedOptions":"1
+        King Bed","sleepsCount":2,"smokingAllowed":true,"tags":["vcr/dvd","jacuzzi
+        tub"]}]}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '2378'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:26:06 GMT
-      elapsed-time: '136'
+      date: Tue, 31 Aug 2021 17:29:25 GMT
+      elapsed-time: '24'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 44fa46e0-afc6-11eb-83b4-a0481ca055a9
+      request-id: fe0980ac-0a80-11ec-b00c-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
 - request:
     body: '{"minimumCoverage": 50.0, "search": "hotel"}'
     headers:
@@ -85,70 +85,70 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        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
+      string: '{"@search.coverage":100.0,"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
+        Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
+        location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
+        alley, fitness center and more.","descriptionFr":"\u00c9conomisez jusqu''\u00e0
+        50% sur les h\u00f4tels traditionnels.  WiFi gratuit, tr\u00e8s bien situ\u00e9
+        pr\u00e8s du centre-ville, cuisine compl\u00e8te, laveuse & s\u00e9cheuse,
+        support 24/7, bowling, centre de fitness et plus encore.","category":"Budget","tags":["24-hour
+        front desk service","coffee in lobby","restaurant"],"parkingIncluded":false,"smokingAllowed":true,"lastRenovationDate":"1999-09-06T00:00:00Z","rating":3,"location":{"type":"Point","coordinates":[-78.940483,35.90416],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":{"streetAddress":"6910
+        Fayetteville Rd","city":"Durham","stateProvince":"NC","country":"USA","postalCode":"27713"},"rooms":[{"description":"Suite,
+        1 King Bed (Amenities)","descriptionFr":"Suite, 1 tr\u00e8s grand lit (Services)","type":"Suite","baseRate":2.44,"bedOptions":"1
+        King Bed","sleepsCount":2,"smokingAllowed":true,"tags":["coffee maker"]},{"description":"Budget
+        Room, 1 Queen Bed (Amenities)","descriptionFr":"Chambre \u00c9conomique, 1
+        grand lit (Services)","type":"Budget Room","baseRate":7.69,"bedOptions":"1
+        Queen Bed","sleepsCount":2,"smokingAllowed":false,"tags":["coffee maker"]}]},{"@search.score":1.778081,"hotelId":"3","hotelName":"EconoStay","description":"Very
+        popular hotel in town","descriptionFr":"H\u00f4tel le plus populaire en ville","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,46.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.778081,"hotelId":"4","hotelName":"Express
+        Rooms","description":"Pretty good hotel","descriptionFr":"Assez bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.778081,"hotelId":"5","hotelName":"Comfy
+        Place","description":"Another good hotel","descriptionFr":"Un autre bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"2012-08-12T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.5749159,"hotelId":"2","hotelName":"Roach
+        Motel","description":"Cheapest hotel in town. Infact, a motel.","descriptionFr":"H\u00f4tel
+        le moins cher en ville. Infact, un motel.","category":"Budget","tags":["motel","budget"],"parkingIncluded":true,"smokingAllowed":true,"lastRenovationDate":"1982-04-28T00:00:00Z","rating":1,"location":{"type":"Point","coordinates":[-122.131577,49.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":1.4634744,"hotelId":"1","hotelName":"Fancy
+        Stay","description":"Best hotel in town if you like luxury hotels. They have
+        an amazing infinity pool, a spa, and a really helpful concierge. The location
+        is perfect -- right downtown, close to all the tourist attractions. We highly
+        recommend this hotel.","descriptionFr":"Meilleur h\u00f4tel en ville si vous
+        aimez les h\u00f4tels de luxe. Ils ont une magnifique piscine \u00e0 d\u00e9bordement,
+        un spa et un concierge tr\u00e8s utile. L''emplacement est parfait \u2013
+        en plein centre, \u00e0 proximit\u00e9 de toutes les attractions touristiques.
+        Nous recommandons fortement cet h\u00f4tel.","category":"Luxury","tags":["pool","view","wifi","concierge"],"parkingIncluded":false,"smokingAllowed":false,"lastRenovationDate":"2010-06-27T00:00:00Z","rating":5,"location":{"type":"Point","coordinates":[-122.131577,47.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]},{"@search.score":0.5496142,"hotelId":"9","hotelName":"Secret
+        Point Motel","description":"The hotel is ideally located on the main commercial
+        artery of the city in the heart of New York. A few minutes away is Time''s
+        Square and the historic centre of the city, as well as other places of interest
+        that make New York one of America''s most attractive and cosmopolitan cities.","descriptionFr":"L''h\u00f4tel
+        est id\u00e9alement situ\u00e9 sur la principale art\u00e8re commerciale de
+        la ville en plein c\u0153ur de New York. A quelques minutes se trouve la place
+        du temps et le centre historique de la ville, ainsi que d''autres lieux d''int\u00e9r\u00eat
+        qui font de New York l''une des villes les plus attractives et cosmopolites
+        de l''Am\u00e9rique.","category":"Boutique","tags":["pool","air conditioning","concierge"],"parkingIncluded":false,"smokingAllowed":true,"lastRenovationDate":"1970-01-18T05:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-73.975403,40.760586],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":{"streetAddress":"677
+        5th Ave","city":"New York","stateProvince":"NY","country":"USA","postalCode":"10022"},"rooms":[{"description":"Budget
+        Room, 1 Queen Bed (Cityside)","descriptionFr":"Chambre \u00c9conomique, 1
+        grand lit (c\u00f4t\u00e9 ville)","type":"Budget Room","baseRate":9.69,"bedOptions":"1
+        Queen Bed","sleepsCount":2,"smokingAllowed":true,"tags":["vcr/dvd"]},{"description":"Budget
+        Room, 1 King Bed (Mountain View)","descriptionFr":"Chambre \u00c9conomique,
+        1 tr\u00e8s grand lit (Mountain View)","type":"Budget Room","baseRate":8.09,"bedOptions":"1
+        King Bed","sleepsCount":2,"smokingAllowed":true,"tags":["vcr/dvd","jacuzzi
+        tub"]}]}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '2391'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:26:06 GMT
+      date: Tue, 31 Aug 2021 17:29:25 GMT
       elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 4535306a-afc6-11eb-9974-a0481ca055a9
+      request-id: fe375ce0-0a80-11ec-9039-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
 version: 1

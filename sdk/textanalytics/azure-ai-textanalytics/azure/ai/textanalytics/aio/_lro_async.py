@@ -1,15 +1,18 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 import datetime
-from typing import Optional
+import base64
+import functools
+import json
+from typing import Optional, Any
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling._async_poller import PollingReturnType
+from .._lro import TextAnalyticsOperationResourcePolling
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
@@ -18,7 +21,6 @@ _SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
-
     def finished(self):
         """Is this polling finished?
         :rtype: bool
@@ -69,7 +71,14 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
             await self.update_status()
 
         if TextAnalyticsAsyncLROPollingMethod._failed(self.status()):
-            raise OperationFailed("Operation failed or canceled")
+            try:
+                job = json.loads(self._pipeline_response.http_response.text())
+                error_message = ""
+                for err in job["errors"]:
+                    error_message += "({}) {}".format(err["code"], err["message"])
+                raise HttpResponseError(message=error_message, response=self._pipeline_response.http_response)
+            except KeyError:
+                raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
@@ -78,15 +87,22 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
                 self._pipeline_response.http_response
             )
 
-class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
+class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+    TextAnalyticsAsyncLROPollingMethod
+):
     def __init__(self, *args, **kwargs):
         self._text_analytics_client = kwargs.pop("text_analytics_client")
-        super(AsyncAnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(*args, **kwargs)
+        self._doc_id_order = kwargs.pop("doc_id_order", None)
+        self._show_stats = kwargs.pop("show_stats", None)
+        super().__init__(
+            *args, **kwargs
+        )
 
     @property
     def _current_body(self):
-        from .._generated.v3_1.models import JobMetadata
+        from .._generated.models import JobMetadata
+
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -113,12 +129,17 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollin
             return None
         return self._current_body.job_id
 
+    def get_continuation_token(self):
+        # type() -> str
+        import pickle
+        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
+        self._initial_response.context.options["show_stats"] = self._show_stats
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+
 
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
-
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller.
-        """
+        """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
 
     @property
@@ -157,17 +178,37 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         """
         return self.polling_method().id
 
-    async def cancel( # type: ignore
-        self,
-        **kwargs
-    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller[None]":
+    @classmethod
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method,  # type: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        continuation_token,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncAnalyzeHealthcareEntitiesLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method  # type: ignore
+        )
+
+    async def cancel(self, **kwargs) -> "AsyncLROPoller[None]":  # type: ignore
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.
             The default value is 5 seconds.
-        :return: Returns an instance of an LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: Warning when the operation has already reached a terminal state.
+        :return: Returns an instance of an AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
 
         .. admonition:: Example:
 
@@ -182,21 +223,30 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         await self.polling_method().update_status()
 
         try:
-            return await getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
+            return await getattr(
+                self._polling_method, "_text_analytics_client"
+            ).begin_cancel_health_job(
                 self.id,
-                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval),
             )
 
         except HttpResponseError as error:
             from .._response_handlers import process_http_response_error
+
             process_http_response_error(error)
 
 
 class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
+    def __init__(self, *args, **kwargs):
+        self._doc_id_order = kwargs.pop("doc_id_order", None)
+        self._task_id_order = kwargs.pop("task_id_order", None)
+        self._show_stats = kwargs.pop("show_stats", None)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
-        from .._generated.v3_1.models import AnalyzeJobMetadata
+        from .._generated.models import AnalyzeJobMetadata
+
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -221,19 +271,19 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def actions_failed_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']['failed']
+        return self._current_body.additional_properties["tasks"]["failed"]
 
     @property
     def actions_in_progress_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']['inProgress']
+        return self._current_body.additional_properties["tasks"]["inProgress"]
 
     @property
     def actions_succeeded_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']["completed"]
+        return self._current_body.additional_properties["tasks"]["completed"]
 
     @property
     def last_modified_on(self):
@@ -245,7 +295,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def total_actions_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']["total"]
+        return self._current_body.additional_properties["tasks"]["total"]
 
     @property
     def id(self):
@@ -253,12 +303,18 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
             return None
         return self._current_body.job_id
 
+    def get_continuation_token(self):
+        # type: () -> str
+        import pickle
+        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
+        self._initial_response.context.options["task_id_order"] = self._task_id_order
+        self._initial_response.context.options["show_stats"] = self._show_stats
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
-
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller.
-        """
+        """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
 
     @property
@@ -344,3 +400,21 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         :rtype: str
         """
         return self.polling_method().id
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AsyncAnalyzeActionsLROPollingMethod, str, Any) -> AsyncAnalyzeActionsLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method  # type: ignore
+        )

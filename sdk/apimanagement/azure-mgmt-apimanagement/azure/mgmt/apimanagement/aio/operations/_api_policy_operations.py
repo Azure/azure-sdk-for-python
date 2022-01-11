@@ -45,7 +45,7 @@ class ApiPolicyOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyCollection":
         """Get the policy configuration at the API level.
 
@@ -93,7 +93,7 @@ class ApiPolicyOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyCollection', pipeline_response)
@@ -110,7 +110,7 @@ class ApiPolicyOperations:
         service_name: str,
         api_id: str,
         policy_id: Union[str, "_models.PolicyIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the API policy specified by its identifier.
 
@@ -161,7 +161,7 @@ class ApiPolicyOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -180,7 +180,7 @@ class ApiPolicyOperations:
         api_id: str,
         policy_id: Union[str, "_models.PolicyIdName"],
         format: Optional[Union[str, "_models.PolicyExportFormat"]] = "xml",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyContract":
         """Get the policy configuration at the API level.
 
@@ -235,7 +235,7 @@ class ApiPolicyOperations:
 
         if response.status_code not in [200, 200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -261,7 +261,7 @@ class ApiPolicyOperations:
         policy_id: Union[str, "_models.PolicyIdName"],
         parameters: "_models.PolicyContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyContract":
         """Creates or updates policy configuration for the API.
 
@@ -324,7 +324,7 @@ class ApiPolicyOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -349,7 +349,7 @@ class ApiPolicyOperations:
         api_id: str,
         policy_id: Union[str, "_models.PolicyIdName"],
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the policy configuration at the Api.
 
@@ -404,7 +404,7 @@ class ApiPolicyOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -12,7 +12,6 @@ urlFragment: documenttranslation-samples
 # Samples for Azure Document Translation client library for Python
 
 These code samples show common scenario operations with the Azure Document Translation client library.
-The async versions of the samples require Python 3.6 or later.
 
 You can authenticate your client with a Document Translation API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
@@ -25,11 +24,11 @@ These sample programs show common scenarios for the Document Translation client'
 |[sample_translate_multiple_inputs.py][sample_translate_multiple_inputs] and [sample_translate_multiple_inputs_async.py][sample_translate_multiple_inputs_async]|Translate multiple source containers with documents to multiple target containers in different languages|
 |[sample_translation_with_glossaries.py][begin_translation_with_glossaries] and [sample_translation_with_glossaries_async.py][begin_translation_with_glossaries_async]|Translate your documents using custom glossaries|
 |[sample_check_document_statuses.py][check_document_statuses] and [sample_check_document_statuses_async.py][check_document_statuses_async]|Check status of submitted documents|
-|[sample_list_all_translations.py][list_all_translations] and [sample_list_all_translations_async.py][list_all_translations_async]|Check status of all submitted translation operations|
+|[sample_list_translations.py][list_translations] and [sample_list_translations_async.py][list_translations_async]|Check status of all submitted translation operations|
 
 
 ## Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
+* Python 3.7 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Translator account][azure_document_translation_account] to run these samples.
 
@@ -75,8 +74,8 @@ what you can do with the Azure Document Translation client library.
 [begin_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
 [check_document_statuses]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/sample_check_document_statuses.py
 [check_document_statuses_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_check_document_statuses_async.py
-[list_all_translations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/sample_list_all_translations.py
-[list_all_translations_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_all_translations_async.py
+[list_translations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/sample_list_translations.py
+[list_translations_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_translations_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_document_translation_account]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=python

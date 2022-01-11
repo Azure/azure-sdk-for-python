@@ -44,7 +44,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourceListResult":
         """Gets the private link resources supported for the key vault.
 

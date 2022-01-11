@@ -5,11 +5,13 @@
 import asyncio
 from datetime import datetime
 import json
+import re
 import sys
 from unittest import mock
 
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import AzureCliCredential
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
@@ -181,3 +183,67 @@ async def test_timeout():
 
     assert proc.communicate.call_count == 1
     assert proc.kill.call_count == 1
+
+
+async def test_multitenant_authentication():
+    default_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    async def fake_exec(*args, **_):
+        match = re.search("--tenant (.*)", args[-1])
+        tenant = match[1] if match else default_tenant
+        assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        output = json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": first_token if tenant == default_tenant else second_token,
+                "subscription": "some-guid",
+                "tenant": tenant,
+                "tokenType": "Bearer",
+            }
+        ).encode()
+        return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
+
+    credential = AzureCliCredential()
+    with mock.patch(SUBPROCESS_EXEC, fake_exec):
+        token = await credential.get_token("scope")
+        assert token.token == first_token
+
+        token = await credential.get_token("scope", tenant_id=default_tenant)
+        assert token.token == first_token
+
+        token = await credential.get_token("scope", tenant_id=second_tenant)
+        assert token.token == second_token
+
+        # should still default to the first tenant
+        token = await credential.get_token("scope")
+        assert token.token == first_token
+
+async def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    async def fake_exec(*args, **_):
+        match = re.search("--tenant (.*)", args[-1])
+        assert match is None or match[1] == expected_tenant
+        output = json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": expected_token,
+                "subscription": "some-guid",
+                "tenant": expected_token,
+                "tokenType": "Bearer",
+            }
+        ).encode()
+        return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
+
+    credential = AzureCliCredential()
+    with mock.patch(SUBPROCESS_EXEC, fake_exec):
+        token = await credential.get_token("scope")
+        assert token.token == expected_token
+
+        with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token

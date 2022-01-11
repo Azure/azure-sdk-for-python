@@ -22,7 +22,8 @@ from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
     AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
-    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions
+    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
+    get_api_version
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
@@ -81,13 +82,18 @@ class PathClient(StorageAccountHostsMixin):
                                          _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
+        api_version = get_api_version(kwargs)
+
         self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
                                                    pipeline=self._pipeline)
+        self._client._config.version = api_version  # pylint: disable=protected-access
+
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
             self._blob_client.url,
             file_system=file_system_name,
             path=path_name,
             pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
 
     def __exit__(self, *args):
         self._blob_client.close()
@@ -112,8 +118,11 @@ class PathClient(StorageAccountHostsMixin):
             quote(self.path_name, safe='~'),
             self._query_str)
 
-    def _create_path_options(self, resource_type, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _create_path_options(self, resource_type,
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
@@ -205,7 +214,7 @@ class PathClient(StorageAccountHostsMixin):
 
     @staticmethod
     def _delete_path_options(**kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        # type: (**Any) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -256,7 +265,7 @@ class PathClient(StorageAccountHostsMixin):
 
     @staticmethod
     def _set_access_control_options(owner=None, group=None, permissions=None, acl=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        # type: (...) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -630,8 +639,11 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _rename_path_options(self, rename_source,
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):

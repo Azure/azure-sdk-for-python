@@ -61,6 +61,6 @@ async def run():
                     break
             await producer.send_batch(event_data_batch)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run())
+
+asyncio.run(run())
 print('Finished sending.')

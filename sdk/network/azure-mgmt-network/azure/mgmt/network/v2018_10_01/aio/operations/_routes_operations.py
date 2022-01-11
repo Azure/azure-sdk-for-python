@@ -48,7 +48,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -92,7 +92,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified route from a route table.
 
@@ -104,8 +104,8 @@ class RoutesOperations:
         :type route_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -161,7 +161,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Route":
         """Gets the specified route from a route table.
 
@@ -224,7 +224,7 @@ class RoutesOperations:
         route_table_name: str,
         route_name: str,
         route_parameters: "_models.Route",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Route":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Route"]
         error_map = {
@@ -283,7 +283,7 @@ class RoutesOperations:
         route_table_name: str,
         route_name: str,
         route_parameters: "_models.Route",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Route"]:
         """Creates or updates a route in the specified route table.
 
@@ -297,8 +297,8 @@ class RoutesOperations:
         :type route_parameters: ~azure.mgmt.network.v2018_10_01.models.Route
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Route or the result of cls(response)
@@ -357,7 +357,7 @@ class RoutesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RouteListResult"]:
         """Gets all routes in a route table.
 

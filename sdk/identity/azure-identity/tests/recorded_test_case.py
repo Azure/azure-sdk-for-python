@@ -8,7 +8,7 @@ from azure_devtools.scenario_tests import GeneralNameReplacer, patch_time_sleep_
 from devtools_testutils.azure_testcase import AzureTestCase
 import pytest
 
-from recording_processors import RecordingRedactor
+from recording_processors import IdTokenProcessor, RecordingRedactor
 
 PLAYBACK_CLIENT_ID = "client-id"
 
@@ -19,7 +19,7 @@ class RecordedTestCase(AzureTestCase):
         super(RecordedTestCase, self).__init__(
             *args,
             recording_processors=[RecordingRedactor(), scrubber],
-            replay_processors=[RequestUrlNormalizer()],
+            replay_processors=[IdTokenProcessor(), RequestUrlNormalizer()],
             **kwargs
         )
         self.scrubber = scrubber

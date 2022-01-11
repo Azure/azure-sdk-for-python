@@ -348,6 +348,104 @@ class Capability(msrest.serialization.Model):
         self.name = name
 
 
+class Capacity(msrest.serialization.Model):
+    """The object that represents all properties related to capacity enforcement on an account.
+
+    :param total_throughput_limit: The total throughput limit imposed on the account. A
+     totalThroughputLimit of 2000 imposes a strict limit of max throughput that can be provisioned
+     on that account to be 2000. A totalThroughputLimit of -1 indicates no limits on provisioning of
+     throughput.
+    :type total_throughput_limit: int
+    """
+
+    _validation = {
+        'total_throughput_limit': {'minimum': -1},
+    }
+
+    _attribute_map = {
+        'total_throughput_limit': {'key': 'totalThroughputLimit', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        total_throughput_limit: Optional[int] = None,
+        **kwargs
+    ):
+        super(Capacity, self).__init__(**kwargs)
+        self.total_throughput_limit = total_throughput_limit
+
+
+class CassandraClusterPublicStatus(msrest.serialization.Model):
+    """Properties of a managed Cassandra cluster public status.
+
+    :param e_tag:
+    :type e_tag: str
+    :param reaper_status:
+    :type reaper_status: ~azure.mgmt.cosmosdb.models.ManagedCassandraReaperStatus
+    :param connection_errors: List relevant information about any connection errors to the
+     Datacenters.
+    :type connection_errors: list[~azure.mgmt.cosmosdb.models.ConnectionError]
+    :param data_centers: List of the status of each datacenter in this cluster.
+    :type data_centers:
+     list[~azure.mgmt.cosmosdb.models.CassandraClusterPublicStatusDataCentersItem]
+    """
+
+    _attribute_map = {
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'reaper_status': {'key': 'reaperStatus', 'type': 'ManagedCassandraReaperStatus'},
+        'connection_errors': {'key': 'connectionErrors', 'type': '[ConnectionError]'},
+        'data_centers': {'key': 'dataCenters', 'type': '[CassandraClusterPublicStatusDataCentersItem]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        e_tag: Optional[str] = None,
+        reaper_status: Optional["ManagedCassandraReaperStatus"] = None,
+        connection_errors: Optional[List["ConnectionError"]] = None,
+        data_centers: Optional[List["CassandraClusterPublicStatusDataCentersItem"]] = None,
+        **kwargs
+    ):
+        super(CassandraClusterPublicStatus, self).__init__(**kwargs)
+        self.e_tag = e_tag
+        self.reaper_status = reaper_status
+        self.connection_errors = connection_errors
+        self.data_centers = data_centers
+
+
+class CassandraClusterPublicStatusDataCentersItem(msrest.serialization.Model):
+    """CassandraClusterPublicStatusDataCentersItem.
+
+    :param name: The name of this Datacenter.
+    :type name: str
+    :param seed_nodes: A list of all seed nodes in the cluster, managed and unmanaged.
+    :type seed_nodes: list[str]
+    :param nodes:
+    :type nodes:
+     list[~azure.mgmt.cosmosdb.models.ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'seed_nodes': {'key': 'seedNodes', 'type': '[str]'},
+        'nodes': {'key': 'nodes', 'type': '[ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        seed_nodes: Optional[List[str]] = None,
+        nodes: Optional[List["ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems"]] = None,
+        **kwargs
+    ):
+        super(CassandraClusterPublicStatusDataCentersItem, self).__init__(**kwargs)
+        self.name = name
+        self.seed_nodes = seed_nodes
+        self.nodes = nodes
+
+
 class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB Cassandra keyspace.
 
@@ -969,6 +1067,27 @@ class CassandraTableListResult(msrest.serialization.Model):
         self.value = None
 
 
+class Certificate(msrest.serialization.Model):
+    """Certificate.
+
+    :param pem: PEM formatted public key.
+    :type pem: str
+    """
+
+    _attribute_map = {
+        'pem': {'key': 'pem', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        pem: Optional[str] = None,
+        **kwargs
+    ):
+        super(Certificate, self).__init__(**kwargs)
+        self.pem = pem
+
+
 class ClusterKey(msrest.serialization.Model):
     """Cosmos DB Cassandra table cluster key.
 
@@ -996,6 +1115,251 @@ class ClusterKey(msrest.serialization.Model):
         self.order_by = order_by
 
 
+class ManagedCassandraARMResourceProperties(msrest.serialization.Model):
+    """The core properties of ARM resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource belongs.
+    :type location: str
+    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+     These tags can be used in viewing and grouping this resource (across resource groups). A
+     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+     characters and value no greater than 256 characters. For example, the default experience for a
+     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+     also include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedCassandraManagedServiceIdentity'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedCassandraManagedServiceIdentity"] = None,
+        **kwargs
+    ):
+        super(ManagedCassandraARMResourceProperties, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+        self.identity = identity
+
+
+class ClusterResource(ManagedCassandraARMResourceProperties):
+    """Representation of a managed Cassandra cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource belongs.
+    :type location: str
+    :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+     These tags can be used in viewing and grouping this resource (across resource groups). A
+     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+     characters and value no greater than 256 characters. For example, the default experience for a
+     template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+     also include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
+    :param properties: Properties of a managed Cassandra cluster.
+    :type properties: ~azure.mgmt.cosmosdb.models.ClusterResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedCassandraManagedServiceIdentity'},
+        'properties': {'key': 'properties', 'type': 'ClusterResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedCassandraManagedServiceIdentity"] = None,
+        properties: Optional["ClusterResourceProperties"] = None,
+        **kwargs
+    ):
+        super(ClusterResource, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.properties = properties
+
+
+class ClusterResourceProperties(msrest.serialization.Model):
+    """Properties of a managed Cassandra cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param provisioning_state: The status of the resource at the time the operation was called.
+     Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :type provisioning_state: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraProvisioningState
+    :param restore_from_backup_id: To create an empty cluster, omit this field or set it to null.
+     To restore a backup into a new cluster, set this field to the resource id of the backup.
+    :type restore_from_backup_id: str
+    :param delegated_management_subnet_id: Resource id of a subnet that this cluster's management
+     service should have its network interface attached to. The subnet must be routable to all
+     subnets that will be delegated to data centers. The resource id must be of the form
+     '/subscriptions/:code:`<subscription id>`/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.Network/virtualNetworks/:code:`<virtual
+     network>`/subnets/:code:`<subnet>`'.
+    :type delegated_management_subnet_id: str
+    :param cassandra_version: Which version of Cassandra should this cluster converge to running
+     (e.g., 3.11). When updated, the cluster may take some time to migrate to the new version.
+    :type cassandra_version: str
+    :param cluster_name_override: If you need to set the clusterName property in cassandra.yaml to
+     something besides the resource name of the cluster, set the value to use on this property.
+    :type cluster_name_override: str
+    :param authentication_method: Which authentication method Cassandra should use to authenticate
+     clients. 'None' turns off authentication, so should not be used except in emergencies.
+     'Cassandra' is the default password based authentication. The default is 'Cassandra'. Possible
+     values include: "None", "Cassandra".
+    :type authentication_method: str or ~azure.mgmt.cosmosdb.models.AuthenticationMethod
+    :param initial_cassandra_admin_password: Initial password for clients connecting as admin to
+     the cluster. Should be changed after cluster creation. Returns null on GET. This field only
+     applies when the authenticationMethod field is 'Cassandra'.
+    :type initial_cassandra_admin_password: str
+    :param prometheus_endpoint: Hostname or IP address where the Prometheus endpoint containing
+     data about the managed Cassandra nodes can be reached.
+    :type prometheus_endpoint: ~azure.mgmt.cosmosdb.models.SeedNode
+    :param repair_enabled: Should automatic repairs run on this cluster? If omitted, this is true,
+     and should stay true unless you are running a hybrid cluster where you are already doing your
+     own repairs.
+    :type repair_enabled: bool
+    :param client_certificates: List of TLS certificates used to authorize clients connecting to
+     the cluster. All connections are TLS encrypted whether clientCertificates is set or not, but if
+     clientCertificates is set, the managed Cassandra cluster will reject all connections not
+     bearing a TLS client certificate that can be validated from one or more of the public
+     certificates in this property.
+    :type client_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :param external_gossip_certificates: List of TLS certificates used to authorize gossip from
+     unmanaged data centers. The TLS certificates of all nodes in unmanaged data centers must be
+     verifiable using one of the certificates provided in this property.
+    :type external_gossip_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :ivar gossip_certificates: List of TLS certificates that unmanaged nodes must trust for gossip
+     with managed nodes. All managed nodes will present TLS client certificates that are verifiable
+     using one of the certificates provided in this property.
+    :vartype gossip_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :param external_seed_nodes: List of IP addresses of seed nodes in unmanaged data centers. These
+     will be added to the seed node lists of all managed nodes.
+    :type external_seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :ivar seed_nodes: List of IP addresses of seed nodes in the managed data centers. These should
+     be added to the seed node lists of all unmanaged nodes.
+    :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :param hours_between_backups: Number of hours to wait between taking a backup of the cluster.
+     To disable backups, set this property to 0.
+    :type hours_between_backups: int
+    :param deallocated: Whether the cluster and associated data centers has been deallocated.
+    :type deallocated: bool
+    :param cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
+    :type cassandra_audit_logging_enabled: bool
+    """
+
+    _validation = {
+        'gossip_certificates': {'readonly': True},
+        'seed_nodes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'restore_from_backup_id': {'key': 'restoreFromBackupId', 'type': 'str'},
+        'delegated_management_subnet_id': {'key': 'delegatedManagementSubnetId', 'type': 'str'},
+        'cassandra_version': {'key': 'cassandraVersion', 'type': 'str'},
+        'cluster_name_override': {'key': 'clusterNameOverride', 'type': 'str'},
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'initial_cassandra_admin_password': {'key': 'initialCassandraAdminPassword', 'type': 'str'},
+        'prometheus_endpoint': {'key': 'prometheusEndpoint', 'type': 'SeedNode'},
+        'repair_enabled': {'key': 'repairEnabled', 'type': 'bool'},
+        'client_certificates': {'key': 'clientCertificates', 'type': '[Certificate]'},
+        'external_gossip_certificates': {'key': 'externalGossipCertificates', 'type': '[Certificate]'},
+        'gossip_certificates': {'key': 'gossipCertificates', 'type': '[Certificate]'},
+        'external_seed_nodes': {'key': 'externalSeedNodes', 'type': '[SeedNode]'},
+        'seed_nodes': {'key': 'seedNodes', 'type': '[SeedNode]'},
+        'hours_between_backups': {'key': 'hoursBetweenBackups', 'type': 'int'},
+        'deallocated': {'key': 'deallocated', 'type': 'bool'},
+        'cassandra_audit_logging_enabled': {'key': 'cassandraAuditLoggingEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        provisioning_state: Optional[Union[str, "ManagedCassandraProvisioningState"]] = None,
+        restore_from_backup_id: Optional[str] = None,
+        delegated_management_subnet_id: Optional[str] = None,
+        cassandra_version: Optional[str] = None,
+        cluster_name_override: Optional[str] = None,
+        authentication_method: Optional[Union[str, "AuthenticationMethod"]] = None,
+        initial_cassandra_admin_password: Optional[str] = None,
+        prometheus_endpoint: Optional["SeedNode"] = None,
+        repair_enabled: Optional[bool] = None,
+        client_certificates: Optional[List["Certificate"]] = None,
+        external_gossip_certificates: Optional[List["Certificate"]] = None,
+        external_seed_nodes: Optional[List["SeedNode"]] = None,
+        hours_between_backups: Optional[int] = None,
+        deallocated: Optional[bool] = None,
+        cassandra_audit_logging_enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        super(ClusterResourceProperties, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.restore_from_backup_id = restore_from_backup_id
+        self.delegated_management_subnet_id = delegated_management_subnet_id
+        self.cassandra_version = cassandra_version
+        self.cluster_name_override = cluster_name_override
+        self.authentication_method = authentication_method
+        self.initial_cassandra_admin_password = initial_cassandra_admin_password
+        self.prometheus_endpoint = prometheus_endpoint
+        self.repair_enabled = repair_enabled
+        self.client_certificates = client_certificates
+        self.external_gossip_certificates = external_gossip_certificates
+        self.gossip_certificates = None
+        self.external_seed_nodes = external_seed_nodes
+        self.seed_nodes = None
+        self.hours_between_backups = hours_between_backups
+        self.deallocated = deallocated
+        self.cassandra_audit_logging_enabled = cassandra_audit_logging_enabled
+
+
 class Column(msrest.serialization.Model):
     """Cosmos DB Cassandra table column.
 
@@ -1020,6 +1384,77 @@ class Column(msrest.serialization.Model):
         super(Column, self).__init__(**kwargs)
         self.name = name
         self.type = type
+
+
+class CommandOutput(msrest.serialization.Model):
+    """Response of /command api.
+
+    :param command_output: Output of the command.
+    :type command_output: str
+    """
+
+    _attribute_map = {
+        'command_output': {'key': 'commandOutput', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        command_output: Optional[str] = None,
+        **kwargs
+    ):
+        super(CommandOutput, self).__init__(**kwargs)
+        self.command_output = command_output
+
+
+class CommandPostBody(msrest.serialization.Model):
+    """Specification of which command to run where.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param command: Required. The command which should be run.
+    :type command: str
+    :param arguments: The arguments for the command to be run.
+    :type arguments: dict[str, str]
+    :param host: Required. IP address of the cassandra host to run the command on.
+    :type host: str
+    :param cassandra_stop_start: If true, stops cassandra before executing the command and then
+     start it again.
+    :type cassandra_stop_start: bool
+    :param readwrite: If true, allows the command to *write* to the cassandra directory, otherwise
+     read-only.
+    :type readwrite: bool
+    """
+
+    _validation = {
+        'command': {'required': True},
+        'host': {'required': True},
+    }
+
+    _attribute_map = {
+        'command': {'key': 'command', 'type': 'str'},
+        'arguments': {'key': 'arguments', 'type': '{str}'},
+        'host': {'key': 'host', 'type': 'str'},
+        'cassandra_stop_start': {'key': 'cassandra-stop-start', 'type': 'bool'},
+        'readwrite': {'key': 'readwrite', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        command: str,
+        host: str,
+        arguments: Optional[Dict[str, str]] = None,
+        cassandra_stop_start: Optional[bool] = None,
+        readwrite: Optional[bool] = None,
+        **kwargs
+    ):
+        super(CommandPostBody, self).__init__(**kwargs)
+        self.command = command
+        self.arguments = arguments
+        self.host = host
+        self.cassandra_stop_start = cassandra_stop_start
+        self.readwrite = readwrite
 
 
 class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
@@ -1050,6 +1485,107 @@ class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidenti
         super(Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+
+
+class ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems(msrest.serialization.Model):
+    """ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems.
+
+    :param address: The node's IP address.
+    :type address: str
+    :param state: The state of the node in Cassandra ring. Possible values include: "Normal",
+     "Leaving", "Joining", "Moving", "Stopped".
+    :type state: str or ~azure.mgmt.cosmosdb.models.NodeState
+    :param status:
+    :type status: str
+    :param load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
+     all content in the snapshots subdirectories. Because all SSTable data files are included, any
+     data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
+    :type load: str
+    :param tokens: List of tokens this node covers.
+    :type tokens: list[str]
+    :param size:
+    :type size: int
+    :param host_id: The network ID of the node.
+    :type host_id: str
+    :param rack: The rack this node is part of.
+    :type rack: str
+    :param timestamp: The timestamp when these statistics were captured.
+    :type timestamp: str
+    :param disk_used_kb: The amount of disk used, in kB, of the directory /var/lib/cassandra.
+    :type disk_used_kb: long
+    :param disk_free_kb: The amount of disk free, in kB, of the directory /var/lib/cassandra.
+    :type disk_free_kb: long
+    :param memory_used_kb: Used memory (calculated as total - free - buffers - cache), in kB.
+    :type memory_used_kb: long
+    :param memory_buffers_and_cached_kb: Memory used by kernel buffers (Buffers in /proc/meminfo)
+     and page cache and slabs (Cached and SReclaimable in /proc/meminfo), in kB.
+    :type memory_buffers_and_cached_kb: long
+    :param memory_free_kb: Unused memory (MemFree and SwapFree in /proc/meminfo), in kB.
+    :type memory_free_kb: long
+    :param memory_total_kb: Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in
+     kB.
+    :type memory_total_kb: long
+    :param cpu_usage: A float representing the current system-wide CPU utilization as a percentage.
+    :type cpu_usage: float
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'load': {'key': 'load', 'type': 'str'},
+        'tokens': {'key': 'tokens', 'type': '[str]'},
+        'size': {'key': 'size', 'type': 'int'},
+        'host_id': {'key': 'hostID', 'type': 'str'},
+        'rack': {'key': 'rack', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'str'},
+        'disk_used_kb': {'key': 'diskUsedKB', 'type': 'long'},
+        'disk_free_kb': {'key': 'diskFreeKB', 'type': 'long'},
+        'memory_used_kb': {'key': 'memoryUsedKB', 'type': 'long'},
+        'memory_buffers_and_cached_kb': {'key': 'memoryBuffersAndCachedKB', 'type': 'long'},
+        'memory_free_kb': {'key': 'memoryFreeKB', 'type': 'long'},
+        'memory_total_kb': {'key': 'memoryTotalKB', 'type': 'long'},
+        'cpu_usage': {'key': 'cpuUsage', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        address: Optional[str] = None,
+        state: Optional[Union[str, "NodeState"]] = None,
+        status: Optional[str] = None,
+        load: Optional[str] = None,
+        tokens: Optional[List[str]] = None,
+        size: Optional[int] = None,
+        host_id: Optional[str] = None,
+        rack: Optional[str] = None,
+        timestamp: Optional[str] = None,
+        disk_used_kb: Optional[int] = None,
+        disk_free_kb: Optional[int] = None,
+        memory_used_kb: Optional[int] = None,
+        memory_buffers_and_cached_kb: Optional[int] = None,
+        memory_free_kb: Optional[int] = None,
+        memory_total_kb: Optional[int] = None,
+        cpu_usage: Optional[float] = None,
+        **kwargs
+    ):
+        super(ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems, self).__init__(**kwargs)
+        self.address = address
+        self.state = state
+        self.status = status
+        self.load = load
+        self.tokens = tokens
+        self.size = size
+        self.host_id = host_id
+        self.rack = rack
+        self.timestamp = timestamp
+        self.disk_used_kb = disk_used_kb
+        self.disk_free_kb = disk_free_kb
+        self.memory_used_kb = memory_used_kb
+        self.memory_buffers_and_cached_kb = memory_buffers_and_cached_kb
+        self.memory_free_kb = memory_free_kb
+        self.memory_total_kb = memory_total_kb
+        self.cpu_usage = cpu_usage
 
 
 class CompositePath(msrest.serialization.Model):
@@ -1112,6 +1648,49 @@ class ConflictResolutionPolicy(msrest.serialization.Model):
         self.mode = mode
         self.conflict_resolution_path = conflict_resolution_path
         self.conflict_resolution_procedure = conflict_resolution_procedure
+
+
+class ConnectionError(msrest.serialization.Model):
+    """ConnectionError.
+
+    :param connection_state: The kind of connection error that occurred. Possible values include:
+     "Unknown", "OK", "OperatorToDataCenterNetworkError", "DatacenterToDatacenterNetworkError",
+     "InternalOperatorToDataCenterCertificateError", "InternalError".
+    :type connection_state: str or ~azure.mgmt.cosmosdb.models.ConnectionState
+    :param i_p_from: The IP of host that originated the failed connection.
+    :type i_p_from: str
+    :param i_p_to: The IP that the connection attempted to reach.
+    :type i_p_to: str
+    :param port: The TCP port the connection was attempted on.
+    :type port: int
+    :param exception: Detailed error message about the failed connection.
+    :type exception: str
+    """
+
+    _attribute_map = {
+        'connection_state': {'key': 'connectionState', 'type': 'str'},
+        'i_p_from': {'key': 'iPFrom', 'type': 'str'},
+        'i_p_to': {'key': 'iPTo', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
+        'exception': {'key': 'exception', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        connection_state: Optional[Union[str, "ConnectionState"]] = None,
+        i_p_from: Optional[str] = None,
+        i_p_to: Optional[str] = None,
+        port: Optional[int] = None,
+        exception: Optional[str] = None,
+        **kwargs
+    ):
+        super(ConnectionError, self).__init__(**kwargs)
+        self.connection_state = connection_state
+        self.i_p_from = i_p_from
+        self.i_p_to = i_p_to
+        self.port = port
+        self.exception = exception
 
 
 class ConsistencyPolicy(msrest.serialization.Model):
@@ -1418,7 +1997,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param locations: Required. An array that contains the georeplication locations enabled for the
      Cosmos DB account.
     :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: Required. The offer type for the database. Default value:
+    :ivar database_account_offer_type: The offer type for the database. Has constant value:
      "Standard".
     :vartype database_account_offer_type: str
     :param ip_rules: List of IpRules.
@@ -1482,6 +2061,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_local_auth: bool
     :param restore_parameters: Parameters to indicate the information about the restore.
     :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
+    :param capacity: The object that represents all properties related to capacity enforcement on
+     an account.
+    :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
     """
 
     _validation = {
@@ -1526,6 +2108,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
+        'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
     }
 
     database_account_offer_type = "Standard"
@@ -1562,6 +2145,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         network_acl_bypass_resource_ids: Optional[List[str]] = None,
         disable_local_auth: Optional[bool] = None,
         restore_parameters: Optional["RestoreParameters"] = None,
+        capacity: Optional["Capacity"] = None,
         **kwargs
     ):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -1592,6 +2176,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.network_acl_bypass_resource_ids = network_acl_bypass_resource_ids
         self.disable_local_auth = disable_local_auth
         self.restore_parameters = restore_parameters
+        self.capacity = capacity
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1632,7 +2217,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :ivar document_endpoint: The connection endpoint for the Cosmos DB database account.
     :vartype document_endpoint: str
     :ivar database_account_offer_type: The offer type for the Cosmos DB database account. Default
-     value: Standard. Default value: "Standard".
+     value: Standard. The only acceptable values to pass in are None and "Standard". The default
+     value is None.
     :vartype database_account_offer_type: str
     :param ip_rules: List of IpRules.
     :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
@@ -1713,6 +2299,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :type disable_local_auth: bool
+    :param capacity: The object that represents all properties related to capacity enforcement on
+     an account.
+    :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
     """
 
     _validation = {
@@ -1722,7 +2311,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'document_endpoint': {'readonly': True},
-        'database_account_offer_type': {'readonly': True, 'constant': True},
+        'database_account_offer_type': {'readonly': True},
         'write_locations': {'readonly': True},
         'read_locations': {'readonly': True},
         'locations': {'readonly': True},
@@ -1773,9 +2362,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
     }
-
-    database_account_offer_type = "Standard"
 
     def __init__(
         self,
@@ -1808,6 +2396,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         network_acl_bypass: Optional[Union[str, "NetworkAclBypass"]] = None,
         network_acl_bypass_resource_ids: Optional[List[str]] = None,
         disable_local_auth: Optional[bool] = None,
+        capacity: Optional["Capacity"] = None,
         **kwargs
     ):
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
@@ -1847,6 +2436,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.network_acl_bypass = network_acl_bypass
         self.network_acl_bypass_resource_ids = network_acl_bypass_resource_ids
         self.disable_local_auth = disable_local_auth
+        self.capacity = capacity
 
 
 class DatabaseAccountListConnectionStringsResult(msrest.serialization.Model):
@@ -2067,6 +2657,9 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :type disable_local_auth: bool
+    :param capacity: The object that represents all properties related to capacity enforcement on
+     an account.
+    :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
     """
 
     _attribute_map = {
@@ -2096,6 +2689,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
     }
 
     def __init__(
@@ -2127,6 +2721,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         network_acl_bypass: Optional[Union[str, "NetworkAclBypass"]] = None,
         network_acl_bypass_resource_ids: Optional[List[str]] = None,
         disable_local_auth: Optional[bool] = None,
+        capacity: Optional["Capacity"] = None,
         **kwargs
     ):
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
@@ -2156,6 +2751,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.network_acl_bypass = network_acl_bypass
         self.network_acl_bypass_resource_ids = network_acl_bypass_resource_ids
         self.disable_local_auth = disable_local_auth
+        self.capacity = capacity
 
 
 class DatabaseRestoreResource(msrest.serialization.Model):
@@ -2182,6 +2778,142 @@ class DatabaseRestoreResource(msrest.serialization.Model):
         super(DatabaseRestoreResource, self).__init__(**kwargs)
         self.database_name = database_name
         self.collection_names = collection_names
+
+
+class DataCenterResource(ARMProxyResource):
+    """A managed Cassandra data center.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param properties: Properties of a managed Cassandra data center.
+    :type properties: ~azure.mgmt.cosmosdb.models.DataCenterResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DataCenterResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["DataCenterResourceProperties"] = None,
+        **kwargs
+    ):
+        super(DataCenterResource, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class DataCenterResourceProperties(msrest.serialization.Model):
+    """Properties of a managed Cassandra data center.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param provisioning_state: The status of the resource at the time the operation was called.
+     Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :type provisioning_state: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraProvisioningState
+    :param data_center_location: The region this data center should be created in.
+    :type data_center_location: str
+    :param delegated_subnet_id: Resource id of a subnet the nodes in this data center should have
+     their network interfaces connected to. The subnet must be in the same region specified in
+     'dataCenterLocation' and must be able to route to the subnet specified in the cluster's
+     'delegatedManagementSubnetId' property. This resource id will be of the form
+     '/subscriptions/:code:`<subscription id>`/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.Network/virtualNetworks/:code:`<virtual
+     network>`/subnets/:code:`<subnet>`'.
+    :type delegated_subnet_id: str
+    :param node_count: The number of nodes the data center should have. This is the desired number.
+     After it is set, it may take some time for the data center to be scaled to match. To monitor
+     the number of nodes and their status, use the fetchNodeStatus method on the cluster.
+    :type node_count: int
+    :ivar seed_nodes: IP addresses for seed nodes in this data center. This is for reference.
+     Generally you will want to use the seedNodes property on the cluster, which aggregates the seed
+     nodes from all data centers in the cluster.
+    :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
+    :param base64_encoded_cassandra_yaml_fragment: A fragment of a cassandra.yaml configuration
+     file to be included in the cassandra.yaml for all nodes in this data center. The fragment
+     should be Base64 encoded, and only a subset of keys are allowed.
+    :type base64_encoded_cassandra_yaml_fragment: str
+    :param managed_disk_customer_key_uri: Key uri to use for encryption of managed disks. Ensure
+     the system assigned identity of the cluster has been assigned appropriate permissions(key
+     get/wrap/unwrap permissions) on the key.
+    :type managed_disk_customer_key_uri: str
+    :param backup_storage_customer_key_uri: Indicates the Key Uri of the customer key to use for
+     encryption of the backup storage account.
+    :type backup_storage_customer_key_uri: str
+    :param sku: Virtual Machine SKU used for data centers. Default value is Standard_DS14_v2.
+    :type sku: str
+    :param disk_sku: Disk SKU used for data centers. Default value is P30.
+    :type disk_sku: str
+    :param disk_capacity: Number of disk used for data centers. Default value is 4.
+    :type disk_capacity: int
+    :param availability_zone: If the azure data center has Availability Zone support, apply it to
+     the Virtual Machine ScaleSet that host the cassandra data center virtual machines.
+    :type availability_zone: bool
+    """
+
+    _validation = {
+        'seed_nodes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'data_center_location': {'key': 'dataCenterLocation', 'type': 'str'},
+        'delegated_subnet_id': {'key': 'delegatedSubnetId', 'type': 'str'},
+        'node_count': {'key': 'nodeCount', 'type': 'int'},
+        'seed_nodes': {'key': 'seedNodes', 'type': '[SeedNode]'},
+        'base64_encoded_cassandra_yaml_fragment': {'key': 'base64EncodedCassandraYamlFragment', 'type': 'str'},
+        'managed_disk_customer_key_uri': {'key': 'managedDiskCustomerKeyUri', 'type': 'str'},
+        'backup_storage_customer_key_uri': {'key': 'backupStorageCustomerKeyUri', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'disk_sku': {'key': 'diskSku', 'type': 'str'},
+        'disk_capacity': {'key': 'diskCapacity', 'type': 'int'},
+        'availability_zone': {'key': 'availabilityZone', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        provisioning_state: Optional[Union[str, "ManagedCassandraProvisioningState"]] = None,
+        data_center_location: Optional[str] = None,
+        delegated_subnet_id: Optional[str] = None,
+        node_count: Optional[int] = None,
+        base64_encoded_cassandra_yaml_fragment: Optional[str] = None,
+        managed_disk_customer_key_uri: Optional[str] = None,
+        backup_storage_customer_key_uri: Optional[str] = None,
+        sku: Optional[str] = None,
+        disk_sku: Optional[str] = None,
+        disk_capacity: Optional[int] = None,
+        availability_zone: Optional[bool] = None,
+        **kwargs
+    ):
+        super(DataCenterResourceProperties, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.data_center_location = data_center_location
+        self.delegated_subnet_id = delegated_subnet_id
+        self.node_count = node_count
+        self.seed_nodes = None
+        self.base64_encoded_cassandra_yaml_fragment = base64_encoded_cassandra_yaml_fragment
+        self.managed_disk_customer_key_uri = managed_disk_customer_key_uri
+        self.backup_storage_customer_key_uri = backup_storage_customer_key_uri
+        self.sku = sku
+        self.disk_sku = disk_sku
+        self.disk_capacity = disk_capacity
+        self.availability_zone = availability_zone
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -2965,6 +3697,52 @@ class IpAddressOrRange(msrest.serialization.Model):
         self.ip_address_or_range = ip_address_or_range
 
 
+class ListClusters(msrest.serialization.Model):
+    """List of managed Cassandra clusters.
+
+    :param value: Container for the array of clusters.
+    :type value: list[~azure.mgmt.cosmosdb.models.ClusterResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ClusterResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ClusterResource"]] = None,
+        **kwargs
+    ):
+        super(ListClusters, self).__init__(**kwargs)
+        self.value = value
+
+
+class ListDataCenters(msrest.serialization.Model):
+    """List of managed Cassandra data centers and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Container for array of data centers.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.DataCenterResource]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DataCenterResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListDataCenters, self).__init__(**kwargs)
+        self.value = None
+
+
 class Location(msrest.serialization.Model):
     """A region in which the Azure Cosmos DB database account is deployed.
 
@@ -3027,6 +3805,173 @@ class Location(msrest.serialization.Model):
         self.provisioning_state = None
         self.failover_priority = failover_priority
         self.is_zone_redundant = is_zone_redundant
+
+
+class LocationGetResult(ARMProxyResource):
+    """Cosmos DB location get result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param properties: Cosmos DB location metadata.
+    :type properties: ~azure.mgmt.cosmosdb.models.LocationProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'LocationProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["LocationProperties"] = None,
+        **kwargs
+    ):
+        super(LocationGetResult, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class LocationListResult(msrest.serialization.Model):
+    """The List operation response, that contains Cosmos DB locations and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Cosmos DB locations and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.LocationGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LocationGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LocationListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class LocationProperties(msrest.serialization.Model):
+    """Cosmos DB location metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar supports_availability_zone: Flag indicating whether the location supports availability
+     zones or not.
+    :vartype supports_availability_zone: bool
+    :ivar is_residency_restricted: Flag indicating whether the location is residency sensitive.
+    :vartype is_residency_restricted: bool
+    :ivar backup_storage_redundancies: The properties of available backup storage redundancies.
+    :vartype backup_storage_redundancies: list[str or
+     ~azure.mgmt.cosmosdb.models.BackupStorageRedundancy]
+    """
+
+    _validation = {
+        'supports_availability_zone': {'readonly': True},
+        'is_residency_restricted': {'readonly': True},
+        'backup_storage_redundancies': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'supports_availability_zone': {'key': 'supportsAvailabilityZone', 'type': 'bool'},
+        'is_residency_restricted': {'key': 'isResidencyRestricted', 'type': 'bool'},
+        'backup_storage_redundancies': {'key': 'backupStorageRedundancies', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LocationProperties, self).__init__(**kwargs)
+        self.supports_availability_zone = None
+        self.is_residency_restricted = None
+        self.backup_storage_redundancies = None
+
+
+class ManagedCassandraManagedServiceIdentity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The object id of the identity resource.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the resource.
+    :vartype tenant_id: str
+    :param type: The type of the resource. Possible values include: "SystemAssigned", "None".
+    :type type: str or ~azure.mgmt.cosmosdb.models.ManagedCassandraResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "ManagedCassandraResourceIdentityType"]] = None,
+        **kwargs
+    ):
+        super(ManagedCassandraManagedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+
+
+class ManagedCassandraReaperStatus(msrest.serialization.Model):
+    """ManagedCassandraReaperStatus.
+
+    :param healthy:
+    :type healthy: bool
+    :param repair_run_ids: Dictionary of :code:`<string>`.
+    :type repair_run_ids: dict[str, str]
+    :param repair_schedules: Dictionary of :code:`<string>`.
+    :type repair_schedules: dict[str, str]
+    """
+
+    _attribute_map = {
+        'healthy': {'key': 'healthy', 'type': 'bool'},
+        'repair_run_ids': {'key': 'repairRunIds', 'type': '{str}'},
+        'repair_schedules': {'key': 'repairSchedules', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        healthy: Optional[bool] = None,
+        repair_run_ids: Optional[Dict[str, str]] = None,
+        repair_schedules: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        super(ManagedCassandraReaperStatus, self).__init__(**kwargs)
+        self.healthy = healthy
+        self.repair_run_ids = repair_run_ids
+        self.repair_schedules = repair_schedules
 
 
 class ManagedServiceIdentity(msrest.serialization.Model):
@@ -4535,6 +5480,9 @@ class PeriodicModeProperties(msrest.serialization.Model):
     :param backup_retention_interval_in_hours: An integer representing the time (in hours) that
      each backup is retained.
     :type backup_retention_interval_in_hours: int
+    :param backup_storage_redundancy: Enum to indicate type of backup residency. Possible values
+     include: "Geo", "Local", "Zone".
+    :type backup_storage_redundancy: str or ~azure.mgmt.cosmosdb.models.BackupStorageRedundancy
     """
 
     _validation = {
@@ -4545,6 +5493,7 @@ class PeriodicModeProperties(msrest.serialization.Model):
     _attribute_map = {
         'backup_interval_in_minutes': {'key': 'backupIntervalInMinutes', 'type': 'int'},
         'backup_retention_interval_in_hours': {'key': 'backupRetentionIntervalInHours', 'type': 'int'},
+        'backup_storage_redundancy': {'key': 'backupStorageRedundancy', 'type': 'str'},
     }
 
     def __init__(
@@ -4552,11 +5501,13 @@ class PeriodicModeProperties(msrest.serialization.Model):
         *,
         backup_interval_in_minutes: Optional[int] = None,
         backup_retention_interval_in_hours: Optional[int] = None,
+        backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
         **kwargs
     ):
         super(PeriodicModeProperties, self).__init__(**kwargs)
         self.backup_interval_in_minutes = backup_interval_in_minutes
         self.backup_retention_interval_in_hours = backup_retention_interval_in_hours
+        self.backup_storage_redundancy = backup_storage_redundancy
 
 
 class Permission(msrest.serialization.Model):
@@ -5809,6 +6760,27 @@ class RestoreParameters(msrest.serialization.Model):
         self.restore_source = restore_source
         self.restore_timestamp_in_utc = restore_timestamp_in_utc
         self.databases_to_restore = databases_to_restore
+
+
+class SeedNode(msrest.serialization.Model):
+    """SeedNode.
+
+    :param ip_address: IP address of this seed node.
+    :type ip_address: str
+    """
+
+    _attribute_map = {
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_address: Optional[str] = None,
+        **kwargs
+    ):
+        super(SeedNode, self).__init__(**kwargs)
+        self.ip_address = ip_address
 
 
 class SpatialSpec(msrest.serialization.Model):

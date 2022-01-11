@@ -8,7 +8,7 @@ from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-all_api_versions = get_decorator(is_async=True, vault_only=True)
+all_api_versions = get_decorator(is_async=True, only_vault=True)
 
 
 class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):

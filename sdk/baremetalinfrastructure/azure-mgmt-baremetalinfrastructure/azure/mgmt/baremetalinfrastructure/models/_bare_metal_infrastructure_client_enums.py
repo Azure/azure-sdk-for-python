@@ -103,3 +103,12 @@ class AzureBareMetalProvisioningStatesEnum(with_metaclass(_CaseInsensitiveEnumMe
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
     MIGRATING = "Migrating"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"

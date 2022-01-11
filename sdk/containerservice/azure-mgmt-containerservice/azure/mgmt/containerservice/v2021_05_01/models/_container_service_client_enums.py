@@ -27,24 +27,34 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class AgentPoolMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """AgentPoolMode represents mode of an agent pool.
+    """A cluster must have at least one 'System' Agent Pool at all times. For additional information
+    on agent pool restrictions and best practices, see:
+    https://docs.microsoft.com/azure/aks/use-system-pools
     """
 
+    #: System agent pools are primarily for hosting critical system pods such as CoreDNS and
+    #: metrics-server. System agent pools osType must be Linux. System agent pools VM SKU must have at
+    #: least 2vCPUs and 4GB of memory.
     SYSTEM = "System"
+    #: User agent pools are primarily for hosting your application pods.
     USER = "User"
 
 class AgentPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """AgentPoolType represents types of an agent pool.
+    """The type of Agent Pool.
     """
 
+    #: Create an Agent Pool backed by a Virtual Machine Scale Set.
     VIRTUAL_MACHINE_SCALE_SETS = "VirtualMachineScaleSets"
+    #: Use of this is strongly discouraged.
     AVAILABILITY_SET = "AvailabilitySet"
 
 class Code(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Tells whether the cluster is Running or Stopped
     """
 
+    #: The cluster is running.
     RUNNING = "Running"
+    #: The cluster is stopped.
     STOPPED = "Stopped"
 
 class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -57,15 +67,15 @@ class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISCONNECTED = "Disconnected"
 
 class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Storage profile specifies what kind of storage used. Choose from StorageAccount and
-    ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
+    """Specifies what kind of storage to use. If omitted, the default will be chosen on your behalf
+    based on the choice of orchestrator.
     """
 
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
 class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Size of agent VMs.
+    """Size of agent VMs. Note: This is no longer maintained.
     """
 
     STANDARD_A1 = "Standard_A1"
@@ -262,10 +272,26 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     KEY = "Key"
 
 class Expander(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """If not specified, the default is 'random'. See `expanders
+    <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders>`_
+    for more information.
+    """
 
+    #: Selects the node group that will have the least idle CPU (if tied, unused memory) after
+    #: scale-up. This is useful when you have different classes of nodes, for example, high CPU or
+    #: high memory nodes, and only want to expand those when there are pending pods that need a lot of
+    #: those resources.
     LEAST_WASTE = "least-waste"
+    #: Selects the node group that would be able to schedule the most pods when scaling up. This is
+    #: useful when you are using nodeSelector to make sure certain pods land on certain nodes. Note
+    #: that this won't cause the autoscaler to select bigger nodes vs. smaller, as it can add multiple
+    #: smaller nodes at once.
     MOST_PODS = "most-pods"
+    #: Selects the node group that has the highest priority assigned by the user. It's configuration
+    #: is described in more details `here
+    #: <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md>`_.
     PRIORITY = "priority"
+    #: Used when you don't have a particular need for the node groups to scale differently.
     RANDOM = "random"
 
 class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -276,7 +302,6 @@ class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
 
 class GPUInstanceProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """GPUInstanceProfile to be used to specify GPU MIG instance profile for supported GPU VM SKU.
-    Supported values are MIG1g, MIG2g, MIG3g, MIG4g and MIG7g.
     """
 
     MIG1_G = "MIG1g"
@@ -286,26 +311,36 @@ class GPUInstanceProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIG7_G = "MIG7g"
 
 class KubeletDiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """KubeletDiskType determines the placement of emptyDir volumes, container runtime data root, and
-    Kubelet ephemeral storage. Allowed values: 'OS', 'Temporary' (preview).
+    """Determines the placement of emptyDir volumes, container runtime data root, and Kubelet
+    ephemeral storage.
     """
 
+    #: Kubelet will use the OS disk for its data.
     OS = "OS"
+    #: Kubelet will use the temporary disk for its data.
     TEMPORARY = "Temporary"
 
 class LicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The licenseType to use for Windows VMs. Windows_Server is used to enable Azure Hybrid User
-    Benefits for Windows VMs.
+    """The license type to use for Windows VMs. See `Azure Hybrid User Benefits
+    <https://azure.microsoft.com/pricing/hybrid-benefit/faq/>`_ for more details.
     """
 
+    #: No additional licensing is applied.
     NONE = "None"
+    #: Enables Azure Hybrid User Benefits for Windows VMs.
     WINDOWS_SERVER = "Windows_Server"
 
 class LoadBalancerSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The load balancer sku for the managed cluster.
+    """The default is 'standard'. See `Azure Load Balancer SKUs
+    <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information about the
+    differences between load balancer SKUs.
     """
 
+    #: Use a a standard Load Balancer. This is the recommended Load Balancer SKU. For more information
+    #: about on working with the load balancer in the managed cluster, see the `standard Load Balancer
+    #: <https://docs.microsoft.com/azure/aks/load-balancer-standard>`_ article.
     STANDARD = "standard"
+    #: Use a basic Load Balancer with limited functionality.
     BASIC = "basic"
 
 class ManagedClusterPodIdentityProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -318,66 +353,104 @@ class ManagedClusterPodIdentityProvisioningState(with_metaclass(_CaseInsensitive
     FAILED = "Failed"
 
 class ManagedClusterSKUName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Name of a managed cluster SKU.
+    """The name of a managed cluster SKU.
     """
 
     BASIC = "Basic"
 
 class ManagedClusterSKUTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Tier of a managed cluster SKU.
+    """If not specified, the default is 'Free'. See `uptime SLA
+    <https://docs.microsoft.com/azure/aks/uptime-sla>`_ for more details.
     """
 
+    #: Guarantees 99.95% availability of the Kubernetes API server endpoint for clusters that use
+    #: Availability Zones and 99.9% of availability for clusters that don't use Availability Zones.
     PAID = "Paid"
+    #: No guaranteed SLA, no additional charges. Free tier clusters have an SLO of 99.5%.
     FREE = "Free"
 
 class NetworkMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Network mode used for building Kubernetes network.
+    """This cannot be specified if networkPlugin is anything other than 'azure'.
     """
 
+    #: No bridge is created. Intra-VM Pod to Pod communication is through IP routes created by Azure
+    #: CNI. See `Transparent Mode <https://docs.microsoft.com/azure/aks/faq#transparent-mode>`_ for
+    #: more information.
     TRANSPARENT = "transparent"
+    #: This is no longer supported.
     BRIDGE = "bridge"
 
 class NetworkPlugin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Network plugin used for building Kubernetes network.
+    """Network plugin used for building the Kubernetes network.
     """
 
+    #: Use the Azure CNI network plugin. See `Azure CNI (advanced) networking
+    #: <https://docs.microsoft.com/azure/aks/concepts-network#azure-cni-advanced-networking>`_ for
+    #: more information.
     AZURE = "azure"
+    #: Use the Kubenet network plugin. See `Kubenet (basic) networking
+    #: <https://docs.microsoft.com/azure/aks/concepts-network#kubenet-basic-networking>`_ for more
+    #: information.
     KUBENET = "kubenet"
 
 class NetworkPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Network policy used for building Kubernetes network.
+    """Network policy used for building the Kubernetes network.
     """
 
+    #: Use Calico network policies. See `differences between Azure and Calico policies
+    #: <https://docs.microsoft.com/azure/aks/use-network-policies#differences-between-azure-and-calico-policies-and-their-capabilities>`_
+    #: for more information.
     CALICO = "calico"
+    #: Use Azure network policies. See `differences between Azure and Calico policies
+    #: <https://docs.microsoft.com/azure/aks/use-network-policies#differences-between-azure-and-calico-policies-and-their-capabilities>`_
+    #: for more information.
     AZURE = "azure"
 
 class OSDiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """OSDiskType represents the type of an OS disk on an agent pool.
+    """The default is 'Ephemeral' if the VM supports it and has a cache disk larger than the requested
+    OSDiskSizeGB. Otherwise, defaults to 'Managed'. May not be changed after creation. For more
+    information see `Ephemeral OS
+    <https://docs.microsoft.com/azure/aks/cluster-configuration#ephemeral-os>`_.
     """
 
+    #: Azure replicates the operating system disk for a virtual machine to Azure storage to avoid data
+    #: loss should the VM need to be relocated to another host. Since containers aren't designed to
+    #: have local state persisted, this behavior offers limited value while providing some drawbacks,
+    #: including slower node provisioning and higher read/write latency.
     MANAGED = "Managed"
+    #: Ephemeral OS disks are stored only on the host machine, just like a temporary disk. This
+    #: provides lower read/write latency, along with faster node scaling and cluster upgrades.
     EPHEMERAL = "Ephemeral"
 
 class OSSKU(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """OsSKU to be used to specify os sku. Choose from Ubuntu(default) and CBLMariner for Linux
-    OSType. Not applicable to Windows OSType.
+    """Specifies an OS SKU. This value must not be specified if OSType is Windows.
     """
 
     UBUNTU = "Ubuntu"
     CBL_MARINER = "CBLMariner"
 
 class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
+    """The operating system type. The default is Linux.
     """
 
+    #: Use Linux.
     LINUX = "Linux"
+    #: Use Windows.
     WINDOWS = "Windows"
 
 class OutboundType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The outbound (egress) routing method.
+    """This can only be set at cluster creation time and cannot be changed later. For more information
+    see `egress outbound type <https://docs.microsoft.com/azure/aks/egress-outboundtype>`_.
     """
 
+    #: The load balancer is used for egress through an AKS assigned public IP. This supports
+    #: Kubernetes services of type 'loadBalancer'. For more information see `outbound type
+    #: loadbalancer
+    #: <https://docs.microsoft.com/azure/aks/egress-outboundtype#outbound-type-of-loadbalancer>`_.
     LOAD_BALANCER = "loadBalancer"
+    #: Egress paths must be defined by the user. This is an advanced scenario and requires proper
+    #: network configuration. For more information see `outbound type userDefinedRouting
+    #: <https://docs.microsoft.com/azure/aks/egress-outboundtype#outbound-type-of-userdefinedrouting>`_.
     USER_DEFINED_ROUTING = "userDefinedRouting"
 
 class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -390,39 +463,72 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitive
     FAILED = "Failed"
 
 class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity used for the managed cluster. Type 'SystemAssigned' will use an implicitly
-    created identity in master components and an auto-created user assigned identity in MC_
-    resource group in agent nodes. Type 'None' will not use MSI for the managed cluster, service
-    principal will be used instead.
+    """For more information see `use managed identities in AKS
+    <https://docs.microsoft.com/azure/aks/use-managed-identity>`_.
     """
 
+    #: Use an implicitly created system assigned managed identity to manage cluster resources. Master
+    #: components in the control plane such as kube-controller-manager will use the system assigned
+    #: managed identity to manipulate Azure resources.
     SYSTEM_ASSIGNED = "SystemAssigned"
+    #: Use a user-specified identity to manage cluster resources. Master components in the control
+    #: plane such as kube-controller-manager will use the specified user assigned managed identity to
+    #: manipulate Azure resources.
     USER_ASSIGNED = "UserAssigned"
+    #: Do not use a managed identity for the Managed Cluster, service principal will be used instead.
     NONE = "None"
 
 class ScaleSetEvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ScaleSetEvictionPolicy to be used to specify eviction policy for Spot virtual machine scale
-    set. Default to Delete.
+    """The eviction policy specifies what to do with the VM when it is evicted. The default is Delete.
+    For more information about eviction see `spot VMs
+    <https://docs.microsoft.com/azure/virtual-machines/spot-vms>`_
     """
 
+    #: Nodes in the underlying Scale Set of the node pool are deleted when they're evicted.
     DELETE = "Delete"
+    #: Nodes in the underlying Scale Set of the node pool are set to the stopped-deallocated state
+    #: upon eviction. Nodes in the stopped-deallocated state count against your compute quota and can
+    #: cause issues with cluster scaling or upgrading.
     DEALLOCATE = "Deallocate"
 
 class ScaleSetPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ScaleSetPriority to be used to specify virtual machine scale set priority. Default to regular.
+    """The Virtual Machine Scale Set priority.
     """
 
+    #: Spot priority VMs will be used. There is no SLA for spot nodes. See `spot on AKS
+    #: <https://docs.microsoft.com/azure/aks/spot-node-pool>`_ for more information.
     SPOT = "Spot"
+    #: Regular VMs will be used.
     REGULAR = "Regular"
 
 class UpgradeChannel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """upgrade channel for auto upgrade.
+    """For more information see `setting the AKS cluster auto-upgrade channel
+    <https://docs.microsoft.com/azure/aks/upgrade-cluster#set-auto-upgrade-channel>`_.
     """
 
+    #: Automatically upgrade the cluster to the latest supported patch release on the latest supported
+    #: minor version. In cases where the cluster is at a version of Kubernetes that is at an N-2 minor
+    #: version where N is the latest supported minor version, the cluster first upgrades to the latest
+    #: supported patch version on N-1 minor version. For example, if a cluster is running version
+    #: 1.17.7 and versions 1.17.9, 1.18.4, 1.18.6, and 1.19.1 are available, your cluster first is
+    #: upgraded to 1.18.6, then is upgraded to 1.19.1.
     RAPID = "rapid"
+    #: Automatically upgrade the cluster to the latest supported patch release on minor version N-1,
+    #: where N is the latest supported minor version. For example, if a cluster is running version
+    #: 1.17.7 and versions 1.17.9, 1.18.4, 1.18.6, and 1.19.1 are available, your cluster is upgraded
+    #: to 1.18.6.
     STABLE = "stable"
+    #: Automatically upgrade the cluster to the latest supported patch version when it becomes
+    #: available while keeping the minor version the same. For example, if a cluster is running
+    #: version 1.17.7 and versions 1.17.9, 1.18.4, 1.18.6, and 1.19.1 are available, your cluster is
+    #: upgraded to 1.17.9.
     PATCH = "patch"
+    #: Automatically upgrade the node image to the latest version available. Microsoft provides
+    #: patches and new images for image nodes frequently (usually weekly), but your running nodes
+    #: won't get the new images unless you do a node image upgrade. Turning on the node-image channel
+    #: will automatically update your node images whenever a new version is available.
     NODE_IMAGE = "node-image"
+    #: Disables auto-upgrades and keeps the cluster at its current version of Kubernetes.
     NONE = "none"
 
 class WeekDay(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

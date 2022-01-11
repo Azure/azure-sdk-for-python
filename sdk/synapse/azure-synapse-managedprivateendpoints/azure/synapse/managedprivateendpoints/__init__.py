@@ -6,11 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._managed_private_endpoints_client import ManagedPrivateEndpointsClient
-from ._version import VERSION
-
-__version__ = VERSION
-__all__ = ['ManagedPrivateEndpointsClient']
+from ._vnet_client import VnetClient
+__all__ = ['VnetClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

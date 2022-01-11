@@ -44,7 +44,7 @@ class LocationBasedRecommendedActionSessionsOperationStatusOperations:
         self,
         location_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendedActionSessionsOperationStatus":
         """Recommendation action session operation status.
 

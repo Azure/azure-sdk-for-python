@@ -72,6 +72,7 @@ def wait_for_no_backup(client, rg, account_name, pool_name, volume_name, backup_
             # and is actually what we are waiting for
             break
 
+
 def wait_for_backup_created(client, rg, account_name, pool_name, volume_name, backup_name, live=False):
     co = 0
     while co < 40:
@@ -81,6 +82,7 @@ def wait_for_backup_created(client, rg, account_name, pool_name, volume_name, ba
         backup = client.backups.get(rg, account_name, pool_name, volume_name, backup_name)
         if backup.provisioning_state == "Succeeded":
             break
+
 
 def clean_up(client, disable_bp=True, live=False):
     if disable_bp:
@@ -110,7 +112,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 1)
 
-        # automaticaly delete the second backup by disable backups on volume
+        # automatically delete the second backup by disable backups on volume
         disable_backup(self.client, live=self.is_live)
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 0)
@@ -143,27 +145,25 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
         clean_up(self.client, live=self.is_live)
 
-
-    @unittest.skip("Skipping test until able to update anyting")
     def test_update_backup(self):
         create_backup(self.client, live=self.is_live)
-
-        tag = {'Tag1': 'Value1'}
-        backup_body = BackupPatch(location=LOCATION, tags=tag)
+        backup_body = BackupPatch(location=LOCATION, label="label1")
         self.client.backups.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_BACKUP_1, backup_body).wait()
 
         backup = get_backup(self.client)
-        self.assertTrue(backup.tags['Tag1'] == 'Value1')
+        self.assertEqual(backup.label, "label1")
 
         clean_up(self.client, live=self.is_live)
 
-
-    @unittest.skip("Skipping test until this feature has faster performance. Today you have to wait 5 minute after backup creation until you can call backup status")
     def test_get_backup_status(self):
         create_backup(self.client, live=self.is_live)
 
+        if self.is_live:
+            time.sleep(120)
+
         backup_status = self.client.backups.get_status(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
         self.assertTrue(backup_status.healthy)
-        self.assertEqual(backup_status.mirrorState, "Mirrored")
+        self.assertEqual(backup_status.mirror_state, "Mirrored")
 
         clean_up(self.client, live=self.is_live)
+

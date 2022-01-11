@@ -25,7 +25,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint)
+            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs)
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
@@ -70,3 +70,10 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         access_token = self._exchange_client.get_acr_access_token(challenge)
         request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
+
+    def __enter__(self):
+        self._exchange_client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._exchange_client.__exit__(*args)

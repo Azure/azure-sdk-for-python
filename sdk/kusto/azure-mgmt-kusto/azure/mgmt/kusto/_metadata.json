@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-01-01",
-    "total_api_version_list": ["2021-01-01"],
+    "chosen_version": "2021-08-27",
+    "total_api_version_list": ["2021-08-27"],
     "client": {
         "name": "KustoManagementClient",
         "filename": "_kusto_management_client",
@@ -101,9 +101,12 @@
         "clusters": "ClustersOperations",
         "cluster_principal_assignments": "ClusterPrincipalAssignmentsOperations",
         "databases": "DatabasesOperations",
+        "attached_database_configurations": "AttachedDatabaseConfigurationsOperations",
+        "managed_private_endpoints": "ManagedPrivateEndpointsOperations",
         "database_principal_assignments": "DatabasePrincipalAssignmentsOperations",
         "scripts": "ScriptsOperations",
-        "attached_database_configurations": "AttachedDatabaseConfigurationsOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
         "data_connections": "DataConnectionsOperations",
         "operations": "Operations",
         "operations_results": "OperationsResultsOperations"

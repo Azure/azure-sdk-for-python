@@ -44,7 +44,7 @@ class LocationBasedPerformanceTierOperations:
     def list(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PerformanceTierListResult"]:
         """List all the performance tiers at specified location in a given subscription.
 
@@ -109,4 +109,4 @@ class LocationBasedPerformanceTierOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSQL/locations/{locationName}/performanceTiers'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/performanceTiers'}  # type: ignore

@@ -45,7 +45,7 @@ class RegulatoryComplianceControlsOperations:
         self,
         regulatory_compliance_standard_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RegulatoryComplianceControlList"]:
         """All supported regulatory compliance controls details and state for selected standard.
 
@@ -120,7 +120,7 @@ class RegulatoryComplianceControlsOperations:
         self,
         regulatory_compliance_standard_name: str,
         regulatory_compliance_control_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegulatoryComplianceControl":
         """Selected regulatory compliance control details and state.
 

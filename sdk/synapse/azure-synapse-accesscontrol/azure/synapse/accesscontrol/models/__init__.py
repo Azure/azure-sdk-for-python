@@ -10,8 +10,8 @@ try:
     from ._models_py3 import CheckAccessDecision
     from ._models_py3 import CheckPrincipalAccessRequest
     from ._models_py3 import CheckPrincipalAccessResponse
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorContract
-    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import RequiredAction
     from ._models_py3 import RoleAssignmentDetails
@@ -24,8 +24,8 @@ except (SyntaxError, ImportError):
     from ._models import CheckAccessDecision  # type: ignore
     from ._models import CheckPrincipalAccessRequest  # type: ignore
     from ._models import CheckPrincipalAccessResponse  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorContract  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import RequiredAction  # type: ignore
     from ._models import RoleAssignmentDetails  # type: ignore
@@ -39,8 +39,8 @@ __all__ = [
     'CheckAccessDecision',
     'CheckPrincipalAccessRequest',
     'CheckPrincipalAccessResponse',
+    'ErrorAdditionalInfo',
     'ErrorContract',
-    'ErrorDetail',
     'ErrorResponse',
     'RequiredAction',
     'RoleAssignmentDetails',

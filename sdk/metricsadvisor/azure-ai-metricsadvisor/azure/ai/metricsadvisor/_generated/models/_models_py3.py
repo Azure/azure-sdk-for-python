@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import *
+from ._metrics_advisor_enums import *
 
 
 class AlertingResultQuery(msrest.serialization.Model):

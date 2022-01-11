@@ -3,9 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 try:
-    from unittest.mock import Mock
+    from unittest.mock import MagicMock, Mock
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import MagicMock, Mock  # type: ignore
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -15,6 +15,37 @@ from azure.identity import (
     CredentialUnavailableError,
 )
 import pytest
+
+
+def test_close():
+    credentials = [MagicMock(close=Mock()) for _ in range(5)]
+    chain = ChainedTokenCredential(*credentials)
+
+    for credential in credentials:
+        assert credential.__exit__.call_count == 0
+
+    chain.close()
+
+    for credential in credentials:
+        assert credential.__exit__.call_count == 1
+
+
+def test_context_manager():
+    credentials = [MagicMock() for _ in range(5)]
+    chain = ChainedTokenCredential(*credentials)
+
+    for credential in credentials:
+        assert credential.__enter__.call_count == 0
+        assert credential.__exit__.call_count == 0
+
+    with chain:
+        for credential in credentials:
+            assert credential.__enter__.call_count == 1
+            assert credential.__exit__.call_count == 0
+
+    for credential in credentials:
+        assert credential.__enter__.call_count == 1
+        assert credential.__exit__.call_count == 1
 
 
 def test_error_message():

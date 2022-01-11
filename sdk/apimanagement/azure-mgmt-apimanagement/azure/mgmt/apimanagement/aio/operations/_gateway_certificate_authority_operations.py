@@ -49,7 +49,7 @@ class GatewayCertificateAuthorityOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GatewayCertificateAuthorityCollection"]:
         """Lists the collection of Certificate Authorities for the specified Gateway entity.
 
@@ -127,7 +127,7 @@ class GatewayCertificateAuthorityOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -144,7 +144,7 @@ class GatewayCertificateAuthorityOperations:
         service_name: str,
         gateway_id: str,
         certificate_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks if Certificate entity is assigned to Gateway entity as Certificate Authority.
 
@@ -196,7 +196,7 @@ class GatewayCertificateAuthorityOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -214,7 +214,7 @@ class GatewayCertificateAuthorityOperations:
         service_name: str,
         gateway_id: str,
         certificate_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayCertificateAuthorityContract":
         """Get assigned Gateway Certificate Authority details.
 
@@ -266,7 +266,7 @@ class GatewayCertificateAuthorityOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -287,7 +287,7 @@ class GatewayCertificateAuthorityOperations:
         certificate_id: str,
         parameters: "_models.GatewayCertificateAuthorityContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GatewayCertificateAuthorityContract":
         """Assign Certificate entity to Gateway entity as Certificate Authority.
 
@@ -351,7 +351,7 @@ class GatewayCertificateAuthorityOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -376,7 +376,7 @@ class GatewayCertificateAuthorityOperations:
         gateway_id: str,
         certificate_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove relationship between Certificate Authority and Gateway entity.
 
@@ -432,7 +432,7 @@ class GatewayCertificateAuthorityOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

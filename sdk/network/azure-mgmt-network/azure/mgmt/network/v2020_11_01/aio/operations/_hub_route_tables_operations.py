@@ -49,7 +49,7 @@ class HubRouteTablesOperations:
         virtual_hub_name: str,
         route_table_name: str,
         route_table_parameters: "_models.HubRouteTable",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HubRouteTable":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         error_map = {
@@ -108,7 +108,7 @@ class HubRouteTablesOperations:
         virtual_hub_name: str,
         route_table_name: str,
         route_table_parameters: "_models.HubRouteTable",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.HubRouteTable"]:
         """Creates a RouteTable resource if it doesn't exist else updates the existing RouteTable.
 
@@ -122,8 +122,8 @@ class HubRouteTablesOperations:
         :type route_table_parameters: ~azure.mgmt.network.v2020_11_01.models.HubRouteTable
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either HubRouteTable or the result of cls(response)
@@ -183,7 +183,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HubRouteTable":
         """Retrieves the details of a RouteTable.
 
@@ -245,7 +245,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -291,7 +291,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a RouteTable.
 
@@ -303,8 +303,8 @@ class HubRouteTablesOperations:
         :type route_table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -359,7 +359,7 @@ class HubRouteTablesOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListHubRouteTablesResult"]:
         """Retrieves the details of all RouteTables.
 

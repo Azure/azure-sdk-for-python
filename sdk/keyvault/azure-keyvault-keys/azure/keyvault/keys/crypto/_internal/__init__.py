@@ -15,7 +15,7 @@ from .rsa_key import RsaKey
 from .symmetric_key import SymmetricKey
 from .transform import CryptoTransform, BlockCryptoTransform, AuthenticatedCryptoTransform, SignatureTransform
 
-__all__ = {
+__all__ = [
     "Key",
     "EllipticCurveKey",
     "RsaKey",
@@ -29,4 +29,4 @@ __all__ = {
     "AuthenticatedSymmetricEncryptionAlgorithm",
     "SignatureTransform",
     "SymmetricKey",
-}
+]

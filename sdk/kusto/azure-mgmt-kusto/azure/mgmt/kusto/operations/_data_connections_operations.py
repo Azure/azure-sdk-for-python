@@ -32,7 +32,7 @@ class DataConnectionsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.kusto.models
+    :type models: ~kusto_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -65,7 +65,7 @@ class DataConnectionsOperations(object):
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.kusto.models.DataConnectionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~kusto_management_client.models.DataConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataConnectionListResult"]
@@ -73,7 +73,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -140,7 +140,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -202,15 +202,15 @@ class DataConnectionsOperations(object):
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param parameters: The data connection parameters supplied to the CreateOrUpdate operation.
-        :type parameters: ~azure.mgmt.kusto.models.DataConnectionValidation
+        :type parameters: ~kusto_management_client.models.DataConnectionValidation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DataConnectionValidationListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.DataConnectionValidationListResult]
+        :rtype: ~azure.core.polling.LROPoller[~kusto_management_client.models.DataConnectionValidationListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -279,10 +279,10 @@ class DataConnectionsOperations(object):
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param data_connection_name: The name of the data connection.
-        :type data_connection_name: ~azure.mgmt.kusto.models.DataConnectionCheckNameRequest
+        :type data_connection_name: ~kusto_management_client.models.DataConnectionCheckNameRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.CheckNameResult
+        :rtype: ~kusto_management_client.models.CheckNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameResult"]
@@ -290,7 +290,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -353,7 +353,7 @@ class DataConnectionsOperations(object):
         :type data_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.DataConnection
+        :rtype: ~kusto_management_client.models.DataConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataConnection"]
@@ -361,7 +361,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL
@@ -414,7 +414,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -485,15 +485,15 @@ class DataConnectionsOperations(object):
         :param data_connection_name: The name of the data connection.
         :type data_connection_name: str
         :param parameters: The data connection parameters supplied to the CreateOrUpdate operation.
-        :type parameters: ~azure.mgmt.kusto.models.DataConnection
+        :type parameters: ~kusto_management_client.models.DataConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DataConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.DataConnection]
+        :rtype: ~azure.core.polling.LROPoller[~kusto_management_client.models.DataConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -561,7 +561,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -632,15 +632,15 @@ class DataConnectionsOperations(object):
         :param data_connection_name: The name of the data connection.
         :type data_connection_name: str
         :param parameters: The data connection parameters supplied to the Update operation.
-        :type parameters: ~azure.mgmt.kusto.models.DataConnection
+        :type parameters: ~kusto_management_client.models.DataConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DataConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.DataConnection]
+        :rtype: ~azure.core.polling.LROPoller[~kusto_management_client.models.DataConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -707,7 +707,7 @@ class DataConnectionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL
@@ -763,8 +763,8 @@ class DataConnectionsOperations(object):
         :type data_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

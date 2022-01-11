@@ -1,0 +1,21 @@
+receivers:
+    otlp:
+        protocols:
+            grpc:
+            http:
+exporters:
+    logging:
+        loglevel: debug
+    
+    zipkin:
+        endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
+        format: proto
+
+processors:
+    batch:
+service:
+    pipelines:
+        traces:
+            receivers: [otlp]
+            exporters: [logging, zipkin]
+            processors: [batch]

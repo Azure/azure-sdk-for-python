@@ -8,8 +8,8 @@ from ._auth_record import AuthenticationRecord
 from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
-    AzureCliCredential,
     AuthorizationCodeCredential,
+    AzureCliCredential,
     AzurePowerShellCredential,
     CertificateCredential,
     ChainedTokenCredential,
@@ -19,6 +19,7 @@ from ._credentials import (
     EnvironmentCredential,
     InteractiveBrowserCredential,
     ManagedIdentityCredential,
+    OnBehalfOfCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
@@ -42,6 +43,7 @@ __all__ = [
     "EnvironmentCredential",
     "InteractiveBrowserCredential",
     "KnownAuthorities",
+    "OnBehalfOfCredential",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "TokenCachePersistenceOptions",

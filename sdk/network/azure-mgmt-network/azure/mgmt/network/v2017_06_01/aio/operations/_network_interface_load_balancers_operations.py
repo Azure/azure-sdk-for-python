@@ -45,7 +45,7 @@ class NetworkInterfaceLoadBalancersOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceLoadBalancerListResult"]:
         """Get all load balancers in a network interface.
 

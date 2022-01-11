@@ -50,8 +50,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> "_models.PrivateEndpointConnectionListResult":
         """Gets a list of private endpoint connections in the specified managed cluster.
 
-        Gets a list of private endpoint connections in the specified managed cluster. The operation
-        returns properties of each private endpoint connection.
+        To learn more about private clusters, see:
+        https://docs.microsoft.com/azure/aks/private-clusters.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -110,9 +110,10 @@ class PrivateEndpointConnectionsOperations:
         private_endpoint_connection_name: str,
         **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
-        """Gets the private endpoint connection.
+        """Gets the specified private endpoint connection.
 
-        Gets the details of the private endpoint connection by managed cluster and resource group.
+        To learn more about private clusters, see:
+        https://docs.microsoft.com/azure/aks/private-clusters.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -177,7 +178,7 @@ class PrivateEndpointConnectionsOperations:
     ) -> "_models.PrivateEndpointConnection":
         """Updates a private endpoint connection.
 
-        Updates a private endpoint connection in the specified managed cluster.
+        Updates a private endpoint connection.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -185,7 +186,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection.
         :type private_endpoint_connection_name: str
-        :param parameters: Parameters supplied to the Update a private endpoint connection operation.
+        :param parameters: The updated private endpoint connection.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
@@ -294,7 +295,7 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncLROPoller[None]:
         """Deletes a private endpoint connection.
 
-        Deletes the private endpoint connection in the specified managed cluster.
+        Deletes a private endpoint connection.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

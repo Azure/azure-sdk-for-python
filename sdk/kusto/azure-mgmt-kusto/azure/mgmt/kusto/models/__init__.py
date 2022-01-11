@@ -7,8 +7,10 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AcceptedAudiences
     from ._models_py3 import AttachedDatabaseConfiguration
     from ._models_py3 import AttachedDatabaseConfigurationListResult
+    from ._models_py3 import AttachedDatabaseConfigurationsCheckNameRequest
     from ._models_py3 import AzureCapacity
     from ._models_py3 import AzureResourceSku
     from ._models_py3 import AzureSku
@@ -39,6 +41,8 @@ try:
     from ._models_py3 import DatabasePrincipalListResult
     from ._models_py3 import DatabaseStatistics
     from ._models_py3 import DiagnoseVirtualNetworkResult
+    from ._models_py3 import EndpointDependency
+    from ._models_py3 import EndpointDetail
     from ._models_py3 import EventGridDataConnection
     from ._models_py3 import EventHubDataConnection
     from ._models_py3 import FollowerDatabaseDefinition
@@ -49,11 +53,22 @@ try:
     from ._models_py3 import LanguageExtension
     from ._models_py3 import LanguageExtensionsList
     from ._models_py3 import ListResourceSkusResult
+    from ._models_py3 import ManagedPrivateEndpoint
+    from ._models_py3 import ManagedPrivateEndpointListResult
+    from ._models_py3 import ManagedPrivateEndpointsCheckNameRequest
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import OperationResult
     from ._models_py3 import OptimizedAutoscale
+    from ._models_py3 import OutboundNetworkDependenciesEndpoint
+    from ._models_py3 import OutboundNetworkDependenciesEndpointListResult
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import ReadOnlyFollowingDatabase
     from ._models_py3 import ReadWriteDatabase
@@ -70,8 +85,10 @@ try:
     from ._models_py3 import TrustedExternalTenant
     from ._models_py3 import VirtualNetworkConfiguration
 except (SyntaxError, ImportError):
+    from ._models import AcceptedAudiences  # type: ignore
     from ._models import AttachedDatabaseConfiguration  # type: ignore
     from ._models import AttachedDatabaseConfigurationListResult  # type: ignore
+    from ._models import AttachedDatabaseConfigurationsCheckNameRequest  # type: ignore
     from ._models import AzureCapacity  # type: ignore
     from ._models import AzureResourceSku  # type: ignore
     from ._models import AzureSku  # type: ignore
@@ -102,6 +119,8 @@ except (SyntaxError, ImportError):
     from ._models import DatabasePrincipalListResult  # type: ignore
     from ._models import DatabaseStatistics  # type: ignore
     from ._models import DiagnoseVirtualNetworkResult  # type: ignore
+    from ._models import EndpointDependency  # type: ignore
+    from ._models import EndpointDetail  # type: ignore
     from ._models import EventGridDataConnection  # type: ignore
     from ._models import EventHubDataConnection  # type: ignore
     from ._models import FollowerDatabaseDefinition  # type: ignore
@@ -112,11 +131,22 @@ except (SyntaxError, ImportError):
     from ._models import LanguageExtension  # type: ignore
     from ._models import LanguageExtensionsList  # type: ignore
     from ._models import ListResourceSkusResult  # type: ignore
+    from ._models import ManagedPrivateEndpoint  # type: ignore
+    from ._models import ManagedPrivateEndpointListResult  # type: ignore
+    from ._models import ManagedPrivateEndpointsCheckNameRequest  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import OperationResult  # type: ignore
     from ._models import OptimizedAutoscale  # type: ignore
+    from ._models import OutboundNetworkDependenciesEndpoint  # type: ignore
+    from ._models import OutboundNetworkDependenciesEndpointListResult  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointProperty  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionStateProperty  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import ReadOnlyFollowingDatabase  # type: ignore
     from ._models import ReadWriteDatabase  # type: ignore
@@ -138,6 +168,7 @@ from ._kusto_management_client_enums import (
     AzureSkuName,
     AzureSkuTier,
     BlobStorageEventType,
+    ClusterNetworkAccessFlag,
     ClusterPrincipalRole,
     Compression,
     CreatedByType,
@@ -155,6 +186,7 @@ from ._kusto_management_client_enums import (
     PrincipalType,
     PrincipalsModificationKind,
     ProvisioningState,
+    PublicNetworkAccess,
     Reason,
     State,
     Status,
@@ -162,8 +194,10 @@ from ._kusto_management_client_enums import (
 )
 
 __all__ = [
+    'AcceptedAudiences',
     'AttachedDatabaseConfiguration',
     'AttachedDatabaseConfigurationListResult',
+    'AttachedDatabaseConfigurationsCheckNameRequest',
     'AzureCapacity',
     'AzureResourceSku',
     'AzureSku',
@@ -194,6 +228,8 @@ __all__ = [
     'DatabasePrincipalListResult',
     'DatabaseStatistics',
     'DiagnoseVirtualNetworkResult',
+    'EndpointDependency',
+    'EndpointDetail',
     'EventGridDataConnection',
     'EventHubDataConnection',
     'FollowerDatabaseDefinition',
@@ -204,11 +240,22 @@ __all__ = [
     'LanguageExtension',
     'LanguageExtensionsList',
     'ListResourceSkusResult',
+    'ManagedPrivateEndpoint',
+    'ManagedPrivateEndpointListResult',
+    'ManagedPrivateEndpointsCheckNameRequest',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
     'OperationResult',
     'OptimizedAutoscale',
+    'OutboundNetworkDependenciesEndpoint',
+    'OutboundNetworkDependenciesEndpointListResult',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'ReadOnlyFollowingDatabase',
     'ReadWriteDatabase',
@@ -228,6 +275,7 @@ __all__ = [
     'AzureSkuName',
     'AzureSkuTier',
     'BlobStorageEventType',
+    'ClusterNetworkAccessFlag',
     'ClusterPrincipalRole',
     'Compression',
     'CreatedByType',
@@ -245,6 +293,7 @@ __all__ = [
     'PrincipalType',
     'PrincipalsModificationKind',
     'ProvisioningState',
+    'PublicNetworkAccess',
     'Reason',
     'State',
     'Status',

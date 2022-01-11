@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search783716a8.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2020-06-30-Preview
+    uri: https://search783716a8.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search783716a8.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
+      string: '{"@odata.context":"https://search783716a8.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
     headers:
       cache-control:
       - no-cache
@@ -23,9 +23,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 08 May 2021 06:09:39 GMT
+      - Tue, 31 Aug 2021 17:17:08 GMT
       elapsed-time:
-      - '36'
+      - '30'
       expires:
       - '-1'
       odata-version:
@@ -35,7 +35,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f83fce35-afc3-11eb-b4af-a0481ca055a9
+      - 465b627d-0a7f-11ec-a11d-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

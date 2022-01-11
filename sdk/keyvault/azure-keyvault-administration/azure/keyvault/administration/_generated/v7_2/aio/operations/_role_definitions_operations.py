@@ -45,7 +45,7 @@ class RoleDefinitionsOperations:
         vault_base_url: str,
         scope: str,
         role_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleDefinition":
         """Deletes a custom role definition.
 
@@ -108,7 +108,7 @@ class RoleDefinitionsOperations:
         scope: str,
         role_definition_name: str,
         parameters: "_models.RoleDefinitionCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleDefinition":
         """Creates or updates a custom role definition.
 
@@ -179,7 +179,7 @@ class RoleDefinitionsOperations:
         vault_base_url: str,
         scope: str,
         role_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleDefinition":
         """Get the specified role definition.
 
@@ -241,7 +241,7 @@ class RoleDefinitionsOperations:
         vault_base_url: str,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleDefinitionListResult"]:
         """Get all role definitions that are applicable at scope and above.
 

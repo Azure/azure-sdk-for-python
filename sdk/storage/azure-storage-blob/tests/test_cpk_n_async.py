@@ -12,10 +12,11 @@ from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.blob import BlobType, BlobBlock, BlobSasPermissions, generate_blob_sas, ContainerEncryptionScope
+from azure.storage.blob import BlobType, BlobBlock, BlobSasPermissions, generate_blob_sas, ContainerEncryptionScope, \
+    generate_container_sas, ContainerSasPermissions, generate_account_sas, ResourceTypes, AccountSasPermissions
 from azure.storage.blob.aio import BlobServiceClient
-from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 # The encryption scope are pre-created using management plane tool ArmClient.
@@ -27,6 +28,8 @@ TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE = {
     "default_encryption_scope": "containerscope",
     "prevent_encryption_scope_override": True
 }
+TEST_SAS_ENCRYPTION_SCOPE = "testscope1"
+TEST_SAS_ENCRYPTION_SCOPE_2 = "testscope2"
 
 
 # ------------------------------------------------------------------------------
@@ -48,7 +51,10 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.byte_data = self.get_random_bytes(64 * 1024)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
-            await bsc.create_container(self.container_name)
+            try:
+                await bsc.create_container(self.container_name)
+            except:
+                pass
 
 
     def _teardown(self, bsc):
@@ -66,11 +72,11 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name("cpk")
 
-    async def _create_block_blob(self, bsc, blob_name=None, data=None, encryption_scope=None, max_concurrency=1):
+    async def _create_block_blob(self, bsc, blob_name=None, data=None, encryption_scope=None, max_concurrency=1, overwrite=False):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b''
-        resp = await blob_client.upload_blob(data, encryption_scope=encryption_scope, max_concurrency=max_concurrency)
+        resp = await blob_client.upload_blob(data, encryption_scope=encryption_scope, max_concurrency=max_concurrency, overwrite=overwrite)
         return blob_client, resp
 
     async def _create_append_blob(self, bsc, encryption_scope=None):
@@ -92,12 +98,12 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_and_put_block_list(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_and_put_block_list(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -132,14 +138,141 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_put_block_and_put_block_list_with_blob_sas(self, storage_account_name, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        await self._setup(bsc)
+
+        blob_name = self._get_blob_reference()
+        token1 = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True, write=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_SAS_ENCRYPTION_SCOPE,
+        )
+        blob_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), token1)\
+            .get_blob_client(self.container_name, blob_name)
+
+        await blob_client.stage_block('1', b'AAA')
+        await blob_client.stage_block('2', b'BBB')
+        await blob_client.stage_block('3', b'CCC')
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        put_block_list_resp = await blob_client.commit_block_list(block_list)
+
+        # Assert
+        self.assertIsNotNone(put_block_list_resp['etag'])
+        self.assertIsNotNone(put_block_list_resp['last_modified'])
+        self.assertTrue(put_block_list_resp['request_server_encrypted'])
+        self.assertEqual(put_block_list_resp['encryption_scope'], TEST_SAS_ENCRYPTION_SCOPE)
+
+        # Act get the blob content
+        blob = await blob_client.download_blob()
+        content = await blob.readall()
+
+        # Assert content was retrieved with the cpk
+        self.assertEqual(content, b'AAABBBCCC')
+        self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
+        self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
+        self.assertEqual(blob.properties.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+        self._teardown(bsc)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_put_block_and_put_block_list_with_blob_sas_fails(self, storage_account_name, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        await self._setup(bsc)
+
+        blob_name = self._get_blob_reference()
+        token1 = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True, write=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_SAS_ENCRYPTION_SCOPE,
+        )
+        blob_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), token1)\
+            .get_blob_client(self.container_name, blob_name)
+
+        # both ses in SAS and encryption_scopes are both set and have DIFFERENT values will throw exception
+        with self.assertRaises(HttpResponseError):
+            await blob_client.stage_block('1', b'AAA', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
+
+        # both ses in SAS and encryption_scopes are both set and have SAME values will succeed
+        await blob_client.stage_block('1', b'AAA', encryption_scope=TEST_SAS_ENCRYPTION_SCOPE)
+
+        # Act
+        block_list = [BlobBlock(block_id='1')]
+        # both ses in SAS and encryption_scopes are both set and have DIFFERENT values will throw exception
+        with self.assertRaises(HttpResponseError):
+            await blob_client.commit_block_list(block_list, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
+
+        # both ses in SAS and encryption_scopes are both set and have SAME values will succeed
+        put_block_list_resp = await blob_client.commit_block_list(block_list, encryption_scope=TEST_SAS_ENCRYPTION_SCOPE)
+
+        # Assert
+        self.assertIsNotNone(put_block_list_resp['etag'])
+        self.assertIsNotNone(put_block_list_resp['last_modified'])
+        self.assertTrue(put_block_list_resp['request_server_encrypted'])
+        self.assertEqual(put_block_list_resp['encryption_scope'], TEST_SAS_ENCRYPTION_SCOPE)
+
+        # generate a sas with a different encryption scope
+        token2 = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True, write=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_ENCRYPTION_KEY_SCOPE,
+        )
+        blob_client_diff_encryption_scope_sas = BlobServiceClient(self.account_url(storage_account_name, "blob"), token2)\
+            .get_blob_client(self.container_name, blob_name)
+
+        # blob can be downloaded successfully no matter which encryption scope is used on the blob actually
+        # the encryption scope on blob is TEST_SAS_ENCRYPTION_SCOPE and ses is TEST_ENCRYPTION_KEY_SCOPE in SAS token,
+        # while we can still download the blob successfully
+        blob = await blob_client_diff_encryption_scope_sas.download_blob()
+        content = await blob.readall()
+
+        # Assert content was retrieved with the cpk
+        self.assertEqual(content, b'AAA')
+        self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
+        self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
+        self.assertEqual(blob.properties.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+        self._teardown(bsc)
+
+    @pytest.mark.live_test_only
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_block_blob_with_chunks(self, storage_account_name, storage_account_key):
         # parallel operation
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -172,9 +305,9 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_block_blob_with_sub_streams(self, storage_account_name, storage_account_key):
         # problem with the recording framework can only run live
 
         # Act
@@ -182,7 +315,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -213,14 +346,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_block_blob_with_single_chunk(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_block_blob_with_single_chunk(self, storage_account_name, storage_account_key):
         # Act
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -248,14 +381,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_from_url_and_commit(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -321,14 +454,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_append_block(self, resource_group, location, storage_account, storage_account_key):
+    async def test_append_block(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -356,14 +489,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
+    async def test_append_block_from_url(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -408,14 +541,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_append_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_append_blob_with_chunks(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -443,14 +576,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_update_page(self, resource_group, location, storage_account, storage_account_key):
+    async def test_update_page(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -481,14 +614,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_update_page_from_url(self, resource_group, location, storage_account, storage_account_key):
+    async def test_update_page_from_url(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -536,13 +669,13 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_page_blob_with_chunks(self, storage_account_name, storage_account_key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -572,14 +705,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_set_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
+    async def test_get_set_blob_metadata(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -615,14 +748,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertFalse('Up' in md)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
+    async def test_snapshot_blob(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -643,12 +776,12 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(blob_snapshot)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
+    async def test_list_blobs(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -669,14 +802,225 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
 
         self._teardown(bsc)
 
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_with_default_cpk_n(self, resource_group, location, storage_account,
-                                                       storage_account_key):
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_list_blobs_using_container_encryption_scope_sas(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        await self._setup(bsc)
+
+        token = generate_container_sas(
+            storage_account_name,
+            self.container_name,
+            storage_account_key,
+            permission=ContainerSasPermissions(read=True, write=True, list=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_SAS_ENCRYPTION_SCOPE
+        )
+        bsc_with_sas_credential = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        # blob is encrypted using TEST_SAS_ENCRYPTION_SCOPE
+        blob_client, _ = await self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
+        await self._create_append_blob(bsc_with_sas_credential)
+
+        # generate a token with TEST_ENCRYPTION_KEY_SCOPE
+        token2 = generate_container_sas(
+            storage_account_name,
+            self.container_name,
+            storage_account_key,
+            permission=ContainerSasPermissions(read=True, write=True, list=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_ENCRYPTION_KEY_SCOPE
+        )
+        bsc_with_diff_sas_credential = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token2,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        container_client = bsc_with_diff_sas_credential.get_container_client(self.container_name)
+
+        # The ses field in SAS token when list blobs is different from the encryption scope used on creating blob, while
+        # list blobs should also succeed
+        generator = container_client.list_blobs(include="metadata")
+        async for blob in generator:
+            self.assertIsNotNone(blob)
+            # Assert: every listed blob has encryption_scope
+            # and the encryption scope is the same as the one on blob creation
+            self.assertEqual(blob.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+
+        self._teardown(bsc)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_copy_with_account_encryption_scope_sas(self, storage_account_name, storage_account_key):
+        # Arrange
+        sas_token = generate_account_sas(
+            storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_SAS_ENCRYPTION_SCOPE_2
+        )
+        bsc_with_sas_credential = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=sas_token,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+
+        await self._setup(bsc_with_sas_credential)
+        # blob is encrypted using TEST_SAS_ENCRYPTION_SCOPE_2
+        blob_client, _ = await self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
+
+        #
+        sas_token2 = generate_account_sas(
+            storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_SAS_ENCRYPTION_SCOPE
+        )
+        bsc_with_account_key_credential = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=sas_token2,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        copied_blob = self.get_resource_name('copiedblob')
+        copied_blob_client = bsc_with_account_key_credential.get_blob_client(self.container_name, copied_blob)
+
+        # TODO: to confirm with Sean/Heidi ses in SAS cannot be set for async copy.
+        #  The test failed for async copy (without requires_sync=True)
+        await copied_blob_client.start_copy_from_url(blob_client.url, requires_sync=True)
+
+        props = await copied_blob_client.get_blob_properties()
+
+        self.assertEqual(props.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+
+        self._teardown(bsc_with_sas_credential)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_copy_blob_from_url_with_ecryption_scope(self, storage_account_name, storage_account_key):
+        # Arrange
+
+        # create sas for source blob
+        sas_token = generate_account_sas(
+            storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        bsc_with_sas_credential = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=sas_token,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+
+        await self._setup(bsc_with_sas_credential)
+        blob_client, _ = await self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
+
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        copied_blob = self.get_resource_name('copiedblob')
+        copied_blob_client = bsc.get_blob_client(self.container_name, copied_blob)
+
+        await copied_blob_client.start_copy_from_url(blob_client.url, requires_sync=True,
+                                               encryption_scope=TEST_SAS_ENCRYPTION_SCOPE)
+
+        props = await copied_blob_client.get_blob_properties()
+
+        self.assertEqual(props.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+
+        self._teardown(bsc_with_sas_credential)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_copy_with_user_delegation_encryption_scope_sas(self, storage_account_name, storage_account_key):
+        # Arrange
+        # to get user delegation key
+        oauth_token_credential = self.generate_oauth_token()
+        service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=oauth_token_credential,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+
+        user_delegation_key = await service_client.get_user_delegation_key(datetime.utcnow(),
+                                                                     datetime.utcnow() + timedelta(hours=1))
+
+        await self._setup(service_client)
+
+        blob_name = self.get_resource_name('blob')
+
+        sas_token = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            blob_name,
+            account_key=user_delegation_key,
+            permission=BlobSasPermissions(read=True, write=True, create=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            encryption_scope=TEST_SAS_ENCRYPTION_SCOPE
+        )
+        bsc_with_delegation_sas = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=sas_token,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+
+        # blob is encrypted using TEST_SAS_ENCRYPTION_SCOPE
+        blob_client, _ = await self._create_block_blob(bsc_with_delegation_sas, blob_name=blob_name, data=b'AAABBBCCC', overwrite=True)
+        props = await blob_client.get_blob_properties()
+
+        self.assertEqual(props.encryption_scope, TEST_SAS_ENCRYPTION_SCOPE)
+
+        self._teardown(service_client)
+
+    @pytest.mark.playback_test_only
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_container_with_default_cpk_n(self, storage_account_name, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -708,13 +1052,12 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         await container_client.delete_container()
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_with_default_cpk_n_deny_override(self, resource_group, location, storage_account,
-                                                                     storage_account_key):
+    async def test_create_container_with_default_cpk_n_deny_override(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,

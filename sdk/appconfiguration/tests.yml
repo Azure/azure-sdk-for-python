@@ -4,8 +4,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: appconfiguration
-      AllocateResourceGroup: false
-      DeployArmTemplate: true
+      SupportedClouds: 'Public,UsGov,China'
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

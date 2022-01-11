@@ -20,6 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from .._serialize import get_api_version
 from .._shared.policies_async import ExponentialRetry
 from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
 from .._shared.models import LocationMode
@@ -65,8 +66,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
 
@@ -101,8 +102,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async

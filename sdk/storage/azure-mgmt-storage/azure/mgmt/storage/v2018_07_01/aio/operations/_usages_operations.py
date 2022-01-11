@@ -44,7 +44,7 @@ class UsagesOperations:
     def list_by_location(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageListResult"]:
         """Gets the current usage count and the limit for the resources of the location under the
         subscription.

@@ -1,5 +1,6 @@
+-e ../../../tools/vcrpy
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
--e ../../identity/azure-identity
-aiohttp>=3.0; python_version >= '3.5'
+azure-identity
+aiohttp>=3.0

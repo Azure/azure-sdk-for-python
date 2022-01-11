@@ -92,10 +92,10 @@ interactions:
     uri: https://login.microsoftonline.com/tenant/oauth2/v2.0/devicecode
   response:
     body:
-      string: '{"user_code": "c934976f1393725db44d1d419b378baf00f383c5f3120eae059eb20bb86c08b0",
-        "device_code": "f942eaaebc9683c361e2038648fe4cf1ddb80d515ff47e10d48af420330eab5c",
+      string: '{"user_code": "redacted3c59ab",
+        "device_code": "redactedb9ef25",
         "verification_uri": "https://microsoft.com/devicelogin", "expires_in": 900,
-        "interval": 5, "message": "524aa9e7bd498505c8f902c5fe65bd4679d45709259cb590e75f46c980c05aa9"}'
+        "interval": 5, "message": "redactedf09f37"}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -299,8 +299,8 @@ interactions:
     body:
       string: '{"token_type": "Bearer", "scope": "https://management.azure.com/user_impersonation
         https://management.azure.com/.default", "expires_in": 86399, "ext_expires_in":
-        86399, "access_token": "27a75655adaa9cd9cd7e604a510829826acb0da287713872a9ea5658df01830f",
-        "refresh_token": "4c9049a37c3f1bdc3c662fb0749e887cf6c0a100f9899ef0d77029867bc9e98e",
+        86399, "access_token": "redactedca8839",
+        "refresh_token": "redacted7ef8cf",
         "foci": "1", "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhL3YyLjAiLCJpYXQiOjE2MTExNjQ2NTQsIm5iZiI6MTYxMTE2NDY1NCwiZXhwIjoxNjExMTY4NTU0LCJhaW8iOiJBVFFBeS84U0FBQUE4Zjl5WTlKeUFBRFQ5bEZkdlVKYU4ybk1NT3ROeGkwVlk1MWRUQUE0eFlWU3psdndwQ3NDNmdIcFRFSzB1MG1kIiwibmFtZSI6ImNobG93ZS10ZXN0Iiwib2lkIjoiYTcyOGM5MWEtNDdjOS00NTAyLWJhMDUtMzYwODQwODI2NjM2IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2hsb3dlLXRlc3RAYXp1cmVzZGt0ZWFtLm9ubWljcm9zb2Z0LmNvbSIsInJoIjoiMC5BVGNBSW11Q1ZOWTRzay02MmJlNU9qNmNXcFYzc0FUYmpScEd1LTRDLWVHX2UwWTNBSkEuIiwic3ViIjoiSE5QcW9raHV6WUFmRlVlRkEtVm1rQ0M1Z253Mkp1b0xTSEtIZ2NDbkdHYyIsInRpZCI6IjU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YSIsInV0aSI6Ii10aTBqY1VrTjA2eHlxcTAzY0tFQVEiLCJ2ZXIiOiIyLjAifQ.cnsvmmnQzua0aZ96pXJOGq8hdgyUhy2DMTN2Yzjvs5TZCRd0voB0Ox_4VmjID3CFiixFOD58tn69pu5DkWEk8T3cBXMBecBRefdjEJcVuDeAQ_GnKZgVGVMjYHERcDxanukaknzs69an8nFASBJVHcLvaiRvy5UtJ4tJPpL1yM1XXwJd6EV4e2mqDt_5SgyWM_O2QPNtQF3IuozWRGrJ84ap2VN-zgkLrZRHeiE9XtNByQDfcwEXcxznx64lOXdJmUyfpxu8iiwChUzCa01PA-gM7UjTIBe_e71ALWdIj3fLmKp3HlquSDDV-eb9jTQrhtn7MtzONk6WbQTOahVMRA",
         "client_info": "eyJ1aWQiOiJhNzI4YzkxYS00N2M5LTQ1MDItYmEwNS0zNjA4NDA4MjY2MzYiLCJ1dGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIn0"}'
     headers:
@@ -579,10 +579,10 @@ interactions:
     uri: https://login.microsoftonline.com/tenant/oauth2/v2.0/devicecode
   response:
     body:
-      string: '{"user_code": "37014a978b95ae6e752f54107987c3409b3cf801c3835261952f8740cb20d1c8",
-        "device_code": "428a20171292a6f89bedf5ef1b83a82a94f3196d1cdc914229be57fb5bdb6b1c",
+      string: '{"user_code": "redacted221497",
+        "device_code": "redacted486127",
         "verification_uri": "https://microsoft.com/devicelogin", "expires_in": 900,
-        "interval": 5, "message": "a92bcf4b00e3e6e783399306f14035815428ee07c9e2a0c7920a27fbdb9a9b27"}'
+        "interval": 5, "message": "redactedb92935"}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -789,8 +789,8 @@ interactions:
     body:
       string: '{"token_type": "Bearer", "scope": "https://management.azure.com/user_impersonation
         https://management.azure.com/.default", "expires_in": 86399, "ext_expires_in":
-        86399, "access_token": "4eae20b397129621daea0169160d06c2d3d6a26bcac8c6aed6d722f89952d41b",
-        "refresh_token": "5013d6d09c2f1ff82a870572f6066aecebea1137e8b1c731be5bf01ae0f67f24",
+        86399, "access_token": "redacteda22f90",
+        "refresh_token": "redacted0f5082",
         "foci": "1", "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhL3YyLjAiLCJpYXQiOjE2MTExNjUwODcsIm5iZiI6MTYxMTE2NTA4NywiZXhwIjoxNjExMTY4OTg3LCJhaW8iOiJBVFFBeS84U0FBQUE4L1lxaDZrd3UrRnJ3TjV2bENVQ2Z5QVlmVDR1dExpTitpeFhZS0ZsWEhZZndiSDZITW9JZEpMazlJMVZnMy9XIiwibmFtZSI6ImNobG93ZS10ZXN0Iiwib2lkIjoiYTcyOGM5MWEtNDdjOS00NTAyLWJhMDUtMzYwODQwODI2NjM2IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiY2hsb3dlLXRlc3RAYXp1cmVzZGt0ZWFtLm9ubWljcm9zb2Z0LmNvbSIsInJoIjoiMC5BVGNBSW11Q1ZOWTRzay02MmJlNU9qNmNXcFYzc0FUYmpScEd1LTRDLWVHX2UwWTNBSkEuIiwic3ViIjoiSE5QcW9raHV6WUFmRlVlRkEtVm1rQ0M1Z253Mkp1b0xTSEtIZ2NDbkdHYyIsInRpZCI6IjU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YSIsInV0aSI6Ik9WY3ZkbXVncEV1YllWQU9va0szQVEiLCJ2ZXIiOiIyLjAifQ.b17pJRXmw9YnC97aQbdKihqjTnqYuFSGH0AxdtDk4cpt9ZviJV19dz5wVxaUORGNf6K6vnFhZRlEX89bhMLH1BpVq5lc28IQ-8zk-Q6ItIap2xVS4u2jjHHoSZLoIPtNXMXPnOz_KPuff_L46mJpKoBxpEOBUvB6Tx_k-hLyrabpNYo_swBemamDylbrDPUpyNZCIlHi_qMH60Hrtfg9JlnGUeUUi-seY4vRQcTnAB-wvsQtMWbKYsEpBgjUihoqScRZMNC9j3HuvAsWurrCIJ4vZ6WKsjg7aoqC-Z-AWnOmvVSlUTajCI1HFzhjcTYDRS_WrcKnModSLvR1I6eMrw",
         "client_info": "eyJ1aWQiOiJhNzI4YzkxYS00N2M5LTQ1MDItYmEwNS0zNjA4NDA4MjY2MzYiLCJ1dGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIn0"}'
     headers:

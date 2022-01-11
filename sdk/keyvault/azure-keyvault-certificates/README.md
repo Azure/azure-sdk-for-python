@@ -11,6 +11,10 @@ and other secrets
 
 [Source code][certificates_client_src] | [Package (PyPI)][pypi_package_certificates] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][certificates_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 ### Install the package
 Install [azure-keyvault-certificates][pypi_package_certificates] and
@@ -23,7 +27,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7, 3.5.3, or later
+* Python 3.7 or later
 * A Key Vault. If you need to create one, you can use the
 [Azure Cloud Shell][azure_cloud_shell] to create one with these commands
 (replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
@@ -262,7 +266,7 @@ for certificate in certificates:
 ```
 
 ### Async operations
-This library includes a complete async API supported on Python 3.5+. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
@@ -437,6 +441,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-certificates/docs
 [certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/azure/keyvault/certificates
 [certificates_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples
-[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-certificates%2FREADME.png)

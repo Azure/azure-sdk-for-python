@@ -42,7 +42,7 @@ class AttestationOperations:
     async def attest_open_enclave(
         self,
         request: "_models.AttestOpenEnclaveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AttestationResponse":
         """Attest to an SGX enclave.
 
@@ -104,7 +104,7 @@ class AttestationOperations:
     async def attest_sgx_enclave(
         self,
         request: "_models.AttestSgxEnclaveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AttestationResponse":
         """Attest to an SGX enclave.
 
@@ -166,7 +166,7 @@ class AttestationOperations:
     async def attest_tpm(
         self,
         data: Optional[bytes] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TpmAttestationResponse":
         """Attest a Virtualization-based Security (VBS) enclave.
 

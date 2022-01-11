@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0 (2021-12-07)
+
+**Features**
+
+  - Model ImageTemplate has a new parameter system_data
+  - Model VirtualNetworkConfig has a new parameter proxy_vm_size
+  - Model ImageTemplateVmProfile has a new parameter user_assigned_identities
+  - Model ImageTemplatePlatformImageSource has a new parameter exact_version
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter tags
+  - Model Resource no longer has parameter location
+
 ## 1.0.0b1 (2021-05-25)
 
 This is beta preview version.

@@ -270,14 +270,11 @@ class ProvidersOperations:
 
     def list(
         self,
-        top: Optional[int] = None,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ProviderListResult"]:
         """Gets all resource providers for a subscription.
 
-        :param top: The number of results to return. If null is passed returns all deployments.
-        :type top: int
         :param expand: The properties to include in the results. For example, use &$expand=metadata in
          the query string to retrieve resource provider metadata. To include property aliases in
          response, use $expand=resourceTypes/aliases.
@@ -309,8 +306,6 @@ class ProvidersOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -348,14 +343,11 @@ class ProvidersOperations:
 
     def list_at_tenant_scope(
         self,
-        top: Optional[int] = None,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ProviderListResult"]:
         """Gets all resource providers for the tenant.
 
-        :param top: The number of results to return. If null is passed returns all providers.
-        :type top: int
         :param expand: The properties to include in the results. For example, use &$expand=metadata in
          the query string to retrieve resource provider metadata. To include property aliases in
          response, use $expand=resourceTypes/aliases.
@@ -383,8 +375,6 @@ class ProvidersOperations:
                 url = self.list_at_tenant_scope.metadata['url']  # type: ignore
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')

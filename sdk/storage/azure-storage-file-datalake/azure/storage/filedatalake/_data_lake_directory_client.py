@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import Any, TypeVar
 
 try:
     from urllib.parse import quote, unquote
@@ -15,6 +15,8 @@ from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeDirectoryClient(PathClient):
@@ -67,12 +69,13 @@ class DataLakeDirectoryClient(PathClient):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             directory_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeDirectoryClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeDirectoryClient from a Connection String.
 
@@ -527,6 +530,7 @@ class DataLakeDirectoryClient(PathClient):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -557,6 +561,7 @@ class DataLakeDirectoryClient(PathClient):
         )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

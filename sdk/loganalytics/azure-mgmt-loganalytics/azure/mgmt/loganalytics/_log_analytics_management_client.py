@@ -34,9 +34,9 @@ from .operations import AvailableServiceTiersOperations
 from .operations import GatewaysOperations
 from .operations import SchemaOperations
 from .operations import WorkspacePurgeOperations
+from .operations import Operations
 from .operations import TablesOperations
 from .operations import ClustersOperations
-from .operations import Operations
 from .operations import WorkspacesOperations
 from .operations import DeletedWorkspacesOperations
 from . import models
@@ -75,12 +75,12 @@ class LogAnalyticsManagementClient(object):
     :vartype schema: azure.mgmt.loganalytics.operations.SchemaOperations
     :ivar workspace_purge: WorkspacePurgeOperations operations
     :vartype workspace_purge: azure.mgmt.loganalytics.operations.WorkspacePurgeOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.loganalytics.operations.Operations
     :ivar tables: TablesOperations operations
     :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.loganalytics.operations.Operations
     :ivar workspaces: WorkspacesOperations operations
     :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
     :ivar deleted_workspaces: DeletedWorkspacesOperations operations
@@ -141,11 +141,11 @@ class LogAnalyticsManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.workspace_purge = WorkspacePurgeOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.tables = TablesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize)

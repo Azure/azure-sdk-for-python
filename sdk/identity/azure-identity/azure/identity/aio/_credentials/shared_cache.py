@@ -54,7 +54,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -78,7 +81,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
-            token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token)
+            token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))

@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searche2a413b7.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2020-06-30-Preview
+    uri: https://searche2a413b7.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'
@@ -27,9 +27,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Sat, 08 May 2021 06:02:22 GMT
+      - Tue, 31 Aug 2021 17:10:37 GMT
       elapsed-time:
-      - '72'
+      - '251'
       expires:
       - '-1'
       odata-version:
@@ -39,7 +39,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f3b00bd3-afc2-11eb-a9eb-a0481ca055a9
+      - 5d8254ab-0a7e-11ec-bab7-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

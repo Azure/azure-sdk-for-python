@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, IO, Union, List
+from typing import Any, IO, Union, List, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -21,6 +21,10 @@ from .._polling import AnalyzePolling
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import FormPage, RecognizedForm
 
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class FormRecognizerClient(FormRecognizerClientBaseAsync):
     """FormRecognizerClient extracts information from forms and images into structured data.
@@ -28,6 +32,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     invoices, identity documents), recognizing content/layout from forms, and analyzing
     custom forms from trained models. It provides different methods based on inputs from a
     URL and inputs from a stream.
+
+    .. note:: FormRecognizerClient should be used with API versions <=v2.1.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentAnalysisClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -37,26 +44,42 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword api_version:
-        The API version of the service to use for requests. It defaults to the latest service version.
-        Setting to an older version may result in reduced feature compatibility.
+        The API version of the service to use for requests. It defaults to API version v2.1.
+        Setting to an older version may result in reduced feature compatibility. To use the
+        latest supported API version and features, instantiate a DocumentAnalysisClient instead.
     :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
             :start-after: [START create_fr_client_with_key_async]
             :end-before: [END create_fr_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
             :start-after: [START create_fr_client_with_aad_async]
             :end-before: [END create_fr_client_with_aad_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with a token credential.
     """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
+        **kwargs: Any
+    ) -> None:
+        api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        super(FormRecognizerClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="form",
+            **kwargs
+        )
 
     def _prebuilt_callback(
         self, raw_response, _, headers
@@ -102,7 +125,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_receipts_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_receipts_async.py
                 :start-after: [START recognize_receipts_async]
                 :end-before: [END recognize_receipts_async]
                 :language: python
@@ -182,7 +205,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_receipts_from_url_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_receipts_from_url_async.py
                 :start-after: [START recognize_receipts_from_url_async]
                 :end-before: [END recognize_receipts_from_url_async]
                 :language: python
@@ -259,7 +282,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_business_cards_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_business_cards_async.py
                 :start-after: [START recognize_business_cards_async]
                 :end-before: [END recognize_business_cards_async]
                 :language: python
@@ -375,7 +398,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_identity_documents_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_identity_documents_async.py
                 :start-after: [START recognize_identity_documents_async]
                 :end-before: [END recognize_identity_documents_async]
                 :language: python
@@ -490,7 +513,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_invoices_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_invoices_async.py
                 :start-after: [START recognize_invoices_async]
                 :end-before: [END recognize_invoices_async]
                 :language: python
@@ -617,7 +640,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_content_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_content_async.py
                 :start-after: [START recognize_content_async]
                 :end-before: [END recognize_content_async]
                 :language: python
@@ -768,7 +791,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_custom_forms_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_custom_forms_async.py
                 :start-after: [START recognize_custom_forms_async]
                 :end-before: [END recognize_custom_forms_async]
                 :language: python

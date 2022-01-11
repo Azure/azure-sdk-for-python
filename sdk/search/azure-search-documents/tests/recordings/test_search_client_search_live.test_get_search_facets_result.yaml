@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searcheb87188d.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://searcheb87188d.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"@search.facets":{"category":[{"count":4,"value":"Budget"},{"count":1,"value":"Luxury"}]},"value":[{"@search.score":2.534638,"hotelName":"Countryside
@@ -37,9 +37,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Sat, 08 May 2021 06:03:23 GMT
+      - Tue, 31 Aug 2021 17:11:32 GMT
       elapsed-time:
-      - '232'
+      - '337'
       expires:
       - '-1'
       odata-version:
@@ -49,7 +49,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 18327585-afc3-11eb-bbb8-a0481ca055a9
+      - 7e38bcd8-0a7e-11ec-a88b-74c63bed1137
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

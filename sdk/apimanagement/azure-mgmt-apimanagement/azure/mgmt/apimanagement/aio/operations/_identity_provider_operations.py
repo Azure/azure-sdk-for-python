@@ -45,7 +45,7 @@ class IdentityProviderOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IdentityProviderList"]:
         """Lists a collection of Identity Provider configured in the specified service instance.
 
@@ -105,7 +105,7 @@ class IdentityProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -121,7 +121,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, "_models.IdentityProviderType"],
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the identityProvider specified by its identifier.
 
@@ -168,7 +168,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -185,7 +185,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, "_models.IdentityProviderType"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IdentityProviderContract":
         """Gets the configuration details of the identity Provider configured in specified service
         instance.
@@ -233,7 +233,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -253,7 +253,7 @@ class IdentityProviderOperations:
         identity_provider_name: Union[str, "_models.IdentityProviderType"],
         parameters: "_models.IdentityProviderCreateContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IdentityProviderContract":
         """Creates or Updates the IdentityProvider configuration.
 
@@ -312,7 +312,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -337,7 +337,7 @@ class IdentityProviderOperations:
         identity_provider_name: Union[str, "_models.IdentityProviderType"],
         if_match: str,
         parameters: "_models.IdentityProviderUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IdentityProviderContract":
         """Updates an existing IdentityProvider configuration.
 
@@ -395,7 +395,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -414,7 +414,7 @@ class IdentityProviderOperations:
         service_name: str,
         identity_provider_name: Union[str, "_models.IdentityProviderType"],
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified identity provider configuration.
 
@@ -465,7 +465,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -478,7 +478,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, "_models.IdentityProviderType"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClientSecretContract":
         """Gets the client secret details of the Identity Provider.
 
@@ -525,7 +525,7 @@ class IdentityProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

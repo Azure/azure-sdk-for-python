@@ -5,36 +5,27 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search3d4a19fe.search.windows.net/servicestats?api-version=2020-06-30-Preview
+    uri: https://search3d4a19fe.search.windows.net/servicestats?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns7vzfaz3Yfn+Vj+HF8Vy1l11YyXeXv3d1vkbYa3f/yL
-        YlpXTXXejo9/sK7z8Wtp/JN7O3s7v//Op7//vZ3f/2WdXxb5FX1VXxbT/HWbtUXTFtPmo9FH02pN
-        vdfNR49+8Uezarpe5Mv2BJ/hg3WTXeQfPdoZffSL1lWbffRouS7LXzL6iBDJ3+XNcLt7tlF9QyuM
-        4XW1rqc3gWvaqqaPXxc/oK8ibe7v7e8dHOzsoOn1slpeL77IVjysXlMG97YoyybfMNZ7v4SalcWi
-        aBnKInv3rMjLWfMyr88wtI8e7e7sUHPzxYucaLq8eJqv2rnfhlucVItVmdOPssynbVEt+RUP1n7Q
-        7svJT1Oz5mzpXkDbpzpBhBx1/Ut+yf8DBnOc9EMCAAA=
+      string: '{"@odata.context":"https://search3d4a19fe.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '431'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:32:32 GMT
-      elapsed-time: '64'
+      date: Tue, 31 Aug 2021 17:34:59 GMT
+      elapsed-time: '117'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 2ad56dec-afc7-11eb-be72-a0481ca055a9
+      request-id: c5091769-0a81-11ec-9d69-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search3d4a19fe.search.windows.net/servicestats?api-version=2020-06-30-Preview
+    url: https://search3d4a19fe.search.windows.net/servicestats?api-version=2021-04-30-Preview
 version: 1

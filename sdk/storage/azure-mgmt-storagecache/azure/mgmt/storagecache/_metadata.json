@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-03-01",
-    "total_api_version_list": ["2021-03-01"],
+    "chosen_version": "2021-09-01",
+    "total_api_version_list": ["2021-09-01"],
     "client": {
         "name": "StorageCacheManagementClient",
         "filename": "_storage_cache_management_client",
@@ -103,6 +103,7 @@
         "usage_models": "UsageModelsOperations",
         "asc_operations": "AscOperationsOperations",
         "caches": "CachesOperations",
-        "storage_targets": "StorageTargetsOperations"
+        "storage_targets": "StorageTargetsOperations",
+        "storage_target": "StorageTargetOperations"
     }
 }

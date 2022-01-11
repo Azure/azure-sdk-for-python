@@ -60,7 +60,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -131,8 +131,8 @@ class BatchAccountOperations(object):
         :type parameters: ~azure.mgmt.batch.models.BatchAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either BatchAccount or the result of cls(response)
@@ -211,7 +211,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -264,7 +264,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -317,8 +317,8 @@ class BatchAccountOperations(object):
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -390,7 +390,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -443,7 +443,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -513,7 +513,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -572,7 +572,7 @@ class BatchAccountOperations(object):
     ):
         # type: (...) -> None
         """Synchronizes access keys for the auto-storage account configured for the specified Batch
-        account.
+        account, only if storage key authentication is being used.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
         :type resource_group_name: str
@@ -588,7 +588,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -631,6 +631,11 @@ class BatchAccountOperations(object):
         # type: (...) -> "_models.BatchAccountKeys"
         """Regenerates the specified account key for the Batch account.
 
+        This operation applies only to Batch accounts with allowedAuthenticationModes containing
+        'SharedKey'. If the Batch account doesn't contain 'SharedKey' in its allowedAuthenticationMode,
+        clients cannot use shared keys to authenticate, and must use another allowedAuthenticationModes
+        instead. In this case, regenerating the keys will fail.
+
         :param resource_group_name: The name of the resource group that contains the Batch account.
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
@@ -647,7 +652,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -697,10 +702,10 @@ class BatchAccountOperations(object):
         # type: (...) -> "_models.BatchAccountKeys"
         """Gets the account keys for the specified Batch account.
 
-        This operation applies only to Batch accounts created with a poolAllocationMode of
-        'BatchService'. If the Batch account was created with a poolAllocationMode of
-        'UserSubscription', clients cannot use access to keys to authenticate, and must use Azure
-        Active Directory instead. In this case, getting the keys will fail.
+        This operation applies only to Batch accounts with allowedAuthenticationModes containing
+        'SharedKey'. If the Batch account doesn't contain 'SharedKey' in its allowedAuthenticationMode,
+        clients cannot use shared keys to authenticate, and must use another allowedAuthenticationModes
+        instead. In this case, getting the keys will fail.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
         :type resource_group_name: str
@@ -716,7 +721,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -751,3 +756,83 @@ class BatchAccountOperations(object):
 
         return deserialized
     get_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/listKeys'}  # type: ignore
+
+    def list_outbound_network_dependencies_endpoints(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.OutboundEnvironmentEndpointCollection"]
+        """Lists the endpoints that a Batch Compute Node under this Batch Account may call as part of
+        Batch service administration. If you are deploying a Pool inside of a virtual network that you
+        specify, you must make sure your network allows outbound access to these endpoints. Failure to
+        allow access to these endpoints may cause Batch to mark the affected nodes as unusable. For
+        more information about creating a pool inside of a virtual network, see
+        https://docs.microsoft.com/en-us/azure/batch/batch-virtual-network.
+
+        :param resource_group_name: The name of the resource group that contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either OutboundEnvironmentEndpointCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.OutboundEnvironmentEndpointCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutboundEnvironmentEndpointCollection"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-06-01"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_outbound_network_dependencies_endpoints.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('OutboundEnvironmentEndpointCollection', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_outbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/outboundNetworkDependenciesEndpoints'}  # type: ignore

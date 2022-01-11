@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkResourceListResult"]:
         """Gets the private link resources for MySQL server.
 
@@ -75,7 +75,7 @@ class PrivateLinkResourcesOperations:
                 # Construct URL
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
@@ -120,7 +120,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         server_name: str,
         group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Gets a private link resource for MySQL server.
 
@@ -146,7 +146,7 @@ class PrivateLinkResourcesOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'groupName': self._serialize.url("group_name", group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),

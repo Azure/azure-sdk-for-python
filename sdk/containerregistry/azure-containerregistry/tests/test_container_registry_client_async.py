@@ -14,12 +14,14 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
+from azure.containerregistry.aio import ContainerRegistryClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
+from testcase import get_authority
 
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
@@ -63,7 +65,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
         await client.delete_repository(TO_BE_DELETED)
@@ -90,7 +92,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_update_properties(self, containerregistry_endpoint):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
         client = self.create_registry_client(containerregistry_endpoint)
 
         properties = await client.get_repository_properties(repository)
@@ -123,7 +125,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -253,7 +255,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_get_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -274,7 +276,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_update_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -307,7 +309,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -337,7 +339,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_get_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -357,7 +359,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_update_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -389,7 +391,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -420,7 +422,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
-        self.import_image(HELLO_WORLD, tags)
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -435,7 +437,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
-        self.import_image(HELLO_WORLD, tags)
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -464,7 +466,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
-        self.import_image(HELLO_WORLD, tags)
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -493,7 +495,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
-        self.import_image(HELLO_WORLD, tags)
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -515,7 +517,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_delete_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
         await client.delete_manifest(repo, tag)
@@ -528,7 +530,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -562,8 +564,23 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    async def test_incorrect_authentication_scope(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint, authentication_scope="https://microsoft.com")
-
+    async def test_construct_container_registry_client(self, containerregistry_endpoint):
+        authority = get_authority(containerregistry_endpoint)
+        credential = self.get_credential(authority)
+        
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com")
         with pytest.raises(ClientAuthenticationError):
-            properties = await client.get_repository_properties(HELLO_WORLD)
+            properties = await client.get_repository_properties(HELLO_WORLD)       
+        with pytest.raises(TypeError):
+            client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
+
+    @acr_preparer()
+    def test_set_api_version(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        assert client._client._config.api_version == "2021-07-01"
+        
+        client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15-preview")
+        assert client._client._config.api_version == "2019-08-15-preview"
+        
+        with pytest.raises(ValueError):
+            client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15")

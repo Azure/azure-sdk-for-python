@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure Storage Blobs client library for Python
 Azure Blob storage is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data, such as text or binary data.
 
@@ -15,7 +18,7 @@ Blob storage is ideal for:
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -123,6 +126,14 @@ The `credential` parameter may be provided in a number of different forms, depen
     from azure.storage.blob import BlobServiceClient
     service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential="<account_access_key>")
     ```
+    
+    If you are using **customized url** (which means the url is not in this format `<my_account_name>.blob.core.windows.net`),
+    please instantiate the client using the credential below:
+    ```python
+    from azure.storage.blob import BlobServiceClient
+    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", 
+       credential={"account_name": "<your_account_name>", "account_key":"<account_access_key>"})
+    ```
 
 4. To use [anonymous public read access](https://docs.microsoft.com/azure/storage/blobs/storage-manage-access-to-resources),
    simply omit the credential parameter.
@@ -172,6 +183,16 @@ Four different clients are provided to interact with the various components of t
 4. [BlobLeaseClient](https://aka.ms/azsdk-python-storage-blob-blobleaseclient) -
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
+
+### Async Clients 
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+for more information.
+
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods.
 
 ### Blob Types
 Once you've initialized a Client, you can choose from the different types of blobs:
@@ -336,6 +357,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __client_request_id__ (str): Optional user specified identification of the request.
 * __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
 * __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
+* __logging_body__ (bool): Enables logging the request and response body. Defaults to False. Can also be passed in at
 the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 

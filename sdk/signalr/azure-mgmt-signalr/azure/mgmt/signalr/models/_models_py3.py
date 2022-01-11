@@ -668,6 +668,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
     :param private_endpoint: Private endpoint associated with the private endpoint connection.
     :type private_endpoint: ~azure.mgmt.signalr.models.PrivateEndpoint
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :param private_link_service_connection_state: Connection state.
     :type private_link_service_connection_state:
      ~azure.mgmt.signalr.models.PrivateLinkServiceConnectionState
@@ -679,6 +681,7 @@ class PrivateEndpointConnection(ProxyResource):
         'type': {'readonly': True},
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'group_ids': {'readonly': True},
     }
 
     _attribute_map = {
@@ -688,6 +691,7 @@ class PrivateEndpointConnection(ProxyResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
     }
 
@@ -702,6 +706,7 @@ class PrivateEndpointConnection(ProxyResource):
         self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
@@ -853,7 +858,7 @@ class RegenerateKeyParameters(msrest.serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
     :param key_type: The keyType to regenerate. Must be either 'primary' or
-     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary".
+     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary", "Salt".
     :type key_type: str or ~azure.mgmt.signalr.models.KeyType
     """
 
@@ -869,6 +874,57 @@ class RegenerateKeyParameters(msrest.serialization.Model):
     ):
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.key_type = key_type
+
+
+class ResourceLogCategory(msrest.serialization.Model):
+    """Resource log category configuration of a Microsoft.SignalRService resource.
+
+    :param name: Gets or sets the resource log category's name.
+     Available values: ConnectivityLogs, MessagingLogs.
+     Case insensitive.
+    :type name: str
+    :param enabled: Indicates whether or the resource log category is enabled.
+     Available values: true, false.
+     Case insensitive.
+    :type enabled: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        enabled: Optional[str] = None,
+        **kwargs
+    ):
+        super(ResourceLogCategory, self).__init__(**kwargs)
+        self.name = name
+        self.enabled = enabled
+
+
+class ResourceLogConfiguration(msrest.serialization.Model):
+    """Resource log configuration of a Microsoft.SignalRService resource.
+
+    :param categories: Gets or sets the list of category configurations.
+    :type categories: list[~azure.mgmt.signalr.models.ResourceLogCategory]
+    """
+
+    _attribute_map = {
+        'categories': {'key': 'categories', 'type': '[ResourceLogCategory]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        categories: Optional[List["ResourceLogCategory"]] = None,
+        **kwargs
+    ):
+        super(ResourceLogConfiguration, self).__init__(**kwargs)
+        self.categories = categories
 
 
 class ResourceSku(msrest.serialization.Model):
@@ -1159,7 +1215,7 @@ class SignalRCorsSettings(msrest.serialization.Model):
 
 
 class SignalRFeature(msrest.serialization.Model):
-    """Feature of a SignalR resource, which controls the SignalR runtime behavior.
+    """Feature of a resource, which controls the runtime behavior.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1377,6 +1433,8 @@ class SignalRResource(TrackedResource):
      list[~azure.mgmt.signalr.models.SharedPrivateLinkResource]
     :param tls: TLS settings.
     :type tls: ~azure.mgmt.signalr.models.SignalRTlsSettings
+    :ivar host_name_prefix: Deprecated.
+    :vartype host_name_prefix: str
     :param features: List of the featureFlags.
     
      FeatureFlags that are not included in the parameters for the update operation will not be
@@ -1386,12 +1444,31 @@ class SignalRResource(TrackedResource):
      But keep in mind, the default value doesn't mean "false". It varies in terms of different
      FeatureFlags.
     :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
+    :param resource_log_configuration: Resource log configuration of a Microsoft.SignalRService
+     resource.
+     If resourceLogConfiguration isn't null or empty, it will override options
+     "EnableConnectivityLog" and "EnableMessagingLogs" in features.
+     Otherwise, use options "EnableConnectivityLog" and "EnableMessagingLogs" in features.
+    :type resource_log_configuration: ~azure.mgmt.signalr.models.ResourceLogConfiguration
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
     :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
     :param upstream: Upstream settings when the service is in server-less mode.
     :type upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
     :param network_ac_ls: Network ACLs.
     :type network_ac_ls: ~azure.mgmt.signalr.models.SignalRNetworkACLs
+    :param public_network_access: Enable or disable public network access. Default to "Enabled".
+     When it's Enabled, network ACLs still apply.
+     When it's Disabled, public network access is always disabled no matter what you set in network
+     ACLs.
+    :type public_network_access: str
+    :param disable_local_auth: DisableLocalAuth
+     Enable or disable local auth with AccessKey
+     When set as true, connection with AccessKey=xxx won't work.
+    :type disable_local_auth: bool
+    :param disable_aad_auth: DisableLocalAuth
+     Enable or disable aad auth
+     When set as true, connection with AuthType=aad won't work.
+    :type disable_aad_auth: bool
     """
 
     _validation = {
@@ -1407,6 +1484,7 @@ class SignalRResource(TrackedResource):
         'version': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
         'shared_private_link_resources': {'readonly': True},
+        'host_name_prefix': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1428,10 +1506,15 @@ class SignalRResource(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
         'tls': {'key': 'properties.tls', 'type': 'SignalRTlsSettings'},
+        'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
         'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
+        'resource_log_configuration': {'key': 'properties.resourceLogConfiguration', 'type': 'ResourceLogConfiguration'},
         'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
         'upstream': {'key': 'properties.upstream', 'type': 'ServerlessUpstreamSettings'},
         'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'SignalRNetworkACLs'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'disable_aad_auth': {'key': 'properties.disableAadAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1444,9 +1527,13 @@ class SignalRResource(TrackedResource):
         identity: Optional["ManagedIdentity"] = None,
         tls: Optional["SignalRTlsSettings"] = None,
         features: Optional[List["SignalRFeature"]] = None,
+        resource_log_configuration: Optional["ResourceLogConfiguration"] = None,
         cors: Optional["SignalRCorsSettings"] = None,
         upstream: Optional["ServerlessUpstreamSettings"] = None,
         network_ac_ls: Optional["SignalRNetworkACLs"] = None,
+        public_network_access: Optional[str] = "Enabled",
+        disable_local_auth: Optional[bool] = False,
+        disable_aad_auth: Optional[bool] = False,
         **kwargs
     ):
         super(SignalRResource, self).__init__(location=location, tags=tags, **kwargs)
@@ -1463,10 +1550,15 @@ class SignalRResource(TrackedResource):
         self.private_endpoint_connections = None
         self.shared_private_link_resources = None
         self.tls = tls
+        self.host_name_prefix = None
         self.features = features
+        self.resource_log_configuration = resource_log_configuration
         self.cors = cors
         self.upstream = upstream
         self.network_ac_ls = network_ac_ls
+        self.public_network_access = public_network_access
+        self.disable_local_auth = disable_local_auth
+        self.disable_aad_auth = disable_aad_auth
 
 
 class SignalRResourceList(msrest.serialization.Model):
@@ -1511,7 +1603,7 @@ class SignalRTlsSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        client_cert_enabled: Optional[bool] = None,
+        client_cert_enabled: Optional[bool] = True,
         **kwargs
     ):
         super(SignalRTlsSettings, self).__init__(**kwargs)
@@ -1613,6 +1705,118 @@ class SignalRUsageName(msrest.serialization.Model):
         super(SignalRUsageName, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
+
+
+class Sku(msrest.serialization.Model):
+    """Describes an available sku.".
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_type: The resource type that this object applies to.
+    :vartype resource_type: str
+    :ivar sku: The exact set of keys that define this sku.
+    :vartype sku: ~azure.mgmt.signalr.models.ResourceSku
+    :ivar capacity: Specifies the unit of the resource.
+    :vartype capacity: ~azure.mgmt.signalr.models.SkuCapacity
+    """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'sku': {'readonly': True},
+        'capacity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'ResourceSku'},
+        'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Sku, self).__init__(**kwargs)
+        self.resource_type = None
+        self.sku = None
+        self.capacity = None
+
+
+class SkuCapacity(msrest.serialization.Model):
+    """Describes scaling information of a sku.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar minimum: The lowest permitted capacity for this resource.
+    :vartype minimum: int
+    :ivar maximum: The highest permitted capacity for this resource.
+    :vartype maximum: int
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar allowed_values: Allows capacity value list.
+    :vartype allowed_values: list[int]
+    :ivar scale_type: The scale type applicable to the sku. Possible values include: "None",
+     "Manual", "Automatic".
+    :vartype scale_type: str or ~azure.mgmt.signalr.models.ScaleType
+    """
+
+    _validation = {
+        'minimum': {'readonly': True},
+        'maximum': {'readonly': True},
+        'default': {'readonly': True},
+        'allowed_values': {'readonly': True},
+        'scale_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'allowed_values': {'key': 'allowedValues', 'type': '[int]'},
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuCapacity, self).__init__(**kwargs)
+        self.minimum = None
+        self.maximum = None
+        self.default = None
+        self.allowed_values = None
+        self.scale_type = None
+
+
+class SkuList(msrest.serialization.Model):
+    """The list skus operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of skus available for the resource.
+    :vartype value: list[~azure.mgmt.signalr.models.Sku]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Sku]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class SystemData(msrest.serialization.Model):

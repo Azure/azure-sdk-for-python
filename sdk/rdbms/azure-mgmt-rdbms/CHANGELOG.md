@@ -1,5 +1,69 @@
 # Release History
 
+## 10.0.0 (2021-10-08)
+
+**Breaking changes**
+
+  - Model Server no longer has parameter identity
+
+## 9.1.0 (2021-09-02)
+
+**Features**
+
+  - Upgrade api-version to `2021-05-01`
+
+## 9.1.0b1 (2021-07-19)
+
+**Features**
+
+  - Added operation group BackupsOperations
+
+## 9.0.0 (2021-07-01)
+
+**Features**
+
+  - Model ServerVersionCapability has a new parameter status
+  - Model Server has a new parameter network
+  - Model Server has a new parameter backup
+  - Model Server has a new parameter storage
+  - Model Server has a new parameter system_data
+  - Model Server has a new parameter high_availability
+  - Model Server has a new parameter minor_version
+  - Model Server has a new parameter source_server_resource_id
+  - Model Database has a new parameter system_data
+  - Model StorageProfile has a new parameter storage_autogrow
+  - Model StorageProfile has a new parameter geo_redundant_backup
+  - Model VcoreCapability has a new parameter status
+  - Model Configuration has a new parameter system_data
+  - Model StorageEditionCapability has a new parameter status
+  - Model FirewallRule has a new parameter system_data
+  - Model ServerForUpdate has a new parameter create_mode
+  - Model ServerForUpdate has a new parameter backup
+  - Model ServerForUpdate has a new parameter high_availability
+  - Model ServerForUpdate has a new parameter storage
+  - Model StorageMBCapability has a new parameter status
+  - Added operation GetPrivateDnsZoneSuffixOperations.execute
+  - Added operation ConfigurationsOperations.begin_put
+
+**Breaking changes**
+
+  - Operation ServersOperations.begin_restart has a new signature
+  - Model Server no longer has parameter byok_enforcement
+  - Model Server no longer has parameter public_network_access
+  - Model Server no longer has parameter display_name
+  - Model Server no longer has parameter ha_state
+  - Model Server no longer has parameter private_dns_zone_arguments
+  - Model Server no longer has parameter source_server_name
+  - Model Server no longer has parameter storage_profile
+  - Model Server no longer has parameter source_resource_group_name
+  - Model Server no longer has parameter delegated_subnet_arguments
+  - Model Server no longer has parameter source_subscription_id
+  - Model Server no longer has parameter ha_enabled
+  - Model Server no longer has parameter standby_availability_zone
+  - Model ServerForUpdate no longer has parameter storage_profile
+  - Model ServerForUpdate no longer has parameter ha_enabled
+  - Model CapabilityProperties has a new signature
+
 ## 8.1.0 (2021-06-08)
 
  - New models and operations for mariadb

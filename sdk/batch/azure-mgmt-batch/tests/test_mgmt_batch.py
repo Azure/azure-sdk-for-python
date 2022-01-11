@@ -5,38 +5,81 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+import binascii
+import hashlib
 import io
+import json
 import logging
 import time
 import unittest
 
 import requests
+import six
 
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.mgmt.network.models
 from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
 
+from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer, RecordingProcessor
 from devtools_testutils import (
     AzureMgmtTestCase,
     ResourceGroupPreparer,
     StorageAccountPreparer
 )
 
+# When running live, these variables may need to be updated depending on the
+# test environment
+AZURE_ARM_ENDPOINT = "https://centraluseuap.management.azure.com"
+AZURE_LOCATION = 'eastus'
+EXISTING_BATCH_ACCOUNT = {'name': 'dawatroupp2acct', 'location': 'eastus'}
+EXPECTED_ACCOUNT_QUOTA = 1000
+EXPECTED_DEDICATED_CORE_QUOTA = 500
+EXPECTED_LOW_PRIO_CORE_QUOTA = 500
+EXPECTED_POOL_QUOTA = 100
+SECRET_FIELDS = ["primary", "secondary"]
 
-AZURE_LOCATION = 'westcentralus'
-EXISTING_BATCH_ACCOUNT = {'name': 'sdktest2', 'location': 'westcentralus'}
+
+def get_redacted_key(key):
+    redacted_value = "redacted"
+    digest = hashlib.sha256(six.ensure_binary(key)).digest()
+    redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
+    return redacted_value
+
+
+class RecordingRedactor(RecordingProcessor):
+    """Removes keys from test recordings"""
+
+    def process_response(self, response):
+        try:
+            body = json.loads(response["body"]["string"])
+        except (KeyError, ValueError):
+            return response
+
+        for field in body:
+            if field in SECRET_FIELDS:
+                body[field] = get_redacted_key(body[field])
+
+        response["body"]["string"] = json.dumps(body)
+        return response
 
 
 class MgmtBatchTest(AzureMgmtTestCase):
 
+    def __init__(self, *args, **kwargs):
+        scrubber = GeneralNameReplacer()
+        redactor = RecordingRedactor()
+        super(MgmtBatchTest, self).__init__(*args, recording_processors=[redactor, scrubber], **kwargs)
+
     def setUp(self):
         super(MgmtBatchTest, self).setUp()
         self.mgmt_batch_client = self.create_mgmt_client(
-            azure.mgmt.batch.BatchManagement)
+            azure.mgmt.batch.BatchManagementClient,
+            base_url=AZURE_ARM_ENDPOINT)
         if self.is_live:
             self.mgmt_network = self.create_mgmt_client(
-                azure.mgmt.network.NetworkManagementClient)
+                azure.mgmt.network.NetworkManagementClient,
+                base_url=AZURE_ARM_ENDPOINT)
 
     def _get_account_name(self):
         return self.get_resource_name('batch')[-24:]
@@ -44,7 +87,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        self.assertEqual(len(all_ops), 50)
+        self.assertEqual(len(all_ops), 53)
         self.assertEqual(all_ops[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
         self.assertEqual(all_ops[0].origin, 'system')
         self.assertEqual(all_ops[0].display.provider, 'Microsoft Batch')
@@ -53,7 +96,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_subscription_quota(self):
         quotas = self.mgmt_batch_client.location.get_quotas(AZURE_LOCATION)
         self.assertIsInstance(quotas, models.BatchLocationQuota)
-        self.assertEqual(quotas.account_quota, 3)
+        self.assertEqual(quotas.account_quota, EXPECTED_ACCOUNT_QUOTA)
 
     def test_mgmt_batch_account_name(self):
         # Test Invalid Account Name
@@ -130,9 +173,9 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         # Test Get Account
         account = self.mgmt_batch_client.batch_account.get(resource_group.name, account_name)
-        self.assertEqual(account.dedicated_core_quota, 700)
-        self.assertEqual(account.low_priority_core_quota, 500)
-        self.assertEqual(account.pool_quota, 100)
+        self.assertEqual(account.dedicated_core_quota, EXPECTED_DEDICATED_CORE_QUOTA)
+        self.assertEqual(account.low_priority_core_quota, EXPECTED_LOW_PRIO_CORE_QUOTA)
+        self.assertEqual(account.pool_quota, EXPECTED_POOL_QUOTA)
         self.assertEqual(account.pool_allocation_mode, 'BatchService')
 
         # Test List Accounts by Resource Group

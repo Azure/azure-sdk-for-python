@@ -14,6 +14,10 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 [Source code][secret_client_src] | [Package (PyPI)][pypi_package_secrets] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][secret_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 ### Install packages
 Install [azure-keyvault-secrets][pypi_package_secrets] and
@@ -26,7 +30,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7, 3.5.3, or later
+* Python 3.7 or later
 * A Key Vault. If you need to create one, you can use the
 [Azure Cloud Shell][azure_cloud_shell] to create one with these commands
 (replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
@@ -141,7 +145,7 @@ A secret consists of a secret value and its associated metadata and management
 information. This library handles secret values as strings, but Azure Key Vault
 doesn't store them as such. For more information about secrets and how Key
 Vault stores and manages them, see the
-[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/about-keys-secrets-and-certificates#key-vault-secrets).
+[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/general/about-keys-secrets-certificates).
 
 [SecretClient][secret_client_docs] can set secret values in the vault, update
 secret metadata, and delete secrets, as shown in the
@@ -258,7 +262,7 @@ for secret_property in secret_properties:
 ```
 
 ### Async API
-This library includes a complete async API supported on Python 3.5+. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
@@ -432,6 +436,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [secret_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/azure/keyvault/secrets
 [secret_client_docs]: https://aka.ms/azsdk/python/keyvault-secrets/docs#azure.keyvault.secrets.SecretClient
 [secret_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/samples
-[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-secrets%2FREADME.png)

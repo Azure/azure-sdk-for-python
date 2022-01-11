@@ -1,0 +1,57 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/linking?loggingOptOut=true\u0026stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "82",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "eeac0f6f-5d11-11ec-8416-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Test for logging disable\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f886d7a8-449b-4517-bca4-d8980dc282d4",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Tue, 14 Dec 2021 19:13:33 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "20"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "0",
+            "entities": [
+              {
+                "bingId": "a7b11e27-5b63-19a5-b4dd-37b71149ecac",
+                "name": "Test (assessment)",
+                "matches": [
+                  {
+                    "text": "Test",
+                    "offset": 0,
+                    "length": 4,
+                    "confidenceScore": 0.04
+                  }
+                ],
+                "language": "en",
+                "id": "Test (assessment)",
+                "url": "https://en.wikipedia.org/wiki/Test_(assessment)",
+                "dataSource": "Wikipedia"
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-06-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

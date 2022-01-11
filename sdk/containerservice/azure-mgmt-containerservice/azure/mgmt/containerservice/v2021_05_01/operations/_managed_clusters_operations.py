@@ -60,7 +60,7 @@ class ManagedClustersOperations(object):
 
         :param location: The name of a supported Azure region.
         :type location: str
-        :param resource_type: resource type for which the OS options needs to be returned.
+        :param resource_type: The resource type for which the OS options needs to be returned.
         :type resource_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OSOptionProfile, or the result of cls(response)
@@ -116,8 +116,7 @@ class ManagedClustersOperations(object):
         # type: (...) -> Iterable["_models.ManagedClusterListResult"]
         """Gets a list of managed clusters in the specified subscription.
 
-        Gets a list of managed clusters in the specified subscription. The operation returns properties
-        of each managed cluster.
+        Gets a list of managed clusters in the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedClusterListResult or the result of cls(response)
@@ -187,8 +186,7 @@ class ManagedClustersOperations(object):
         # type: (...) -> Iterable["_models.ManagedClusterListResult"]
         """Lists managed clusters in the specified subscription and resource group.
 
-        Lists managed clusters in the specified subscription and resource group. The operation returns
-        properties of each managed cluster.
+        Lists managed clusters in the specified subscription and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -260,10 +258,9 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ManagedClusterUpgradeProfile"
-        """Gets upgrade profile for a managed cluster.
+        """Gets the upgrade profile of a managed cluster.
 
-        Gets the details of the upgrade profile for a managed cluster with a specified resource group
-        and name.
+        Gets the upgrade profile of a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -325,12 +322,10 @@ class ManagedClustersOperations(object):
         # type: (...) -> "_models.ManagedClusterAccessProfile"
         """Gets an access profile of a managed cluster.
 
-        Gets the accessProfile for the specified role name of the managed cluster with a specified
-        resource group and name. **WARNING**\ : This API will be deprecated. Instead use
-        `ListClusterUserCredentials
-        <https://docs.microsoft.com/en-us/rest/api/aks/managedclusters/listclusterusercredentials>`_ or
+        **WARNING**\ : This API will be deprecated. Instead use `ListClusterUserCredentials
+        <https://docs.microsoft.com/rest/api/aks/managedclusters/listclusterusercredentials>`_ or
         `ListClusterAdminCredentials
-        <https://docs.microsoft.com/en-us/rest/api/aks/managedclusters/listclusteradmincredentials>`_ .
+        <https://docs.microsoft.com/rest/api/aks/managedclusters/listclusteradmincredentials>`_ .
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -393,9 +388,9 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CredentialResults"
-        """Gets cluster admin credential of a managed cluster.
+        """Lists the admin credentials of a managed cluster.
 
-        Gets cluster admin credential of the managed cluster with a specified resource group and name.
+        Lists the admin credentials of a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -459,9 +454,9 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CredentialResults"
-        """Gets cluster user credential of a managed cluster.
+        """Lists the user credentials of a managed cluster.
 
-        Gets cluster user credential of the managed cluster with a specified resource group and name.
+        Lists the user credentials of a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -525,10 +520,9 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CredentialResults"
-        """Gets cluster monitoring user credential of a managed cluster.
+        """Lists the cluster monitoring user credentials of a managed cluster.
 
-        Gets cluster monitoring user credential of the managed cluster with a specified resource group
-        and name.
+        Lists the cluster monitoring user credentials of a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -593,7 +587,7 @@ class ManagedClustersOperations(object):
         # type: (...) -> "_models.ManagedCluster"
         """Gets a managed cluster.
 
-        Gets the details of the managed cluster with a specified resource group and name.
+        Gets a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -713,14 +707,13 @@ class ManagedClustersOperations(object):
         # type: (...) -> LROPoller["_models.ManagedCluster"]
         """Creates or updates a managed cluster.
 
-        Creates or updates a managed cluster with the specified configuration for agents and Kubernetes
-        version.
+        Creates or updates a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param parameters: Parameters supplied to the Create or Update a Managed Cluster operation.
+        :param parameters: The managed cluster to create or update.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.ManagedCluster
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -842,7 +835,7 @@ class ManagedClustersOperations(object):
         # type: (...) -> LROPoller["_models.ManagedCluster"]
         """Updates tags on a managed cluster.
 
-        Updates a managed cluster with the specified tags.
+        Updates tags on a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -960,7 +953,7 @@ class ManagedClustersOperations(object):
         # type: (...) -> LROPoller[None]
         """Deletes a managed cluster.
 
-        Deletes the managed cluster with a specified resource group and name.
+        Deletes a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1077,16 +1070,15 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Reset Service Principal Profile of a managed cluster.
+        """Reset the Service Principal Profile of a managed cluster.
 
-        Update the service principal Profile for a managed cluster.
+        This action cannot be performed on a cluster that is not using a service principal.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param parameters: Parameters supplied to the Reset Service Principal Profile operation for a
-         Managed Cluster.
+        :param parameters: The service principal profile to set on the managed cluster.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterServicePrincipalProfile
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1200,16 +1192,15 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Reset AAD Profile of a managed cluster.
+        """Reset the AAD Profile of a managed cluster.
 
-        Update the AAD Profile for a managed cluster.
+        Reset the AAD Profile of a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param parameters: Parameters supplied to the Reset AAD Profile operation for a Managed
-         Cluster.
+        :param parameters: The AAD profile to set on the Managed Cluster.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.ManagedClusterAADProfile
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1316,9 +1307,10 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Rotate certificates of a managed cluster.
+        """Rotates the certificates of a managed cluster.
 
-        Rotate certificates of a managed cluster.
+        See `Certificate rotation <https://docs.microsoft.com/azure/aks/certificate-rotation>`_ for
+        more details about rotating managed cluster certificates.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1428,9 +1420,13 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Stop Managed Cluster.
+        """Stops a Managed Cluster.
 
-        Stops a Running Managed Cluster.
+        This can only be performed on Azure Virtual Machine Scale set backed clusters. Stopping a
+        cluster stops the control plane and agent nodes entirely, while maintaining all object and
+        cluster state. A cluster does not accrue charges while it is stopped. See `stopping a cluster
+        <https://docs.microsoft.com/azure/aks/start-stop-cluster>`_ for more details about stopping a
+        cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1540,9 +1536,10 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Start Managed Cluster.
+        """Starts a previously stopped Managed Cluster.
 
-        Starts a Stopped Managed Cluster.
+        See `starting a cluster <https://docs.microsoft.com/azure/aks/start-stop-cluster>`_ for more
+        details about starting a cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1664,16 +1661,17 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.RunCommandResult"]
-        """Run Command against Managed Kubernetes Service.
+        """Submits a command to run against the Managed Cluster.
 
-        Submit a command to run against managed kubernetes service, it will create a pod to run the
-        command.
+        AKS will create a pod to run the command. This is primarily useful for private clusters. For
+        more information see `AKS Run Command
+        <https://docs.microsoft.com/azure/aks/private-clusters#aks-run-command-preview>`_.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param request_payload: Parameters supplied to the RunCommand operation.
+        :param request_payload: The run command request.
         :type request_payload: ~azure.mgmt.containerservice.v2021_05_01.models.RunCommandRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1739,15 +1737,15 @@ class ManagedClustersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.RunCommandResult"]
-        """Get command result.
+        """Gets the results of a command which has been run on the Managed Cluster.
 
-        Get command result from previous runCommand invoke.
+        Gets the results of a command which has been run on the Managed Cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param command_id: Id of the command request.
+        :param command_id: Id of the command.
         :type command_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunCommandResult, or the result of cls(response)

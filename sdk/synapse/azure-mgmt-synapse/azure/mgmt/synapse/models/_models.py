@@ -10,6 +10,172 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class Resource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AttachedDatabaseConfiguration(ProxyResource):
+    """Class representing an attached database configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :param database_name: The name of the database which you would like to attach, use * if you
+     want to follow all current and future databases.
+    :type database_name: str
+    :param kusto_pool_resource_id: The resource id of the kusto pool where the databases you would
+     like to attach reside.
+    :type kusto_pool_resource_id: str
+    :ivar attached_database_names: The list of databases from the clusterResourceId which are
+     currently attached to the kusto pool.
+    :vartype attached_database_names: list[str]
+    :param default_principals_modification_kind: The default principals modification kind. Possible
+     values include: "Union", "Replace", "None".
+    :type default_principals_modification_kind: str or
+     ~azure.mgmt.synapse.models.DefaultPrincipalsModificationKind
+    :param table_level_sharing_properties: Table level sharing specifications.
+    :type table_level_sharing_properties: ~azure.mgmt.synapse.models.TableLevelSharingProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'attached_database_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'kusto_pool_resource_id': {'key': 'properties.clusterResourceId', 'type': 'str'},
+        'attached_database_names': {'key': 'properties.attachedDatabaseNames', 'type': '[str]'},
+        'default_principals_modification_kind': {'key': 'properties.defaultPrincipalsModificationKind', 'type': 'str'},
+        'table_level_sharing_properties': {'key': 'properties.tableLevelSharingProperties', 'type': 'TableLevelSharingProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.system_data = None
+        self.provisioning_state = None
+        self.database_name = kwargs.get('database_name', None)
+        self.kusto_pool_resource_id = kwargs.get('kusto_pool_resource_id', None)
+        self.attached_database_names = None
+        self.default_principals_modification_kind = kwargs.get('default_principals_modification_kind', None)
+        self.table_level_sharing_properties = kwargs.get('table_level_sharing_properties', None)
+
+
+class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
+    """The list attached database configurations operation response.
+
+    :param value: The list of attached database configurations.
+    :type value: list[~azure.mgmt.synapse.models.AttachedDatabaseConfiguration]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AttachedDatabaseConfiguration]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AttachedDatabaseConfigurationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class AutoPauseProperties(msrest.serialization.Model):
     """Auto-pausing properties of a Big Data pool powered by Apache Spark.
 
@@ -127,8 +293,8 @@ class AvailableRpOperationDisplayInfo(msrest.serialization.Model):
         self.operation = kwargs.get('operation', None)
 
 
-class Resource(msrest.serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class AzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory Only Authentication Info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -140,28 +306,111 @@ class Resource(msrest.serialization.Model):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    :ivar state: property configuration state. Possible values include: "Consistent",
+     "InConsistent", "Updating".
+    :vartype state: str or ~azure.mgmt.synapse.models.StateValue
+    :ivar creation_date: property configuration date.
+    :vartype creation_date: ~datetime.datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'state': {'readonly': True},
+        'creation_date': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        super(AzureADOnlyAuthentication, self).__init__(**kwargs)
+        self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
+        self.state = None
+        self.creation_date = None
+
+
+class AzureADOnlyAuthenticationListResult(msrest.serialization.Model):
+    """A list of active directory only authentications.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.synapse.models.AzureADOnlyAuthentication]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AzureADOnlyAuthentication]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureADOnlyAuthenticationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class AzureCapacity(msrest.serialization.Model):
+    """Azure capacity definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param scale_type: Required. Scale type. Possible values include: "automatic", "manual",
+     "none".
+    :type scale_type: str or ~azure.mgmt.synapse.models.AzureScaleType
+    :param minimum: Required. Minimum allowed capacity.
+    :type minimum: int
+    :param maximum: Required. Maximum allowed capacity.
+    :type maximum: int
+    :param default: Required. The default capacity that would be used.
+    :type default: int
+    """
+
+    _validation = {
+        'scale_type': {'required': True},
+        'minimum': {'required': True},
+        'maximum': {'required': True},
+        'default': {'required': True},
+    }
+
+    _attribute_map = {
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureCapacity, self).__init__(**kwargs)
+        self.scale_type = kwargs['scale_type']
+        self.minimum = kwargs['minimum']
+        self.maximum = kwargs['maximum']
+        self.default = kwargs['default']
 
 
 class AzureEntityResource(Resource):
@@ -201,6 +450,69 @@ class AzureEntityResource(Resource):
     ):
         super(AzureEntityResource, self).__init__(**kwargs)
         self.etag = None
+
+
+class AzureResourceSku(msrest.serialization.Model):
+    """Azure resource SKU definition.
+
+    :param resource_type: Resource Namespace and Type.
+    :type resource_type: str
+    :param sku: The SKU details.
+    :type sku: ~azure.mgmt.synapse.models.AzureSku
+    :param capacity: The number of instances of the cluster.
+    :type capacity: ~azure.mgmt.synapse.models.AzureCapacity
+    """
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'AzureSku'},
+        'capacity': {'key': 'capacity', 'type': 'AzureCapacity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureResourceSku, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)
+
+
+class AzureSku(msrest.serialization.Model):
+    """Azure SKU definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. SKU name. Possible values include: "Compute optimized", "Storage
+     optimized".
+    :type name: str or ~azure.mgmt.synapse.models.SkuName
+    :param capacity: The number of instances of the cluster.
+    :type capacity: int
+    :param size: Required. SKU size. Possible values include: "Extra small", "Small", "Medium",
+     "Large".
+    :type size: str or ~azure.mgmt.synapse.models.SkuSize
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'size': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+        'size': {'key': 'size', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSku, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.capacity = kwargs.get('capacity', None)
+        self.size = kwargs['size']
 
 
 class BigDataPoolPatchInfo(msrest.serialization.Model):
@@ -311,7 +623,7 @@ class BigDataPoolResourceInfo(TrackedResource):
     :param custom_libraries: List of custom libraries/packages associated with the spark pool.
     :type custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
     :param spark_config_properties: Spark configuration file to specify additional properties.
-    :type spark_config_properties: ~azure.mgmt.synapse.models.LibraryRequirements
+    :type spark_config_properties: ~azure.mgmt.synapse.models.SparkConfigProperties
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will be written.
@@ -320,7 +632,7 @@ class BigDataPoolResourceInfo(TrackedResource):
      values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge", "XXXLarge".
     :type node_size: str or ~azure.mgmt.synapse.models.NodeSize
     :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
-     include: "None", "MemoryOptimized".
+     include: "None", "MemoryOptimized", "HardwareAcceleratedFPGA", "HardwareAcceleratedGPU".
     :type node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
     :ivar last_succeeded_timestamp: The time when the Big Data pool was updated successfully.
     :vartype last_succeeded_timestamp: ~datetime.datetime
@@ -352,7 +664,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
         'custom_libraries': {'key': 'properties.customLibraries', 'type': '[LibraryInfo]'},
-        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'SparkConfigProperties'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -462,6 +774,166 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
 
 
+class CheckNameResult(msrest.serialization.Model):
+    """The result returned from a check name availability request.
+
+    :param name_available: Specifies a Boolean value that indicates if the name is available.
+    :type name_available: bool
+    :param name: The name that was checked.
+    :type name: str
+    :param message: Message indicating an unavailable name due to a conflict, or a description of
+     the naming rules that are violated.
+    :type message: str
+    :param reason: Message providing the reason why the given name is invalid. Possible values
+     include: "Invalid", "AlreadyExists".
+    :type reason: str or ~azure.mgmt.synapse.models.Reason
+    """
+
+    _attribute_map = {
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CheckNameResult, self).__init__(**kwargs)
+        self.name_available = kwargs.get('name_available', None)
+        self.name = kwargs.get('name', None)
+        self.message = kwargs.get('message', None)
+        self.reason = kwargs.get('reason', None)
+
+
+class ClusterPrincipalAssignment(ProxyResource):
+    """Class representing a cluster principal assignment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :param principal_id: The principal ID assigned to the cluster principal. It can be a user
+     email, application ID, or security group name.
+    :type principal_id: str
+    :param role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
+     "AllDatabasesViewer".
+    :type role: str or ~azure.mgmt.synapse.models.ClusterPrincipalRole
+    :param tenant_id: The tenant id of the principal.
+    :type tenant_id: str
+    :param principal_type: Principal type. Possible values include: "App", "Group", "User".
+    :type principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
+    :ivar tenant_name: The tenant name of the principal.
+    :vartype tenant_name: str
+    :ivar principal_name: The principal name.
+    :vartype principal_name: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'tenant_name': {'readonly': True},
+        'principal_name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
+        'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
+        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterPrincipalAssignment, self).__init__(**kwargs)
+        self.system_data = None
+        self.principal_id = kwargs.get('principal_id', None)
+        self.role = kwargs.get('role', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.principal_type = kwargs.get('principal_type', None)
+        self.tenant_name = None
+        self.principal_name = None
+        self.provisioning_state = None
+
+
+class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
+    """A principal assignment check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Principal Assignment resource name.
+    :type name: str
+    :ivar type: The type of resource, Microsoft.Synapse/workspaces/kustoPools/principalAssignments.
+     Has constant value: "Microsoft.Synapse/workspaces/kustoPools/principalAssignments".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Synapse/workspaces/kustoPools/principalAssignments"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterPrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs['name']
+
+
+class ClusterPrincipalAssignmentListResult(msrest.serialization.Model):
+    """The list Kusto cluster principal assignments operation response.
+
+    :param value: The list of Kusto cluster principal assignments.
+    :type value: list[~azure.mgmt.synapse.models.ClusterPrincipalAssignment]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ClusterPrincipalAssignment]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ClusterPrincipalAssignmentListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class CustomSetupBase(msrest.serialization.Model):
     """The base definition of the custom setup.
 
@@ -502,9 +974,9 @@ class CmdkeySetup(CustomSetupBase):
     :param type: Required. The type of custom setup.Constant filled by server.
     :type type: str
     :param target_name: Required. The server name of data source access.
-    :type target_name: object
+    :type target_name: any
     :param user_name: Required. The user name of data source access.
-    :type user_name: object
+    :type user_name: any
     :param password: Required. The password of data source access.
     :type password: ~azure.mgmt.synapse.models.SecretBase
     """
@@ -593,6 +1065,25 @@ class CreateSqlPoolRestorePointDefinition(msrest.serialization.Model):
         self.restore_point_label = kwargs['restore_point_label']
 
 
+class CspWorkspaceAdminProperties(msrest.serialization.Model):
+    """Initial workspace AAD admin properties for a CSP subscription.
+
+    :param initial_workspace_admin_object_id: AAD object ID of initial workspace admin.
+    :type initial_workspace_admin_object_id: str
+    """
+
+    _attribute_map = {
+        'initial_workspace_admin_object_id': {'key': 'initialWorkspaceAdminObjectId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CspWorkspaceAdminProperties, self).__init__(**kwargs)
+        self.initial_workspace_admin_object_id = kwargs.get('initial_workspace_admin_object_id', None)
+
+
 class CustomerManagedKeyDetails(msrest.serialization.Model):
     """Details of the customer managed key associated with the workspace.
 
@@ -602,6 +1093,8 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
     :vartype status: str
     :param key: The key object of the workspace.
     :type key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
+    :param kek_identity: Key encryption key.
+    :type kek_identity: ~azure.mgmt.synapse.models.KekIdentityProperties
     """
 
     _validation = {
@@ -611,6 +1104,7 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'key': {'key': 'key', 'type': 'WorkspaceKeyDetails'},
+        'kek_identity': {'key': 'kekIdentity', 'type': 'KekIdentityProperties'},
     }
 
     def __init__(
@@ -620,33 +1114,122 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
         super(CustomerManagedKeyDetails, self).__init__(**kwargs)
         self.status = None
         self.key = kwargs.get('key', None)
+        self.kek_identity = kwargs.get('kek_identity', None)
 
 
-class DataLakeStorageAccountDetails(msrest.serialization.Model):
-    """Details of the data lake storage account associated with the workspace.
+class Database(ProxyResource):
+    """Class representing a Kusto database.
 
-    :param account_url: Account URL.
-    :type account_url: str
-    :param filesystem: Filesystem name.
-    :type filesystem: str
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ReadWriteDatabase.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
+     include: "ReadWrite", "ReadOnlyFollowing".
+    :type kind: str or ~azure.mgmt.synapse.models.Kind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
-        'account_url': {'key': 'accountUrl', 'type': 'str'},
-        'filesystem': {'key': 'filesystem', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    _subtype_map = {
+        'kind': {'ReadWrite': 'ReadWriteDatabase'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(DataLakeStorageAccountDetails, self).__init__(**kwargs)
-        self.account_url = kwargs.get('account_url', None)
-        self.filesystem = kwargs.get('filesystem', None)
+        super(Database, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.kind = 'Database'  # type: str
+        self.system_data = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+class DatabaseCheckNameRequest(msrest.serialization.Model):
+    """The result returned from a database check name availability request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name.
+    :type name: str
+    :param type: Required. The type of resource, for instance
+     Microsoft.Synapse/workspaces/kustoPools/databases. Possible values include:
+     "Microsoft.Synapse/workspaces/kustoPools/databases",
+     "Microsoft.Synapse/workspaces/kustoPools/attachedDatabaseConfigurations".
+    :type type: str or ~azure.mgmt.synapse.models.Type
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabaseCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.type = kwargs['type']
+
+
+class DatabaseListResult(msrest.serialization.Model):
+    """The list Kusto databases operation response.
+
+    :param value: The list of Kusto databases.
+    :type value: list[~azure.mgmt.synapse.models.Database]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Database]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabaseListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class DatabasePrincipalAssignment(ProxyResource):
+    """Class representing a database principal assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -658,25 +1241,344 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :param principal_id: The principal ID assigned to the database principal. It can be a user
+     email, application ID, or security group name.
+    :type principal_id: str
+    :param role: Database principal role. Possible values include: "Admin", "Ingestor", "Monitor",
+     "User", "UnrestrictedViewer", "Viewer".
+    :type role: str or ~azure.mgmt.synapse.models.DatabasePrincipalRole
+    :param tenant_id: The tenant id of the principal.
+    :type tenant_id: str
+    :param principal_type: Principal type. Possible values include: "App", "Group", "User".
+    :type principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
+    :ivar tenant_name: The tenant name of the principal.
+    :vartype tenant_name: str
+    :ivar principal_name: The principal name.
+    :vartype principal_name: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'tenant_name': {'readonly': True},
+        'principal_name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
+        'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
+        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ProxyResource, self).__init__(**kwargs)
+        super(DatabasePrincipalAssignment, self).__init__(**kwargs)
+        self.system_data = None
+        self.principal_id = kwargs.get('principal_id', None)
+        self.role = kwargs.get('role', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.principal_type = kwargs.get('principal_type', None)
+        self.tenant_name = None
+        self.principal_name = None
+        self.provisioning_state = None
+
+
+class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
+    """A principal assignment check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Principal Assignment resource name.
+    :type name: str
+    :ivar type: The type of resource,
+     Microsoft.Synapse/workspaces/kustoPools/databases/principalAssignments. Has constant value:
+     "Microsoft.Synapse/workspaces/kustoPools/databases/principalAssignments".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Synapse/workspaces/kustoPools/databases/principalAssignments"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabasePrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs['name']
+
+
+class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
+    """The list Kusto database principal assignments operation response.
+
+    :param value: The list of Kusto database principal assignments.
+    :type value: list[~azure.mgmt.synapse.models.DatabasePrincipalAssignment]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DatabasePrincipalAssignment]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabasePrincipalAssignmentListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class DatabaseStatistics(msrest.serialization.Model):
+    """A class that contains database statistics information.
+
+    :param size: The database size - the total size of compressed data and index in bytes.
+    :type size: float
+    """
+
+    _attribute_map = {
+        'size': {'key': 'size', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabaseStatistics, self).__init__(**kwargs)
+        self.size = kwargs.get('size', None)
+
+
+class DataConnection(ProxyResource):
+    """Class representing a data connection.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: EventGridDataConnection, EventHubDataConnection, IotHubDataConnection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+     Possible values include: "EventHub", "EventGrid", "IotHub".
+    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    _subtype_map = {
+        'kind': {'EventGrid': 'EventGridDataConnection', 'EventHub': 'EventHubDataConnection', 'IotHub': 'IotHubDataConnection'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataConnection, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.kind = 'DataConnection'  # type: str
+        self.system_data = None
+
+
+class DataConnectionCheckNameRequest(msrest.serialization.Model):
+    """A data connection check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Data Connection name.
+    :type name: str
+    :ivar type: The type of resource,
+     Microsoft.Synapse/workspaces/kustoPools/databases/dataConnections. Has constant value:
+     "Microsoft.Synapse/workspaces/kustoPools/databases/dataConnections".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Synapse/workspaces/kustoPools/databases/dataConnections"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataConnectionCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs['name']
+
+
+class DataConnectionListResult(msrest.serialization.Model):
+    """The list Kusto data connections operation response.
+
+    :param value: The list of Kusto data connections.
+    :type value: list[~azure.mgmt.synapse.models.DataConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DataConnection]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataConnectionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class DataConnectionValidation(msrest.serialization.Model):
+    """Class representing an data connection validation.
+
+    :param data_connection_name: The name of the data connection.
+    :type data_connection_name: str
+    :param properties: The data connection properties to validate.
+    :type properties: ~azure.mgmt.synapse.models.DataConnection
+    """
+
+    _attribute_map = {
+        'data_connection_name': {'key': 'dataConnectionName', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DataConnection'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataConnectionValidation, self).__init__(**kwargs)
+        self.data_connection_name = kwargs.get('data_connection_name', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class DataConnectionValidationListResult(msrest.serialization.Model):
+    """The list Kusto data connection validation result.
+
+    :param value: The list of Kusto data connection validation errors.
+    :type value: list[~azure.mgmt.synapse.models.DataConnectionValidationResult]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DataConnectionValidationResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataConnectionValidationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class DataConnectionValidationResult(msrest.serialization.Model):
+    """The result returned from a data connection validation request.
+
+    :param error_message: A message which indicates a problem in data connection validation.
+    :type error_message: str
+    """
+
+    _attribute_map = {
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataConnectionValidationResult, self).__init__(**kwargs)
+        self.error_message = kwargs.get('error_message', None)
+
+
+class DataLakeStorageAccountDetails(msrest.serialization.Model):
+    """Details of the data lake storage account associated with the workspace.
+
+    :param account_url: Account URL.
+    :type account_url: str
+    :param filesystem: Filesystem name.
+    :type filesystem: str
+    :param resource_id: ARM resource Id of this storage account.
+    :type resource_id: str
+    :param create_managed_private_endpoint: Create managed private endpoint to this storage account
+     or not.
+    :type create_managed_private_endpoint: bool
+    """
+
+    _attribute_map = {
+        'account_url': {'key': 'accountUrl', 'type': 'str'},
+        'filesystem': {'key': 'filesystem', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'create_managed_private_endpoint': {'key': 'createManagedPrivateEndpoint', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataLakeStorageAccountDetails, self).__init__(**kwargs)
+        self.account_url = kwargs.get('account_url', None)
+        self.filesystem = kwargs.get('filesystem', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.create_managed_private_endpoint = kwargs.get('create_managed_private_endpoint', None)
 
 
 class DataMaskingPolicy(ProxyResource):
@@ -1125,7 +2027,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -1211,6 +2113,199 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
+class EventGridDataConnection(DataConnection):
+    """Class representing an Event Grid data connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+     Possible values include: "EventHub", "EventGrid", "IotHub".
+    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :param storage_account_resource_id: The resource ID of the storage account where the data
+     resides.
+    :type storage_account_resource_id: str
+    :param event_hub_resource_id: The resource ID where the event grid is configured to send
+     events.
+    :type event_hub_resource_id: str
+    :param consumer_group: The event hub consumer group.
+    :type consumer_group: str
+    :param table_name: The table where the data should be ingested. Optionally the table
+     information can be added to each message.
+    :type table_name: str
+    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+     mapping information can be added to each message.
+    :type mapping_rule_name: str
+    :param data_format: The data format of the message. Optionally the data format can be added to
+     each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+     "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+     "W3CLOGFILE".
+    :type data_format: str or ~azure.mgmt.synapse.models.EventGridDataFormat
+    :param ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
+     should ignore the first record of every file.
+    :type ignore_first_record: bool
+    :param blob_storage_event_type: The name of blob storage event type to process. Possible values
+     include: "Microsoft.Storage.BlobCreated", "Microsoft.Storage.BlobRenamed".
+    :type blob_storage_event_type: str or ~azure.mgmt.synapse.models.BlobStorageEventType
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
+        'event_hub_resource_id': {'key': 'properties.eventHubResourceId', 'type': 'str'},
+        'consumer_group': {'key': 'properties.consumerGroup', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
+        'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'ignore_first_record': {'key': 'properties.ignoreFirstRecord', 'type': 'bool'},
+        'blob_storage_event_type': {'key': 'properties.blobStorageEventType', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EventGridDataConnection, self).__init__(**kwargs)
+        self.kind = 'EventGrid'  # type: str
+        self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
+        self.event_hub_resource_id = kwargs.get('event_hub_resource_id', None)
+        self.consumer_group = kwargs.get('consumer_group', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
+        self.data_format = kwargs.get('data_format', None)
+        self.ignore_first_record = kwargs.get('ignore_first_record', None)
+        self.blob_storage_event_type = kwargs.get('blob_storage_event_type', None)
+        self.provisioning_state = None
+
+
+class EventHubDataConnection(DataConnection):
+    """Class representing an event hub data connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+     Possible values include: "EventHub", "EventGrid", "IotHub".
+    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :param event_hub_resource_id: The resource ID of the event hub to be used to create a data
+     connection.
+    :type event_hub_resource_id: str
+    :param consumer_group: The event hub consumer group.
+    :type consumer_group: str
+    :param table_name: The table where the data should be ingested. Optionally the table
+     information can be added to each message.
+    :type table_name: str
+    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+     mapping information can be added to each message.
+    :type mapping_rule_name: str
+    :param data_format: The data format of the message. Optionally the data format can be added to
+     each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+     "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+     "W3CLOGFILE".
+    :type data_format: str or ~azure.mgmt.synapse.models.EventHubDataFormat
+    :param event_system_properties: System properties of the event hub.
+    :type event_system_properties: list[str]
+    :param compression: The event hub messages compression type. Possible values include: "None",
+     "GZip".
+    :type compression: str or ~azure.mgmt.synapse.models.Compression
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :param managed_identity_resource_id: The resource ID of a managed identity (system or user
+     assigned) to be used to authenticate with event hub.
+    :type managed_identity_resource_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'event_hub_resource_id': {'key': 'properties.eventHubResourceId', 'type': 'str'},
+        'consumer_group': {'key': 'properties.consumerGroup', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
+        'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
+        'compression': {'key': 'properties.compression', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_identity_resource_id': {'key': 'properties.managedIdentityResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EventHubDataConnection, self).__init__(**kwargs)
+        self.kind = 'EventHub'  # type: str
+        self.event_hub_resource_id = kwargs.get('event_hub_resource_id', None)
+        self.consumer_group = kwargs.get('consumer_group', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
+        self.data_format = kwargs.get('data_format', None)
+        self.event_system_properties = kwargs.get('event_system_properties', None)
+        self.compression = kwargs.get('compression', None)
+        self.provisioning_state = None
+        self.managed_identity_resource_id = kwargs.get('managed_identity_resource_id', None)
+
+
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
     """An extended server blob auditing policy.
 
@@ -1291,9 +2386,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1317,9 +2411,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -1337,8 +2430,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1499,9 +2591,8 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1525,9 +2616,8 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -1545,8 +2635,7 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1625,6 +2714,65 @@ class ExtendedSqlPoolBlobAuditingPolicyListResult(msrest.serialization.Model):
         super(ExtendedSqlPoolBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class FollowerDatabaseDefinition(msrest.serialization.Model):
+    """A class representing follower database request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param kusto_pool_resource_id: Required. Resource id of the cluster that follows a database
+     owned by this cluster.
+    :type kusto_pool_resource_id: str
+    :param attached_database_configuration_name: Required. Resource name of the attached database
+     configuration in the follower cluster.
+    :type attached_database_configuration_name: str
+    :ivar database_name: The database name owned by this cluster that was followed. * in case
+     following all databases.
+    :vartype database_name: str
+    """
+
+    _validation = {
+        'kusto_pool_resource_id': {'required': True},
+        'attached_database_configuration_name': {'required': True},
+        'database_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'kusto_pool_resource_id': {'key': 'clusterResourceId', 'type': 'str'},
+        'attached_database_configuration_name': {'key': 'attachedDatabaseConfigurationName', 'type': 'str'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FollowerDatabaseDefinition, self).__init__(**kwargs)
+        self.kusto_pool_resource_id = kwargs['kusto_pool_resource_id']
+        self.attached_database_configuration_name = kwargs['attached_database_configuration_name']
+        self.database_name = None
+
+
+class FollowerDatabaseListResult(msrest.serialization.Model):
+    """The list Kusto database principals operation response.
+
+    :param value: The list of follower database result.
+    :type value: list[~azure.mgmt.synapse.models.FollowerDatabaseDefinition]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[FollowerDatabaseDefinition]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FollowerDatabaseListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class GeoBackupPolicy(ProxyResource):
@@ -1732,7 +2880,7 @@ class IntegrationRuntime(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -1792,10 +2940,10 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param location: The location for managed integration runtime. The supported regions could be
-     found on https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-
-     activities.
+     found on
+     https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
     :type location: str
     :param node_size: The node size requirement to managed integration runtime.
     :type node_size: str
@@ -1846,7 +2994,7 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar service_token: The token generated in service. Callers use this token to authenticate to
      integration runtime.
     :vartype service_token: str
@@ -1926,7 +3074,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param compute_type: Compute type of the cluster which will execute data flow job. Possible
      values include: "General", "MemoryOptimized", "ComputeOptimized".
     :type compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
@@ -1936,6 +3084,9 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
     :param time_to_live: Time to live (in minutes) setting of the cluster which will execute data
      flow job.
     :type time_to_live: int
+    :param cleanup: Cluster will not be recycled and it will be used in next data flow activity run
+     until TTL (time to live) is reached if this is set as false. Default is true.
+    :type cleanup: bool
     """
 
     _validation = {
@@ -1947,6 +3098,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'core_count': {'key': 'coreCount', 'type': 'int'},
         'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+        'cleanup': {'key': 'cleanup', 'type': 'bool'},
     }
 
     def __init__(
@@ -1958,6 +3110,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         self.compute_type = kwargs.get('compute_type', None)
         self.core_count = kwargs.get('core_count', None)
         self.time_to_live = kwargs.get('time_to_live', None)
+        self.cleanup = kwargs.get('cleanup', None)
 
 
 class IntegrationRuntimeDataProxyProperties(msrest.serialization.Model):
@@ -2071,7 +3224,7 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar available_memory_in_mb: Available memory (MB) on the integration runtime node.
@@ -2128,6 +3281,93 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
         self.max_concurrent_jobs = None
         self.sent_bytes = None
         self.received_bytes = None
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(msrest.serialization.Model):
+    """Azure-SSIS integration runtime outbound network dependency endpoints for one category.
+
+    :param category: The category of outbound network dependency.
+    :type category: str
+    :param endpoints: The endpoints for outbound network dependency.
+    :type endpoints:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint]
+    """
+
+    _attribute_map = {
+        'category': {'key': 'category', 'type': 'str'},
+        'endpoints': {'key': 'endpoints', 'type': '[IntegrationRuntimeOutboundNetworkDependenciesEndpoint]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.endpoints = kwargs.get('endpoints', None)
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(msrest.serialization.Model):
+    """The endpoint for Azure-SSIS integration runtime outbound network dependency.
+
+    :param domain_name: The domain name of endpoint.
+    :type domain_name: str
+    :param endpoint_details: The details of endpoint.
+    :type endpoint_details:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails]
+    """
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'endpoint_details': {'key': 'endpointDetails', 'type': '[IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesEndpoint, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.endpoint_details = kwargs.get('endpoint_details', None)
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(msrest.serialization.Model):
+    """The details of Azure-SSIS integration runtime outbound network dependency endpoint.
+
+    :param port: The port of endpoint.
+    :type port: int
+    """
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails, self).__init__(**kwargs)
+        self.port = kwargs.get('port', None)
+
+
+class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(msrest.serialization.Model):
+    """Azure-SSIS integration runtime outbound network dependency endpoints.
+
+    :param value: The list of outbound network dependency endpoints.
+    :type value:
+     list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
@@ -2238,7 +3478,7 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_server_endpoint: The catalog database server URL.
     :type catalog_server_endpoint: str
     :param catalog_admin_user_name: The administrator user name of catalog database.
@@ -2282,7 +3522,7 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_info: Catalog information for managed dedicated integration runtime.
     :type catalog_info: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
     :param license_type: License type for bringing your own license scenario. Possible values
@@ -2339,7 +3579,7 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -2416,7 +3656,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param v_net_id: The ID of the VNet that this integration runtime will join.
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
@@ -2424,6 +3664,9 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
     :param public_i_ps: Resource IDs of the public IP addresses that this integration runtime will
      use.
     :type public_i_ps: list[str]
+    :param subnet_id: The ID of subnet, to which this Azure-SSIS integration runtime will be
+     joined.
+    :type subnet_id: str
     """
 
     _attribute_map = {
@@ -2431,6 +3674,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
         'v_net_id': {'key': 'vNetId', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'str'},
         'public_i_ps': {'key': 'publicIPs', 'type': '[str]'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
     }
 
     def __init__(
@@ -2442,6 +3686,97 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
         self.v_net_id = kwargs.get('v_net_id', None)
         self.subnet = kwargs.get('subnet', None)
         self.public_i_ps = kwargs.get('public_i_ps', None)
+        self.subnet_id = kwargs.get('subnet_id', None)
+
+
+class IotHubDataConnection(DataConnection):
+    """Class representing an iot hub data connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+     Possible values include: "EventHub", "EventGrid", "IotHub".
+    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :param iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
+     connection.
+    :type iot_hub_resource_id: str
+    :param consumer_group: The iot hub consumer group.
+    :type consumer_group: str
+    :param table_name: The table where the data should be ingested. Optionally the table
+     information can be added to each message.
+    :type table_name: str
+    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+     mapping information can be added to each message.
+    :type mapping_rule_name: str
+    :param data_format: The data format of the message. Optionally the data format can be added to
+     each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+     "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+     "W3CLOGFILE".
+    :type data_format: str or ~azure.mgmt.synapse.models.IotHubDataFormat
+    :param event_system_properties: System properties of the iot hub.
+    :type event_system_properties: list[str]
+    :param shared_access_policy_name: The name of the share access policy.
+    :type shared_access_policy_name: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'iot_hub_resource_id': {'key': 'properties.iotHubResourceId', 'type': 'str'},
+        'consumer_group': {'key': 'properties.consumerGroup', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
+        'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
+        'shared_access_policy_name': {'key': 'properties.sharedAccessPolicyName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IotHubDataConnection, self).__init__(**kwargs)
+        self.kind = 'IotHub'  # type: str
+        self.iot_hub_resource_id = kwargs.get('iot_hub_resource_id', None)
+        self.consumer_group = kwargs.get('consumer_group', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
+        self.data_format = kwargs.get('data_format', None)
+        self.event_system_properties = kwargs.get('event_system_properties', None)
+        self.shared_access_policy_name = kwargs.get('shared_access_policy_name', None)
+        self.provisioning_state = None
 
 
 class IpFirewallRuleInfo(ProxyResource):
@@ -2551,6 +3886,30 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
         self.start_ip_address = kwargs.get('start_ip_address', None)
 
 
+class KekIdentityProperties(msrest.serialization.Model):
+    """Key encryption key properties.
+
+    :param user_assigned_identity: User assigned identity resource Id.
+    :type user_assigned_identity: str
+    :param use_system_assigned_identity: Boolean specifying whether to use system assigned identity
+     or not.
+    :type use_system_assigned_identity: any
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KekIdentityProperties, self).__init__(**kwargs)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+        self.use_system_assigned_identity = kwargs.get('use_system_assigned_identity', None)
+
+
 class Key(ProxyResource):
     """A workspace key.
 
@@ -2616,6 +3975,297 @@ class KeyInfoListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class KustoPool(TrackedResource):
+    """Class representing a Kusto kusto pool.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
+    :param sku: Required. The SKU of the kusto pool.
+    :type sku: ~azure.mgmt.synapse.models.AzureSku
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :ivar state: The state of the resource. Possible values include: "Creating", "Unavailable",
+     "Running", "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating".
+    :vartype state: str or ~azure.mgmt.synapse.models.State
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :ivar uri: The Kusto Pool URI.
+    :vartype uri: str
+    :ivar data_ingestion_uri: The Kusto Pool data ingestion URI.
+    :vartype data_ingestion_uri: str
+    :ivar state_reason: The reason for the Kusto Pool's current state.
+    :vartype state_reason: str
+    :param optimized_autoscale: Optimized auto scale definition.
+    :type optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
+    :param enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+     enabled.
+    :type enable_streaming_ingest: bool
+    :param enable_purge: A boolean value that indicates if the purge operations are enabled.
+    :type enable_purge: bool
+    :ivar language_extensions: List of the Kusto Pool's language extensions.
+    :vartype language_extensions: ~azure.mgmt.synapse.models.LanguageExtensionsList
+    :param workspace_uid: The workspace unique identifier.
+    :type workspace_uid: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'sku': {'required': True},
+        'etag': {'readonly': True},
+        'system_data': {'readonly': True},
+        'state': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'uri': {'readonly': True},
+        'data_ingestion_uri': {'readonly': True},
+        'state_reason': {'readonly': True},
+        'language_extensions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'AzureSku'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'uri': {'key': 'properties.uri', 'type': 'str'},
+        'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
+        'state_reason': {'key': 'properties.stateReason', 'type': 'str'},
+        'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
+        'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
+        'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
+        'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
+        'workspace_uid': {'key': 'properties.workspaceUID', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KustoPool, self).__init__(**kwargs)
+        self.sku = kwargs['sku']
+        self.etag = None
+        self.system_data = None
+        self.state = None
+        self.provisioning_state = None
+        self.uri = None
+        self.data_ingestion_uri = None
+        self.state_reason = None
+        self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
+        self.enable_streaming_ingest = kwargs.get('enable_streaming_ingest', False)
+        self.enable_purge = kwargs.get('enable_purge', False)
+        self.language_extensions = None
+        self.workspace_uid = kwargs.get('workspace_uid', None)
+
+
+class KustoPoolCheckNameRequest(msrest.serialization.Model):
+    """The object sent for a kusto pool check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Kusto Pool name.
+    :type name: str
+    :ivar type: The type of resource, Microsoft.Synapse/workspaces/kustoPools. Has constant value:
+     "Microsoft.Synapse/workspaces/kustoPools".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Synapse/workspaces/kustoPools"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KustoPoolCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs['name']
+
+
+class KustoPoolListResult(msrest.serialization.Model):
+    """The list Kusto pools operation response.
+
+    :param value: The list of Kusto pools.
+    :type value: list[~azure.mgmt.synapse.models.KustoPool]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[KustoPool]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KustoPoolListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class KustoPoolUpdate(Resource):
+    """Class representing an update to a Kusto kusto pool.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param sku: The SKU of the kusto pool.
+    :type sku: ~azure.mgmt.synapse.models.AzureSku
+    :ivar state: The state of the resource. Possible values include: "Creating", "Unavailable",
+     "Running", "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating".
+    :vartype state: str or ~azure.mgmt.synapse.models.State
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :ivar uri: The Kusto Pool URI.
+    :vartype uri: str
+    :ivar data_ingestion_uri: The Kusto Pool data ingestion URI.
+    :vartype data_ingestion_uri: str
+    :ivar state_reason: The reason for the Kusto Pool's current state.
+    :vartype state_reason: str
+    :param optimized_autoscale: Optimized auto scale definition.
+    :type optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
+    :param enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+     enabled.
+    :type enable_streaming_ingest: bool
+    :param enable_purge: A boolean value that indicates if the purge operations are enabled.
+    :type enable_purge: bool
+    :ivar language_extensions: List of the Kusto Pool's language extensions.
+    :vartype language_extensions: ~azure.mgmt.synapse.models.LanguageExtensionsList
+    :param workspace_uid: The workspace unique identifier.
+    :type workspace_uid: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'state': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'uri': {'readonly': True},
+        'data_ingestion_uri': {'readonly': True},
+        'state_reason': {'readonly': True},
+        'language_extensions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'AzureSku'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'uri': {'key': 'properties.uri', 'type': 'str'},
+        'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
+        'state_reason': {'key': 'properties.stateReason', 'type': 'str'},
+        'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
+        'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
+        'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
+        'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
+        'workspace_uid': {'key': 'properties.workspaceUID', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KustoPoolUpdate, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
+        self.state = None
+        self.provisioning_state = None
+        self.uri = None
+        self.data_ingestion_uri = None
+        self.state_reason = None
+        self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
+        self.enable_streaming_ingest = kwargs.get('enable_streaming_ingest', False)
+        self.enable_purge = kwargs.get('enable_purge', False)
+        self.language_extensions = None
+        self.workspace_uid = kwargs.get('workspace_uid', None)
+
+
+class LanguageExtension(msrest.serialization.Model):
+    """The language extension object.
+
+    :param language_extension_name: The language extension name. Possible values include: "PYTHON",
+     "R".
+    :type language_extension_name: str or ~azure.mgmt.synapse.models.LanguageExtensionName
+    """
+
+    _attribute_map = {
+        'language_extension_name': {'key': 'languageExtensionName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LanguageExtension, self).__init__(**kwargs)
+        self.language_extension_name = kwargs.get('language_extension_name', None)
+
+
+class LanguageExtensionsList(msrest.serialization.Model):
+    """The list of language extension objects.
+
+    :param value: The list of language extensions.
+    :type value: list[~azure.mgmt.synapse.models.LanguageExtension]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LanguageExtension]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LanguageExtensionsList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class LibraryInfo(msrest.serialization.Model):
     """Library/package information of a Big Data pool powered by Apache Spark.
 
@@ -2627,8 +4277,8 @@ class LibraryInfo(msrest.serialization.Model):
     :type path: str
     :param container_name: Storage blob container name.
     :type container_name: str
-    :ivar uploaded_timestamp: The last update time of the library.
-    :vartype uploaded_timestamp: ~datetime.datetime
+    :param uploaded_timestamp: The last update time of the library.
+    :type uploaded_timestamp: ~datetime.datetime
     :param type: Type of the library.
     :type type: str
     :ivar provisioning_status: Provisioning status of the library/package.
@@ -2638,7 +4288,6 @@ class LibraryInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'uploaded_timestamp': {'readonly': True},
         'provisioning_status': {'readonly': True},
         'creator_id': {'readonly': True},
     }
@@ -2661,7 +4310,7 @@ class LibraryInfo(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
         self.path = kwargs.get('path', None)
         self.container_name = kwargs.get('container_name', None)
-        self.uploaded_timestamp = None
+        self.uploaded_timestamp = kwargs.get('uploaded_timestamp', None)
         self.type = kwargs.get('type', None)
         self.provisioning_status = None
         self.creator_id = None
@@ -2750,8 +4399,8 @@ class LibraryResource(SubResource):
     :type path: str
     :param container_name: Storage blob container name.
     :type container_name: str
-    :ivar uploaded_timestamp: The last update time of the library.
-    :vartype uploaded_timestamp: ~datetime.datetime
+    :param uploaded_timestamp: The last update time of the library.
+    :type uploaded_timestamp: ~datetime.datetime
     :param type_properties_type: Type of the library.
     :type type_properties_type: str
     :ivar provisioning_status: Provisioning status of the library/package.
@@ -2765,7 +4414,6 @@ class LibraryResource(SubResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
-        'uploaded_timestamp': {'readonly': True},
         'provisioning_status': {'readonly': True},
         'creator_id': {'readonly': True},
     }
@@ -2792,7 +4440,7 @@ class LibraryResource(SubResource):
         self.name_properties_name = kwargs.get('name_properties_name', None)
         self.path = kwargs.get('path', None)
         self.container_name = kwargs.get('container_name', None)
-        self.uploaded_timestamp = None
+        self.uploaded_timestamp = kwargs.get('uploaded_timestamp', None)
         self.type_properties_type = kwargs.get('type_properties_type', None)
         self.provisioning_status = None
         self.creator_id = None
@@ -2938,6 +4586,25 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
         super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__(**kwargs)
         self.authorization_type = 'RBAC'  # type: str
         self.resource_id = kwargs['resource_id']
+
+
+class ListResourceSkusResult(msrest.serialization.Model):
+    """List of available SKUs for a Kusto Pool.
+
+    :param value: The collection of available SKUs for an existing resource.
+    :type value: list[~azure.mgmt.synapse.models.AzureResourceSku]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AzureResourceSku]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListResourceSkusResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class ListSqlPoolSecurityAlertPolicies(msrest.serialization.Model):
@@ -3110,8 +4777,11 @@ class ManagedIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the workspace managed identity.
     :vartype tenant_id: str
     :param type: The type of managed identity for the workspace. Possible values include: "None",
-     "SystemAssigned".
+     "SystemAssigned", "SystemAssigned,UserAssigned".
     :type type: str or ~azure.mgmt.synapse.models.ResourceIdentityType
+    :param user_assigned_identities: The user assigned managed identities.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.synapse.models.UserAssignedManagedIdentity]
     """
 
     _validation = {
@@ -3123,6 +4793,7 @@ class ManagedIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedManagedIdentity}'},
     }
 
     def __init__(
@@ -3133,6 +4804,7 @@ class ManagedIdentity(msrest.serialization.Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class ManagedIdentitySqlControlSettingsModel(ProxyResource):
@@ -3215,7 +4887,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -3263,7 +4935,7 @@ class ManagedIntegrationRuntimeError(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar time: The time when the error occurred.
     :vartype time: ~datetime.datetime
     :ivar code: Error code.
@@ -3308,7 +4980,7 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_id: The managed integration runtime node id.
     :vartype node_id: str
     :ivar status: The managed integration runtime node status. Possible values include: "Starting",
@@ -3348,7 +5020,7 @@ class ManagedIntegrationRuntimeOperationResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar type: The operation type. Could be start or stop.
     :vartype type: str
     :ivar start_time: The start time of the operation.
@@ -3405,7 +5077,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -3525,6 +5197,97 @@ class MetadataSyncConfig(ProxyResource):
         super(MetadataSyncConfig, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.sync_interval_in_minutes = kwargs.get('sync_interval_in_minutes', None)
+
+
+class Operation(msrest.serialization.Model):
+    """A REST API operation.
+
+    :param name: This is of the format {provider}/{resource}/{operation}.
+    :type name: str
+    :param display: The object that describes the operation.
+    :type display: ~azure.mgmt.synapse.models.OperationDisplay
+    :param origin: The intended executor of the operation.
+    :type origin: str
+    :param properties: Any object.
+    :type properties: any
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """The object that describes the operation.
+
+    :param provider: Friendly name of the resource provider.
+    :type provider: str
+    :param operation: For example: read, write, delete.
+    :type operation: str
+    :param resource: The resource type on which the operation is performed.
+    :type resource: str
+    :param description: The friendly name of the operation.
+    :type description: str
+    """
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.operation = kwargs.get('operation', None)
+        self.resource = kwargs.get('resource', None)
+        self.description = kwargs.get('description', None)
+
+
+class OperationListResult(msrest.serialization.Model):
+    """Result of the request to list REST API operations. It contains a list of operations and a URL nextLink to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param value: The list of operations supported by the resource provider.
+    :type value: list[~azure.mgmt.synapse.models.Operation]
+    :ivar next_link: The URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = None
 
 
 class OperationMetaLogSpecification(msrest.serialization.Model):
@@ -3675,7 +5438,7 @@ class OperationResource(msrest.serialization.Model):
      "Canceled".
     :type status: str or ~azure.mgmt.synapse.models.OperationStatus
     :param properties: Operation properties.
-    :type properties: object
+    :type properties: any
     :param error: Errors from the operation.
     :type error: ~azure.mgmt.synapse.models.ErrorDetail
     :param start_time: Operation start time.
@@ -3710,6 +5473,47 @@ class OperationResource(msrest.serialization.Model):
         self.start_time = kwargs.get('start_time', None)
         self.end_time = kwargs.get('end_time', None)
         self.percent_complete = kwargs.get('percent_complete', None)
+
+
+class OptimizedAutoscale(msrest.serialization.Model):
+    """A class that contains the optimized auto scale definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param version: Required. The version of the template defined, for instance 1.
+    :type version: int
+    :param is_enabled: Required. A boolean value that indicate if the optimized autoscale feature
+     is enabled or not.
+    :type is_enabled: bool
+    :param minimum: Required. Minimum allowed instances count.
+    :type minimum: int
+    :param maximum: Required. Maximum allowed instances count.
+    :type maximum: int
+    """
+
+    _validation = {
+        'version': {'required': True},
+        'is_enabled': {'required': True},
+        'minimum': {'required': True},
+        'maximum': {'required': True},
+    }
+
+    _attribute_map = {
+        'version': {'key': 'version', 'type': 'int'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OptimizedAutoscale, self).__init__(**kwargs)
+        self.version = kwargs['version']
+        self.is_enabled = kwargs['is_enabled']
+        self.minimum = kwargs['minimum']
+        self.maximum = kwargs['maximum']
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -4323,6 +6127,82 @@ class QueryStatistic(msrest.serialization.Model):
         self.intervals = None
 
 
+class ReadWriteDatabase(Database):
+    """Class representing a read write database.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
+     include: "ReadWrite", "ReadOnlyFollowing".
+    :type kind: str or ~azure.mgmt.synapse.models.Kind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :param soft_delete_period: The time the data should be kept before it stops being accessible to
+     queries in TimeSpan.
+    :type soft_delete_period: ~datetime.timedelta
+    :param hot_cache_period: The time the data should be kept in cache for fast queries in
+     TimeSpan.
+    :type hot_cache_period: ~datetime.timedelta
+    :ivar statistics: The statistics of the database.
+    :vartype statistics: ~azure.mgmt.synapse.models.DatabaseStatistics
+    :ivar is_followed: Indicates whether the database is followed.
+    :vartype is_followed: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'statistics': {'readonly': True},
+        'is_followed': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
+        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+        'is_followed': {'key': 'properties.isFollowed', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ReadWriteDatabase, self).__init__(**kwargs)
+        self.kind = 'ReadWrite'  # type: str
+        self.provisioning_state = None
+        self.soft_delete_period = kwargs.get('soft_delete_period', None)
+        self.hot_cache_period = kwargs.get('hot_cache_period', None)
+        self.statistics = None
+        self.is_followed = None
+
+
 class RecommendedSensitivityLabelUpdate(ProxyResource):
     """A recommended sensitivity label update operation.
 
@@ -4925,7 +6805,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -4962,7 +6842,7 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar machine_name: Machine name of the integration runtime node.
@@ -5085,7 +6965,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -5472,9 +7352,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -5498,9 +7377,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -5518,8 +7396,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -5902,6 +7779,242 @@ class Sku(msrest.serialization.Model):
         self.capacity = kwargs.get('capacity', None)
 
 
+class SkuDescription(msrest.serialization.Model):
+    """The Kusto SKU description of given resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_type: The resource type.
+    :vartype resource_type: str
+    :ivar name: The name of the SKU.
+    :vartype name: str
+    :ivar size: The size of the SKU.
+    :vartype size: str
+    :ivar locations: The set of locations that the SKU is available.
+    :vartype locations: list[str]
+    :ivar location_info: Locations and zones.
+    :vartype location_info: list[~azure.mgmt.synapse.models.SkuLocationInfoItem]
+    :ivar restrictions: The restrictions because of which SKU cannot be used.
+    :vartype restrictions: list[any]
+    """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'name': {'readonly': True},
+        'size': {'readonly': True},
+        'locations': {'readonly': True},
+        'location_info': {'readonly': True},
+        'restrictions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'location_info': {'key': 'locationInfo', 'type': '[SkuLocationInfoItem]'},
+        'restrictions': {'key': 'restrictions', 'type': '[object]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuDescription, self).__init__(**kwargs)
+        self.resource_type = None
+        self.name = None
+        self.size = None
+        self.locations = None
+        self.location_info = None
+        self.restrictions = None
+
+
+class SkuDescriptionList(msrest.serialization.Model):
+    """The list of the SKU descriptions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: SKU descriptions.
+    :vartype value: list[~azure.mgmt.synapse.models.SkuDescription]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SkuDescription]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuDescriptionList, self).__init__(**kwargs)
+        self.value = None
+
+
+class SkuLocationInfoItem(msrest.serialization.Model):
+    """The locations and zones info for SKU.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The available location of the SKU.
+    :type location: str
+    :param zones: The available zone of the SKU.
+    :type zones: list[str]
+    """
+
+    _validation = {
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuLocationInfoItem, self).__init__(**kwargs)
+        self.location = kwargs['location']
+        self.zones = kwargs.get('zones', None)
+
+
+class SparkConfigProperties(msrest.serialization.Model):
+    """SparkConfig Properties for a Big Data pool powered by Apache Spark.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar time: The last update time of the spark config properties file.
+    :vartype time: ~datetime.datetime
+    :param content: The spark config properties.
+    :type content: str
+    :param filename: The filename of the spark config properties file.
+    :type filename: str
+    :param configuration_type: The type of the spark config properties file. Possible values
+     include: "File", "Artifact".
+    :type configuration_type: str or ~azure.mgmt.synapse.models.ConfigurationType
+    """
+
+    _validation = {
+        'time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'content': {'key': 'content', 'type': 'str'},
+        'filename': {'key': 'filename', 'type': 'str'},
+        'configuration_type': {'key': 'configurationType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SparkConfigProperties, self).__init__(**kwargs)
+        self.time = None
+        self.content = kwargs.get('content', None)
+        self.filename = kwargs.get('filename', None)
+        self.configuration_type = kwargs.get('configuration_type', None)
+
+
+class SparkConfigurationListResponse(msrest.serialization.Model):
+    """A list of SparkConfiguration resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of SparkConfiguration.
+    :type value: list[~azure.mgmt.synapse.models.SparkConfigurationResource]
+    :param next_link: The link to the next page of results, if any remaining results exist.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SparkConfigurationResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SparkConfigurationListResponse, self).__init__(**kwargs)
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
+
+
+class SparkConfigurationResource(SubResource):
+    """SparkConfiguration response details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param description: Description about the SparkConfiguration.
+    :type description: str
+    :param configs: Required. SparkConfiguration configs.
+    :type configs: dict[str, str]
+    :param annotations: Annotations for SparkConfiguration.
+    :type annotations: list[str]
+    :param notes: additional Notes.
+    :type notes: str
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created: The timestamp of resource creation.
+    :type created: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'configs': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'configs': {'key': 'properties.configs', 'type': '{str}'},
+        'annotations': {'key': 'properties.annotations', 'type': '[str]'},
+        'notes': {'key': 'properties.notes', 'type': 'str'},
+        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
+        'created': {'key': 'properties.created', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SparkConfigurationResource, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.configs = kwargs['configs']
+        self.annotations = kwargs.get('annotations', None)
+        self.notes = kwargs.get('notes', None)
+        self.created_by = kwargs.get('created_by', None)
+        self.created = kwargs.get('created', None)
+
+
 class SqlPool(TrackedResource):
     """A SQL Analytics pool.
 
@@ -5937,13 +8050,29 @@ class SqlPool(TrackedResource):
     :type status: str
     :param restore_point_in_time: Snapshot time to restore.
     :type restore_point_in_time: ~datetime.datetime
-    :param create_mode: What is this?.
-    :type create_mode: str
+    :param create_mode: Specifies the mode of sql pool creation.
+    
+     Default: regular sql pool creation.
+    
+     PointInTimeRestore: Creates a sql pool by restoring a point in time backup of an existing sql
+     pool. sourceDatabaseId must be specified as the resource ID of the existing sql pool, and
+     restorePointInTime must be specified.
+    
+     Recovery: Creates a sql pool by a geo-replicated backup. sourceDatabaseId  must be specified
+     as the recoverableDatabaseId to restore.
+    
+     Restore: Creates a sql pool by restoring a backup of a deleted sql  pool. SourceDatabaseId
+     should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate
+     must be specified. Possible values include: "Default", "PointInTimeRestore", "Recovery",
+     "Restore".
+    :type create_mode: str or ~azure.mgmt.synapse.models.CreateMode
     :param creation_date: Date the SQL pool was created.
     :type creation_date: ~datetime.datetime
     :param storage_account_type: The storage account type used to store backups for this sql pool.
      Possible values include: "GRS", "LRS", "ZRS".
     :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+    :param source_database_deletion_date: Specifies the time that the sql pool was deleted.
+    :type source_database_deletion_date: ~datetime.datetime
     """
 
     _validation = {
@@ -5970,6 +8099,7 @@ class SqlPool(TrackedResource):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'source_database_deletion_date': {'key': 'properties.sourceDatabaseDeletionDate', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -5988,6 +8118,7 @@ class SqlPool(TrackedResource):
         self.create_mode = kwargs.get('create_mode', None)
         self.creation_date = kwargs.get('creation_date', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
+        self.source_database_deletion_date = kwargs.get('source_database_deletion_date', None)
 
 
 class SqlPoolBlobAuditingPolicy(ProxyResource):
@@ -6059,9 +8190,8 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -6085,9 +8215,8 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -6105,8 +8234,7 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6512,13 +8640,29 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
     :type status: str
     :param restore_point_in_time: Snapshot time to restore.
     :type restore_point_in_time: ~datetime.datetime
-    :param create_mode: What is this?.
-    :type create_mode: str
+    :param create_mode: Specifies the mode of sql pool creation.
+    
+     Default: regular sql pool creation.
+    
+     PointInTimeRestore: Creates a sql pool by restoring a point in time backup of an existing sql
+     pool. sourceDatabaseId must be specified as the resource ID of the existing sql pool, and
+     restorePointInTime must be specified.
+    
+     Recovery: Creates a sql pool by a geo-replicated backup. sourceDatabaseId  must be specified
+     as the recoverableDatabaseId to restore.
+    
+     Restore: Creates a sql pool by restoring a backup of a deleted sql  pool. SourceDatabaseId
+     should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate
+     must be specified. Possible values include: "Default", "PointInTimeRestore", "Recovery",
+     "Restore".
+    :type create_mode: str or ~azure.mgmt.synapse.models.CreateMode
     :param creation_date: Date the SQL pool was created.
     :type creation_date: ~datetime.datetime
     :param storage_account_type: The storage account type used to store backups for this sql pool.
      Possible values include: "GRS", "LRS", "ZRS".
     :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+    :param source_database_deletion_date: Specifies the time that the sql pool was deleted.
+    :type source_database_deletion_date: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -6535,6 +8679,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'source_database_deletion_date': {'key': 'properties.sourceDatabaseDeletionDate', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -6555,6 +8700,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         self.create_mode = kwargs.get('create_mode', None)
         self.creation_date = kwargs.get('creation_date', None)
         self.storage_account_type = kwargs.get('storage_account_type', None)
+        self.source_database_deletion_date = kwargs.get('source_database_deletion_date', None)
 
 
 class SqlPoolSchema(ProxyResource):
@@ -7452,6 +9598,88 @@ class SsisVariable(msrest.serialization.Model):
         self.sensitive_value = kwargs.get('sensitive_value', None)
 
 
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
+class TableLevelSharingProperties(msrest.serialization.Model):
+    """Tables that will be included and excluded in the follower database.
+
+    :param tables_to_include: List of tables to include in the follower database.
+    :type tables_to_include: list[str]
+    :param tables_to_exclude: List of tables to exclude from the follower database.
+    :type tables_to_exclude: list[str]
+    :param external_tables_to_include: List of external tables to include in the follower database.
+    :type external_tables_to_include: list[str]
+    :param external_tables_to_exclude: List of external tables exclude from the follower database.
+    :type external_tables_to_exclude: list[str]
+    :param materialized_views_to_include: List of materialized views to include in the follower
+     database.
+    :type materialized_views_to_include: list[str]
+    :param materialized_views_to_exclude: List of materialized views exclude from the follower
+     database.
+    :type materialized_views_to_exclude: list[str]
+    """
+
+    _attribute_map = {
+        'tables_to_include': {'key': 'tablesToInclude', 'type': '[str]'},
+        'tables_to_exclude': {'key': 'tablesToExclude', 'type': '[str]'},
+        'external_tables_to_include': {'key': 'externalTablesToInclude', 'type': '[str]'},
+        'external_tables_to_exclude': {'key': 'externalTablesToExclude', 'type': '[str]'},
+        'materialized_views_to_include': {'key': 'materializedViewsToInclude', 'type': '[str]'},
+        'materialized_views_to_exclude': {'key': 'materializedViewsToExclude', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TableLevelSharingProperties, self).__init__(**kwargs)
+        self.tables_to_include = kwargs.get('tables_to_include', None)
+        self.tables_to_exclude = kwargs.get('tables_to_exclude', None)
+        self.external_tables_to_include = kwargs.get('external_tables_to_include', None)
+        self.external_tables_to_exclude = kwargs.get('external_tables_to_exclude', None)
+        self.materialized_views_to_include = kwargs.get('materialized_views_to_include', None)
+        self.materialized_views_to_exclude = kwargs.get('materialized_views_to_exclude', None)
+
+
 class TopQueries(msrest.serialization.Model):
     """A database query.
 
@@ -7662,6 +9890,36 @@ class UpdateIntegrationRuntimeRequest(msrest.serialization.Model):
         super(UpdateIntegrationRuntimeRequest, self).__init__(**kwargs)
         self.auto_update = kwargs.get('auto_update', None)
         self.update_delay_offset = kwargs.get('update_delay_offset', None)
+
+
+class UserAssignedManagedIdentity(msrest.serialization.Model):
+    """User Assigned Managed Identity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_id: The client ID.
+    :vartype client_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        'client_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedManagedIdentity, self).__init__(**kwargs)
+        self.client_id = None
+        self.principal_id = None
 
 
 class VirtualNetworkProfile(msrest.serialization.Model):
@@ -8070,7 +10328,7 @@ class Workspace(TrackedResource):
     :ivar workspace_uid: The workspace unique identifier.
     :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags.
-    :vartype extra_properties: dict[str, object]
+    :vartype extra_properties: dict[str, any]
     :param managed_virtual_network_settings: Managed Virtual Network Settings.
     :type managed_virtual_network_settings:
      ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
@@ -8081,9 +10339,17 @@ class Workspace(TrackedResource):
     :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar adla_resource_id: The ADLA resource ID.
     :vartype adla_resource_id: str
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+    :param public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+    :param csp_workspace_admin_properties: Initial workspace AAD admin properties for a CSP
+     subscription.
+    :type csp_workspace_admin_properties: ~azure.mgmt.synapse.models.CspWorkspaceAdminProperties
+    :ivar settings: Workspace settings.
+    :vartype settings: dict[str, any]
+    :param azure_ad_only_authentication: Enable or Disable AzureADOnlyAuthentication on All
+     Workspace subresource.
+    :type azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -8095,6 +10361,7 @@ class Workspace(TrackedResource):
         'workspace_uid': {'readonly': True},
         'extra_properties': {'readonly': True},
         'adla_resource_id': {'readonly': True},
+        'settings': {'readonly': True},
     }
 
     _attribute_map = {
@@ -8121,6 +10388,9 @@ class Workspace(TrackedResource):
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'adla_resource_id': {'key': 'properties.adlaResourceId', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'csp_workspace_admin_properties': {'key': 'properties.cspWorkspaceAdminProperties', 'type': 'CspWorkspaceAdminProperties'},
+        'settings': {'key': 'properties.settings', 'type': '{object}'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
     }
 
     def __init__(
@@ -8146,6 +10416,9 @@ class Workspace(TrackedResource):
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.adla_resource_id = None
         self.public_network_access = kwargs.get('public_network_access', None)
+        self.csp_workspace_admin_properties = kwargs.get('csp_workspace_admin_properties', None)
+        self.settings = None
+        self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
 
 
 class WorkspaceAadAdminInfo(ProxyResource):
@@ -8267,7 +10540,7 @@ class WorkspacePatchInfo(msrest.serialization.Model):
     :vartype provisioning_state: str
     :param encryption: The encryption details of the workspace.
     :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+    :param public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """

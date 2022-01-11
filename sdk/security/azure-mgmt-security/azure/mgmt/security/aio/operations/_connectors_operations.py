@@ -43,7 +43,7 @@ class ConnectorsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ConnectorSettingList"]:
         """Cloud accounts connectors of a subscription.
 
@@ -110,7 +110,7 @@ class ConnectorsOperations:
     async def get(
         self,
         connector_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectorSetting":
         """Details of a specific cloud account connector.
 
@@ -165,7 +165,7 @@ class ConnectorsOperations:
         self,
         connector_name: str,
         connector_setting: "_models.ConnectorSetting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectorSetting":
         """Create a cloud account connector or update an existing one. Connect to your cloud account. For
         AWS, use either account credentials or role-based authentication. For GCP, use account
@@ -228,7 +228,7 @@ class ConnectorsOperations:
     async def delete(
         self,
         connector_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a cloud account connector from a subscription.
 

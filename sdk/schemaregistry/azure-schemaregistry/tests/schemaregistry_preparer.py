@@ -30,10 +30,10 @@ from devtools_testutils import (
 )
 
 
-SCHEMA_REGISTRY_ENDPOINT_PARAM = "schemaregistry_endpoint"
-SCHEMA_REGISTRY_GROUP_PARAM = "schemaregistry_group"
-SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME = 'SCHEMA_REGISTRY_ENDPOINT'
-SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME = 'SCHEMA_REGISTRY_GROUP'
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE_PARAM = "schemaregistry_fully_qualified_namespace"
+SCHEMAREGISTRY_GROUP_PARAM = "schemaregistry_group"
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE_ENV_KEY_NAME = 'SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE'
+SCHEMAREGISTRY_GROUP_ENV_KEY_NAME = 'SCHEMAREGISTRY_GROUP'
 
 
 class SchemaRegistryNamespacePreparer(AzureMgmtPreparer):
@@ -59,13 +59,13 @@ class SchemaRegistryPreparer(AzureMgmtPreparer):
         # TODO: right now the endpoint/group is fixed, as there is no way to create/delete resources using api, in the future we should be able to dynamically create and remove resources
         if self.is_live:
             return {
-                SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
-                SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME]
+                SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE_PARAM: os.environ[SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE_ENV_KEY_NAME],
+                SCHEMAREGISTRY_GROUP_PARAM: os.environ[SCHEMAREGISTRY_GROUP_ENV_KEY_NAME]
             }
         else:
             return {
-                SCHEMA_REGISTRY_ENDPOINT_PARAM: "sr-playground.servicebus.windows.net",
-                SCHEMA_REGISTRY_GROUP_PARAM: "azsdk_python_test_group"
+                SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE_PARAM: "sr-playground.servicebus.windows.net",
+                SCHEMAREGISTRY_GROUP_PARAM: "azsdk_python_test_group"
             }
 
     def remove_resource(self, name, **kwargs):

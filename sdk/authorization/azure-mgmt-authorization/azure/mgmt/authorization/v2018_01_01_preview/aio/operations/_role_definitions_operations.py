@@ -45,8 +45,8 @@ class RoleDefinitionsOperations:
         self,
         scope: str,
         role_definition_id: str,
-        **kwargs
-    ) -> "_models.RoleDefinition":
+        **kwargs: Any
+    ) -> Optional["_models.RoleDefinition"]:
         """Deletes a role definition.
 
         :param scope: The scope of the role definition.
@@ -55,10 +55,10 @@ class RoleDefinitionsOperations:
         :type role_definition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleDefinition, or the result of cls(response)
-        :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition
+        :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RoleDefinition"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -86,11 +86,14 @@ class RoleDefinitionsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RoleDefinition', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RoleDefinition', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -102,7 +105,7 @@ class RoleDefinitionsOperations:
         self,
         scope: str,
         role_definition_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleDefinition":
         """Get role definition by name (GUID).
 
@@ -145,7 +148,8 @@ class RoleDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleDefinition', pipeline_response)
 
@@ -160,7 +164,7 @@ class RoleDefinitionsOperations:
         scope: str,
         role_definition_id: str,
         role_definition: "_models.RoleDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleDefinition":
         """Creates or updates a role definition.
 
@@ -210,7 +214,8 @@ class RoleDefinitionsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleDefinition', pipeline_response)
 
@@ -224,7 +229,7 @@ class RoleDefinitionsOperations:
         self,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RoleDefinitionListResult"]:
         """Get all role definitions that are applicable at scope and above.
 
@@ -285,8 +290,9 @@ class RoleDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -298,7 +304,7 @@ class RoleDefinitionsOperations:
     async def get_by_id(
         self,
         role_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleDefinition":
         """Gets a role definition by ID.
 
@@ -342,7 +348,8 @@ class RoleDefinitionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RoleDefinition', pipeline_response)
 

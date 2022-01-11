@@ -9,40 +9,37 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search88e11b0a.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://search88e11b0a.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        k2f1dD4+z6Z523z06Bd/NM3a/KKqrz969D36o1ov248e7Y8+uszKdf7Ro4+erGcXefvRLxnZL3fd
-        l8/X79b05i/5/i+xnxEQ00czrWr6ZG987+De3oN7n44+mldtXr7IFvTpRyeAVl83xSxPv43PPxp9
-        NMubaV2s2qJaUovX2WWerldpW6X3d373tDo/T9s6mxX4OitTBtaM0/RZnefpd4tnxSi9qPOsTcuK
-        BkWN0iUhks6qq2VL/x+l5+uyTN8W7XSe019XWTPP6/QXprP6Oq9H6d7+3Qdps16tqrodpZPqqiyW
-        F2lWlvk1vVq0y7xp0mm+bOmlbDlLFzS6MSFNfSkBfWJ1iLA73tnbu3+w/zAkwum0Wlav2+ya4ISD
-        /8m8vk5X1Wpd0hD4lbRYEimultT0g7p8t6oxkldVtWgIVtjtyzpv2+v0oqpm0iu1+JDeTqrF+XX6
-        siR2I0hhX8fLqsUMvH9nO+MHDw8ePLj/IOzsWbacXqdRcj7Jm1b6MGRMi/P0ulqnZfE2T0tmZGlA
-        LPVmntMfYL9smWaL7AfghGJ5XiwLIs6qqspRmqXNKqMfxAlZSmxXlvRKXq6IyVKa1WmR1xc5g3L8
-        WDTpKq/P82mbbm+ndXExbz32nJZVkxNu4LmUKEO/ruuC8M5a4vspIBBu383TOb1IvdX5tFosckKg
-        nRNkRr7DkE5A/x9DmFa0+wMAAA==
+      string: '{"@search.facets":{"category":[{"count":4,"value":"Budget"},{"count":1,"value":"Luxury"}]},"value":[{"@search.score":2.3832736,"hotelName":"Countryside
+        Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
+        location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
+        alley, fitness center and more.","category":"Budget"},{"@search.score":1.0225849,"hotelName":"EconoStay","description":"Very
+        popular hotel in town","category":"Budget"},{"@search.score":1.0225849,"hotelName":"Express
+        Rooms","description":"Pretty good hotel","category":"Budget"},{"@search.score":1.0225849,"hotelName":"Comfy
+        Place","description":"Another good hotel","category":"Budget"},{"@search.score":0.7987757,"hotelName":"Fancy
+        Stay","description":"Best hotel in town if you like luxury hotels. They have
+        an amazing infinity pool, a spa, and a really helpful concierge. The location
+        is perfect -- right downtown, close to all the tourist attractions. We highly
+        recommend this hotel.","category":"Luxury"}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '646'
       content-type: application/json; odata.metadata=none
-      date: Sat, 08 May 2021 06:26:35 GMT
-      elapsed-time: '165'
+      date: Tue, 31 Aug 2021 17:30:00 GMT
+      elapsed-time: '225'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 562f415c-afc6-11eb-8d44-a0481ca055a9
+      request-id: 12e721c5-0a81-11ec-9993-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search88e11b0a.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    url: https://search88e11b0a.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
 version: 1

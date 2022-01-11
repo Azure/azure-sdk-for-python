@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 from ._configuration import AzureBlobStorageConfiguration
 from .operations import ServiceOperations
 from .operations import ContainerOperations
-from .operations import DirectoryOperations
 from .operations import BlobOperations
 from .operations import PageBlobOperations
 from .operations import AppendBlobOperations
@@ -35,8 +34,6 @@ class AzureBlobStorage(object):
     :vartype service: azure.storage.blob.operations.ServiceOperations
     :ivar container: ContainerOperations operations
     :vartype container: azure.storage.blob.operations.ContainerOperations
-    :ivar directory: DirectoryOperations operations
-    :vartype directory: azure.storage.blob.operations.DirectoryOperations
     :ivar blob: BlobOperations operations
     :vartype blob: azure.storage.blob.operations.BlobOperations
     :ivar page_blob: PageBlobOperations operations
@@ -45,7 +42,7 @@ class AzureBlobStorage(object):
     :vartype append_blob: azure.storage.blob.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.operations.BlockBlobOperations
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
     :type url: str
     """
 
@@ -67,8 +64,6 @@ class AzureBlobStorage(object):
         self.service = ServiceOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.container = ContainerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.directory = DirectoryOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.blob = BlobOperations(
             self._client, self._config, self._serialize, self._deserialize)

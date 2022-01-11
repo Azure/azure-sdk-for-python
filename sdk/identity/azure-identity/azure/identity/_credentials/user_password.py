@@ -21,20 +21,21 @@ class UsernamePasswordCredential(InteractiveCredential):
     a directory admin.
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
-    See this document for more information about account types:
-    https://docs.microsoft.com/azure/active-directory/fundamentals/sign-up-organization
+    See `Azure Active Directory documentation
+    <https://docs.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`_ for more information about
+    account types.
 
     :param str client_id: the application's client ID
     :param str username: the user's username (usually an email address)
     :param str password: the user's password
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds.
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds.
     :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
-          'organizations' tenant, which supports only Azure Active Directory work or school accounts.
+        "organizations" tenant, which supports only Azure Active Directory work or school accounts.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
-          will cache tokens in memory.
+        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
@@ -53,7 +54,7 @@ class UsernamePasswordCredential(InteractiveCredential):
     @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
-        app = self._get_app()
+        app = self._get_app(**kwargs)
         return app.acquire_token_by_username_password(
             username=self._username,
             password=self._password,

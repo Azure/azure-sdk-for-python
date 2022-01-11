@@ -48,7 +48,7 @@ class ExpressRouteConnectionsOperations:
         express_route_gateway_name: str,
         connection_name: str,
         put_express_route_connection_parameters: "_models.ExpressRouteConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteConnection"]
         error_map = {
@@ -107,7 +107,7 @@ class ExpressRouteConnectionsOperations:
         express_route_gateway_name: str,
         connection_name: str,
         put_express_route_connection_parameters: "_models.ExpressRouteConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExpressRouteConnection"]:
         """Creates a connection between an ExpressRoute gateway and an ExpressRoute circuit.
 
@@ -122,8 +122,8 @@ class ExpressRouteConnectionsOperations:
         :type put_express_route_connection_parameters: ~azure.mgmt.network.v2020_03_01.models.ExpressRouteConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExpressRouteConnection or the result of cls(response)
@@ -183,7 +183,7 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteConnection":
         """Gets the specified ExpressRouteConnection.
 
@@ -245,7 +245,7 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -291,7 +291,7 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a connection to a ExpressRoute circuit.
 
@@ -303,8 +303,8 @@ class ExpressRouteConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -359,7 +359,7 @@ class ExpressRouteConnectionsOperations:
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRouteConnectionList":
         """Lists ExpressRouteConnections.
 

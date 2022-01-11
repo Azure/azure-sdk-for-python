@@ -54,8 +54,7 @@ class MaintenanceConfigurationsOperations(object):
         # type: (...) -> Iterable["_models.MaintenanceConfigurationListResult"]
         """Gets a list of maintenance configurations in the specified managed cluster.
 
-        Gets a list of maintenance configurations in the specified managed cluster. The operation
-        returns properties of each maintenance configuration.
+        Gets a list of maintenance configurations in the specified managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -131,9 +130,9 @@ class MaintenanceConfigurationsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.MaintenanceConfiguration"
-        """Gets the maintenance configuration.
+        """Gets the specified maintenance configuration of a managed cluster.
 
-        Gets the details of maintenance configurations by managed cluster and resource group.
+        Gets the specified maintenance configuration of a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -197,7 +196,7 @@ class MaintenanceConfigurationsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.MaintenanceConfiguration"
-        """Creates or updates a maintenance configurations.
+        """Creates or updates a maintenance configuration in the specified managed cluster.
 
         Creates or updates a maintenance configuration in the specified managed cluster.
 
@@ -207,8 +206,7 @@ class MaintenanceConfigurationsOperations(object):
         :type resource_name: str
         :param config_name: The name of the maintenance configuration.
         :type config_name: str
-        :param parameters: Parameters supplied to the Create or Update a default maintenance
-         configuration.
+        :param parameters: The maintenance configuration to create or update.
         :type parameters: ~azure.mgmt.containerservice.v2021_05_01.models.MaintenanceConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MaintenanceConfiguration, or the result of cls(response)
@@ -272,7 +270,7 @@ class MaintenanceConfigurationsOperations(object):
         # type: (...) -> None
         """Deletes a maintenance configuration.
 
-        Deletes the maintenance configuration in the specified managed cluster.
+        Deletes a maintenance configuration.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

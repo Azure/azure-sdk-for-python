@@ -47,7 +47,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceResource":
         """Get a Service and its properties.
 
@@ -107,7 +107,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_name: str,
         resource: "_models.ServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceResource"]
         error_map = {
@@ -164,7 +164,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_name: str,
         resource: "_models.ServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServiceResource"]:
         """Create a new Service or update an exiting Service.
 
@@ -177,8 +177,8 @@ class ServicesOperations:
         :type resource: ~azure.mgmt.appplatform.v2019_05_01_preview.models.ServiceResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServiceResource or the result of cls(response)
@@ -235,7 +235,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -279,7 +279,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Operation to delete a Service.
 
@@ -290,8 +290,8 @@ class ServicesOperations:
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -345,7 +345,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_name: str,
         resource: "_models.ServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServiceResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceResource"]
         error_map = {
@@ -402,7 +402,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_name: str,
         resource: "_models.ServiceResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServiceResource"]:
         """Operation to update an exiting Service.
 
@@ -415,8 +415,8 @@ class ServicesOperations:
         :type resource: ~azure.mgmt.appplatform.v2019_05_01_preview.models.ServiceResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServiceResource or the result of cls(response)
@@ -473,7 +473,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestKeys":
         """List test keys for a Service.
 
@@ -533,7 +533,7 @@ class ServicesOperations:
         resource_group_name: str,
         service_name: str,
         regenerate_test_key_request: "_models.RegenerateTestKeyRequestPayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestKeys":
         """Regenerate a test key for a Service.
 
@@ -599,7 +599,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """disable_test_endpoint.
 
@@ -655,7 +655,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestKeys":
         """enable_test_endpoint.
 
@@ -714,7 +714,7 @@ class ServicesOperations:
         self,
         location: str,
         availability_parameters: "_models.NameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Checks that the resource name is valid and is not already in use.
 
@@ -774,7 +774,7 @@ class ServicesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceResourceList"]:
         """Handles requests to list all resources in a subscription.
 
@@ -841,7 +841,7 @@ class ServicesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceResourceList"]:
         """Handles requests to list all resources in a resource group.
 

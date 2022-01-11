@@ -44,7 +44,7 @@ class ServiceOperations:
         storage_service_properties: "_models.StorageServiceProperties",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets properties for a storage account's Blob service endpoint, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -52,8 +52,9 @@ class ServiceOperations:
         :param storage_service_properties: The StorageService properties.
         :type storage_service_properties: ~azure.storage.blob.models.StorageServiceProperties
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -121,14 +122,15 @@ class ServiceOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageServiceProperties":
         """gets the properties of a storage account's Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -193,15 +195,16 @@ class ServiceOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageServiceStats":
         """Retrieves statistics related to replication for the Blob service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         storage account.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -271,7 +274,7 @@ class ServiceOperations:
         include: Optional[List[Union[str, "_models.ListContainersIncludeType"]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListContainersSegmentResponse":
         """The List Containers Segment operation returns a list of the containers under the specified
         account.
@@ -297,8 +300,9 @@ class ServiceOperations:
          part of the response body.
         :type include: list[str or ~azure.storage.blob.models.ListContainersIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -370,16 +374,17 @@ class ServiceOperations:
         key_info: "_models.KeyInfo",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserDelegationKey":
         """Retrieves a user delegation key for the Blob service. This is only a valid operation when using
         bearer token authentication.
 
-        :param key_info:
+        :param key_info: Key information.
         :type key_info: ~azure.storage.blob.models.KeyInfo
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -448,7 +453,7 @@ class ServiceOperations:
 
     async def get_account_info(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns the sku name and account kind.
 
@@ -513,7 +518,7 @@ class ServiceOperations:
         body: IO,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
 
@@ -525,8 +530,9 @@ class ServiceOperations:
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -599,15 +605,16 @@ class ServiceOperations:
         where: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FilterBlobSegment":
         """The Filter Blobs operation enables callers to list blobs across all containers whose tags match
         a given search expression.  Filter blobs searches across all containers within a storage
         account but can be scoped within the expression to a single container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.

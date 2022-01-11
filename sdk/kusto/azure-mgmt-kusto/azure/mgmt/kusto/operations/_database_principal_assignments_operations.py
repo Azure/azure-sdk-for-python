@@ -32,7 +32,7 @@ class DatabasePrincipalAssignmentsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.kusto.models
+    :type models: ~kusto_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -65,10 +65,10 @@ class DatabasePrincipalAssignmentsOperations(object):
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param principal_assignment_name: The name of the resource.
-        :type principal_assignment_name: ~azure.mgmt.kusto.models.DatabasePrincipalAssignmentCheckNameRequest
+        :type principal_assignment_name: ~kusto_management_client.models.DatabasePrincipalAssignmentCheckNameRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.CheckNameResult
+        :rtype: ~kusto_management_client.models.CheckNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameResult"]
@@ -76,7 +76,7 @@ class DatabasePrincipalAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -139,7 +139,7 @@ class DatabasePrincipalAssignmentsOperations(object):
         :type principal_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatabasePrincipalAssignment, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalAssignment
+        :rtype: ~kusto_management_client.models.DatabasePrincipalAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalAssignment"]
@@ -147,7 +147,7 @@ class DatabasePrincipalAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL
@@ -200,7 +200,7 @@ class DatabasePrincipalAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -268,15 +268,15 @@ class DatabasePrincipalAssignmentsOperations(object):
         :param principal_assignment_name: The name of the Kusto principalAssignment.
         :type principal_assignment_name: str
         :param parameters: The Kusto principalAssignments parameters supplied for the operation.
-        :type parameters: ~azure.mgmt.kusto.models.DatabasePrincipalAssignment
+        :type parameters: ~kusto_management_client.models.DatabasePrincipalAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DatabasePrincipalAssignment or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.DatabasePrincipalAssignment]
+        :rtype: ~azure.core.polling.LROPoller[~kusto_management_client.models.DatabasePrincipalAssignment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -343,7 +343,7 @@ class DatabasePrincipalAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         # Construct URL
@@ -399,8 +399,8 @@ class DatabasePrincipalAssignmentsOperations(object):
         :type principal_assignment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -471,7 +471,7 @@ class DatabasePrincipalAssignmentsOperations(object):
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DatabasePrincipalAssignmentListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.kusto.models.DatabasePrincipalAssignmentListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~kusto_management_client.models.DatabasePrincipalAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalAssignmentListResult"]
@@ -479,7 +479,7 @@ class DatabasePrincipalAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
+        api_version = "2021-08-27"
         accept = "application/json"
 
         def prepare_request(next_link=None):

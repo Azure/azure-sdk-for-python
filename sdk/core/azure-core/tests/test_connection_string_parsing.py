@@ -1,4 +1,3 @@
-import sys
 import pytest
 from azure.core.utils import parse_connection_string
 

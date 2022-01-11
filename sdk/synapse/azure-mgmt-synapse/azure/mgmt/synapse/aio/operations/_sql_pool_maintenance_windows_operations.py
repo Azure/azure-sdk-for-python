@@ -46,7 +46,7 @@ class SqlPoolMaintenanceWindowsOperations:
         workspace_name: str,
         sql_pool_name: str,
         maintenance_window_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceWindows":
         """Get a SQL pool's Maintenance Windows.
 
@@ -70,14 +70,14 @@ class SqlPoolMaintenanceWindowsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }
@@ -116,7 +116,7 @@ class SqlPoolMaintenanceWindowsOperations:
         sql_pool_name: str,
         maintenance_window_name: str,
         parameters: "_models.MaintenanceWindows",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Creates or updates a Sql pool's maintenance windows settings.
 
@@ -143,14 +143,14 @@ class SqlPoolMaintenanceWindowsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
         }

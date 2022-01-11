@@ -48,7 +48,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -92,7 +92,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified tap configuration from the NetworkInterface.
 
@@ -104,8 +104,8 @@ class NetworkInterfaceTapConfigurationsOperations:
         :type tap_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -161,7 +161,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkInterfaceTapConfiguration":
         """Get the specified tap configuration on a network interface.
 
@@ -224,7 +224,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         network_interface_name: str,
         tap_configuration_name: str,
         tap_configuration_parameters: "_models.NetworkInterfaceTapConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkInterfaceTapConfiguration":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceTapConfiguration"]
         error_map = {
@@ -283,7 +283,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         network_interface_name: str,
         tap_configuration_name: str,
         tap_configuration_parameters: "_models.NetworkInterfaceTapConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetworkInterfaceTapConfiguration"]:
         """Creates or updates a Tap configuration in the specified NetworkInterface.
 
@@ -298,8 +298,8 @@ class NetworkInterfaceTapConfigurationsOperations:
         :type tap_configuration_parameters: ~azure.mgmt.network.v2018_10_01.models.NetworkInterfaceTapConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetworkInterfaceTapConfiguration or the result of cls(response)
@@ -358,7 +358,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceTapConfigurationListResult"]:
         """Get all Tap configurations in a network interface.
 

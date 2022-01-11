@@ -36,7 +36,7 @@ class FaceListOperations(object):
         self.config = config
 
     def create(
-            self, face_list_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+            self, face_list_id, name, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create an empty face list with user-specified faceListId, name, an
         optional userData and recognitionModel. Up to 64 face lists are allowed
         in one subscription.

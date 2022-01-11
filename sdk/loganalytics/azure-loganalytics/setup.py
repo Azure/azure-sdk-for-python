@@ -59,7 +59,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -77,7 +77,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         'azure-common~=1.1',
     ],
     extras_require={

@@ -7,11 +7,19 @@ from abc import ABCMeta, abstractmethod
 from six import with_metaclass
 from .algorithm import Algorithm
 
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from typing import Any, FrozenSet
 
 class Key(with_metaclass(ABCMeta, object)):
-    _supported_encryption_algorithms = []
-    _supported_key_wrap_algorithms = []
-    _supported_signature_algorithms = []
+    _supported_encryption_algorithms = frozenset([])  # type: FrozenSet[Any]
+    _supported_key_wrap_algorithms = frozenset([])  # type: FrozenSet[Any]
+    _supported_signature_algorithms = frozenset([])  # type: FrozenSet[Any]
 
     def __init__(self):
         self._kid = None

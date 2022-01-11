@@ -47,7 +47,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeerExpressRouteCircuitConnection":
         """Gets the specified Peer Express Route Circuit Connection from the specified express route
         circuit.
@@ -113,7 +113,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeerExpressRouteCircuitConnectionListResult"]:
         """Gets all global reach peer connections associated with a private peering in an express route
         circuit.

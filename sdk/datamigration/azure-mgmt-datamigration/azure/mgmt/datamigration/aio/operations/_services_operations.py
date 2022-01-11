@@ -48,14 +48,14 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         parameters: "_models.DataMigrationService",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DataMigrationService"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataMigrationService"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -107,7 +107,7 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         parameters: "_models.DataMigrationService",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataMigrationService"]:
         """Create or update DMS Instance.
 
@@ -128,8 +128,8 @@ class ServicesOperations:
         :type parameters: ~azure.mgmt.datamigration.models.DataMigrationService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataMigrationService or the result of cls(response)
@@ -186,7 +186,7 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMigrationService":
         """Get DMS Service Instance.
 
@@ -207,7 +207,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -249,14 +249,14 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -297,7 +297,7 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete DMS Service Instance.
 
@@ -312,8 +312,8 @@ class ServicesOperations:
         :type delete_running_tasks: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -368,14 +368,14 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         parameters: "_models.DataMigrationService",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DataMigrationService"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataMigrationService"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -424,7 +424,7 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         parameters: "_models.DataMigrationService",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataMigrationService"]:
         """Create or update DMS Service Instance.
 
@@ -441,8 +441,8 @@ class ServicesOperations:
         :type parameters: ~azure.mgmt.datamigration.models.DataMigrationService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataMigrationService or the result of cls(response)
@@ -499,7 +499,7 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMigrationServiceStatusResponse":
         """Check service health status.
 
@@ -521,7 +521,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -562,14 +562,14 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -607,7 +607,7 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Start service.
 
@@ -620,8 +620,8 @@ class ServicesOperations:
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -674,14 +674,14 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -719,7 +719,7 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stop service.
 
@@ -733,8 +733,8 @@ class ServicesOperations:
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -787,7 +787,7 @@ class ServicesOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceSkuList"]:
         """Get compatible SKUs.
 
@@ -808,7 +808,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -866,7 +866,7 @@ class ServicesOperations:
         group_name: str,
         service_name: str,
         parameters: "_models.NameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailabilityResponse":
         """Check nested resource name validity and availability.
 
@@ -888,7 +888,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -933,7 +933,7 @@ class ServicesOperations:
     def list_by_resource_group(
         self,
         group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataMigrationServiceList"]:
         """Get services in resource group.
 
@@ -952,7 +952,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1006,7 +1006,7 @@ class ServicesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataMigrationServiceList"]:
         """Get services in subscription.
 
@@ -1023,7 +1023,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1078,7 +1078,7 @@ class ServicesOperations:
         self,
         location: str,
         parameters: "_models.NameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailabilityResponse":
         """Check name validity and availability.
 
@@ -1098,7 +1098,7 @@ class ServicesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

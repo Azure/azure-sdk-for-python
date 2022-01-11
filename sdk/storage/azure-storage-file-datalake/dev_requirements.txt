@@ -1,7 +1,8 @@
+-e ../../../tools/vcrpy
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../azure-storage-blob
 -e ../../identity/azure-identity
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 adal

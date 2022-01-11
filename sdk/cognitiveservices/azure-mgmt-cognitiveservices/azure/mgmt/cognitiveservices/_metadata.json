@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-04-30",
-    "total_api_version_list": ["2021-04-30"],
+    "chosen_version": "2021-10-01",
+    "total_api_version_list": ["2021-10-01"],
     "client": {
         "name": "CognitiveServicesManagementClient",
         "filename": "_cognitive_services_management_client",
@@ -102,8 +102,11 @@
         "deleted_accounts": "DeletedAccountsOperations",
         "resource_skus": "ResourceSkusOperations",
         "operations": "Operations",
+        "commitment_tiers": "CommitmentTiersOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
-        "private_link_resources": "PrivateLinkResourcesOperations"
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "deployments": "DeploymentsOperations",
+        "commitment_plans": "CommitmentPlansOperations"
     },
     "operation_mixins": {
         "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
@@ -123,15 +126,15 @@
             },
             "check_domain_availability" : {
                 "sync": {
-                    "signature": "def check_domain_availability(\n    self,\n    subdomain_name,  # type: str\n    type,  # type: str\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Check whether a domain is available.\n\n:param subdomain_name: The subdomain name to use.\n:type subdomain_name: str\n:param type: The Type of the resource.\n:type type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DomainAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def check_domain_availability(\n    self,\n    subdomain_name,  # type: str\n    type,  # type: str\n    kind=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Check whether a domain is available.\n\n:param subdomain_name: The subdomain name to use.\n:type subdomain_name: str\n:param type: The Type of the resource.\n:type type: str\n:param kind: The Kind of the resource.\n:type kind: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DomainAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def check_domain_availability(\n    self,\n    subdomain_name: str,\n    type: str,\n    **kwargs: Any\n) -\u003e \"_models.DomainAvailability\":\n",
-                    "doc": "\"\"\"Check whether a domain is available.\n\n:param subdomain_name: The subdomain name to use.\n:type subdomain_name: str\n:param type: The Type of the resource.\n:type type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DomainAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "async def check_domain_availability(\n    self,\n    subdomain_name: str,\n    type: str,\n    kind: Optional[str] = None,\n    **kwargs: Any\n) -\u003e \"_models.DomainAvailability\":\n",
+                    "doc": "\"\"\"Check whether a domain is available.\n\n:param subdomain_name: The subdomain name to use.\n:type subdomain_name: str\n:param type: The Type of the resource.\n:type type: str\n:param kind: The Kind of the resource.\n:type kind: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DomainAvailability, or the result of cls(response)\n:rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
-                "call": "subdomain_name, type"
+                "call": "subdomain_name, type, kind"
             }
         }
     }

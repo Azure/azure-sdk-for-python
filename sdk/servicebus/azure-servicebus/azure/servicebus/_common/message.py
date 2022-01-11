@@ -9,7 +9,7 @@ import time
 import datetime
 import uuid
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
@@ -92,8 +92,24 @@ class ServiceBusMessage(
 
     """
 
-    def __init__(self, body, **kwargs):
-        # type: (Optional[Union[str, bytes]], Any) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes]],
+        *,
+        application_properties: Optional[Dict[str, Any]] = None,
+        session_id: Optional[str] = None,
+        message_id: Optional[str] = None,
+        scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
+        time_to_live: Optional[datetime.timedelta] = None,
+        content_type: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        subject: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        to: Optional[str] = None,
+        reply_to: Optional[str] = None,
+        reply_to_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
@@ -108,20 +124,18 @@ class ServiceBusMessage(
             self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
         else:
             self._build_message(body)
-            self.application_properties = kwargs.pop("application_properties", None)
-            self.session_id = kwargs.pop("session_id", None)
-            self.message_id = kwargs.pop("message_id", None)
-            self.content_type = kwargs.pop("content_type", None)
-            self.correlation_id = kwargs.pop("correlation_id", None)
-            self.to = kwargs.pop("to", None)
-            self.reply_to = kwargs.pop("reply_to", None)
-            self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
-            self.subject = kwargs.pop("subject", None)
-            self.scheduled_enqueue_time_utc = kwargs.pop(
-                "scheduled_enqueue_time_utc", None
-            )
-            self.time_to_live = kwargs.pop("time_to_live", None)
-            self.partition_key = kwargs.pop("partition_key", None)
+            self.application_properties = application_properties
+            self.session_id = session_id
+            self.message_id = message_id
+            self.content_type = content_type
+            self.correlation_id = correlation_id
+            self.to = to
+            self.reply_to = reply_to
+            self.reply_to_session_id = reply_to_session_id
+            self.subject = subject
+            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
+            self.time_to_live = time_to_live
+            self.partition_key = partition_key
 
     def __str__(self):
         # type: () -> str
@@ -293,9 +307,15 @@ class ServiceBusMessage(
         """
         p_key = None
         try:
-            p_key = self._raw_amqp_message.annotations.get(  # type: ignore
-                _X_OPT_PARTITION_KEY  # type: ignore
-            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
+            # opt_p_key is used on the incoming message
+            opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
+            if opt_p_key is not None:
+                p_key = opt_p_key
+            # symbol_p_key is used on the outgoing message
+            symbol_p_key = self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
+            if symbol_p_key is not None:
+                p_key = symbol_p_key
+
             return p_key.decode("UTF-8")  # type: ignore
         except (AttributeError, UnicodeDecodeError):
             return p_key
@@ -310,7 +330,7 @@ class ServiceBusMessage(
                 )
             )
 
-        if value and self.session_id and value != self.session_id:
+        if value and self.session_id is not None and value != self.session_id:
             raise ValueError(
                 "partition_key:{} cannot be set to a different value than session_id:{}".format(
                     value, self.session_id
@@ -347,7 +367,7 @@ class ServiceBusMessage(
             if self._raw_amqp_message.properties.absolute_expiry_time:
                 self._raw_amqp_message.properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
-            self._raw_amqp_message.header.time_to_live = value.seconds * 1000
+            self._raw_amqp_message.header.time_to_live = int(value.total_seconds()) * 1000
         else:
             self._raw_amqp_message.header.time_to_live = int(value) * 1000
 
@@ -398,9 +418,13 @@ class ServiceBusMessage(
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.DATA<azure.servicebus.amqp.AmqpMessageBodyType.DATA>`,
+        the body could be bytes or Iterable[bytes].
+        For
+        :class:`azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE<azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE>`,
+        the body could be List or Iterable[List].
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.VALUE<azure.servicebus.amqp.AmqpMessageBodyType.VALUE>`,
+        the body could be any type.
 
         :rtype: Any
         """
@@ -411,7 +435,7 @@ class ServiceBusMessage(
         # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
 
-        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return self._raw_amqp_message.body_type
 

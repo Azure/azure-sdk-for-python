@@ -47,7 +47,7 @@ class QueueOperations:
         account_name: str,
         queue_name: str,
         queue: "_models.StorageQueue",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageQueue":
         """Creates a new queue with the specified queue name, under the specified account.
 
@@ -124,7 +124,7 @@ class QueueOperations:
         account_name: str,
         queue_name: str,
         queue: "_models.StorageQueue",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageQueue":
         """Creates a new queue with the specified queue name, under the specified account.
 
@@ -200,7 +200,7 @@ class QueueOperations:
         resource_group_name: str,
         account_name: str,
         queue_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageQueue":
         """Gets the queue with the specified queue name, under the specified account if it exists.
 
@@ -269,7 +269,7 @@ class QueueOperations:
         resource_group_name: str,
         account_name: str,
         queue_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the queue with the specified queue name, under the specified account if it exists.
 
@@ -336,7 +336,7 @@ class QueueOperations:
         account_name: str,
         maxpagesize: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListQueueResource"]:
         """Gets a list of all the queues under the specified storage account.
 

@@ -43,7 +43,7 @@ class VirtualApplianceSkusOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkVirtualApplianceSkuListResult"]:
         """List all SKUs available for a virtual appliance.
 
@@ -110,7 +110,7 @@ class VirtualApplianceSkusOperations:
     async def get(
         self,
         sku_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkVirtualApplianceSku":
         """Retrieves a single available sku for network virtual appliance.
 

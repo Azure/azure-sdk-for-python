@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 import re
 from azure.ai.formrecognizer._helpers import get_element_type
 from testcase import FormRecognizerTest

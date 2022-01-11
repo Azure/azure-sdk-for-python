@@ -16,7 +16,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource
+from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
@@ -41,7 +41,7 @@ if (! $m) {{
     exit
 }}
 
-$token = Get-AzAccessToken -ResourceUrl '{}'
+$token = Get-AzAccessToken -ResourceUrl '{}'{}
 
 Write-Output "`nazsdk%$($token.Token)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
@@ -53,8 +53,18 @@ class AzurePowerShellCredential(object):
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
     """
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def close(self):
+        # type: () -> None
+        """Calling this method is unnecessary."""
+
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=no-self-use,unused-argument
+    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -62,6 +72,8 @@ class AzurePowerShellCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
@@ -69,8 +81,8 @@ class AzurePowerShellCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-
-        command_line = get_command_line(scopes)
+        tenant_id = resolve_tenant("", **kwargs)
+        command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line)
         token = parse_token(output)
         return token
@@ -98,7 +110,10 @@ def run_command_line(command_line):
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
         if proc and not proc.returncode:
             proc.kill()
-        error = CredentialUnavailableError(message="Failed to invoke PowerShell")
+        error = CredentialUnavailableError(
+            message="Failed to invoke PowerShell.\n"
+                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
         six.raise_from(error, ex)
 
     raise_for_error(proc.returncode, stdout, stderr)
@@ -128,10 +143,14 @@ def parse_token(output):
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 
-def get_command_line(scopes):
-    # type: (Tuple) -> List[str]
+def get_command_line(scopes, tenant_id):
+    # type: (Tuple, str) -> List[str]
+    if tenant_id:
+        tenant_argument = " -TenantId " + tenant_id
+    else:
+        tenant_argument = ""
     resource = _scopes_to_resource(*scopes)
-    script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource)
+    script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource, tenant_argument)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
 
     command = "pwsh -NonInteractive -EncodedCommand " + encoded_script

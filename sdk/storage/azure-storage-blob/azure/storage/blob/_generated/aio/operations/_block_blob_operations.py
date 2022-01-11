@@ -58,7 +58,7 @@ class BlockBlobOperations:
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
         existing block blob overwrites any existing metadata on the blob. Partial updates are not
@@ -71,8 +71,9 @@ class BlockBlobOperations:
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service.
@@ -270,13 +271,14 @@ class BlockBlobOperations:
         source_content_md5: Optional[bytearray] = None,
         blob_tags_string: Optional[str] = None,
         copy_source_blob_properties: Optional[bool] = None,
+        copy_source_authorization: Optional[str] = None,
         blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
         read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
@@ -292,8 +294,9 @@ class BlockBlobOperations:
          via a shared access signature.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service.
@@ -319,6 +322,9 @@ class BlockBlobOperations:
         :param copy_source_blob_properties: Optional, default is true.  Indicates if properties from
          the source blob should be copied.
         :type copy_source_blob_properties: bool
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param blob_http_headers: Parameter group.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group.
@@ -467,6 +473,8 @@ class BlockBlobOperations:
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
         if copy_source_blob_properties is not None:
             header_parameters['x-ms-copy-source-blob-properties'] = self._serialize.header("copy_source_blob_properties", copy_source_blob_properties, 'bool')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -508,7 +516,7 @@ class BlockBlobOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
@@ -527,8 +535,9 @@ class BlockBlobOperations:
          validated by the service.
         :type transactional_content_crc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -641,11 +650,12 @@ class BlockBlobOperations:
         source_contentcrc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        copy_source_authorization: Optional[str] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
@@ -667,12 +677,16 @@ class BlockBlobOperations:
          read from the copy source.
         :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param cpk_info: Parameter group.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group.
@@ -762,6 +776,8 @@ class BlockBlobOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -807,7 +823,7 @@ class BlockBlobOperations:
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
         the blob. In order to be written as part of a blob, a block must have been successfully written
@@ -817,11 +833,12 @@ class BlockBlobOperations:
         or from the uncommitted block list, or to commit the most recently uploaded version of the
         block, whichever list it may belong to.
 
-        :param blocks:
+        :param blocks: Blob Blocks.
         :type blocks: ~azure.storage.blob.models.BlockLookupList
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service.
@@ -1021,23 +1038,24 @@ class BlockBlobOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BlockList":
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see :code:`<a href="https://docs.microsoft.com/en-
-         us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of
-         a Blob.</a>`.
+         see :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>`.
         :type snapshot: str
         :param list_type: Specifies whether to return the list of committed blocks, the list of
          uncommitted blocks, or both lists together.
         :type list_type: str or ~azure.storage.blob.models.BlockListType
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.

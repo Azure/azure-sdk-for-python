@@ -79,6 +79,16 @@ class EventHubConsumerClient(ClientBaseAsync):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay).
+     In fixed mode, retry policy will always sleep for {backoff factor}.
+     In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+     seconds. If the backoff_factor is 0.1, then the retry will sleep
+     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
@@ -161,7 +171,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             network_tracing=network_tracing,
             **kwargs
         )
-        self._lock = asyncio.Lock(loop=self._loop)
+        self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
 
     async def __aenter__(self):
@@ -198,7 +208,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            loop=self._loop,
+            **self._internal_kwargs
         )
         return handler
 
@@ -239,6 +249,16 @@ class EventHubConsumerClient(ClientBaseAsync):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+         (most errors are resolved immediately by a second try without a delay).
+         In fixed mode, retry policy will always sleep for {backoff factor}.
+         In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+         seconds. If the backoff_factor is 0.1, then the retry will sleep
+         for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+        :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no further activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.
@@ -378,7 +398,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 owner_level=owner_level,
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-                loop=self._loop,
+                **self._internal_kwargs
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
@@ -687,7 +707,6 @@ class EventHubConsumerClient(ClientBaseAsync):
             await asyncio.gather(
                 *[p.stop() for p in self._event_processors.values()],
                 return_exceptions=True,
-                loop=self._loop
             )
             self._event_processors = {}
             await super(EventHubConsumerClient, self)._close_async()

@@ -1,6 +1,39 @@
 # Release History
 
-## 5.6.0 (Unreleased)
+## 5.7.0 (Unreleased)
+
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+
+### Features Added
+
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `EventHubProducerClient` and `EventHubConsumerClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed a bug that `EventHubProducerClient` could be reopened for sending events instead of encountering with `KeyError` when the client is previously closed (issue #21849).
+
+### Other Changes
+
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.0.
+
+## 5.6.1 (2021-10-06)
+
+### Bugs Fixed
+
+- Fixed a bug for checking that `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` contain specific properties using the `in` keyword.
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.4.3.
+  - Added support for Python 3.10.
+  - Fixed memory leak in win32 socketio and tlsio (issue #19777).
+  - Fixed memory leak in the process of converting AMQPValue into string (issue #19777).
+
+## 5.6.0 (2021-07-07)
 
 ### Features Added
 
@@ -14,6 +47,11 @@
   - Introduced new classes `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` for accessing amqp header and properties.
   - Added new property `body_type` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpMessageBodyType`.
   - Added new read-only property `raw_amqp_message` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpAnnotatedMessage`.
+
+### Fixed
+
+- Updated uAMQP dependency to 1.4.1.
+  - Fixed a bug that attributes creation_time, absolute_expiry_time and group_sequence on MessageProperties should be compatible with integer types on Python 2.7.
 
 ## 5.5.0 (2021-05-13)
 

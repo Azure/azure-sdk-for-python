@@ -24,11 +24,6 @@ try:
     from ._models_py3 import DomainUpdateParameters
     from ._models_py3 import DomainsListResult
     from ._models_py3 import DynamicDeliveryAttributeMapping
-    from ._models_py3 import EventChannel
-    from ._models_py3 import EventChannelDestination
-    from ._models_py3 import EventChannelFilter
-    from ._models_py3 import EventChannelSource
-    from ._models_py3 import EventChannelsListResult
     from ._models_py3 import EventHubEventSubscriptionDestination
     from ._models_py3 import EventSubscription
     from ._models_py3 import EventSubscriptionDestination
@@ -39,7 +34,6 @@ try:
     from ._models_py3 import EventSubscriptionsListResult
     from ._models_py3 import EventType
     from ._models_py3 import EventTypesListResult
-    from ._models_py3 import ExtendedLocation
     from ._models_py3 import ExtensionTopic
     from ._models_py3 import HybridConnectionEventSubscriptionDestination
     from ._models_py3 import IdentityInfo
@@ -61,27 +55,12 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationInfo
     from ._models_py3 import OperationsListResult
-    from ._models_py3 import PartnerNamespace
-    from ._models_py3 import PartnerNamespaceRegenerateKeyRequest
-    from ._models_py3 import PartnerNamespaceSharedAccessKeys
-    from ._models_py3 import PartnerNamespaceUpdateParameters
-    from ._models_py3 import PartnerNamespacesListResult
-    from ._models_py3 import PartnerRegistration
-    from ._models_py3 import PartnerRegistrationEventTypesListResult
-    from ._models_py3 import PartnerRegistrationUpdateParameters
-    from ._models_py3 import PartnerRegistrationsListResult
-    from ._models_py3 import PartnerTopic
-    from ._models_py3 import PartnerTopicType
-    from ._models_py3 import PartnerTopicTypesListResult
-    from ._models_py3 import PartnerTopicUpdateParameters
-    from ._models_py3 import PartnerTopicsListResult
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourcesListResult
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceSku
     from ._models_py3 import RetryPolicy
     from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
     from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
@@ -128,11 +107,6 @@ except (SyntaxError, ImportError):
     from ._models import DomainUpdateParameters  # type: ignore
     from ._models import DomainsListResult  # type: ignore
     from ._models import DynamicDeliveryAttributeMapping  # type: ignore
-    from ._models import EventChannel  # type: ignore
-    from ._models import EventChannelDestination  # type: ignore
-    from ._models import EventChannelFilter  # type: ignore
-    from ._models import EventChannelSource  # type: ignore
-    from ._models import EventChannelsListResult  # type: ignore
     from ._models import EventHubEventSubscriptionDestination  # type: ignore
     from ._models import EventSubscription  # type: ignore
     from ._models import EventSubscriptionDestination  # type: ignore
@@ -143,7 +117,6 @@ except (SyntaxError, ImportError):
     from ._models import EventSubscriptionsListResult  # type: ignore
     from ._models import EventType  # type: ignore
     from ._models import EventTypesListResult  # type: ignore
-    from ._models import ExtendedLocation  # type: ignore
     from ._models import ExtensionTopic  # type: ignore
     from ._models import HybridConnectionEventSubscriptionDestination  # type: ignore
     from ._models import IdentityInfo  # type: ignore
@@ -165,27 +138,12 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationInfo  # type: ignore
     from ._models import OperationsListResult  # type: ignore
-    from ._models import PartnerNamespace  # type: ignore
-    from ._models import PartnerNamespaceRegenerateKeyRequest  # type: ignore
-    from ._models import PartnerNamespaceSharedAccessKeys  # type: ignore
-    from ._models import PartnerNamespaceUpdateParameters  # type: ignore
-    from ._models import PartnerNamespacesListResult  # type: ignore
-    from ._models import PartnerRegistration  # type: ignore
-    from ._models import PartnerRegistrationEventTypesListResult  # type: ignore
-    from ._models import PartnerRegistrationUpdateParameters  # type: ignore
-    from ._models import PartnerRegistrationsListResult  # type: ignore
-    from ._models import PartnerTopic  # type: ignore
-    from ._models import PartnerTopicType  # type: ignore
-    from ._models import PartnerTopicTypesListResult  # type: ignore
-    from ._models import PartnerTopicUpdateParameters  # type: ignore
-    from ._models import PartnerTopicsListResult  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourcesListResult  # type: ignore
     from ._models import Resource  # type: ignore
-    from ._models import ResourceSku  # type: ignore
     from ._models import RetryPolicy  # type: ignore
     from ._models import ServiceBusQueueEventSubscriptionDestination  # type: ignore
     from ._models import ServiceBusTopicEventSubscriptionDestination  # type: ignore
@@ -223,11 +181,10 @@ from ._event_grid_management_client_enums import (
     DomainProvisioningState,
     DomainTopicProvisioningState,
     EndpointType,
-    Enum25,
-    Enum26,
-    Enum27,
-    Enum28,
-    EventChannelProvisioningState,
+    Enum18,
+    Enum19,
+    Enum20,
+    Enum21,
     EventDeliverySchema,
     EventSubscriptionIdentityType,
     EventSubscriptionProvisioningState,
@@ -235,19 +192,10 @@ from ._event_grid_management_client_enums import (
     InputSchema,
     InputSchemaMappingType,
     IpActionType,
-    PartnerNamespaceProvisioningState,
-    PartnerRegistrationProvisioningState,
-    PartnerRegistrationVisibilityState,
-    PartnerTopicActivationState,
-    PartnerTopicProvisioningState,
-    PartnerTopicReadinessState,
-    PartnerTopicTypeAuthorizationState,
     PersistedConnectionStatus,
     PublicNetworkAccess,
-    ResourceKind,
     ResourceProvisioningState,
     ResourceRegionType,
-    Sku,
     TopicProvisioningState,
     TopicTypePropertiesSupportedScopesForSourceItem,
     TopicTypeProvisioningState,
@@ -271,11 +219,6 @@ __all__ = [
     'DomainUpdateParameters',
     'DomainsListResult',
     'DynamicDeliveryAttributeMapping',
-    'EventChannel',
-    'EventChannelDestination',
-    'EventChannelFilter',
-    'EventChannelSource',
-    'EventChannelsListResult',
     'EventHubEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionDestination',
@@ -286,7 +229,6 @@ __all__ = [
     'EventSubscriptionsListResult',
     'EventType',
     'EventTypesListResult',
-    'ExtendedLocation',
     'ExtensionTopic',
     'HybridConnectionEventSubscriptionDestination',
     'IdentityInfo',
@@ -308,27 +250,12 @@ __all__ = [
     'Operation',
     'OperationInfo',
     'OperationsListResult',
-    'PartnerNamespace',
-    'PartnerNamespaceRegenerateKeyRequest',
-    'PartnerNamespaceSharedAccessKeys',
-    'PartnerNamespaceUpdateParameters',
-    'PartnerNamespacesListResult',
-    'PartnerRegistration',
-    'PartnerRegistrationEventTypesListResult',
-    'PartnerRegistrationUpdateParameters',
-    'PartnerRegistrationsListResult',
-    'PartnerTopic',
-    'PartnerTopicType',
-    'PartnerTopicTypesListResult',
-    'PartnerTopicUpdateParameters',
-    'PartnerTopicsListResult',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
     'PrivateLinkResource',
     'PrivateLinkResourcesListResult',
     'Resource',
-    'ResourceSku',
     'RetryPolicy',
     'ServiceBusQueueEventSubscriptionDestination',
     'ServiceBusTopicEventSubscriptionDestination',
@@ -364,11 +291,10 @@ __all__ = [
     'DomainProvisioningState',
     'DomainTopicProvisioningState',
     'EndpointType',
-    'Enum25',
-    'Enum26',
-    'Enum27',
-    'Enum28',
-    'EventChannelProvisioningState',
+    'Enum18',
+    'Enum19',
+    'Enum20',
+    'Enum21',
     'EventDeliverySchema',
     'EventSubscriptionIdentityType',
     'EventSubscriptionProvisioningState',
@@ -376,19 +302,10 @@ __all__ = [
     'InputSchema',
     'InputSchemaMappingType',
     'IpActionType',
-    'PartnerNamespaceProvisioningState',
-    'PartnerRegistrationProvisioningState',
-    'PartnerRegistrationVisibilityState',
-    'PartnerTopicActivationState',
-    'PartnerTopicProvisioningState',
-    'PartnerTopicReadinessState',
-    'PartnerTopicTypeAuthorizationState',
     'PersistedConnectionStatus',
     'PublicNetworkAccess',
-    'ResourceKind',
     'ResourceProvisioningState',
     'ResourceRegionType',
-    'Sku',
     'TopicProvisioningState',
     'TopicTypePropertiesSupportedScopesForSourceItem',
     'TopicTypeProvisioningState',

@@ -77,7 +77,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],

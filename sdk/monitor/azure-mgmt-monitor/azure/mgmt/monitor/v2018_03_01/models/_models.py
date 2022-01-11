@@ -135,20 +135,20 @@ class ActionGroupResource(Resource):
     :type itsm_receivers: list[~$(python-base-namespace).v2018_03_01.models.ItsmReceiver]
     :param azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
      action group.
-    :type azure_app_push_receivers: list[~$(python-base-
-     namespace).v2018_03_01.models.AzureAppPushReceiver]
+    :type azure_app_push_receivers:
+     list[~$(python-base-namespace).v2018_03_01.models.AzureAppPushReceiver]
     :param automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
-    :type automation_runbook_receivers: list[~$(python-base-
-     namespace).v2018_03_01.models.AutomationRunbookReceiver]
+    :type automation_runbook_receivers:
+     list[~$(python-base-namespace).v2018_03_01.models.AutomationRunbookReceiver]
     :param voice_receivers: The list of voice receivers that are part of this action group.
     :type voice_receivers: list[~$(python-base-namespace).v2018_03_01.models.VoiceReceiver]
     :param logic_app_receivers: The list of logic app receivers that are part of this action group.
     :type logic_app_receivers: list[~$(python-base-namespace).v2018_03_01.models.LogicAppReceiver]
     :param azure_function_receivers: The list of azure function receivers that are part of this
      action group.
-    :type azure_function_receivers: list[~$(python-base-
-     namespace).v2018_03_01.models.AzureFunctionReceiver]
+    :type azure_function_receivers:
+     list[~$(python-base-namespace).v2018_03_01.models.AzureFunctionReceiver]
     """
 
     _validation = {
@@ -327,7 +327,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
      server.  Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :type criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
@@ -339,7 +339,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
      include: "Average", "Count", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
+    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
@@ -391,7 +391,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
      server.  Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :type criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
@@ -403,7 +403,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
      include: "Average", "Count", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
+    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
@@ -415,12 +415,12 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :param alert_sensitivity: Required. The extent of deviation required to trigger an alert. This
      will affect how tight the threshold is to the metric series pattern. Possible values include:
      "Low", "Medium", "High".
-    :type alert_sensitivity: str or ~$(python-base-
-     namespace).v2018_03_01.models.DynamicThresholdSensitivity
+    :type alert_sensitivity: str or
+     ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdSensitivity
     :param failing_periods: Required. The minimum number of violations required within the selected
      lookback time window required to raise an alert.
-    :type failing_periods: ~$(python-base-
-     namespace).v2018_03_01.models.DynamicThresholdFailingPeriods
+    :type failing_periods:
+     ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdFailingPeriods
     :param ignore_data_before: Use this option to set the date from which to start learning the
      metric historical data and calculate the dynamic thresholds (in ISO8601 format).
     :type ignore_data_before: ~datetime.datetime
@@ -673,7 +673,8 @@ class MetricAlertAction(msrest.serialization.Model):
 
     :param action_group_id: the id of the action group to use.
     :type action_group_id: str
-    :param web_hook_properties: The properties of a webhook object.
+    :param web_hook_properties: This field allows specifying custom properties, which would be
+     appended to the alert payload sent as input to the webhook.
     :type web_hook_properties: dict[str, str]
     """
 
@@ -701,7 +702,7 @@ class MetricAlertCriteria(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
@@ -739,7 +740,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
@@ -786,14 +787,14 @@ class MetricAlertResource(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param description: Required. the description of the metric alert that will be included in the
-     alert email.
+    :param description: the description of the metric alert that will be included in the alert
+     email.
     :type description: str
     :param severity: Required. Alert severity {0, 1, 2, 3, 4}.
     :type severity: int
     :param enabled: Required. the flag that indicates whether the metric alert is enabled.
     :type enabled: bool
-    :param scopes: the list of resource id's that this metric alert is scoped to.
+    :param scopes: Required. the list of resource id's that this metric alert is scoped to.
     :type scopes: list[str]
     :param evaluation_frequency: Required. how often the metric alert is evaluated represented in
      ISO 8601 duration format.
@@ -802,10 +803,12 @@ class MetricAlertResource(Resource):
      monitor alert activity based on the threshold.
     :type window_size: ~datetime.timedelta
     :param target_resource_type: the resource type of the target resource(s) on which the alert is
-     created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
+     created/updated. Mandatory if the scope contains a subscription, resource group, or more than
+     one resource.
     :type target_resource_type: str
     :param target_resource_region: the region of the target resource(s) on which the alert is
-     created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
+     created/updated. Mandatory if the scope contains a subscription, resource group, or more than
+     one resource.
     :type target_resource_region: str
     :param criteria: Required. defines the specific alert criteria information.
     :type criteria: ~$(python-base-namespace).v2018_03_01.models.MetricAlertCriteria
@@ -817,6 +820,8 @@ class MetricAlertResource(Resource):
     :type actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
+    :ivar is_migrated: the value indicating whether this alert rule is migrated.
+    :vartype is_migrated: bool
     """
 
     _validation = {
@@ -824,13 +829,14 @@ class MetricAlertResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'description': {'required': True},
         'severity': {'required': True},
         'enabled': {'required': True},
+        'scopes': {'required': True},
         'evaluation_frequency': {'required': True},
         'window_size': {'required': True},
         'criteria': {'required': True},
         'last_updated_time': {'readonly': True},
+        'is_migrated': {'readonly': True},
     }
 
     _attribute_map = {
@@ -851,6 +857,7 @@ class MetricAlertResource(Resource):
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
+        'is_migrated': {'key': 'properties.isMigrated', 'type': 'bool'},
     }
 
     def __init__(
@@ -858,10 +865,10 @@ class MetricAlertResource(Resource):
         **kwargs
     ):
         super(MetricAlertResource, self).__init__(**kwargs)
-        self.description = kwargs['description']
+        self.description = kwargs.get('description', None)
         self.severity = kwargs['severity']
         self.enabled = kwargs['enabled']
-        self.scopes = kwargs.get('scopes', None)
+        self.scopes = kwargs['scopes']
         self.evaluation_frequency = kwargs['evaluation_frequency']
         self.window_size = kwargs['window_size']
         self.target_resource_type = kwargs.get('target_resource_type', None)
@@ -870,6 +877,7 @@ class MetricAlertResource(Resource):
         self.auto_mitigate = kwargs.get('auto_mitigate', None)
         self.actions = kwargs.get('actions', None)
         self.last_updated_time = None
+        self.is_migrated = None
 
 
 class MetricAlertResourceCollection(msrest.serialization.Model):
@@ -929,10 +937,13 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
     :type actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
+    :ivar is_migrated: the value indicating whether this alert rule is migrated.
+    :vartype is_migrated: bool
     """
 
     _validation = {
         'last_updated_time': {'readonly': True},
+        'is_migrated': {'readonly': True},
     }
 
     _attribute_map = {
@@ -949,6 +960,7 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
+        'is_migrated': {'key': 'properties.isMigrated', 'type': 'bool'},
     }
 
     def __init__(
@@ -969,6 +981,7 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
         self.auto_mitigate = kwargs.get('auto_mitigate', None)
         self.actions = kwargs.get('actions', None)
         self.last_updated_time = None
+        self.is_migrated = None
 
 
 class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
@@ -978,7 +991,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
@@ -1092,7 +1105,7 @@ class MetricCriteria(MultiMetricCriteria):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param criterion_type: Required. Specifies the type of threshold criteria.Constant filled by
      server.  Possible values include: "StaticThresholdCriterion", "DynamicThresholdCriterion".
     :type criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
@@ -1104,14 +1117,14 @@ class MetricCriteria(MultiMetricCriteria):
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
      include: "Average", "Count", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
+    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :type skip_metric_validation: bool
     :param operator: Required. the criteria operator. Possible values include: "Equals",
-     "NotEquals", "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+     "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
     :param threshold: Required. the criteria threshold value that activates the alert.
     :type threshold: float
@@ -1302,7 +1315,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param odata_type: Required. specifies the type of the alert criteria.Constant filled by
      server.  Possible values include:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",

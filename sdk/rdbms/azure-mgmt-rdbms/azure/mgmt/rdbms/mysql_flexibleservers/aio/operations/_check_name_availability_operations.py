@@ -42,11 +42,14 @@ class CheckNameAvailabilityOperations:
 
     async def execute(
         self,
+        location_name: str,
         name_availability_request: "_models.NameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Check the availability of name for server.
 
+        :param location_name: The name of the location.
+        :type location_name: str
         :param name_availability_request: The required parameters for checking if server name is
          available.
         :type name_availability_request: ~azure.mgmt.rdbms.mysql_flexibleservers.models.NameAvailabilityRequest
@@ -60,7 +63,7 @@ class CheckNameAvailabilityOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -68,6 +71,7 @@ class CheckNameAvailabilityOperations:
         url = self.execute.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'locationName': self._serialize.url("location_name", location_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -97,4 +101,4 @@ class CheckNameAvailabilityOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMySql/checkNameAvailability'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/checkNameAvailability'}  # type: ignore

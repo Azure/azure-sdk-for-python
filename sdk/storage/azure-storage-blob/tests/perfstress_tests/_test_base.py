@@ -20,7 +20,7 @@ class _ServiceTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
-        if self.args.test_proxy:
+        if self.args.test_proxies:
             self._client_kwargs['_additional_pipeline_policies'] = self._client_kwargs['per_retry_policies']
         self._client_kwargs['max_single_put_size'] = self.args.max_put_size
         self._client_kwargs['max_block_size'] = self.args.max_block_size

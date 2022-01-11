@@ -97,12 +97,11 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
      will be selected.
     :type event_hub_name: str
     :param logs: The list of logs settings.
-    :type logs: list[~$(python-base-
-     namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+    :type logs:
+     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
     :param workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
     :type workspace_id: str
     """
 
@@ -142,8 +141,8 @@ class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.M
     """Represents a collection of management group diagnostic settings resources.
 
     :param value: The collection of management group diagnostic settings resources.
-    :type value: list[~$(python-base-
-     namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+    :type value:
+     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
     """
 
     _attribute_map = {

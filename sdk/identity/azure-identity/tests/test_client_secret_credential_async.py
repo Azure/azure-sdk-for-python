@@ -189,16 +189,16 @@ async def test_cache():
 def test_token_cache():
     """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
-    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+    with patch(ClientSecretCredential.__module__ + "._load_persistent_cache") as load_persistent_cache:
         with patch(ClientSecretCredential.__module__ + ".msal") as mock_msal:
             ClientSecretCredential("tenant", "client-id", "secret")
         assert mock_msal.TokenCache.call_count == 1
-        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert not load_persistent_cache.called
 
         ClientSecretCredential(
-            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions(),
+            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
         )
-        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+        assert load_persistent_cache.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -247,3 +247,78 @@ async def test_cache_multiple_clients():
     assert transport_b.send.call_count == 1
 
     assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
+
+
+@pytest.mark.asyncio
+async def test_multitenant_authentication():
+    first_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    async def send(request, **kwargs):
+        assert "tenant_id" not in kwargs, "tenant_id kwarg shouldn't get passed to send method"
+
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+
+        token = first_token if tenant == first_tenant else second_token
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = ClientSecretCredential(
+        first_tenant, "client-id", "secret", transport=Mock(send=send)
+    )
+    token = await credential.get_token("scope")
+    assert token.token == first_token
+
+    token = await credential.get_token("scope", tenant_id=first_tenant)
+    assert token.token == first_token
+
+    token = await credential.get_token("scope", tenant_id=second_tenant)
+    assert token.token == second_token
+
+    # should still default to the first tenant
+    token = await credential.get_token("scope")
+    assert token.token == first_token
+
+
+@pytest.mark.asyncio
+async def test_live_multitenant_authentication(live_service_principal):
+    # first create a credential with a non-existent tenant
+    credential = ClientSecretCredential(
+        "...", live_service_principal["client_id"], live_service_principal["client_secret"]
+    )
+    # then get a valid token for an actual tenant
+    token = await credential.get_token(
+        "https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"]
+    )
+    assert token.token
+    assert token.expires_on
+
+
+@pytest.mark.asyncio
+async def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    async def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        token = expected_token if tenant == expected_tenant else expected_token * 2
+        return mock_response(json_payload=build_aad_response(access_token=token))
+
+    credential = ClientSecretCredential(expected_tenant, "client-id", "secret", transport=Mock(send=send))
+
+    token = await credential.get_token("scope")
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token * 2
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token
