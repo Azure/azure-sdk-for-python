@@ -16,18 +16,17 @@ import unittest
 
 import azure.mgmt.compute
 from azure.profiles import ProfileDefinition
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
+class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtComputeTestMultiVersion, self).setUp()
-        self.re_replacer.register_pattern_pair(
-          '\"accessSAS\": \"https://.*\"',
-          '\"accessSAS\": \"FakeUrl\"'
-        )
+    def setup_method(self, method):
+        # self.re_replacer.register_pattern_pair(
+        #   '\"accessSAS\": \"https://.*\"',
+        #   '\"accessSAS\": \"FakeUrl\"'
+        # )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
@@ -62,6 +61,7 @@ class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
         )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_disks_multi(self, resource_group):
 
         DISK_NAME = self.get_resource_name("disknamex")
@@ -109,14 +109,13 @@ class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
         result = self.mgmt_client.disks.begin_delete(resource_group.name, DISK_NAME)
         result = result.result()
 
-class MgmtComputeTest(AzureMgmtTestCase):
+class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtComputeTest, self).setUp()
-        self.re_replacer.register_pattern_pair(
-          '\"accessSAS\": \"https://.*\"',
-          '\"accessSAS\": \"FakeUrl\"'
-        )
+    def setup_method(self, method):
+        # self.re_replacer.register_pattern_pair(
+        #   '\"accessSAS\": \"https://.*\"',
+        #   '\"accessSAS\": \"FakeUrl\"'
+        # )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
@@ -195,8 +194,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @unittest.skip("The KEY_VAULT_NAME need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_disk_encryption(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
@@ -255,8 +255,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_shot(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         DISK_NAME = self.get_resource_name("disknamex")
         SNAPSHOT_NAME = self.get_resource_name("snapshotx")
@@ -366,6 +367,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_disks(self, resource_group):
 
         DISK_NAME = self.get_resource_name("disknamex")
