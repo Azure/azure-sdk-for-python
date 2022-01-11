@@ -1,15 +1,15 @@
 import azure.mgmt.loganalytics
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 
-class MgmtLogAnalyticsTest(AzureMgmtTestCase):
+class TestMgmtLogAnalytics(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtLogAnalyticsTest, self).setUp()
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             azure.mgmt.loganalytics.LogAnalyticsManagementClient
         )
 
+    @recorded_by_proxy
     def test_loganalytics_operations(self):
         operations = self.client.operations.list()
-        self.assertTrue(len(list(operations)) > 0)
+        assert len(list(operations)) > 0
