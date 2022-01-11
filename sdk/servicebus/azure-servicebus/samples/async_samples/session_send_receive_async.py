@@ -75,5 +75,4 @@ async def main():
         print("Receive is done.")
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

@@ -67,7 +67,7 @@ az appservice plan create -g $RESOURCE_GROUP -n $APP_SERVICE_PLAN -l westus2 --s
 ### Web app: system-assigned identity
 
 ```sh
-az webapp create -n $WEB_APP_SYSTEM_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
+az webapp create -n $WEB_APP_SYSTEM_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.9"
 ```
 
 Attach a system-assigned identity:
@@ -109,7 +109,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME \
 ### Web app: user-assigned identity
 
 ```sh
-az webapp create -n $WEB_APP_USER_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
+az webapp create -n $WEB_APP_USER_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.9"
 ```
 
 Set app configuration:

@@ -1,0 +1,444 @@
+{
+    "chosen_version": "2020-12-01-preview",
+    "total_api_version_list": ["2020-12-01-preview"],
+    "client": {
+        "name": "EdgeOrderManagementClient",
+        "filename": "_edge_order_management_client",
+        "description": "The EdgeOrder Client.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"EdgeOrderManagementClientConfiguration\"], \"._operations_mixin\": [\"EdgeOrderManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"EdgeOrderManagementClientConfiguration\"], \"._operations_mixin\": [\"EdgeOrderManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=None,  # type: Optional[str]",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: Optional[str] = None,",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.paging\": [\"ItemPaged\"], \"azure.core.polling\": [\"LROPoller\", \"NoPolling\", \"PollingMethod\"], \"azure.mgmt.core.polling.arm_polling\": [\"ARMPolling\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Iterable\", \"Optional\", \"TypeVar\", \"Union\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"], \"azure.core.async_paging\": [\"AsyncItemPaged\", \"AsyncList\"], \"azure.core.polling\": [\"AsyncLROPoller\", \"AsyncNoPolling\", \"AsyncPollingMethod\"], \"azure.mgmt.core.polling.async_arm_polling\": [\"AsyncARMPolling\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\", \"Union\"]}}}",
+        "operations": {
+            "list_operations" : {
+                "sync": {
+                    "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"This method gets all the operations that are exposed for customer.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.OperationListResult\"]:\n",
+                    "doc": "\"\"\"This method gets all the operations that are exposed for customer.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": ""
+            },
+            "list_addresses_at_subscription_level" : {
+                "sync": {
+                    "signature": "def list_addresses_at_subscription_level(\n    self,\n    filter=None,  # type: Optional[str]\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists all the addresses available under the subscription.\n\n:param filter: $filter is supported to filter based on shipping address properties. Filter\n supports only equals operation.\n:type filter: str\n:param skip_token: $skipToken is supported on Get list of addresses, which provides the next\n page in the list of addresses.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either AddressResourceList or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_addresses_at_subscription_level(\n    self,\n    filter: Optional[str] = None,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.AddressResourceList\"]:\n",
+                    "doc": "\"\"\"Lists all the addresses available under the subscription.\n\n:param filter: $filter is supported to filter based on shipping address properties. Filter\n supports only equals operation.\n:type filter: str\n:param skip_token: $skipToken is supported on Get list of addresses, which provides the next\n page in the list of addresses.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either AddressResourceList or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "filter, skip_token"
+            },
+            "list_product_families" : {
+                "sync": {
+                    "signature": "def list_product_families(\n    self,\n    product_families_request,  # type: \"_models.ProductFamiliesRequest\"\n    expand=None,  # type: Optional[str]\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"This method provides the list of product families for the given subscription.\n\n:param product_families_request: Filters for showing the product families.\n:type product_families_request: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamiliesRequest\n:param expand: $expand is supported on configurations parameter for product, which provides\n details on the configurations for the product.\n:type expand: str\n:param skip_token: $skipToken is supported on list of product families, which provides the next\n page in the list of product families.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either ProductFamilies or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamilies]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_product_families(\n    self,\n    product_families_request: \"_models.ProductFamiliesRequest\",\n    expand: Optional[str] = None,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.ProductFamilies\"]:\n",
+                    "doc": "\"\"\"This method provides the list of product families for the given subscription.\n\n:param product_families_request: Filters for showing the product families.\n:type product_families_request: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamiliesRequest\n:param expand: $expand is supported on configurations parameter for product, which provides\n details on the configurations for the product.\n:type expand: str\n:param skip_token: $skipToken is supported on list of product families, which provides the next\n page in the list of product families.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either ProductFamilies or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamilies]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "product_families_request, expand, skip_token"
+            },
+            "list_configurations" : {
+                "sync": {
+                    "signature": "def list_configurations(\n    self,\n    configurations_request,  # type: \"_models.ConfigurationsRequest\"\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"This method provides the list of configurations for the given product family, product line and\nproduct under subscription.\n\n:param configurations_request: Filters for showing the configurations.\n:type configurations_request: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ConfigurationsRequest\n:param skip_token: $skipToken is supported on list of configurations, which provides the next\n page in the list of configurations.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either Configurations or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Configurations]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_configurations(\n    self,\n    configurations_request: \"_models.ConfigurationsRequest\",\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.Configurations\"]:\n",
+                    "doc": "\"\"\"This method provides the list of configurations for the given product family, product line and\nproduct under subscription.\n\n:param configurations_request: Filters for showing the configurations.\n:type configurations_request: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ConfigurationsRequest\n:param skip_token: $skipToken is supported on list of configurations, which provides the next\n page in the list of configurations.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either Configurations or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.Configurations]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "configurations_request, skip_token"
+            },
+            "list_product_families_metadata" : {
+                "sync": {
+                    "signature": "def list_product_families_metadata(\n    self,\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"This method provides the list of product families metadata for the given subscription.\n\n:param skip_token: $skipToken is supported on list of product families metadata, which provides\n the next page in the list of product families metadata.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either ProductFamiliesMetadata or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamiliesMetadata]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_product_families_metadata(\n    self,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.ProductFamiliesMetadata\"]:\n",
+                    "doc": "\"\"\"This method provides the list of product families metadata for the given subscription.\n\n:param skip_token: $skipToken is supported on list of product families metadata, which provides\n the next page in the list of product families metadata.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either ProductFamiliesMetadata or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.ProductFamiliesMetadata]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "skip_token"
+            },
+            "list_order_at_subscription_level" : {
+                "sync": {
+                    "signature": "def list_order_at_subscription_level(\n    self,\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists order at subscription level.\n\n:param skip_token: $skipToken is supported on Get list of order, which provides the next page\n in the list of order.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderResourceList or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_order_at_subscription_level(\n    self,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.OrderResourceList\"]:\n",
+                    "doc": "\"\"\"Lists order at subscription level.\n\n:param skip_token: $skipToken is supported on Get list of order, which provides the next page\n in the list of order.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderResourceList or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "skip_token"
+            },
+            "list_order_items_at_subscription_level" : {
+                "sync": {
+                    "signature": "def list_order_items_at_subscription_level(\n    self,\n    filter=None,  # type: Optional[str]\n    expand=None,  # type: Optional[str]\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists order item at subscription level.\n\n:param filter: $filter is supported to filter based on order id. Filter supports only equals\n operation.\n:type filter: str\n:param expand: $expand is supported on device details, forward shipping details and reverse\n shipping details parameters. Each of these can be provided as a comma separated list. Device\n Details for order item provides details on the devices of the product, Forward and Reverse\n Shipping details provide forward and reverse shipping details respectively.\n:type expand: str\n:param skip_token: $skipToken is supported on Get list of order items, which provides the next\n page in the list of order items.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderItemResourceList or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_order_items_at_subscription_level(\n    self,\n    filter: Optional[str] = None,\n    expand: Optional[str] = None,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.OrderItemResourceList\"]:\n",
+                    "doc": "\"\"\"Lists order item at subscription level.\n\n:param filter: $filter is supported to filter based on order id. Filter supports only equals\n operation.\n:type filter: str\n:param expand: $expand is supported on device details, forward shipping details and reverse\n shipping details parameters. Each of these can be provided as a comma separated list. Device\n Details for order item provides details on the devices of the product, Forward and Reverse\n Shipping details provide forward and reverse shipping details respectively.\n:type expand: str\n:param skip_token: $skipToken is supported on Get list of order items, which provides the next\n page in the list of order items.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderItemResourceList or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "filter, expand, skip_token"
+            },
+            "list_addresses_at_resource_group_level" : {
+                "sync": {
+                    "signature": "def list_addresses_at_resource_group_level(\n    self,\n    resource_group_name,  # type: str\n    filter=None,  # type: Optional[str]\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists all the addresses available under the given resource group.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param filter: $filter is supported to filter based on shipping address properties. Filter\n supports only equals operation.\n:type filter: str\n:param skip_token: $skipToken is supported on Get list of addresses, which provides the next\n page in the list of address.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either AddressResourceList or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_addresses_at_resource_group_level(\n    self,\n    resource_group_name: str,\n    filter: Optional[str] = None,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.AddressResourceList\"]:\n",
+                    "doc": "\"\"\"Lists all the addresses available under the given resource group.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param filter: $filter is supported to filter based on shipping address properties. Filter\n supports only equals operation.\n:type filter: str\n:param skip_token: $skipToken is supported on Get list of addresses, which provides the next\n page in the list of address.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either AddressResourceList or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, filter, skip_token"
+            },
+            "get_address_by_name" : {
+                "sync": {
+                    "signature": "def get_address_by_name(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets information about the specified address.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AddressResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_address_by_name(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    **kwargs: Any\n) -\u003e \"_models.AddressResource\":\n",
+                    "doc": "\"\"\"Gets information about the specified address.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AddressResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "address_name, resource_group_name"
+            },
+            "_create_address_initial" : {
+                "sync": {
+                    "signature": "def _create_address_initial(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    address_resource,  # type: \"_models.AddressResource\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_resource: Address details from request body.\n:type address_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AddressResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _create_address_initial(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    address_resource: \"_models.AddressResource\",\n    **kwargs: Any\n) -\u003e Optional[\"_models.AddressResource\"]:\n",
+                    "doc": "\"\"\"\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_resource: Address details from request body.\n:type address_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AddressResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "address_name, resource_group_name, address_resource"
+            },
+            "begin_create_address" : {
+                "sync": {
+                    "signature": "def begin_create_address(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    address_resource,  # type: \"_models.AddressResource\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Creates a new address with the specified parameters. Existing address cannot be updated with\nthis API and should instead be updated with the Update address API.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_resource: Address details from request body.\n:type address_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either AddressResource or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_create_address(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    address_resource: \"_models.AddressResource\",\n    **kwargs: Any\n) -\u003e AsyncLROPoller[\"_models.AddressResource\"]:\n",
+                    "doc": "\"\"\"Creates a new address with the specified parameters. Existing address cannot be updated with\nthis API and should instead be updated with the Update address API.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_resource: Address details from request body.\n:type address_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either AddressResource or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "address_name, resource_group_name, address_resource"
+            },
+            "_delete_address_by_name_initial" : {
+                "sync": {
+                    "signature": "def _delete_address_by_name_initial(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _delete_address_by_name_initial(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "address_name, resource_group_name"
+            },
+            "begin_delete_address_by_name" : {
+                "sync": {
+                    "signature": "def begin_delete_address_by_name(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Deletes an address.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_delete_address_by_name(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
+                    "doc": "\"\"\"Deletes an address.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "address_name, resource_group_name"
+            },
+            "_update_address_initial" : {
+                "sync": {
+                    "signature": "def _update_address_initial(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    address_update_parameter,  # type: \"_models.AddressUpdateParameter\"\n    if_match=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_update_parameter: Address update parameters from request body.\n:type address_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the job on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AddressResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _update_address_initial(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    address_update_parameter: \"_models.AddressUpdateParameter\",\n    if_match: Optional[str] = None,\n    **kwargs: Any\n) -\u003e Optional[\"_models.AddressResource\"]:\n",
+                    "doc": "\"\"\"\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_update_parameter: Address update parameters from request body.\n:type address_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the job on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AddressResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "address_name, resource_group_name, address_update_parameter, if_match"
+            },
+            "begin_update_address" : {
+                "sync": {
+                    "signature": "def begin_update_address(\n    self,\n    address_name,  # type: str\n    resource_group_name,  # type: str\n    address_update_parameter,  # type: \"_models.AddressUpdateParameter\"\n    if_match=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Updates the properties of an existing address.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_update_parameter: Address update parameters from request body.\n:type address_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the job on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either AddressResource or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_update_address(\n    self,\n    address_name: str,\n    resource_group_name: str,\n    address_update_parameter: \"_models.AddressUpdateParameter\",\n    if_match: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[\"_models.AddressResource\"]:\n",
+                    "doc": "\"\"\"Updates the properties of an existing address.\n\n:param address_name: The name of the address Resource within the specified resource group.\n address names must be between 3 and 24 characters in length and use any alphanumeric and\n underscore only.\n:type address_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param address_update_parameter: Address update parameters from request body.\n:type address_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the job on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either AddressResource or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.AddressResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "address_name, resource_group_name, address_update_parameter, if_match"
+            },
+            "list_order_at_resource_group_level" : {
+                "sync": {
+                    "signature": "def list_order_at_resource_group_level(\n    self,\n    resource_group_name,  # type: str\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists order at resource group level.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param skip_token: $skipToken is supported on Get list of order, which provides the next page\n in the list of order.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderResourceList or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_order_at_resource_group_level(\n    self,\n    resource_group_name: str,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.OrderResourceList\"]:\n",
+                    "doc": "\"\"\"Lists order at resource group level.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param skip_token: $skipToken is supported on Get list of order, which provides the next page\n in the list of order.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderResourceList or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, skip_token"
+            },
+            "get_order_by_name" : {
+                "sync": {
+                    "signature": "def get_order_by_name(\n    self,\n    order_name,  # type: str\n    resource_group_name,  # type: str\n    location,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets an order.\n\n:param order_name: The name of the order.\n:type order_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param location: The name of Azure region.\n:type location: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResource\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_order_by_name(\n    self,\n    order_name: str,\n    resource_group_name: str,\n    location: str,\n    **kwargs: Any\n) -\u003e \"_models.OrderResource\":\n",
+                    "doc": "\"\"\"Gets an order.\n\n:param order_name: The name of the order.\n:type order_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param location: The name of Azure region.\n:type location: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderResource\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_name, resource_group_name, location"
+            },
+            "list_order_items_at_resource_group_level" : {
+                "sync": {
+                    "signature": "def list_order_items_at_resource_group_level(\n    self,\n    resource_group_name,  # type: str\n    filter=None,  # type: Optional[str]\n    expand=None,  # type: Optional[str]\n    skip_token=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists order item at resource group level.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param filter: $filter is supported to filter based on order id. Filter supports only equals\n operation.\n:type filter: str\n:param expand: $expand is supported on device details, forward shipping details and reverse\n shipping details parameters. Each of these can be provided as a comma separated list. Device\n Details for order item provides details on the devices of the product, Forward and Reverse\n Shipping details provide forward and reverse shipping details respectively.\n:type expand: str\n:param skip_token: $skipToken is supported on Get list of order items, which provides the next\n page in the list of order items.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderItemResourceList or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def list_order_items_at_resource_group_level(\n    self,\n    resource_group_name: str,\n    filter: Optional[str] = None,\n    expand: Optional[str] = None,\n    skip_token: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.OrderItemResourceList\"]:\n",
+                    "doc": "\"\"\"Lists order item at resource group level.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param filter: $filter is supported to filter based on order id. Filter supports only equals\n operation.\n:type filter: str\n:param expand: $expand is supported on device details, forward shipping details and reverse\n shipping details parameters. Each of these can be provided as a comma separated list. Device\n Details for order item provides details on the devices of the product, Forward and Reverse\n Shipping details provide forward and reverse shipping details respectively.\n:type expand: str\n:param skip_token: $skipToken is supported on Get list of order items, which provides the next\n page in the list of order items.\n:type skip_token: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OrderItemResourceList or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResourceList]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, filter, expand, skip_token"
+            },
+            "get_order_item_by_name" : {
+                "sync": {
+                    "signature": "def get_order_item_by_name(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    expand=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets an order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param expand: $expand is supported on device details, forward shipping details and reverse\n shipping details parameters. Each of these can be provided as a comma separated list. Device\n Details for order item provides details on the devices of the product, Forward and Reverse\n Shipping details provide forward and reverse shipping details respectively.\n:type expand: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderItemResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_order_item_by_name(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    expand: Optional[str] = None,\n    **kwargs: Any\n) -\u003e \"_models.OrderItemResource\":\n",
+                    "doc": "\"\"\"Gets an order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param expand: $expand is supported on device details, forward shipping details and reverse\n shipping details parameters. Each of these can be provided as a comma separated list. Device\n Details for order item provides details on the devices of the product, Forward and Reverse\n Shipping details provide forward and reverse shipping details respectively.\n:type expand: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderItemResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, expand"
+            },
+            "_create_order_item_initial" : {
+                "sync": {
+                    "signature": "def _create_order_item_initial(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    order_item_resource,  # type: \"_models.OrderItemResource\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_resource: Order item details from request body.\n:type order_item_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderItemResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _create_order_item_initial(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    order_item_resource: \"_models.OrderItemResource\",\n    **kwargs: Any\n) -\u003e Optional[\"_models.OrderItemResource\"]:\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_resource: Order item details from request body.\n:type order_item_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderItemResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, order_item_resource"
+            },
+            "begin_create_order_item" : {
+                "sync": {
+                    "signature": "def begin_create_order_item(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    order_item_resource,  # type: \"_models.OrderItemResource\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Creates an order item. Existing order item cannot be updated with this api and should instead\nbe updated with the Update order item API.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_resource: Order item details from request body.\n:type order_item_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either OrderItemResource or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_create_order_item(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    order_item_resource: \"_models.OrderItemResource\",\n    **kwargs: Any\n) -\u003e AsyncLROPoller[\"_models.OrderItemResource\"]:\n",
+                    "doc": "\"\"\"Creates an order item. Existing order item cannot be updated with this api and should instead\nbe updated with the Update order item API.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_resource: Order item details from request body.\n:type order_item_resource: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either OrderItemResource or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, order_item_resource"
+            },
+            "_delete_order_item_by_name_initial" : {
+                "sync": {
+                    "signature": "def _delete_order_item_by_name_initial(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _delete_order_item_by_name_initial(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name"
+            },
+            "begin_delete_order_item_by_name" : {
+                "sync": {
+                    "signature": "def begin_delete_order_item_by_name(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Deletes an order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_delete_order_item_by_name(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
+                    "doc": "\"\"\"Deletes an order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name"
+            },
+            "_update_order_item_initial" : {
+                "sync": {
+                    "signature": "def _update_order_item_initial(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    order_item_update_parameter,  # type: \"_models.OrderItemUpdateParameter\"\n    if_match=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_update_parameter: order item update parameters from request body.\n:type order_item_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the order on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderItemResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _update_order_item_initial(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    order_item_update_parameter: \"_models.OrderItemUpdateParameter\",\n    if_match: Optional[str] = None,\n    **kwargs: Any\n) -\u003e Optional[\"_models.OrderItemResource\"]:\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_update_parameter: order item update parameters from request body.\n:type order_item_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the order on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OrderItemResource, or the result of cls(response)\n:rtype: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, order_item_update_parameter, if_match"
+            },
+            "begin_update_order_item" : {
+                "sync": {
+                    "signature": "def begin_update_order_item(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    order_item_update_parameter,  # type: \"_models.OrderItemUpdateParameter\"\n    if_match=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Updates the properties of an existing order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_update_parameter: order item update parameters from request body.\n:type order_item_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the order on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either OrderItemResource or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_update_order_item(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    order_item_update_parameter: \"_models.OrderItemUpdateParameter\",\n    if_match: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[\"_models.OrderItemResource\"]:\n",
+                    "doc": "\"\"\"Updates the properties of an existing order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param order_item_update_parameter: order item update parameters from request body.\n:type order_item_update_parameter: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemUpdateParameter\n:param if_match: Defines the If-Match condition. The patch will be performed only if the ETag\n of the order on the server matches this value.\n:type if_match: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either OrderItemResource or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.edgeorder.v2020_12_01_preview.models.OrderItemResource]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, order_item_update_parameter, if_match"
+            },
+            "cancel_order_item" : {
+                "sync": {
+                    "signature": "def cancel_order_item(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    cancellation_reason,  # type: \"_models.CancellationReason\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Cancel order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param cancellation_reason: Reason for cancellation.\n:type cancellation_reason: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CancellationReason\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def cancel_order_item(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    cancellation_reason: \"_models.CancellationReason\",\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"Cancel order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param cancellation_reason: Reason for cancellation.\n:type cancellation_reason: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.CancellationReason\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, cancellation_reason"
+            },
+            "_return_order_item_initial" : {
+                "sync": {
+                    "signature": "def _return_order_item_initial(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    return_order_item_details,  # type: \"_models.ReturnOrderItemDetails\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param return_order_item_details: Return order item CurrentStatus.\n:type return_order_item_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ReturnOrderItemDetails\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _return_order_item_initial(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    return_order_item_details: \"_models.ReturnOrderItemDetails\",\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param return_order_item_details: Return order item CurrentStatus.\n:type return_order_item_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ReturnOrderItemDetails\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, return_order_item_details"
+            },
+            "begin_return_order_item" : {
+                "sync": {
+                    "signature": "def begin_return_order_item(\n    self,\n    order_item_name,  # type: str\n    resource_group_name,  # type: str\n    return_order_item_details,  # type: \"_models.ReturnOrderItemDetails\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Return order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param return_order_item_details: Return order item CurrentStatus.\n:type return_order_item_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ReturnOrderItemDetails\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_return_order_item(\n    self,\n    order_item_name: str,\n    resource_group_name: str,\n    return_order_item_details: \"_models.ReturnOrderItemDetails\",\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
+                    "doc": "\"\"\"Return order item.\n\n:param order_item_name: The name of the order item.\n:type order_item_name: str\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param return_order_item_details: Return order item CurrentStatus.\n:type return_order_item_details: ~azure.mgmt.edgeorder.v2020_12_01_preview.models.ReturnOrderItemDetails\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                },
+                "call": "order_item_name, resource_group_name, return_order_item_details"
+            }
+        }
+    }
+}
