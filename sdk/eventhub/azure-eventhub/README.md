@@ -19,6 +19,11 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
+_This version is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
+Features like async support or AmqpOverWebsocket are unavailable for this version which will be added back in future versions,
+please refer to the changelog for more details._
+
+
 ## Getting started
 
 ### Prerequisites
@@ -63,8 +68,6 @@ protocol. There are implementations of the `TokenCredential` protocol available 
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
 - To use the credential types provided by `azure-identity`, please install the package:
 ```pip install azure-identity```
-- Additionally, to use the async API, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
-```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Event Hubs, such as the
 Azure Event Hubs Data Owner role. For more information about using Azure Active Directory authorization with Event Hubs,
 please refer to [the associated documentation](https://docs.microsoft.com/azure/event-hubs/authorize-access-azure-active-directory).
@@ -213,7 +216,7 @@ a consumer group in an Event Hub instance. The `EventHubConsumerClient` uses an 
 and to store the relevant information required by the load balancing algorithm.
 
 Search pypi with the prefix `azure-eventhub-checkpointstore` to
-find packages that support this and use the `CheckpointStore` implementation from one such package. Please note that both sync and async libraries are provided.
+find packages that support this and use the `CheckpointStore` implementation from one such package.
 
 In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobCheckpointStore`. You need
 to [create an Azure Storage account](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)

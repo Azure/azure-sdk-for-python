@@ -9,7 +9,7 @@ Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library
 
 - The following features have been temporarily pulled out and will be added back in the future:
   - Async is not supported.
-  - Setting `transport_type` `http_proxy`, `custom_endpoint_address` and `connection_verify` of the client are not supported.
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
 
 ### Other Changes
 
