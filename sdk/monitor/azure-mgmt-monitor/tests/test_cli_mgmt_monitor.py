@@ -45,6 +45,7 @@
 
 import time
 import unittest
+import os
 
 import azure.mgmt.monitor
 import azure.mgmt.monitor.models
@@ -912,7 +913,7 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
         # Delete an action group[delete]
         result = self.mgmt_client.action_groups.delete(resource_group.name, ACTION_GROUP_NAME)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_activity_log_alerts(self, resource_group):
@@ -1086,7 +1087,7 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
         # Delete an autoscale setting[delete]
         result = self.mgmt_client.autoscale_settings.delete(resource_group.name, AUTOSCALESETTING_NAME)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_scheduled_query_rules(self, resource_group):
