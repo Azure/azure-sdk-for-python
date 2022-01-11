@@ -28,6 +28,7 @@
 
 
 import unittest
+import pytest
 
 import azure.mgmt.network
 from azure.core.exceptions import HttpResponseError
@@ -35,7 +36,8 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = 'eastus'
 
-@unittest.skip("Fix it later.")
+
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

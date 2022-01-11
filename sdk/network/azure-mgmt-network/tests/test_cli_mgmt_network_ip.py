@@ -20,6 +20,7 @@
 #  ip_allocations: 0/6 TODO: InvalidResourceType
 
 import unittest
+import pytest
 
 import azure.mgmt.network
 import azure.mgmt.network
@@ -27,6 +28,8 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = 'eastus'
 
+
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

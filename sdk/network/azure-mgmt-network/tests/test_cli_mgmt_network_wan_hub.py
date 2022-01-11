@@ -36,9 +36,12 @@ import unittest
 import azure.mgmt.network
 from azure.core.exceptions import ResourceExistsError
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, RandomNameResourceGroupPreparer, recorded_by_proxy
+import pytest
 
 AZURE_LOCATION = 'eastus'
 
+
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

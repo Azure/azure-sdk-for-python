@@ -20,12 +20,15 @@
 #  service_endpoint_policy_definitions:  /4
 
 import unittest
+import pytest
 
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
+
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

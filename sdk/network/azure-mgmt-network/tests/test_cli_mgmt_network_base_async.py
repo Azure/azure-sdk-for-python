@@ -12,6 +12,7 @@
 
 import unittest
 import time
+import pytest
 
 import azure.mgmt.network.aio
 from azure.core.exceptions import HttpResponseError
@@ -21,6 +22,7 @@ from _aio_testcase import AzureMgmtRecordedAsyncTestCase
 
 AZURE_LOCATION = 'eastus'
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedAsyncTestCase):
 
     def setup_method(self, method):
