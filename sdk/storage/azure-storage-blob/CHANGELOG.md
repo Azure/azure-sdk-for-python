@@ -7,6 +7,7 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 ### Features Added
 
 ### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
 
 ## 12.10.0b2 (2021-12-13)
 
