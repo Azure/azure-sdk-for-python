@@ -5,6 +5,7 @@ import time
 import argparse
 import logging
 from ghapi.all import GhApi
+from util import CERTIFICATION
 
 
 SERVICE_NAME = 'servicename'
@@ -15,6 +16,7 @@ VERSION_LAST_RELEASE = '1.0.0b1'
 BRANCH_BASE = ''
 OUT_PATH = ''
 NEW_BRANCH = ''
+USER_REPO = ''
 
 _LOG = logging.getLogger()
 
@@ -404,9 +406,9 @@ def git_remote_add():
     global TRACK, NEW_BRANCH
     # init git
     print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
-    print_exec('git remote add autosdk https://github.com/AzureSDKAutomation/azure-sdk-for-python.git')
-    print_check(f'git fetch autosdk {BRANCH_BASE}')
-    print_check(f'git checkout autosdk/{BRANCH_BASE}')
+    print_exec(f'git remote add {USER_REPO} https://github.com/{USER_REPO}/azure-sdk-for-python.git')
+    print_check(f'git fetch {USER_REPO} {BRANCH_BASE}')
+    print_check(f'git checkout {USER_REPO}/{BRANCH_BASE}')
 
 
 def create_branch():
@@ -416,6 +418,14 @@ def create_branch():
     d = time.localtime(t)
     NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}-{}'.format(TRACK, SERVICE_NAME, d.tm_year, d.tm_mon, d.tm_mday, str(t)[-5:])
     print_exec(f'git checkout -b {NEW_BRANCH}')
+
+
+def add_certificate():
+    cacert_path = r'../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem'
+    with open(cacert_path, 'a+') as f:
+        f.seek(0, 0)
+        f.write(CERTIFICATION)
+        my_print(f"Added CERTIFICATION into cacert.pem of {cacert_path}")
 
 
 def commit_file():
@@ -430,6 +440,7 @@ def main():
     git_remote_add()
     judge_sdk_folder()
     create_branch()
+    add_certificate()
     init_env()
     edit_file()
     edit_useless_file()
@@ -454,15 +465,19 @@ if __name__ == '__main__':
     logging.basicConfig()
     main_logger.setLevel(logging.INFO)
 
-    BRANCH_BASE = args.branch.replace('AzureSDKAutomation:', '')
+    USER_REPO = args.branch.split(':')[0]
+    BRANCH_BASE = args.branch.split(':')[1]
     SCRIPT_PATH = args.script_path
     OUT_PATH = args.out_path
 
-    # extract info
+    # extract info. (e.g. AzureSDKAutomation:sdkAuto/track2_azure-mgmt-apimanagement)
     sys.path.append(OUT_PATH)
     TRACK = '2' if BRANCH_BASE.find('track2_') > -1 else '1'
     SERVICE_NAME = BRANCH_BASE.replace('sdkAuto/', '').replace('sdkAutomation/', '').replace('track2_', '').replace(
         'azure-mgmt-', '')
+    # compatible with `azclibot:t2-apimanagement-2022-01-05-26928`
+    if len(SERVICE_NAME.split('-')) > 1:
+        SERVICE_NAME = SERVICE_NAME.split('-')[1]
     try:
         main()
     except Exception as e:
