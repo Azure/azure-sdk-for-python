@@ -261,7 +261,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
     async def cancel_scheduled_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs:Any
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
