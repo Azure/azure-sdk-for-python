@@ -5,6 +5,7 @@
 from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
+from typing_extensions import Literal
 
 import uamqp
 
@@ -25,6 +26,7 @@ from ._common.utils import (
 from ._common.constants import (
     ServiceBusSubQueue,
     ServiceBusReceiveMode,
+    ServiceBusSessionFilter,
 )
 
 if TYPE_CHECKING:
@@ -33,6 +35,8 @@ if TYPE_CHECKING:
         AzureSasCredential,
         AzureNamedKeyCredential,
     )
+
+NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -269,7 +273,7 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
-        session_id=None,
+        session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -422,7 +426,7 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
-        session_id=None,
+        session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
