@@ -64,16 +64,14 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
+    python_requires=">=3.7",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
@@ -85,7 +83,4 @@ setup(
         'msrest>=0.6.21',
         'azure-core<2.0.0,>=1.18.0',
     ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
-    }
 )
