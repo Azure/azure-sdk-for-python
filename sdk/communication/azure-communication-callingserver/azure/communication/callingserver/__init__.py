@@ -16,7 +16,7 @@ from ._generated.models import (AudioRoutingMode, AddParticipantResult, CallConn
                                 PlayAudioResultEvent, AddParticipantResultEvent,
                                 CallConnectionState, ToneValue, AnswerCallResult, AudioRoutingGroupResult,
                                 CreateAudioRoutingGroupResult, TransferCallResult,
-                                ParticipantsUpdatedEvent)
+                                ParticipantsUpdatedEvent, TransferCallResultEvent)
 from ._models import (
     CallLocator,
     GroupCallLocator,
@@ -57,6 +57,7 @@ __all__ = [
     'AudioRoutingGroupResult',
     'CreateAudioRoutingGroupResult',
     'TransferCallResult',
-    'ParticipantsUpdatedEvent'
+    'ParticipantsUpdatedEvent',
+    'TransferCallResultEvent'
 ]
 __version__ = VERSION
