@@ -1,5 +1,5 @@
 ## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. This change will be effective azure-storage-blob>12.10.0b2 For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Azure Storage Blobs client library for Python
 Azure Blob storage is Microsoft's object storage solution for the cloud. Blob storage is optimized for storing massive amounts of unstructured data, such as text or binary data.
@@ -18,7 +18,7 @@ Blob storage is ideal for:
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (ending Python 2.7 support starting 01 January 2022).
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 

@@ -1,5 +1,13 @@
 # Release History
 
+## 12.10.0b3 (Unreleased)
+
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+
+### Features Added
+
+### Bugs Fixed
+
 ## 12.10.0b2 (2021-12-13)
 
 ### Features Added
