@@ -205,9 +205,9 @@ class PoolPreparer(AzureMgmtPreparer):
                         image_reference=models.ImageReference(
                             publisher='Canonical',
                             offer='UbuntuServer',
-                            sku='16.04-LTS'
+                            sku='18.04-LTS'
                         ),
-                        node_agent_sku_id='batch.node.ubuntu 16.04'))
+                        node_agent_sku_id='batch.node.ubuntu 18.04'))
             parameters = models.Pool(
                 display_name="test_pool",
                 vm_size=vm_size,

@@ -210,9 +210,9 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04')
+                node_agent_sku_id='batch.node.ubuntu 18.04')
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_network_pool, models.PoolAddOptions(timeout=45))
 
@@ -228,7 +228,7 @@ class BatchTest(AzureMgmtTestCase):
                                              "/images/FakeImage"
                                              "/versions/version"
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04'
+                node_agent_sku_id='batch.node.ubuntu 18.04'
             )
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_image_pool, models.PoolAddOptions(timeout=45))
@@ -242,9 +242,9 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
+                node_agent_sku_id='batch.node.ubuntu 18.04',
                 data_disks=[data_disk])
         )
         response = client.pool.add(test_disk_pool)
@@ -262,9 +262,9 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
+                node_agent_sku_id='batch.node.ubuntu 18.04',
                 data_disks=[data_disk])
         )
         response = client.pool.add(test_app_pool)
@@ -280,12 +280,12 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.temporary_disk]
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04')
+                node_agent_sku_id='batch.node.ubuntu 18.04')
         )
         response = client.pool.add(test_ade_pool)
         self.assertIsNone(response)
@@ -569,11 +569,11 @@ class BatchTest(AzureMgmtTestCase):
             )
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 16.04",
+            node_agent_sku_id="batch.node.ubuntu 18.04",
             image_reference=models.ImageReference(
                 publisher="Canonical",
                 offer="UbuntuServer",
-                sku="16.04-LTS")
+                sku="18.04-LTS")
         )
         pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_network_'),

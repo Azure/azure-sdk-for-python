@@ -91492,7 +91492,7 @@
             "offer": "0001-com-ubuntu-server-focal",
             "sku": "20_04-lts"
            },
-           "nodeAgentSKUId": "batch.node.ubuntu 20.04"
+           "nodeAgentSKUId": "batch.node.ubuntu 18.04"
           },
           "resizeTimeout": "PT15M",
           "targetDedicatedNodes": "5",
@@ -91534,7 +91534,7 @@
             "offer": "0001-com-ubuntu-server-focal",
             "sku": "120_04-lts"
            },
-           "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+           "nodeAgentSKUId": "batch.node.ubuntu 18.04",
            "containerConfiguration": {
             "type": "dockerCompatible",
             "containerImageNames": [
@@ -91575,7 +91575,7 @@
             "offer": "0001-com-ubuntu-server-focal",
             "sku": "20_04-lts"
            },
-           "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+           "nodeAgentSKUId": "batch.node.ubuntu 18.04",
            "extensions": [
             {
              "name": "batchextension1",
@@ -91628,7 +91628,7 @@
             "offer": "UbuntuServer",
             "sku": "20_04-lts"
            },
-           "nodeAgentSKUId": "batch.node.ubuntu 20.04"
+           "nodeAgentSKUId": "batch.node.ubuntu 18.04"
           },
           "mountConfiguration": [
            {
@@ -94481,7 +94481,7 @@
              "sku": "20_04-lts",
              "version": "latest"
             },
-            "nodeAgentSKUId": "batch.node.ubuntu 20.04"
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04"
            }
           }
          }
@@ -94537,7 +94537,7 @@
              "sku": "20_04-lts",
              "version": "latest"
             },
-            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04",
             "extensions": [
              {
               "name": "batchextension1",
