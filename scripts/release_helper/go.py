@@ -6,7 +6,7 @@ import os
 _GO_OWNER = {'ArcturusZhang'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN_GO = {'ArcturusZhang': os.getenv('GO_DAPENGZHANG_TOKEN')}
+_ASSIGNEE_TOKEN_GO = {'ArcturusZhang': os.getenv('AZURESDK_BOT_TOKEN')}
 
 
 class IssueProcessGo(IssueProcess):

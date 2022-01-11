@@ -20,7 +20,7 @@ jobs:
   displayName: ReleaseSdkStatus Python 3.8
   timeoutInMinutes: 30
   strategy:
-    maxParallel: 3
+    maxParallel: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
@@ -44,8 +44,6 @@ jobs:
         git clone https://github.com/Azure/azure-sdk-for-python.git $(pwd)/sdk-repo
 
         # import env variable
-        export CONN_STR=$(ENV_CONN_STR)
-        export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
         export SWAGGER_REPO=$(pwd)/azure-rest-api-specs
         export SDK_REPO=$(pwd)/sdk-repo
