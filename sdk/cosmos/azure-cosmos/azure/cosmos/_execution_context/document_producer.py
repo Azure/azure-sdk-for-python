@@ -111,7 +111,7 @@ class _DocumentProducer(object):
                 self._cur_item = next(self._ex_context)
             except exceptions.CosmosHttpResponseError as e:
                 if partition_range_is_gone(e):
-                    print("410 found in doc_prod peek()")
+                    # raising within document producer peek in order to properly handle within execution context
                     raise
 
         return self._cur_item
@@ -126,7 +126,8 @@ def _compare_helper(a, b):
 
 
 def partition_range_is_gone(e):
-    if e.status_code == 410 and e.sub_status == 1002:
+    if (e.status_code == http_constants.StatusCodes.GONE
+            and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True
     return False
 

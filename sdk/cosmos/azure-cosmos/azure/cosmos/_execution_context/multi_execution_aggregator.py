@@ -161,7 +161,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
             except exceptions.CosmosHttpResponseError as e:
                 if document_producer.partition_range_is_gone(e):
-                    print("410 found within the repair context")
+                    # error shouldn't bubble up all the way up here, but we raise to make sure we retry if it does
                     raise
 
             except StopIteration:
