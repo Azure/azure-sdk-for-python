@@ -1,14 +1,24 @@
 # Release History
 
-## 5.6.2 (Unreleased)
+## 5.7.0 (Unreleased)
+
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
 
 ### Features Added
+
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `EventHubProducerClient` and `EventHubConsumerClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed a bug that `EventHubProducerClient` could be reopened for sending events instead of encountering with `KeyError` when the client is previously closed (issue #21849).
+
 ### Other Changes
+
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.0.
 
 ## 5.6.1 (2021-10-06)
 

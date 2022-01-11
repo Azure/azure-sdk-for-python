@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_git_hub_access_token_request(
@@ -115,12 +116,12 @@ class WorkspaceGitRepoManagementOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(git_hub_access_token_request, 'GitHubAccessTokenRequest')
+        _json = self._serialize.body(git_hub_access_token_request, 'GitHubAccessTokenRequest')
 
         request = build_get_git_hub_access_token_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             client_request_id=client_request_id,
             template_url=self.get_git_hub_access_token.metadata['url'],
         )

@@ -4,7 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
@@ -20,6 +22,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_document_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -55,6 +58,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_document_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
@@ -90,6 +94,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_document_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -123,8 +128,10 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_document_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
             myfile = fd.read()
@@ -141,6 +148,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_document_specify_pages(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
