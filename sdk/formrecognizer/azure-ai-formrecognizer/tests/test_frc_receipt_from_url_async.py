@@ -17,12 +17,12 @@ from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
-GlobalClientPreparerV2 = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_url_transform_png(self, client):
         set_bodiless_matcher()
@@ -60,7 +60,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_url_include_field_elements(self, client):
         set_bodiless_matcher()
@@ -98,7 +98,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, True)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_receipt_locale_v2(self, client):
         with pytest.raises(ValueError) as e:
             async with client:

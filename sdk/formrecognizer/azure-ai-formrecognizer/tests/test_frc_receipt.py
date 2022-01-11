@@ -14,13 +14,13 @@ from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
-GlobalClientPreparerV2 = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 class TestReceiptFromStream(FormRecognizerTest):
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_enum_content_type_v2(self, client):
         with open(self.receipt_png, "rb") as fd:
@@ -33,7 +33,7 @@ class TestReceiptFromStream(FormRecognizerTest):
         assert result is not None
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
@@ -42,7 +42,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     # TODO should there be a v3 version of this test?
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
@@ -52,7 +52,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     def test_passing_bad_content_type_param_passed(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
@@ -63,7 +63,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     def test_passing_unsupported_url_content_type(self, client):
         with pytest.raises(TypeError):
             poller = client.begin_recognize_receipts(
@@ -72,7 +72,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2()
+    @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_receipt_jpg_include_field_elements(self, client):
         with open(self.receipt_jpg, "rb") as fd:
@@ -106,7 +106,7 @@ class TestReceiptFromStream(FormRecognizerTest):
         assert receipt_type.value ==  'Itemized'
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparerV2(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_receipt_locale_v2(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
