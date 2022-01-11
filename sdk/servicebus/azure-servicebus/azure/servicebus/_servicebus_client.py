@@ -269,7 +269,7 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
-        session_id = None,
+        session_id=None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -422,7 +422,7 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
-        session_id = None,
+        session_id=None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
