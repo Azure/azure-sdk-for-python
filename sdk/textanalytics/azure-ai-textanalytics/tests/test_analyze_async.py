@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -333,7 +332,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_bad_request_on_empty_document(self, client):
-        docs = [u""]
+        docs = [""]
 
         with pytest.raises(HttpResponseError):
             async with client:
@@ -520,98 +519,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert isinstance(poller.last_modified_on, datetime.datetime)
             assert poller.total_actions_count == 1
             assert poller.id
-
-    ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # @recorded_by_proxy_async
-    # async def test_whole_batch_language_hint(self, client):
-    #     def callback(resp):
-    #         language_str = "\"language\": \"fr\""
-    #         if resp.http_request.body:
-    #             language = resp.http_request.body.count(language_str)
-    #             assert language == 3
-
-    #     docs = [
-    #         u"This was the best day of my life.",
-    #         u"I did not like the hotel we stayed at. It was too expensive.",
-    #         u"The restaurant was not as good as I hoped."
-    #     ]
-
-    #     async with client:
-    #         response = await (await client.begin_analyze_actions(
-    #             docs,
-    #             actions=[
-    #                 RecognizeEntitiesAction(),
-    #                 ExtractKeyPhrasesAction(),
-    #                 RecognizePiiEntitiesAction()
-    #             ],
-    #             language="fr",
-    #             polling_interval=self._interval(),
-    #             raw_response_hook=callback
-    #         )).result()
-
-    #         async for action_result in response:
-    #             for doc in action_result.document_results:
-    #                 assert not doc.is_error
-
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer(client_kwargs={
-    #     "default_language": "en"
-    # })
-    # async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
-    #     def callback(resp):
-    #         if resp.http_request.body:
-    #             language_str = "\"language\": \"es\""
-    #             language = resp.http_request.body.count(language_str)
-    #             assert language == 2
-    #             language_str = "\"language\": \"en\""
-    #             language = resp.http_request.body.count(language_str)
-    #             assert language == 1
-
-    #     docs = [
-    #         TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
-    #         TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
-    #         TextDocumentInput(id="3", text="猫は幸せ"),
-    #     ]
-
-    #     async with client:
-    #         response = await (await client.begin_analyze_actions(
-    #             docs,
-    #             actions=[
-    #                 RecognizeEntitiesAction(),
-    #                 ExtractKeyPhrasesAction(),
-    #                 RecognizePiiEntitiesAction()
-    #             ],
-    #             language="en",
-    #             polling_interval=self._interval()
-    #         )).result()
-
-    #         async for action_result in response:
-    #             for doc in action_result.document_results:
-    #                 assert not doc.is_error
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # @recorded_by_proxy_async
-    # async def test_invalid_language_hint_method(self, client):
-    #     async with client:
-    #         response = await (await client.begin_analyze_actions(
-    #             ["This should fail because we're passing in an invalid language hint"],
-    #             language="notalanguage",
-    #             actions=[
-    #                 RecognizeEntitiesAction(),
-    #                 ExtractKeyPhrasesAction(),
-    #                 RecognizePiiEntitiesAction()
-    #             ],
-    #             polling_interval=self._interval()
-    #         )).result()
-
-    #         async for action_result in response:
-    #             for doc in action_result.document_results:
-    #                 assert doc.is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1425,7 +1332,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 "./mock_test_responses/action_error_no_target.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1491,7 +1398,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 "./mock_test_responses/action_error_with_targets.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1584,7 +1491,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 "./mock_test_responses/action_job_failure.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
