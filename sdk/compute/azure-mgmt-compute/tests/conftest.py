@@ -37,6 +37,7 @@ collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
     collect_ignore_glob.append("*_async.py")
 
+    
 load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
