@@ -123,8 +123,9 @@ class _QueryExecutionContextBase(object):
                 (fetched_items, response_headers) = fetch_function(new_options)
             except exceptions.CosmosHttpResponseError as e:
                 if e.status_code == http_constants.StatusCodes.GONE:
-                    print("410 found in base_execution_context")  # This one gets called after the fetch_fn in doc prod
-                    raise  # re-construct document producer here?
+                    # error comes here from fetch function in document producer
+                    # raise error to rebuild context within multi_execution_aggregator on partition split
+                    raise
                 (fetched_items, response_headers) = fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
@@ -143,8 +144,6 @@ class _QueryExecutionContextBase(object):
     def _fetch_items_helper_with_retries(self, fetch_function):
         def callback():
             return self._fetch_items_helper_no_retries(fetch_function)
-            # Trying to do try/except here doesn't work - probably due to the fact that the call to raise the error
-            # gets dealt with within the Execute method in retry utility and just ends up getting retried.
 
         return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
 

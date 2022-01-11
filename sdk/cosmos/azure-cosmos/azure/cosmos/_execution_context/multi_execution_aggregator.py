@@ -101,8 +101,10 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
             except exceptions.CosmosHttpResponseError as e:
                 if document_producer.partition_range_is_gone(e):
-                    # repairing document producer for partition split
+                    # repairing document producer context on partition split
                     self._repair_document_producer()
+                else:
+                    raise
 
             except StopIteration:
                 continue
@@ -116,7 +118,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         """
         if self._orderByPQ.size() > 0:
 
-            targetRangeExContext = self._orderByPQ.pop()  # maybe here repair document producers
+            targetRangeExContext = self._orderByPQ.pop()
             res = next(targetRangeExContext)
 
             try:

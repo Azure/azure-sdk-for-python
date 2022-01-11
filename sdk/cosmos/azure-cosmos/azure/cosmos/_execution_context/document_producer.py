@@ -28,7 +28,7 @@ from collections import deque
 
 import six
 
-from azure.cosmos import _base, exceptions
+from azure.cosmos import _base, exceptions, http_constants
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
 
@@ -61,15 +61,11 @@ class _DocumentProducer(object):
 
         def fetch_fn(options):
             try:
-                # partition key target range might be stale, should always get the target partition key range from cache
-                # other way - instead of not using from cache, initialize a new document producer using the cache
                 return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
             except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == 410:
-                    print("410 found in doc prod fetch function")
-                    # works, actually gets caught here, however since it is a fetch function that is passed forward
-                    # it's not exactly within this context, goes first in 410 stack trace
-                    raise  # replace this raise with re-initializing of document producer(?)
+                if e.status_code == http_constants.StatusCodes.GONE:
+                    # 410 within fetch function, raise to properly handle within execution context
+                    raise
                 return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
@@ -132,6 +128,7 @@ def _compare_helper(a, b):
 def partition_range_is_gone(e):
     if e.status_code == 410 and e.sub_status == 1002:
         return True
+    return False
 
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
