@@ -9,8 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-loganalytics/13.0.0b1 Python/3.8.12 (Linux-5.11.0-1022-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0
+      - azsdk-python-mgmt-loganalytics/13.0.0b1 Python/3.7.12 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with)
     method: GET
     uri: https://management.azure.com/providers/Microsoft.OperationalInsights/operations?api-version=2021-12-01-preview
   response:
@@ -26,7 +25,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 10 Jan 2022 08:25:42 GMT
+      - Tue, 11 Jan 2022 03:08:12 GMT
       expires:
       - '-1'
       pragma:
