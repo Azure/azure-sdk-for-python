@@ -339,7 +339,7 @@ class EventData(object):
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
         the body could be any type.
 
-        :rtype: Union[None, int, float, bytes, str, Dict, List, uuid.UUID]
+        :rtype: int or float or bytes or str or Dict or List or uuid.UUID
         """
         try:
             return self._raw_amqp_message.body

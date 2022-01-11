@@ -292,7 +292,7 @@ class ServiceBusClient(object):
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
-        :paramtype sub_queue: Optional[Union[~azure.servicebus.ServiceBusSubQueue, str]]
+        :paramtype sub_queue: str or ~azure.servicebus.ServiceBusSubQueue
         :keyword receive_mode: The receive_mode with which messages will be retrieved from the entity. The two options
          are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
          lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -447,7 +447,7 @@ class ServiceBusClient(object):
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
-        :paramtype sub_queue: Optional[Union[~azure.servicebus.ServiceBusSubQueue, str]]
+        :paramtype sub_queue: str or ~azure.servicebus.ServiceBusSubQueue
         :keyword receive_mode: The receive_mode with which messages will be retrieved from the entity. The two options
          are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
          lock period before they will be removed from the subscription. Messages received with RECEIVE_AND_DELETE
