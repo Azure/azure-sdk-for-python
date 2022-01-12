@@ -2384,8 +2384,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request_params = _request_object.RequestObject(typ,
-                                                           documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
+            request_params = _request_object.RequestObject(
+                typ, documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
