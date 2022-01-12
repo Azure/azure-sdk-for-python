@@ -2,7 +2,7 @@
 
 ## 6.0.1 (2022-01-12)
 
-**Features**
+**Fixes**
 
   - add support for Python 3.6
 
