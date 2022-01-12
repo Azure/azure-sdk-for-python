@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AutoHealActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AutoHealActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Predefined action to be taken.
     """
 
@@ -34,14 +19,14 @@ class AutoHealActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOG_EVENT = "LogEvent"
     CUSTOM_ACTION = "CustomAction"
 
-class AzureResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AzureResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Azure resource type.
     """
 
     WEBSITE = "Website"
     TRAFFIC_MANAGER = "TrafficManager"
 
-class BackupItemStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackupItemStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Backup status.
     """
 
@@ -56,7 +41,7 @@ class BackupItemStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETE_FAILED = "DeleteFailed"
     DELETED = "Deleted"
 
-class BackupRestoreOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackupRestoreOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the backup.
     """
 
@@ -65,7 +50,7 @@ class BackupRestoreOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     RELOCATION = "Relocation"
     SNAPSHOT = "Snapshot"
 
-class BuiltInAuthenticationProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BuiltInAuthenticationProvider(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The default authentication provider to use when multiple providers are configured.
     This setting is only needed if multiple providers are configured and the unauthenticated client
     action is set to "RedirectToLoginPage".
@@ -77,7 +62,7 @@ class BuiltInAuthenticationProvider(with_metaclass(_CaseInsensitiveEnumMeta, str
     MICROSOFT_ACCOUNT = "MicrosoftAccount"
     TWITTER = "Twitter"
 
-class CloneAbilityResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CloneAbilityResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of app.
     """
 
@@ -85,7 +70,7 @@ class CloneAbilityResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTIALLY_CLONEABLE = "PartiallyCloneable"
     NOT_CLONEABLE = "NotCloneable"
 
-class ConnectionStringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionStringType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of database.
     """
 
@@ -101,7 +86,7 @@ class ConnectionStringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REDIS_CACHE = "RedisCache"
     POSTGRE_SQL = "PostgreSQL"
 
-class ContinuousWebJobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContinuousWebJobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Job status.
     """
 
@@ -111,14 +96,14 @@ class ContinuousWebJobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     PENDING_RESTART = "PendingRestart"
     STOPPED = "Stopped"
 
-class CustomHostNameDnsRecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CustomHostNameDnsRecordType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Custom DNS record type.
     """
 
     C_NAME = "CName"
     A = "A"
 
-class DatabaseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DatabaseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Database type (e.g. SqlAzure / MySql).
     """
 
@@ -127,7 +112,7 @@ class DatabaseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCAL_MY_SQL = "LocalMySql"
     POSTGRE_SQL = "PostgreSql"
 
-class DnsVerificationTestResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DnsVerificationTestResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """DNS verification test result.
     """
 
@@ -135,7 +120,7 @@ class DnsVerificationTestResult(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     FAILED = "Failed"
     SKIPPED = "Skipped"
 
-class FrequencyUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrequencyUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The unit of time for how often the backup should be executed (e.g. for weekly backup, this
     should be set to Day and FrequencyInterval should be set to 7)
     """
@@ -143,21 +128,21 @@ class FrequencyUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DAY = "Day"
     HOUR = "Hour"
 
-class HostNameType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostNameType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Hostname type.
     """
 
     VERIFIED = "Verified"
     MANAGED = "Managed"
 
-class HostType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the hostname is a standard or repository hostname.
     """
 
     STANDARD = "Standard"
     REPOSITORY = "Repository"
 
-class LogLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LogLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Log level.
     """
 
@@ -167,20 +152,20 @@ class LogLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     ERROR = "Error"
 
-class ManagedPipelineMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedPipelineMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Managed pipeline mode.
     """
 
     INTEGRATED = "Integrated"
     CLASSIC = "Classic"
 
-class ManagedServiceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class MSDeployLogEntryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MSDeployLogEntryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Log entry type
     """
 
@@ -188,7 +173,7 @@ class MSDeployLogEntryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     ERROR = "Error"
 
-class MSDeployProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MSDeployProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state
     """
 
@@ -198,14 +183,14 @@ class MSDeployProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     FAILED = "failed"
     CANCELED = "canceled"
 
-class MySqlMigrationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MySqlMigrationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of migration operation to be done
     """
 
     LOCAL_TO_REMOTE = "LocalToRemote"
     REMOTE_TO_LOCAL = "RemoteToLocal"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current status of the operation.
     """
 
@@ -215,7 +200,7 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TIMED_OUT = "TimedOut"
     CREATED = "Created"
 
-class PublicCertificateLocation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicCertificateLocation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Public Certificate Location
     """
 
@@ -223,7 +208,7 @@ class PublicCertificateLocation(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     LOCAL_MACHINE_MY = "LocalMachineMy"
     UNKNOWN = "Unknown"
 
-class PublishingProfileFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublishingProfileFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the format. Valid values are:
     FileZilla3
     WebDeploy -- default
@@ -234,7 +219,7 @@ class PublishingProfileFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     WEB_DEPLOY = "WebDeploy"
     FTP = "Ftp"
 
-class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of route this is:
     DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
     INHERITED - Routes inherited from the real Virtual Network routes
@@ -247,7 +232,7 @@ class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INHERITED = "INHERITED"
     STATIC = "STATIC"
 
-class ScmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SCM type.
     """
 
@@ -265,7 +250,7 @@ class ScmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE_DRIVE = "OneDrive"
     VSO = "VSO"
 
-class SiteAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteAvailabilityState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Management information availability state for the app.
     """
 
@@ -273,14 +258,14 @@ class SiteAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     LIMITED = "Limited"
     DISASTER_RECOVERY_MODE = "DisasterRecoveryMode"
 
-class SiteExtensionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteExtensionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Site extension type.
     """
 
     GALLERY = "Gallery"
     WEB_ROOT = "WebRoot"
 
-class SiteLoadBalancing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteLoadBalancing(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Site load balancing.
     """
 
@@ -290,7 +275,7 @@ class SiteLoadBalancing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WEIGHTED_TOTAL_TRAFFIC = "WeightedTotalTraffic"
     REQUEST_HASH = "RequestHash"
 
-class SslState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SslState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SSL type.
     """
 
@@ -298,7 +283,7 @@ class SslState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SNI_ENABLED = "SniEnabled"
     IP_BASED_ENABLED = "IpBasedEnabled"
 
-class SupportedTlsVersions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SupportedTlsVersions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """MinTlsVersion: configures the minimum version of TLS required for SSL requests
     """
 
@@ -306,7 +291,7 @@ class SupportedTlsVersions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE1 = "1.1"
     ONE2 = "1.2"
 
-class TriggeredWebJobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TriggeredWebJobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Job status.
     """
 
@@ -314,21 +299,21 @@ class TriggeredWebJobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     FAILED = "Failed"
     ERROR = "Error"
 
-class UnauthenticatedClientAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UnauthenticatedClientAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The action to take when an unauthenticated client attempts to access the app.
     """
 
     REDIRECT_TO_LOGIN_PAGE = "RedirectToLoginPage"
     ALLOW_ANONYMOUS = "AllowAnonymous"
 
-class UsageState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State indicating whether the app has exceeded its quota usage. Read-only.
     """
 
     NORMAL = "Normal"
     EXCEEDED = "Exceeded"
 
-class WebJobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WebJobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Job type.
     """
 
