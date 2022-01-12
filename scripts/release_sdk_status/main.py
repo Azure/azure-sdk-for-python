@@ -14,6 +14,8 @@ import time
 from packaging.version import parse
 from pathlib import Path
 
+from util import add_certificate
+
 SERVICE_TEST_PATH = {}
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
 PR_URL = 'https://github.com/Azure/azure-rest-api-specs/pull/'
@@ -184,6 +186,7 @@ class PyPIClient:
 
 def sdk_info_from_pypi(sdk_info, cli_dependency):
     all_sdk_status = []
+    add_certificate(str(Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')))
     for package in sdk_info:
         if ',' in package:
             package = package.split(',')
@@ -233,11 +236,13 @@ def get_test_result(txt_path):
 
 
 def run_playback_test(service_name):
+    if os.getenv('SKIP_COVERAGE') in ('true', 'yes'):
+        return '-, -, -, -\n'
+
     # eg: coverage_path='$(pwd)/sdk-repo/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/'
     coverage_path = ''.join([os.getenv('SDK_REPO'), '/sdk/', SERVICE_TEST_PATH[service_name]])
     service_path = coverage_path.split('/azure/mgmt')[0]
     test_path = service_path + '/tests'
-    print(f'****{service_name}*****')
     if os.path.exists(test_path):
         print_check('pip install -r dev_requirements.txt', path=service_path)
         print_check('pip install -e .', path=service_path)
@@ -246,16 +251,17 @@ def run_playback_test(service_name):
             operations_path = coverage_path+'/operations'
             models_path = coverage_path+'/models'
             try:
+                start_time = int(time.time())
                 print_check(f'pytest -s tests --cov={operations_path} --cov={models_path} >result.txt', path=service_path)
+                cost_time = int(time.time()) - start_time
+                my_print(f'{service_name} play_back cost {cost_time} seconds({cost_time // 60} minutes)')
             except Exception as e:
                 print(f'{service_name} test ERROR')
                 return '-, 0, 0, 0\n'
         else:
             try:
-                print(f'hhh {service_name} no coverage')
                 print_check(f'pytest -s tests >result.txt', path=service_path)
             except Exception as e:
-                print(f'{service_name} test ERROR')
                 return '-, 0, 0, 0\n'
         if os.path.exists(service_path+'/result.txt'):
             return get_test_result(service_path+'/result.txt')
