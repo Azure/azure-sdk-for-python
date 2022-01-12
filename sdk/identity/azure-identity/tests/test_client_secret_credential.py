@@ -136,7 +136,7 @@ def test_regional_authority():
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region
+        assert kwargs["azure_region"] == str(region)
 
 
 def test_token_cache():
