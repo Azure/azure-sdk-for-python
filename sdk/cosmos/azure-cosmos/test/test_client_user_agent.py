@@ -41,9 +41,9 @@ class TestClientUserAgent(unittest.TestCase):
         client_sync = sync_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey)
         client_async = async_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey)
 
-        self.assertTrue(client_sync.client_connection.user_agent.startswith("azsdk-python-cosmos/"))
-        self.assertTrue(client_async.client_connection.user_agent.startswith("azsdk-python-cosmos-async/"))
-        self.assertTrue(client_async.client_connection.user_agent != client_sync.client_connection.user_agent)
+        self.assertTrue(client_sync.client_connection._user_agent.startswith("azsdk-python-cosmos/"))
+        self.assertTrue(client_async.client_connection._user_agent.startswith("azsdk-python-cosmos-async/"))
+        self.assertTrue(client_async.client_connection._user_agent != client_sync.client_connection._user_agent)
 
         await client_async.close()
 
