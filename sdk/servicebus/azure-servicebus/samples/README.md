@@ -96,6 +96,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 - [topic_subscription_with_rule_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/topic_subscription_with_rule_operations.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/topic_subscription_with_rule_operations_async.py)) - Example to manage rules on topic subscriptions and to explore different forms of subscription filters.
 
 ## Prerequisites
+
 - Python 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Service Bus, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
