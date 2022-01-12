@@ -20,7 +20,7 @@ except:
 import pytest
 import subprocess
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
@@ -86,16 +86,24 @@ def start_record_or_playback(test_id):
             RECORDING_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
+        if result.status_code != 200:
+            message = six.ensure_str(result._content)
+            raise HttpResponseError(message=message)
         recording_id = result.headers["x-recording-id"]
+
     else:
         result = requests.post(
             PLAYBACK_START_URL,
             headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
         )
+        if result.status_code != 200:
+            message = six.ensure_str(result._content)
+            raise HttpResponseError(message=message)
+
         try:
             recording_id = result.headers["x-recording-id"]
-        except KeyError:
-            raise ValueError("No recording file found for {}".format(test_id))
+        except KeyError as ex:
+            six.raise_from(ValueError("No recording file found for {}".format(test_id)), ex)
         if result.text:
             try:
                 variables = result.json()
@@ -208,8 +216,9 @@ def recorded_by_proxy(test_func):
                 test_output = test_func(*args, **trimmed_kwargs)
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
-            raise error_with_message
+            message = error_body.get("message") or error_body.get("Message")
+            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            six.raise_from(error_with_message, error)
         finally:
             RequestsTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)
