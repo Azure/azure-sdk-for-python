@@ -34,8 +34,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
     changelog = f.read()
 
 exclude_packages = [
-    "tests",
-    "tests.*",
+    "test",
     "samples",
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
