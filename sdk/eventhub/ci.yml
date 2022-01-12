@@ -40,8 +40,6 @@ extends:
     Artifacts:
     - name: azure-eventhub
       safeName: azureeventhub
-    - name: azure-eventhub-checkpointstoreblob-aio
-      safeName: azureeventhubcheckpointstoreblobaio
     - name: azure-eventhub-checkpointstoreblob
       safeName: azureeventhubcheckpointstoreblob
     - name: azure-eventhub-checkpointstoretable

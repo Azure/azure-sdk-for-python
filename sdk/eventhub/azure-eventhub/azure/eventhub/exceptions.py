@@ -11,30 +11,6 @@ from ._pyamqp import error as errors
 _LOGGER = logging.getLogger(__name__)
 
 
-def _error_handler(error):
-    """
-    Called internally when an event has failed to send so we
-    can parse the error to determine whether we should attempt
-    to retry sending the event again.
-    Returns the action to take according to error type.
-
-    :param error: The error received in the send attempt.
-    :type error: Exception
-    :rtype: ~uamqp.errors.ErrorAction
-    """
-    if error.condition == b"com.microsoft:server-busy":
-        return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition == b"com.microsoft:timeout":
-        return errors.ErrorAction(retry=True, backoff=2)
-    if error.condition == b"com.microsoft:operation-cancelled":
-        return errors.ErrorAction(retry=True)
-    if error.condition == b"com.microsoft:container-close":
-        return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition in NO_RETRY_ERRORS:
-        return errors.ErrorAction(retry=False)
-    return errors.ErrorAction(retry=True)
-
-
 class EventHubError(Exception):
     """Represents an error occurred in the client.
 

@@ -593,7 +593,7 @@ def encode_filter_set(value):
 
 
 def encode_unknown(output, value, **kwargs):
-    # type: (bytearray, Optional[Any]) -> None
+    # type: (bytearray, Optional[Any], Any) -> None
     """
     Dynamic encoding according to the type of `value`.
     """
@@ -786,7 +786,7 @@ def encode_payload(output, payload):
 
 
 def encode_frame(frame, frame_type=_FRAME_TYPE):
-    # type: (Performative) -> Tuple(bytes, bytes)
+    # type: (Performative, bytes) -> Tuple[bytes, bytes]
     # TODO: allow passing type specific bytes manually, e.g. Empty Frame needs padding
     if frame is None:
         size = 8

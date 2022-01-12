@@ -152,7 +152,30 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = kwargs.get("delivery_annotations")
 
     def __str__(self):
-        return str(self._message)
+        if self._body_type == AmqpMessageBodyType.DATA:
+            output_str = ""
+            for data_section in self.body:
+                try:
+                    output_str += data_section.decode(self._encoding)
+                except AttributeError:
+                    output_str += str(data_section)
+            return output_str
+        elif self._body_type == AmqpMessageBodyType.SEQUENCE:
+            output_str = ""
+            for sequence_section in self.body:
+                for d in sequence_section:
+                    try:
+                        output_str += d.decode(self._encoding)
+                    except AttributeError:
+                        output_str += str(d)
+            return output_str
+        else:
+            if not self.body:
+                return ""
+            try:
+                return self.body.decode(self._encoding)
+            except AttributeError:
+                return str(self.body)
 
     def __repr__(self):
         # type: () -> str

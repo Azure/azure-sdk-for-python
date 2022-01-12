@@ -11,21 +11,9 @@ import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
-
-try:
-    from urlparse import urlparse
-    from urllib import quote_plus  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse, quote_plus
-
-
-from ._pyamqp.client import AMQPClient
-from ._pyamqp.message import Message, Properties
-from ._pyamqp import constants, error as errors, utils as pyamqp_utils
-from ._pyamqp.authentication import JWTTokenAuth
-
-
+from urllib.parse import urlparse
 import six
+
 from azure.core.credentials import (
     AccessToken,
     AzureSasCredential,
@@ -35,14 +23,17 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
-from .exceptions import _handle_exception, ClientClosedError, ConnectError
+from ._pyamqp.client import AMQPClient
+from ._pyamqp.message import Message
+from ._pyamqp import constants, error as errors, utils as pyamqp_utils
+from ._pyamqp.authentication import JWTTokenAuth
+from .exceptions import _handle_exception, ClientClosedError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp, parse_sas_credential
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
     JWT_TOKEN_SCOPE,
-    MAX_MESSAGE_LENGTH_BYTES,
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
@@ -320,7 +311,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         return kwargs
 
     def _create_auth(self):
-        # type: () -> authentication.JWTTokenAuth
+        # type: () -> JWTTokenAuth
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
@@ -331,7 +322,11 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            return JWTTokenAuth(self._auth_uri, self._auth_uri, functools.partial(self._credential.get_token, self._auth_uri))
+            return JWTTokenAuth(
+                self._auth_uri,
+                self._auth_uri,
+                functools.partial(self._credential.get_token, self._auth_uri)
+            )
         return JWTTokenAuth(
             self._auth_uri,
             self._auth_uri,
@@ -343,7 +338,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify,
-            refresh_window=300,
         )
 
     def _close_connection(self):
@@ -410,7 +404,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     return response
                 if status_code in [401]:
                     raise errors.AuthenticationException(
-                        errors.ErrorCodes.UnauthorizedAccess,
+                        errors.ErrorCondition.UnauthorizedAccess,
                         description="Management authentication failed. Status code: {}, Description: {!r}".format(
                             status_code,
                             description
@@ -418,14 +412,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     )
                 if status_code in [404]:
                     raise errors.AMQPConnectionError(
-                        errors.ErrorCodes.NotFound,
+                        errors.ErrorCondition.NotFound,
                         description="Management connection failed. Status code: {}, Description: {!r}".format(
                             status_code,
                             description
                         )
                     )
                 raise errors.AMQPConnectionError(
-                    errors.ErrorCodes.UnknownError,
+                    errors.ErrorCondition.UnknownError,
                     description="Management operation failed. Status code: {}, Description: {!r}".format(
                         status_code,
                         description
@@ -458,14 +452,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         output = {}
         eh_info = response.value  # type: Dict[bytes, Any]
         if eh_info:
-           output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-           output["created_at"] = utc_from_timestamp(
-               float(eh_info[b"created_at"]) / 1000
-           )
-           output["partition_ids"] = [
-               p.decode("utf-8") for p in eh_info[b"partition_ids"]
-           ]
-        return output
+            output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
+            output["created_at"] = utc_from_timestamp(
+                float(eh_info[b"created_at"]) / 1000
+            )
+            output["partition_ids"] = [
+                p.decode("utf-8") for p in eh_info[b"partition_ids"]
+            ]
+            return output
 
     def _get_partition_ids(self):
         # type:() -> List[str]
@@ -552,7 +546,7 @@ class ConsumerProducerMixin(object):
     def _handle_exception(self, exception):
         if not self.running and isinstance(exception, TimeoutError):
            exception = errors.AuthenticationException(
-               errors.ErrorCodes.InternalError,
+               errors.ErrorCondition.InternalError,
                description="Authorization timeout."
            )
         return _handle_exception(exception, self)

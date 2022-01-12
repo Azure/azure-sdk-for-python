@@ -29,17 +29,13 @@ if TYPE_CHECKING:
     from .._common import EventData
     from .._consumer import EventHubConsumer
     from .._consumer_client import EventHubConsumerClient
-    from ..aio._consumer_async import EventHubConsumer as EventHubConsumerAsync
-    from ..aio._consumer_client_async import (
-        EventHubConsumerClient as EventHubConsumerClientAsync,
-    )
 
 
 class EventProcessorMixin(object):
 
     _eventhub_client = (
         None
-    )  # type: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]]
+    )  # type: Optional[EventHubConsumerClient]
     _consumer_group = ""  # type: str
     _owner_level = None  # type: Optional[int]
     _prefetch = None  # type: Optional[int]
@@ -81,7 +77,7 @@ class EventProcessorMixin(object):
         on_event_received,  # type: Callable[[Union[Optional[EventData], List[EventData]]], None]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[EventHubConsumer, EventHubConsumerAsync]
+        # type: (...) -> EventHubConsumer
         consumer = self._eventhub_client._create_consumer(  # type: ignore  # pylint: disable=protected-access
             self._consumer_group,
             partition_id,

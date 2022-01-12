@@ -80,9 +80,9 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
 
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+#  - template: /eng/pipelines/templates/steps/run_apistub.yml
+#    parameters:
+#      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 
