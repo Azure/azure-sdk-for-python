@@ -5,7 +5,10 @@
 from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
-from typing_extensions import Literal
+try:
+    from typing import Literal  # pylint: disable=ungrouped-imports
+except ImportError:
+    from typing_extensions import Literal
 
 import uamqp
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
