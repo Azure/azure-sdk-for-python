@@ -7,6 +7,7 @@
 import time
 import uuid
 from datetime import datetime
+import warnings
 from typing import Optional, Any, cast, Mapping, Union, Dict
 
 from msrest.serialization import TZ_UTC
@@ -500,8 +501,11 @@ class AmqpMessageHeader(DictMixin):
         time_to_live: Optional[int] = None,
         durable: Optional[bool] = None,
         first_acquirer: Optional[bool] = None,
-        priority: Optional[int] = None
+        priority: Optional[int] = None,
+        **kwargs: Any
     ):
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self.delivery_count = delivery_count
         self.time_to_live = time_to_live
         self.first_acquirer = first_acquirer
@@ -601,8 +605,11 @@ class AmqpMessageProperties(DictMixin):
         absolute_expiry_time: Optional[int] = None,
         group_id: Optional[Union[str, bytes]] = None,
         group_sequence: Optional[int] = None,
-        reply_to_group_id: Optional[Union[str, bytes]] = None
+        reply_to_group_id: Optional[Union[str, bytes]] = None,
+        **kwargs: Any
     ):
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self.message_id = message_id
         self.user_id = user_id
         self.to = to
