@@ -64,7 +64,7 @@ setup(
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
