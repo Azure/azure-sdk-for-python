@@ -11,7 +11,7 @@ urlFragment: eventhub-samples
 # Azure Event Hubs client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Event Hubs client library.
-Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples) of samples are provided.
+The [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples) of samples are provided.
 
 - [client_creation.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_creation.py) - Examples to create EventHubProducerClient and EventHubConsumerClient:
     - From a connection string
@@ -71,8 +71,8 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 - [authenticate_with_azure_named_key_credential.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_azure_named_key_credential.py) - Examples:
     - Utilize `azure.core.credentials.AzureNamedKeyCredential` to authenticate when creating an Event Hub client.
 
-- [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples:
-    - Create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
+- [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) - Examples:
+  to create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
 
 - [send_and_receive_amqp_annotated_message.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_and_receive_amqp_annotated_message.py) - Examples to send AMQPAnnotatedMessage to and receive events from an event hub and parse the body:
     - Send AMQPAnnotatedMessage of different body types.

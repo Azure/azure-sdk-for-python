@@ -40,6 +40,60 @@ NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 
 logging.getLogger().setLevel(logging.INFO)
 
+<<<<<<< HEAD
+=======
+OMITTED_CI_PACKAGES = [
+    "azure-mgmt-documentdb",
+    "azure-servicemanagement-legacy",
+    "azure-mgmt-scheduler",
+    "azure",
+    "azure-mgmt",
+    "azure-storage",
+    "azure-monitor",
+    "azure-mgmt-regionmove",
+    "azure-eventhub-checkpointstoreblob-aio"
+]
+MANAGEMENT_PACKAGE_IDENTIFIERS = [
+    "mgmt",
+    "azure-cognitiveservices",
+    "azure-servicefabric",
+    "nspkg",
+    "azure-keyvault",
+    "azure-synapse",
+    "azure-ai-anomalydetector",
+]
+META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
+REGRESSION_EXCLUDED_PACKAGES = [
+    "azure-common",
+]
+
+MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
+    "azure-mgmt-core",
+]
+
+TEST_COMPATIBILITY_MAP = {"azure-core-tracing-opentelemetry": "<3.10"}
+
+omit_regression = (
+    lambda x: "nspkg" not in x
+    and "mgmt" not in x
+    and os.path.basename(x) not in MANAGEMENT_PACKAGE_IDENTIFIERS
+    and os.path.basename(x) not in META_PACKAGES
+    and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
+)
+omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
+omit_build = lambda x: x  # Dummy lambda to match omit type
+lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
+omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS
+
+
+# dict of filter type and filter function
+omit_funct_dict = {
+    "Build": omit_build,
+    "Docs": omit_docs,
+    "Regression": omit_regression,
+    "Omit_management": omit_mgmt,
+}
+>>>>>>> e87e909428 ([EH Pyproto] Release preparation (#22433))
 
 
 def log_file(file_location, is_error=False):
