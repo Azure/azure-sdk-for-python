@@ -50,6 +50,8 @@ setup(
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -63,7 +65,7 @@ setup(
         'azure',
         'azure.synapse',
     ]),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
