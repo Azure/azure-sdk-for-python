@@ -1,19 +1,5 @@
 # Release History
 
-## 5.10.1 (2022-08-22)
-
-This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
-
-### Bugs Fixed
-
-- Fixed a bug in async `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
-- Fixed a bug in the async `EventHubProducerClient` and `EventHubConsumerClient` that set the default value of the `transport_type` parameter in the `from_connection_string` methods to `None` rather than `TransportType.Amqp`.
-
-### Other Changes
-
-- Internal refactoring to support upcoming Pure Python AMQP-based release.
-- Updated uAMQP dependency to 1.6.0.
-
 ## 5.10.0 (2022-06-08)
 
 ### Features Added
@@ -78,6 +64,20 @@ This version and all future versions will require Python 3.7+, Python 3.6 is no 
 ### Features Added
 
 - The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
+
+## 5.8.0a1 (2022-01-13)
+
+Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out which will be added back in future previews as we work towards a stable release:
+  - Async is not supported.
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+### Other Changes
+
+- uAMQP dependency is removed.
 
 ## 5.7.0 (2022-01-12)
 

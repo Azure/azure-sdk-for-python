@@ -180,6 +180,7 @@ class EventHubProducer(
     def _send_event_data_with_retry(self, timeout: Optional[float] = None) -> None:
         return self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
+    @staticmethod
     def _wrap_eventdata(
         self,
         event_data: Union[EventData, EventDataBatch, Iterable[EventData], AmqpAnnotatedMessage],
