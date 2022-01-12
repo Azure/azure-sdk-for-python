@@ -274,7 +274,7 @@ def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
     )
 
 
-def build_get_anomaly_detection_configuration_request(
+def build_get_detection_configuration_request(
     configuration_id,  # type: str
     **kwargs  # type: Any
 ):
@@ -300,7 +300,7 @@ def build_get_anomaly_detection_configuration_request(
     )
 
 
-def build_update_detection_configuration_request(
+def build_update_anomaly_detection_configuration_request(
     configuration_id,  # type: str
     **kwargs  # type: Any
 ):
@@ -1988,7 +1988,7 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     get_incidents_from_alert_by_anomaly_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents'}  # type: ignore
 
     @distributed_trace
-    def get_anomaly_detection_configuration(
+    def get_detection_configuration(
         self,
         configuration_id,  # type: str
         **kwargs  # type: Any
@@ -2012,9 +2012,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_anomaly_detection_configuration_request(
+        request = build_get_detection_configuration_request(
             configuration_id=configuration_id,
-            template_url=self.get_anomaly_detection_configuration.metadata['url'],
+            template_url=self.get_detection_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -2037,11 +2037,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
 
         return deserialized
 
-    get_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
+    get_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
 
 
     @distributed_trace
-    def update_detection_configuration(
+    def update_anomaly_detection_configuration(
         self,
         configuration_id,  # type: str
         body,  # type: "_models.AnomalyDetectionConfigurationPatch"
@@ -2071,11 +2071,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
 
         _content = self._serialize.body(body, 'AnomalyDetectionConfigurationPatch')
 
-        request = build_update_detection_configuration_request(
+        request = build_update_anomaly_detection_configuration_request(
             configuration_id=configuration_id,
             content_type=content_type,
             content=_content,
-            template_url=self.update_detection_configuration.metadata['url'],
+            template_url=self.update_anomaly_detection_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -2098,7 +2098,7 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
 
         return deserialized
 
-    update_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
+    update_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}'}  # type: ignore
 
 
     @distributed_trace

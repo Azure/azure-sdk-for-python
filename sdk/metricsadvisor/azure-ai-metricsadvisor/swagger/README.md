@@ -66,305 +66,97 @@ directive:
       $["x-ms-pageable"] = {"nextLinkName": null};
 ```
 
-### createMetricFeedback -> addFeedback
-
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["paths"]["/feedback/metric"]["post"]
-    transform: >
-      $["operationId"] = "addFeedback";
+    - rename-operation:
+        from: createMetricFeedback
+        to: addFeedback
+    - rename-operation:
+        from: getMetricFeedback
+        to: getFeedback
+    - rename-operation:
+        from: listMetricFeedbacks
+        to: listFeedback
+    - rename-operation:
+        from: getRootCauseOfIncidentByAnomalyDetectionConfiguration
+        to: listIncidentRootCauses
+    - rename-operation:
+        from: getSeriesByAnomalyDetectionConfiguration
+        to: listMetricEnrichedSeriesData
+    - rename-operation:
+        from: getAlertsByAnomalyAlertingConfiguration
+        to: listAlerts
+    - rename-operation:
+        from: getDimensionOfAnomaliesByAnomalyDetectionConfiguration
+        to: listAnomalyDimensionValues
+    - rename-operation:
+        from: getMetricDimension
+        to: listMetricDimensionValues
+    - rename-operation:
+        from: getMetricData
+        to: listMetricSeriesData
+    - rename-operation:
+        from: getMetricSeries
+        to: listMetricSeriesDefinitions
+    - rename-operation:
+        from: getEnrichmentStatusByMetric
+        to: listMetricEnrichmentStatus
+    - rename-operation:
+        from: createAnomalyAlertingConfiguration
+        to: createAlertConfiguration
+    - rename-operation:
+        from: createAnomalyDetectionConfiguration
+        to: createDetectionConfiguration
+    - rename-operation:
+        from: getDataFeedById
+        to: getDataFeed
+    - rename-operation:
+        from: getAnomalyAlertingConfiguration
+        to: getAlertConfiguration
+    - rename-operation:
+        from: getAnomalyDetectionConfiguration
+        to: getDetectionConfiguration
+    - rename-operation:
+        from: getIngestionProgress
+        to: getDataFeedIngestionProgress
+    - rename-operation:
+        from: resetDataFeedIngestionStatus
+        to: refreshDataFeedIngestion
+    - rename-operation:
+        from: deleteAnomalyAlertingConfiguration
+        to: deleteAlertConfiguration
+    - rename-operation:
+        from: deleteAnomalyDetectionConfiguration
+        to: deleteDetectionConfiguration
+    - rename-operation:
+        from: updateAnomalyAlertingConfiguration
+        to: updateAlertConfiguration
+    - rename-operation:
+        from: getAnomalyAlertingConfigurationsByAnomalyDetectionConfiguration
+        to: listAlertConfigurations
+    - rename-operation:
+        from: getAnomalyDetectionConfigurationsByMetric
+        to: listDetectionConfigurations
+    - rename-operation:
+        from: getDataFeedIngestionStatus
+        to: listDataFeedIngestionStatus
+    - rename-operation:
+        from: getCredential
+        to: getDatasourceCredential
+    - rename-operation:
+        from: createCredential
+        to: createDatasourceCredential
+    - rename-operation:
+        from: listCredentials
+        to: listDatasourceCredentials
+    - rename-operation:
+        from: updateCredential
+        to: updateDatasourceCredential
+    - rename-operation:
+        from: deleteCredential
+        to: deleteDatasourceCredential
 ```
 
-### getMetricFeedback -> getFeedback
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/feedback/metric/{feedbackId}"]["get"]
-    transform: >
-      $["operationId"] = "getFeedback";
-```
-
-### listMetricFeedbacks -> listFeedback
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/feedback/metric/query"]["post"]
-    transform: >
-      $["operationId"] = "listFeedback";
-```
-
-### getRootCauseOfIncidentByAnomalyDetectionConfiguration -> listIncidentRootCauses
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"]["get"]
-    transform: >
-      $["operationId"] = "listIncidentRootCauses";
-```
-
-### getSeriesByAnomalyDetectionConfiguration -> listMetricEnrichedSeriesData
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}/series/query"]["post"]
-    transform: >
-      $["operationId"] = "listMetricEnrichedSeriesData";
-```
-
-### getAlertsByAnomalyAlertingConfiguration -> listAlerts
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/alert/anomaly/configurations/{configurationId}/alerts/query"]["post"]
-    transform: >
-      $["operationId"] = "listAlerts";
-```
-
-### getDimensionOfAnomaliesByAnomalyDetectionConfiguration -> listAnomalyDimensionValues
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query"]["post"]
-    transform: >
-      $["operationId"] = "listAnomalyDimensionValues";
-```
-
-### getMetricDimension -> listMetricDimensionValues
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/metrics/{metricId}/dimension/query"]["post"]
-    transform: >
-      $["operationId"] = "listMetricDimensionValues";
-```
-
-### getMetricData -> listMetricSeriesData
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/metrics/{metricId}/data/query"]["post"]
-    transform: >
-      $["operationId"] = "listMetricSeriesData";
-```
-
-### getMetricSeries -> listMetricSeriesDefinitions
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/metrics/{metricId}/series/query"]["post"]
-    transform: >
-      $["operationId"] = "listMetricSeriesDefinitions";
-```
-
-### getEnrichmentStatusByMetric -> listMetricEnrichmentStatus
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/metrics/{metricId}/status/enrichment/anomalyDetection/query"]["post"]
-    transform: >
-      $["operationId"] = "listMetricEnrichmentStatus";
-```
-
-### createAnomalyAlertingConfiguration -> createAlertConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/alert/anomaly/configurations"]["post"]
-    transform: >
-      $["operationId"] = "createAlertConfiguration";
-```
-
-### createAnomalyDetectionConfiguration -> createDetectionConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations"]["post"]
-    transform: >
-      $["operationId"] = "createDetectionConfiguration";
-```
-
-### getDataFeedById -> getDataFeed
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/dataFeeds/{dataFeedId}"]["get"]
-    transform: >
-      $["operationId"] = "getDataFeed";
-```
-
-### getAnomalyAlertingConfiguration -> getAlertConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/alert/anomaly/configurations/{configurationId}"]["get"]
-    transform: >
-      $["operationId"] = "getAlertConfiguration";
-```
-
-### getAnomalyDetectionConfiguration -> getDetectionConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/metrics/{metricId}/enrichment/anomalyDetection/configurations"]["get"]
-    transform: >
-      $["operationId"] = "getDetectionConfiguration";
-```
-
-### getIngestionProgress -> getDataFeedIngestionProgress
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/dataFeeds/{dataFeedId}/ingestionProgress"]["get"]
-    transform: >
-      $["operationId"] = "getDataFeedIngestionProgress";
-```
-
-### resetDataFeedIngestionStatus -> refreshDataFeedIngestion
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/dataFeeds/{dataFeedId}/ingestionProgress/reset"]["post"]
-    transform: >
-      $["operationId"] = "refreshDataFeedIngestion";
-```
-
-### deleteAnomalyAlertingConfiguration -> deleteAlertConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/alert/anomaly/configurations/{configurationId}"]["delete"]
-    transform: >
-      $["operationId"] = "deleteAlertConfiguration";
-```
-
-### deleteAnomalyDetectionConfiguration -> deleteDetectionConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}"]["delete"]
-    transform: >
-      $["operationId"] = "deleteDetectionConfiguration";
-```
-
-### updateAnomalyAlertingConfiguration -> updateAlertConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/alert/anomaly/configurations/{configurationId}"]["patch"]
-    transform: >
-      $["operationId"] = "updateAlertConfiguration";
-```
-
-### updateAnomalyDetectionConfiguration -> updateDetectionConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}"]["patch"]
-    transform: >
-      $["operationId"] = "updateDetectionConfiguration";
-```
-
-### getAnomalyAlertingConfigurationsByAnomalyDetectionConfiguration -> listAlertConfigurations
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations"]["get"]
-    transform: >
-      $["operationId"] = "listAlertConfigurations";
-```
-
-### getAnomalyDetectionConfigurationsByMetric -> listDetectionConfigurations
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/metrics/{metricId}/enrichment/anomalyDetection/configurations"]["get"]
-    transform: >
-      $["operationId"] = "listDetectionConfigurations";
-```
-
-### getDataFeedIngestionStatus -> listDataFeedIngestionStatus
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/dataFeeds/{dataFeedId}/ingestionStatus/query"]["post"]
-    transform: >
-      $["operationId"] = "listDataFeedIngestionStatus";
-```
-
-### getCredential -> getDatasourceCredential
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/credentials/{credentialId}"]["get"]
-    transform: >
-      $["operationId"] = "getDatasourceCredential";
-```
-
-### createCredential -> createDatasourceCredential
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/credentials"]["post"]
-    transform: >
-      $["operationId"] = "createDatasourceCredential";
-```
-
-### listCredentials -> listDatasourceCredentials
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/credentials"]["get"]
-    transform: >
-      $["operationId"] = "listDatasourceCredentials";
-```
-
-### updateCredential -> updateDatasourceCredential
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/credentials/{credentialId}"]["patch"]
-    transform: >
-      $["operationId"] = "updateDatasourceCredential";
-```
-
-### deleteCredential -> deleteDatasourceCredential
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/credentials/{credentialId}"]["delete"]
-    transform: >
-      $["operationId"] = "deleteDatasourceCredential";
-```
 
 ### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
 
@@ -528,352 +320,123 @@ directive:
       $["DataFeedDetailPatch"]["properties"]["authenticationType"]["x-ms-enum"]["name"] = "DatasourceAuthenticationType";
 ```
 
-### MetricSeriesItem -> MetricSeriesDefinition
-
 ```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["MetricSeriesItem"]
-    transform: >
-      $["x-ms-client-name"] = "MetricSeriesDefinition";
+declare-directive:
+    rename-model: >-
+        [{
+            from: 'swagger-document',
+            where: `$.definitions[${JSON.stringify($.from)}]`,
+            transform: `$["x-ms-client-name"] = ${JSON.stringify($.to)}`
+        }]
 ```
 
-### IngestionStatus -> DataFeedIngestionStatus
+### Rename models
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["definitions"]["IngestionStatus"]
-    transform: >
-      $["x-ms-client-name"] = "DataFeedIngestionStatus";
-```
-
-### AlertSnoozeCondition -> MetricAnomalyAlertSnoozeCondition
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AlertSnoozeCondition"]
-    transform: >
-      $["x-ms-client-name"] = "MetricAnomalyAlertSnoozeCondition";
-```
-
-### AnomalyAlertingConfiguration -> AnomalyAlertConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AnomalyAlertingConfiguration"]
-    transform: >
-      $["x-ms-client-name"] = "AnomalyAlertConfiguration";
-```
-
-### DataFeedDetail -> DataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["DataFeedDetail"]
-    transform: >
-      $["x-ms-client-name"] = "DataFeedSource";
-```
-
-### AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureApplicationInsightsDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureApplicationInsightsDataFeedSource";
-```
-
-### AzureBlobDataFeed -> AzureBlobDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureBlobDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureBlobDataFeedSource";
-```
-
-### AzureBlobDataFeed -> AzureCosmosDbDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureCosmosDBDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureCosmosDbDataFeedSource";
-```
-
-### AzureDataExplorerDataFeed -> AzureDataExplorerDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureDataExplorerDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureDataExplorerDataFeedSource";
-```
-
-### AzureTableDataFeed -> AzureTableDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureTableDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureTableDataFeedSource";
-```
-
-### AzureEventHubsDataFeed -> AzureEventHubsDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureEventHubsDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureEventHubsDataFeedSource";
-```
-
-### InfluxDBDataFeed -> InfluxDbDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["InfluxDBDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "InfluxDbDataFeedSource";
-```
-
-### MySqlDataFeed -> MySqlDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["MySqlDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "MySqlDataFeedSource";
-```
-
-### PostgreSqlDataFeed -> PostgreSqlDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["PostgreSqlDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "PostgreSqlDataFeedSource";
-```
-
-### SQLServerDataFeed -> SqlServerDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["SQLServerDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "SqlServerDataFeedSource";
-```
-
-### AzureDataLakeStorageGen2DataFeed -> AzureDataLakeStorageGen2DataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureDataLakeStorageGen2DataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureDataLakeStorageGen2DataFeedSource";
-```
-
-### AzureLogAnalyticsDataFeed -> AzureLogAnalyticsDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureLogAnalyticsDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "AzureLogAnalyticsDataFeedSource";
-```
-
-### MongoDBDataFeed -> MongoDbDataFeedSource
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["MongoDBDataFeed"]
-    transform: >
-      $["x-ms-client-name"] = "MongoDbDataFeedSource";
-```
-
-### HookInfo -> NotificationHook
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["HookInfo"]
-    transform: >
-      $["x-ms-client-name"] = "NotificationHook";
-```
-
-### EmailHookInfo -> EmailNotificationHook
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["EmailHookInfo"]
-    transform: >
-      $["x-ms-client-name"] = "EmailNotificationHook";
-```
-
-### WebhookHookInfo -> WebNotificationHook
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["WebhookHookInfo"]
-    transform: >
-      $["x-ms-client-name"] = "WebNotificationHook";
-```
-
-### WholeMetricConfiguration -> MetricDetectionCondition
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["WholeMetricConfiguration"]
-    transform: >
-      $["x-ms-client-name"] = "MetricDetectionCondition";
-```
-
-### DimensionGroupConfiguration -> MetricSeriesGroupDetectionCondition
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["DimensionGroupConfiguration"]
-    transform: >
-      $["x-ms-client-name"] = "MetricSeriesGroupDetectionCondition";
-```
-
-### SeriesConfiguration -> MetricSingleSeriesDetectionCondition
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["SeriesConfiguration"]
-    transform: >
-      $["x-ms-client-name"] = "MetricSingleSeriesDetectionCondition";
-```
-
-### Metric -> DataFeedMetric
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["Metric"]
-    transform: >
-      $["x-ms-client-name"] = "DataFeedMetric";
-```
-
-### Dimension -> DataFeedDimension
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["Dimension"]
-    transform: >
-      $["x-ms-client-name"] = "DataFeedDimension";
-```
-
-### SeriesResult -> MetricEnrichedSeriesData
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["SeriesResult"]
-    transform: >
-      $["x-ms-client-name"] = "MetricEnrichedSeriesData";
-```
-
-### AlertResult -> AnomalyAlert
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AlertResult"]
-    transform: >
-      $["x-ms-client-name"] = "AnomalyAlert";
-```
-
-### AnomalyResult -> DataPointAnomaly
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AnomalyResult"]
-    transform: >
-      $["x-ms-client-name"] = "DataPointAnomaly";
-```
-
-### IncidentResult -> AnomalyIncident
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["IncidentResult"]
-    transform: >
-      $["x-ms-client-name"] = "AnomalyIncident";
-```
-
-### RootCause -> IncidentRootCause
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["RootCause"]
-    transform: >
-      $["x-ms-client-name"] = "IncidentRootCause";
-```
-
-### AzureSQLConnectionStringCredential -> DatasourceSqlConnectionString
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AzureSQLConnectionStringCredential"]
-    transform: >
-      $["x-ms-client-name"] = "DatasourceSqlConnectionString";
-```
-
-### DataLakeGen2SharedKeyCredential -> DatasourceDataLakeGen2SharedKey
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["DataLakeGen2SharedKeyCredential"]
-    transform: >
-      $["x-ms-client-name"] = "DatasourceDataLakeGen2SharedKey";
-```
-
-### ServicePrincipalCredential -> DatasourceDataLakeGen2SharedKey
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["ServicePrincipalCredential"]
-    transform: >
-      $["x-ms-client-name"] = "DatasourceServicePrincipal";
-```
-
-### ServicePrincipalInKVCredential -> DatasourceServicePrincipalInKeyVault
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["ServicePrincipalInKVCredential"]
-    transform: >
-      $["x-ms-client-name"] = "DatasourceServicePrincipalInKeyVault";
+    - rename-model:
+        from: MetricSeriesItem
+        to: MetricSeriesDefinition
+    - rename-model:
+        from: IngestionStatus
+        to: DataFeedIngestionStatus
+    - rename-model:
+        from: AlertSnoozeCondition
+        to: MetricAnomalyAlertSnoozeCondition
+    - rename-model:
+        from: AnomalyAlertingConfiguration
+        to: AnomalyAlertConfiguration
+    - rename-model:
+        from: DataFeedDetail
+        to: DataFeedSource
+    - rename-model:
+        from: AzureApplicationInsightsDataFeed
+        to: AzureApplicationInsightsDataFeedSource
+    - rename-model:
+        from: AzureBlobDataFeed
+        to: AzureBlobDataFeedSource
+    - rename-model:
+        from: AzureCosmosDBDataFeed
+        to: AzureCosmosDbDataFeedSource
+    - rename-model:
+        from: AzureDataExplorerDataFeed
+        to: AzureDataExplorerDataFeedSource
+    - rename-model:
+        from: AzureTableDataFeed
+        to: AzureTableDataFeedSource
+    - rename-model:
+        from: AzureEventHubsDataFeed
+        to: AzureEventHubsDataFeedSource
+    - rename-model:
+        from: InfluxDBDataFeed
+        to: InfluxDbDataFeedSource
+    - rename-model:
+        from: MySqlDataFeed
+        to: MySqlDataFeedSource
+    - rename-model:
+        from: PostgreSqlDataFeed
+        to: PostgreSqlDataFeedSource
+    - rename-model:
+        from: SQLServerDataFeed
+        to: SqlServerDataFeedSource
+    - rename-model:
+        from: AzureDataLakeStorageGen2DataFeed
+        to: AzureDataLakeStorageGen2DataFeedSource
+    - rename-model:
+        from: AzureLogAnalyticsDataFeed
+        to: AzureLogAnalyticsDataFeedSource
+    - rename-model:
+        from: MongoDBDataFeed
+        to: MongoDbDataFeedSource
+    - rename-model:
+        from: HookInfo
+        to: NotificationHook
+    - rename-model:
+        from: EmailHookInfo
+        to: EmailNotificationHook
+    - rename-model:
+        from: WebhookHookInfo
+        to: WebNotificationHook
+    - rename-model:
+        from: WholeMetricConfiguration
+        to: MetricDetectionCondition
+    - rename-model:
+        from: DimensionGroupConfiguration
+        to: MetricSeriesGroupDetectionCondition
+    - rename-model:
+        from: SeriesConfiguration
+        to: MetricSingleSeriesDetectionCondition
+    - rename-model:
+        from: Metric
+        to: DataFeedMetric
+    - rename-model:
+        from: Dimension
+        to: DataFeedDimension
+    - rename-model:
+        from: SeriesResult
+        to: MetricEnrichedSeriesData
+    - rename-model:
+        from: AlertResult
+        to: AnomalyAlert
+    - rename-model:
+        from: AnomalyResult
+        to: DataPointAnomaly
+    - rename-model:
+        from: IncidentResult
+        to: AnomalyIncident
+    - rename-model:
+        from: RootCause
+        to: IncidentRootCause
+    - rename-model:
+        from: AzureSQLConnectionStringCredential
+        to: DatasourceSqlConnectionString
+    - rename-model:
+        from: DataLakeGen2SharedKeyCredential
+        to: DatasourceDataLakeGen2SharedKey
+    - rename-model:
+        from: ServicePrincipalCredential
+        to: DatasourceServicePrincipal
+    - rename-model:
+        from: ServicePrincipalInKVCredential
+        to: DatasourceServicePrincipalInKeyVault
 ```
