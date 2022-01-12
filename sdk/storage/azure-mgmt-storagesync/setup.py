@@ -66,5 +66,5 @@ setup(
         'azure-common~=1.1',
         'azure-mgmt-core>=1.2.0,<2.0.0',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
 )
