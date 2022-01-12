@@ -13,7 +13,7 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - task: PythonScript@0
-    condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))
+    condition: and(succeeded(), or(eq(variables['SetDevVersion'],'true'), eq(variables['Build.Reason'],'Schedule')))
     displayName: "Update package versions for dev build"
     inputs:
       scriptPath: 'eng/versioning/version_set_dev.py'
