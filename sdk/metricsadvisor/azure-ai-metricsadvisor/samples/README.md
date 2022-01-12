@@ -11,7 +11,6 @@ urlFragment: metricsadvisor-samples
 # Samples for Azure Metrics Advisor client library for Python
 
 These code samples show common scenario operations with the Azure Metrics Advisor client library.
-The async versions of the samples require Python 3.6 or later.
 
 |**File Name**|**Description**|
 |----------------|-------------|
@@ -28,7 +27,7 @@ The async versions of the samples require Python 3.6 or later.
 
 ## Prerequisites
 
-* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Metrics Advisor account][portal_metrics_advisor_account] to run these samples.
 
@@ -37,7 +36,7 @@ The async versions of the samples require Python 3.6 or later.
 1. Install the Azure Metrics Advisor client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-metricsadvisor --pre
+pip install azure-ai-metricsadvisor
 ```
 
 2. Clone or download this sample repository

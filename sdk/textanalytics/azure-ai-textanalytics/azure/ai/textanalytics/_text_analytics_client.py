@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -118,7 +117,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-        super(TextAnalyticsClient, self).__init__(
+        super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
@@ -173,8 +172,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
-        :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.DetectLanguageResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -197,7 +195,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
@@ -262,8 +260,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -282,7 +279,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -363,8 +360,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -383,7 +379,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
 
@@ -471,8 +467,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -491,7 +486,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
@@ -519,7 +514,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self, doc_id_order, raw_response, _, headers, show_stats=False
     ):
         healthcare_result = self._client.models(
-            api_version="v3.1"
+            api_version=self._api_version
         ).HealthcareJobState.deserialize(raw_response)
         return healthcare_paged_result(
             doc_id_order,
@@ -580,7 +575,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
-            Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
@@ -598,7 +593,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop(
@@ -715,8 +710,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
-        :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -735,7 +729,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
@@ -807,8 +801,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
-        :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult or ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -827,7 +820,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
@@ -935,9 +928,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
-            list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, RecognizeCustomEntitiesResult,
-            SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]
+            list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult,
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
+            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
@@ -962,7 +955,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
-        show_stats = kwargs.pop("show_stats", False)
+        show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         language = language_arg if language_arg is not None else self._default_language
 

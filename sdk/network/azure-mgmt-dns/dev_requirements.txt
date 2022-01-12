@@ -1,3 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 -e ../azure-mgmt-network
 -e ../../../tools/azure-devtools
+../../identity/azure-identity

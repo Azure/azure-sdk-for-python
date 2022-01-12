@@ -34,5 +34,5 @@ async def main():
                 print(str(msg))
                 await receiver.complete_message(msg)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+
+asyncio.run(main())

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,15 +11,12 @@ import functools
 import itertools
 import datetime
 import json
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
-
+from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     RecognizeEntitiesAction,
@@ -59,12 +55,14 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_no_single_input(self, client):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             response = client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_all_successful_passing_dict_key_phrase_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -90,6 +88,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_all_successful_passing_dict_sentiment_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
@@ -130,6 +129,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_sentiment_analysis_task_with_opinion_mining(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at.",
@@ -154,57 +154,58 @@ class TestAnalyze(TextAnalyticsTest):
                 if idx == 0:
                     for mined_opinion in sentence.mined_opinions:
                         target = mined_opinion.target
-                        self.assertEqual('design', target.text)
-                        self.assertEqual('positive', target.sentiment)
-                        self.assertEqual(0.0, target.confidence_scores.neutral)
+                        assert 'design' == target.text
+                        assert 'positive' == target.sentiment
+                        assert 0.0 == target.confidence_scores.neutral
                         self.validateConfidenceScores(target.confidence_scores)
-                        self.assertEqual(32, target.offset)
+                        assert 32 == target.offset
 
                         sleek_opinion = mined_opinion.assessments[0]
-                        self.assertEqual('sleek', sleek_opinion.text)
-                        self.assertEqual('positive', sleek_opinion.sentiment)
-                        self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
+                        assert 'sleek' == sleek_opinion.text
+                        assert 'positive' == sleek_opinion.sentiment
+                        assert 0.0 == sleek_opinion.confidence_scores.neutral
                         self.validateConfidenceScores(sleek_opinion.confidence_scores)
-                        self.assertEqual(9, sleek_opinion.offset)
-                        self.assertFalse(sleek_opinion.is_negated)
+                        assert 9 == sleek_opinion.offset
+                        assert not sleek_opinion.is_negated
 
                         premium_opinion = mined_opinion.assessments[1]
-                        self.assertEqual('premium', premium_opinion.text)
-                        self.assertEqual('positive', premium_opinion.sentiment)
-                        self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
+                        assert 'premium' == premium_opinion.text
+                        assert 'positive' == premium_opinion.sentiment
+                        assert 0.0 == premium_opinion.confidence_scores.neutral
                         self.validateConfidenceScores(premium_opinion.confidence_scores)
-                        self.assertEqual(15, premium_opinion.offset)
-                        self.assertFalse(premium_opinion.is_negated)
+                        assert 15 == premium_opinion.offset
+                        assert not premium_opinion.is_negated
                 else:
                     food_target = sentence.mined_opinions[0].target
                     service_target = sentence.mined_opinions[1].target
                     self.validateConfidenceScores(food_target.confidence_scores)
-                    self.assertEqual(4, food_target.offset)
+                    assert 4 == food_target.offset
 
-                    self.assertEqual('service', service_target.text)
-                    self.assertEqual('negative', service_target.sentiment)
-                    self.assertEqual(0.0, service_target.confidence_scores.neutral)
+                    assert 'service' == service_target.text
+                    assert 'negative' == service_target.sentiment
+                    assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
-                    self.assertEqual(13, service_target.offset)
+                    assert 13 == service_target.offset
 
                     food_opinion = sentence.mined_opinions[0].assessments[0]
                     service_opinion = sentence.mined_opinions[1].assessments[0]
                     self.assertOpinionsEqual(food_opinion, service_opinion)
 
-                    self.assertEqual('good', food_opinion.text)
-                    self.assertEqual('negative', food_opinion.sentiment)
-                    self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
+                    assert 'good' == food_opinion.text
+                    assert 'negative' == food_opinion.sentiment
+                    assert 0.0 == food_opinion.confidence_scores.neutral
                     self.validateConfidenceScores(food_opinion.confidence_scores)
-                    self.assertEqual(28, food_opinion.offset)
-                    self.assertTrue(food_opinion.is_negated)
+                    assert 28 == food_opinion.offset
+                    assert food_opinion.is_negated
                     service_target = sentence.mined_opinions[1].target
 
-                    self.assertEqual('food', food_target.text)
-                    self.assertEqual('negative', food_target.sentiment)
-                    self.assertEqual(0.0, food_target.confidence_scores.neutral)
+                    assert 'food' == food_target.text
+                    assert 'negative' == food_target.sentiment
+                    assert 0.0 == food_target.confidence_scores.neutral
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_all_successful_passing_text_document_input_entities_task(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975", language="en"),
@@ -233,12 +234,13 @@ class TestAnalyze(TextAnalyticsTest):
                 assert entity.category is not None
                 assert entity.offset is not None
                 assert entity.confidence_score is not None
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_all_successful_passing_string_pii_entities_task(self, client):
 
         docs = ["My SSN is 859-98-0987.",
@@ -273,10 +275,11 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_bad_request_on_empty_document(self, client):
-        docs = [u""]
+        docs = [""]
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             response = client.begin_analyze_actions(
                 docs,
                 actions=[ExtractKeyPhrasesAction()],
@@ -287,8 +290,9 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "textanalytics_test_api_key": "",
     })
+    @recorded_by_proxy
     def test_empty_credential_class(self, client):
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             response = client.begin_analyze_actions(
                 ["This is written in English."],
                 actions=[
@@ -306,8 +310,9 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "textanalytics_test_api_key": "xxxxxxxxxxxx",
     })
+    @recorded_by_proxy
     def test_bad_credentials(self, client):
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             response = client.begin_analyze_actions(
                 ["This is written in English."],
                 actions=[
@@ -323,6 +328,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_out_of_order_ids_multiple_tasks(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -357,11 +363,12 @@ class TestAnalyze(TextAnalyticsTest):
         for doc_idx, document_results in enumerate(results):
             assert len(document_results) == 6
             for action_idx, document_result in enumerate(document_results):
-                self.assertEqual(document_result.id, document_order[doc_idx])
-                self.assertEqual(self.document_result_to_action_type(document_result), action_order[action_idx])
+                assert document_result.id == document_order[doc_idx]
+                assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_show_stats_and_model_version_multiple_tasks(self, client):
 
         def callback(resp):
@@ -424,6 +431,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_poller_metadata(self, client):
         docs = [{"id": "56", "text": ":)"}]
 
@@ -448,76 +456,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert poller.total_actions_count == 1
         assert poller.id
 
-    ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # def test_whole_batch_language_hint(self, client):
-    #     def callback(resp):
-    #         language_str = "\"language\": \"fr\""
-    #         if resp.http_request.body:
-    #             language = resp.http_request.body.count(language_str)
-    #             self.assertEqual(language, 3)
-
-    #     docs = [
-    #         u"This was the best day of my life.",
-    #         u"I did not like the hotel we stayed at. It was too expensive.",
-    #         u"The restaurant was not as good as I hoped."
-    #     ]
-
-    #     response = list(client.begin_analyze_actions(
-    #         docs,
-    #         actions=[
-    #             RecognizeEntitiesAction(),
-    #             ExtractKeyPhrasesAction(),
-    #             RecognizePiiEntitiesAction()
-    #         ],
-    #         language="fr",
-    #         polling_interval=self._interval(),
-    #         raw_response_hook=callback
-    #     ).result())
-
-    #     for document_result in response:
-    #         for doc in document_result.document_results:
-    #             self.assertFalse(doc.is_error)
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer(client_kwargs={
-    #     "default_language": "en"
-    # })
-    # def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
-    #     def callback(resp):
-    #         pass
-    #         # if resp.http_request.body:
-    #         #     language_str = "\"language\": \"es\""
-    #         #     language = resp.http_request.body.count(language_str)
-    #         #     self.assertEqual(language, 2)
-    #         #     language_str = "\"language\": \"en\""
-    #         #     language = resp.http_request.body.count(language_str)
-    #         #     self.assertEqual(language, 1)
-
-    #     docs = [
-    #         TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
-    #         TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
-    #         TextDocumentInput(id="3", text="猫は幸せ"),
-    #     ]
-
-    #     response = list(client.begin_analyze_actions(
-    #         docs,
-    #         actions=[
-    #             RecognizeEntitiesAction(),
-    #             ExtractKeyPhrasesAction(),
-    #             RecognizePiiEntitiesAction()
-    #         ],
-    #         polling_interval=self._interval(),
-    #     ).result())
-
-    #     for document_result in response:
-    #         for doc in document_result.document_results:
-    #             assert not doc.is_error
-
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_invalid_language_hint_method(self, client):
         response = list(client.begin_analyze_actions(
             ["This should fail because we're passing in an invalid language hint"],
@@ -539,6 +480,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
@@ -558,10 +500,11 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             client.begin_analyze_actions(
                 docs,
                 actions=[
@@ -577,6 +520,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
@@ -596,6 +540,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze_actions(None, None)
@@ -603,6 +548,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
@@ -618,6 +564,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 25)))] # max number of documents is 25
@@ -650,9 +597,9 @@ class TestAnalyze(TextAnalyticsTest):
 
         for doc_idx, page in enumerate(pages):
             for action_idx, document_result in enumerate(page):
-                self.assertEqual(document_result.id, str(doc_idx))
+                assert document_result.id == str(doc_idx)
                 action_type = self.document_result_to_action_type(document_result)
-                self.assertEqual(action_type, action_order[action_idx])
+                assert action_type == action_order[action_idx]
                 action_type_to_document_results[action_type].append(document_result)
 
         assert len(action_type_to_document_results) == len(action_order)
@@ -661,6 +608,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
@@ -680,6 +628,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_disable_service_logs(
             self,
             textanalytics_custom_text_endpoint,
@@ -691,7 +640,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
@@ -735,6 +684,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_pii_action_categories_filter(self, client):
 
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
@@ -763,6 +713,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_partial_success_for_actions(self, client):
         docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
@@ -800,6 +751,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_multiple_of_same_action(self, client):
         docs = [
             {"id": "28", "text": "My SSN is 859-98-0987. Here is another sentence."},
@@ -890,6 +842,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_multiple_of_same_action_with_partial_results(self, client):
         docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
                 {"id": "2", "text": ""}]
@@ -926,6 +879,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_all_successful_passing_dict_extract_summary_action(self, client):
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
@@ -971,6 +925,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_extract_summary_action_with_options(self, client):
         docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
@@ -1016,6 +971,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_extract_summary_partial_results(self, client):
         docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
 
@@ -1034,6 +990,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(document_results[1][0], ExtractSummaryResult)
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_single_category_classify(
             self,
             textanalytics_custom_text_endpoint,
@@ -1041,6 +998,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1071,6 +1029,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.classification.confidence_score
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_multi_category_classify(
             self,
             textanalytics_custom_text_endpoint,
@@ -1078,6 +1037,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1109,6 +1069,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.confidence_score
 
     @TextAnalyticsPreparer()
+    @recorded_by_proxy
     def test_recognize_custom_entities(
             self,
             textanalytics_custom_text_endpoint,
@@ -1116,6 +1077,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1199,6 +1161,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
     def test_analyze_continuation_token(self, client):
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1282,7 +1245,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "./mock_test_responses/action_error_no_target.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1343,7 +1306,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "./mock_test_responses/action_error_with_targets.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
@@ -1430,7 +1393,7 @@ class TestAnalyze(TextAnalyticsTest):
                 "./mock_test_responses/action_job_failure.json",
             )
         )
-        with open(path_to_mock_json_response, "r") as fd:
+        with open(path_to_mock_json_response) as fd:
             mock_json_response = json.loads(fd.read())
 
         response.text = lambda encoding=None: json.dumps(mock_json_response)
