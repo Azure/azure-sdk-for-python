@@ -176,14 +176,14 @@ directive:
       $["operationId"] = "listMetricEnrichmentStatus";
 ```
 
-### createAnomalyAlertingConfiguration -> createAlertingConfiguration
+### createAnomalyAlertingConfiguration -> createAlertConfiguration
 
 ```yaml
 directive:
   - from: swagger-document
     where: $["paths"]["/alert/anomaly/configurations"]["post"]
     transform: >
-      $["operationId"] = "createAlertingConfiguration";
+      $["operationId"] = "createAlertConfiguration";
 ```
 
 ### createAnomalyDetectionConfiguration -> createDetectionConfiguration

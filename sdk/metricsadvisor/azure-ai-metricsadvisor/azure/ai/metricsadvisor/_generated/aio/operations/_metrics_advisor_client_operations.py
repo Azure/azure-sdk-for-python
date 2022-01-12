@@ -19,7 +19,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._metrics_advisor_client_operations import build_add_feedback_request, build_create_alerting_configuration_request, build_create_data_feed_request, build_create_datasource_credential_request, build_create_detection_configuration_request, build_create_hook_request, build_delete_alert_configuration_request, build_delete_data_feed_request, build_delete_datasource_credential_request, build_delete_detection_configuration_request, build_delete_hook_request, build_get_active_series_count_request, build_get_alert_configuration_request, build_get_anomalies_by_anomaly_detection_configuration_request, build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request, build_get_anomaly_detection_configuration_request, build_get_data_feed_ingestion_progress_request, build_get_data_feed_request, build_get_datasource_credential_request, build_get_feedback_request, build_get_hook_request, build_get_incidents_by_anomaly_detection_configuration_next_pages_request, build_get_incidents_by_anomaly_detection_configuration_request, build_get_incidents_from_alert_by_anomaly_alerting_configuration_request, build_list_alert_configurations_request, build_list_alerts_request, build_list_anomaly_dimension_values_request, build_list_data_feed_ingestion_status_request, build_list_data_feeds_request, build_list_datasource_credentials_request, build_list_detection_configurations_request, build_list_feedback_request, build_list_hooks_request, build_list_incident_root_causes_request, build_list_metric_dimension_values_request, build_list_metric_enriched_series_data_request, build_list_metric_enrichment_status_request, build_list_metric_series_data_request, build_list_metric_series_definitions_request, build_refresh_data_feed_ingestion_request, build_update_alert_configuration_request, build_update_data_feed_request, build_update_datasource_credential_request, build_update_detection_configuration_request, build_update_hook_request
+from ...operations._metrics_advisor_client_operations import build_add_feedback_request, build_create_alert_configuration_request, build_create_data_feed_request, build_create_datasource_credential_request, build_create_detection_configuration_request, build_create_hook_request, build_delete_alert_configuration_request, build_delete_data_feed_request, build_delete_datasource_credential_request, build_delete_detection_configuration_request, build_delete_hook_request, build_get_active_series_count_request, build_get_alert_configuration_request, build_get_anomalies_by_anomaly_detection_configuration_request, build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request, build_get_anomaly_detection_configuration_request, build_get_data_feed_ingestion_progress_request, build_get_data_feed_request, build_get_datasource_credential_request, build_get_feedback_request, build_get_hook_request, build_get_incidents_by_anomaly_detection_configuration_next_pages_request, build_get_incidents_by_anomaly_detection_configuration_request, build_get_incidents_from_alert_by_anomaly_alerting_configuration_request, build_list_alert_configurations_request, build_list_alerts_request, build_list_anomaly_dimension_values_request, build_list_data_feed_ingestion_status_request, build_list_data_feeds_request, build_list_datasource_credentials_request, build_list_detection_configurations_request, build_list_feedback_request, build_list_hooks_request, build_list_incident_root_causes_request, build_list_metric_dimension_values_request, build_list_metric_enriched_series_data_request, build_list_metric_enrichment_status_request, build_list_metric_series_data_request, build_list_metric_series_definitions_request, build_refresh_data_feed_ingestion_request, build_update_alert_configuration_request, build_update_data_feed_request, build_update_datasource_credential_request, build_update_detection_configuration_request, build_update_hook_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -234,7 +234,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
 
 
     @distributed_trace_async
-    async def create_alerting_configuration(
+    async def create_alert_configuration(
         self,
         body: "_models.AnomalyAlertConfiguration",
         **kwargs: Any
@@ -260,10 +260,10 @@ class MetricsAdvisorClientOperationsMixinGenerated:
 
         _json = self._serialize.body(body, 'AnomalyAlertConfiguration')
 
-        request = build_create_alerting_configuration_request(
+        request = build_create_alert_configuration_request(
             content_type=content_type,
             json=_json,
-            template_url=self.create_alerting_configuration.metadata['url'],
+            template_url=self.create_alert_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -286,7 +286,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations'}  # type: ignore
+    create_alert_configuration.metadata = {'url': '/alert/anomaly/configurations'}  # type: ignore
 
 
     @distributed_trace

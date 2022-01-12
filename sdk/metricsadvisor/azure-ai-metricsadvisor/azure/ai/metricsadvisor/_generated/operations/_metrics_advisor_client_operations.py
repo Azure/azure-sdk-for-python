@@ -132,7 +132,7 @@ def build_delete_alert_configuration_request(
     )
 
 
-def build_create_alerting_configuration_request(
+def build_create_alert_configuration_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -1640,7 +1640,7 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
 
 
     @distributed_trace
-    def create_alerting_configuration(
+    def create_alert_configuration(
         self,
         body,  # type: "_models.AnomalyAlertConfiguration"
         **kwargs  # type: Any
@@ -1667,10 +1667,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
 
         _json = self._serialize.body(body, 'AnomalyAlertConfiguration')
 
-        request = build_create_alerting_configuration_request(
+        request = build_create_alert_configuration_request(
             content_type=content_type,
             json=_json,
-            template_url=self.create_alerting_configuration.metadata['url'],
+            template_url=self.create_alert_configuration.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1693,7 +1693,7 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_alerting_configuration.metadata = {'url': '/alert/anomaly/configurations'}  # type: ignore
+    create_alert_configuration.metadata = {'url': '/alert/anomaly/configurations'}  # type: ignore
 
 
     @distributed_trace
