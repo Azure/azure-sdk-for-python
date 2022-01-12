@@ -809,19 +809,18 @@ class PhoneNumbersOperations(object):
 
         _body = _models.PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
         if _body is not None:
-            _content = self._serialize.body(_body, 'PhoneNumberCapabilitiesRequest')
+            _json = self._serialize.body(_body, 'PhoneNumberCapabilitiesRequest')
         else:
-            _content = None
+            _json = None
 
         request = build_update_capabilities_request_initial(
             phone_number=phone_number,
             api_version=api_version,
             content_type=content_type,
-            content=_content,
+            json=_json,
             template_url=self._update_capabilities_initial.metadata['url'],
         )
         request = _convert_request(request)
-        request.set_json_body(_content)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }

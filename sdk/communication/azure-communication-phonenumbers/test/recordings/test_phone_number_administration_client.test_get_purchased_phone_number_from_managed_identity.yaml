@@ -15,8 +15,8 @@ interactions:
   response:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
-        "phoneNumberType": "tollFree", "capabilities": {"calling": "outbound", "sms":
-        "inbound+outbound"}, "assignmentType": "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00",
+        "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound", "sms":
+        "outbound"}, "assignmentType": "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}'
     headers:
       api-supported-versions:
@@ -24,9 +24,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Jan 2022 21:15:58 GMT
+      - Wed, 12 Jan 2022 16:24:22 GMT
       ms-cv:
-      - Tj8MrXlxzE2XmovaMPymag.0
+      - vyQH496Y/0OFVUm/apv27Q.0
       request-context:
       - appId=
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 1585ms
+      - 3489ms
     status:
       code: 200
       message: OK

@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 07 Jan 2022 21:14:34 GMT
+      - Wed, 12 Jan 2022 16:28:30 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -15,55 +15,55 @@ interactions:
   response:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
-        "phoneNumberType": "tollFree", "capabilities": {"calling": "outbound", "sms":
-        "inbound+outbound"}, "assignmentType": "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00",
+        "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound", "sms":
+        "outbound"}, "assignmentType": "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}'
     headers:
       api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 07 Jan 2022 21:14:32 GMT
-      ms-cv: b4mYiS/bRkGMKMOi1Z395g.0
+      date: Wed, 12 Jan 2022 16:28:29 GMT
+      ms-cv: ozmCkEcIpkupIIFU9XgyIg.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1360ms
+      x-processing-time: 3306ms
     status:
       code: 200
       message: OK
     url: sanitized
 - request:
-    body: '{"calling": "inbound", "sms": "outbound"}'
+    body: '{"calling": "outbound", "sms": "inbound+outbound"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '41'
+      - '50'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 07 Jan 2022 21:14:36 GMT
+      - Wed, 12 Jan 2022 16:28:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2022-01-11-preview2
   response:
     body:
-      string: '{"capabilitiesUpdateId": "e54c6e1d-7a7c-49eb-8d34-daebeb3ae98f"}'
+      string: '{"capabilitiesUpdateId": "a31f7ba0-f997-44bc-869a-3bcf05a8cfb5"}'
     headers:
       access-control-expose-headers: Operation-Location,Location,operation-id,capabilities-id
       api-supported-versions: 2021-03-07, 2022-01-11-preview2
-      capabilities-id: e54c6e1d-7a7c-49eb-8d34-daebeb3ae98f
+      capabilities-id: a31f7ba0-f997-44bc-869a-3bcf05a8cfb5
       content-type: application/json; charset=utf-8
-      date: Fri, 07 Jan 2022 21:14:34 GMT
-      ms-cv: WiLzwGuTKUOsxNODwUBO+Q.0
-      operation-id: capabilities_e54c6e1d-7a7c-49eb-8d34-daebeb3ae98f
-      operation-location: /phoneNumbers/operations/capabilities_e54c6e1d-7a7c-49eb-8d34-daebeb3ae98f?api-version=2022-01-11-preview2
+      date: Wed, 12 Jan 2022 16:28:34 GMT
+      ms-cv: oAS87KWL4UCKh4UPlKiRbQ.0
+      operation-id: capabilities_a31f7ba0-f997-44bc-869a-3bcf05a8cfb5
+      operation-location: /phoneNumbers/operations/capabilities_a31f7ba0-f997-44bc-869a-3bcf05a8cfb5?api-version=2022-01-11-preview2
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1704ms
+      x-processing-time: 4505ms
     status:
       code: 202
       message: Accepted
@@ -74,27 +74,27 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 07 Jan 2022 21:15:08 GMT
+      - Wed, 12 Jan 2022 16:29:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_e54c6e1d-7a7c-49eb-8d34-daebeb3ae98f?api-version=2022-01-11-preview2
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_a31f7ba0-f997-44bc-869a-3bcf05a8cfb5?api-version=2022-01-11-preview2
   response:
     body:
       string: '{"operationType": "updatePhoneNumberCapabilities", "status": "succeeded",
         "resourceLocation": "/phoneNumbers/+18332321221?api-version=2022-01-11-preview2",
-        "createdDateTime": "2022-01-07T21:14:34.2685648+00:00", "id": "sanitized",
+        "createdDateTime": "2022-01-12T16:28:34.0845568+00:00", "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers: Location
       api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 07 Jan 2022 21:15:04 GMT
-      ms-cv: nv3FraZVXEe0/vOvzvmw6w.0
+      date: Wed, 12 Jan 2022 16:29:06 GMT
+      ms-cv: utOJoUOu+EGOm1vqiXFVmQ.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 189ms
+      x-processing-time: 1332ms
     status:
       code: 200
       message: OK
@@ -105,7 +105,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 07 Jan 2022 21:15:09 GMT
+      - Wed, 12 Jan 2022 16:29:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -113,18 +113,18 @@ interactions:
   response:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
-        "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound", "sms":
-        "outbound"}, "assignmentType": "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00",
+        "phoneNumberType": "tollFree", "capabilities": {"calling": "outbound", "sms":
+        "inbound+outbound"}, "assignmentType": "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}'
     headers:
       api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 07 Jan 2022 21:15:06 GMT
-      ms-cv: Sf3so1KUJUamjfi6SHYoLw.0
+      date: Wed, 12 Jan 2022 16:29:09 GMT
+      ms-cv: 7iIVtF6m20W+mjph3x7+0w.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1569ms
+      x-processing-time: 3014ms
     status:
       code: 200
       message: OK
