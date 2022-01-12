@@ -1,14 +1,8 @@
 # Release History
 
 ## 1.0.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+- Adds support for API verion `2022-01-11-preview2`
 
 ## 1.0.1 (2021-06-08)
 ### Bug Fixes
