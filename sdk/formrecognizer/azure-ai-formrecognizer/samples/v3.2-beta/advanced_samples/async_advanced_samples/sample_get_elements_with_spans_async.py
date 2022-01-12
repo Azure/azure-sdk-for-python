@@ -61,6 +61,7 @@ async def get_elements_with_spans_async():
             "..",
             "..",
             "..",
+            "..",
             "./sample_forms/forms/Form_1.jpg",
         )
     )
@@ -140,5 +141,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

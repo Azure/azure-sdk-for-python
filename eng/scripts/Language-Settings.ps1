@@ -204,24 +204,27 @@ function DockerValidation{
     [string]$workingDirectory
   ) 
   if ($PackageSourceOverride) {
-    docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
-       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 | Out-Null
+    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 
   }
   else {
-    docker run -v "${workingDirectory}:/workdir/out" `
-      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1 | Out-Null
+    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId"
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" `
+      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1
   }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
   # If the docker failed because of docker itself instead of the application, 
   # we should skip the validation and keep the packages. 
+  
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
-    Write-Host $commandLine
+    $commandLine | ForEach-Object { Write-Debug $_ }
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
     FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
-    Write-Host $commandLine
-    LogWarning "Package $($Package.name) ref docs validation failed."
+    $commandLine | ForEach-Object { Write-Debug $_ }
+    LogWarning "Package $packageName ref docs validation failed."
     return $false
   }
   return $true
@@ -560,16 +563,8 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
-function Validate-Python-DocMsPackages
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageSourceOverride, $DocValidationImageId)
 {
-  Param(
-    [Parameter(Mandatory=$true)]
-    [PSCustomObject]$PackageInfo,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride,
-    [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId
-  )
   $packageName = $packageInfo.Name
   $packageVersion = $packageInfo.Version
   ValidatePackage -packageName $packageName -packageVersion $packageVersion `

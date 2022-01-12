@@ -1,0 +1,138 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "358",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b9037129-5d10-11ec-98d0-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Microsoft was founded by Bill Gates and Paul Allen.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant had really good food. I recommend you try it.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ceed943b-eec3-4632-9699-3acdeb7dbe3f",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:04:54 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "175"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "0",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.01,
+              "neutral": 0.99,
+              "negative": 0.0
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.01,
+                  "neutral": 0.99,
+                  "negative": 0.0
+                },
+                "offset": 0,
+                "length": 51,
+                "text": "Microsoft was founded by Bill Gates and Paul Allen."
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "1",
+            "sentiment": "negative",
+            "confidenceScores": {
+              "positive": 0.01,
+              "neutral": 0.22,
+              "negative": 0.77
+            },
+            "sentences": [
+              {
+                "sentiment": "negative",
+                "confidenceScores": {
+                  "positive": 0.01,
+                  "neutral": 0.45,
+                  "negative": 0.54
+                },
+                "offset": 0,
+                "length": 38,
+                "text": "I did not like the hotel we stayed at."
+              },
+              {
+                "sentiment": "negative",
+                "confidenceScores": {
+                  "positive": 0.0,
+                  "neutral": 0.0,
+                  "negative": 1.0
+                },
+                "offset": 39,
+                "length": 21,
+                "text": "It was too expensive."
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "sentiment": "positive",
+            "confidenceScores": {
+              "positive": 0.98,
+              "neutral": 0.02,
+              "negative": 0.0
+            },
+            "sentences": [
+              {
+                "sentiment": "positive",
+                "confidenceScores": {
+                  "positive": 1.0,
+                  "neutral": 0.0,
+                  "negative": 0.0
+                },
+                "offset": 0,
+                "length": 36,
+                "text": "The restaurant had really good food."
+              },
+              {
+                "sentiment": "positive",
+                "confidenceScores": {
+                  "positive": 0.96,
+                  "neutral": 0.03,
+                  "negative": 0.01
+                },
+                "offset": 37,
+                "length": 23,
+                "text": "I recommend you try it."
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [
+          {
+            "id": "3",
+            "error": {
+              "code": "InvalidArgument",
+              "message": "Invalid document in request.",
+              "innererror": {
+                "code": "InvalidDocument",
+                "message": "Document text is empty."
+              }
+            }
+          }
+        ],
+        "modelVersion": "2020-04-01"
+      }
+    }
+  ],
+  "Variables": {}
+}
