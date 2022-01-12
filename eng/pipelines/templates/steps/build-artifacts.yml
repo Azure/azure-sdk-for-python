@@ -101,6 +101,17 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Upload Package SBOM'
+    inputs:
+      BuildDropPath: $(Build.ArtifactStagingDirectory)
+
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Upload Documentation SBOM'
+    condition: and(succeeded(), ${{ parameters.BuildDocs }})
+    inputs:
+      BuildDropPath: $(Build.SourcesDirectory)/_docs
+
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
