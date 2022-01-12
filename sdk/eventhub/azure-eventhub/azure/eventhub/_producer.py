@@ -143,7 +143,7 @@ class EventHubProducer(
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _send_event_data(self, timeout_time=None):
-        # type: (Optional[float], Optional[Exception]) -> None
+        # type: (Optional[float]) -> None
         if self._unsent_events:
             self._open()
             timeout = timeout_time - time.time() if timeout_time else 0

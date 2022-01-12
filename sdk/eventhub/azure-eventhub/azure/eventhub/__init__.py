@@ -17,13 +17,14 @@ from ._connection_string_parser import (
     parse_connection_string,
     EventHubConnectionStringProperties
 )
-
+from ._constants import TransportType
 
 __all__ = [
     "EventData",
     "EventDataBatch",
     "EventHubProducerClient",
     "EventHubConsumerClient",
+    "TransportType",
     "EventHubSharedKeyCredential",
     "CheckpointStore",
     "CloseReason",
