@@ -78,6 +78,11 @@ steps:
       displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
       workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
   
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Upload Conda Package SBOM'
+    inputs:
+      BuildDropPath: '$(Agent.BuildDirectory)/conda/output'
+
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Agent.BuildDirectory)/conda/output'

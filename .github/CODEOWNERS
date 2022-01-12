@@ -23,7 +23,7 @@
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft @jalauzon-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
@@ -66,7 +66,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh 
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @simorenoh @gahl-levy
@@ -138,6 +138,9 @@
 
 # PRLabel: %VideoAnalyzer
 /sdk/videoanalyzer/                                                  @hivyas
+
+# PRLabel: %WebPubSub
+/sdk/webpubsub/                                                      @msyyc @iscai-msft
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
@@ -729,7 +732,7 @@
 
 
 # Management Plane
-/**/*mgmt*/                                                          @RAY-316 @msyyc
+/**/*mgmt*/                                                          @BigCat20196	 @msyyc
 
 
 ###########
