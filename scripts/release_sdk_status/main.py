@@ -236,7 +236,7 @@ def get_test_result(txt_path):
 
 
 def run_playback_test(service_name):
-    if os.getenv('SKIP_COVERAGE'):
+    if os.getenv('SKIP_COVERAGE') in ('true', 'yes'):
         return '-, -, -, -\n'
 
     # eg: coverage_path='$(pwd)/sdk-repo/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/'

@@ -18,7 +18,7 @@ schedules:
 jobs:
 - job: ReleaseSdkStatus
   displayName: ReleaseSdkStatus Python 3.8
-  timeoutInMinutes: 30
+  timeoutInMinutes: 300
   strategy:
     maxParallel: 1
   pool:
