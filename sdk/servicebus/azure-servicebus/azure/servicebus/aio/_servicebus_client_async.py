@@ -5,6 +5,7 @@
 from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
+from typing_extensions import Literal
 
 import uamqp
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -21,12 +22,15 @@ from .._common.auto_lock_renewer import AutoLockRenewer
 from .._common.utils import generate_dead_letter_entity_name, strip_protocol_from_uri
 from .._common.constants import (
     ServiceBusSubQueue,
-    ServiceBusReceiveMode
+    ServiceBusReceiveMode,
+    ServiceBusSessionFilter,
 )
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
+NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -258,7 +262,7 @@ class ServiceBusClient(object):
         self,
         queue_name: str,
         *,
-        session_id: Optional[str] = None,
+        session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -274,13 +278,14 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful queue, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
-        :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE_SESSION
+        :keyword sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
+        :paramtype sub_queue: str or ~azure.servicebus.ServiceBusSubQueue
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
          are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
          lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -408,7 +413,7 @@ class ServiceBusClient(object):
         topic_name: str,
         subscription_name: str,
         *,
-        session_id: Optional[str] = None,
+        session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[
             ServiceBusReceiveMode, str
@@ -426,13 +431,14 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful subscription, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
-        :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE_SESSION
+        :keyword sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
+        :paramtype sub_queue: str or ~azure.servicebus.ServiceBusSubQueue
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
          are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
          lock period before they will be removed from the subscription. Messages received with RECEIVE_AND_DELETE

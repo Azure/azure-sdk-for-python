@@ -21,6 +21,7 @@ from ._common.message import (
 from ._common.constants import (
     ServiceBusReceiveMode,
     ServiceBusSubQueue,
+    ServiceBusSessionFilter,
     NEXT_AVAILABLE_SESSION,
 )
 from ._common.auto_lock_renewer import AutoLockRenewer
@@ -37,6 +38,7 @@ __all__ = [
     "ServiceBusReceivedMessage",
     "NEXT_AVAILABLE_SESSION",
     "ServiceBusSubQueue",
+    "ServiceBusSessionFilter",
     "ServiceBusReceiveMode",
     "ServiceBusClient",
     "ServiceBusReceiver",

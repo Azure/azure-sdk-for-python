@@ -7,6 +7,7 @@ import collections
 import datetime
 import functools
 import logging
+import warnings
 from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING
 
 import six
@@ -647,7 +648,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return messages
 
     async def receive_deferred_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
@@ -670,6 +671,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -718,7 +721,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return messages
 
     async def peek_messages(
-        self, max_message_count: int = 1, *, sequence_number: int = 0, timeout: Optional[float] = None
+        self, max_message_count: int = 1, *, sequence_number: int = 0, timeout: Optional[float] = None, **kwargs: Any
     ) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
@@ -741,6 +744,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :dedent: 4
                 :caption: Peek messages in the queue.
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -879,7 +884,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
 
     async def renew_message_lock(
-        self, message: ServiceBusReceivedMessage, *, timeout: Optional[float] = None
+        self, message: ServiceBusReceivedMessage, *, timeout: Optional[float] = None, **kwargs: Any
     ) -> datetime.datetime:
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
@@ -913,6 +918,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Renew the lock on a received message.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         try:
             if self.session:
                 raise TypeError(

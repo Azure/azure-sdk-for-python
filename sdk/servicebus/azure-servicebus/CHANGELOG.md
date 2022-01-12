@@ -8,6 +8,7 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 
 - Added support for fixed (linear) retry backoff:
   - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+- Added new enum class `ServiceBusSessionFilter`, which is the type of existing `NEXT_AVAILABLE_SESSION` value.
 
 ### Breaking Changes
 
