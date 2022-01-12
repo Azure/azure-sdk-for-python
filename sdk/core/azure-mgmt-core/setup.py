@@ -68,5 +68,5 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.15.0",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
 )
