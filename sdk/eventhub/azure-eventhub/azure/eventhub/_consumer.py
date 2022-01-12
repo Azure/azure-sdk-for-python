@@ -8,7 +8,7 @@ import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
 from urllib.parse import urlparse
 
 from ._pyamqp import (
@@ -33,8 +33,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from typing import Deque
-    from ._pyamqp.authentication import JWTTokenAuth, SASTokenAuth
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
 
@@ -106,9 +105,12 @@ class EventHubConsumer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._retry_policy = error.RetryPolicy(
-            max_retries=self._client._config.max_retries,  # pylint:disable=protected-access
+            retry_total=self._client._config.max_retries,  # pylint:disable=protected-access
+            retry_backoff_factor=self._client._config.backoff_factor,  # pylint:disable=protected-access
+            retry_backoff_max=self._client._config.backoff_max,  # pylint:disable=protected-access
+            retry_mode=self._client._config.retry_mode,  # pylint:disable=protected-access
             no_retry_condition=NO_RETRY_ERRORS,
-            custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
+            custom_condition_backoff=CUSTOM_CONDITION_BACKOFF,
         )
         self._reconnect_backoff = 1
         self._link_properties = {}  # type: Dict[types.AMQPType, types.AMQPType]

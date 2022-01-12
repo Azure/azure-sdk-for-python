@@ -1,6 +1,20 @@
 # Release History
 
-## 5.7.0 (Unreleased)
+## 5.8.0a1 (Unreleased)
+
+Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out which will be added back in future previews as we work towards a stable release:
+  - Async is not supported.
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+### Other Changes
+
+- uAMQP dependency is removed.
+
+## 5.7.0 (2022-01-11)
 
 This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
 
@@ -8,8 +22,6 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 
 - Added support for fixed (linear) retry backoff:
   - Sync/async `EventHubProducerClient` and `EventHubConsumerClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

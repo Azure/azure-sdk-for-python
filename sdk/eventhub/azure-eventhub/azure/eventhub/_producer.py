@@ -126,11 +126,11 @@ class EventHubProducer(
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
         self._handler = SendClient(
-            self._client._address.hostname,
+            self._client._address.hostname,  # pylint: disable=protected-access
             self._target,
             auth=auth,
             idle_timeout=self._idle_timeout,
-            network_trace=self._client._config.network_tracing,
+            network_trace=self._client._config.network_tracing,  # pylint: disable=protected-access
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
@@ -142,8 +142,8 @@ class EventHubProducer(
         # type: () -> None
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _send_event_data(self, timeout_time=None, last_exception=None):
-        # type: (Optional[float], Optional[Exception]) -> None
+    def _send_event_data(self, timeout_time=None):
+        # type: (Optional[float]) -> None
         if self._unsent_events:
             self._open()
             timeout = timeout_time - time.time() if timeout_time else 0
@@ -154,8 +154,8 @@ class EventHubProducer(
         # type: (Optional[float]) -> None
         return self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
+    @staticmethod
     def _wrap_eventdata(
-        self,
         event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
         span,  # type: Optional[AbstractSpan]
         partition_key,  # type: Optional[AnyStr]

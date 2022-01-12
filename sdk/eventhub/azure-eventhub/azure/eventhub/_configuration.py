@@ -3,11 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Optional, Dict, Any
+from urllib.parse import urlparse
 
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+from azure.core.pipeline.policies import RetryMode
 
 from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
@@ -17,6 +15,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
         self.max_retries = self.retry_total  # type: int
+        self.retry_mode = RetryMode(kwargs.get("retry_mode", "exponential"))
         self.backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float
         self.backoff_max = kwargs.get("retry_backoff_max", 120)  # type: int
         self.network_tracing = kwargs.get("network_tracing", False)  # type: bool
