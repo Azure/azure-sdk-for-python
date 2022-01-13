@@ -36,7 +36,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Text Analytics account][azure_text_analytics_account] to run these samples.
 
