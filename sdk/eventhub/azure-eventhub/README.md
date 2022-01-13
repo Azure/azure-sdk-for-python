@@ -42,7 +42,7 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 Install the Azure Event Hubs client library for Python with pip:
 
 ```
-$ pip install azure-eventhub
+$ pip install azure-eventhub --pre
 ```
 
 ### Authenticate the client
@@ -298,20 +298,7 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 ### Logging
 
 - Enable `azure.eventhub` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
-- There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
-```python
-import logging
-
-# The logging levels below may need to be adjusted based on the logging that you want to suppress.
-uamqp_logger = logging.getLogger('uamqp')
-uamqp_logger.setLevel(logging.ERROR)
-
-# or even further fine-grained control, suppressing the warnings in uamqp.connection module
-uamqp_connection_logger = logging.getLogger('uamqp.connection')
-uamqp_connection_logger.setLevel(logging.ERROR)
-```
 
 ## Next steps
 
@@ -327,14 +314,6 @@ Reference documentation is available [here](https://azuresdkdocs.blob.core.windo
 
 The EventHubs SDK integrates nicely with the [Schema Registry][schemaregistry_service] service and [Avro][avro].
 For more information, please refer to [Schema Registry SDK][schemaregistry_repo] and [Schema Registry Avro Encoder SDK][schemaregistry_avroencoder_repo].
-
-### Building uAMQP wheel from source
-
-`azure-eventhub` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
-uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-eventhub`.
-
-If you're running on a platform for which uAMQP wheels are not provided, please follow
- the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
 
 ### Provide Feedback
 
