@@ -3,6 +3,7 @@
 ### 4.3.0b2 (Unreleased)
 
 #### Features Added
+- Added support for split-proof queries for the async client
 
 #### Breaking Changes
 
