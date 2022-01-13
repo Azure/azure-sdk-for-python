@@ -22,19 +22,23 @@
 import unittest
 
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+import pytest
+
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtNetworkTest(AzureMgmtTestCase):
 
-    def setUp(self):
-        super(MgmtNetworkTest, self).setUp()
+@pytest.mark.live_test_only
+class TestMgmtNetwork(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"

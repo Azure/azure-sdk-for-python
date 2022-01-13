@@ -55,9 +55,7 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -65,6 +63,7 @@ setup(
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
@@ -74,12 +73,5 @@ setup(
         "cryptography>=2.1.4",
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
-    ],
-    extras_require={
-        # dependencies for the vendored storage blob
-        ":python_version<'3.0'": ['futures'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ["typing"]
-        # end of dependencies for the vendored storage blob
-    },
+    ]
 )

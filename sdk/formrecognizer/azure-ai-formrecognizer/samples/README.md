@@ -71,7 +71,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 Please see the samples [here][v3.0.0-samples-tag].
 
 ## Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
+* Python 3.7 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Form Recognizer account][azure_form_recognizer_account] to run these samples.
 

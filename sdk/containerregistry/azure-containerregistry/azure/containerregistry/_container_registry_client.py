@@ -356,8 +356,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, DefaultAzureCredential())
             client.delete_manifest("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
@@ -383,8 +383,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             for artifact in client.list_tag_properties():
                 client.delete_tag("my_repository", tag.name)
         """
@@ -406,8 +406,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifest_properties():
                 properties = client.get_manifest_properties("my_repository", artifact.digest)
         """
@@ -436,8 +436,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             for tag in client.list_tag_properties():
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
@@ -467,8 +467,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             for tag in client.list_tag_properties():
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
@@ -608,8 +608,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             for artifact in client.list_manifest_properties():
                 received_properties = client.update_manifest_properties(
                     "my_repository",
@@ -677,8 +677,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             from azure.containerregistry import ContainerRepositoryClient, TagWriteableProperties
             from azure.identity import DefaultAzureCredential
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
             tag_identifier = "latest"
             received = client.update_tag_properties(
                 "my_repository",

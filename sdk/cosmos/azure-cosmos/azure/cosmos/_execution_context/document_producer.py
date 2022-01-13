@@ -26,8 +26,6 @@ database service.
 import numbers
 from collections import deque
 
-import six
-
 from azure.cosmos import _base, exceptions, http_constants
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
@@ -172,7 +170,7 @@ class _OrderByHelper(object):
             return 2
         if isinstance(val, numbers.Number):
             return 4
-        if isinstance(val, six.string_types):
+        if isinstance(val, str):
             return 5
 
         raise TypeError("unknown type" + str(val))
@@ -194,7 +192,7 @@ class _OrderByHelper(object):
             return "Boolean"
         if isinstance(val, numbers.Number):
             return "Number"
-        if isinstance(val, six.string_types):
+        if isinstance(val, str):
             return "String"
 
         raise TypeError("unknown type" + str(val))
