@@ -14,39 +14,42 @@
 import unittest
 
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
+class TestMgmtResourceSubscriptions(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtResourceSubscriptionsTest, self).setUp()
-        self.subscriptions_client = self.create_basic_client(
+    def setup_method(self, method):
+        self.subscriptions_client = self.create_mgmt_client(
             azure.mgmt.resource.SubscriptionClient
         )
 
+    @recorded_by_proxy
     def test_subscriptions(self):
         subs = list(self.subscriptions_client.subscriptions.list())
-        self.assertGreater(len(subs), 0)
+        assert len(subs) >= 0
         
         # [ZIM] temporarily disabled
-        # self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.Subscription) for v in subs))
+        # assert all(isinstance(v, azure.mgmt.resource.subscriptions.models.Subscription) for v in subs)
 
-        locations = list(self.subscriptions_client.subscriptions.list_locations(self.settings.SUBSCRIPTION_ID))
-        self.assertGreater(len(locations), 0)
+        subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+        locations = list(self.subscriptions_client.subscriptions.list_locations(subscription_id))
+        assert len(locations) >= 0
 
         # [ZIM] temporarily disabled
-        # self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.Location) for v in locations))
+        # assert all(isinstance(v, azure.mgmt.resource.subscriptions.models.Location) for v in locations)
 
-        sub = self.subscriptions_client.subscriptions.get(self.settings.SUBSCRIPTION_ID)
-        self.assertEqual(sub.subscription_id, self.settings.SUBSCRIPTION_ID)
+        sub = self.subscriptions_client.subscriptions.get(subscription_id)
+        assert sub.subscription_id == subscription_id
 
+    @recorded_by_proxy
     def test_tenants(self):
         tenants = list(self.subscriptions_client.tenants.list())
-        self.assertGreater(len(tenants), 0)
+        assert len(tenants) >= 0
         
         # [ZIM] temporarily disabled
-        # self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.TenantIdDescription) for v in tenants))
+        # assert all(isinstance(v, azure.mgmt.resource.subscriptions.models.TenantIdDescription) for v in tenants)
 
+    @recorded_by_proxy
     def test_operations(self):
         self.subscriptions_client.operations.list()
 

@@ -25,11 +25,7 @@ import platform
 import azure.cosmos.documents as documents
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import test_config
-import six
-if six.PY2:
-    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-else:
-    from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 from azure.core.exceptions import ServiceRequestError
 
@@ -46,10 +42,7 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
     def _send_payload(self):
         self._set_headers()
         payload = "{\"id\":\"" + self.database_name + "\", \"_self\":\"self_link\"}"
-        if six.PY2:
-            self.wfile.write(payload)
-        else:
-            self.wfile.write(bytes(payload, "utf-8"))
+        self.wfile.write(bytes(payload, "utf-8"))
 
     def do_GET(self):
         self._send_payload()

@@ -24,7 +24,6 @@
 
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
-import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -53,7 +52,7 @@ def _parse_connection_str(conn_str, credential):
 def _build_auth(credential):
     # type: (Any) -> Dict[str, Any]
     auth = {}
-    if isinstance(credential, six.string_types):
+    if isinstance(credential, str):
         auth['masterKey'] = credential
     elif isinstance(credential, dict):
         if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
@@ -206,7 +205,7 @@ class CosmosClient(object):
     @staticmethod
     def _get_database_link(database_or_id):
         # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
-        if isinstance(database_or_id, six.string_types):
+        if isinstance(database_or_id, str):
             return "dbs/{}".format(database_or_id)
         try:
             return cast("DatabaseProxy", database_or_id).database_link

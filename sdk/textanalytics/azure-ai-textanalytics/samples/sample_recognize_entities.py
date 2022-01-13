@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -54,7 +52,7 @@ def sample_recognize_entities():
 
     for idx, review in enumerate(result):
         for entity in review.entities:
-            print("Entity '{}' has category '{}'".format(entity.text, entity.category))
+            print(f"Entity '{entity.text}' has category '{entity.category}'")
     # [END recognize_entities]
             if entity.category == 'Organization':
                 organization_to_reviews.setdefault(entity.text, [])

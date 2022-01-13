@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_get_sql_scripts_by_workspace_request(
@@ -322,13 +323,13 @@ class SqlScriptOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(sql_script, 'SqlScriptResource')
+        _json = self._serialize.body(sql_script, 'SqlScriptResource')
 
         request = build_create_or_update_sql_script_request_initial(
             sql_script_name=sql_script_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_sql_script_initial.metadata['url'],
         )
@@ -626,13 +627,13 @@ class SqlScriptOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_sql_script_request_initial(
             sql_script_name=sql_script_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_sql_script_initial.metadata['url'],
         )
         request = _convert_request(request)
