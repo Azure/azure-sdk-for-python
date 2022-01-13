@@ -19,7 +19,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 08:05:53 GMT
+      - Thu, 13 Jan 2022 07:36:31 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2022-01-01.15.0
   response:
@@ -31,13 +31,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 08:05:53 GMT
+      - Thu, 13 Jan 2022 07:36:32 GMT
       etag:
-      - '0x8D9D346DB8A035D'
+      - '0x8D9D6676AD743E4'
       last-modified:
-      - Sun, 09 Jan 2022 08:05:53 GMT
+      - Thu, 13 Jan 2022 07:36:31 GMT
       request-id:
-      - 84c78fef-7eaf-4f1f-9f99-9a132bab2126
+      - 57240d8a-3550-4780-a8ec-882503919b7b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -68,12 +68,12 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\",\"timestamp\":\"2022-01-09T08:05:54.7013717Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\",\"timestamp\":\"2022-01-13T07:36:33.1042774Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
@@ -82,9 +82,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 08:05:53 GMT
+      - Thu, 13 Jan 2022 07:36:32 GMT
       request-id:
-      - ede2bffe-aab2-4b3b-9287-90eb06563b93
+      - 977b9511-f653-4424-ac89-ec164baadb06
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -113,7 +113,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2022-01-01.15.0
   response:
@@ -125,13 +125,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 08:05:53 GMT
+      - Thu, 13 Jan 2022 07:36:32 GMT
       etag:
-      - '0x8D9D346DC5C9684'
+      - '0x8D9D6676C025849'
       last-modified:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
       request-id:
-      - 798be6d4-b53f-4fd7-8304-de7fe0b9bba2
+      - 182c048d-896c-4d68-bf61-ef8b198ba953
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -158,12 +158,12 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D346DC5C9684\",\"lastModified\":\"2022-01-09T08:05:54.786266Z\",\"creationTime\":\"2022-01-09T08:05:53.4062429Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-09T08:05:53.4062429Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-09T08:05:54.8202701Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D6676C025849\",\"lastModified\":\"2022-01-13T07:36:33.1704393Z\",\"creationTime\":\"2022-01-13T07:36:31.2103908Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:36:31.2103908Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-13T07:36:33.2004348Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
         \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
         \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
         \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
@@ -174,13 +174,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:32 GMT
       etag:
-      - '0x8D9D346DC5C9684'
+      - '0x8D9D6676C025849'
       last-modified:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
       request-id:
-      - d6737dda-29f9-42e4-8593-9a11c2ffcb32
+      - da42bd8e-e3a5-44a7-b869-e1e4521fc6af
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -211,7 +211,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 08:05:55 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2022-01-01.15.0
   response:
@@ -223,13 +223,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:32 GMT
       etag:
-      - '0x8D9D346DC7B90EF'
+      - '0x8D9D6676C1FA434'
       last-modified:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:33 GMT
       request-id:
-      - 31627727-1941-4962-a33f-dc5b24994fb7
+      - ba0b045f-8b7b-457a-87e5-006d87f2d244
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -250,41 +250,131 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
         azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 08:05:55 GMT
-    method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2022-01-01.15.0
+      - Thu, 13 Jan 2022 07:36:33 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"OperationInvalidForCurrentState\",\"message\":{\r\n
-        \   \"lang\":\"en-US\",\"value\":\"The specified operation is not valid for
-        the current state of the resource.\\nRequestId:d38891b1-6b0e-46f8-a8f6-6dd981309fec\\nTime:2022-01-09T08:05:55.0983718Z\"\r\n
-        \ }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D6676C1FA434\",\"lastModified\":\"2022-01-13T07:36:33.3624372Z\",\"creationTime\":\"2022-01-13T07:36:31.2103908Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:36:31.2103908Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-13T07:36:33.3944369Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"resizeErrors\":[\r\n
+        \   {\r\n      \"code\":\"AccountLowPriorityCoreQuotaReached\",\"message\":\"The
+        specified account has reached low priority core quota\"\r\n    }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
     headers:
-      content-length:
-      - '402'
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 08:05:54 GMT
+      - Thu, 13 Jan 2022 07:36:32 GMT
+      etag:
+      - '0x8D9D6676C1FA434'
+      last-modified:
+      - Thu, 13 Jan 2022 07:36:33 GMT
       request-id:
-      - d38891b1-6b0e-46f8-a8f6-6dd981309fec
+      - b2415b4e-f725-4d99-ac4e-364f1c3f17d0
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       x-content-type-options:
       - nosniff
     status:
-      code: 409
-      message: The specified operation is not valid for the current state of the resource.
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jan 2022 07:36:33 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/lifetimepoolstats?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#poolstats/@Element\",\"url\":\"https://batch.southcentralus.batch.azure.com/lifetimepoolstats\",\"usageStats\":{\r\n
+        \   \"startTime\":\"2022-01-13T07:36:14.0698912Z\",\"lastUpdateTime\":\"2022-01-13T07:36:14.0698912Z\",\"dedicatedCoreTime\":\"PT0S\"\r\n
+        \ },\"resourceStats\":{\r\n    \"startTime\":\"2022-01-13T07:36:14.0698912Z\",\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2022-01-13T07:36:14.0698912Z\",\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\":0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\":0.0,\"networkWriteGiB\":0.0\r\n
+        \ }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jan 2022 07:36:32 GMT
+      request-id:
+      - 0fe8df8b-cf1c-4540-a79c-78f192f68e7e
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Thu, 13 Jan 2022 07:36:33 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/poolusagemetrics?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#poolusagemetrics\",\"value\":[]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Thu, 13 Jan 2022 07:36:33 GMT
+      request-id:
+      - 51243620-95ca-4df9-8ca8-dcd4af58997d
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 version: 1

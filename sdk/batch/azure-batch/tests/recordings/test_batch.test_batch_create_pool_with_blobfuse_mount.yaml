@@ -24,7 +24,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:34:31 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
@@ -36,15 +36,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:34:32 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       etag:
-      - '0x8D9D3427A4C559C'
+      - '0x8D9D66308BBCA09'
       last-modified:
-      - Sun, 09 Jan 2022 07:34:32 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       location:
       - https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb
       request-id:
-      - ee147c94-5260-48e6-968e-52e6e7332d0e
+      - 9996c072-b4e7-4da2-a413-7aa74d79d349
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -71,12 +71,12 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:34:32 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D9D3427A4C559C\",\"lastModified\":\"2022-01-09T07:34:32.2761116Z\",\"creationTime\":\"2022-01-09T07:34:32.2761116Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-09T07:34:32.2761116Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-09T07:34:32.2761116Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D9D66308BBCA09\",\"lastModified\":\"2022-01-13T07:05:08.6266889Z\",\"creationTime\":\"2022-01-13T07:05:08.6266889Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
@@ -89,13 +89,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:34:32 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       etag:
-      - '0x8D9D3427A4C559C'
+      - '0x8D9D66308BBCA09'
       last-modified:
-      - Sun, 09 Jan 2022 07:34:32 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       request-id:
-      - fd5c52f3-6a62-4c6b-a4e8-2871f47ab918
+      - e2ddb328-8ea3-44b2-a2aa-3392fda84059
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
