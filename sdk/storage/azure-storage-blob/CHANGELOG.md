@@ -1,14 +1,23 @@
 # Release History
 
-## 12.10.0b2 (Unreleased)
+## 12.10.0b3 (Unreleased)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
 
-### Breaking Changes
+### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+
+## 12.10.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12
+- Added support for blob names container invalid XML characters. Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
 
 ### Bugs Fixed
-
-### Other Changes
+- BlobPrefix for aio operations is now exposed to be imported, previously it was private.
 
 ## 12.10.0b1 (2021-11-08)
 **New Features**

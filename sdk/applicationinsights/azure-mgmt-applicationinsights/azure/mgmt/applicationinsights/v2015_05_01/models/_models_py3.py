@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -1405,7 +1405,7 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
     :type operator: str
     :param value: the value for the operator to function over. This can be a number (e.g., > 100),
      a string (timestamp >= '2017-09-01') or array of values.
-    :type value: object
+    :type value: any
     :param key: When filtering over custom dimensions, this key will be used as the name of the
      custom dimension.
     :type key: str
@@ -1423,7 +1423,7 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         *,
         column: Optional[str] = None,
         operator: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         key: Optional[str] = None,
         **kwargs
     ):

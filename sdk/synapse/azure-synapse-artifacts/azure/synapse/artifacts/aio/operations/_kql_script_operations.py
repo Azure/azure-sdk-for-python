@@ -60,13 +60,13 @@ class KqlScriptOperations:
         api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(kql_script, 'KqlScriptResource')
+        _json = self._serialize.body(kql_script, 'KqlScriptResource')
 
         request = build_create_or_update_request_initial(
             kql_script_name=kql_script_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -346,13 +346,13 @@ class KqlScriptOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _rename_request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_rename_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_rename_request, 'ArtifactRenameRequest')
 
         request = build_rename_request_initial(
             kql_script_name=kql_script_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_initial.metadata['url'],
         )
         request = _convert_request(request)

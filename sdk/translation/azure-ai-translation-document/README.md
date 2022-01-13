@@ -9,10 +9,14 @@ and dialects while preserving document structure and data format. Use the client
 
 [Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs] | [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Translator resource][DT_resource] to use this package.
 
@@ -116,14 +120,14 @@ document_translation_client = DocumentTranslationClient(
 ## Key concepts
 
 The Document Translation service requires that you upload your files to an Azure Blob Storage source container and provide
-a target container where the translated documents can be written. SAS tokens to the containers (or files) are used to
-access the documents and create the translated documents in the target container. Additional information about setting this up can be found in
+a target container where the translated documents can be written. Additional information about setting this up can be found in
 the service documentation:
 
 - [Set up Azure Blob Storage containers][source_containers] with your documents
 - Optionally apply [glossaries][glossary] or a [custom model for translation][custom_model]
-- Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
-
+- Allow access to your storage account with either of the following options:
+    - Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
+    - Create and use a [managed identity][managed_identity] to grant access to your storage account
 
 ### DocumentTranslationClient
 
@@ -396,7 +400,7 @@ These code samples show common scenario operations with the Azure Document Trans
 
 
 ### Async samples
-This library also includes a complete async API supported on Python 3.6+. To use it, you must
+This library also includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.translation.document.aio` namespace.
 
@@ -452,7 +456,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-
+[managed_identity]: https://aka.ms/azsdk/documenttranslation/managed-identity
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py

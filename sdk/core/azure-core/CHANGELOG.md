@@ -1,5 +1,17 @@
 # Release History
 
+## 1.21.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- raise AttributeError when calling azure.core.pipeline.transport.\_\_bases__    #22469
+
+### Other Changes
+
 ## 1.21.1 (2021-12-06)
 
 ### Other Changes

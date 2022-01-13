@@ -34,6 +34,9 @@ def stream_compress():
 @streams_api.route('/compress', methods=['GET'])
 def compress():
     return Response(stream_compress(), status=200)
+    
+def stream_compressed_header_error():
+    yield b'test'
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
@@ -46,3 +49,8 @@ def iterable():
 @streams_api.route('/error', methods=['GET'])
 def error():
     return Response(stream_json_error(), status=400)
+
+@streams_api.route('/compressed', methods=['GET'])
+def compressed():
+    return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
+    

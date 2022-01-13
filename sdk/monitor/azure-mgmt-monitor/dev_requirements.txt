@@ -9,3 +9,5 @@ aiohttp>=3.0; python_version >= '3.5'
 -e ../../network/azure-mgmt-network
 -e ../../applicationinsights/azure-mgmt-applicationinsights
 -e ../../logic/azure-mgmt-logic
+
+../../identity/azure-identity

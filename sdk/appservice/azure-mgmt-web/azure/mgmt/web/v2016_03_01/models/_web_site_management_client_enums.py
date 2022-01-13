@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessControlEntryAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessControlEntryAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Action object.
     """
 
     PERMIT = "Permit"
     DENY = "Deny"
 
-class AppServicePlanRestrictions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AppServicePlanRestrictions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """App Service plans this offer is restricted to.
     """
 
@@ -44,7 +29,7 @@ class AppServicePlanRestrictions(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class AutoHealActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AutoHealActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Predefined action to be taken.
     """
 
@@ -52,7 +37,7 @@ class AutoHealActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOG_EVENT = "LogEvent"
     CUSTOM_ACTION = "CustomAction"
 
-class Channels(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Channels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """List of channels that this recommendation can apply.
     """
 
@@ -62,7 +47,7 @@ class Channels(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WEBHOOK = "Webhook"
     ALL = "All"
 
-class CheckNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CheckNameResourceTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource type used for verification.
     """
 
@@ -75,7 +60,7 @@ class CheckNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     MICROSOFT_WEB_HOSTING_ENVIRONMENTS = "Microsoft.Web/hostingEnvironments"
     MICROSOFT_WEB_PUBLISHING_USERS = "Microsoft.Web/publishingUsers"
 
-class ComputeModeOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ComputeModeOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Shared/dedicated workers.
     """
 
@@ -83,7 +68,7 @@ class ComputeModeOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEDICATED = "Dedicated"
     DYNAMIC = "Dynamic"
 
-class ConnectionStringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionStringType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of database.
     """
 
@@ -99,17 +84,17 @@ class ConnectionStringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REDIS_CACHE = "RedisCache"
     POSTGRE_SQL = "PostgreSQL"
 
-class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum0(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class Enum1(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum1(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class HostingEnvironmentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostingEnvironmentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current status of the App Service Environment.
     """
 
@@ -118,14 +103,14 @@ class HostingEnvironmentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     SCALING = "Scaling"
     DELETING = "Deleting"
 
-class HostType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the hostname is a standard or repository hostname.
     """
 
     STANDARD = "Standard"
     REPOSITORY = "Repository"
 
-class InAvailabilityReasonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InAvailabilityReasonType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """:code:`<code>Invalid</code>` indicates the name provided does not match Azure App Service
     naming requirements. :code:`<code>AlreadyExists</code>` indicates that the name is already in
     use and is therefore unavailable.
@@ -134,7 +119,7 @@ class InAvailabilityReasonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class InternalLoadBalancingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InternalLoadBalancingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies which endpoints to serve internally in the Virtual Network for the App Service
     Environment.
     """
@@ -143,7 +128,7 @@ class InternalLoadBalancingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     WEB = "Web"
     PUBLISHING = "Publishing"
 
-class IssueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IssueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the type of the Detector
     """
 
@@ -156,7 +141,7 @@ class IssueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PLATFORM_ISSUE = "PlatformIssue"
     OTHER = "Other"
 
-class KeyVaultSecretStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyVaultSecretStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the Key Vault secret.
     """
 
@@ -172,20 +157,20 @@ class KeyVaultSecretStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EXTERNAL_PRIVATE_KEY = "ExternalPrivateKey"
     UNKNOWN = "Unknown"
 
-class ManagedPipelineMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedPipelineMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Managed pipeline mode.
     """
 
     INTEGRATED = "Integrated"
     CLASSIC = "Classic"
 
-class ManagedServiceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class NotificationLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Level indicating how critical this recommendation can impact.
     """
 
@@ -194,7 +179,7 @@ class NotificationLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INFORMATION = "Information"
     NON_URGENT_SUGGESTION = "NonUrgentSuggestion"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current status of the operation.
     """
 
@@ -204,7 +189,7 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TIMED_OUT = "TimedOut"
     CREATED = "Created"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the App Service Environment.
     """
 
@@ -214,7 +199,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IN_PROGRESS = "InProgress"
     DELETING = "Deleting"
 
-class RenderingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RenderingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Rendering Type
     """
 
@@ -223,7 +208,7 @@ class RenderingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TIME_SERIES = "TimeSeries"
     TIME_SERIES_PER_INSTANCE = "TimeSeriesPerInstance"
 
-class ResourceScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of a resource type this recommendation applies, e.g. Subscription, ServerFarm, Site.
     """
 
@@ -231,7 +216,7 @@ class ResourceScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUBSCRIPTION = "Subscription"
     WEB_SITE = "WebSite"
 
-class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of route this is:
     DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
     INHERITED - Routes inherited from the real Virtual Network routes
@@ -244,7 +229,7 @@ class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INHERITED = "INHERITED"
     STATIC = "STATIC"
 
-class ScmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SCM type.
     """
 
@@ -262,7 +247,7 @@ class ScmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE_DRIVE = "OneDrive"
     VSO = "VSO"
 
-class SiteAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteAvailabilityState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Management information availability state for the app.
     """
 
@@ -270,7 +255,7 @@ class SiteAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     LIMITED = "Limited"
     DISASTER_RECOVERY_MODE = "DisasterRecoveryMode"
 
-class SiteLoadBalancing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteLoadBalancing(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Site load balancing.
     """
 
@@ -280,7 +265,7 @@ class SiteLoadBalancing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WEIGHTED_TOTAL_TRAFFIC = "WeightedTotalTraffic"
     REQUEST_HASH = "RequestHash"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     FREE = "Free"
     SHARED = "Shared"
@@ -291,7 +276,7 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DYNAMIC = "Dynamic"
     ISOLATED = "Isolated"
 
-class SolutionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SolutionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of Solution
     """
 
@@ -299,7 +284,7 @@ class SolutionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEEP_INVESTIGATION = "DeepInvestigation"
     BEST_PRACTICES = "BestPractices"
 
-class SslState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SslState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SSL type.
     """
 
@@ -307,7 +292,7 @@ class SslState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SNI_ENABLED = "SniEnabled"
     IP_BASED_ENABLED = "IpBasedEnabled"
 
-class StatusOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StatusOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """App Service plan status.
     """
 
@@ -315,7 +300,7 @@ class StatusOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PENDING = "Pending"
     CREATING = "Creating"
 
-class SupportedTlsVersions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SupportedTlsVersions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """MinTlsVersion: configures the minimum version of TLS required for SSL requests
     """
 
@@ -323,21 +308,21 @@ class SupportedTlsVersions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE1 = "1.1"
     ONE2 = "1.2"
 
-class UsageState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State indicating whether the app has exceeded its quota usage. Read-only.
     """
 
     NORMAL = "Normal"
     EXCEEDED = "Exceeded"
 
-class ValidateResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ValidateResourceTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource type used for verification.
     """
 
     SERVER_FARM = "ServerFarm"
     SITE = "Site"
 
-class WorkerSizeOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WorkerSizeOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Size of the machines.
     """
 

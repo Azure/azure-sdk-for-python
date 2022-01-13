@@ -14,7 +14,7 @@ from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
-from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync
+from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
 from .._common.constants import (
@@ -268,7 +268,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self, retried_times, last_exception, abs_timeout_time=None, entity_name=None
     ):
         entity_name = entity_name or self._container_id
-        backoff = self._config.retry_backoff_factor * 2 ** retried_times
+        backoff = _get_backoff_time(
+            self._config.retry_mode,
+            self._config.retry_backoff_factor,
+            self._config.retry_backoff_max,
+            retried_times,
+        )
         if backoff <= self._config.retry_backoff_max and (
             abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):

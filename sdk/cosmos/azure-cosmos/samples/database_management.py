@@ -61,6 +61,7 @@ def read_database(client, id):
 
     try:
         database = client.get_database_client(id)
+        database.read()
         print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
     except exceptions.CosmosResourceNotFoundError:

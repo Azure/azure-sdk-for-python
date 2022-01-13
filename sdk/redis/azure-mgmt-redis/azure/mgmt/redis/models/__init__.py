@@ -13,6 +13,7 @@ try:
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportRDBParameters
     from ._models_py3 import ImportRDBParameters
+    from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import NotificationListResponse
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -26,6 +27,7 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RedisAccessKeys
     from ._models_py3 import RedisCommonProperties
+    from ._models_py3 import RedisCommonPropertiesRedisConfiguration
     from ._models_py3 import RedisCreateParameters
     from ._models_py3 import RedisCreateProperties
     from ._models_py3 import RedisFirewallRule
@@ -53,6 +55,7 @@ try:
     from ._models_py3 import Sku
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpgradeNotification
+    from ._models_py3 import UserAssignedIdentity
 except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityParameters  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
@@ -60,6 +63,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse  # type: ignore
     from ._models import ExportRDBParameters  # type: ignore
     from ._models import ImportRDBParameters  # type: ignore
+    from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import NotificationListResponse  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
@@ -73,6 +77,7 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource  # type: ignore
     from ._models import RedisAccessKeys  # type: ignore
     from ._models import RedisCommonProperties  # type: ignore
+    from ._models import RedisCommonPropertiesRedisConfiguration  # type: ignore
     from ._models import RedisCreateParameters  # type: ignore
     from ._models import RedisCreateProperties  # type: ignore
     from ._models import RedisFirewallRule  # type: ignore
@@ -100,10 +105,12 @@ except (SyntaxError, ImportError):
     from ._models import Sku  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UpgradeNotification  # type: ignore
+    from ._models import UserAssignedIdentity  # type: ignore
 
 from ._redis_management_client_enums import (
     DayOfWeek,
     DefaultName,
+    ManagedServiceIdentityType,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
     ProvisioningState,
@@ -123,6 +130,7 @@ __all__ = [
     'ErrorResponse',
     'ExportRDBParameters',
     'ImportRDBParameters',
+    'ManagedServiceIdentity',
     'NotificationListResponse',
     'Operation',
     'OperationDisplay',
@@ -136,6 +144,7 @@ __all__ = [
     'ProxyResource',
     'RedisAccessKeys',
     'RedisCommonProperties',
+    'RedisCommonPropertiesRedisConfiguration',
     'RedisCreateParameters',
     'RedisCreateProperties',
     'RedisFirewallRule',
@@ -163,8 +172,10 @@ __all__ = [
     'Sku',
     'TrackedResource',
     'UpgradeNotification',
+    'UserAssignedIdentity',
     'DayOfWeek',
     'DefaultName',
+    'ManagedServiceIdentityType',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',
     'ProvisioningState',

@@ -182,5 +182,4 @@ async def main():
     await servicebus_client.close()
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

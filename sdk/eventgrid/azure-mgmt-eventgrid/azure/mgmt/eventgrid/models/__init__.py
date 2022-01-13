@@ -39,15 +39,19 @@ try:
     from ._models_py3 import IdentityInfo
     from ._models_py3 import InboundIpRule
     from ._models_py3 import InputSchemaMapping
+    from ._models_py3 import IsNotNullAdvancedFilter
+    from ._models_py3 import IsNullOrUndefinedAdvancedFilter
     from ._models_py3 import JsonField
     from ._models_py3 import JsonFieldWithDefault
     from ._models_py3 import JsonInputSchemaMapping
     from ._models_py3 import NumberGreaterThanAdvancedFilter
     from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
     from ._models_py3 import NumberInAdvancedFilter
+    from ._models_py3 import NumberInRangeAdvancedFilter
     from ._models_py3 import NumberLessThanAdvancedFilter
     from ._models_py3 import NumberLessThanOrEqualsAdvancedFilter
     from ._models_py3 import NumberNotInAdvancedFilter
+    from ._models_py3 import NumberNotInRangeAdvancedFilter
     from ._models_py3 import Operation
     from ._models_py3 import OperationInfo
     from ._models_py3 import OperationsListResult
@@ -67,6 +71,9 @@ try:
     from ._models_py3 import StringContainsAdvancedFilter
     from ._models_py3 import StringEndsWithAdvancedFilter
     from ._models_py3 import StringInAdvancedFilter
+    from ._models_py3 import StringNotBeginsWithAdvancedFilter
+    from ._models_py3 import StringNotContainsAdvancedFilter
+    from ._models_py3 import StringNotEndsWithAdvancedFilter
     from ._models_py3 import StringNotInAdvancedFilter
     from ._models_py3 import SystemData
     from ._models_py3 import SystemTopic
@@ -115,15 +122,19 @@ except (SyntaxError, ImportError):
     from ._models import IdentityInfo  # type: ignore
     from ._models import InboundIpRule  # type: ignore
     from ._models import InputSchemaMapping  # type: ignore
+    from ._models import IsNotNullAdvancedFilter  # type: ignore
+    from ._models import IsNullOrUndefinedAdvancedFilter  # type: ignore
     from ._models import JsonField  # type: ignore
     from ._models import JsonFieldWithDefault  # type: ignore
     from ._models import JsonInputSchemaMapping  # type: ignore
     from ._models import NumberGreaterThanAdvancedFilter  # type: ignore
     from ._models import NumberGreaterThanOrEqualsAdvancedFilter  # type: ignore
     from ._models import NumberInAdvancedFilter  # type: ignore
+    from ._models import NumberInRangeAdvancedFilter  # type: ignore
     from ._models import NumberLessThanAdvancedFilter  # type: ignore
     from ._models import NumberLessThanOrEqualsAdvancedFilter  # type: ignore
     from ._models import NumberNotInAdvancedFilter  # type: ignore
+    from ._models import NumberNotInRangeAdvancedFilter  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationInfo  # type: ignore
     from ._models import OperationsListResult  # type: ignore
@@ -143,6 +154,9 @@ except (SyntaxError, ImportError):
     from ._models import StringContainsAdvancedFilter  # type: ignore
     from ._models import StringEndsWithAdvancedFilter  # type: ignore
     from ._models import StringInAdvancedFilter  # type: ignore
+    from ._models import StringNotBeginsWithAdvancedFilter  # type: ignore
+    from ._models import StringNotContainsAdvancedFilter  # type: ignore
+    from ._models import StringNotEndsWithAdvancedFilter  # type: ignore
     from ._models import StringNotInAdvancedFilter  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import SystemTopic  # type: ignore
@@ -220,15 +234,19 @@ __all__ = [
     'IdentityInfo',
     'InboundIpRule',
     'InputSchemaMapping',
+    'IsNotNullAdvancedFilter',
+    'IsNullOrUndefinedAdvancedFilter',
     'JsonField',
     'JsonFieldWithDefault',
     'JsonInputSchemaMapping',
     'NumberGreaterThanAdvancedFilter',
     'NumberGreaterThanOrEqualsAdvancedFilter',
     'NumberInAdvancedFilter',
+    'NumberInRangeAdvancedFilter',
     'NumberLessThanAdvancedFilter',
     'NumberLessThanOrEqualsAdvancedFilter',
     'NumberNotInAdvancedFilter',
+    'NumberNotInRangeAdvancedFilter',
     'Operation',
     'OperationInfo',
     'OperationsListResult',
@@ -248,6 +266,9 @@ __all__ = [
     'StringContainsAdvancedFilter',
     'StringEndsWithAdvancedFilter',
     'StringInAdvancedFilter',
+    'StringNotBeginsWithAdvancedFilter',
+    'StringNotContainsAdvancedFilter',
+    'StringNotEndsWithAdvancedFilter',
     'StringNotInAdvancedFilter',
     'SystemData',
     'SystemTopic',

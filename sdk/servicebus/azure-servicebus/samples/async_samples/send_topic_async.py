@@ -54,5 +54,4 @@ async def main():
     print("Send message is done.")
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

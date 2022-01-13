@@ -1,8 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-workloadmonitor"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Workloadmonitor Management"
+package_pprint_name = "Workload Monitor Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true
