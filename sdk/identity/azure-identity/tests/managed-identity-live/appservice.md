@@ -67,7 +67,7 @@ az appservice plan create -g $RESOURCE_GROUP -n $APP_SERVICE_PLAN -l westus2 --s
 ### Web app: system-assigned identity
 
 ```sh
-az webapp create -n $WEB_APP_SYSTEM_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
+az webapp create -n $WEB_APP_SYSTEM_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.9"
 ```
 
 Attach a system-assigned identity:
@@ -109,7 +109,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME \
 ### Web app: user-assigned identity
 
 ```sh
-az webapp create -n $WEB_APP_USER_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
+az webapp create -n $WEB_APP_USER_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.9"
 ```
 
 Set app configuration:
@@ -130,7 +130,7 @@ Use the Azure Portal to attached the managed identity created above to the Web A
 The test are deployed as a container. The following command lines assume this working directory:
 > `azure-sdk-for-python/sdk/identity/azure-identity/tests`
 
-Two images are needed because the test must run on Python 2 and 3.
+We only need to test on Python 3.x
 
 ### Authenticate to ACR
 
@@ -142,7 +142,7 @@ az acr login -n $ACR_NAME
 
 ```sh
 export IMAGE_NAME=$(az acr show -n $ACR_NAME --query loginServer -o tsv)/webapp-managed-id-test  \
-        PYTHON_VERSION=2.7 
+        PYTHON_VERSION=3.x 
 ```
 
 ### Build the image
@@ -157,13 +157,7 @@ docker build --no-cache --build-arg PYTHON_TAG=$PYTHON_VERSION -t $IMAGE_NAME:$P
 docker push $IMAGE_NAME:$PYTHON_VERSION
 ```
 
-Then set `PYTHON_VERSION` to the latest 3.x and run the above `docker build`
-and `docker push` commands again. (It's safe--and faster--to omit
-`--no-cache` from `docker build` the second time.)
-
 ## Run tests
-
-Run these commands twice, once with `PYTHON_VERSION=2.7` and again with the latest 3.x.
 
 ### Deploy test code
 
