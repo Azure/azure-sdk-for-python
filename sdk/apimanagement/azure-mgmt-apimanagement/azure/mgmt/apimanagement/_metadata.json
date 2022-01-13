@@ -1,17 +1,17 @@
 {
-    "chosen_version": "2020-12-01",
-    "total_api_version_list": ["2020-12-01"],
+    "chosen_version": "2021-08-01",
+    "total_api_version_list": ["2021-08-01"],
     "client": {
         "name": "ApiManagementClient",
         "filename": "_api_management_client",
         "description": "ApiManagement Client.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ApiManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ApiManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ApiManagementClientConfiguration\"], \"._operations_mixin\": [\"ApiManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ApiManagementClientConfiguration\"], \"._operations_mixin\": [\"ApiManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -54,7 +54,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -74,7 +74,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -91,11 +91,10 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "api": "ApiOperations",
@@ -142,6 +141,7 @@
         "notification_recipient_user": "NotificationRecipientUserOperations",
         "notification_recipient_email": "NotificationRecipientEmailOperations",
         "open_id_connect_provider": "OpenIdConnectProviderOperations",
+        "outbound_network_dependencies_endpoints": "OutboundNetworkDependenciesEndpointsOperations",
         "policy": "PolicyOperations",
         "policy_description": "PolicyDescriptionOperations",
         "portal_revision": "PortalRevisionOperations",
@@ -149,6 +149,7 @@
         "sign_in_settings": "SignInSettingsOperations",
         "sign_up_settings": "SignUpSettingsOperations",
         "delegation_settings": "DelegationSettingsOperations",
+        "private_endpoint_connection": "PrivateEndpointConnectionOperations",
         "product": "ProductOperations",
         "product_api": "ProductApiOperations",
         "product_group": "ProductGroupOperations",
@@ -158,6 +159,7 @@
         "quota_by_period_keys": "QuotaByPeriodKeysOperations",
         "region": "RegionOperations",
         "reports": "ReportsOperations",
+        "global_schema": "GlobalSchemaOperations",
         "tenant_settings": "TenantSettingsOperations",
         "api_management_skus": "ApiManagementSkusOperations",
         "subscription": "SubscriptionOperations",
@@ -170,5 +172,35 @@
         "user_subscription": "UserSubscriptionOperations",
         "user_identities": "UserIdentitiesOperations",
         "user_confirmation_password": "UserConfirmationPasswordOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.polling\": [\"LROPoller\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.polling\": [\"AsyncLROPoller\"]}}}",
+        "operations": {
+            "_perform_connectivity_check_async_initial" : {
+                "sync": {
+                    "signature": "def _perform_connectivity_check_async_initial(\n    self,\n    resource_group_name,  # type: str\n    service_name,  # type: str\n    connectivity_check_request_params,  # type: \"_models.ConnectivityCheckRequest\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Optional[\"_models.ConnectivityCheckResponse\"]\n",
+                    "doc": "\n\n:param resource_group_name: The name of the resource group.\n:type resource_group_name: str\n:param service_name: The name of the API Management service.\n:type service_name: str\n:param connectivity_check_request_params: Connectivity Check request parameters.\n:type connectivity_check_request_params: ~api_management_client.models.ConnectivityCheckRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ConnectivityCheckResponse, or the result of cls(response)\n:rtype: ~api_management_client.models.ConnectivityCheckResponse or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _perform_connectivity_check_async_initial(\n    self,\n    resource_group_name: str,\n    service_name: str,\n    connectivity_check_request_params: \"_models.ConnectivityCheckRequest\",\n    **kwargs: Any\n) -\u003e Optional[\"_models.ConnectivityCheckResponse\"]:\n",
+                    "doc": "\n\n:param resource_group_name: The name of the resource group.\n:type resource_group_name: str\n:param service_name: The name of the API Management service.\n:type service_name: str\n:param connectivity_check_request_params: Connectivity Check request parameters.\n:type connectivity_check_request_params: ~api_management_client.models.ConnectivityCheckRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ConnectivityCheckResponse, or the result of cls(response)\n:rtype: ~api_management_client.models.ConnectivityCheckResponse or None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, service_name, connectivity_check_request_params"
+            },
+            "begin_perform_connectivity_check_async" : {
+                "sync": {
+                    "signature": "def begin_perform_connectivity_check_async(\n    self,\n    resource_group_name,  # type: str\n    service_name,  # type: str\n    connectivity_check_request_params,  # type: \"_models.ConnectivityCheckRequest\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e LROPoller[\"_models.ConnectivityCheckResponse\"]\n",
+                    "doc": "\"\"\"Performs a connectivity check between the API Management service and a given destination, and\nreturns metrics for the connection, as well as errors encountered while trying to establish it.\n\n:param resource_group_name: The name of the resource group.\n:type resource_group_name: str\n:param service_name: The name of the API Management service.\n:type service_name: str\n:param connectivity_check_request_params: Connectivity Check request parameters.\n:type connectivity_check_request_params: ~api_management_client.models.ConnectivityCheckRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling. Pass in False for this\n operation to not poll, or pass in your own initialized polling object for a personal polling\n strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of LROPoller that returns either ConnectivityCheckResponse or the result\n of cls(response)\n:rtype: ~azure.core.polling.LROPoller[~api_management_client.models.ConnectivityCheckResponse]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_perform_connectivity_check_async(\n    self,\n    resource_group_name: str,\n    service_name: str,\n    connectivity_check_request_params: \"_models.ConnectivityCheckRequest\",\n    **kwargs: Any\n) -\u003e AsyncLROPoller[\"_models.ConnectivityCheckResponse\"]:\n",
+                    "doc": "\"\"\"Performs a connectivity check between the API Management service and a given destination, and\nreturns metrics for the connection, as well as errors encountered while trying to establish it.\n\n:param resource_group_name: The name of the resource group.\n:type resource_group_name: str\n:param service_name: The name of the API Management service.\n:type service_name: str\n:param connectivity_check_request_params: Connectivity Check request parameters.\n:type connectivity_check_request_params: ~api_management_client.models.ConnectivityCheckRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for\n this operation to not poll, or pass in your own initialized polling object for a personal\n polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either ConnectivityCheckResponse or the\n result of cls(response)\n:rtype:\n ~azure.core.polling.AsyncLROPoller[~api_management_client.models.ConnectivityCheckResponse]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, service_name, connectivity_check_request_params"
+            }
+        }
     }
 }
