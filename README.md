@@ -6,7 +6,7 @@ This repository is for active development of the Azure SDK for Python. For consu
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -16,7 +16,7 @@ You can find service libraries in the `/sdk` directory.
 
 ### Prerequisites
 
-The client libraries are supported on Python 2.7 and 3.5.3 or later.
+The client libraries are supported on Python 2.7 and 3.6 or later.
 
 ## Packages available
 

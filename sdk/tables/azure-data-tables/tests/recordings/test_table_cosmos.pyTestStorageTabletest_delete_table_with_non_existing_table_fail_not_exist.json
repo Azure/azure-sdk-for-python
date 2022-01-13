@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://yalltablestestsprim.table.cosmos.azure.com/Tables(\u0027pytablesync982b35ec\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Wed, 15 Sep 2021 17:14:58 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "7422c830-1648-11ec-a4c4-5cf37093a909",
+        "x-ms-date": "Wed, 15 Sep 2021 17:14:58 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 15 Sep 2021 17:14:55 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "8da29cab-0aa5-4ad7-b33b-b676d1c0f598"
+      },
+      "ResponseBody": [
+        "{\u0022odata.error\u0022:{\u0022code\u0022:\u0022ResourceNotFound\u0022,\u0022message\u0022:{\u0022lang\u0022:\u0022en-us\u0022,\u0022value\u0022:\u0022The specified resource does not exist.\\nRequestID:8da29cab-0aa5-4ad7-b33b-b676d1c0f598\\n\u0022}}}\r\n"
+      ]
+    }
+  ],
+  "Variables": {}
+}

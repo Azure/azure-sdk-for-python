@@ -1,3 +1,4 @@
+# coding=utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -5,12 +6,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import uuid
 from dateutil.tz import tzutc
-import unittest
 import pytest
-from devtools_testutils import AzureTestCase
+import functools
 from azure.core.exceptions import ResourceNotFoundError
-
 from azure.ai.metricsadvisor.models import (
     SqlServerDataFeedSource,
     AzureTableDataFeedSource,
@@ -31,18 +31,27 @@ from azure.ai.metricsadvisor.models import (
     MySqlDataFeedSource,
     PostgreSqlDataFeedSource,
 )
-from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
+from base_testcase_async import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
-class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_simple_data_feed(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_simple_data_feed(self, client, variables):
         data_feed_name = self.create_random_name("testfeed")
-        async with self.admin_client:
+        if self.is_live:
+            variables["data_feed_name"] = data_feed_name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=data_feed_name,
+                data_feed = await client.create_data_feed(
+                    variables["data_feed_name"],
                     source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query="select * from adsample2 where Timestamp = @StartTime"
@@ -51,28 +60,35 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     schema=["cost", "revenue"],
                     ingestion_settings=datetime.datetime(2019, 10, 1)
                 )
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "SqlServer"
+                assert data_feed.source.query is not None
+                assert data_feed.granularity.granularity_type == "Daily"
+                assert data_feed.schema.metrics[0].name == "cost"
+                assert data_feed.schema.metrics[1].name == "revenue"
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
 
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Daily")
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_from_sql_server(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_from_sql_server(self, client, variables):
 
-        data_feed_name = self.create_random_name("testfeedasync")
-        async with self.admin_client:
+        data_feed_name = self.create_random_name("testfeed")
+        if self.is_live:
+            variables["data_feed_name"] = data_feed_name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=data_feed_name,
+                data_feed = await client.create_data_feed(
+                    variables["data_feed_name"],
                     source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query=u"select * from adsample2 where Timestamp = @StartTime"
@@ -111,56 +127,62 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     access_mode="Private",
                     action_link_template="action link template"
                 )
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Daily")
-                self.assertEqual(data_feed.granularity.custom_granularity_value, None)
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.schema.metrics[0].display_name, "display cost")
-                self.assertEqual(data_feed.schema.metrics[1].display_name, "display revenue")
-                self.assertEqual(data_feed.schema.metrics[0].description, "the cost")
-                self.assertEqual(data_feed.schema.metrics[1].description, "the revenue")
-                self.assertEqual(data_feed.schema.dimensions[0].name, "category")
-                self.assertEqual(data_feed.schema.dimensions[1].name, "city")
-                self.assertEqual(data_feed.schema.dimensions[0].display_name, "display category")
-                self.assertEqual(data_feed.schema.dimensions[1].display_name, "display city")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(data_feed.ingestion_settings.data_source_request_concurrency, 0)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.admins)
-                self.assertEqual(data_feed.data_feed_description, "my first data feed")
-                self.assertEqual(data_feed.missing_data_point_fill_settings.fill_type, "SmartFilling")
-                self.assertEqual(data_feed.rollup_settings.rollup_type, "NoRollup")
-                self.assertEqual(data_feed.rollup_settings.rollup_method, "None")
-                self.assertEqual(data_feed.viewers, ["viewers"])
-                self.assertEqual(data_feed.access_mode, "Private")
-                self.assertEqual(data_feed.action_link_template, "action link template")
-                self.assertEqual(data_feed.status, "Active")
-                self.assertTrue(data_feed.is_admin)
-                self.assertIsNotNone(data_feed.metric_ids)
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "SqlServer"
+                assert data_feed.source.query is not None
+                assert data_feed.granularity.granularity_type == "Daily"
+                assert data_feed.granularity.custom_granularity_value is None
+                assert data_feed.schema.metrics[0].name == "cost"
+                assert data_feed.schema.metrics[1].name == "revenue"
+                assert data_feed.schema.metrics[0].display_name == "display cost"
+                assert data_feed.schema.metrics[1].display_name == "display revenue"
+                assert data_feed.schema.metrics[0].description == "the cost"
+                assert data_feed.schema.metrics[1].description == "the revenue"
+                assert data_feed.schema.dimensions[0].name == "category"
+                assert data_feed.schema.dimensions[1].name == "city"
+                assert data_feed.schema.dimensions[0].display_name == "display category"
+                assert data_feed.schema.dimensions[1].display_name == "display city"
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.data_source_request_concurrency == 0
+                assert data_feed.ingestion_settings.ingestion_retry_delay == -1
+                assert data_feed.ingestion_settings.ingestion_start_offset == -1
+                assert data_feed.ingestion_settings.stop_retry_after == -1
+                assert "yournamehere@microsoft.com" in data_feed.admins
+                assert data_feed.data_feed_description == "my first data feed"
+                assert data_feed.missing_data_point_fill_settings.fill_type == "SmartFilling"
+                assert data_feed.rollup_settings.rollup_type == "NoRollup"
+                assert data_feed.rollup_settings.rollup_method == "None"
+                assert data_feed.viewers == ["viewers"]
+                assert data_feed.access_mode == "Private"
+                assert data_feed.action_link_template == "action link template"
+                assert data_feed.status == "Active"
+                assert data_feed.is_admin
+                assert data_feed.metric_ids is not None
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
 
-                with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_data_feed(data_feed.id)
+                with pytest.raises(ResourceNotFoundError):
+                    await client.get_data_feed(variables["data_feed_id"])
+            return variables
 
-    @unittest.skip("skip test")
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_from_sql_server_with_custom_values(self):
+    @pytest.mark.skip("skip test")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_from_sql_server_with_custom_values(self, client, variables):
 
-        data_feed_name = self.create_random_name("testfeedasync")
-        async with self.admin_client:
+        data_feed_name = self.create_random_name("testfeed")
+        if self.is_live:
+            variables["data_feed_name"] = data_feed_name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=data_feed_name,
+                data_feed = await client.create_data_feed(
+                    variables["data_feed_name"],
                     source=SqlServerDataFeedSource(
                         connection_string=self.sql_server_connection_string,
                         query=u"select * from adsample2 where Timestamp = @StartTime"
@@ -202,58 +224,64 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     access_mode="Private",
                     action_link_template="action link template"
                 )
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Custom")
-                self.assertEqual(data_feed.granularity.custom_granularity_value, 400)
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.schema.metrics[0].display_name, "display cost")
-                self.assertEqual(data_feed.schema.metrics[1].display_name, "display revenue")
-                self.assertEqual(data_feed.schema.metrics[0].description, "the cost")
-                self.assertEqual(data_feed.schema.metrics[1].description, "the revenue")
-                self.assertEqual(data_feed.schema.dimensions[0].name, "category")
-                self.assertEqual(data_feed.schema.dimensions[1].name, "city")
-                self.assertEqual(data_feed.schema.dimensions[0].display_name, "display category")
-                self.assertEqual(data_feed.schema.dimensions[1].display_name, "display city")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(data_feed.ingestion_settings.data_source_request_concurrency, 0)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
-                self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.admins)
-                self.assertEqual(data_feed.data_feed_description, "my first data feed")
-                self.assertEqual(data_feed.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(data_feed.missing_data_point_fill_settings.custom_fill_value, 10)
-                self.assertEqual(data_feed.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(data_feed.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(data_feed.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(data_feed.viewers, ["viewers"])
-                self.assertEqual(data_feed.access_mode, "Private")
-                self.assertEqual(data_feed.action_link_template, "action link template")
-                self.assertEqual(data_feed.status, "Active")
-                self.assertTrue(data_feed.is_admin)
-                self.assertIsNotNone(data_feed.metric_ids)
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "SqlServer"
+                assert data_feed.source.query is not None
+                assert data_feed.granularity.granularity_type == "Custom"
+                assert data_feed.granularity.custom_granularity_value == 400
+                assert data_feed.schema.metrics[0].name == "cost"
+                assert data_feed.schema.metrics[1].name == "revenue"
+                assert data_feed.schema.metrics[0].display_name == "display cost"
+                assert data_feed.schema.metrics[1].display_name == "display revenue"
+                assert data_feed.schema.metrics[0].description == "the cost"
+                assert data_feed.schema.metrics[1].description == "the revenue"
+                assert data_feed.schema.dimensions[0].name == "category"
+                assert data_feed.schema.dimensions[1].name == "city"
+                assert data_feed.schema.dimensions[0].display_name == "display category"
+                assert data_feed.schema.dimensions[1].display_name == "display city"
+                assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert data_feed.ingestion_settings.data_source_request_concurrency == 0
+                assert data_feed.ingestion_settings.ingestion_retry_delay == -1
+                assert data_feed.ingestion_settings.ingestion_start_offset == -1
+                assert data_feed.ingestion_settings.stop_retry_after == -1
+                assert "yournamehere@microsoft.com" in  data_feed.admins
+                assert data_feed.data_feed_description == "my first data feed"
+                assert data_feed.missing_data_point_fill_settings.fill_type == "CustomValue"
+                assert data_feed.missing_data_point_fill_settings.custom_fill_value == 10
+                assert data_feed.rollup_settings.rollup_type == "AlreadyRollup"
+                assert data_feed.rollup_settings.rollup_method == "Sum"
+                assert data_feed.rollup_settings.rollup_identification_value == "sumrollup"
+                assert data_feed.viewers == ["viewers"]
+                assert data_feed.access_mode == "Private"
+                assert data_feed.action_link_template == "action link template"
+                assert data_feed.status == "Active"
+                assert data_feed.is_admin
+                assert data_feed.metric_ids is not None
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
 
-                with self.assertRaises(ResourceNotFoundError):
-                    await self.admin_client.get_data_feed(data_feed.id)
+                with pytest.raises(ResourceNotFoundError):
+                    await client.get_data_feed(variables["data_feed_id"])
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_azure_table(self):
-        name = self.create_random_name("tablefeedasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_azure_table(self, client, variables):
+        name = self.create_random_name("tablefeed")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=AzureTableDataFeedSource(
-                        connection_string=self.azure_table_connection_string,
+                        connection_string="azure_table_connection_string",
                         query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
                         table="adsample"
                     ),
@@ -275,25 +303,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureTable")
-                self.assertEqual(data_feed.source.table, "adsample")
-                self.assertEqual(data_feed.source.query, "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'")
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "AzureTable"
+                assert data_feed.source.table == "adsample"
+                assert data_feed.source.query == "PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_azure_blob(self):
-        name = self.create_random_name("blobfeedasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_azure_blob(self, client, variables):
+        name = self.create_random_name("blobfeed")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=AzureBlobDataFeedSource(
-                        connection_string=self.azure_blob_connection_string,
+                        connection_string="azure_blob_connection_string",
                         container="adsample",
                         blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
                     ),
@@ -315,25 +350,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureBlob")
-                self.assertEqual(data_feed.source.container, "adsample")
-                self.assertEqual(data_feed.source.blob_template, "%Y/%m/%d/%h/JsonFormatV2.json")
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "AzureBlob"
+                assert data_feed.source.container == "adsample"
+                assert data_feed.source.blob_template == "%Y/%m/%d/%h/JsonFormatV2.json"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_azure_cosmos_db(self):
-        name = self.create_random_name("cosmosfeedasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_azure_cosmos_db(self, client, variables):
+        name = self.create_random_name("cosmosfeed")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=AzureCosmosDbDataFeedSource(
-                        connection_string=self.azure_cosmosdb_connection_string,
+                        connection_string="azure_cosmosdb_connection_string",
                         sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
                         database="adsample",
                         collection_id="adsample"
@@ -356,32 +398,39 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureCosmosDB")
-                self.assertEqual(data_feed.source.database, "adsample")
-                self.assertEqual(data_feed.source.collection_id, "adsample")
-                self.assertEqual(data_feed.source.sql_query, "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'")
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "AzureCosmosDB"
+                assert data_feed.source.database == "adsample"
+                assert data_feed.source.collection_id == "adsample"
+                assert data_feed.source.sql_query == "'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_application_insights(self):
-        name = self.create_random_name("applicationinsightsasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_application_insights(self, client, variables):
+        name = self.create_random_name("applicationinsights")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
                 query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
                     "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
                     "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
                     "duration_max_ms = max(duration) by resultCode"
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=AzureApplicationInsightsDataFeedSource(
                         azure_cloud="Azure",
                         application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
-                        api_key=self.application_insights_api_key,
+                        api_key="application_insights_api_key",
                         query=query
                     ),
                     granularity=DataFeedGranularity(
@@ -402,28 +451,34 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureApplicationInsights")
-                self.assertEqual(data_feed.source.application_id, "3706fe8b-98f1-47c7-bf69-b73b6e53274d")
-                self.assertIsNotNone(data_feed.source.query)
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "AzureApplicationInsights"
+                assert data_feed.source.application_id == "3706fe8b-98f1-47c7-bf69-b73b6e53274d"
+                assert data_feed.source.query is not None
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_data_explorer(self):
-        name = self.create_random_name("azuredataexplorerasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_data_explorer(self, client, variables):
+        name = self.create_random_name("azuredataexplorer")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
                 query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
                         "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=AzureDataExplorerDataFeedSource(
-                        connection_string=self.azure_data_explorer_connection_string,
+                        connection_string="azure_data_explorer_connection_string",
                         query=query
                     ),
                     granularity=DataFeedGranularity(
@@ -444,28 +499,34 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureDataExplorer")
-                self.assertEqual(data_feed.source.query, query)
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "AzureDataExplorer"
+                assert data_feed.source.query == query
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_influxdb(self):
-        name = self.create_random_name("influxdbasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_influxdb(self, client, variables):
+        name = self.create_random_name("influxdb")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=InfluxDbDataFeedSource(
-                        connection_string=self.influxdb_connection_string,
+                        connection_string="influxdb_connection_string",
                         database="adsample",
                         user_name="adreadonly",
-                        password=self.influxdb_password,
+                        password="influxdb_password",
                         query="'select * from adsample2 where Timestamp = @StartTime'"
                     ),
                     granularity=DataFeedGranularity(
@@ -486,28 +547,35 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "InfluxDB")
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.source.database, "adsample")
-                self.assertEqual(data_feed.source.user_name, "adreadonly")
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "InfluxDB"
+                assert data_feed.source.query is not None
+                assert data_feed.source.database == "adsample"
+                assert data_feed.source.user_name == "adreadonly"
 
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_datalake(self):
-        name = self.create_random_name("datalakeasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_datalake(self, client, variables):
+        name = self.create_random_name("datalake")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=AzureDataLakeStorageGen2DataFeedSource(
                         account_name="adsampledatalakegen2",
-                        account_key=self.azure_datalake_account_key,
+                        account_key="azure_datalake_account_key",
                         file_system_name="adsample",
                         directory_template="%Y/%m/%d",
                         file_template="adsample.json"
@@ -530,28 +598,34 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "AzureDataLakeStorageGen2")
-                self.assertEqual(data_feed.source.account_name, "adsampledatalakegen2")
-                self.assertEqual(data_feed.source.file_system_name, "adsample")
-                self.assertEqual(data_feed.source.directory_template, "%Y/%m/%d")
-                self.assertEqual(data_feed.source.file_template, "adsample.json")
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "AzureDataLakeStorageGen2"
+                assert data_feed.source.account_name == "adsampledatalakegen2"
+                assert data_feed.source.file_system_name == "adsample"
+                assert data_feed.source.directory_template == "%Y/%m/%d"
+                assert data_feed.source.file_template == "adsample.json"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_mongodb(self):
-        name = self.create_random_name("mongodbasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_mongodb(self, client, variables):
+        name = self.create_random_name("mongodb")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=MongoDbDataFeedSource(
-                        connection_string=self.mongodb_connection_string,
+                        connection_string="mongodb_connection_string",
                         database="adsample",
                         command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
                     ),
@@ -573,26 +647,32 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "MongoDB")
-                self.assertEqual(data_feed.source.database, "adsample")
-                self.assertEqual(data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}')
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "MongoDB"
+                assert data_feed.source.database == "adsample"
+                assert data_feed.source.command, '{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000 == }'
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_mysql(self):
-        name = self.create_random_name("mysqlasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_mysql(self, client, variables):
+        name = self.create_random_name("mysql")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=MySqlDataFeedSource(
-                        connection_string=self.mysql_connection_string,
+                        connection_string="mysql_connection_string",
                         query="'select * from adsample2 where Timestamp = @StartTime'"
                     ),
                     granularity=DataFeedGranularity(
@@ -613,25 +693,31 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "MySql")
-                self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "MySql"
+                assert data_feed.source.query == "'select * from adsample2 where Timestamp = @StartTime'"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_data_feed_with_postgresql(self):
-        name = self.create_random_name("postgresqlasync")
-        async with self.admin_client:
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_data_feed_with_postgresql(self, client, variables):
+        name = self.create_random_name("postgresql")
+        if self.is_live:
+            variables["data_feed_name"] = name
+        async with client:
             try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=name,
+                data_feed = await client.create_data_feed(
+                    name=variables["data_feed_name"],
                     source=PostgreSqlDataFeedSource(
-                        connection_string=self.postgresql_connection_string,
+                        connection_string="postgresql_connection_string",
                         query="'select * from adsample2 where Timestamp = @StartTime'"
                     ),
                     granularity=DataFeedGranularity(
@@ -652,88 +738,110 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
 
                 )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "PostgreSql")
-                self.assertEqual(data_feed.source.query, "'select * from adsample2 where Timestamp = @StartTime'")
-
+                if self.is_live:
+                    variables["data_feed_id"] = data_feed.id
+                assert data_feed.id is not None
+                assert data_feed.created_time is not None
+                assert data_feed.name is not None
+                assert data_feed.source.data_source_type == "PostgreSql"
+                assert data_feed.source.query == "'select * from adsample2 where Timestamp = @StartTime'"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feeds(self):
-        async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds()
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feeds(self, client):
+        async with client:
+            feeds = client.list_data_feeds()
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feeds_with_data_feed_name(self):
-        async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_feed_name="azureSqlDatafeed")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feeds_with_data_feed_name(self, client):
+        async with client:
+            feeds = client.list_data_feeds(data_feed_name="azureSqlDatafeed")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
             assert len(feeds_list) == 1
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feeds_with_status(self):
-        async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(status="Paused")
-            feeds_list = []
-            async for item in feeds:
-                feeds_list.append(item)
-            assert len(feeds_list) == 0
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feeds_with_skip(self, client):
+        all_feeds = client.list_data_feeds()
+        skipped_feeds = client.list_data_feeds(skip=10)
+        all_feeds_list = []
+        async for item in all_feeds:
+            all_feeds_list.append(item)
+        skipped_feeds_list = []
+        async for item in skipped_feeds:
+            skipped_feeds_list.append(item)
+        assert len(all_feeds_list) > len(skipped_feeds_list)
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feeds_with_source_type(self):
-        async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_source_type="SqlServer")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feeds_with_status(self, client):
+        async with client:
+            feeds = client.list_data_feeds(status="Active")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feeds_with_granularity_type(self):
-        async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(granularity_type="Daily")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feeds_with_source_type(self, client):
+        async with client:
+            feeds = client.list_data_feeds(data_source_type="SqlServer")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @unittest.skip("skip test")
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feeds_with_skip(self):
-        async with self.admin_client:
-            all_feeds = self.admin_client.list_data_feeds()
-            skipped_feeds = self.admin_client.list_data_feeds(skip=1)
-            all_feeds_list = []
-            skipped_feeds_list = []
-            async for feed in all_feeds:
-                all_feeds_list.append(feed)
-            async for feed in skipped_feeds:
-                skipped_feeds_list.append(feed)
-            assert len(all_feeds_list) == len(skipped_feeds_list) + 1
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feeds_with_granularity_type(self, client):
+        async with client:
+            feeds = client.list_data_feeds(granularity_type="Daily")
+            feeds_list = []
+            async for item in feeds:
+                feeds_list.append(item)
+            assert len(feeds_list) > 0
 
-    @unittest.skip("skip test")
-    @AzureTestCase.await_prepared_test
-    async def test_update_data_feed_with_model(self):
-        async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy_async
+    async def test_update_data_feed_with_model(self, client, variables):
+        async with client:
             try:
-                data_feed.name = "update"
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["data_feed_updated_name"] = update_name
+                data_feed = await client.get_data_feed(variables["data_feed_id"])
+                data_feed.name = variables["data_feed_updated_name"]
                 data_feed.data_feed_description = "updated"
                 data_feed.schema.timestamp_column = "time"
                 data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2021, 12, 10)
                 data_feed.ingestion_settings.ingestion_start_offset = 1
                 data_feed.ingestion_settings.data_source_request_concurrency = 1
-                data_feed.ingestion_settings.ingestion_retry_delay = 1
+                data_feed.ingestion_settings.ingestion_retry_delay = 120
                 data_feed.ingestion_settings.stop_retry_after = 1
                 data_feed.rollup_settings.rollup_type = "AlreadyRollup"
                 data_feed.rollup_settings.rollup_method = "Sum"
@@ -748,46 +856,50 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.connection_string = "updated"
                 data_feed.source.query = "get data"
 
-                await self.admin_client.update_data_feed(data_feed)
-                updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "update")
-                self.assertEqual(updated.data_feed_description, "updated")
-                self.assertEqual(updated.schema.timestamp_column, "time")
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2021, 12, 10, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
-                self.assertEqual(updated.access_mode, "Public")
-                self.assertEqual(updated.viewers, ["updated"])
-                self.assertEqual(updated.status, "Paused")
-                self.assertEqual(updated.action_link_template, "updated")
-                self.assertEqual(updated.source.query, "get data")
-
+                await client.update_data_feed(data_feed)
+                updated = await client.get_data_feed(variables["data_feed_id"])
+                assert updated.name == variables["data_feed_updated_name"]
+                assert updated.data_feed_description == "updated"
+                assert updated.schema.timestamp_column == "time"
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset == 1
+                assert updated.ingestion_settings.data_source_request_concurrency == 1
+                assert updated.ingestion_settings.ingestion_retry_delay == 120
+                assert updated.ingestion_settings.stop_retry_after == 1
+                assert updated.rollup_settings.rollup_type == "AlreadyRollup"
+                assert updated.rollup_settings.rollup_method == "Sum"
+                assert updated.rollup_settings.rollup_identification_value == "sumrollup"
+                assert updated.missing_data_point_fill_settings.fill_type == "CustomValue"
+                assert updated.missing_data_point_fill_settings.custom_fill_value == 2
+                assert updated.access_mode == "Public"
+                assert updated.viewers == ["updated"]
+                assert updated.status == "Paused"
+                assert updated.action_link_template == "updated"
+                assert updated.source.query == "get data"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @unittest.skip("skip test")
-    @AzureTestCase.await_prepared_test
-    async def test_update_data_feed_with_kwargs(self):
-        async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy_async
+    async def test_update_data_feed_with_kwargs(self, client, variables):
+        async with client:
             try:
-                await self.admin_client.update_data_feed(
+                data_feed = await client.get_data_feed(variables["data_feed_id"])
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["data_feed_updated_name"] = update_name
+                await client.update_data_feed(
                     data_feed.id,
-                    name="update",
+                    name=variables["data_feed_updated_name"],
                     data_feed_description="updated",
                     timestamp_column="time",
-                    ingestion_begin_time=datetime.datetime(2021, 12, 10),
+                    ingestion_begin_time=datetime.datetime(2021, 9, 10),
                     ingestion_start_offset=1,
                     data_source_request_concurrency=1,
-                    ingestion_retry_delay=1,
+                    ingestion_retry_delay=120,
                     stop_retry_after=1,
                     rollup_type="AlreadyRollup",
                     rollup_method="Sum",
@@ -804,40 +916,44 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
-                updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "update")
-                self.assertEqual(updated.data_feed_description, "updated")
-                self.assertEqual(updated.schema.timestamp_column, "time")
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2021, 12, 10, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
-                self.assertEqual(updated.access_mode, "Public")
-                self.assertEqual(updated.viewers, ["updated"])
-                self.assertEqual(updated.status, "Paused")
-                self.assertEqual(updated.action_link_template, "updated")
-                self.assertEqual(updated.source.query, "get data")
-
+                updated = await client.get_data_feed(variables["data_feed_id"])
+                assert updated.name == variables["data_feed_updated_name"]
+                assert updated.data_feed_description == "updated"
+                assert updated.schema.timestamp_column == "time"
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset == 1
+                assert updated.ingestion_settings.data_source_request_concurrency == 1
+                assert updated.ingestion_settings.ingestion_retry_delay == 120
+                assert updated.ingestion_settings.stop_retry_after == 1
+                assert updated.rollup_settings.rollup_type == "AlreadyRollup"
+                assert updated.rollup_settings.rollup_method == "Sum"
+                assert updated.rollup_settings.rollup_identification_value == "sumrollup"
+                assert updated.missing_data_point_fill_settings.fill_type == "CustomValue"
+                assert updated.missing_data_point_fill_settings.custom_fill_value == 2
+                assert updated.access_mode == "Public"
+                assert updated.viewers == ["updated"]
+                assert updated.status == "Paused"
+                assert updated.action_link_template == "updated"
+                assert updated.source.query == "get data"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @unittest.skip("skip test")
-    @AzureTestCase.await_prepared_test
-    async def test_update_data_feed_with_model_and_kwargs(self):
-        async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy_async
+    async def test_update_data_feed_with_model_and_kwargs(self, client, variables):
+        async with client:
             try:
-                data_feed.name = "updateMe"
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["data_feed_updated_name"] = update_name
+                data_feed = await client.get_data_feed(variables["data_feed_id"])
+                data_feed.name = variables["data_feed_updated_name"]
                 data_feed.data_feed_description = "updateMe"
                 data_feed.schema.timestamp_column = "don't update me"
-                data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2021, 12, 22)
+                data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2021, 9, 22)
                 data_feed.ingestion_settings.ingestion_start_offset = 2
                 data_feed.ingestion_settings.data_source_request_concurrency = 2
                 data_feed.ingestion_settings.ingestion_retry_delay = 2
@@ -855,13 +971,13 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.connection_string = "don't update me"
                 data_feed.source.query = "don't update me"
 
-                await self.admin_client.update_data_feed(
+                await client.update_data_feed(
                     data_feed,
                     timestamp_column="time",
-                    ingestion_begin_time=datetime.datetime(2021, 12, 10),
+                    ingestion_begin_time=datetime.datetime(2021, 9, 10),
                     ingestion_start_offset=1,
                     data_source_request_concurrency=1,
-                    ingestion_retry_delay=1,
+                    ingestion_retry_delay=120,
                     stop_retry_after=1,
                     rollup_type="AlreadyRollup",
                     rollup_method="Sum",
@@ -878,39 +994,44 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
-                updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "updateMe")
-                self.assertEqual(updated.data_feed_description, "updateMe")
-                self.assertEqual(updated.schema.timestamp_column, "time")
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2021, 12, 10, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
-                self.assertEqual(updated.access_mode, "Public")
-                self.assertEqual(updated.viewers, ["updated"])
-                self.assertEqual(updated.status, "Paused")
-                self.assertEqual(updated.action_link_template, "updated")
-                self.assertEqual(updated.source.query, "get data")
-
+                updated = await client.get_data_feed(variables["data_feed_id"])
+                assert updated.name == variables["data_feed_updated_name"]
+                assert updated.data_feed_description == "updateMe"
+                assert updated.schema.timestamp_column == "time"
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset == 1
+                assert updated.ingestion_settings.data_source_request_concurrency == 1
+                assert updated.ingestion_settings.ingestion_retry_delay == 120
+                assert updated.ingestion_settings.stop_retry_after == 1
+                assert updated.rollup_settings.rollup_type == "AlreadyRollup"
+                assert updated.rollup_settings.rollup_method == "Sum"
+                assert updated.rollup_settings.rollup_identification_value == "sumrollup"
+                assert updated.missing_data_point_fill_settings.fill_type == "CustomValue"
+                assert updated.missing_data_point_fill_settings.custom_fill_value == 2
+                assert updated.access_mode == "Public"
+                assert updated.viewers == ["updated"]
+                assert updated.status == "Paused"
+                assert updated.action_link_template == "updated"
+                assert updated.source.query == "get data"
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables
 
-    @unittest.skip("skip test")
-    @AzureTestCase.await_prepared_test
-    async def test_update_data_feed_by_reseting_properties(self):
-        async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+    @pytest.mark.skip("skip test")
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(data_feed=True)
+    @recorded_by_proxy_async
+    async def test_update_data_feed_by_reseting_properties(self, client, variables):
+        async with client:
             try:
-                await self.admin_client.update_data_feed(
+                data_feed = await client.get_data_feed(variables["data_feed_id"])
+                update_name = "update" + str(uuid.uuid4())
+                if self.is_live:
+                    variables["data_feed_updated_name"] = update_name
+                await client.update_data_feed(
                     data_feed.id,
-                    name="update",
+                    name=variables["data_feed_updated_name"],
                     data_feed_description=None,
                     timestamp_column=None,
                     ingestion_start_offset=None,
@@ -928,25 +1049,24 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     status=None,
                     action_link_template=None,
                 )
-                updated = await self.admin_client.get_data_feed(data_feed.id)
-                self.assertEqual(updated.name, "update")
-                # self.assertEqual(updated.data_feed_description, "")  # doesn't currently clear
-                # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear
-                self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 0)
-                self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, -1)
-                self.assertEqual(updated.ingestion_settings.stop_retry_after, -1)
-                self.assertEqual(updated.rollup_settings.rollup_type, "NoRollup")
-                self.assertEqual(updated.rollup_settings.rollup_method, "None")
-                self.assertEqual(updated.rollup_settings.rollup_identification_value, None)
-                self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "SmartFilling")
-                self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 0)
-                self.assertEqual(updated.access_mode, "Private")
-                # self.assertEqual(updated.viewers, ["viewers"]) # doesn't currently clear
-                self.assertEqual(updated.status, "Active")
-                # self.assertEqual(updated.action_link_template, "updated")  # doesn't currently clear
-
+                updated = await client.get_data_feed(variables["data_feed_id"])
+                assert updated.name == variables["data_feed_updated_name"]
+                # assert updated.data_feed_description == ""  # doesn't currently clear
+                # assert updated.schema.timestamp_column == ""  # doesn't currently clear
+                assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+                assert updated.ingestion_settings.ingestion_start_offset == -1
+                assert updated.ingestion_settings.data_source_request_concurrency == 0
+                assert updated.ingestion_settings.ingestion_retry_delay == -1
+                assert updated.ingestion_settings.stop_retry_after == -1
+                assert updated.rollup_settings.rollup_type == "NoRollup"
+                assert updated.rollup_settings.rollup_method == "None"
+                assert updated.rollup_settings.rollup_identification_value is None
+                assert updated.missing_data_point_fill_settings.fill_type == "SmartFilling"
+                assert updated.missing_data_point_fill_settings.custom_fill_value == 0
+                assert updated.access_mode == "Private"
+                # assert updated.viewers == ["viewers"] # doesn't currently clear
+                assert updated.status == "Active"
+                # assert updated.action_link_template == "updated"  # doesn't currently clear
             finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
+                await self.clean_up(client.delete_data_feed, variables)
+            return variables

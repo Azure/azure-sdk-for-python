@@ -1,5 +1,36 @@
 # Release History
 
+## 2.2.0 (2022-01-06)
+
+**Features**
+
+  - Model AzureBlobFSLinkedService has a new parameter service_principal_credential
+  - Model AzureBlobFSLinkedService has a new parameter service_principal_credential_type
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter credential
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter workspace_resource_id
+  - Model CosmosDbLinkedService has a new parameter credential
+  - Model DynamicsLinkedService has a new parameter credential
+  - Model GoogleAdWordsLinkedService has a new parameter connection_properties
+  - Model LinkedIntegrationRuntimeRbacAuthorization has a new parameter credential
+
+## 2.1.0 (2021-11-20)
+
+**Features**
+
+  - Model PowerQuerySink has a new parameter flowlet
+  - Model DatasetCompression has a new parameter level
+  - Model SftpReadSettings has a new parameter disable_chunking
+  - Model DataFlowSink has a new parameter flowlet
+  - Model PowerQuerySource has a new parameter flowlet
+  - Model Transformation has a new parameter linked_service
+  - Model Transformation has a new parameter dataset
+  - Model Transformation has a new parameter flowlet
+  - Model DataFlowDebugPackage has a new parameter data_flows
+  - Model FtpReadSettings has a new parameter disable_chunking
+  - Model MappingDataFlow has a new parameter script_lines
+  - Model DataFlowReference has a new parameter parameters
+  - Model DataFlowSource has a new parameter flowlet
+
 ## 2.0.0 (2021-10-09)
 
 **Features**

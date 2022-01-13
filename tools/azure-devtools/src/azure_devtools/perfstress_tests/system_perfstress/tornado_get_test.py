@@ -14,7 +14,7 @@ class TornadoGetTest(PerfStressTest):
         type(self).client = httpclient.AsyncHTTPClient()
 
     async def run_async(self):
-        await type(self).client.fetch(self.Arguments.url)
+        await type(self).client.fetch(self.args.url)
 
     @staticmethod
     def add_arguments(parser):

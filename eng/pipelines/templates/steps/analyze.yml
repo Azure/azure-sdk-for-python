@@ -15,6 +15,8 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
+    parameters:
+      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
@@ -108,12 +110,6 @@ steps:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
-  - template: ../steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
-
   - template: ../steps/run_bandit.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -130,9 +126,10 @@ steps:
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
 
-  - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
-    parameters:
-      Artifacts: ${{ parameters.Artifacts }}
+  # Temporarily disabling due to #22416
+  # - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
+  #   parameters:
+  #     Artifacts: ${{ parameters.Artifacts }}
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

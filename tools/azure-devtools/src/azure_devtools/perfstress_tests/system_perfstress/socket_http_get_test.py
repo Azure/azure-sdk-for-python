@@ -11,7 +11,7 @@ from azure_devtools.perfstress_tests import PerfStressTest
 
 class SocketHttpGetTest(PerfStressTest):
     async def setup(self):
-        parsed_url = urlparse(self.Arguments.url)
+        parsed_url = urlparse(self.args.url)
         hostname = parsed_url.hostname
         port = parsed_url.port
         path = parsed_url.path

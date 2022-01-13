@@ -1,5 +1,17 @@
 # Release History
 
+## 11.3.0b7 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
 ## 11.3.0b6 (2021-11-19)
 
 ### Features Added

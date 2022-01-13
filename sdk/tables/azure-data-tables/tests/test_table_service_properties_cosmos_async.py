@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables import TableAnalyticsLogging, TableMetrics, TableRetentionPolicy, TableCorsRule
 from azure.data.tables.aio import TableServiceClient
@@ -18,8 +19,9 @@ from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
+class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
@@ -32,6 +34,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
             await tsc.set_service_properties(cors=cors)
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)

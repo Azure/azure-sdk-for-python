@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -37,7 +36,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class TextAnalyticsClientBase(object):
+class TextAnalyticsClientBase:
     def __init__(self, endpoint, credential, **kwargs):
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(
@@ -62,7 +61,10 @@ class TextAnalyticsClientBase(object):
                 "opinionMining",
             }
         )
-
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,

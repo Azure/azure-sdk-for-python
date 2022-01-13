@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import uuid
 from typing import (
     Union,
     Dict,
@@ -59,6 +60,17 @@ from .amqp import (
 if TYPE_CHECKING:
     import datetime
 
+PrimitiveTypes = Optional[Union[
+    int,
+    float,
+    bytes,
+    bool,
+    str,
+    Dict,
+    List,
+    uuid.UUID,
+]]
+
 _LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
@@ -108,7 +120,7 @@ class EventData(object):
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
-        )  
+        )
         self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
@@ -171,6 +183,7 @@ class EventData(object):
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
         # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
+        # pylint:disable=protected-access
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
@@ -181,6 +194,7 @@ class EventData(object):
         """
         event_data = cls(body="")
         event_data.message = message
+        # pylint: disable=protected-access
         event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
@@ -317,7 +331,7 @@ class EventData(object):
 
     @property
     def body(self):
-        # type: () -> Any
+        # type: () -> PrimitiveTypes
         """The body of the Message. The format may vary depending on the body type:
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.DATA<azure.eventhub.amqp.AmqpMessageBodyType.DATA>`,
         the body could be bytes or Iterable[bytes].
@@ -326,7 +340,7 @@ class EventData(object):
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
         the body could be any type.
 
-        :rtype: Any
+        :rtype: int or bool or float or bytes or str or dict or list or uuid.UUID
         """
         try:
             return self._raw_amqp_message.body

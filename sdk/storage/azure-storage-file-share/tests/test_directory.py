@@ -139,6 +139,17 @@ class StorageDirectoryTest(StorageTestCase):
             new_file.get_file_properties()
 
     @FileSharePreparer()
+    def test_share_directory_exists(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('dir1')
+
+        directory2 = share_client.get_directory_client("dir2")
+
+        self.assertTrue(directory.exists())
+        self.assertFalse(directory2.exists())
+
+    @FileSharePreparer()
     def test_delete_subdirectories(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)

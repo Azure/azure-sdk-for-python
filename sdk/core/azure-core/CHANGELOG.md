@@ -1,8 +1,24 @@
 # Release History
 
-## 1.20.2 (Unreleased)
+## 1.21.2 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- raise AttributeError when calling azure.core.pipeline.transport.\_\_bases__    #22469
+
+### Other Changes
+
+## 1.21.1 (2021-12-06)
+
+### Other Changes
+
+- Revert change in str method  #22023
+
+## 1.21.0 (2021-12-02)
 
 ### Breaking Changes
 
@@ -10,7 +26,7 @@
 
 ### Bugs Fixed
 
-### Other Changes
+- Add response body to string representation of `HttpResponseError` if we're not able to parse out information #21800
 
 ## 1.20.1 (2021-11-08)
 
