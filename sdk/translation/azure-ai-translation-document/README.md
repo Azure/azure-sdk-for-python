@@ -120,14 +120,14 @@ document_translation_client = DocumentTranslationClient(
 ## Key concepts
 
 The Document Translation service requires that you upload your files to an Azure Blob Storage source container and provide
-a target container where the translated documents can be written. SAS tokens to the containers (or files) are used to
-access the documents and create the translated documents in the target container. Additional information about setting this up can be found in
+a target container where the translated documents can be written. Additional information about setting this up can be found in
 the service documentation:
 
 - [Set up Azure Blob Storage containers][source_containers] with your documents
 - Optionally apply [glossaries][glossary] or a [custom model for translation][custom_model]
-- Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
-
+- Allow access to your storage account with either of the following options:
+    - Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
+    - Create and use a [managed identity][managed_identity] to grant access to your storage account
 
 ### DocumentTranslationClient
 
@@ -456,7 +456,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-
+[managed_identity]: https://aka.ms/azsdk/documenttranslation/managed-identity
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
