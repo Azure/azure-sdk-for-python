@@ -19,7 +19,7 @@ virtualenv env
 env/bin/activate
 pip install -e ../azure-sdk-tools
 $fileName = Join-Path $repoRoot scripts devops_tasks  get_track2_packages.py
-python $fileName
+python $fileName nightly
 if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
@@ -31,9 +31,9 @@ Pop-Location
 #If these succeed the smoke tests pass
 Push-Location $smoketestsDir
 Write-Host "Printing content of requirements-nightly.txt file:"
-Get-Content requirements-release.txt
+Get-Content requirements-nightly.txt
 Write-Host "Installing the packages in the file recursively"
-pip install -r requirements-release.txt
+pip install -r requirements-nightly.txt
 
 
 Pop-Location

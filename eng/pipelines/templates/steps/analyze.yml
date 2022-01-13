@@ -95,6 +95,14 @@ steps:
       pwsh: true
       arguments: '${{ parameters.ServiceDirectory }}'
 
+  - task: PowerShell@2
+    displayName: 'Run Release SmokeTests'
+    inputs:
+      targetType: 'filePath'
+      filePath: scripts/devops_tasks//Smoke-Tests-Release.ps1
+      pwsh: true
+      arguments: '${{ parameters.ServiceDirectory }}'
+
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
