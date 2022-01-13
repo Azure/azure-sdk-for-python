@@ -1,5 +1,11 @@
 # Release History
 
+## 6.0.1 (2022-01-12)
+
+**Fixes**
+
+  - add support for Python 3.6
+
 ## 6.0.0 (2022-01-06)
 
 **Features**
