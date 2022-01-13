@@ -28,7 +28,7 @@ These sample programs show common scenarios for the Document Translation client'
 
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Translator account][azure_document_translation_account] to run these samples.
 
