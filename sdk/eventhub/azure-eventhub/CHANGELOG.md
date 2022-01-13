@@ -1,5 +1,20 @@
 # Release History
 
+## 5.8.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 0.2.0a1 (unreleased)
+
+- Swapped out Proton dependency for uAMQP.
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
 ## 5.8.0a1 (2022-01-13)
 
 Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
@@ -525,8 +540,3 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 - Updated uAQMP dependency.
 
 
-## 0.2.0a1 (unreleased)
-
-- Swapped out Proton dependency for uAMQP.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
