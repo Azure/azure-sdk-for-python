@@ -37,7 +37,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         service documentation for the supported SAS permissions for accessing storage
         containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions) or a managed identity
         can be created and used to access documents in your storage account
-        (see https://aka.ms/azsdk/documenttranslation/managed-identity). Note that f the translation
+        (see https://aka.ms/azsdk/documenttranslation/managed-identity). Note that if the translation
         language pair is not present in the glossary, it will not be applied.
     :param str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
@@ -52,7 +52,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         service documentation for the supported SAS permissions for accessing storage
         containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions) or a managed identity
         can be created and used to access documents in your storage account
-        (see https://aka.ms/azsdk/documenttranslation/managed-identity). Note that f the translation
+        (see https://aka.ms/azsdk/documenttranslation/managed-identity). Note that if the translation
         language pair is not present in the glossary, it will not be applied.
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
