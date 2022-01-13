@@ -24,11 +24,10 @@ import time
 from datetime import datetime, timezone
 
 from azure.ai.anomalydetector import AnomalyDetectorClient
-from azure.ai.anomalydetector.models import DetectionRequest, ModelInfo
+from azure.ai.anomalydetector.models import DetectionRequest, ModelInfo, LastDetectionRequest
 from azure.ai.anomalydetector.models import ModelStatus, DetectionStatus
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-
 
 class MultivariateSample:
 
@@ -142,6 +141,14 @@ class MultivariateSample:
         print("{:d} available models after deletion.".format(len(model_list_after_delete)))
 
 
+    def last_detect(self, model_id, variables, detecting_points):
+
+        # Detect anomaly by sync api
+        last_detection_req = LastDetectionRequest(variables=variables, detecting_points=detecting_points)
+        r = self.ad_client.last_detect_anomaly(model_id, last_detection_req)
+        print("Get last detection result")
+        return r
+
 if __name__ == '__main__':
     SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
     ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
@@ -159,7 +166,7 @@ if __name__ == '__main__':
                             datetime(2021, 1, 2, 12, 0, 0, tzinfo=timezone.utc))
     assert model_id is not None
 
-    # Reference
+    # Inference
     result = sample.detect(model_id, datetime(2021, 1, 2, 12, 0, 0, tzinfo=timezone.utc),
                            datetime(2021, 1, 3, 0, 0, 0, tzinfo=timezone.utc))
     assert result is not None
@@ -180,3 +187,32 @@ if __name__ == '__main__':
 
     # Delete model
     sample.delete_model(model_id)
+
+    # *******************************************************************************************************************
+    # use your own inference data sending to last detection api, you should define your own variables and detectingPoints
+    # *****************************************************************************************************************
+    # define "<YOUR OWN variables>"
+    variables = [
+        {
+            "name": "variables_name1",
+            "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
+            "values": [0, 0, ...]
+        },
+        {
+            "name": "variables_name2",
+            "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
+            "values": [0, 0, ...]
+        }
+    ]
+    # define <YOUR OWN number of detectingPoints>"
+    detectingPoints = 10
+
+    # Last detection
+    last_detect_result = sample.last_detect(model_id, variables, detectingPoints)
+
+    assert last_detect_result is not None
+
+    print("Variable States:\t", last_detect_result.variable_states)
+    print("Variable States length:\t", len(last_detect_result.variable_states))
+    print("Results:\t", last_detect_result.results)
+    print("Results length:\t", len(last_detect_result.results))

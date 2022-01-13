@@ -20,6 +20,7 @@ These sample programs show common scenarios for the Anomaly Detector client's of
 |[sample_detect_entire_series_anomaly.py][sample_detect_entire_series_anomaly] |Detecting anomalies in the entire time series.|
 |[sample_detect_last_point_anomaly.py][sample_detect_last_point_anomaly] |Detecting the anomaly status of the latest data point.|
 |[sample_detect_change_point.py][sample_detect_change_point] |Detecting change points in the entire time series.|
+|[sample_multivariate_detect.py][sample_multivariate_detect] |Detecting anomalies in the multivariate time series.|
 
 ## Prerequisites
 * Python 2.7 or 3.5 or higher is required to use this package.

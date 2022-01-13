@@ -1,5 +1,15 @@
 # Release History
 
+## 3.0.0b4 (2022-01-18)
+
+  **Features**
+  - Introduced the new API: `AnomalyDetectorClientOperationsMixin.last_detect_anomaly`.
+  - Added 2 new optional properties: `impute_mode` & `impute_fixed_value` to `DetectRequest` object.
+  - Added 1 new optional property: `severity` to the `EntireDetectResponse` & `LastDetectResponse` objects.
+  - Removed the optional property `errors` from the `VariableState` object.
+  - Refactored the optional property `contributors` to `interpretation` from the `AnomalyValue` object.
+  - Modified the `FillNAMethod` object into an extensible enum.
+
 ## 3.0.0b3 (2021-04-16)
 
   **Features**
