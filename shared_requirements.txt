@@ -241,6 +241,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-redis azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-recoveryservicesbackup msrest>=0.6.21
 #override azure-mgmt-recoveryservicesbackup azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-datafactory msrest>=0.6.21
+#override azure-mgmt-datafactory azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-apimanagement msrest>=0.6.21
 #override azure-mgmt-apimanagement azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-compute msrest>=0.6.21
