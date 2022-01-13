@@ -100,7 +100,7 @@ then you can retrieve the client/app id by following the instructions [here](htt
 
 #### Client Secret Argument
 
-The client secret is the secret string that the application uses to prove its identity when requesting a token; this can also can be referred to as an application password.
+The client secret is the secret string that the application uses to prove its identity when requesting a token; this can also be referred to as an application password.
 If you have already created a service principal you can follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret) to create a client secret for your application.
 
 ### Client Certificate Credential Issues
@@ -138,7 +138,7 @@ Azure Service | Managed Identity Configuration
 
 #### Failed To Read VS Code Credentials / Authenticate via Azure Tools plugin in VS Code
 
-THe `VS Code Credential` failed to read the credential details from the cache.
+The `VS Code Credential` failed to read the credential details from the cache.
 
 The Visual Studio Code authentication is handled by an integration with the Azure Account extension.
 To use this form of authentication, ensure that you have installed the Azure Account extension,
