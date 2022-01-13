@@ -192,7 +192,7 @@ Verify in a browser:
 2. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
 3. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
 4. When you find an application entry, click the "+" sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
-5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` shows `PASSED`.
+5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` and `test_managed_identity_live_async` show `PASSED`.
 
 This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.9, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
 
