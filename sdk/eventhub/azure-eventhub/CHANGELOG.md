@@ -1,5 +1,20 @@
 # Release History
 
+## 5.7.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 0.2.0a1 (unreleased)
+
+- Swapped out Proton dependency for uAMQP.
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
 ## 5.7.0 (2022-01-12)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
@@ -511,8 +526,3 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 - Updated uAQMP dependency.
 
 
-## 0.2.0a1 (unreleased)
-
-- Swapped out Proton dependency for uAMQP.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
