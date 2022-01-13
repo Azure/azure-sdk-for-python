@@ -1,0 +1,252 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4e40b040-5e0d-11ec-acb3-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "eb59d7b3-c626-4053-a5c5-4ac62471adbe",
+        "Content-Length": "4390",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:12:58 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "63",
+        "X-Request-ID": "eb59d7b3-c626-4053-a5c5-4ac62471adbe"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "hookId": "8c88db0d-0020-4b7d-b88b-0a1b1c0eb315",
+            "hookName": "js-test-emailHook-163122810639507343",
+            "hookType": "Email",
+            "externalLink": "",
+            "description": "description",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360",
+              "savaity@microsoft.com"
+            ],
+            "hookParameter": {
+              "toList": [
+                "test@example.com"
+              ]
+            }
+          },
+          {
+            "hookId": "c5bcdcb2-4b0e-4d72-8548-4ea9b37f19ab",
+            "hookName": "email hook",
+            "hookType": "Email",
+            "externalLink": "https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts",
+            "description": "my email hook",
+            "admins": [
+              "xiangyan@microsoft.com",
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "alertme@alertme.com"
+              ]
+            }
+          },
+          {
+            "hookId": "37da4364-ad50-4ade-b239-d2c98c2ada2f",
+            "hookName": "453dbe04-03df-4ad6-b488-8f1e17fc6774",
+            "hookType": "Email",
+            "externalLink": "https://github.com/Azure/azure-sdk-for-java/wiki",
+            "description": "alert_us!",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "simpleuser0@hotmail.com",
+                "simpleuser1@hotmail.com"
+              ]
+            }
+          },
+          {
+            "hookId": "76d5cecb-1d72-4168-b379-075584093305",
+            "hookName": "15ab1448-e000-482f-88e8-598e91587e63",
+            "hookType": "Email",
+            "externalLink": "https://github.com/Azure/azure-sdk-for-java/wiki",
+            "description": "alert_us!",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "simpleuser0@hotmail.com",
+                "simpleuser1@hotmail.com"
+              ]
+            }
+          },
+          {
+            "hookId": "14b69527-cc37-45ba-8863-4f9857ccacca",
+            "hookName": "bd0a798a-94b2-4b88-b01e-37d1dcaecc7f",
+            "hookType": "Email",
+            "externalLink": "https://github.com/Azure/azure-sdk-for-java/wiki",
+            "description": "alert_us!",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "simpleuser0@hotmail.com",
+                "simpleuser1@hotmail.com"
+              ]
+            }
+          },
+          {
+            "hookId": "6d39275d-1b4e-4a26-820d-c3b6c187c4f9",
+            "hookName": "java_test_e1e92d58-963a-4570-833e-83a32814a167",
+            "hookType": "Email",
+            "externalLink": "",
+            "description": "",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "simpleuser0@hotmail.com"
+              ]
+            }
+          },
+          {
+            "hookId": "84ab6ffd-6b0c-4db6-ad09-de8fdac82970",
+            "hookName": "2546363b-c27a-43c5-a03d-ce9d7cb3449d",
+            "hookType": "Email",
+            "externalLink": "https://github.com/Azure/azure-sdk-for-java/wiki",
+            "description": "alert_us!",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "simpleuser0@hotmail.com",
+                "simpleuser1@hotmail.com"
+              ]
+            }
+          },
+          {
+            "hookId": "9c5d8942-bcaf-4184-af2b-444446c5df50",
+            "hookName": "js-test-emailHook-163615467577705904",
+            "hookType": "Email",
+            "externalLink": "",
+            "description": "description",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "test@example.com"
+              ]
+            }
+          },
+          {
+            "hookId": "919c4d20-ca07-4e36-a693-977a20aceb5c",
+            "hookName": "js-test-emailHook-163615469774902335",
+            "hookType": "Email",
+            "externalLink": "",
+            "description": "description",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "test@example.com"
+              ]
+            }
+          },
+          {
+            "hookId": "679a3c76-01ec-4abb-909e-8dae6f6d3896",
+            "hookName": "js-test-emailHook-163667847631004143",
+            "hookType": "Email",
+            "externalLink": "",
+            "description": "description",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "test@example.com"
+              ]
+            }
+          },
+          {
+            "hookId": "942727ee-c652-470e-83ac-75059ed08d75",
+            "hookName": "js-test-emailHook-163667870166203762",
+            "hookType": "Email",
+            "externalLink": "",
+            "description": "description",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "test@example.com"
+              ]
+            }
+          },
+          {
+            "hookId": "b125a509-e690-47ec-8ea8-19a5aca8d557",
+            "hookName": "f26d0888-fecc-4ff2-ae0a-3bd4b16db1db",
+            "hookType": "Webhook",
+            "externalLink": "https://github.com/Azure/azure-sdk-for-java/wiki",
+            "description": "alert_us!",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "test",
+              "password": "testpwd!@#",
+              "headers": {
+                "x-contoso-id": "123",
+                "x-contoso-name": "contoso"
+              }
+            }
+          },
+          {
+            "hookId": "bcfce31d-f197-4f0b-b039-5fbae4f3f020",
+            "hookName": "js-test-webHook-163768731301605500",
+            "hookType": "Webhook",
+            "externalLink": "",
+            "description": "description",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "user1",
+              "password": "SecretPlaceholder"
+            }
+          },
+          {
+            "hookId": "3bca60f7-407c-403b-9619-7b070883a174",
+            "hookName": "testwebhookcd6f134f",
+            "hookType": "Webhook",
+            "externalLink": "external link",
+            "description": "my web hook",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "krista",
+              "password": "123"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
