@@ -64,13 +64,13 @@ class DataFlowOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _data_flow = _models.DataFlowResource(properties=properties)
-        json = self._serialize.body(_data_flow, 'DataFlowResource')
+        _json = self._serialize.body(_data_flow, 'DataFlowResource')
 
         request = build_create_or_update_data_flow_request_initial(
             data_flow_name=data_flow_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_data_flow_initial.metadata['url'],
         )
@@ -361,13 +361,13 @@ class DataFlowOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_data_flow_request_initial(
             data_flow_name=data_flow_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_data_flow_initial.metadata['url'],
         )
         request = _convert_request(request)

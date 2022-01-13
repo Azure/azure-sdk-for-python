@@ -77,5 +77,5 @@ setup(
         'azure-mgmt-core>=1.3.0,<2.0.0',
         {%- endif %}
     ],
-    python_requires=">=3.7"
+    python_requires=">=3.6"
 )

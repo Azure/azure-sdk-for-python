@@ -1,12 +1,20 @@
 # Release History
 
-## 0.11.0 (Unreleased)
+## 0.12.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 0.11.0 (2022-01-11)
+
+### Features Added
+
+- Added `MetastoreOperations`
 
 ### Other Changes
 

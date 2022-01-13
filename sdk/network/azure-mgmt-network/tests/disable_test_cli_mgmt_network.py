@@ -124,12 +124,14 @@
 #   WebApplicationFirewallPolicies: 5/5
 
 import unittest
+import pytest
 
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, StorageAccountPreparer
 
 AZURE_LOCATION = 'eastus'
 
+@pytest.mark.live_test_only
 class MgmtNetworkTest(AzureMgmtTestCase):
 
     def setUp(self):
