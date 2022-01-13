@@ -8,8 +8,8 @@ __pycache__/
 # Virtual environment
 env*/
 
-# Codespace virtual environment
-pythonenv*/
+# Codespaces default virtual environment
+.venv/
 
 # PTVS analysis
 .ptvs/
