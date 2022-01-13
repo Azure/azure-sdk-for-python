@@ -15,6 +15,9 @@ New-Item -Path $smoketestsDir -ItemType Directory
 
 # Run smoketests python script to create requirements.txt
 Write-Host "Creating requirements.txt in the smoketest folder"
+virtualenv env
+source env/Scripts/activate
+pip install -e ../azure-sdk-tools
 $fileName = Join-Path $repoRoot scripts devops_tasks  get_track2_packages.py
 python $fileName
 if ($LASTEXITCODE) {
@@ -30,8 +33,6 @@ Push-Location $smoketestsDir
 Write-Host "Printing content of requirements-nightly.txt file:"
 Get-Content requirements-release.txt
 Write-Host "Installing the packages in the file recursively"
-vierualenv env
-source env/bin/activate
 pip install -r requirements-release.txt
 
 

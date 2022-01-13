@@ -2,6 +2,7 @@ import os
 import ast
 import io
 import re
+import logging
 import textwrap
 from subprocess import check_call
 
@@ -106,9 +107,17 @@ def build_requirements_release(packages):
             "./eng/scripts/smoketest",
         ))
     f = open(file_path + "/requirements-release.txt", 'w')
+    from pypi_tools.pypi import PyPIClient
+    client = PyPIClient()
     for package in packages:
         pkg_name, _, setup_py_path = package
-        f.write(pkg_name + '\n')
+        try:
+            versions = [str(v) for v in client.get_ordered_versions(pkg_name, False)]
+            f.write(pkg_name + '\n')
+        except Exception as err:
+            print(err)
+            print("Skipping Package {} since it is not available on PyPI".format(pkg_name))
+            logging.info("Skipping Package {} since it is not available on PyPI".format(pkg_name))
     f.close()
 
 if __name__ == '__main__':
