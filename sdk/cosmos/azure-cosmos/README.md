@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure Cosmos DB SQL API client library for Python
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
@@ -23,7 +26,7 @@ New releases of this SDK won't support Python 2.x starting January 1st, 2022. Pl
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 2.7 or 3.6+][python]
+* [Python 3.6+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
