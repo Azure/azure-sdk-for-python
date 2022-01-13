@@ -174,9 +174,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.20.1
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
-#override azure-eventhub uamqp>=1.5.0,<2.0.0
+#override azure-eventhub uamqp>=1.5.1,<2.0.0
 #override azure-appconfiguration msrest>=0.6.10
-#override azure-servicebus uamqp>=1.5.0,<2.0.0
+#override azure-servicebus uamqp>=1.5.1,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.14.0
 #override azure-servicebus typing-extensions>=3.7.4.3
@@ -241,6 +241,10 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-redis azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-recoveryservicesbackup msrest>=0.6.21
 #override azure-mgmt-recoveryservicesbackup azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-datafactory msrest>=0.6.21
+#override azure-mgmt-datafactory azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-apimanagement msrest>=0.6.21
+#override azure-mgmt-apimanagement azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-compute msrest>=0.6.21
 #override azure-mgmt-compute azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-streamanalytics msrest>=0.6.21
