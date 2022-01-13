@@ -1,6 +1,6 @@
 # Release History
 
-## 5.8.0a1 (Unreleased)
+## 5.8.0a1 (2022-01-13)
 
 Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
 
@@ -14,9 +14,9 @@ Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library
 
 - uAMQP dependency is removed.
 
-## 5.7.0 (2022-01-11)
+## 5.7.0 (2022-01-12)
 
-This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
 
@@ -30,7 +30,7 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 ### Other Changes
 
 - Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
-- Updated uAMQP dependency to 1.5.0.
+- Updated uAMQP dependency to 1.5.1.
 
 ## 5.6.1 (2021-10-06)
 
