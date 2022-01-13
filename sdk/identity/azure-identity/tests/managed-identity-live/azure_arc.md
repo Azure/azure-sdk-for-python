@@ -54,7 +54,7 @@ Install `requirements.txt`:
 ```
 pip install -r requirements.txt
 ```
-Run the managed identity tests, using the below command with Python Python 3.6+:
+Run the managed identity tests, using the below command with Python 3.6+:
 ```
 pytest -k managed_identity_live
 ```
