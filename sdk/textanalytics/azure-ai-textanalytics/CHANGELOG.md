@@ -10,7 +10,7 @@
 - `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
 
 ### Other Changes
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 5.2.0b2 (2021-11-02)
 

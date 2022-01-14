@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -96,7 +95,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
         self._text_analytics_client = kwargs.pop("text_analytics_client")
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        super(AsyncAnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(
+        super().__init__(
             *args, **kwargs
         )
 
@@ -242,7 +241,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        super(AsyncAnalyzeActionsLROPollingMethod, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):

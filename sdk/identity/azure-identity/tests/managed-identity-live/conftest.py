@@ -8,9 +8,6 @@ import sys
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-if sys.version_info < (3, 5, 3):
-    collect_ignore_glob = ["*_async.py"]
-
 AZURE_IDENTITY_TEST_VAULT_URL = "AZURE_IDENTITY_TEST_VAULT_URL"
 AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID = "AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID"
 

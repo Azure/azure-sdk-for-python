@@ -70,5 +70,5 @@ setup(
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
 )
