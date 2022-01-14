@@ -30,10 +30,11 @@ no-namespace-folders: true
 python: true
 title: MetricsAdvisorClient
 head-as-boolean: true
-package-version: 1.0.0
+package-version: 1.1.0
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 want-operation-metadata: false
+keep-version-file: true
 ```
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
@@ -406,6 +407,9 @@ directive:
     - rename-model:
         from: SeriesConfiguration
         to: MetricSingleSeriesDetectionCondition
+    - rename-model:
+        from: DataFeedSource
+        to: DataFeed
     - rename-model:
         from: Metric
         to: DataFeedMetric
