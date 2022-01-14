@@ -24,7 +24,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -34,14 +34,18 @@ from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_s
 from azure.eventgrid._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
-    CachedEventGridTopicPreparer,
+    EventGridPreparer,
 )
 
 class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def create_eg_publisher_client(self, endpoint):
+        credential = self.get_credential(EventGridPublisherClient)
+        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
+        return client
+
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_auth_error(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    def test_raise_on_auth_error(self, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -53,11 +57,10 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
         with pytest.raises(ClientAuthenticationError, match="The request authorization key is not authorized for*"):
             client.send(eg_event)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_bad_resource(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+    def test_raise_on_bad_resource(self, eventgrid_topic_key):
+        akc_credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(
                 subject="sample", 
@@ -68,12 +71,10 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             client.send(eg_event)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_raise_on_large_payload(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_raise_on_large_payload(self, eventgrid_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
 
         path  = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./large_data.json"))
         with open(path) as json_file:

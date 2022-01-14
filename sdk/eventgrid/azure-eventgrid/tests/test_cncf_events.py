@@ -1,23 +1,25 @@
 
 import json
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, CachedResourceGroupPreparer
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.eventgrid import EventGridPublisherClient
 from cloudevents.http import CloudEvent
 
 from eventgrid_preparer import (
-    CachedEventGridTopicPreparer,
+    EventGridPreparer,
 )
 
-class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
+class TestEventGridPublisherClientCncf(AzureRecordedTestCase):
+    def create_eg_publisher_client(self, endpoint):
+        credential = self.get_credential(EventGridPublisherClient)
+        client = self.create_client_from_credential(EventGridPublisherClient, credential=credential, endpoint=endpoint)
+        return client
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_dict(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_send_cloud_event_data_dict(self, eventgrid_cloud_event_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
             "source": "https://example.com/event-producer",
@@ -33,12 +35,10 @@ class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
     
         client.send(cloud_event, raw_request_hook=callback)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_base64_using_data(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_send_cloud_event_data_base64_using_data(self, eventgrid_cloud_event_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
             "source": "https://example.com/event-producer",
@@ -52,12 +52,10 @@ class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
     
         client.send(cloud_event, raw_request_hook=callback)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_none(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_send_cloud_event_data_none(self, eventgrid_cloud_event_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
             "source": "https://example.com/event-producer",
@@ -66,12 +64,10 @@ class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
         cloud_event = CloudEvent(attributes, data)
         client.send(cloud_event)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_str(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_send_cloud_event_data_str(self, eventgrid_cloud_event_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
             "source": "https://example.com/event-producer",
@@ -84,12 +80,10 @@ class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
         cloud_event = CloudEvent(attributes, data)
         client.send(cloud_event, raw_request_hook=callback)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_as_list(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_send_cloud_event_data_as_list(self, eventgrid_cloud_event_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
             "source": "https://example.com/event-producer",
@@ -98,12 +92,10 @@ class TestEventGridPublisherClientCncf(AzureMgmtRecordedTestCase):
         cloud_event = CloudEvent(attributes, data)
         client.send([cloud_event])
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_cloud_event_data_with_extensions(self, variables, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+    def test_send_cloud_event_data_with_extensions(self, eventgrid_cloud_event_topic_endpoint):
+        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
         attributes = {
             "type": "com.example.sampletype1",
             "source": "https://example.com/event-producer",
