@@ -23,7 +23,7 @@ USAGE:
 import os
 import asyncio
 from azure.communication.siprouting.aio import SipRoutingClient
-from azure.communication.siprouting._generated.models import TrunkPatch, TrunkRoute
+from azure.communication.siprouting._generated.models import SipConfiguration, Trunk, TrunkRoute
 
 
 class UpdateSIPConfigurationSampleAsync(object):
@@ -33,7 +33,7 @@ class UpdateSIPConfigurationSampleAsync(object):
 
     async def update_sip_configuration_sample(self):
         test_trunks = {
-            os.getenv("SAMPLE_TRUNK_NAME"): TrunkPatch(
+            os.getenv("SAMPLE_TRUNK_NAME"): Trunk(
                 sip_signaling_port=int(os.getenv("SAMPLE_TRUNK_SIP_PORT"))
             )
         }
@@ -46,18 +46,18 @@ class UpdateSIPConfigurationSampleAsync(object):
         ]
 
         response = await self._client.update_sip_configuration(
-            test_trunks, test_trunk_routes
+            SipConfiguration(trunks=test_trunks, routes=test_trunk_routes)
         )
         print(response)
 
     async def update_sip_trunks_sample(self):
         test_trunks = {
-            os.getenv("SAMPLE_TRUNK_NAME"): TrunkPatch(
+            os.getenv("SAMPLE_TRUNK_NAME"): Trunk(
                 sip_signaling_port=(int(os.getenv("SAMPLE_TRUNK_SIP_PORT")))
             )
         }
 
-        response = await self._client.update_sip_trunks(test_trunks)
+        response = await self._client.update_sip_configuration(trunks=test_trunks)
         print(response)
 
     async def update_sip_routes_sample(self):
@@ -69,7 +69,7 @@ class UpdateSIPConfigurationSampleAsync(object):
             )
         ]
 
-        response = await self._client.update_sip_routes(test_trunk_routes)
+        response = await self._client.update_sip_configuration(routes=test_trunk_routes)
         print(response)
 
 

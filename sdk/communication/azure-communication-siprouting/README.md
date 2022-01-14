@@ -37,8 +37,6 @@ The following section provides several code snippets covering some of the most c
 - [Client Initialization](#client-initialization)
 - [Retrieve SIP configuration](#retrieve-sip-configuration)
 - [Update SIP configuration](#update-sip-configuration)
-- [Update SIP trunks](#update-sip-trunks)
-- [Update SIP routes](#update-sip-routes)
 
 
 ### Client Initialization: {#client-initialization}
@@ -77,7 +75,7 @@ print(result.routes)
 Set new SIP configuration trunks and routes:
 
 ```python
-result = sip_client.update_sip_configuration(NEW_TRUNKS_CONFIGURATION,NEW_ROUTES_CONFIGURATION)
+result = sip_client.update_sip_configuration(SipConfiguration(NEW_TRUNKS_CONFIGURATION,NEW_ROUTES_CONFIGURATION))
 ```
 
 ### Update SIP trunks: {#update-sip-trunks}
@@ -85,7 +83,7 @@ result = sip_client.update_sip_configuration(NEW_TRUNKS_CONFIGURATION,NEW_ROUTES
 Set new SIP configuration trunks:
 
 ```python
-result = sip_client.update_sip_trunks(NEW_TRUNKS_CONFIGURATION)
+result = sip_client.update_sip_configuration(trunks=NEW_TRUNKS_CONFIGURATION)
 ```
 
 ### Update SIP routes: {#update-sip-routes}
@@ -93,7 +91,7 @@ result = sip_client.update_sip_trunks(NEW_TRUNKS_CONFIGURATION)
 Set new SIP configuration routes:
 
 ```python
-result = sip_client.update_sip_routes(NEW_ROUTES_CONFIGURATION)
+result = sip_client.update_sip_configuration(routes=NEW_ROUTES_CONFIGURATION)
 ```
 
 # Troubleshooting

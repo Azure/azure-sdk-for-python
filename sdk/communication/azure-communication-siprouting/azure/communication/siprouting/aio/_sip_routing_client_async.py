@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Dict, Any  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, overload  # pylint: disable=unused-import
 
 try:
     from urllib.parse import urlparse
@@ -13,20 +13,20 @@ except ImportError:
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.siprouting._generated.models import (
-    SipConfiguration,
-    SipConfigurationPatch,
-    Trunk,
-    TrunkRoute,
+    SipConfiguration
 )
 from .._generated.aio._azure_communication_sip_routing_service import (
     AzureCommunicationSIPRoutingService,
 )
 from .._authentication._client_utils import (
     parse_connection_str,
-    get_authentication_policy,
+    get_authentication_policy
 )
-from .._authentication._user_credential_async import CommunicationTokenCredential
 from .._version import SDK_MONIKER
+
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SipRoutingClient(object):
@@ -36,13 +36,13 @@ class SipRoutingClient(object):
     :param endpoint: The endpoint url for Azure Communication Service resource.
     :type endpoint: str
     :param credential: The credentials with which to authenticate.
-    :type credential: CommunicationTokenCredential
+    :type credential: AsyncTokenCredential
     """
 
     def __init__(
         self,
         endpoint,  # type: str
-        credential,  # type: CommunicationTokenCredential
+        credential,  # type: AsyncTokenCredential
         **kwargs  # type: Any
     ):  # type: (...) -> SipRoutingClient
 
@@ -73,18 +73,18 @@ class SipRoutingClient(object):
     @classmethod
     def from_connection_string(
         cls,
-        connection_string,  # type: str
+        conn_str,  # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> SipRoutingClient
         """Factory method for creating client from connection string.
 
-        :param connection_string: Connection string containing endpoint and credentials
-        :type connection_string: str
+        :param conn_str: Connection string containing endpoint and credentials
+        :type conn_str: str
         :returns: The newly created client.
         :rtype: ~azure.communication.siprouting.models.SipRoutingClient
         """
 
-        endpoint, credential = parse_connection_str(connection_string)
+        endpoint, credential = parse_connection_str(conn_str)
         return cls(endpoint, credential, **kwargs)
 
     @distributed_trace_async
@@ -103,81 +103,73 @@ class SipRoutingClient(object):
 
         return acs_resource_calling_configuration
 
+    @overload
     @distributed_trace_async
     async def update_sip_configuration(
         self,
-        sip_configuration,  # type: SipConfiguration
-        **kwargs  # type: Any
+        configuration, # type: SipConfiguration
+        **kwargs # type: any
     ):  # type: (...) -> SipConfiguration
         """Updates SIP routing configuration with new SIP trunks and trunk routes.
 
-        :param sip_configuration: SIP trunks for routing calls
-        :type sip_configuration: ~azure.communication.siprouting.models.SipConfiguration
+        :param configuration: new SIP configuration
+        :type configuration: ~azure.communication.siprouting.models.SipConfiguration
         :returns: Updated SIP configuration.
         :rtype: ~azure.communication.siprouting.models.SipConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
+    @overload
+    @distributed_trace_async
+    async def update_sip_configuration(
+        self,
+        **kwargs
+    ):  # type: (**Any) -> SipConfiguration
+        """Updates SIP routing configuration with new SIP trunks and SIP trunk routes.
 
-        if not sip_configuration:
-            raise ValueError("SIP configuration can not be null")
-
-        if not sip_configuration.trunks:
-            raise ValueError("SIP trunks can not be null")
-
-        if not sip_configuration.routes:
-            raise ValueError("SIP routes can not be null")
-
-        updated_sip_configuration = SipConfigurationPatch(
-            trunks=sip_configuration.trunks, routes=sip_configuration.routes
-        )
-        return await self._rest_service.patch_sip_configuration(
-            body=updated_sip_configuration, **kwargs
-        )
+        :keyword trunks: SIP trunks for routing calls
+        :paramtype trunks: Dict[str, ~azure.communication.siprouting.models.Trunk]
+        :keyword routes: Trunk routes for routing calls. Route's name is used as the key.
+        :paramtype routes: list[~azure.communication.siprouting.models.TrunkRoute]
+        :returns: Updated SIP configuration.
+        :rtype: ~azure.communication.siprouting.models.SipConfiguration
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
 
     @distributed_trace_async
-    async def update_sip_trunks(
+    async def update_sip_configuration(
         self,
-        sip_trunks,  # type: Dict[str,Trunk]
-        **kwargs  # type: Any
+        *args, # type: SipConfiguration
+        **kwargs # type: any
     ):  # type: (...) -> SipConfiguration
-        """Updates SIP routing configuration with new SIP trunks.
+        """Updates SIP routing configuration with new SIP trunks and SIP trunk routes.
 
-        :param sip_trunks: SIP trunks for routing calls
-        :type sip_trunks: Dict[str, ~azure.communication.siprouting.models.Trunk]
+        :param args: new SIP configuration
+        :type args: ~azure.communication.siprouting.models.SipConfiguration
+        :keyword trunks: SIP trunks for routing calls
+        :paramtype trunks: Dict[str, ~azure.communication.siprouting.models.Trunk]
+        :keyword routes: Trunk routes for routing calls. Route's name is used as the key.
+        :paramtype routes: list[~azure.communication.siprouting.models.TrunkRoute]
         :returns: Updated SIP configuration.
         :rtype: ~azure.communication.siprouting.models.SipConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-
-        if not sip_trunks:
-            raise ValueError("SIP trunks can not be null")
-
-        updated_sip_configuration = SipConfigurationPatch(trunks=sip_trunks)
-        return await self._rest_service.patch_sip_configuration(
-            body=updated_sip_configuration, **kwargs
+        if len(args) > 1:
+            raise TypeError("There can only be one positional argument, which is the SIP configuration.")
+        if args and "configuration" in kwargs:
+            raise TypeError(
+            "You have already supplied the configuration as a positional parameter, "
+            "you can not supply it as a keyword argument as well."
         )
 
-    @distributed_trace_async
-    async def update_sip_routes(
-        self,
-        sip_routes,  # type: List[TrunkRoute]
-        **kwargs  # type: Any
-    ):  # type: (...) -> SipConfiguration
-        """Updates SIP routing configuration with new SIP trunk routes.
+        configuration = args[0] if args else None
 
-        :param sip_routes: Trunk routes for routing calls. Route's name is used as the key.
-        :type sip_routes: List[~azure.communication.siprouting.models.TrunkRoute]
-        :returns: Updated SIP configuration.
-        :rtype: ~azure.communication.siprouting.models.SipConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
+        if not configuration:
+            configuration = SipConfiguration(
+                trunks=kwargs.pop("trunks", {}),
+                routes=kwargs.pop("routes", {}))
 
-        if not sip_routes:
-            raise ValueError("SIP routes can not be null")
-
-        updated_sip_configuration = SipConfigurationPatch(routes=sip_routes)
         return await self._rest_service.patch_sip_configuration(
-            body=updated_sip_configuration, **kwargs
+            body=configuration, **kwargs
         )
 
     async def close(self) -> None:

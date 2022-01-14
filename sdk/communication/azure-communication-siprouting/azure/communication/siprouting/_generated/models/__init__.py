@@ -10,25 +10,19 @@ try:
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import SipConfiguration
-    from ._models_py3 import SipConfigurationPatch
     from ._models_py3 import Trunk
-    from ._models_py3 import TrunkPatch
     from ._models_py3 import TrunkRoute
 except (SyntaxError, ImportError):
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import SipConfiguration  # type: ignore
-    from ._models import SipConfigurationPatch  # type: ignore
     from ._models import Trunk  # type: ignore
-    from ._models import TrunkPatch  # type: ignore
     from ._models import TrunkRoute  # type: ignore
 
 __all__ = [
     'CommunicationError',
     'CommunicationErrorResponse',
     'SipConfiguration',
-    'SipConfigurationPatch',
     'Trunk',
-    'TrunkPatch',
     'TrunkRoute',
 ]

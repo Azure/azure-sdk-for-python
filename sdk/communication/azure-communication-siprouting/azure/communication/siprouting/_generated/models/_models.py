@@ -109,57 +109,8 @@ Call is then directed into route's first available trunk, based on the order in 
         self.routes = kwargs.get('routes', None)
 
 
-class SipConfigurationPatch(msrest.serialization.Model):
-    """Represents a SIP configuration patch.
-
-    :param trunks: SIP trunks for routing calls.
-     Map key is trunk's FQDN (1-249 characters).
-    :type trunks: dict[str, ~azure.communication.siprouting.models.TrunkPatch]
-    :param routes: Trunk routes for routing calls.
-    :type routes: list[~azure.communication.siprouting.models.TrunkRoute]
-    """
-
-    _attribute_map = {
-        'trunks': {'key': 'trunks', 'type': '{TrunkPatch}'},
-        'routes': {'key': 'routes', 'type': '[TrunkRoute]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SipConfigurationPatch, self).__init__(**kwargs)
-        self.trunks = kwargs.get('trunks', None)
-        self.routes = kwargs.get('routes', None)
-
-
 class Trunk(msrest.serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
-    :type sip_signaling_port: int
-    """
-
-    _validation = {
-        'sip_signaling_port': {'required': True},
-    }
-
-    _attribute_map = {
-        'sip_signaling_port': {'key': 'sipSignalingPort', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Trunk, self).__init__(**kwargs)
-        self.sip_signaling_port = kwargs['sip_signaling_port']
-
-
-class TrunkPatch(msrest.serialization.Model):
-    """Represents a SIP trunk patch.
 
     :param sip_signaling_port: Gets or sets SIP signaling port of the trunk.
     :type sip_signaling_port: int
@@ -173,7 +124,7 @@ class TrunkPatch(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(TrunkPatch, self).__init__(**kwargs)
+        super(Trunk, self).__init__(**kwargs)
         self.sip_signaling_port = kwargs.get('sip_signaling_port', None)
 
 

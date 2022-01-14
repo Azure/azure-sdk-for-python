@@ -79,7 +79,7 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin(object):
 
     def patch_sip_configuration(
         self,
-        body=None,  # type: Optional["_models.SipConfigurationPatch"]
+        body=None,  # type: Optional["_models.SipConfiguration"]
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.SipConfiguration"]
@@ -88,7 +88,7 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin(object):
         Patches SIP configuration for resource.
 
         :param body: Configuration patch.
-        :type body: ~azure.communication.siprouting.models.SipConfigurationPatch
+        :type body: ~azure.communication.siprouting.models.SipConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SipConfiguration, or the result of cls(response)
         :rtype: ~azure.communication.siprouting.models.SipConfiguration or None
@@ -121,8 +121,7 @@ class AzureCommunicationSIPRoutingServiceOperationsMixin(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
-            print(body)
-            body_content = self._serialize.body(body, 'SipConfigurationPatch')
+            body_content = self._serialize.body(body, 'SipConfiguration')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

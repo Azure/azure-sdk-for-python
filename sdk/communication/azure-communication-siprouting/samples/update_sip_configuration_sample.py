@@ -22,8 +22,7 @@ USAGE:
 
 import os
 from azure.communication.siprouting import SipRoutingClient
-from azure.communication.siprouting._generated.models import TrunkPatch, TrunkRoute
-
+from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 
 class UpdateSIPConfigurationSample(object):
     def __init__(self):
@@ -32,7 +31,7 @@ class UpdateSIPConfigurationSample(object):
 
     def update_sip_configuration_sample(self):
         test_trunks = {
-            os.getenv("SAMPLE_TRUNK_NAME"): TrunkPatch(
+            os.getenv("SAMPLE_TRUNK_NAME"): Trunk(
                 sip_signaling_port=int(os.getenv("SAMPLE_TRUNK_SIP_PORT"))
             )
         }
@@ -49,12 +48,12 @@ class UpdateSIPConfigurationSample(object):
 
     def update_sip_trunks_sample(self):
         test_trunks = {
-            os.getenv("SAMPLE_TRUNK_NAME"): TrunkPatch(
+            os.getenv("SAMPLE_TRUNK_NAME"): Trunk(
                 sip_signaling_port=(int(os.getenv("SAMPLE_TRUNK_SIP_PORT")))
             )
         }
 
-        response = self._client.update_sip_trunks(test_trunks)
+        response = self._client.update_sip_configuration(trunks=test_trunks)
         print(response)
 
     def update_sip_routes_sample(self):
@@ -66,7 +65,7 @@ class UpdateSIPConfigurationSample(object):
             )
         ]
 
-        response = self._client.update_sip_routes(test_trunk_routes)
+        response = self._client.update_sip_configuration(routes=test_trunk_routes)
         print(response)
 
 
