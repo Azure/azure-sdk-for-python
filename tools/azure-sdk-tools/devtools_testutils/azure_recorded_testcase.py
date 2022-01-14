@@ -149,8 +149,26 @@ class AzureRecordedTestCase(object):
         return client
 
     def create_random_name(self, name):
-        unique_test_name = os.getenv("PYTEST_CURRENT_TEST").encode("utf-8")
-        return get_resource_name(name, unique_test_name)
+        # pytest sets the current running test in an environment variable
+        # the path to the test can depend on the environment, so we can't assume this is the path from the repo root
+        unique_test_name = os.getenv("PYTEST_CURRENT_TEST")
+        path_to_test = os.path.normpath(unique_test_name.split(" ")[0])
+        full_path_to_test = os.path.abspath(path_to_test)
+
+        # walk up to the repo root by looking for "sdk" directory or root of file system
+        path_components = []
+        head, tail = os.path.split(full_path_to_test)
+        while tail != "sdk" and tail != "":
+            path_components.append(tail)
+            head, tail = os.path.split(head)
+
+        # reverse path_components to construct components of path from repo root: [sdk, ..., tests, {test}]
+        path_components.append("sdk")
+        path_components.reverse()
+        # using the path to the test from the repo root ensures a consistent full_test_name regardless of environment
+        # without consistency, random names might not be consistent across test runs
+        full_test_name = os.sep.join(path_components).encode("utf-8")
+        return get_resource_name(name, full_test_name)
 
     def get_resource_name(self, name):
         """Alias to create_random_name for back compatibility."""
