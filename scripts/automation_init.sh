@@ -2,9 +2,7 @@
 
 # install python3.8
 sudo apt-get install python3.8
-python3 -V
-whereis python
-python3.8 -V
+sudo apt-get install python3-venv
 
 # init env
 rm -rf $TMPDIR/venv-sdk
