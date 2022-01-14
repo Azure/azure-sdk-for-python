@@ -1,0 +1,167 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1139",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "5015237b-5e0c-11ec-ad4f-6245b51668de"
+      },
+      "RequestBody": "{\u0022dataSourceType\u0022: \u0022SqlServer\u0022, \u0022dataFeedName\u0022: \u0022testfeeda5661e02-b75b-4477-b279-563b6b7b3222\u0022, \u0022dataFeedDescription\u0022: \u0022my first data feed\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022, \u0022metricDisplayName\u0022: \u0022display cost\u0022, \u0022metricDescription\u0022: \u0022the cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022, \u0022metricDisplayName\u0022: \u0022display revenue\u0022, \u0022metricDescription\u0022: \u0022the revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022, \u0022dimensionDisplayName\u0022: \u0022display category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022, \u0022dimensionDisplayName\u0022: \u0022display city\u0022}], \u0022timestampColumn\u0022: \u0022Timestamp\u0022, \u0022dataStartFrom\u0022: \u00222019-10-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: -1, \u0022maxConcurrency\u0022: 0, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022needRollup\u0022: \u0022NoRollup\u0022, \u0022rollUpMethod\u0022: \u0022None\u0022, \u0022fillMissingPointType\u0022: \u0022SmartFilling\u0022, \u0022viewMode\u0022: \u0022Private\u0022, \u0022admins\u0022: [\u0022yournamehere@microsoft.com\u0022], \u0022viewers\u0022: [\u0022viewers\u0022], \u0022actionLinkTemplate\u0022: \u0022action link template\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022connectionString\u0022: \u0022metrics_advisor_sql_server_connection_string\u0022, \u0022query\u0022: \u0022select * from adsample2 where Timestamp = @StartTime\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "c1af267b-8a4e-4ae1-a20e-248803dc30b4",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:05:51 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/12646621-2091-4cd6-9cb5-eb667673cb72",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "482",
+        "X-Request-ID": "c1af267b-8a4e-4ae1-a20e-248803dc30b4"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/12646621-2091-4cd6-9cb5-eb667673cb72",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "506e84df-5e0c-11ec-909f-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a5a37e7c-51bf-4e98-94e6-ba17e4fcee94",
+        "Content-Length": "1342",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:05:51 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "180",
+        "X-Request-ID": "a5a37e7c-51bf-4e98-94e6-ba17e4fcee94"
+      },
+      "ResponseBody": {
+        "dataFeedId": "12646621-2091-4cd6-9cb5-eb667673cb72",
+        "dataFeedName": "testfeeda5661e02-b75b-4477-b279-563b6b7b3222",
+        "metrics": [
+          {
+            "metricId": "620d5b41-0162-4c29-a128-8e5f5b3c53a3",
+            "metricName": "cost",
+            "metricDisplayName": "display cost",
+            "metricDescription": "the cost"
+          },
+          {
+            "metricId": "68c902a3-e9ea-4230-be0a-7288df639641",
+            "metricName": "revenue",
+            "metricDisplayName": "display revenue",
+            "metricDescription": "the revenue"
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category",
+            "dimensionDisplayName": "display category"
+          },
+          {
+            "dimensionName": "city",
+            "dimensionDisplayName": "display city"
+          }
+        ],
+        "dataStartFrom": "2019-10-01T00:00:00Z",
+        "dataSourceType": "SqlServer",
+        "timestampColumn": "Timestamp",
+        "startOffsetInSeconds": -1,
+        "maxQueryPerMinute": 30.0,
+        "granularityName": "Daily",
+        "needRollup": "NoRollup",
+        "fillMissingPointType": "SmartFilling",
+        "fillMissingPointValue": 0.0,
+        "rollUpMethod": "None",
+        "dataFeedDescription": "my first data feed",
+        "stopRetryAfterInSeconds": -1,
+        "minRetryIntervalInSeconds": -1,
+        "maxConcurrency": 0,
+        "viewMode": "Private",
+        "admins": [
+          "krpratic@microsoft.com",
+          "yournamehere@microsoft.com"
+        ],
+        "viewers": [
+          "viewers"
+        ],
+        "creator": "krpratic@microsoft.com",
+        "status": "Active",
+        "createdTime": "2021-12-16T01:05:52Z",
+        "isAdmin": true,
+        "actionLinkTemplate": "action link template",
+        "dataSourceParameter": {
+          "query": "select * from adsample2 where Timestamp = @StartTime"
+        },
+        "authenticationType": "Basic"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/12646621-2091-4cd6-9cb5-eb667673cb72",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "50907c46-5e0c-11ec-a6ba-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "412dae04-6c9d-4542-9561-d4159bdd1dd9",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:05:52 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "358",
+        "X-Request-ID": "412dae04-6c9d-4542-9561-d4159bdd1dd9"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/12646621-2091-4cd6-9cb5-eb667673cb72",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "50cd5dd9-5e0c-11ec-aeb2-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "apim-request-id": "2860fe3a-05b2-4481-9a99-09574499f9d7",
+        "Content-Length": "59",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:05:52 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "237",
+        "X-Request-ID": "2860fe3a-05b2-4481-9a99-09574499f9d7"
+      },
+      "ResponseBody": {
+        "code": "404 NOT_FOUND",
+        "message": "datafeedId is invalid."
+      }
+    }
+  ],
+  "Variables": {
+    "data_feed_id": "12646621-2091-4cd6-9cb5-eb667673cb72",
+    "data_feed_name": "testfeeda5661e02-b75b-4477-b279-563b6b7b3222"
+  }
+}
