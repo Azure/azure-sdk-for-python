@@ -424,9 +424,6 @@ class PhoneNumbersOperations(object):
         :type country_code: str
         :param body: The phone number search request.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -507,9 +504,6 @@ class PhoneNumbersOperations(object):
 
         :param search_id: The search Id.
         :type search_id: str
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PhoneNumberSearchResult, or the result of cls(response)
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberSearchResult
@@ -615,9 +609,6 @@ class PhoneNumbersOperations(object):
 
         :param search_id: The search id.
         :type search_id: str
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -686,9 +677,6 @@ class PhoneNumbersOperations(object):
 
         :param operation_id: The id of the operation.
         :type operation_id: str
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PhoneNumberOperation, or the result of cls(response)
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberOperation
@@ -748,9 +736,6 @@ class PhoneNumbersOperations(object):
 
         :param operation_id: The id of the operation.
         :type operation_id: str
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -869,9 +854,6 @@ class PhoneNumbersOperations(object):
         :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
         :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -954,9 +936,6 @@ class PhoneNumbersOperations(object):
         :param phone_number: The purchased phone number whose details are to be fetched in E.164
          format, e.g. +11234567890.
         :type phone_number: str
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PurchasedPhoneNumber, or the result of cls(response)
         :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
@@ -1058,9 +1037,6 @@ class PhoneNumbersOperations(object):
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
         :type phone_number: str
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -1132,9 +1108,6 @@ class PhoneNumbersOperations(object):
         :param top: An optional parameter for how many entries to return, for pagination purposes. The
          default value is 100.
         :type top: int
-        :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PurchasedPhoneNumbers or the result of
          cls(response)

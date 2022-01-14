@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.2 (Unreleased)
+## 1.1.0b1 (Unreleased)
 ### Other Changes
 - Adds support for API verion `2022-01-11-preview2`
 - Updates dependency `azure-core` to `1.20.0`
