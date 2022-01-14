@@ -65,5 +65,5 @@ setup(
         "msrest>=0.6.21",
         'six>=1.11.0',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
 )
