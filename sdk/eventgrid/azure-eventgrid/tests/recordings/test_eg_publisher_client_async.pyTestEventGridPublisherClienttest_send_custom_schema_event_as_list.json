@@ -16,29 +16,29 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "1321",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 14 Jan 2022 01:33:45 GMT",
+        "Date": "Fri, 14 Jan 2022 02:20:25 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=As11ewGdSQpJt8wDF5lghPqIATgcBAAAAPPJctkOAAAA; expires=Sun, 13-Feb-2022 01:33:45 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Avox71nb3K5Diym0GHNwAHGIATgcEgAAAM3UctkOAAAA; expires=Sun, 13-Feb-2022 02:20:26 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12261.22 - EUS ProdSlices",
-        "x-ms-request-id": "f8086ae6-79dc-4577-a664-8b3ae3890300"
+        "x-ms-ests-server": "2.1.12261.17 - SCUS ProdSlices",
+        "x-ms-request-id": "a92d7d79-9a04-43e0-b926-4bd590b49300"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 86399,
         "ext_expires_in": 86399,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL2V2ZW50Z3JpZC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQyMTIzNzI1LCJuYmYiOjE2NDIxMjM3MjUsImV4cCI6MTY0MjIxMDQyNSwiYWlvIjoiRTJaZ1lPRDczdCs1bUVmWnJYTGkvOTNsa1RYdkFRPT0iLCJhcHBpZCI6Ijc1YTFhN2ZmLTlkYmItNGVlMy04MWRmLWM2NTViZGZhMWU0ZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiIyYTg0OTJkYS1lYzk3LTQ5YzItODQ4Ni1kYTQxNjhlYjZlZGIiLCJyaCI6IjAuQVFFQXY0ajVjdkdHcjBHUnF5MTgwQkhiUl8tbm9YVzduZU5PZ2RfR1ZiMzZIazhhQUFBLiIsInN1YiI6IjJhODQ5MmRhLWVjOTctNDljMi04NDg2LWRhNDE2OGViNmVkYiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6IjVtb0ktTng1ZDBXbVpJczY0NGtEQUEiLCJ2ZXIiOiIxLjAifQ.Kyjd0i_moVUK2ThEp4XN0lD4YjXiw1lfYIer7bhr-udWhrc0-Yd23si-pIThLPVhmZMK-3B6i8-4wUqPuhPOO_aqsisn4WQwAX8f8zP3MzVL66Xiut4N21fEjmMVb4BTJ7EzRngRXnyy9t4faUDh-mYgpWM7ZxilbIWycTcQ1hsKCb82B-xBw5UTrpn5nClN719sxvjwF41KEFbiMl_vDEhxZINzZsCqyUgjBzr4SLUPWh3b8ROE5oV9g8s8X0qDCzSj25VLv5c8dmpYKaQu9o31FGWJnHo8iIdHuGiQpVCG-RHmpnsABHbXSbHVVwl-az_fBB4j3pJLEO_qab0xqw"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL2V2ZW50Z3JpZC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQyMTI2NTI2LCJuYmYiOjE2NDIxMjY1MjYsImV4cCI6MTY0MjIxMzIyNiwiYWlvIjoiRTJaZ1lEajd1c0RaWitueklPNzl6OCt0a2pmUEJRQT0iLCJhcHBpZCI6Ijc1YTFhN2ZmLTlkYmItNGVlMy04MWRmLWM2NTViZGZhMWU0ZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiIyYTg0OTJkYS1lYzk3LTQ5YzItODQ4Ni1kYTQxNjhlYjZlZGIiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUl8tbm9YVzduZU5PZ2RfR1ZiMzZIazhhQUFBLiIsInN1YiI6IjJhODQ5MmRhLWVjOTctNDljMi04NDg2LWRhNDE2OGViNmVkYiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImVYMHRxUVNhNEVPNUprdlZrTFNUQUEiLCJ2ZXIiOiIxLjAifQ.hsLkx6kzS9eL8glUkJL4t33FqAjq4zqk5jSgT5tM1QcKGM-ZWocPCeTTj-05cvBB7t4wV40hMEl-QRPdWkat2xUdU71dQ-Y-PP4mz-WY_3Zg6eeT5MXvdyupT7vVhU3kEdbqS4lLyhWYjuLGw8tN0usyW8fTvVbPL3iRvDOuwYEAW628Hr2IWz4vCtzsb5LbSiKht_7rVWfjvnAE2qRV2lHgGAAJ4nx5zUoJ7JhSL2S-TBfGb-xGLhWnMoiOga-C967zRoAZi2pEzyo2Ug1rR1wKreUz3XTfZuRT_Py-8Kb7d34aXKS4_8WeRH38kew-ZJg0p6UwtmJxp0XRa5jBWw"
       }
     },
     {
-      "RequestUri": "https://administratoreventgridcustomevent-topic.westus2-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://fakeresource.westus2-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -47,17 +47,17 @@
         "Content-Length": "396",
         "Content-Type": "application/json; charset=utf-8",
         "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "041dba10-74da-11ec-bb98-2816a845e8c6"
+        "x-ms-client-request-id": "89ebc014-74e0-11ec-8daf-2816a845e8c6"
       },
-      "RequestBody": "[{\u0022customSubject\u0022: \u0022sample\u0022, \u0022customEventType\u0022: \u0022sample.event\u0022, \u0022customDataVersion\u0022: \u00222.0\u0022, \u0022customId\u0022: \u00221234\u0022, \u0022customEventTime\u0022: \u00222022-01-14T01:33:46.239233\u002B00:00\u0022, \u0022customData\u0022: \u0022sample data\u0022}, {\u0022customSubject\u0022: \u0022sample2\u0022, \u0022customEventType\u0022: \u0022sample.event\u0022, \u0022customDataVersion\u0022: \u00222.0\u0022, \u0022customId\u0022: \u002212345\u0022, \u0022customEventTime\u0022: \u00222022-01-14T01:33:46.239233\u002B00:00\u0022, \u0022customData\u0022: \u0022sample data 2\u0022}]",
+      "RequestBody": "[{\u0022customSubject\u0022: \u0022sample\u0022, \u0022customEventType\u0022: \u0022sample.event\u0022, \u0022customDataVersion\u0022: \u00222.0\u0022, \u0022customId\u0022: \u00221234\u0022, \u0022customEventTime\u0022: \u00222022-01-14T02:20:27.705509\u002B00:00\u0022, \u0022customData\u0022: \u0022sample data\u0022}, {\u0022customSubject\u0022: \u0022sample2\u0022, \u0022customEventType\u0022: \u0022sample.event\u0022, \u0022customDataVersion\u0022: \u00222.0\u0022, \u0022customId\u0022: \u002212345\u0022, \u0022customEventTime\u0022: \u00222022-01-14T02:20:27.705509\u002B00:00\u0022, \u0022customData\u0022: \u0022sample data 2\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Fri, 14 Jan 2022 01:33:45 GMT",
+        "Date": "Fri, 14 Jan 2022 02:20:25 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "a125aa2b-9831-41c9-b748-93a8cfd31547"
+        "x-ms-request-id": "4c102a46-b6bf-4361-9937-b3ec0cb46bae"
       },
       "ResponseBody": null
     }

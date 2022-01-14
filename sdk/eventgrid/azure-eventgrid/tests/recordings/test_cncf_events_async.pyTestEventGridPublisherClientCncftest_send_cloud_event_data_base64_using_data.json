@@ -16,29 +16,29 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "1321",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 14 Jan 2022 01:23:50 GMT",
+        "Date": "Fri, 14 Jan 2022 02:20:02 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=Aq_M6xCPU2JFsJ1xnlLt6deIATgcAgAAAKTHctkOAAAA; expires=Sun, 13-Feb-2022 01:23:50 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Avox71nb3K5Diym0GHNwAHGIATgcBgAAAM3UctkOAAAA; expires=Sun, 13-Feb-2022 02:20:03 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12261.22 - SCUS ProdSlices",
-        "x-ms-request-id": "42470d94-2530-4178-b9ee-76b3a5120400"
+        "x-ms-ests-server": "2.1.12261.17 - EUS ProdSlices",
+        "x-ms-request-id": "8d291e6a-f0b5-4a6b-a0f1-f9e722d6a500"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 86399,
         "ext_expires_in": 86399,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL2V2ZW50Z3JpZC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQyMTIzMTMwLCJuYmYiOjE2NDIxMjMxMzAsImV4cCI6MTY0MjIwOTgzMCwiYWlvIjoiRTJaZ1lNaGxMdlo5TXJPWUkyYjJyZSsveERQZUFBQT0iLCJhcHBpZCI6Ijc1YTFhN2ZmLTlkYmItNGVlMy04MWRmLWM2NTViZGZhMWU0ZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiIyYTg0OTJkYS1lYzk3LTQ5YzItODQ4Ni1kYTQxNjhlYjZlZGIiLCJyaCI6IjAuQVFFQXY0ajVjdkdHcjBHUnF5MTgwQkhiUl8tbm9YVzduZU5PZ2RfR1ZiMzZIazhhQUFBLiIsInN1YiI6IjJhODQ5MmRhLWVjOTctNDljMi04NDg2LWRhNDE2OGViNmVkYiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImxBMUhRakFsZUVHNTduYXpwUklFQUEiLCJ2ZXIiOiIxLjAifQ.B-QwOx1byVFJ-I0PXKc2_SUzzkIktQYmBKi8OIHKISa4LryQdlJVP5AG-8HU5U2auawXOfKRMxom6TtsirgbnmeLP4Q_mYsJgjr1XMCB5R-CuN0zLCR1f6owBp6L2K6qlXjEK3rFBHtmTg84j9pMv1_ZtSkGDuTJqi1zahaC-44wX3d4g68L_12sU_YHR71bf_Op12QN2ZqYz1T289pB51NKAPF8zMQ77J3Oy8uZlFdAV4z0G8o8uyfqEKJB7XpJk11SP6e2rDtGk6Xd2hCzQlby6JrNSwDu560MdGWLOLYnXE5HgetBYFNJNZmAB3IZmx3rZmAvzNjOaYPNgKhsBA"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL2V2ZW50Z3JpZC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQyMTI2NTAzLCJuYmYiOjE2NDIxMjY1MDMsImV4cCI6MTY0MjIxMzIwMywiYWlvIjoiRTJaZ1lGaHdvYzByTUtYYThVN3I3Q2VoZ1JQTkFBPT0iLCJhcHBpZCI6Ijc1YTFhN2ZmLTlkYmItNGVlMy04MWRmLWM2NTViZGZhMWU0ZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiIyYTg0OTJkYS1lYzk3LTQ5YzItODQ4Ni1kYTQxNjhlYjZlZGIiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUl8tbm9YVzduZU5PZ2RfR1ZiMzZIazhhQUFBLiIsInN1YiI6IjJhODQ5MmRhLWVjOTctNDljMi04NDg2LWRhNDE2OGViNmVkYiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6ImFoNHBqYlh3YTBxZzhmbm5JdGFsQUEiLCJ2ZXIiOiIxLjAifQ.kvrgmp62Ii0I1z7_zb7UEHYEHywY3t2-ZPq7Ec5DTJ4yHZQj5VqxUnGzq5PCYHep4t2ptHW21xRsAKsTfJI-Ycgjn9E4XfgAfMIQDOojpCqxuhuGbQ8pBH-iEmUC4_xmLbJdOJNBpT0NKkRI238gVcu9BBxo5U59lTSXmSpOqENyVdgm8bC6FnMzMpkxx64MLrLSSb5oiqhSLVVhACBsNG_YPk-waNJCHMDPVFj9GkfRCemGpySqnBaBG-2thWDir7lYkKlfLS-ChWSXAtq2xBg9tElMC5r-1Os-GZ4molapBkkN-R4nbzoTivlcbSA5L39fyL1VyLkMCgE8KOOTgw"
       }
     },
     {
-      "RequestUri": "https://administratoreventgridcloudevent-topic.westus2-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestUri": "https://fakeresource.westus2-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -47,17 +47,17 @@
         "Content-Length": "232",
         "Content-Type": "application/cloudevents-batch\u002Bjson; charset=utf-8",
         "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "a15b4ba8-74d8-11ec-9b7b-2816a845e8c6"
+        "x-ms-client-request-id": "7c1a31c0-74e0-11ec-b324-2816a845e8c6"
       },
-      "RequestBody": "[{\u0022specversion\u0022: \u00221.0\u0022, \u0022id\u0022: \u0022952f1bc4-f95b-43af-9e0d-e810677568b9\u0022, \u0022source\u0022: \u0022https://example.com/event-producer\u0022, \u0022type\u0022: \u0022com.example.sampletype1\u0022, \u0022time\u0022: \u00222022-01-14T01:23:51.051562\u002B00:00\u0022, \u0022data_base64\u0022: \u0022aGVsbG8gd29ybGQ=\u0022}]",
+      "RequestBody": "[{\u0022specversion\u0022: \u00221.0\u0022, \u0022id\u0022: \u0022b2445168-983b-4d72-9ba4-8618e666722c\u0022, \u0022source\u0022: \u0022https://example.com/event-producer\u0022, \u0022type\u0022: \u0022com.example.sampletype1\u0022, \u0022time\u0022: \u00222022-01-14T02:20:04.522052\u002B00:00\u0022, \u0022data_base64\u0022: \u0022aGVsbG8gd29ybGQ=\u0022}]",
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2018-01-01",
         "Content-Length": "0",
-        "Date": "Fri, 14 Jan 2022 01:23:50 GMT",
+        "Date": "Fri, 14 Jan 2022 02:20:03 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-request-id": "f1de598c-656c-4183-bb4e-88242bebaa03"
+        "x-ms-request-id": "cb960523-25ac-4e59-87e1-e8430eb7f654"
       },
       "ResponseBody": null
     }
