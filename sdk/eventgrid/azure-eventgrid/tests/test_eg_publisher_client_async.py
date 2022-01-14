@@ -311,6 +311,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                     )
             await client.send(cloud_event)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_send_NONE_credential_async(self, variables, eventgrid_topic_endpoint):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
