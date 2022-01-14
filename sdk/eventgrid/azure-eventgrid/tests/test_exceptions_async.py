@@ -44,7 +44,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_raise_on_auth_error(self, eventgrid_topic_endpoint):
+    async def test_raise_on_auth_error(self, variables, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
@@ -59,7 +59,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_raise_on_bad_resource(self, eventgrid_topic_key):
+    async def test_raise_on_bad_resource(self, variables, eventgrid_topic_key):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(
@@ -74,7 +74,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @EventGridPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_raise_on_large_payload(self, eventgrid_topic_endpoint):
+    async def test_raise_on_large_payload(self, variables, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
 
         path  = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./large_data.json"))
