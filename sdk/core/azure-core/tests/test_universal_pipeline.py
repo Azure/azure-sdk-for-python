@@ -357,6 +357,7 @@ def test_json_regex():
     assert ContentDecodePolicy.JSON_REGEXP.match("text/json")
     assert ContentDecodePolicy.JSON_REGEXP.match("application/merge-patch+json")
     assert ContentDecodePolicy.JSON_REGEXP.match("application/ld+json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/vnd.microsoft.appconfig.kv+json")
     assert not ContentDecodePolicy.JSON_REGEXP.match("application/+json")
     assert not ContentDecodePolicy.JSON_REGEXP.match("application/not-json")
     assert not ContentDecodePolicy.JSON_REGEXP.match("application/iamjson")

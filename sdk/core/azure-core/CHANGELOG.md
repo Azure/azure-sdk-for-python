@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- `ContentDecodePolicy` can now correctly JSON deserialize `application/merge-patch+json` bodies #22410
+- `ContentDecodePolicy` can now correctly deserialize more JSON bodies with different mime types #22410
 - raise AttributeError when calling azure.core.pipeline.transport.\_\_bases__    #22469
 
 ### Other Changes
