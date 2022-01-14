@@ -70,7 +70,7 @@ def build_entity_list_by_guids_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['guids'] = [_SERIALIZER.query("guids", q, 'str') if q is not None else '' for q in guids]
+    query_parameters['guid'] = [_SERIALIZER.query("guids", q, 'str') if q is not None else '' for q in guids]
     if min_ext_info is not None:
         query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
     if ignore_relationships is not None:
@@ -127,7 +127,7 @@ def build_entity_delete_by_guids_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['guids'] = [_SERIALIZER.query("guids", q, 'str') if q is not None else '' for q in guids]
+    query_parameters['guid'] = [_SERIALIZER.query("guids", q, 'str') if q is not None else '' for q in guids]
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -3197,7 +3197,7 @@ class EntityOperations(object):
         # type: (...) -> Any
         """List entities in bulk identified by its GUIDs.
 
-        :keyword guids: An array of GUIDs of entities to create.
+        :keyword guids: An array of GUIDs of entities to list.
         :paramtype guids: list[str]
         :keyword min_ext_info: Whether to return minimal information for referred entities.
         :paramtype min_ext_info: bool
@@ -12721,7 +12721,7 @@ class DiscoveryOperations(object):
                     "filter": {},  # Optional. The filter for the search. See examples for the usage of supported filters.
                     "keywords": "str",  # Optional. The keywords applied to all searchable fields.
                     "limit": 0,  # Optional. The limit of the number of the search result. default value is 50; maximum value is 1000.
-                    "offset": 0,  # Optional. The offset. The default value is 0.
+                    "offset": 0,  # Optional. The offset. The default value is 0. The maximum value is 100000.
                     "taxonomySetting": {
                         "assetTypes": [
                             "str"  # Optional.
@@ -13000,8 +13000,8 @@ class DiscoveryOperations(object):
                 # JSON input template you can fill out and use as your body input.
                 browse_request = {
                     "entityType": "str",  # Optional. The entity type to browse as the root level entry point.
-                    "limit": 0,  # Optional. The number of browse items we hope to return.
-                    "offset": 0,  # Optional. The offset. The default value is 0.
+                    "limit": 0,  # Optional. The number of browse items we hope to return. The maximum value is 10000.
+                    "offset": 0,  # Optional. The offset. The default value is 0. The maximum value is 100000.
                     "path": "str"  # Optional. The path to browse the next level child entities.
                 }
 
