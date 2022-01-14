@@ -27,7 +27,7 @@ pip install --pre azure-containerregistry
 
 ### Prerequisites
 
-* Python 3.7 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 To create a new Container Registry, you can use the [Azure Portal][container_registry_create_portal],

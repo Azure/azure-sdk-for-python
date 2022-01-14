@@ -23,7 +23,7 @@ The async versions of the samples require Python 3.6 or later.
 |[sample_list_tags.py][list_tags] and [sample_list_tags_async.py][list_tags_async] | List tags on an image using an anonymous access |
 
 ### Prerequisites
-* Python 3.7 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 ## Setup
