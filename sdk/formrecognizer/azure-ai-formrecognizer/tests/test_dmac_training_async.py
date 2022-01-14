@@ -22,6 +22,7 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 
+@pytest.mark.skip()
 class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()

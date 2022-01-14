@@ -17,7 +17,7 @@ from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
+@pytest.mark.skip()
 class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()

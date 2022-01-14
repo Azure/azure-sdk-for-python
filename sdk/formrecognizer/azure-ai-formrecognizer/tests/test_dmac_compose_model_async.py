@@ -18,7 +18,7 @@ from asynctestcase import AsyncFormRecognizerTest
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
+@pytest.mark.skip()
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()

@@ -90,6 +90,7 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"]
             assert doc_type.field_confidence is None
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
