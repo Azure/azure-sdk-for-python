@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.7.3 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://https://fake_account.account.purview.azure.com/deviceupdate/instance/management/deviceclasses?api-version=2021-06-01-preview
   response:
@@ -21,9 +21,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 10 Jan 2022 02:11:01 GMT
+      - Fri, 14 Jan 2022 03:28:59 GMT
       traceparent:
-      - 00-19534b983acda84ea1c96e5d3d931f92-ceb3106ae0014b48-00
+      - 00-814bdd3e5f0d7d4ba63f140e33528e5e-04d6be5b18ac8a47-00
     status:
       code: 200
       message: OK

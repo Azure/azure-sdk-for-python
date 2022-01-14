@@ -10,17 +10,18 @@ from azure.core.exceptions import ResourceNotFoundError
 import pytest
 import os
 
+
 class UpdatesClientTest(DeviceUpdateTest):
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @DeviceUpdatePowerShellPreparer()
     def test_get_names_not_found(
-        self,
-        deviceupdate_endpoint,
-        deviceupdate_instance_id,
+            self,
+            deviceupdate_endpoint,
+            deviceupdate_instance_id,
     ):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
-            response = client.updates.list_names("foo")
+            response = client.device_update.list_names("foo")
             result = [item for item in response]
             self.assertTrue(len(result) > 0)
         except ResourceNotFoundError as e:

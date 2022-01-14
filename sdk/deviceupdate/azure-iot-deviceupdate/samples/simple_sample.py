@@ -49,7 +49,7 @@ client = DeviceUpdateClient(credential=DefaultAzureCredential(), endpoint=endpoi
 
 try:
     # Raise an exception if the service rejected the call
-    response = client.management.list_device_classes()
+    response = client.device_management.list_device_classes()
     result = [item for item in response]
     print(result)
 except HttpResponseError as e:
