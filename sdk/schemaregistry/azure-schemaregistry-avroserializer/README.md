@@ -24,7 +24,7 @@ pip install azure-schemaregistry-avroserializer azure-identity
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service]
-* Python 3.7 or later - [Install Python][python]
+* Python 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
 Interaction with the Schema Registry Avro Serializer starts with an instance of AvroSerializer class, which takes the schema group name and the [Schema Registry Client][schemaregistry_client] class. The client constructor takes the Event Hubs fully qualified namespace and and Azure Active Directory credential:

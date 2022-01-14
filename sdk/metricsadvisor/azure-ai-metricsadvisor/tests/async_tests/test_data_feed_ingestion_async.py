@@ -50,7 +50,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
-    async def test_list_data_feed_ingestion_status_with_skip(self, client):
+    async def test_list_data_feed_ingest_status_skip(self, client):
         async with client:
             ingestions = client.list_data_feed_ingestion_status(
                 data_feed_id=self.data_feed_id,

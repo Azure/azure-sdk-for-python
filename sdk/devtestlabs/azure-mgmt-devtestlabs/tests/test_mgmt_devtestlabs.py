@@ -8,18 +8,18 @@
 import unittest
 
 import azure.mgmt.devtestlabs
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
-class MgmtDevTestLabsTest(AzureMgmtTestCase):
+class TestMgmtDevTestLabs(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtDevTestLabsTest, self).setUp()
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             azure.mgmt.devtestlabs.DevTestLabsClient
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_devtestlabs(self, resource_group, location):
         lab_name = self.get_resource_name('pylab')
 
@@ -29,7 +29,7 @@ class MgmtDevTestLabsTest(AzureMgmtTestCase):
             {'location': location}
         )
         lab = async_lab.result()
-        self.assertEqual(lab.name, lab_name)
+        assert lab.name == lab_name
 
         # get
         self.client.labs.get(resource_group.name, lab_name)

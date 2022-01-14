@@ -27,7 +27,7 @@ These code samples show common scenario operations with the Azure Metrics Adviso
 
 ## Prerequisites
 
-* Python 3.7 or later is required to use this package
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Metrics Advisor account][portal_metrics_advisor_account] to run these samples.
 
