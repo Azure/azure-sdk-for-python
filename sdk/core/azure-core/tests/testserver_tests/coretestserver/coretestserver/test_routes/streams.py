@@ -33,10 +33,6 @@ def stream_compress():
     file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
     with open(file_path, "rb") as fd:
         yield fd.read()
-
-@streams_api.route('/compress', methods=['GET'])
-def compress():
-    return Response(stream_compress(), status=200)
     
 def stream_compressed_header_error():
     yield b'test'
