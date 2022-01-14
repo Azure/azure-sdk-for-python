@@ -6,10 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import UpdatesOperations
-from ._operations import ManagementOperations
+from ._operations import DeviceUpdateOperations
+from ._operations import DeviceManagementOperations
 
 __all__ = [
-    'UpdatesOperations',
-    'ManagementOperations',
+    'DeviceUpdateOperations',
+    'DeviceManagementOperations',
 ]

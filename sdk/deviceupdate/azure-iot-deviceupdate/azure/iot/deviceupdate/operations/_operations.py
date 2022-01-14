@@ -28,7 +28,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_updates_import_update_request_initial(
+def build_device_update_import_update_request_initial(
     instance_id: str,
     *,
     action: str,
@@ -70,7 +70,7 @@ def build_updates_import_update_request_initial(
     )
 
 
-def build_updates_list_updates_request(
+def build_device_update_list_updates_request(
     instance_id: str,
     *,
     search: Optional[str] = None,
@@ -109,7 +109,7 @@ def build_updates_list_updates_request(
     )
 
 
-def build_updates_get_update_request(
+def build_device_update_get_update_request(
     instance_id: str,
     provider: str,
     name: str,
@@ -151,7 +151,7 @@ def build_updates_get_update_request(
     )
 
 
-def build_updates_delete_update_request_initial(
+def build_device_update_delete_update_request_initial(
     instance_id: str,
     provider: str,
     name: str,
@@ -189,7 +189,7 @@ def build_updates_delete_update_request_initial(
     )
 
 
-def build_updates_list_providers_request(
+def build_device_update_list_providers_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -221,7 +221,7 @@ def build_updates_list_providers_request(
     )
 
 
-def build_updates_list_names_request(
+def build_device_update_list_names_request(
     instance_id: str,
     provider: str,
     **kwargs: Any
@@ -255,7 +255,7 @@ def build_updates_list_names_request(
     )
 
 
-def build_updates_list_versions_request(
+def build_device_update_list_versions_request(
     instance_id: str,
     provider: str,
     name: str,
@@ -295,7 +295,7 @@ def build_updates_list_versions_request(
     )
 
 
-def build_updates_list_files_request(
+def build_device_update_list_files_request(
     instance_id: str,
     provider: str,
     name: str,
@@ -333,7 +333,7 @@ def build_updates_list_files_request(
     )
 
 
-def build_updates_get_file_request(
+def build_device_update_get_file_request(
     instance_id: str,
     provider: str,
     name: str,
@@ -377,7 +377,7 @@ def build_updates_get_file_request(
     )
 
 
-def build_updates_list_operations_request(
+def build_device_update_list_operations_request(
     instance_id: str,
     *,
     filter: Optional[str] = None,
@@ -416,7 +416,7 @@ def build_updates_list_operations_request(
     )
 
 
-def build_updates_get_operation_request(
+def build_device_update_get_operation_request(
     instance_id: str,
     operation_id: str,
     *,
@@ -454,7 +454,7 @@ def build_updates_get_operation_request(
     )
 
 
-def build_management_list_device_classes_request(
+def build_device_management_list_device_classes_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -486,7 +486,7 @@ def build_management_list_device_classes_request(
     )
 
 
-def build_management_get_device_class_request(
+def build_device_management_get_device_class_request(
     instance_id: str,
     device_class_id: str,
     **kwargs: Any
@@ -520,7 +520,7 @@ def build_management_get_device_class_request(
     )
 
 
-def build_management_list_installable_updates_for_device_class_request(
+def build_device_management_list_installable_updates_for_device_class_request(
     instance_id: str,
     device_class_id: str,
     **kwargs: Any
@@ -554,7 +554,7 @@ def build_management_list_installable_updates_for_device_class_request(
     )
 
 
-def build_management_list_devices_request(
+def build_device_management_list_devices_request(
     instance_id: str,
     *,
     filter: Optional[str] = None,
@@ -590,7 +590,7 @@ def build_management_list_devices_request(
     )
 
 
-def build_management_import_devices_request_initial(
+def build_device_management_import_devices_request_initial(
     instance_id: str,
     *,
     action: str,
@@ -632,7 +632,7 @@ def build_management_import_devices_request_initial(
     )
 
 
-def build_management_get_device_request(
+def build_device_management_get_device_request(
     instance_id: str,
     device_id: str,
     **kwargs: Any
@@ -666,7 +666,7 @@ def build_management_get_device_request(
     )
 
 
-def build_management_get_device_module_request(
+def build_device_management_get_device_module_request(
     instance_id: str,
     device_id: str,
     module_id: str,
@@ -702,7 +702,7 @@ def build_management_get_device_module_request(
     )
 
 
-def build_management_get_update_compliance_request(
+def build_device_management_get_update_compliance_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -734,7 +734,7 @@ def build_management_get_update_compliance_request(
     )
 
 
-def build_management_list_device_tags_request(
+def build_device_management_list_device_tags_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -766,7 +766,7 @@ def build_management_list_device_tags_request(
     )
 
 
-def build_management_get_device_tag_request(
+def build_device_management_get_device_tag_request(
     instance_id: str,
     tag_name: str,
     **kwargs: Any
@@ -800,7 +800,7 @@ def build_management_get_device_tag_request(
     )
 
 
-def build_management_list_groups_request(
+def build_device_management_list_groups_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -832,7 +832,7 @@ def build_management_list_groups_request(
     )
 
 
-def build_management_get_group_request(
+def build_device_management_get_group_request(
     instance_id: str,
     group_id: str,
     **kwargs: Any
@@ -866,7 +866,7 @@ def build_management_get_group_request(
     )
 
 
-def build_management_create_or_update_group_request(
+def build_device_management_create_or_update_group_request(
     instance_id: str,
     group_id: str,
     *,
@@ -908,7 +908,7 @@ def build_management_create_or_update_group_request(
     )
 
 
-def build_management_delete_group_request(
+def build_device_management_delete_group_request(
     instance_id: str,
     group_id: str,
     **kwargs: Any
@@ -942,7 +942,7 @@ def build_management_delete_group_request(
     )
 
 
-def build_management_get_group_update_compliance_request(
+def build_device_management_get_group_update_compliance_request(
     instance_id: str,
     group_id: str,
     **kwargs: Any
@@ -976,7 +976,7 @@ def build_management_get_group_update_compliance_request(
     )
 
 
-def build_management_list_best_updates_for_group_request(
+def build_device_management_list_best_updates_for_group_request(
     instance_id: str,
     group_id: str,
     *,
@@ -1014,7 +1014,7 @@ def build_management_list_best_updates_for_group_request(
     )
 
 
-def build_management_list_deployments_for_group_request(
+def build_device_management_list_deployments_for_group_request(
     instance_id: str,
     group_id: str,
     *,
@@ -1052,7 +1052,7 @@ def build_management_list_deployments_for_group_request(
     )
 
 
-def build_management_get_deployment_request(
+def build_device_management_get_deployment_request(
     instance_id: str,
     group_id: str,
     deployment_id: str,
@@ -1088,7 +1088,7 @@ def build_management_get_deployment_request(
     )
 
 
-def build_management_create_or_update_deployment_request(
+def build_device_management_create_or_update_deployment_request(
     instance_id: str,
     deployment_id: str,
     group_id: str,
@@ -1132,7 +1132,7 @@ def build_management_create_or_update_deployment_request(
     )
 
 
-def build_management_delete_deployment_request(
+def build_device_management_delete_deployment_request(
     instance_id: str,
     group_id: str,
     deployment_id: str,
@@ -1168,7 +1168,7 @@ def build_management_delete_deployment_request(
     )
 
 
-def build_management_get_deployment_status_request(
+def build_device_management_get_deployment_status_request(
     instance_id: str,
     group_id: str,
     deployment_id: str,
@@ -1204,7 +1204,7 @@ def build_management_get_deployment_status_request(
     )
 
 
-def build_management_list_deployment_devices_request(
+def build_device_management_list_deployment_devices_request(
     instance_id: str,
     group_id: str,
     deployment_id: str,
@@ -1244,7 +1244,7 @@ def build_management_list_deployment_devices_request(
     )
 
 
-def build_management_get_operation_request(
+def build_device_management_get_operation_request(
     instance_id: str,
     operation_id: str,
     *,
@@ -1282,7 +1282,7 @@ def build_management_get_operation_request(
     )
 
 
-def build_management_list_operations_request(
+def build_device_management_list_operations_request(
     instance_id: str,
     *,
     filter: Optional[str] = None,
@@ -1321,7 +1321,7 @@ def build_management_list_operations_request(
     )
 
 
-def build_management_collect_logs_request(
+def build_device_management_collect_logs_request(
     instance_id: str,
     operation_id: str,
     *,
@@ -1363,7 +1363,7 @@ def build_management_collect_logs_request(
     )
 
 
-def build_management_get_log_collection_operation_request(
+def build_device_management_get_log_collection_operation_request(
     instance_id: str,
     operation_id: str,
     **kwargs: Any
@@ -1397,7 +1397,7 @@ def build_management_get_log_collection_operation_request(
     )
 
 
-def build_management_list_log_collection_operations_request(
+def build_device_management_list_log_collection_operations_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -1429,7 +1429,7 @@ def build_management_list_log_collection_operations_request(
     )
 
 
-def build_management_get_log_collection_operation_detailed_status_request(
+def build_device_management_get_log_collection_operation_detailed_status_request(
     instance_id: str,
     operation_id: str,
     **kwargs: Any
@@ -1463,7 +1463,7 @@ def build_management_get_log_collection_operation_detailed_status_request(
     )
 
 
-def build_management_stop_deployment_request(
+def build_device_management_stop_deployment_request(
     instance_id: str,
     group_id: str,
     deployment_id: str,
@@ -1502,7 +1502,7 @@ def build_management_stop_deployment_request(
     )
 
 
-def build_management_retry_deployment_request(
+def build_device_management_retry_deployment_request(
     instance_id: str,
     group_id: str,
     deployment_id: str,
@@ -1540,8 +1540,8 @@ def build_management_retry_deployment_request(
         **kwargs
     )
 
-class UpdatesOperations(object):
-    """UpdatesOperations operations.
+class DeviceUpdateOperations(object):
+    """DeviceUpdateOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -1576,7 +1576,7 @@ class UpdatesOperations(object):
 
         _json = update_to_import
 
-        request = build_updates_import_update_request_initial(
+        request = build_device_update_import_update_request_initial(
             instance_id=self._config.instance_id,
             api_version=api_version,
             content_type=content_type,
@@ -1852,7 +1852,7 @@ class UpdatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_updates_list_updates_request(
+                request = build_device_update_list_updates_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     search=search,
@@ -1865,7 +1865,7 @@ class UpdatesOperations(object):
 
             else:
                 
-                request = build_updates_list_updates_request(
+                request = build_device_update_list_updates_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     search=search,
@@ -1996,7 +1996,7 @@ class UpdatesOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_updates_get_update_request(
+        request = build_device_update_get_update_request(
             instance_id=self._config.instance_id,
             provider=provider,
             name=name,
@@ -2047,7 +2047,7 @@ class UpdatesOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_updates_delete_update_request_initial(
+        request = build_device_update_delete_update_request_initial(
             instance_id=self._config.instance_id,
             provider=provider,
             name=name,
@@ -2184,7 +2184,7 @@ class UpdatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_updates_list_providers_request(
+                request = build_device_update_list_providers_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -2195,7 +2195,7 @@ class UpdatesOperations(object):
 
             else:
                 
-                request = build_updates_list_providers_request(
+                request = build_device_update_list_providers_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -2273,7 +2273,7 @@ class UpdatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_updates_list_names_request(
+                request = build_device_update_list_names_request(
                     instance_id=self._config.instance_id,
                     provider=provider,
                     api_version=api_version,
@@ -2285,7 +2285,7 @@ class UpdatesOperations(object):
 
             else:
                 
-                request = build_updates_list_names_request(
+                request = build_device_update_list_names_request(
                     instance_id=self._config.instance_id,
                     provider=provider,
                     api_version=api_version,
@@ -2371,7 +2371,7 @@ class UpdatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_updates_list_versions_request(
+                request = build_device_update_list_versions_request(
                     instance_id=self._config.instance_id,
                     provider=provider,
                     name=name,
@@ -2385,7 +2385,7 @@ class UpdatesOperations(object):
 
             else:
                 
-                request = build_updates_list_versions_request(
+                request = build_device_update_list_versions_request(
                     instance_id=self._config.instance_id,
                     provider=provider,
                     name=name,
@@ -2472,7 +2472,7 @@ class UpdatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_updates_list_files_request(
+                request = build_device_update_list_files_request(
                     instance_id=self._config.instance_id,
                     provider=provider,
                     name=name,
@@ -2486,7 +2486,7 @@ class UpdatesOperations(object):
 
             else:
                 
-                request = build_updates_list_files_request(
+                request = build_device_update_list_files_request(
                     instance_id=self._config.instance_id,
                     provider=provider,
                     name=name,
@@ -2586,7 +2586,7 @@ class UpdatesOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_updates_get_file_request(
+        request = build_device_update_get_file_request(
             instance_id=self._config.instance_id,
             provider=provider,
             name=name,
@@ -2696,7 +2696,7 @@ class UpdatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_updates_list_operations_request(
+                request = build_device_update_list_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
@@ -2709,7 +2709,7 @@ class UpdatesOperations(object):
 
             else:
                 
-                request = build_updates_list_operations_request(
+                request = build_device_update_list_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
@@ -2816,7 +2816,7 @@ class UpdatesOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_updates_get_operation_request(
+        request = build_device_update_get_operation_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
@@ -2851,8 +2851,8 @@ class UpdatesOperations(object):
 
     get_operation.metadata = {'url': '/deviceupdate/{instanceId}/updates/operations/{operationId}'}  # type: ignore
 
-class ManagementOperations(object):
-    """ManagementOperations operations.
+class DeviceManagementOperations(object):
+    """DeviceManagementOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -2915,7 +2915,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_device_classes_request(
+                request = build_device_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -2926,7 +2926,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_device_classes_request(
+                request = build_device_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -3008,7 +3008,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_device_class_request(
+        request = build_device_management_get_device_class_request(
             instance_id=self._config.instance_id,
             device_class_id=device_class_id,
             api_version=api_version,
@@ -3080,7 +3080,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_installable_updates_for_device_class_request(
+                request = build_device_management_list_installable_updates_for_device_class_request(
                     instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
@@ -3092,7 +3092,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_installable_updates_for_device_class_request(
+                request = build_device_management_list_installable_updates_for_device_class_request(
                     instance_id=self._config.instance_id,
                     device_class_id=device_class_id,
                     api_version=api_version,
@@ -3211,7 +3211,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_devices_request(
+                request = build_device_management_list_devices_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
@@ -3223,7 +3223,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_devices_request(
+                request = build_device_management_list_devices_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
@@ -3282,7 +3282,7 @@ class ManagementOperations(object):
 
         _json = import_type
 
-        request = build_management_import_devices_request_initial(
+        request = build_device_management_import_devices_request_initial(
             instance_id=self._config.instance_id,
             api_version=api_version,
             content_type=content_type,
@@ -3455,7 +3455,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_device_request(
+        request = build_device_management_get_device_request(
             instance_id=self._config.instance_id,
             device_id=device_id,
             api_version=api_version,
@@ -3559,7 +3559,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_device_module_request(
+        request = build_device_management_get_device_module_request(
             instance_id=self._config.instance_id,
             device_id=device_id,
             module_id=module_id,
@@ -3625,7 +3625,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_update_compliance_request(
+        request = build_device_management_get_update_compliance_request(
             instance_id=self._config.instance_id,
             api_version=api_version,
         )
@@ -3693,7 +3693,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_device_tags_request(
+                request = build_device_management_list_device_tags_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -3704,7 +3704,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_device_tags_request(
+                request = build_device_management_list_device_tags_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -3779,7 +3779,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_device_tag_request(
+        request = build_device_management_get_device_tag_request(
             instance_id=self._config.instance_id,
             tag_name=tag_name,
             api_version=api_version,
@@ -3854,7 +3854,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_groups_request(
+                request = build_device_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -3865,7 +3865,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_groups_request(
+                request = build_device_management_list_groups_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -3947,7 +3947,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_group_request(
+        request = build_device_management_get_group_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
@@ -4037,7 +4037,7 @@ class ManagementOperations(object):
 
         _json = group
 
-        request = build_management_create_or_update_group_request(
+        request = build_device_management_create_or_update_group_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
@@ -4095,7 +4095,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_delete_group_request(
+        request = build_device_management_delete_group_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
@@ -4156,7 +4156,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_group_update_compliance_request(
+        request = build_device_management_get_group_update_compliance_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             api_version=api_version,
@@ -4236,7 +4236,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_best_updates_for_group_request(
+                request = build_device_management_list_best_updates_for_group_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     api_version=api_version,
@@ -4249,7 +4249,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_best_updates_for_group_request(
+                request = build_device_management_list_best_updates_for_group_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     api_version=api_version,
@@ -4345,7 +4345,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_deployments_for_group_request(
+                request = build_device_management_list_deployments_for_group_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     api_version=api_version,
@@ -4358,7 +4358,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_deployments_for_group_request(
+                request = build_device_management_list_deployments_for_group_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     api_version=api_version,
@@ -4446,7 +4446,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_deployment_request(
+        request = build_device_management_get_deployment_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
@@ -4542,7 +4542,7 @@ class ManagementOperations(object):
 
         _json = deployment
 
-        request = build_management_create_or_update_deployment_request(
+        request = build_device_management_create_or_update_deployment_request(
             instance_id=self._config.instance_id,
             deployment_id=deployment_id,
             group_id=group_id,
@@ -4604,7 +4604,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_delete_deployment_request(
+        request = build_device_management_delete_deployment_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
@@ -4671,7 +4671,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_deployment_status_request(
+        request = build_device_management_get_deployment_status_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
@@ -4755,7 +4755,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_deployment_devices_request(
+                request = build_device_management_list_deployment_devices_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     deployment_id=deployment_id,
@@ -4769,7 +4769,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_deployment_devices_request(
+                request = build_device_management_list_deployment_devices_request(
                     instance_id=self._config.instance_id,
                     group_id=group_id,
                     deployment_id=deployment_id,
@@ -4871,7 +4871,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_operation_request(
+        request = build_device_management_get_operation_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
@@ -4975,7 +4975,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_operations_request(
+                request = build_device_management_list_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
@@ -4988,7 +4988,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_operations_request(
+                request = build_device_management_list_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                     filter=filter,
@@ -5094,7 +5094,7 @@ class ManagementOperations(object):
 
         _json = log_collection_request
 
-        request = build_management_collect_logs_request(
+        request = build_device_management_collect_logs_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
@@ -5170,7 +5170,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_log_collection_operation_request(
+        request = build_device_management_get_log_collection_operation_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
@@ -5247,7 +5247,7 @@ class ManagementOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_management_list_log_collection_operations_request(
+                request = build_device_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -5258,7 +5258,7 @@ class ManagementOperations(object):
 
             else:
                 
-                request = build_management_list_log_collection_operations_request(
+                request = build_device_management_list_log_collection_operations_request(
                     instance_id=self._config.instance_id,
                     api_version=api_version,
                 )
@@ -5346,7 +5346,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_get_log_collection_operation_detailed_status_request(
+        request = build_device_management_get_log_collection_operation_detailed_status_request(
             instance_id=self._config.instance_id,
             operation_id=operation_id,
             api_version=api_version,
@@ -5426,7 +5426,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_stop_deployment_request(
+        request = build_device_management_stop_deployment_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,
@@ -5508,7 +5508,7 @@ class ManagementOperations(object):
         api_version = kwargs.pop('api_version', "2021-06-01-preview")  # type: str
 
         
-        request = build_management_retry_deployment_request(
+        request = build_device_management_retry_deployment_request(
             instance_id=self._config.instance_id,
             group_id=group_id,
             deployment_id=deployment_id,

@@ -14,7 +14,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
 from ._configuration import DeviceUpdateClientConfiguration
-from .operations import ManagementOperations, UpdatesOperations
+from .operations import DeviceManagementOperations, DeviceUpdateOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,10 +25,10 @@ if TYPE_CHECKING:
 class DeviceUpdateClient:
     """Device Update for IoT Hub is an Azure service that enables customers to publish update for their IoT devices to the cloud, and then deploy that update to their devices (approve updates to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and reliability of the Windows Update platform, optimized for IoT devices. It works globally and knows when and how to update devices, enabling customers to focus on their business goals and let Device Update for IoT Hub handle the updates.
 
-    :ivar updates: UpdatesOperations operations
-    :vartype updates: azure.iot.deviceupdate.aio.operations.UpdatesOperations
-    :ivar management: ManagementOperations operations
-    :vartype management: azure.iot.deviceupdate.aio.operations.ManagementOperations
+    :ivar device_update: DeviceUpdateOperations operations
+    :vartype device_update: azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations
+    :ivar device_management: DeviceManagementOperations operations
+    :vartype device_management: azure.iot.deviceupdate.aio.operations.DeviceManagementOperations
     :param endpoint: Account endpoint.
     :type endpoint: str
     :param instance_id: Account instance identifier.
@@ -56,8 +56,8 @@ class DeviceUpdateClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.updates = UpdatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.management = ManagementOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.device_update = DeviceUpdateOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.device_management = DeviceManagementOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(
