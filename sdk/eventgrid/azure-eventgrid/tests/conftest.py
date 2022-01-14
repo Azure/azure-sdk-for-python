@@ -27,7 +27,7 @@ import platform
 import sys
 import pytest
 from devtools_testutils import test_proxy
-from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer
+from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer, set_bodiless_matcher
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -37,6 +37,7 @@ if sys.version_info < (3, 5):
 
 @pytest.fixture(scope="session", autouse=True)
 def add_aeg_sanitizer(test_proxy):
+    set_bodiless_matcher()
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
     add_general_regex_sanitizer(
         value="fakeresource",
