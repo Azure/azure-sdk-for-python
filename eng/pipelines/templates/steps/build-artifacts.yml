@@ -115,10 +115,10 @@ steps:
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Generate BOM'
     inputs:
-      BuildDropPath: $(Build.ArtifactStagingDirectory)/manifest
+      BuildDropPath: $(Build.ArtifactStagingDirectory)
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)/manifest/_manifest'
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
       ArtifactName: 'manifest'
 
