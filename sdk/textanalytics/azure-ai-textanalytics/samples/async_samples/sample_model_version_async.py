@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -53,7 +51,7 @@ async def sample_model_version_async():
         print("...Results of Recognize Entities:")
         for review in result:
             for entity in review.entities:
-                print("......Entity '{}' has category '{}'".format(entity.text, entity.category))
+                print(f"......Entity '{entity.text}' has category '{entity.category}'")
 
         print("\nSetting model_version='latest' with recognize entities action in begin_analyze_actions")
         poller = await text_analytics_client.begin_analyze_actions(
@@ -73,7 +71,7 @@ async def sample_model_version_async():
                 ))
             else:
                 for entity in recognize_entities_result.entities:
-                    print("......Entity '{}' has category '{}'".format(entity.text, entity.category))
+                    print(f"......Entity '{entity.text}' has category '{entity.category}'")
 
 
 async def main():

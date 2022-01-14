@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -75,10 +74,10 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_passing_only_string(self, client):
         docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
-            u"Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.",
-            u""
+            "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
+            "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
+            "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.",
+            ""
         ]
 
         response = client.recognize_entities(docs)
@@ -174,7 +173,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
+            "You cannot mix string input with the above inputs"
         ]
         with pytest.raises(TypeError):
             response = client.recognize_entities(docs)
@@ -224,7 +223,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_batch_size_over_limit(self, client):
-        docs = [u"hello world"] * 1050
+        docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = client.recognize_entities(docs)
 
@@ -238,9 +237,9 @@ class TestRecognizeEntities(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = client.recognize_entities(docs, language="fr", raw_response_hook=callback)
@@ -255,9 +254,9 @@ class TestRecognizeEntities(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = client.recognize_entities(docs, language="", raw_response_hook=callback)
@@ -538,7 +537,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
-        docs = [u"hello world"] * 1001
+        docs = ["hello world"] * 1001
         try:
             response = client.recognize_entities(docs)
         except HttpResponseError as err:
