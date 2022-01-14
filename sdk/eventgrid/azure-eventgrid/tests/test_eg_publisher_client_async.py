@@ -311,6 +311,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                     )
             await client.send(cloud_event)
 
+    @pytest.mark.skip()
     @EventGridPreparer()
     @recorded_by_proxy_async
     def test_send_NONE_credential_async(self, variables, eventgrid_topic_endpoint):
