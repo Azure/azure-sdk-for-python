@@ -183,8 +183,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             link = None
             if "Link" in pipeline_response.http_response.headers.keys():
                 link = _parse_next_link(pipeline_response.http_response.headers["Link"])
-            elif "link" in pipeline_response.http_response.headers.keys():  # python 2.7 turns this into lowercase
-                link = _parse_next_link(pipeline_response.http_response.headers["link"])
             return link, iter(list_of_elem)
 
         def get_next(next_link=None):
