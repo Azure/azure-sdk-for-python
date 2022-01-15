@@ -91,7 +91,8 @@ class CallingServerEventType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     CALL_RECORDING_STATE_CHANGED_EVENT = "Microsoft.Communication.CallRecordingStateChanged"
     PLAY_AUDIO_RESULT_EVENT = "Microsoft.Communication.PlayAudioResult"
     PARTICIPANTS_UPDATED_EVENT = "Microsoft.Communication.ParticipantsUpdated"
-    TONE_RECEIVED_EVENT = "Microsoft.Communication.DtmfReceived"
+    TONE_RECEIVED_EVENT = "Microsoft.Communication.ToneReceived"
+    TRANSFER_CALL_RESULT_EVENT = "Microsoft.Communication.TransferCallResult"
 
 class ParallelDownloadOptions(object):
     """The options to configure parallel downloads.
