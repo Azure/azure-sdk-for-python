@@ -17,7 +17,7 @@ from .utils_async import AsyncTimer
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service
-    :keyword callable token_refresher: The async token refresher to provide capacity to fetch fresh token
+    :keyword Callable[[], Awaitable[azure.core.credentials.AccessToken]] token_refresher: The async token refresher to provide capacity to fetch fresh token
     :keyword bool refresh_proactively: Whether to refresh the token proactively or not
     :raises: TypeError
     """
