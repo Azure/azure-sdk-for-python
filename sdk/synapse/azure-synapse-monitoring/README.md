@@ -1,7 +1,7 @@
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Synapse Monitoring Client Library.
-This package has been tested with Python 3.7, 3.8, 3.9 and 3.10.
+This package has been tested with Python 3.6, 3.7, 3.8, 3.9 and 3.10.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## _Disclaimer_

@@ -9,7 +9,6 @@ import pytest
 import six
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
-
 RECORD_IMDS = "--record-imds"
 
 

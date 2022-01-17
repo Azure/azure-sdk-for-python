@@ -1,5 +1,3 @@
-
-# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -42,7 +40,7 @@ TextAnalyticsPreparer = functools.partial(
 
 class TextAnalyticsClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(TextAnalyticsClientPreparer, self).__init__(
+        super().__init__(
             name_prefix='',
             random_name_length=42
         )

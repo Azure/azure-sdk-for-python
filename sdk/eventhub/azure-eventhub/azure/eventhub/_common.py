@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import uuid
 from typing import (
     Union,
     Dict,
@@ -58,6 +59,17 @@ from .amqp import (
 
 if TYPE_CHECKING:
     import datetime
+
+PrimitiveTypes = Optional[Union[
+    int,
+    float,
+    bytes,
+    bool,
+    str,
+    Dict,
+    List,
+    uuid.UUID,
+]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -319,7 +331,7 @@ class EventData(object):
 
     @property
     def body(self):
-        # type: () -> Any
+        # type: () -> PrimitiveTypes
         """The body of the Message. The format may vary depending on the body type:
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.DATA<azure.eventhub.amqp.AmqpMessageBodyType.DATA>`,
         the body could be bytes or Iterable[bytes].
@@ -328,7 +340,7 @@ class EventData(object):
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
         the body could be any type.
 
-        :rtype: Any
+        :rtype: int or bool or float or bytes or str or dict or list or uuid.UUID
         """
         try:
             return self._raw_amqp_message.body

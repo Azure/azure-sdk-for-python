@@ -17,27 +17,29 @@
 # ----------------------
 
 import unittest
+import pytest
 
 import azure.mgmt.keyvault.aio
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtKeyVaultTest(AzureMgmtAsyncTestCase):
+class TestMgmtKeyVault(AzureMgmtAsyncTestCase):
 
-    def setUp(self):
-        super(MgmtKeyVaultTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_aio_client(
             azure.mgmt.keyvault.aio.KeyVaultManagementClient
         )
-    
+
+    @pytest.mark.skip('skip aio test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_keyvault(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47" # self.settings.TENANT_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
+        TENANT_ID = self.get_settings_value("TENANT_ID") # self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
         VAULT_NAME = "myValtZikfikxyzz"
         OPERATION_KIND = "add"

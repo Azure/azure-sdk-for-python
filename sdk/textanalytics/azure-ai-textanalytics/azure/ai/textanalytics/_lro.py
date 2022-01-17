@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -32,7 +31,7 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
     def __init__(
         self, operation_location_header="operation-location", show_stats=False
     ):
-        super(TextAnalyticsOperationResourcePolling, self).__init__(
+        super().__init__(
             operation_location_header=operation_location_header
         )
         self._show_stats = show_stats
@@ -40,10 +39,10 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
 
     def get_polling_url(self):
         if not self._show_stats:
-            return super(TextAnalyticsOperationResourcePolling, self).get_polling_url()
+            return super().get_polling_url()
 
         return (
-            super(TextAnalyticsOperationResourcePolling, self).get_polling_url()
+            super().get_polling_url()
             + "?"
             + urlencode(self._query_params)
         )
@@ -124,7 +123,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
         self._text_analytics_client = kwargs.pop("text_analytics_client")
-        super(AnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
@@ -273,7 +272,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        super(AnalyzeActionsLROPollingMethod, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):

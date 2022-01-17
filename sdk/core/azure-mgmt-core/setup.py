@@ -50,6 +50,7 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -68,5 +69,5 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.15.0",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
 )
