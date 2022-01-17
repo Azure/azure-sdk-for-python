@@ -3,15 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from threading import Lock, Condition, Timer
 from datetime import timedelta
-
 from typing import Any
 import six
-
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
-
 
 
 class CommunicationTokenCredential(object):
@@ -19,12 +17,11 @@ class CommunicationTokenCredential(object):
     :param str token: The token used to authenticate to an Azure Communication service
     :keyword callable token_refresher: The async token refresher to provide capacity to fetch fresh token
     :keyword bool refresh_proactively: Whether to refresh the token proactively or not
-    :keyword timedelta refresh_interval_before_expiry: The time interval before token expiry that causes the token_refresher to be called if refresh_proactively is true.
     :raises: TypeError
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
-    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 4.5
+    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self,
                  token,  # type: str
@@ -35,8 +32,6 @@ class CommunicationTokenCredential(object):
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
-        self._refresh_interval_before_expiry = kwargs.pop('refresh_interval_before_expiry', timedelta(
-            minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
         self._timer = None
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
@@ -98,7 +93,8 @@ class CommunicationTokenCredential(object):
             self._timer.cancel()
 
         timespan = self._token.expires_on - \
-            get_current_utc_as_int() - self._refresh_interval_before_expiry.total_seconds()
+            get_current_utc_as_int() - timedelta(
+                minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
         self._timer = Timer(timespan, self._update_token_and_reschedule)
         self._timer.start()
 
@@ -108,7 +104,8 @@ class CommunicationTokenCredential(object):
 
     def _token_expiring(self):
         if self._refresh_proactively:
-            interval = self._refresh_interval_before_expiry
+            interval = timedelta(
+                minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES)
         else:
             interval = timedelta(
                 minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)

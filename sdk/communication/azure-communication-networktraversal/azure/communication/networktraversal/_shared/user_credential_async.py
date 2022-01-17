@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from asyncio import Condition, Lock
 from datetime import timedelta
 from typing import Any
@@ -10,7 +11,6 @@ import six
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
-
 
 
 class CommunicationTokenCredential(object):
@@ -22,7 +22,7 @@ class CommunicationTokenCredential(object):
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
-    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 4.5
+    _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self, token: str, **kwargs: Any):
         if not isinstance(token, six.string_types):
@@ -30,8 +30,6 @@ class CommunicationTokenCredential(object):
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
-        self._refresh_interval_before_expiry = kwargs.pop('refresh_interval_before_expiry', timedelta(
-            minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES))
         self._timer = None
         self._async_mutex = Lock()
         if sys.version_info[:3] == (3, 10, 0):
@@ -71,10 +69,9 @@ class CommunicationTokenCredential(object):
 
         if should_this_thread_refresh:
             try:
-                newtoken = await self._token_refresher()  # pylint:disable=not-callable
-
+                new_token = await self._token_refresher()  # pylint:disable=not-callable
                 async with self._lock:
-                    self._token = newtoken
+                    self._token = new_token
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
             except:
@@ -91,25 +88,25 @@ class CommunicationTokenCredential(object):
             self._timer.cancel()
 
         timespan = self._token.expires_on - \
-            get_current_utc_as_int() - self._refresh_interval_before_expiry.total_seconds()
+            get_current_utc_as_int() - timedelta(
+                minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
         self._timer = AsyncTimer(timespan, self._update_token_and_reschedule)
         self._timer.start()
 
     async def _wait_till_inprogress_thread_finish_refreshing(self):
+
         self._lock.release()
         await self._lock.acquire()
 
     def _token_expiring(self):
         if self._refresh_proactively:
-            interval = self._refresh_interval_before_expiry
+            interval = timedelta(
+                minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES)
         else:
             interval = timedelta(
                 minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
         return self._token.expires_on - get_current_utc_as_int() <\
             timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
-
-    def _is_currenttoken_valid(self):
-        return get_current_utc_as_int() < self._token.expires_on
 
     async def close(self) -> None:
         pass

@@ -7,14 +7,13 @@
 import base64
 import json
 import calendar
-import time
-from typing import (  # pylint: disable=unused-import
-    cast,
-    Tuple,
-)
+from typing import (cast,
+                    Tuple,
+                    )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
+
 
 def _convert_datetime_to_utc_int(input_datetime):
     """
@@ -96,6 +95,7 @@ def create_access_token(token):
                            _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp'], TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
+
 
 def get_authentication_policy(
         endpoint,  # type: str
