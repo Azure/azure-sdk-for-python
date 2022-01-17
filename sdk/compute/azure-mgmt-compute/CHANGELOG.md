@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (2022-01-17)
+## 24.0.1 (2022-01-17)
 
+**Bugfixes**
 
+  - Added support for Python3.6 back
 
 ## 24.0.0 (2022-01-06)
 
