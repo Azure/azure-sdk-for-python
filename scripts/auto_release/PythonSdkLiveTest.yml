@@ -38,12 +38,29 @@ jobs:
         mkdir azure-sdk-for-python
         git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
 
+        # prepare env if need to generate SDK code
+        if [ "$(SPEC_README)"]; then
+          mkdir azure-rest-api-specs
+          git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
+
+          sudo npm install -g n
+          sudo n 14.15.0
+          sudo npm install autorest
+
+          mkdir temp_folder
+
+          export SPEC_README=$(SPEC_README)
+          export SPEC_REPO=$(pwd)/azure-rest-api-specs
+          export PATH=/usr/local/n/versions/node/14.15.0/bin:$PATH
+          export TEMP_FOLDER=$(pwd)/temp_folder
+        fi
+
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
         pip install packaging
-        pip install -r $script_path/livetest_package.txt
+        pip install -r $script_path/requirement.txt
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true

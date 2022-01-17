@@ -6,7 +6,9 @@ import argparse
 import logging
 from ghapi.all import GhApi
 from util import CERTIFICATION
-
+from pathlib import Path
+import json
+from typing import List
 
 SERVICE_NAME = 'servicename'
 SDK_FOLDER = 'servicename'
@@ -30,7 +32,7 @@ def print_exec(cmd):
     sp.call(cmd, shell=True)
 
 
-def print_exec_output(cmd):
+def print_exec_output(cmd) -> List[str]:
     my_print(cmd)
     return sp.getoutput(cmd).split('\n')
 
@@ -198,6 +200,7 @@ def edit_dependency_check_file(dependency):
     with open(f'shared_requirements.txt', 'w') as file_out:
         file_out.writelines(list_in)
 
+
 def edit_file_setup():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/setup.py', 'r') as file_in:
@@ -284,8 +287,7 @@ def build_wheel():
     print_check(f'python -m packaging_tools.code_report azure-mgmt-{SERVICE_NAME}')
 
 
-def test_env_init():
-    print_exec(f'pip install -r {SCRIPT_PATH}/livetest_package.txt')
+def livetest_env_init():
     file = f'{SCRIPT_PATH}/livetest_package_{SERVICE_NAME}_track{TRACK}.txt'
     if os.path.exists(file):
         print_exec(f'pip install -r {file}')
@@ -312,7 +314,7 @@ def test_env_init():
 
 
 def run_live_test():
-    test_env_init()
+    livetest_env_init()
     print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{SERVICE_NAME}')
     # run live test
     try:
@@ -402,13 +404,48 @@ def judge_sdk_folder():
                 break
 
 
-def git_remote_add():
-    global TRACK, NEW_BRANCH
-    # init git
-    print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
+def checkout_branch():
     print_exec(f'git remote add {USER_REPO} https://github.com/{USER_REPO}/azure-sdk-for-python.git')
     print_check(f'git fetch {USER_REPO} {BRANCH_BASE}')
     print_check(f'git checkout {USER_REPO}/{BRANCH_BASE}')
+
+
+def generate_code():
+    print_exec('git remote add azure https://github.com/Azure/azure-sdk-for-python.git')
+    print_check('git fetch azure main')
+    print_check('git checkout azure/main')
+
+    head_sha = print_exec_output('git rev-parse HEAD')[0]
+    html_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/'
+    input_data = {
+        'headSha': head_sha,
+        'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
+        'specFolder': os.getenv('SPEC_REPO'),
+        'relatedReadmeMdFiles': [os.getenv('SPEC_README').replace(html_link, '') + 'readme.md']
+    }
+    temp_folder = Path(os.getenv('TEMP_FOLDER'))
+    input_file = str(temp_folder / 'input.json')
+    with open(input_file, 'w') as file:
+        json.dump(input_data, file)
+
+    temp_file = str(temp_folder / 'temp.txt')
+    Path(temp_file).touch()
+    output_file = str(temp_folder / 'output.json')
+    Path(output_file).touch()
+
+    print_exec('python scripts/dev_setup.py -p azure-core')
+    print_check(f'python -m packaging_tools.auto_codegen {input_file} {input_file}')
+    print_check(f'python -m packaging_tools.auto_codegen {input_file} {input_file}')
+
+
+def checkout_base_branch():
+    # init git
+    print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
+
+    if os.getenv('SPEC_README'):
+        generate_code()
+    else:
+        checkout_branch()
 
 
 def create_branch():
@@ -437,7 +474,7 @@ def commit_file():
 
 
 def main():
-    git_remote_add()
+    checkout_base_branch()
     judge_sdk_folder()
     create_branch()
     add_certificate()
@@ -487,4 +524,3 @@ if __name__ == '__main__':
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
             file_out.writelines([f'{NEW_BRANCH}\n', "main\n" if TRACK == '2' else 'release/v3\n'])
-
