@@ -14,13 +14,15 @@ import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
     # python version < 3.3
     import time
+
     def generate_token_with_custom_expiry(valid_for_seconds):
         date = datetime.now() + timedelta(seconds=valid_for_seconds)
         return generate_token_with_custom_expiry_epoch(time.mktime(date.timetuple()))
 else:
     def generate_token_with_custom_expiry(valid_for_seconds):
         return generate_token_with_custom_expiry_epoch((datetime.now() + timedelta(seconds=valid_for_seconds)).timestamp())
-    
+
+
 def generate_token_with_custom_expiry_epoch(expires_on_epoch):
     expiry_json = '{"exp": ' + str(expires_on_epoch) + '}'
     base64expiry = base64.b64encode(
@@ -32,15 +34,19 @@ def generate_token_with_custom_expiry_epoch(expires_on_epoch):
 
 class URIIdentityReplacer(RecordingProcessor):
     """Replace the identity in request uri"""
+
     def process_request(self, request):
         resource = (urlparse(request.uri).netloc).split('.')[0]
-        request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri) 
+        request.uri = re.sub(
+            '/identities/([^/?]+)', '/identities/sanitized', request.uri)
         request.uri = re.sub(resource, 'sanitized', request.uri)
-        request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri) 
+        request.uri = re.sub(
+            '/identities/([^/?]+)', '/identities/sanitized', request.uri)
         request.uri = re.sub(resource, 'sanitized', request.uri)
         return request
-    
+
     def process_response(self, response):
         if 'url' in response:
-            response['url'] = re.sub('/identities/([^/?]+)', '/identities/sanitized', response['url'])
+            response['url'] = re.sub(
+                '/identities/([^/?]+)', '/identities/sanitized', response['url'])
         return response

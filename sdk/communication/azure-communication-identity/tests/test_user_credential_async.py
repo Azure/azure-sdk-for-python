@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import timedelta
 import pytest
 try:
     from unittest.mock import MagicMock, patch
@@ -16,6 +15,7 @@ import azure.communication.identity._shared.user_credential_async as user_creden
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
 from _shared.helper import generate_token_with_custom_expiry
+from _shared.asynctestcase import get_completed_future
 
 
 class TestCommunicationTokenCredential:
@@ -43,7 +43,7 @@ class TestCommunicationTokenCredential:
     async def test_refresher_should_be_called_immediately_with_expired_token(self):
         refreshed_token = generate_token_with_custom_expiry(10 * 60)
         refresher = MagicMock(
-            return_value=create_access_token(refreshed_token))
+            return_value=get_completed_future(create_access_token(refreshed_token)))
         expired_token = generate_token_with_custom_expiry(-(5 * 60))
 
         credential = CommunicationTokenCredential(
@@ -87,7 +87,8 @@ class TestCommunicationTokenCredential:
     @pytest.mark.asyncio
     async def test_refresher_should_be_called_as_necessary(self):
         expired_token = generate_token_with_custom_expiry(-(10 * 60))
-        refresher = MagicMock(return_value=create_access_token(expired_token))
+        refresher = MagicMock(return_value=get_completed_future(
+            create_access_token(expired_token)))
 
         credential = CommunicationTokenCredential(
             expired_token, token_refresher=refresher)
@@ -116,8 +117,7 @@ class TestCommunicationTokenCredential:
             credential = CommunicationTokenCredential(
                 initial_token,
                 token_refresher=refresher,
-                refresh_proactively=True,
-                refresh_interval_before_expiry=timedelta(minutes=refresh_minutes))
+                refresh_proactively=True)
             async with credential:
                 access_token = await credential.get_token()
 
@@ -128,24 +128,24 @@ class TestCommunicationTokenCredential:
 
     @pytest.mark.asyncio
     async def test_proactive_refresher_should_be_called_after_specified_time(self):
-        refresh_minutes = 30
+        refresh_minutes = 10
         token_validity_minutes = 60
         start_timestamp = get_current_utc_as_int()
-        skip_to_timestamp = start_timestamp + (refresh_minutes + 5) * 60
+        skip_to_timestamp = start_timestamp + \
+            (token_validity_minutes - refresh_minutes + 5) * 60
 
         initial_token = generate_token_with_custom_expiry(
             token_validity_minutes * 60)
         refreshed_token = generate_token_with_custom_expiry(
             2 * token_validity_minutes * 60)
         refresher = MagicMock(
-            return_value=create_access_token(refreshed_token))
+            return_value=get_completed_future(create_access_token(refreshed_token)))
 
         with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
             credential = CommunicationTokenCredential(
                 initial_token,
                 token_refresher=refresher,
-                refresh_proactively=True,
-                refresh_interval_before_expiry=timedelta(minutes=refresh_minutes))
+                refresh_proactively=True)
             async with credential:
                 access_token = await credential.get_token()
 
@@ -156,7 +156,7 @@ class TestCommunicationTokenCredential:
 
     @pytest.mark.asyncio
     async def test_proactive_refresher_keeps_scheduling_again(self):
-        refresh_seconds = 2
+        refresh_seconds = 10 * 60
         expired_token = generate_token_with_custom_expiry(-5 * 60)
         skip_to_timestamp = get_current_utc_as_int() + refresh_seconds + 4
         first_refreshed_token = create_access_token(
@@ -164,13 +164,12 @@ class TestCommunicationTokenCredential:
         last_refreshed_token = create_access_token(
             generate_token_with_custom_expiry(10 * 60))
         refresher = MagicMock(
-            side_effect=[first_refreshed_token, last_refreshed_token])
+            side_effect=[get_completed_future(first_refreshed_token), get_completed_future(last_refreshed_token)])
 
         credential = CommunicationTokenCredential(
             expired_token,
             token_refresher=refresher,
-            refresh_proactively=True,
-            refresh_interval_before_expiry=timedelta(seconds=refresh_seconds))
+            refresh_proactively=True)
         async with credential:
             access_token = await credential.get_token()
             with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
