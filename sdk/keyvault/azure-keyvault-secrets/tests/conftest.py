@@ -28,7 +28,7 @@ import platform
 import pytest
 import sys
 from unittest import mock
-from azure_devtools.scenario_tests.patches import mock_in_unit_test, is_live
+from devtools_testutils import is_live
 
 
 #from devtools_testutils import test_proxy, add_general_regex_sanitizer
