@@ -5,6 +5,9 @@
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
+- Added support for service version 2021-04-10.
+- Added support for `find_blobs_by_tags()` on a container.
+- Added support for `Find (f)` container SAS permission.
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
