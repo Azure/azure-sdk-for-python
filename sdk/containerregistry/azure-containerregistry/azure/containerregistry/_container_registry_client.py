@@ -224,7 +224,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder` or str
+        :paramtype order_by: :class:`~azure.containerregistry.ArtifactManifestOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :returns: An iterable of :class:`~azure.containerregistry.ArtifactManifestProperties`
@@ -451,7 +451,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.TagOrder` or str
+        :paramtype order_by: :class:`~azure.containerregistry.ArtifactTagOrder` or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :returns: An iterable of :class:`~azure.containerregistry.ArtifactTagProperties`

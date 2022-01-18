@@ -226,14 +226,14 @@ class RepositoryProperties(object):
         return self._tag_count
 
 
-class ManifestOrder(str, Enum):
+class ArtifactManifestOrder(str, Enum):
     """Enum for ordering registry artifacts"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagOrder(str, Enum):
+class ArtifactTagOrder(str, Enum):
     """Enum for ordering tags"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"

@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 - Renamed the property `size` of `ArtifactManifestProperties` to `size_in_bytes`.
+- Renamed `TagOrder` to `ArtifactTagOrder`.
+- Renamed `ManifestOrder` to `ArtifactManifestOrder`.
 
 ## 1.0.0b7 (2021-11-19)
 
