@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from unittest import TestCase
 import pytest
 try:
     from unittest.mock import MagicMock, patch
@@ -18,7 +19,7 @@ from _shared.helper import generate_token_with_custom_expiry
 from _shared.asynctestcase import get_completed_future
 
 
-class TestCommunicationTokenCredential:
+class TestCommunicationTokenCredential(TestCase):
 
     @pytest.mark.asyncio
     async def test_raises_error_for_init_with_nonstring_token(self):
@@ -85,7 +86,7 @@ class TestCommunicationTokenCredential:
         assert generated_token == access_token.token
 
     @pytest.mark.asyncio
-    async def test_refresher_should_be_called_as_necessary(self):
+    async def test_raises_if_refresher_returns_expired_token(self):
         expired_token = generate_token_with_custom_expiry(-(10 * 60))
         refresher = MagicMock(return_value=get_completed_future(
             create_access_token(expired_token)))
@@ -93,11 +94,10 @@ class TestCommunicationTokenCredential:
         credential = CommunicationTokenCredential(
             expired_token, token_refresher=refresher)
         async with credential:
-            await credential.get_token()
-            access_token = await credential.get_token()
+            with self.assertRaises(ValueError):
+                await credential.get_token()
 
-        assert refresher.call_count == 2
-        assert expired_token == access_token.token
+        assert refresher.call_count == 1
 
     @pytest.mark.asyncio
     async def test_proactive_refresher_should_not_be_called_before_specified_time(self):

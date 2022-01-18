@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Type
 from unittest import TestCase
 try:
     from unittest.mock import MagicMock, patch
@@ -42,30 +43,27 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(credential.get_token().token, self.expired_token)
 
     def test_communicationtokencredential_token_expired_refresh_called(self):
-        refresher = MagicMock(return_value=self.sample_token)
+        refresher = MagicMock(
+            return_value=create_access_token(self.sample_token))
         access_token = CommunicationTokenCredential(
             self.expired_token,
             token_refresher=refresher).get_token()
         refresher.assert_called_once()
-        self.assertEqual(access_token, self.sample_token)
+        self.assertEqual(access_token.token, self.sample_token)
 
-
-    def test_communicationtokencredential_token_expired_refresh_called_as_necessary(self):
+    def test_communicationtokencredential_raises_if_refresher_returns_expired_token(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
         credential = CommunicationTokenCredential(
             self.expired_token, token_refresher=refresher)
 
-        credential.get_token()
-        access_token = credential.get_token()
+        with self.assertRaises(ValueError):
+            credential.get_token()
+        self.assertEqual(refresher.call_count, 1)
 
-        self.assertEqual(refresher.call_count, 2)
-        self.assertEqual(access_token.token, self.expired_token)
-
-    # @patch_threading_timer(user_credential.__name__+'.Timer')
-    def test_uses_initial_token_as_expected(self):  # , timer_mock):
+    def test_uses_initial_token_as_expected(self):
         refresher = MagicMock(
-            return_value=self.expired_token)
+            return_value=create_access_token(self.expired_token))
         credential = CommunicationTokenCredential(
             self.sample_token, token_refresher=refresher, refresh_proactively=True)
         with credential:

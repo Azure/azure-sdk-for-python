@@ -47,7 +47,7 @@ class CommunicationTokenCredential(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
 
-        if not self._token_refresher or not self._token_expiring():
+        if not self._token_refresher or not self._is_token_expiring_soon(self._token):
             return self._token
 
         self._update_token_and_reschedule()
@@ -56,12 +56,11 @@ class CommunicationTokenCredential(object):
     def _update_token_and_reschedule(self):
         should_this_thread_refresh = False
         with self._lock:
-            while self._token_expiring():
+            while self._is_token_expiring_soon(self._token):
                 if self._some_thread_refreshing:
-                    if self._is_currenttoken_valid():
+                    if self._is_token_valid(self._token):
                         return self._token
-
-                    self._wait_till_inprogress_thread_finish_refreshing()
+                    self._wait_till_lock_owner_finishes_refreshing()
                 else:
                     should_this_thread_refresh = True
                     self._some_thread_refreshing = True
@@ -69,10 +68,12 @@ class CommunicationTokenCredential(object):
 
         if should_this_thread_refresh:
             try:
-                newtoken = self._token_refresher()  # pylint:disable=not-callable
-
+                new_token = self._token_refresher()
+                if not self._is_token_valid(new_token):
+                    raise ValueError(
+                        "The token returned from the token_refresher is expired.")
                 with self._lock:
-                    self._token = newtoken
+                    self._token = new_token
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
             except:
@@ -88,25 +89,31 @@ class CommunicationTokenCredential(object):
         if self._timer is not None:
             self._timer.cancel()
 
-        timespan = self._token.expires_on - \
-            get_current_utc_as_int() - timedelta(
+        token_ttl = self._token.expires_on - get_current_utc_as_int()
+
+        if self._is_token_expiring_soon(self._token):
+            # Schedule the next refresh for when it reaches a certain percentage of the remaining lifetime.
+            timespan = token_ttl / 2
+        else:
+            # Schedule the next refresh for when it gets in to the soon-to-expire window.
+            timespan = token_ttl - timedelta(
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
         self._timer = Timer(timespan, self._update_token_and_reschedule)
         self._timer.start()
 
-    def _wait_till_inprogress_thread_finish_refreshing(self):
+    def _wait_till_lock_owner_finishes_refreshing(self):
         self._lock.release()
         self._lock.acquire()
 
-    def _token_expiring(self):
+    def _is_token_expiring_soon(self, token):
         if self._refresh_proactively:
             interval = timedelta(
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES)
         else:
             interval = timedelta(
                 minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
-        return self._token.expires_on - get_current_utc_as_int() <\
+        return token.expires_on - get_current_utc_as_int() <\
             interval.total_seconds()
 
-    def _is_currenttoken_valid(self):
-        return get_current_utc_as_int() < self._token.expires_on
+    def _is_token_valid(self, token):
+        return get_current_utc_as_int() < token.expires_on
