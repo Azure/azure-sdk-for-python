@@ -9,8 +9,6 @@
 Example to demonstrate utilizing AzureNamedKeyCredential to authenticate with Event Hubs.
 """
 
-# pylint: disable=C0111
-
 import os
 import time
 from azure.core.credentials import AzureNamedKeyCredential
