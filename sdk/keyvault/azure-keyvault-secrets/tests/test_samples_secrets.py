@@ -8,6 +8,7 @@ import time
 from _shared.test_case import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, SecretsTestCase
 
+from devtools_testutils import recorded_by_proxy
 
 all_api_versions = get_decorator()
 
