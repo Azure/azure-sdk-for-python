@@ -45,7 +45,6 @@ class GoneRetryPolicy(object):
 
         """
         if exception.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE:
-            print("returning False for ShouldRetry in policy to raise error")
             # refresh routing_map_provider to refresh partition key range cache
             # return False to raise error to multi_execution_aggregator and repair document producer
             self.client.refresh_routing_map_provider()
