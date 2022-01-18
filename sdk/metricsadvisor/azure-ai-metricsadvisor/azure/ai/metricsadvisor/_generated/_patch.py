@@ -26,9 +26,8 @@
 # --------------------------------------------------------------------------
 
 
-class MetricsAdvisorAdministrationClient(
-    object
-):  # pylint:disable=too-many-public-methods
+class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods
+    
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
