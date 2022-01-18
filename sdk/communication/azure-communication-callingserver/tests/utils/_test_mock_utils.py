@@ -6,7 +6,7 @@
 import json
 from . import _test_constants
 from azure.core.credentials import AccessToken
-from azure.communication.callingserver import CallingServerClient
+from azure.communication.callingserver import CallingServerClient, CallingOperationStatus
 
 try:
     from unittest.mock import Mock
@@ -53,3 +53,8 @@ def _mock_response(status_code=200, headers=None, json_payload=None):
         response.headers["content-type"] = "text/plain"
         response.content_type = "text/plain"
     return response
+
+
+def mock_delete_audio_group(audio_group_id):
+     response = Mock(status_code= 202)
+     return response

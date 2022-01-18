@@ -22,6 +22,7 @@ class CallConnectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the call connection.
     """
 
+    UNKNOWN = "unknown"
     CONNECTING = "connecting"
     CONNECTED = "connected"
     TRANSFERRING = "transferring"

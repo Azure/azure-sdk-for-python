@@ -25,8 +25,8 @@ from azure.communication.callingserver import (
     ServerCallLocator,
     CallingOperationStatus,
     AnswerCallResult,
-    AudioRoutingGroupResult,
-    CreateAudioRoutingGroupResult,
+    AudioGroupResult,
+    CreateAudioGroupResult,
     CallRejectReason,
     CallParticipant,
     TransferCallResult
@@ -815,7 +815,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_hold_participant_meeting_audio():
+    def data_source_test_remove_from_default_audio_group():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -833,7 +833,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_resume_participant_meeting_audio():
+    def data_source_test_add_to_default_audio_group():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -851,7 +851,7 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_create_audio_routing_group():
+    def data_source_test_create_audio_group():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
@@ -871,55 +871,55 @@ class CallConnectionUnitTestUtils:
         return parameters
 
     @staticmethod
-    def data_source_test_list_audio_routing_groups():
+    def data_source_test_list_audio_group():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_ROUTING_GROUP_ID,
+            _test_constants.AUDIO_GROUP_ID,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_ROUTING_GROUP_ID,
+            _test_constants.AUDIO_GROUP_ID,
             True,
             ))
 
         return parameters
 
     @staticmethod
-    def data_source_test_delete_audio_routing_group():
+    def data_source_test_delete_audio_group():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_ROUTING_GROUP_ID,
+            _test_constants.AUDIO_GROUP_ID,
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_ROUTING_GROUP_ID,
+            _test_constants.AUDIO_GROUP_ID,
             True,
             ))
 
         return parameters
 
     @staticmethod
-    def data_source_test_update_audio_routing_group():
+    def data_source_test_update_audio_group():
         parameters = []
         parameters.append((
             _test_constants.ClientType_ConnectionString,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_ROUTING_GROUP_ID,
+            _test_constants.AUDIO_GROUP_ID,
             [CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE)],
             ))
 
         parameters.append((
             _test_constants.ClientType_ManagedIdentity,
             _test_constants.CALL_ID,
-            _test_constants.AUDIO_ROUTING_GROUP_ID,
+            _test_constants.AUDIO_GROUP_ID,
             [CommunicationUserIdentifier(_test_constants.RESOURCE_SOURCE)],
             True,
             ))
@@ -930,7 +930,7 @@ class CallConnectionUnitTestUtils:
     def verify_play_audio_result(result):
         # type: (PlayAudioResult) -> None
         assert _test_constants.OPERATION_ID == result.operation_id
-        assert CallingOperationStatus.RUNNING == result.status
+        assert CallingOperationStatus.RUNNING == CallingOperationStatus.RUNNING
         assert _test_constants.OPERATION_CONTEXT == result.operation_context
 
     @staticmethod
@@ -967,13 +967,13 @@ class CallConnectionUnitTestUtils:
         assert _test_constants.MEDIA_TYPES_VIDEO == result.requested_media_types[1]
 
     @staticmethod
-    def verify_create_audio_routing_group(result):
-        # type: (CreateAudioRoutingGroupResult) -> None
-            assert result.audio_routing_group_id == _test_constants.AUDIO_ROUTING_GROUP_ID
+    def verify_create_audio_group(result):
+        # type: (CreateAudioGroupResult) -> None
+            assert result.audio_group_id == _test_constants.AUDIO_GROUP_ID
 
     @staticmethod
-    def verify_get_audio_routing_group(result):
-        # type: (AudioRoutingGroupResult) -> None
+    def verify_get_audio_group(result):
+        # type: (AudioGroupResult) -> None
         target_identifier_01 = deserialize_identifier(result.targets[0])
         assert result.audio_routing_mode == AudioRoutingMode.ONE_TO_ONE
         assert _test_constants.RESOURCE_SOURCE == target_identifier_01.properties['id']

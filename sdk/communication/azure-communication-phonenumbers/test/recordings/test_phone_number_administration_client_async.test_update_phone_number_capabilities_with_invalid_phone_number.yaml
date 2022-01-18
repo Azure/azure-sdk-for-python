@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 22 Jun 2021 20:49:00 GMT
+      - Wed, 05 Jan 2022 10:02:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -21,14 +21,14 @@ interactions:
       string: '{"error": {"code": "InternalError", "message": "The server encountered
         an internal error."}}'
     headers:
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview
       content-type: application/json
-      date: Tue, 22 Jun 2021 20:49:00 GMT
-      ms-cv: ZHFikJ3L5EitfYqYolw4hw.0
+      date: Wed, 05 Jan 2022 10:02:57 GMT
+      ms-cv: a1R4bijUxU+K7btQ10zmVA.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 446ms
+      x-processing-time: 72ms
     status:
       code: 404
       message: Not Found

@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 22 Jun 2021 20:47:43 GMT
+      - Wed, 05 Jan 2022 10:01:32 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -22,16 +22,16 @@ interactions:
       string: ''
     headers:
       access-control-expose-headers: Location,Operation-Location,operation-id,search-id
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview
       content-length: '0'
-      date: Tue, 22 Jun 2021 20:47:45 GMT
-      ms-cv: d2IuwtOW+km0VKnygc3F2g.0
-      operation-id: search_ca052693-7500-4cc3-a225-7d9c1fd34b1b
-      operation-location: /phoneNumbers/operations/search_ca052693-7500-4cc3-a225-7d9c1fd34b1b?api-version=2021-03-07
+      date: Wed, 05 Jan 2022 10:01:35 GMT
+      ms-cv: mpKm76CFLkO3lwu0cCe7SQ.0
+      operation-id: search_3095eb1c-1e33-4238-9549-9ce74cfd823a
+      operation-location: /phoneNumbers/operations/search_3095eb1c-1e33-4238-9549-9ce74cfd823a?api-version=2021-03-07
       request-context: appId=
-      search-id: ca052693-7500-4cc3-a225-7d9c1fd34b1b
+      search-id: 3095eb1c-1e33-4238-9549-9ce74cfd823a
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1984ms
+      x-processing-time: 3604ms
     status:
       code: 202
       message: Accepted

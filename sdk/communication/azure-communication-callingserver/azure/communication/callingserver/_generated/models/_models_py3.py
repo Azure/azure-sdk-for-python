@@ -126,11 +126,15 @@ class AddParticipantResultEvent(msrest.serialization.Model):
     :ivar result_details: The result details.
     :vartype result_details:
      ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar operation_id: The operation id.
+    :vartype operation_id: str
     :ivar operation_context: The operation context.
     :vartype operation_context: str
     :ivar status: Required. The status of the operation. Possible values include: "notStarted",
      "running", "completed", "failed".
     :vartype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+    :ivar call_locator: The server call locator.
+    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     """
 
     _validation = {
@@ -139,8 +143,10 @@ class AddParticipantResultEvent(msrest.serialization.Model):
 
     _attribute_map = {
         'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
+        'operation_id': {'key': 'operationId', 'type': 'str'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
     }
 
     def __init__(
@@ -148,23 +154,31 @@ class AddParticipantResultEvent(msrest.serialization.Model):
         *,
         status: Union[str, "CallingOperationStatus"],
         result_details: Optional["CallingOperationResultDetails"] = None,
+        operation_id: Optional[str] = None,
         operation_context: Optional[str] = None,
+        call_locator: Optional["CallLocatorModel"] = None,
         **kwargs
     ):
         """
         :keyword result_details: The result details.
         :paramtype result_details:
          ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword operation_id: The operation id.
+        :paramtype operation_id: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword status: Required. The status of the operation. Possible values include: "notStarted",
          "running", "completed", "failed".
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+        :keyword call_locator: The server call locator.
+        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
         """
         super(AddParticipantResultEvent, self).__init__(**kwargs)
         self.result_details = result_details
+        self.operation_id = operation_id
         self.operation_context = operation_context
         self.status = status
+        self.call_locator = call_locator
 
 
 class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
@@ -227,6 +241,37 @@ class AddParticipantWithCallLocatorRequest(msrest.serialization.Model):
         self.alternate_caller_id = alternate_caller_id
         self.participant = participant
         self.operation_context = operation_context
+
+
+class AddToDefaultAudioGroupRequest(msrest.serialization.Model):
+    """The request payload for adding a participant to default audio group.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar identifier: Required. The identifier of the participant.
+    :vartype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        *,
+        identifier: "CommunicationIdentifierModel",
+        **kwargs
+    ):
+        """
+        :keyword identifier: Required. The identifier of the participant.
+        :paramtype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+        """
+        super(AddToDefaultAudioGroupRequest, self).__init__(**kwargs)
+        self.identifier = identifier
 
 
 class AnswerCallRequest(msrest.serialization.Model):
@@ -310,16 +355,15 @@ class AnswerCallResult(msrest.serialization.Model):
         self.call_connection_id = call_connection_id
 
 
-class AudioRoutingGroupRequest(msrest.serialization.Model):
-    """The audio routing group request.
+class AudioGroupRequest(msrest.serialization.Model):
+    """The audio group request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar audio_routing_mode: Required. The audio routing mode. Possible values include:
      "oneToOne", "multicast".
     :vartype audio_routing_mode: str or ~azure.communication.callingserver.models.AudioRoutingMode
-    :ivar targets: Required. The target identities that would be receivers in the audio routing
-     group.
+    :ivar targets: Required. The target identities that would be receivers in the audio group.
     :vartype targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
     """
 
@@ -345,23 +389,22 @@ class AudioRoutingGroupRequest(msrest.serialization.Model):
          "oneToOne", "multicast".
         :paramtype audio_routing_mode: str or
          ~azure.communication.callingserver.models.AudioRoutingMode
-        :keyword targets: Required. The target identities that would be receivers in the audio routing
-         group.
+        :keyword targets: Required. The target identities that would be receivers in the audio group.
         :paramtype targets:
          list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
         """
-        super(AudioRoutingGroupRequest, self).__init__(**kwargs)
+        super(AudioGroupRequest, self).__init__(**kwargs)
         self.audio_routing_mode = audio_routing_mode
         self.targets = targets
 
 
-class AudioRoutingGroupResult(msrest.serialization.Model):
-    """The audio routing group result.
+class AudioGroupResult(msrest.serialization.Model):
+    """The audio group result.
 
     :ivar audio_routing_mode: The audio routing mode. Possible values include: "oneToOne",
      "multicast".
     :vartype audio_routing_mode: str or ~azure.communication.callingserver.models.AudioRoutingMode
-    :ivar targets: The target identities that would be receivers in the audio routing group.
+    :ivar targets: The target identities that would be receivers in the audio group.
     :vartype targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
     """
 
@@ -382,11 +425,11 @@ class AudioRoutingGroupResult(msrest.serialization.Model):
          "multicast".
         :paramtype audio_routing_mode: str or
          ~azure.communication.callingserver.models.AudioRoutingMode
-        :keyword targets: The target identities that would be receivers in the audio routing group.
+        :keyword targets: The target identities that would be receivers in the audio group.
         :paramtype targets:
          list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
         """
-        super(AudioRoutingGroupResult, self).__init__(**kwargs)
+        super(AudioGroupResult, self).__init__(**kwargs)
         self.audio_routing_mode = audio_routing_mode
         self.targets = targets
 
@@ -405,7 +448,8 @@ class CallConnectionProperties(msrest.serialization.Model):
     :ivar targets: The targets of the call.
     :vartype targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
     :ivar call_connection_state: The state of the call connection. Possible values include:
-     "connecting", "connected", "transferring", "transferAccepted", "disconnecting", "disconnected".
+     "unknown", "connecting", "connected", "transferring", "transferAccepted", "disconnecting",
+     "disconnected".
     :vartype call_connection_state: str or
      ~azure.communication.callingserver.models.CallConnectionState
     :ivar subject: The subject.
@@ -463,7 +507,8 @@ class CallConnectionProperties(msrest.serialization.Model):
         :paramtype targets:
          list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
         :keyword call_connection_state: The state of the call connection. Possible values include:
-         "connecting", "connected", "transferring", "transferAccepted", "disconnecting", "disconnected".
+         "unknown", "connecting", "connected", "transferring", "transferAccepted", "disconnecting",
+         "disconnected".
         :paramtype call_connection_state: str or
          ~azure.communication.callingserver.models.CallConnectionState
         :keyword subject: The subject.
@@ -502,8 +547,8 @@ class CallConnectionStateChangedEvent(msrest.serialization.Model):
     :ivar call_connection_id: The call connection id.
     :vartype call_connection_id: str
     :ivar call_connection_state: Required. The state of the call connection. Possible values
-     include: "connecting", "connected", "transferring", "transferAccepted", "disconnecting",
-     "disconnected".
+     include: "unknown", "connecting", "connected", "transferring", "transferAccepted",
+     "disconnecting", "disconnected".
     :vartype call_connection_state: str or
      ~azure.communication.callingserver.models.CallConnectionState
     """
@@ -532,8 +577,8 @@ class CallConnectionStateChangedEvent(msrest.serialization.Model):
         :keyword call_connection_id: The call connection id.
         :paramtype call_connection_id: str
         :keyword call_connection_state: Required. The state of the call connection. Possible values
-         include: "connecting", "connected", "transferring", "transferAccepted", "disconnecting",
-         "disconnected".
+         include: "unknown", "connecting", "connected", "transferring", "transferAccepted",
+         "disconnecting", "disconnected".
         :paramtype call_connection_state: str or
          ~azure.communication.callingserver.models.CallConnectionState
         """
@@ -1059,29 +1104,29 @@ class CommunicationUserIdentifierModel(msrest.serialization.Model):
         self.id = id
 
 
-class CreateAudioRoutingGroupResult(msrest.serialization.Model):
-    """The response payload of the create audio routing group operation.
+class CreateAudioGroupResult(msrest.serialization.Model):
+    """The response payload of the create audio group operation.
 
-    :ivar audio_routing_group_id: The audio routing group id.
-    :vartype audio_routing_group_id: str
+    :ivar audio_group_id: The audio group id.
+    :vartype audio_group_id: str
     """
 
     _attribute_map = {
-        'audio_routing_group_id': {'key': 'audioRoutingGroupId', 'type': 'str'},
+        'audio_group_id': {'key': 'audioGroupId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        audio_routing_group_id: Optional[str] = None,
+        audio_group_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword audio_routing_group_id: The audio routing group id.
-        :paramtype audio_routing_group_id: str
+        :keyword audio_group_id: The audio group id.
+        :paramtype audio_group_id: str
         """
-        super(CreateAudioRoutingGroupResult, self).__init__(**kwargs)
-        self.audio_routing_group_id = audio_routing_group_id
+        super(CreateAudioGroupResult, self).__init__(**kwargs)
+        self.audio_group_id = audio_group_id
 
 
 class CreateCallRequest(msrest.serialization.Model):
@@ -1294,37 +1339,6 @@ class GetParticipantWithCallLocatorRequest(msrest.serialization.Model):
         self.identifier = identifier
 
 
-class HoldMeetingAudioRequest(msrest.serialization.Model):
-    """The request payload for holding meeting audio for a participant.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar identifier: Required. The identifier of the participant.
-    :vartype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
-    """
-
-    _validation = {
-        'identifier': {'required': True},
-    }
-
-    _attribute_map = {
-        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
-    }
-
-    def __init__(
-        self,
-        *,
-        identifier: "CommunicationIdentifierModel",
-        **kwargs
-    ):
-        """
-        :keyword identifier: Required. The identifier of the participant.
-        :paramtype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
-        """
-        super(HoldMeetingAudioRequest, self).__init__(**kwargs)
-        self.identifier = identifier
-
-
 class JoinCallRequest(msrest.serialization.Model):
     """The request payload for join call.
 
@@ -1517,12 +1531,15 @@ class ParticipantsUpdatedEvent(msrest.serialization.Model):
 
     :ivar call_connection_id: The call connection id.
     :vartype call_connection_id: str
+    :ivar call_locator: The server call locator.
+    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     :ivar participants: The list of participants.
     :vartype participants: list[~azure.communication.callingserver.models.CallParticipant]
     """
 
     _attribute_map = {
         'call_connection_id': {'key': 'callConnectionId', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
         'participants': {'key': 'participants', 'type': '[CallParticipant]'},
     }
 
@@ -1530,17 +1547,21 @@ class ParticipantsUpdatedEvent(msrest.serialization.Model):
         self,
         *,
         call_connection_id: Optional[str] = None,
+        call_locator: Optional["CallLocatorModel"] = None,
         participants: Optional[List["CallParticipant"]] = None,
         **kwargs
     ):
         """
         :keyword call_connection_id: The call connection id.
         :paramtype call_connection_id: str
+        :keyword call_locator: The server call locator.
+        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
         :keyword participants: The list of participants.
         :paramtype participants: list[~azure.communication.callingserver.models.CallParticipant]
         """
         super(ParticipantsUpdatedEvent, self).__init__(**kwargs)
         self.call_connection_id = call_connection_id
+        self.call_locator = call_locator
         self.participants = participants
 
 
@@ -1701,11 +1722,15 @@ class PlayAudioResultEvent(msrest.serialization.Model):
     :ivar result_details: The result details.
     :vartype result_details:
      ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar operation_id: The operation id.
+    :vartype operation_id: str
     :ivar operation_context: The operation context.
     :vartype operation_context: str
     :ivar status: Required. The status of the operation. Possible values include: "notStarted",
      "running", "completed", "failed".
     :vartype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+    :ivar call_locator: The server call locator.
+    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     """
 
     _validation = {
@@ -1714,8 +1739,10 @@ class PlayAudioResultEvent(msrest.serialization.Model):
 
     _attribute_map = {
         'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
+        'operation_id': {'key': 'operationId', 'type': 'str'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
     }
 
     def __init__(
@@ -1723,23 +1750,31 @@ class PlayAudioResultEvent(msrest.serialization.Model):
         *,
         status: Union[str, "CallingOperationStatus"],
         result_details: Optional["CallingOperationResultDetails"] = None,
+        operation_id: Optional[str] = None,
         operation_context: Optional[str] = None,
+        call_locator: Optional["CallLocatorModel"] = None,
         **kwargs
     ):
         """
         :keyword result_details: The result details.
         :paramtype result_details:
          ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword operation_id: The operation id.
+        :paramtype operation_id: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword status: Required. The status of the operation. Possible values include: "notStarted",
          "running", "completed", "failed".
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+        :keyword call_locator: The server call locator.
+        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
         """
         super(PlayAudioResultEvent, self).__init__(**kwargs)
         self.result_details = result_details
+        self.operation_id = operation_id
         self.operation_context = operation_context
         self.status = status
+        self.call_locator = call_locator
 
 
 class PlayAudioToParticipantRequest(msrest.serialization.Model):
@@ -2054,6 +2089,37 @@ class RejectCallRequest(msrest.serialization.Model):
         self.call_reject_reason = call_reject_reason
 
 
+class RemoveFromDefaultAudioGroupRequest(msrest.serialization.Model):
+    """The request payload for removing a participant from default audio group.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar identifier: Required. The identifier of the participant.
+    :vartype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        'identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        *,
+        identifier: "CommunicationIdentifierModel",
+        **kwargs
+    ):
+        """
+        :keyword identifier: Required. The identifier of the participant.
+        :paramtype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
+        """
+        super(RemoveFromDefaultAudioGroupRequest, self).__init__(**kwargs)
+        self.identifier = identifier
+
+
 class RemoveParticipantRequest(msrest.serialization.Model):
     """The remove participant by identifier request.
 
@@ -2121,37 +2187,6 @@ class RemoveParticipantWithCallLocatorRequest(msrest.serialization.Model):
         """
         super(RemoveParticipantWithCallLocatorRequest, self).__init__(**kwargs)
         self.call_locator = call_locator
-        self.identifier = identifier
-
-
-class ResumeMeetingAudioRequest(msrest.serialization.Model):
-    """The request payload for resuming meeting audio for a participant.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar identifier: Required. The identifier of the participant.
-    :vartype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
-    """
-
-    _validation = {
-        'identifier': {'required': True},
-    }
-
-    _attribute_map = {
-        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
-    }
-
-    def __init__(
-        self,
-        *,
-        identifier: "CommunicationIdentifierModel",
-        **kwargs
-    ):
-        """
-        :keyword identifier: Required. The identifier of the participant.
-        :paramtype identifier: ~azure.communication.callingserver.models.CommunicationIdentifierModel
-        """
-        super(ResumeMeetingAudioRequest, self).__init__(**kwargs)
         self.identifier = identifier
 
 
@@ -2305,6 +2340,8 @@ class ToneReceivedEvent(msrest.serialization.Model):
     :vartype tone_info: ~azure.communication.callingserver.models.ToneInfo
     :ivar call_connection_id: The call connection id.
     :vartype call_connection_id: str
+    :ivar call_locator: The server call locator.
+    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     """
 
     _validation = {
@@ -2314,6 +2351,7 @@ class ToneReceivedEvent(msrest.serialization.Model):
     _attribute_map = {
         'tone_info': {'key': 'toneInfo', 'type': 'ToneInfo'},
         'call_connection_id': {'key': 'callConnectionId', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
     }
 
     def __init__(
@@ -2321,6 +2359,7 @@ class ToneReceivedEvent(msrest.serialization.Model):
         *,
         tone_info: "ToneInfo",
         call_connection_id: Optional[str] = None,
+        call_locator: Optional["CallLocatorModel"] = None,
         **kwargs
     ):
         """
@@ -2328,10 +2367,13 @@ class ToneReceivedEvent(msrest.serialization.Model):
         :paramtype tone_info: ~azure.communication.callingserver.models.ToneInfo
         :keyword call_connection_id: The call connection id.
         :paramtype call_connection_id: str
+        :keyword call_locator: The server call locator.
+        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
         """
         super(ToneReceivedEvent, self).__init__(**kwargs)
         self.tone_info = tone_info
         self.call_connection_id = call_connection_id
+        self.call_locator = call_locator
 
 
 class TransferCallResult(msrest.serialization.Model):
@@ -2398,11 +2440,15 @@ class TransferCallResultEvent(msrest.serialization.Model):
     :ivar result_details: The result details.
     :vartype result_details:
      ~azure.communication.callingserver.models.CallingOperationResultDetails
+    :ivar operation_id: The operation id.
+    :vartype operation_id: str
     :ivar operation_context: The operation context.
     :vartype operation_context: str
     :ivar status: Required. The status of the operation. Possible values include: "notStarted",
      "running", "completed", "failed".
     :vartype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+    :ivar call_locator: The server call locator.
+    :vartype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
     """
 
     _validation = {
@@ -2411,8 +2457,10 @@ class TransferCallResultEvent(msrest.serialization.Model):
 
     _attribute_map = {
         'result_details': {'key': 'resultDetails', 'type': 'CallingOperationResultDetails'},
+        'operation_id': {'key': 'operationId', 'type': 'str'},
         'operation_context': {'key': 'operationContext', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'call_locator': {'key': 'callLocator', 'type': 'CallLocatorModel'},
     }
 
     def __init__(
@@ -2420,23 +2468,31 @@ class TransferCallResultEvent(msrest.serialization.Model):
         *,
         status: Union[str, "CallingOperationStatus"],
         result_details: Optional["CallingOperationResultDetails"] = None,
+        operation_id: Optional[str] = None,
         operation_context: Optional[str] = None,
+        call_locator: Optional["CallLocatorModel"] = None,
         **kwargs
     ):
         """
         :keyword result_details: The result details.
         :paramtype result_details:
          ~azure.communication.callingserver.models.CallingOperationResultDetails
+        :keyword operation_id: The operation id.
+        :paramtype operation_id: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword status: Required. The status of the operation. Possible values include: "notStarted",
          "running", "completed", "failed".
         :paramtype status: str or ~azure.communication.callingserver.models.CallingOperationStatus
+        :keyword call_locator: The server call locator.
+        :paramtype call_locator: ~azure.communication.callingserver.models.CallLocatorModel
         """
         super(TransferCallResultEvent, self).__init__(**kwargs)
         self.result_details = result_details
+        self.operation_id = operation_id
         self.operation_context = operation_context
         self.status = status
+        self.call_locator = call_locator
 
 
 class TransferToCallRequest(msrest.serialization.Model):
@@ -2584,13 +2640,12 @@ class UnmuteParticipantRequest(msrest.serialization.Model):
         self.operation_context = operation_context
 
 
-class UpdateAudioRoutingGroupRequest(msrest.serialization.Model):
-    """The update audio routing group request.
+class UpdateAudioGroupRequest(msrest.serialization.Model):
+    """The update audio group request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar targets: Required. The target identities that would be receivers in the audio routing
-     group.
+    :ivar targets: Required. The target identities that would be receivers in the audio group.
     :vartype targets: list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
     """
 
@@ -2609,10 +2664,9 @@ class UpdateAudioRoutingGroupRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword targets: Required. The target identities that would be receivers in the audio routing
-         group.
+        :keyword targets: Required. The target identities that would be receivers in the audio group.
         :paramtype targets:
          list[~azure.communication.callingserver.models.CommunicationIdentifierModel]
         """
-        super(UpdateAudioRoutingGroupRequest, self).__init__(**kwargs)
+        super(UpdateAudioGroupRequest, self).__init__(**kwargs)
         self.targets = targets

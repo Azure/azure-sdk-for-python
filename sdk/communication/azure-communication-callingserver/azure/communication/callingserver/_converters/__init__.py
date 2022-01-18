@@ -19,10 +19,10 @@ from ._converter import (
     TransferToCallRequestConverter,
     MuteParticipantRequestConverter,
     UnmuteParticipantRequestConverter,
-    HoldMeetingAudioRequestConverter,
-    ResumeMeetingAudioRequestConverter,
-    AudioRoutingGroupRequestConverter,
-    UpdateAudioRoutingGroupRequestConverter,
+    RemoveFromDefaultAudioGroupRequestConverter,
+    AddToDefaultAudioGroupRequestConverter,
+    AudioGroupRequestConverter,
+    UpdateAudioGroupRequestConverter,
     GetAllParticipantsWithCallLocatorRequestConverter,
     GetParticipantWithCallLocatorRequestConverter
     )
@@ -48,10 +48,10 @@ __all__ = [
     'TransferToCallRequestConverter',
     'MuteParticipantRequestConverter',
     'UnmuteParticipantRequestConverter',
-    'HoldMeetingAudioRequestConverter',
-    'ResumeMeetingAudioRequestConverter',
-    'AudioRoutingGroupRequestConverter',
-    'UpdateAudioRoutingGroupRequestConverter',
+    'RemoveFromDefaultAudioGroupRequestConverter',
+    'AddToDefaultAudioGroupRequestConverter',
+    'AudioGroupRequestConverter',
+    'UpdateAudioGroupRequestConverter',
     'GetAllParticipantsWithCallLocatorRequestConverter',
     'GetParticipantWithCallLocatorRequestConverter'
 ]

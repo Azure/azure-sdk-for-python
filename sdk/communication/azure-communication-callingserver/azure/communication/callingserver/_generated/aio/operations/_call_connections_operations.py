@@ -17,7 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._call_connections_operations import build_add_participant_request, build_cancel_all_media_operations_request, build_cancel_participant_media_operation_request, build_create_audio_routing_group_request, build_create_call_request, build_delete_audio_routing_group_request, build_delete_call_request, build_get_audio_routing_groups_request, build_get_call_request, build_get_participant_request, build_get_participants_request, build_hangup_call_request, build_hold_participant_meeting_audio_request, build_keep_alive_request, build_mute_participant_request, build_participant_play_audio_request, build_play_audio_request, build_remove_participant_request, build_resume_participant_meeting_audio_request, build_transfer_to_call_request, build_transfer_to_participant_request, build_unmute_participant_request, build_update_audio_routing_group_request
+from ...operations._call_connections_operations import build_add_participant_request, build_add_participant_to_default_audio_group_request, build_cancel_all_media_operations_request, build_cancel_participant_media_operation_request, build_create_audio_group_request, build_create_call_request, build_delete_audio_group_request, build_delete_call_request, build_get_audio_groups_request, build_get_call_request, build_get_participant_request, build_get_participants_request, build_hangup_call_request, build_keep_alive_request, build_mute_participant_request, build_participant_play_audio_request, build_play_audio_request, build_remove_participant_from_default_audio_group_request, build_remove_participant_request, build_transfer_to_call_request, build_transfer_to_participant_request, build_unmute_participant_request, build_update_audio_group_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -44,29 +44,29 @@ class CallConnectionsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get_audio_routing_groups(
+    async def get_audio_groups(
         self,
         call_connection_id: str,
-        audio_routing_group_id: str,
+        audio_group_id: str,
         **kwargs: Any
-    ) -> "_models.AudioRoutingGroupResult":
-        """Get audio routing groups from a call.
+    ) -> "_models.AudioGroupResult":
+        """Get audio groups from a call.
 
-        Get audio routing groups from a call.
+        Get audio groups from a call.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param audio_routing_group_id: The audio routing group id.
-        :type audio_routing_group_id: str
+        :param audio_group_id: The audio group id.
+        :type audio_group_id: str
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AudioRoutingGroupResult, or the result of cls(response)
-        :rtype: ~azure.communication.callingserver.models.AudioRoutingGroupResult
+        :return: AudioGroupResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.AudioGroupResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AudioRoutingGroupResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AudioGroupResult"]
         error_map = {
             409: ResourceExistsError,
             400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
@@ -80,11 +80,11 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
 
         
-        request = build_get_audio_routing_groups_request(
+        request = build_get_audio_groups_request(
             call_connection_id=call_connection_id,
-            audio_routing_group_id=audio_routing_group_id,
+            audio_group_id=audio_group_id,
             api_version=api_version,
-            template_url=self.get_audio_routing_groups.metadata['url'],
+            template_url=self.get_audio_groups.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -99,31 +99,31 @@ class CallConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('AudioRoutingGroupResult', pipeline_response)
+        deserialized = self._deserialize('AudioGroupResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_audio_routing_groups.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}'}  # type: ignore
+    get_audio_groups.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioGroups/{audioGroupId}'}  # type: ignore
 
 
     @distributed_trace_async
-    async def delete_audio_routing_group(
+    async def delete_audio_group(
         self,
         call_connection_id: str,
-        audio_routing_group_id: str,
+        audio_group_id: str,
         **kwargs: Any
     ) -> None:
-        """Delete audio routing group from a call.
+        """Delete audio group from a call.
 
-        Delete audio routing group from a call.
+        Delete audio group from a call.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param audio_routing_group_id: The audio routing group id.
-        :type audio_routing_group_id: str
+        :param audio_group_id: The audio group id.
+        :type audio_group_id: str
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -146,11 +146,11 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
 
         
-        request = build_delete_audio_routing_group_request(
+        request = build_delete_audio_group_request(
             call_connection_id=call_connection_id,
-            audio_routing_group_id=audio_routing_group_id,
+            audio_group_id=audio_group_id,
             api_version=api_version,
-            template_url=self.delete_audio_routing_group.metadata['url'],
+            template_url=self.delete_audio_group.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -161,35 +161,35 @@ class CallConnectionsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_audio_routing_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}'}  # type: ignore
+    delete_audio_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioGroups/{audioGroupId}'}  # type: ignore
 
 
     @distributed_trace_async
-    async def update_audio_routing_group(
+    async def update_audio_group(
         self,
         call_connection_id: str,
-        audio_routing_group_id: str,
-        update_audio_routing_group_request: "_models.UpdateAudioRoutingGroupRequest",
+        audio_group_id: str,
+        update_audio_group_request: "_models.UpdateAudioGroupRequest",
         **kwargs: Any
     ) -> None:
-        """Update audio routing group.
+        """Update audio group.
 
-        Update audio routing group.
+        Update audio group.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param audio_routing_group_id: The audio routing group id.
-        :type audio_routing_group_id: str
-        :param update_audio_routing_group_request: The update audio routing group request.
-        :type update_audio_routing_group_request:
-         ~azure.communication.callingserver.models.UpdateAudioRoutingGroupRequest
+        :param audio_group_id: The audio group id.
+        :type audio_group_id: str
+        :param update_audio_group_request: The update audio group request.
+        :type update_audio_group_request:
+         ~azure.communication.callingserver.models.UpdateAudioGroupRequest
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -212,15 +212,15 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(update_audio_routing_group_request, 'UpdateAudioRoutingGroupRequest')
+        _json = self._serialize.body(update_audio_group_request, 'UpdateAudioGroupRequest')
 
-        request = build_update_audio_routing_group_request(
+        request = build_update_audio_group_request(
             call_connection_id=call_connection_id,
-            audio_routing_group_id=audio_routing_group_id,
+            audio_group_id=audio_group_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.update_audio_routing_group.metadata['url'],
+            json=_json,
+            template_url=self.update_audio_group.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -238,7 +238,7 @@ class CallConnectionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_audio_routing_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}'}  # type: ignore
+    update_audio_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/audioGroups/{audioGroupId}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -275,12 +275,12 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(call_request, 'CreateCallRequest')
+        _json = self._serialize.body(call_request, 'CreateCallRequest')
 
         request = build_create_call_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.create_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -521,13 +521,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(play_audio_request, 'PlayAudioRequest')
+        _json = self._serialize.body(play_audio_request, 'PlayAudioRequest')
 
         request = build_play_audio_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.play_audio.metadata['url'],
         )
         request = _convert_request(request)
@@ -707,13 +707,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(transfer_to_participant_request, 'TransferToParticipantRequest')
+        _json = self._serialize.body(transfer_to_participant_request, 'TransferToParticipantRequest')
 
         request = build_transfer_to_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.transfer_to_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -776,13 +776,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(transfer_to_call_request, 'TransferToCallRequest')
+        _json = self._serialize.body(transfer_to_call_request, 'TransferToCallRequest')
 
         request = build_transfer_to_call_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.transfer_to_call.metadata['url'],
         )
         request = _convert_request(request)
@@ -809,30 +809,29 @@ class CallConnectionsOperations:
 
 
     @distributed_trace_async
-    async def create_audio_routing_group(
+    async def create_audio_group(
         self,
         call_connection_id: str,
-        audio_routing_group_request: "_models.AudioRoutingGroupRequest",
+        audio_group_request: "_models.AudioGroupRequest",
         **kwargs: Any
-    ) -> "_models.CreateAudioRoutingGroupResult":
-        """Create audio routing group in a call.
+    ) -> "_models.CreateAudioGroupResult":
+        """Create audio group in a call.
 
-        Create audio routing group in a call.
+        Create audio group in a call.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param audio_routing_group_request: The audio routing group request.
-        :type audio_routing_group_request:
-         ~azure.communication.callingserver.models.AudioRoutingGroupRequest
+        :param audio_group_request: The audio group request.
+        :type audio_group_request: ~azure.communication.callingserver.models.AudioGroupRequest
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CreateAudioRoutingGroupResult, or the result of cls(response)
-        :rtype: ~azure.communication.callingserver.models.CreateAudioRoutingGroupResult
+        :return: CreateAudioGroupResult, or the result of cls(response)
+        :rtype: ~azure.communication.callingserver.models.CreateAudioGroupResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateAudioRoutingGroupResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateAudioGroupResult"]
         error_map = {
             409: ResourceExistsError,
             400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
@@ -846,14 +845,14 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(audio_routing_group_request, 'AudioRoutingGroupRequest')
+        _json = self._serialize.body(audio_group_request, 'AudioGroupRequest')
 
-        request = build_create_audio_routing_group_request(
+        request = build_create_audio_group_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.create_audio_routing_group.metadata['url'],
+            json=_json,
+            template_url=self.create_audio_group.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -868,14 +867,14 @@ class CallConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('CreateAudioRoutingGroupResult', pipeline_response)
+        deserialized = self._deserialize('CreateAudioGroupResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_audio_routing_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/:createAudioRoutingGroup'}  # type: ignore
+    create_audio_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/:createAudioGroup'}  # type: ignore
 
 
     @distributed_trace_async
@@ -977,13 +976,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(add_participant_request, 'AddParticipantRequest')
+        _json = self._serialize.body(add_participant_request, 'AddParticipantRequest')
 
         request = build_add_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.add_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -1048,13 +1047,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(remove_participant_request, 'RemoveParticipantRequest')
+        _json = self._serialize.body(remove_participant_request, 'RemoveParticipantRequest')
 
         request = build_remove_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.remove_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -1113,13 +1112,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(get_participant_request, 'GetParticipantRequest')
+        _json = self._serialize.body(get_participant_request, 'GetParticipantRequest')
 
         request = build_get_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.get_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -1183,13 +1182,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantRequest')
+        _json = self._serialize.body(play_audio_to_participant_request, 'PlayAudioToParticipantRequest')
 
         request = build_participant_play_audio_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.participant_play_audio.metadata['url'],
         )
         request = _convert_request(request)
@@ -1253,13 +1252,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(cancel_media_operation_request, 'CancelParticipantMediaOperationRequest')
+        _json = self._serialize.body(cancel_media_operation_request, 'CancelParticipantMediaOperationRequest')
 
         request = build_cancel_participant_media_operation_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.cancel_participant_media_operation.metadata['url'],
         )
         request = _convert_request(request)
@@ -1319,13 +1318,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(mute_participant_request, 'MuteParticipantRequest')
+        _json = self._serialize.body(mute_participant_request, 'MuteParticipantRequest')
 
         request = build_mute_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.mute_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -1385,13 +1384,13 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(unmute_participant_request, 'UnmuteParticipantRequest')
+        _json = self._serialize.body(unmute_participant_request, 'UnmuteParticipantRequest')
 
         request = build_unmute_participant_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.unmute_participant.metadata['url'],
         )
         request = _convert_request(request)
@@ -1414,22 +1413,22 @@ class CallConnectionsOperations:
 
 
     @distributed_trace_async
-    async def hold_participant_meeting_audio(
+    async def remove_participant_from_default_audio_group(
         self,
         call_connection_id: str,
-        hold_meeting_audio_request: "_models.HoldMeetingAudioRequest",
+        remove_from_default_audio_group_request: "_models.RemoveFromDefaultAudioGroupRequest",
         **kwargs: Any
     ) -> None:
-        """Hold meeting audio of a participant in the call.
+        """Remove a participant from default audio group.
 
-        Hold meeting audio of a participant in the call.
+        Remove a participant from default audio group.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param hold_meeting_audio_request: The request payload for holding meeting audio for a
-         participant.
-        :type hold_meeting_audio_request:
-         ~azure.communication.callingserver.models.HoldMeetingAudioRequest
+        :param remove_from_default_audio_group_request: The request payload for removing a participant
+         from default audio group.
+        :type remove_from_default_audio_group_request:
+         ~azure.communication.callingserver.models.RemoveFromDefaultAudioGroupRequest
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1452,14 +1451,14 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(hold_meeting_audio_request, 'HoldMeetingAudioRequest')
+        _json = self._serialize.body(remove_from_default_audio_group_request, 'RemoveFromDefaultAudioGroupRequest')
 
-        request = build_hold_participant_meeting_audio_request(
+        request = build_remove_participant_from_default_audio_group_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.hold_participant_meeting_audio.metadata['url'],
+            json=_json,
+            template_url=self.remove_participant_from_default_audio_group.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1477,26 +1476,26 @@ class CallConnectionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    hold_participant_meeting_audio.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:holdMeetingAudio'}  # type: ignore
+    remove_participant_from_default_audio_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:removeFromDefaultAudioGroup'}  # type: ignore
 
 
     @distributed_trace_async
-    async def resume_participant_meeting_audio(
+    async def add_participant_to_default_audio_group(
         self,
         call_connection_id: str,
-        resume_meeting_audio_request: "_models.ResumeMeetingAudioRequest",
+        add_to_default_audio_group_request: "_models.AddToDefaultAudioGroupRequest",
         **kwargs: Any
     ) -> None:
-        """Resume meeting audio of a participant in the call.
+        """Add a participant to default audio group.
 
-        Resume meeting audio of a participant in the call.
+        Add a participant to default audio group.
 
         :param call_connection_id: The call connection id.
         :type call_connection_id: str
-        :param resume_meeting_audio_request: The request payload for resuming meeting audio for a
-         participant.
-        :type resume_meeting_audio_request:
-         ~azure.communication.callingserver.models.ResumeMeetingAudioRequest
+        :param add_to_default_audio_group_request: The request payload for adding a participant to
+         default audio group.
+        :type add_to_default_audio_group_request:
+         ~azure.communication.callingserver.models.AddToDefaultAudioGroupRequest
         :keyword api_version: Api Version. The default value is "2021-11-15-preview". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -1519,14 +1518,14 @@ class CallConnectionsOperations:
         api_version = kwargs.pop('api_version', "2021-11-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(resume_meeting_audio_request, 'ResumeMeetingAudioRequest')
+        _json = self._serialize.body(add_to_default_audio_group_request, 'AddToDefaultAudioGroupRequest')
 
-        request = build_resume_participant_meeting_audio_request(
+        request = build_add_participant_to_default_audio_group_request(
             call_connection_id=call_connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.resume_participant_meeting_audio.metadata['url'],
+            json=_json,
+            template_url=self.add_participant_to_default_audio_group.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -1544,5 +1543,5 @@ class CallConnectionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    resume_participant_meeting_audio.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:resumeMeetingAudio'}  # type: ignore
+    add_participant_to_default_audio_group.metadata = {'url': '/calling/callConnections/{callConnectionId}/participants:addToDefaultAudioGroup'}  # type: ignore
 

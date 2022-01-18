@@ -53,15 +53,27 @@ class BodyReplacerProcessor(RecordingProcessor):
     def _replace_keys(self, body):
         def _replace_recursively(dictionary):
             for key in dictionary:
-                value = dictionary[key]
-                if key in self._keys:
-                    dictionary[key] = self._replacement
-                elif isinstance(value, dict):
-                    _replace_recursively(value)
-                elif key == 'iceServers':
-                    _replace_recursively(value[0])
-                elif key == 'urls':
-                    dictionary[key][0] = "turn.skype.com"
+                if isinstance(key, dict):
+                        for inner_key in key:
+                            inner_value = key[inner_key]
+                            if inner_key in self._keys:
+                                key[inner_key] = self._replacement
+                            elif isinstance(inner_value, dict):
+                                _replace_recursively(inner_value)
+                            elif inner_key == 'iceServers':
+                                _replace_recursively(inner_value[0])
+                            elif inner_key == 'urls':
+                                key[inner_key][0] = "turn.skype.com"   
+                else:
+                    value = dictionary[key]
+                    if key in self._keys:
+                        dictionary[key] = self._replacement
+                    elif isinstance(value, dict):
+                        _replace_recursively(value)
+                    elif key == 'iceServers':
+                        _replace_recursively(value[0])
+                    elif key == 'urls':
+                        dictionary[key][0] = "turn.skype.com"
 
         import json
         try:
@@ -74,7 +86,7 @@ class BodyReplacerProcessor(RecordingProcessor):
         return json.dumps(body)
 
 class CommunicationTestCase(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location']
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location', 'UriToSignWith']
 
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)

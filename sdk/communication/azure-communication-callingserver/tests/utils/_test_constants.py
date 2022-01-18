@@ -33,13 +33,13 @@ IncomingRequestSecret = "helloworld"
 AppBaseUrl = "https://dummy.ngrok.io"
 AppCallbackUrl = "{}/api/incident/callback?SecretKey={}".format(AppBaseUrl,quote(IncomingRequestSecret))
 AudioFileName = "sample-message.wav"
-AudioFileUrl = "{}/audio/{}".format(AppBaseUrl,AudioFileName)
+AUDIO_FILE_URL = 'https://acsfunctionappstorage.blob.core.windows.net/acs-audio-files/sample-message.wav'
 
 # Common
 PHONE_NUMBER = "+14255550123"
 OPERATION_CONTEXT = "dummyOperationContext"
 INCOMING_CALL_CONTEXT = "dummyIncomingCallContext"
-AUDIO_ROUTING_GROUP_ID = "0e54921f-69db-4bd4-b99a-790538ab9708"
+AUDIO_GROUP_ID = "e54921f-69db-4bd4-b99a-790538ab9708"
 COMMUNICATION_USER_Id_01 = "8:acs:b9612345-fd0b-480c-8fd2-cb58b70eab9f_acacdeb5-dba7-479b-ab45-5e76469d87b2"
 COMMUNICATION_USER_Id_02 = "8:acs:b9612345-fd0b-480c-8fd2-cb58b70eab9f_f95c7b38-6c4e-4898-93b3-2553402304d6"
 RESOURCE_SOURCE = "8:acs:6dbaf0ca-ec52-4202-a2ca-71fd2e09e5cd_4488bddf-549b-46f6-afd8-2e1fcd598c20"
@@ -48,7 +48,9 @@ PARTICIPANT_ID_01 = "d114c51f-03f1-4dcf-84ed-0a5bb56f17a7"
 PARTICIPANT_ID_02 = "321a1144-ba7c-4a3d-af45-017bb6c52706"
 MEDIA_OPERATION_ID = "dummyMediaOperationId"
 USER_TO_USER_INFORMATION = "dummyUserToUserInformation"
-
+USER_GUID = '0000000e-a50f-2ad3-655d-573a0d00829d'
+USER_GUID_AUDIO = '0000000e-a50f-5a75-655d-573a0d0082a2'
+INVALID_SEVERCALL_ID='86d58c30-68a4-11ec-8eed-f3ff71bc2a0c'
 # CreateOrJoinCallPayload
 CreateOrJoinCallPayload={
     "callLegId": CALL_ID,
@@ -97,7 +99,7 @@ ErrorPayload={
     "operationId": OPERATION_ID,
     "status": "failed",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
+    "resultInfo": {
         "code": 404,
         "subcode": 404,
         "message": "Resource not found on the server."
@@ -178,7 +180,7 @@ PlayAudioResponsePayload = {
     "operationId": OPERATION_ID,
     "status": "running",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
+    "resultInfo": {
         "code": 202,
         "subcode": 202,
         "message": "Good."
@@ -187,14 +189,10 @@ PlayAudioResponsePayload = {
 
 # AddParticipantPayload
 AddParticipantResultPayload = {
+    "participantId": PARTICIPANT_ID_01,
     "operationId": OPERATION_ID,
     "status": "running",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
-        "code": 202,
-        "subcode": 202,
-        "message": "Good."
-        }
     }
 
 # TransferPayload
@@ -202,7 +200,7 @@ TransferResultPayload = {
     "operationId": OPERATION_ID,
     "status": "completed",
     "operationContext": OPERATION_CONTEXT,
-    "resultDetails": {
+    "resultInfo": {
         "code": 202,
         "subcode": 202,
         "message": "Good."
@@ -213,7 +211,7 @@ TransferResultPayload = {
 AUDIO_URL = "https://bot.contoso.io/audio/sample-message.wav"
 AUDIO_FILE_ID = "sampleAudioFileId"
 CreateAudioRoutingGroupResponsePayload = {
-    "audioRoutingGroupId": AUDIO_ROUTING_GROUP_ID,
+    "audioGroupId": AUDIO_GROUP_ID,
     }
 
 # GetAudioRoutingGroupPayload

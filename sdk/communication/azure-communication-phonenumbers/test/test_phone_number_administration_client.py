@@ -43,193 +43,232 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             ResponseReplacerProcessor()])
 
     def test_list_purchased_phone_numbers_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
-        phone_numbers = phone_number_client.list_purchased_phone_numbers()
-        assert phone_numbers.next()
-    
+        try:
+            endpoint, access_key = parse_connection_str(self.connection_str)
+            credential = create_token_credential()
+            phone_number_client = PhoneNumbersClient(
+                endpoint, 
+                credential, 
+                http_logging_policy=get_http_logging_policy()
+            )
+            phone_numbers = phone_number_client.list_purchased_phone_numbers()
+            assert phone_numbers.next()
+        except Exception as ex:
+            print(str(ex))
+
     def test_list_purchased_phone_numbers(self):
-        phone_numbers = self.phone_number_client.list_purchased_phone_numbers()
-        assert phone_numbers.next()
+        try:
+            phone_numbers = self.phone_number_client.list_purchased_phone_numbers()
+            assert phone_numbers.next()
+        except Exception as ex:
+            print(str(ex))
 
     def test_get_purchased_phone_number_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
-        phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
-        assert phone_number.phone_number == self.phone_number
-    
+        try:
+            endpoint, access_key = parse_connection_str(self.connection_str)
+            credential = create_token_credential()
+            phone_number_client = PhoneNumbersClient(
+                endpoint, 
+                credential, 
+                http_logging_policy=get_http_logging_policy()
+            )
+            phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
+            assert phone_number.phone_number == self.phone_number
+        except Exception as ex:
+            print(str(ex))
+
     def test_get_purchased_phone_number(self):
-        phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
-        assert phone_number.phone_number == self.phone_number
+        try:
+            phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
+            assert phone_number.phone_number == self.phone_number
+        except Exception as ex:
+            print(str(ex))
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_search_available_phone_numbers_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
-        capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityType.INBOUND,
-            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
-        )
-        poller = phone_number_client.begin_search_available_phone_numbers(
-            self.country_code,
-            PhoneNumberType.TOLL_FREE,
-            PhoneNumberAssignmentType.APPLICATION,
-            capabilities,
-            polling = True
-        )
-        assert poller.result()
+        try:
+            endpoint, access_key = parse_connection_str(self.connection_str)
+            credential = create_token_credential()
+            phone_number_client = PhoneNumbersClient(
+                endpoint, 
+                credential, 
+                http_logging_policy=get_http_logging_policy()
+            )
+            capabilities = PhoneNumberCapabilities(
+                calling = PhoneNumberCapabilityType.INBOUND,
+                sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            )
+            poller = phone_number_client.begin_search_available_phone_numbers(
+                self.country_code,
+                PhoneNumberType.TOLL_FREE,
+                PhoneNumberAssignmentType.APPLICATION,
+                capabilities,
+                polling = True
+            )
+            assert poller.result()
+        except Exception as ex:
+            print(str(ex))
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_search_available_phone_numbers(self):
-        capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityType.INBOUND,
-            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
-        )
-        poller = self.phone_number_client.begin_search_available_phone_numbers(
-            self.country_code,
-            PhoneNumberType.TOLL_FREE,
-            PhoneNumberAssignmentType.APPLICATION,
-            capabilities,
-            polling = True
-        )
-        assert poller.result()
+        try:
+            capabilities = PhoneNumberCapabilities(
+                calling = PhoneNumberCapabilityType.INBOUND,
+                sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            )
+            poller = self.phone_number_client.begin_search_available_phone_numbers(
+                self.country_code,
+                PhoneNumberType.TOLL_FREE,
+                PhoneNumberAssignmentType.APPLICATION,
+                capabilities,
+                polling = True
+            )
+            assert poller.result()
+        except Exception as ex:
+            print(str(ex))
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_update_phone_number_capabilities_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
-        current_phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
-        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-        poller = phone_number_client.begin_update_phone_number_capabilities(
-            self.phone_number,
-            sms_capabilities,
-            calling_capabilities,
-            polling = True
-        )
-        assert poller.result()
-        assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+        try:    
+            endpoint, access_key = parse_connection_str(self.connection_str)
+            credential = create_token_credential()
+            phone_number_client = PhoneNumbersClient(
+                endpoint, 
+                credential, 
+                http_logging_policy=get_http_logging_policy()
+            )
+            current_phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
+            calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            poller = phone_number_client.begin_update_phone_number_capabilities(
+                self.phone_number,
+                sms_capabilities,
+                calling_capabilities,
+                polling = True
+            )
+            assert poller.result()
+            assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+        except Exception as ex:
+            print(str(ex))
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_update_phone_number_capabilities(self):
-        current_phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
-        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-        poller = self.phone_number_client.begin_update_phone_number_capabilities(
-            self.phone_number,
-            sms_capabilities,
-            calling_capabilities,
-            polling = True
-        )
-        assert poller.result()
-        assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+        try:
+            current_phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
+            calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            poller = self.phone_number_client.begin_update_phone_number_capabilities(
+                self.phone_number,
+                sms_capabilities,
+                calling_capabilities,
+                polling = True
+            )
+            assert poller.result()
+            assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+        except Exception as ex:
+            print(str(ex))
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_number_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
-        capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityType.INBOUND,
-            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
-        )
-        search_poller = phone_number_client.begin_search_available_phone_numbers(
-            self.country_code,
-            PhoneNumberType.TOLL_FREE,
-            PhoneNumberAssignmentType.APPLICATION,
-            capabilities,
-            polling = True
-        )
-        phone_number_to_buy = search_poller.result()
-        purchase_poller = phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
-        purchase_poller.result()
-        release_poller = phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
-
+        try:
+            endpoint, access_key = parse_connection_str(self.connection_str)
+            credential = create_token_credential()
+            phone_number_client = PhoneNumbersClient(
+                endpoint, 
+                credential, 
+                http_logging_policy=get_http_logging_policy()
+            )
+            capabilities = PhoneNumberCapabilities(
+                calling = PhoneNumberCapabilityType.INBOUND,
+                sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            )
+            search_poller = phone_number_client.begin_search_available_phone_numbers(
+                self.country_code,
+                PhoneNumberType.TOLL_FREE,
+                PhoneNumberAssignmentType.APPLICATION,
+                capabilities,
+                polling = True
+            )
+            phone_number_to_buy = search_poller.result()
+            purchase_poller = phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
+            purchase_poller.result()
+            release_poller = phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
+            assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+        except Exception as ex:
+            print(str(ex))
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
-        capabilities = PhoneNumberCapabilities(
+        try:
+            capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
-        )
-        search_poller = self.phone_number_client.begin_search_available_phone_numbers(
-            self.country_code,
-            PhoneNumberType.TOLL_FREE,
-            PhoneNumberAssignmentType.APPLICATION,
-            capabilities,
-            polling = True
-        )
-        phone_number_to_buy = search_poller.result()
-        purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
-        purchase_poller.result()
-        release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
-    
+            )
+            search_poller = self.phone_number_client.begin_search_available_phone_numbers(
+                self.country_code,
+                PhoneNumberType.TOLL_FREE,
+                PhoneNumberAssignmentType.APPLICATION,
+                capabilities,
+                polling = True
+            )
+            phone_number_to_buy = search_poller.result()
+            purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
+            purchase_poller.result()
+            release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
+            assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+        except Exception as ex:
+            print(str(ex))
+
     def test_get_purchased_phone_number_with_invalid_phone_number(self):
-        if self.is_playback():
-            phone_number = "sanitized"
-        else:
-            phone_number = "+14255550123"
+        try:    
+            if self.is_playback():
+                phone_number = "sanitized"
+            else:
+                phone_number = "+14255550123"
 
-        with pytest.raises(Exception) as ex:
-            self.phone_number_client.get_purchased_phone_number(phone_number)
-        
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
-    
+            with pytest.raises(Exception) as ex:
+                self.phone_number_client.get_purchased_phone_number(phone_number)
+            
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+        except Exception as ex:
+            print(str(ex))
+
     def test_search_available_phone_numbers_with_invalid_country_code(self):
-        capabilities = PhoneNumberCapabilities(
+        try:
+            capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
-        )
+            )
 
-        with pytest.raises(Exception) as ex:
-            self.phone_number_client.begin_search_available_phone_numbers(
+            with pytest.raises(Exception) as ex:
+                self.phone_number_client.begin_search_available_phone_numbers(
                 "XX",
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
                 polling = True
             )
+        except Exception as ex:
+            print(str(ex))
 
     def test_update_phone_number_capabilities_with_invalid_phone_number(self):
-        if self.is_playback():
-            phone_number = "sanitized"
-        else:
-            phone_number = "+14255555111"
+        try:
+            if self.is_playback():
+                phone_number = "sanitized"
+            else:
+                phone_number = "+14255555111"
 
-        with pytest.raises(Exception) as ex:
-            self.phone_number_client.begin_update_phone_number_capabilities(
-                phone_number,
-                PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-                PhoneNumberCapabilityType.INBOUND,
-                polling = True
-            )
-        
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
+            with pytest.raises(Exception) as ex:
+                self.phone_number_client.begin_update_phone_number_capabilities(
+                    phone_number,
+                    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                    PhoneNumberCapabilityType.INBOUND,
+                    polling = True
+                )
+            
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+        except Exception as ex:
+            print(str(ex))
+

@@ -20,20 +20,20 @@ from .._converters import (
     CancelParticipantMediaOperationRequestConverter,
     PlayAudioRequestConverter,
     PlayAudioToParticipantRequestConverter,
-    AudioRoutingGroupRequestConverter,
+    AudioGroupRequestConverter,
     MuteParticipantRequestConverter,
     UnmuteParticipantRequestConverter,
-    HoldMeetingAudioRequestConverter,
-    ResumeMeetingAudioRequestConverter,
-    UpdateAudioRoutingGroupRequestConverter
+    RemoveFromDefaultAudioGroupRequestConverter,
+    AddToDefaultAudioGroupRequestConverter,
+    UpdateAudioGroupRequestConverter
     )
 from .._generated.models import (
     AddParticipantResult,
     CallConnectionProperties,
     PhoneNumberIdentifierModel,
     PlayAudioResult,
-    AudioRoutingGroupResult,
-    CreateAudioRoutingGroupResult,
+    AudioGroupResult,
+    CreateAudioGroupResult,
     TransferCallResult,
     CallParticipant,
     AudioRoutingMode
@@ -425,7 +425,7 @@ class CallConnection:
         )
 
     @distributed_trace_async()
-    async def hold_participant_meeting_audio(
+    async def remove_from_default_audio_group(
             self,
             participant: CommunicationIdentifier,
             **kwargs: Any
@@ -440,18 +440,18 @@ class CallConnection:
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        hold_meeting_audio_request = HoldMeetingAudioRequestConverter.convert(
+        remove_from_default_audio_group_request = RemoveFromDefaultAudioGroupRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
 
-        return await self._call_connection_client.hold_participant_meeting_audio(
+        return await self._call_connection_client.remove_participant_from_default_audio_group(
             call_connection_id=self.call_connection_id,
-            hold_meeting_audio_request=hold_meeting_audio_request,
+            remove_from_default_audio_group_request=remove_from_default_audio_group_request,
             **kwargs
         )
 
     @distributed_trace_async()
-    async def resume_participant_meeting_audio(
+    async def add_participant_to_default_audio_group(
             self,
             participant: CommunicationIdentifier,
             **kwargs: Any
@@ -466,13 +466,13 @@ class CallConnection:
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        resume_participant_meeting_audio_request = ResumeMeetingAudioRequestConverter.convert(
+        add_to_default_audio_group_request = AddToDefaultAudioGroupRequestConverter.convert(
             identifier=serialize_identifier(participant)
             )
 
-        return await self._call_connection_client.resume_participant_meeting_audio(
+        return await self._call_connection_client.add_participant_to_default_audio_group(
             call_connection_id=self.call_connection_id,
-            resume_meeting_audio_request=resume_participant_meeting_audio_request,
+            add_to_default_audio_group_request=add_to_default_audio_group_request,
             **kwargs
         )
 
@@ -553,13 +553,13 @@ class CallConnection:
         )
 
     @distributed_trace_async()
-    async def create_audio_routing_group(
+    async def create_audio_group(
             self,
             audio_routing_mode: AudioRoutingMode,
             targets: List[CommunicationIdentifier],
             **kwargs: Any
-        ) -> CreateAudioRoutingGroupResult:
-        """Create audio routing group in a call.
+        ) -> CreateAudioGroupResult:
+        """Create audio group in a call.
 
         :param audio_routing_mode: Required. The audio routing mode. Possible values include:
          "oneToOne", "multicast".
@@ -567,76 +567,76 @@ class CallConnection:
         :param targets: Required. The target identities that would be receivers in the audio routing
          group.
         :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifier]
-        :return: CreateAudioRoutingGroupResult
-        :rtype: ~azure.communication.callingserver.models.CreateAudioRoutingGroupResult
+        :return: CreateAudioGroupResult
+        :rtype: ~azure.communication.callingserver.models.CreateAudioGroupResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        audio_routing_group_request = AudioRoutingGroupRequestConverter.convert(
+        audio_group_request = AudioGroupRequestConverter.convert(
             audio_routing_mode=audio_routing_mode,
             target_identities=[serialize_identifier(m) for m in targets]
             )
 
-        return await self._call_connection_client.create_audio_routing_group(
+        return await self._call_connection_client.create_audio_group(
             call_connection_id=self.call_connection_id,
-            audio_routing_group_request=audio_routing_group_request,
+            audio_group_request=audio_group_request,
             **kwargs
         )
 
     @distributed_trace_async()
-    async def list_audio_routing_groups(
+    async def list_audio_groups(
             self,
-            audio_routing_group_id: str,
+            audio_group_id: str,
             **kwargs: Any
-        ) -> AudioRoutingGroupResult:
-        """List audio routing groups in a call.
+        ) -> AudioGroupResult:
+        """List audio groups in a call.
 
-        :param audio_routing_group_id: Required. The audio routing group id.
-        :type audio_routing_group_id: str
-        :return: AudioRoutingGroupResult
-        :rtype: ~azure.communication.callingserver.models.AudioRoutingGroupResult
+        :param audio_group_id: Required. The audio group id.
+        :type audio_group_id: str
+        :return: AudioGroupResult
+        :rtype: ~azure.communication.callingserver.models.AudioGroupResult
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        return await self._call_connection_client.get_audio_routing_groups(
+        return await self._call_connection_client.get_audio_groups(
             call_connection_id=self.call_connection_id,
-            audio_routing_group_id=audio_routing_group_id,
+            audio_group_id=audio_group_id,
             **kwargs
         )
 
     @distributed_trace_async()
-    async def delete_audio_routing_group(
+    async def delete_audio_group(
             self,
-            audio_routing_group_id: str,
+            audio_group_id: str,
             **kwargs: Any
         ) -> None:
-        """Delete audio routing group from a call.
+        """Delete audio group from a call.
 
-        :param audio_routing_group_id: Required. The audio routing group id.
-        :type audio_routing_group_id: str
+        :param audio_group_id: Required. The audio group id.
+        :type audio_group_id: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        return await self._call_connection_client.delete_audio_routing_group(
+        return await self._call_connection_client.delete_audio_group(
             call_connection_id=self.call_connection_id,
-            audio_routing_group_id=audio_routing_group_id,
+            audio_group_id=audio_group_id,
             **kwargs
         )
 
     @distributed_trace_async()
-    async def update_audio_routing_group(
+    async def update_audio_group(
             self,
-            audio_routing_group_id: str,
+            audio_group_id: str,
             targets: List[CommunicationIdentifier],
             **kwargs: Any
         ) -> None:
-        """Update audio routing group.
+        """Update audio group.
 
-        :param audio_routing_group_id: Required. The audio routing group id.
-        :type audio_routing_group_id: str
-        :param targets: Required. The target identities that would be receivers in the audio routing
+        :param audio_group_id: Required. The audio group id.
+        :type audio_group_id: str
+        :param targets: Required. The target identities that would be receivers in the audio
          group.
         :type targets: list[~azure.communication.callingserver.models.CommunicationIdentifier]
         :return: None
@@ -644,14 +644,14 @@ class CallConnection:
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        update_audio_routing_group_request = UpdateAudioRoutingGroupRequestConverter.convert(
+        update_audio_group_request = UpdateAudioGroupRequestConverter.convert(
             target_identities=[serialize_identifier(m) for m in targets]
             )
 
-        return await self._call_connection_client.update_audio_routing_group(
+        return await self._call_connection_client.update_audio_group(
             call_connection_id=self.call_connection_id,
-            audio_routing_group_id=audio_routing_group_id,
-            update_audio_routing_group_request=update_audio_routing_group_request,
+            audio_group_id=audio_group_id,
+            update_audio_group_request=update_audio_group_request,
             **kwargs
         )
 
